@@ -7,6 +7,26 @@ export type GrayMatterSessionStatus =
   | "unauthenticated"
   | "unavailable";
 
+export type GrayMatterRecoveryActionId =
+  | "buy_credits"
+  | "open_account";
+
+export interface GrayMatterRecoveryAction {
+  command: "valoride.accountButtonClicked";
+  id: GrayMatterRecoveryActionId;
+  label: string;
+  primary?: boolean;
+}
+
+export interface GrayMatterRecovery {
+  actions: GrayMatterRecoveryAction[];
+  backendBaseUrl: string;
+  command: "valoride.accountButtonClicked";
+  message: string;
+  reason: GrayMatterSessionStatus;
+  retryable: boolean;
+}
+
 export interface GrayMatterCapabilities {
   agent: boolean;
   grayMatter: boolean;
@@ -26,6 +46,7 @@ export interface GrayMatterSessionState {
   checkedAt: string;
   controlSurface?: GrayMatterControlSurface;
   error?: string;
+  recovery?: GrayMatterRecovery;
   status: GrayMatterSessionStatus;
 }
 

@@ -4,11 +4,13 @@ import {
   FaCreditCard,
   FaNetworkWired,
   FaPlug,
+  FaTimes,
   FaTerminal,
 } from "react-icons/fa";
 import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 import type { McpServer } from "@shared/mcp";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { useMothershipOptional } from "@thorapi/context/MothershipContext";
 import { vscode } from "@thorapi/utils/vscode";
 import "./CapabilityCommandCenter.css";
 
@@ -106,9 +108,14 @@ const mcpSummary = (
 
 const swarmSummary = (
   agenticState?: AgenticCapabilityCommandCenterState,
+  websocketState?: { instanceId?: string | null; isConnected?: boolean },
 ): { detail: string; label: string; tone: PillTone } => {
   const swarm = agenticState?.swarm;
-  const status = swarm?.status ?? "offline";
+  const status =
+    websocketState?.isConnected &&
+    (!swarm?.status || swarm.status === "offline")
+      ? "online"
+      : (swarm?.status ?? "offline");
   const tone: PillTone =
     status === "online" || status === "busy"
       ? "ok"
@@ -116,7 +123,11 @@ const swarmSummary = (
         ? "error"
         : "warn";
   return {
-    detail: swarm?.instanceId ?? swarm?.lastError ?? "No registration ACK",
+    detail:
+      websocketState?.instanceId ??
+      swarm?.instanceId ??
+      swarm?.lastError ??
+      "No registration ACK",
     label: `SWARM ${titleCaseStatus(status)}`,
     tone,
   };
@@ -212,18 +223,6 @@ const quotaRecoveryUrl = (
 
 const valorideReturnTo = (action: string): string =>
   `valoride://agentic-command-center/recovery?action=${encodeURIComponent(action)}`;
-
-const hostedRecoveryUrl = (
-  path: string,
-  state: Record<string, any>,
-  source: string,
-  action: string,
-): string => {
-  const url = hostedUrl(path, state);
-  url.searchParams.set("source", source);
-  url.searchParams.set("returnTo", valorideReturnTo(action));
-  return url.toString();
-};
 
 const trackRecoveryAction = (
   status: string | undefined,
@@ -335,131 +334,35 @@ const GrayMatterQuotaRecovery = ({
 
 const GrayMatterRecoveryActions = ({
   grayMatterSession,
-  state,
+  isSignedIn,
 }: {
   grayMatterSession?: GrayMatterLike;
-  state: Record<string, any>;
+  isSignedIn: boolean;
 }) => {
-  const openHosted = (path: string, source: string, action: string) => {
-    trackRecoveryAction(grayMatterSession?.status, action, "graymatter");
-    vscode.postMessage({
-      type: "openInBrowser",
-      url: hostedRecoveryUrl(path, state, source, action),
-    });
-  };
-
   if (grayMatterSession?.status === "unauthenticated") {
-    return (
-      <div className="capability-command-center__quota" role="alert">
-        <div className="capability-command-center__quota-copy">
-          <FaCreditCard aria-hidden="true" />
-          <span>
-            Sign in to restore GrayMatter memory and activation flows.
-          </span>
-        </div>
-        <div className="capability-command-center__quota-actions">
-          <button
-            type="button"
-            onClick={() =>
-              openHosted(
-                "/graymatter/activate",
-                "valoride-graymatter-auth",
-                "sign_in",
-              )
-            }
-          >
-            Sign in to ValkyrAI
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              openHosted(
-                "/signup",
-                "valoride-graymatter-workspace",
-                "create_workspace",
-              )
-            }
-          >
-            Create workspace
-          </button>
-        </div>
-      </div>
-    );
-  }
+    if (isSignedIn) {
+      return null;
+    }
 
-  if (grayMatterSession?.status === "forbidden") {
     return (
       <div className="capability-command-center__quota" role="alert">
         <div className="capability-command-center__quota-copy">
           <FaCreditCard aria-hidden="true" />
-          <span>
-            Missing role/scope detected. Request access or open RBAC controls.
-          </span>
+          <span>Sign in to ValkyrAI to enable GrayMatter memory.</span>
         </div>
         <div className="capability-command-center__quota-actions">
-          <button
-            type="button"
-            onClick={() =>
-              openHosted(
-                "/account",
-                "valoride-graymatter-rbac-request",
-                "request_access",
-              )
-            }
-          >
-            Request access
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              openHosted(
-                "/admin/rbac",
-                "valoride-graymatter-rbac-admin",
-                "open_admin_rbac",
-              )
-            }
-          >
-            Open admin RBAC
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (grayMatterSession?.status === "unavailable") {
-    return (
-      <div className="capability-command-center__quota" role="alert">
-        <div className="capability-command-center__quota-copy">
-          <FaCreditCard aria-hidden="true" />
-          <span>
-            GrayMatter is unavailable. Open diagnostics and retry setup.
-          </span>
-        </div>
-        <div className="capability-command-center__quota-actions">
-          <button
-            type="button"
-            onClick={() =>
-              openHosted(
-                "/graymatter/activate",
-                "valoride-graymatter-diagnostics",
-                "open_diagnostics",
-              )
-            }
-          >
-            Open diagnostics
-          </button>
           <button
             type="button"
             onClick={() => {
               trackRecoveryAction(
                 grayMatterSession?.status,
-                "retry_setup",
+                "sign_in",
                 "graymatter",
               );
-              vscode.postMessage({ type: "webviewDidLaunch" });
+              vscode.postMessage({ type: "showAccountViewClicked" });
             }}
           >
-            Retry setup
+            Sign in to ValkyrAI
           </button>
         </div>
       </div>
@@ -469,63 +372,34 @@ const GrayMatterRecoveryActions = ({
   return null;
 };
 
-const SwarmRecoveryActions = ({
-  agenticState,
-  latestCommand,
-}: {
-  agenticState?: AgenticCapabilityCommandCenterState;
-  latestCommand?: AgenticCapabilityCommandCenterState["recentCommands"][number];
-}) => {
-  const swarmStatus = agenticState?.swarm?.status ?? "offline";
-  if (swarmStatus === "online" || swarmStatus === "busy") {
-    return null;
-  }
-
-  const detail =
-    agenticState?.swarm?.lastError ??
-    commandFailureDetail(latestCommand) ??
-    "SWARM is offline. Reconnect before routing remote commands.";
-
-  return (
-    <div className="capability-command-center__quota" role="status">
-      <div className="capability-command-center__quota-copy">
-        <FaNetworkWired aria-hidden="true" />
-        <span>{detail}</span>
-      </div>
-      <div className="capability-command-center__quota-actions">
-        <button
-          type="button"
-          onClick={() => vscode.postMessage({ type: "webviewDidLaunch" })}
-        >
-          Retry SWARM
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            vscode.postMessage({ type: "showMcpView", tab: "installed" })
-          }
-        >
-          Open setup
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const CapabilityCommandCenter = () => {
   const state = useExtensionState() as Record<string, any>;
+  const mothership = useMothershipOptional();
+  const isSignedIn = Boolean(
+    state.isLoggedIn ||
+      state.jwtToken ||
+      state.authenticatedUser ||
+      state.userInfo ||
+      state.authenticatedPrincipal,
+  );
   const grayMatterSession = state.grayMatterSession as
     | GrayMatterLike
     | undefined;
   const agenticState = state.agenticState as
     | AgenticCapabilityCommandCenterState
     | undefined;
+  const mcpServers = state.mcpServers;
   const grayMatter = grayMatterLabel(grayMatterSession);
-  const mcp = mcpSummary(state.mcpServers);
-  const swarm = swarmSummary(agenticState);
+  const mcp = mcpSummary(mcpServers);
+  const swarm = swarmSummary(agenticState, {
+    instanceId: mothership?.instanceId,
+    isConnected: mothership?.isConnected,
+  });
   const recentCommands = agenticState?.recentCommands ?? [];
   const latestCommand = recentCommands[0];
-
+  const [dismissedPrompts, setDismissedPrompts] = React.useState<
+    Record<string, boolean>
+  >({});
   return (
     <section
       className="capability-command-center"
@@ -583,43 +457,31 @@ const CapabilityCommandCenter = () => {
         />
       ) : null}
       {grayMatterSession?.status !== "quota" ? (
-        <GrayMatterRecoveryActions
-          grayMatterSession={grayMatterSession}
-          state={state}
-        />
-      ) : null}
-      <SwarmRecoveryActions
-        agenticState={agenticState}
-        latestCommand={latestCommand}
-      />
-      {mcp.tone === "warn" ? (
-        <div className="capability-command-center__quota" role="status">
-          <div className="capability-command-center__quota-copy">
-            <FaPlug aria-hidden="true" />
-            <span>
-              MCP connectivity needs attention. Retry discovery or open setup.
-            </span>
-          </div>
-          <div className="capability-command-center__quota-actions">
-            <button
-              type="button"
-              onClick={() => {
-                trackRecoveryAction(undefined, "retry_discovery", "mcp");
-                vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
-              }}
-            >
-              Retry discovery
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                trackRecoveryAction(undefined, "open_mcp_setup", "mcp");
-                vscode.postMessage({ type: "showMcpView", tab: "installed" });
-              }}
-            >
-              Open MCP setup
-            </button>
-          </div>
+        <div className="capability-command-center__dismissible">
+          {!dismissedPrompts[`graymatter-${grayMatterSession?.status}`] ? (
+            <>
+              <GrayMatterRecoveryActions
+                grayMatterSession={grayMatterSession}
+                isSignedIn={isSignedIn}
+              />
+              {grayMatterSession?.status === "unauthenticated" &&
+              !isSignedIn ? (
+                <button
+                  aria-label="Dismiss GrayMatter sign-in prompt"
+                  className="capability-command-center__dismiss"
+                  type="button"
+                  onClick={() =>
+                    setDismissedPrompts((prev) => ({
+                      ...prev,
+                      [`graymatter-${grayMatterSession?.status}`]: true,
+                    }))
+                  }
+                >
+                  <FaTimes aria-hidden="true" />
+                </button>
+              ) : null}
+            </>
+          ) : null}
         </div>
       ) : null}
     </section>

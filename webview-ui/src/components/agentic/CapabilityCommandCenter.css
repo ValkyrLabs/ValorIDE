@@ -141,6 +141,28 @@
   background: var(--vscode-button-hoverBackground, #1177bb);
 }
 
+.capability-command-center__dismissible {
+  position: relative;
+}
+
+.capability-command-center__dismiss {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: 4px;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+}
+
+.capability-command-center__dismiss:hover {
+  color: var(--vscode-foreground);
+}
+
 @media (max-width: 640px) {
   .capability-command-center__topline {
     align-items: flex-start;

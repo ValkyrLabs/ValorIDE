@@ -23,7 +23,7 @@ export class ValorIDEHandler implements ApiHandler {
     const basePath = getValkyraiBasePath();
     this.client = new OpenAI({
       baseURL: `${basePath}/llm-details/heimdallm/chat`,
-      apiKey: this.options.valorideApiKey || "",
+      apiKey: this.options.valorideApiKey || "noop",
       defaultHeaders: {
         "HTTP-Referer": basePath, // Optional, for including your app on valkyrlabs.com/v1 rankings.
         "X-Title": "ValorIDE", // Optional. Shows in rankings on valkyrlabs.com/v1.

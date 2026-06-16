@@ -12,6 +12,7 @@
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
@@ -31,9 +32,7 @@
       "@thorapi/model/*": ["webview-ui/src/thorapi/model/*"],
       "@thorapi/src": ["webview-ui/src/thorapi/src/index.ts"],
       "@thorapi/redux/*": ["webview-ui/src/thorapi/redux/*"],
-      "@thorapi/redux/services/*": [
-        "webview-ui/src/thorapi/redux/services/*"
-      ],
+      "@thorapi/redux/services/*": ["webview-ui/src/thorapi/redux/services/*"],
       "@thorapi/api/*": [
         "webview-ui/src/api/*",
         "src/api/*",

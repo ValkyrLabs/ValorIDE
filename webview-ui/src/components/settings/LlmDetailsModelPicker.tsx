@@ -17,6 +17,7 @@ import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions";
 import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { LlmDetailsSummary } from "@shared/llm";
 
 export interface LlmDetailsModelPickerProps {
   isPopup?: boolean;
@@ -120,7 +121,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
 }) => {
   const { apiConfiguration, setApiConfiguration } = useExtensionState();
   const [searchTerm, setSearchTerm] = useState(
-    (apiConfiguration as any)?.llmDetailsModelId || "",
+    apiConfiguration?.valkyraiServiceId || "",
   );
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -129,8 +130,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
   const [llmModels, setLlmModels] = useState<
     Record<
       string,
-      {
-        id?: string;
+      LlmDetailsSummary & {
         name: string;
         provider: string;
         version?: string;
@@ -141,8 +141,12 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
 
   // Fetch LLM models from backend (or from extension state if available)
   useMount(() => {
-    vscode.postMessage({ type: "refreshOpenRouterModels" } as any);
+    vscode.postMessage({ type: "refreshLLMDetails" });
   });
+
+  useEffect(() => {
+    setSearchTerm(apiConfiguration?.valkyraiServiceId || "");
+  }, [apiConfiguration?.valkyraiServiceId]);
 
   // Listen for LLM models updates from extension
   useEffect(() => {
@@ -170,12 +174,18 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
     const selectedModel = llmModels[newModelId];
     setApiConfiguration({
       ...apiConfiguration,
-      ...(llmModels[newModelId] && {
-        llmDetailsModelId: newModelId,
-        llmDetailsModelInfo: selectedModel,
-      }),
-    } as any);
+      apiProvider: "valkyrai",
+      apiModelId: newModelId,
+      valkyraiServiceId: newModelId,
+    });
     setSearchTerm(newModelId);
+    if (selectedModel) {
+      vscode.postMessage({
+        type: "updateLLMDetails",
+        llmDetails: selectedModel,
+        taskIntent: "code-edit",
+      });
+    }
   };
 
   useEffect(() => {

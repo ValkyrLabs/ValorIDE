@@ -1,8 +1,11 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 import "./AccountView.css";
 
-import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
-import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
+import {
+  UsageTransaction,
+  PaymentTransaction,
+} from "@thorapi/model";
+import { useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
   useAddUsageTransactionMutation,
   useGetUsageTransactionsQuery,
@@ -34,6 +37,8 @@ import {
   FaBrain,
   FaFileArchive,
   FaHammer,
+  FaNetworkWired,
+  FaCreditCard,
   FaReceipt,
   FaRecycle,
   FaUserEdit,
@@ -61,20 +66,26 @@ import {
 import { CreditIntent } from "@thorapi/types/creditIntent";
 import { buildAccountLoginSuccessMessage } from "./accountAuthBridge";
 import { loginThroughExtensionHost } from "./extensionLogin";
+import CapabilityCommandCenter from "../agentic/CapabilityCommandCenter";
+import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
+
+type AccountTab =
+  | "login"
+  | "account"
+  | "applications"
+  | "appGeneration"
+  | "contextPage"
+  | "generatedFiles"
+  | "receipts"
+  | "swarm"
+  | "agenticCommandCenter"
+  | "userPreferences"
+  | "serverConsole";
 
 type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
-  initialActiveTab?:
-    | "login"
-    | "account"
-    | "applications"
-    | "appGeneration"
-    | "contextPage"
-    | "generatedFiles"
-    | "receipts"
-    | "userPreferences"
-    | "serverConsole";
+  initialActiveTab?: AccountTab;
   onConsumeInitialActiveTab?: () => void;
   initialSwarmCommandResponse?: Record<string, unknown>;
   onConsumeInitialSwarmCommandResponse?: () => void;
@@ -82,6 +93,27 @@ type AccountViewProps = {
   creditIntent?: CreditIntent;
   onClearCreditIntent?: () => void;
 };
+
+const firstFiniteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+  return undefined;
+};
+
+const formatCreditCount = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  }).format(Math.max(0, Math.round(value)));
 
 const AccountView = ({
   onDone,
@@ -100,6 +132,7 @@ const AccountView = ({
     isLoggedIn,
     jwtToken,
     advancedSettings,
+    agenticState,
   } = useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
@@ -134,17 +167,9 @@ const AccountView = ({
   const authed = isAuthenticated || didLogin || hasStoredJwt;
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<
-    | "login"
-    | "account"
-    | "applications"
-    | "appGeneration"
-    | "contextPage"
-    | "generatedFiles"
-    | "receipts"
-    | "userPreferences"
-    | "serverConsole"
-  >(authed ? "account" : "login");
+  const [activeTab, setActiveTab] = useState<AccountTab>(
+    authed ? "account" : "login",
+  );
 
   // Keep active tab in sync with authentication state
   useEffect(() => {
@@ -180,13 +205,12 @@ const AccountView = ({
       : principalId !== undefined && principalId !== null
         ? String(principalId)
         : "";
-
   const {
-    data: balanceData,
-    isLoading: isBalanceLoading,
-    isFetching: isBalanceFetching,
-    refetch: refetchBalance,
-  } = useGetAccountBalanceQuery(accountId, {
+    data: creditBalanceData,
+    isLoading: isCreditBalanceLoading,
+    isFetching: isCreditBalanceFetching,
+    refetch: refetchCreditBalance,
+  } = useGetCreditAccountBalanceQuery(accountId, {
     skip: !accountId,
   });
 
@@ -209,15 +233,16 @@ const AccountView = ({
 
   // Combined loading state
   const loading =
-    isBalanceLoading ||
-    isBalanceFetching ||
+    isCreditBalanceLoading ||
+    isCreditBalanceFetching ||
     isUsageLoading ||
     isPaymentsLoading;
 
   const effectiveBalance = useMemo(() => {
-    const rawBalance = balanceData?.currentBalance ?? 0;
+    const rawBalance =
+      firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
     return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
-  }, [apiMetrics.totalCost, balanceData?.currentBalance]);
+  }, [apiMetrics.totalCost, creditBalanceData?.currentBalance]);
   const criticalBalanceThreshold =
     advancedSettings?.budgetAlerts?.criticalThreshold;
   const shouldShowBuyCredits =
@@ -369,6 +394,25 @@ const AccountView = ({
         ? "Connecting..."
         : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
+  const typedAgenticState = agenticState as
+    | AgenticCapabilityCommandCenterState
+    | undefined;
+  const swarmStatus = typedAgenticState?.swarm?.status ?? "offline";
+  const swarmKind =
+    swarmStatus === "online" || swarmStatus === "busy"
+      ? "ok"
+      : swarmStatus === "error" || swarmStatus === "rejected"
+        ? "error"
+        : "warn";
+  const swarmLabel = swarmStatus
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+  const swarmDetail =
+    typedAgenticState?.swarm?.instanceId ||
+    typedAgenticState?.swarm?.lastError ||
+    "No SWARM registration ACK yet.";
 
   return (
     <div
@@ -415,15 +459,19 @@ const AccountView = ({
                 className={`nav-link ${activeTab === "account" ? "active" : ""}`}
                 onClick={() => setActiveTab("account")}
                 style={{ cursor: "pointer" }}
+                title="Account"
               >
                 <FaUserEdit />
+                <span className="account-tab-label">Account</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
                 onClick={() => setActiveTab("applications")}
                 style={{ cursor: "pointer" }}
+                title="Applications"
               >
                 <FaAppStore />
+                <span className="account-tab-label">Applications</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "appGeneration" ? "active" : ""}`}
@@ -432,6 +480,7 @@ const AccountView = ({
                 title="App Generation"
               >
                 <FaHammer />
+                <span className="account-tab-label">App Generation</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "contextPage" ? "active" : ""}`}
@@ -440,13 +489,16 @@ const AccountView = ({
                 title="Context Pages"
               >
                 <FaBrain />
+                <span className="account-tab-label">Context Pages</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
                 onClick={() => setActiveTab("generatedFiles")}
                 style={{ cursor: "pointer" }}
+                title="Generated Files"
               >
                 <FaFileArchive />
+                <span className="account-tab-label">Generated Files</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "receipts" ? "active" : ""}`}
@@ -455,6 +507,27 @@ const AccountView = ({
                 title="Receipts"
               >
                 <FaReceipt />
+                <span className="account-tab-label">Receipts</span>
+              </div>
+              <div
+                className={`nav-link ${activeTab === "swarm" ? "active" : ""}`}
+                onClick={() => setActiveTab("swarm")}
+                style={{ cursor: "pointer" }}
+                title="SWARM"
+              >
+                <FaNetworkWired />
+                <span className="account-tab-label">SWARM</span>
+              </div>
+              <div
+                className={`nav-link ${activeTab === "agenticCommandCenter" ? "active" : ""}`}
+                onClick={() => setActiveTab("agenticCommandCenter")}
+                style={{ cursor: "pointer" }}
+                title="Agentic Command Center"
+              >
+                <FaBrain />
+                <span className="account-tab-label">
+                  Agentic Command Center
+                </span>
               </div>
               <div
                 className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention ? "needs-attention" : ""}`}
@@ -466,13 +539,16 @@ const AccountView = ({
                 title="Server Console"
               >
                 <FaServer />
+                <span className="account-tab-label">Server Console</span>
               </div>
               <div
                 className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
                 onClick={() => setActiveTab("userPreferences")}
                 style={{ cursor: "pointer" }}
+                title="User Preferences"
               >
                 <FaUserEdit />
+                <span className="account-tab-label">User Preferences</span>
               </div>
             </>
           )}
@@ -568,6 +644,61 @@ const AccountView = ({
             }
           />
         </div>
+      ) : activeTab === "swarm" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <div className="grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>SWARM</h3>
+            <div
+              style={{
+                border: "1px solid var(--vscode-panel-border)",
+                borderRadius: 6,
+                padding: 12,
+                background: "var(--vscode-panel-background)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  flexWrap: "wrap",
+                  marginBottom: 8,
+                }}
+              >
+                <strong>Local Agent Registration</strong>
+                <StatusBadge
+                  label="Status"
+                  value={swarmLabel || "Offline"}
+                  kind={swarmKind as any}
+                  title={swarmDetail}
+                />
+              </div>
+              <p
+                style={{
+                  color: "var(--vscode-descriptionForeground)",
+                  fontSize: 12,
+                  marginBottom: 12,
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {swarmDetail}
+              </p>
+              <VSCodeButton
+                appearance="secondary"
+                onClick={() => vscode.postMessage({ type: "webviewDidLaunch" })}
+              >
+                Retry SWARM
+              </VSCodeButton>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === "agenticCommandCenter" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <div className="grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>Agentic Command Center</h3>
+            <CapabilityCommandCenter />
+          </div>
+        </div>
       ) : activeTab === "userPreferences" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           <div className="grow flex flex-col min-h-0">
@@ -611,18 +742,21 @@ const AccountView = ({
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
-                    <span>$</span>
+                    <FaCreditCard aria-hidden="true" />
                     <CountUp
                       end={effectiveBalance}
                       duration={0.66}
-                      decimals={2}
+                      decimals={0}
+                      separator=","
                     />
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      disabled={!accountId}
+                      disabled={!accountId && !authed}
                       onClick={async () => {
-                        await refetchBalance();
+                        if (accountId) {
+                          await refetchCreditBalance();
+                        }
                         if (authed) {
                           refetchUsage();
                           refetchPayments();
@@ -650,13 +784,12 @@ const AccountView = ({
                       Finish this action: {creditIntent.actionName}
                     </div>
                     <div style={{ fontSize: "12px", marginBottom: "8px" }}>
-                      Balance ${creditIntent.currentBalance.toFixed(2)} · Need $
-                      {creditIntent.requiredCredits.toFixed(2)} · Suggested
-                      top-up $
-                      {Math.max(
-                        5,
-                        Math.ceil(creditIntent.requiredCredits),
-                      ).toFixed(0)}
+                      Balance {formatCreditCount(creditIntent.currentBalance)} ·
+                      Need {formatCreditCount(creditIntent.requiredCredits)} ·
+                      Suggested top-up{" "}
+                      {formatCreditCount(
+                        Math.max(5, Math.ceil(creditIntent.requiredCredits)),
+                      )}
                     </div>
                     {(creditIntent.resumeUrl || creditIntent.originView) && (
                       <VSCodeButton

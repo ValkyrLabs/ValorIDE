@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 
 const mockUseGetAccountBalanceQuery = vi.fn();
+const mockUseGetAccountBalancesQuery = vi.fn();
 const mockReceiptQuery = vi.fn();
 const mockUseGetUsageTransactionsQuery = vi.fn();
 const mockUseGetPaymentTransactionsQuery = vi.fn();
@@ -126,6 +127,11 @@ vi.mock("@thorapi/services/creditsApi", () => ({
   ],
 }));
 
+vi.mock("@thorapi/redux/services/AccountBalanceService", () => ({
+  useGetAccountBalancesQuery: (...args: any[]) =>
+    mockUseGetAccountBalancesQuery(...args),
+}));
+
 vi.mock("@thorapi/redux/services/UsageTransactionService", () => ({
   useAddUsageTransactionMutation: () => [vi.fn()],
   useGetUsageTransactionsQuery: (...args: any[]) =>
@@ -220,6 +226,7 @@ describe("AccountView - Buy Credits button integration", () => {
     ({ default: AccountView } = await import("./AccountView"));
     mockExtensionState = { ...baseExtensionState };
     mockUseGetAccountBalanceQuery.mockClear();
+    mockUseGetAccountBalancesQuery.mockClear();
     mockReceiptQuery.mockClear();
     mockReceiptQuery.mockReturnValue({
       data: undefined,
@@ -231,6 +238,12 @@ describe("AccountView - Buy Credits button integration", () => {
     mockUseGetAccountBalanceQuery.mockReturnValue({
       data: { currentBalance: 25 },
       isLoading: false,
+      refetch: vi.fn(),
+    });
+    mockUseGetAccountBalancesQuery.mockReturnValue({
+      data: [{ id: "user-123", currentBalance: 25 }],
+      isLoading: false,
+      isFetching: false,
       refetch: vi.fn(),
     });
 
@@ -318,7 +331,7 @@ describe("AccountView - Buy Credits button integration", () => {
 
     const receiptsTab = screen.getByTitle(/receipts/i);
     expect(receiptsTab.className).toMatch(/active/);
-    expect(screen.getByText("Receipts")).toBeInTheDocument();
+    expect(screen.getAllByText("Receipts").length).toBeGreaterThan(0);
   });
 
   it("preloads SWARM command evidence in the Receipts tab", async () => {
@@ -408,6 +421,10 @@ describe("AccountView - Buy Credits button integration", () => {
       "user-123",
       expect.objectContaining({ skip: false }),
     );
+    expect(mockUseGetAccountBalancesQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ authSessionKey: "token" }),
+      expect.objectContaining({ skip: false }),
+    );
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
   });
 });
@@ -427,6 +444,13 @@ describe("AccountView - BuyCredits visibility", () => {
       },
     };
     mockUseGetAccountBalanceQuery.mockClear();
+    mockUseGetAccountBalancesQuery.mockClear();
+    mockUseGetAccountBalancesQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
     mockUseGetUsageTransactionsQuery.mockReturnValue({
       data: [],
       isLoading: false,

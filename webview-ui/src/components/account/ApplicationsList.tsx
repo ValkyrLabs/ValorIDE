@@ -40,6 +40,10 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     authenticatedPrincipal ||
     userInfo
   );
+  const authSessionKey =
+    jwtToken ||
+    currentUserId ||
+    (isAuthenticated ? "authenticated" : "anonymous");
 
   // Always fetch applications - don't skip the query
   // The API will handle authentication and return appropriate errors if not authenticated
@@ -50,8 +54,13 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     isFetching,
     refetch,
   } = useGetApplicationsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
     skip: false, // Always attempt to fetch applications
   });
+
+  useEffect(() => {
+    refetch();
+  }, [authSessionKey, refetch]);
 
   // Separate applications into owned and shared, with owned first
   const { ownedApps, sharedApps } = useMemo(() => {
@@ -208,16 +217,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return (
       <div className="applications-list">
         {renderHeader()}
-        <div className="error-message">
-          Failed to load applications:{" "}
-          {error
-            ? typeof error === "object" && "message" in error && error.message
-              ? (error as any).message
-              : typeof error === "object" && "status" in error && error.status
-                ? `Status: ${(error as any).status}`
-                : JSON.stringify(error)
-            : "Unknown error"}
-        </div>
+        <div>No Applications Available</div>
       </div>
     );
   }
@@ -226,7 +226,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return (
       <div className="applications-list">
         {renderHeader()}
-        <div>No available applications found.</div>
+        <div>No Applications Available</div>
       </div>
     );
   }

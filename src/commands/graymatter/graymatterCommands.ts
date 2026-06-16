@@ -1,10 +1,22 @@
 import * as vscode from "vscode";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
-import { getGlobalState, getSecret, storeSecret, updateGlobalState } from "@core/storage/state";
-import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import {
+  getGlobalState,
+  getSecret,
+  storeSecret,
+  updateGlobalState,
+} from "@core/storage/state";
+import {
+  buildGrayMatterRecovery,
+  createGrayMatterSessionState,
+} from "@services/graymatter/GrayMatterSessionService";
 import { getStatusBarService } from "@services/StatusBarService";
 import { GrayMatterMemoryPanel } from "../../views/graymatter/GrayMatterMemoryPanel";
-import { extractTenantContext, mergeTenantContext } from "@services/auth/tenantContext";
+import {
+  extractTenantContext,
+  mergeTenantContext,
+} from "@services/auth/tenantContext";
+import type { GrayMatterSessionStatus } from "@shared/GrayMatterSession";
 
 export const registerGrayMatterCommands = (
   context: vscode.ExtensionContext,
@@ -26,9 +38,7 @@ export const registerGrayMatterCommands = (
 export const refreshGrayMatterStatus = async (
   context: vscode.ExtensionContext,
 ): Promise<void> => {
-  const token =
-    (await getSecret(context, "graymatter-token")) ||
-    (await getSecret(context, "jwtToken"));
+  const token = await getSecret(context, "jwtToken");
   const tenantContext = await readStoredTenantContext(context);
   const session = await createGrayMatterSessionState({
     baseUrl: getValkyraiBasePath(),
@@ -61,20 +71,27 @@ const readStoredTenantContext = async (context: vscode.ExtensionContext) => {
   );
 };
 
+const openGrayMatterRecovery = async (
+  status: GrayMatterSessionStatus,
+): Promise<void> => {
+  const recovery = buildGrayMatterRecovery(status, getValkyraiBasePath());
+  const primaryAction = recovery?.actions.find((action) => action.primary);
+  if (!primaryAction) {
+    return;
+  }
+  await vscode.commands.executeCommand(primaryAction.command);
+};
+
 const signInToGrayMatter = async () => {
-  await vscode.env.openExternal(
-    vscode.Uri.parse(
-      "https://valkyrlabs.com/login?redirect=/graymatter/install/mcp",
-    ),
-  );
+  await openGrayMatterRecovery("unauthenticated");
 };
 
 const rotateGrayMatterToken = async (context: vscode.ExtensionContext) => {
   await storeSecret(context, "graymatter-token", undefined);
   await updateGlobalState(context, "grayMatterSession", undefined);
   getStatusBarService().updateGrayMatterStatus("unauthenticated");
-  await signInToGrayMatter();
+  await openGrayMatterRecovery("unauthenticated");
   vscode.window.showInformationMessage(
-    "GrayMatter token cleared. Complete sign-in, then reload ValorIDE to validate the new token.",
+    "Legacy GrayMatter token cleared. Use the ValorIDE account panel; GrayMatter uses the same backend session.",
   );
 };

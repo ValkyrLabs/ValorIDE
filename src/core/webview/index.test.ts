@@ -74,4 +74,50 @@ describe("WebviewProvider CSP", () => {
 
     expect(html).toContain(`connect-src ${webview.cspSource}`);
   });
+
+  test("uses the webview dev server by default in development", () => {
+    (vscodeApi.workspace as any).getConfiguration = jest
+      .fn()
+      .mockImplementation(() => ({
+        get: (_key: string, defaultValue?: any) => defaultValue,
+      }));
+
+    const provider = Object.create(WebviewProvider.prototype) as any;
+
+    expect(provider["shouldUseWebviewDevServer"]()).toBe(true);
+  });
+
+  test("allows the webview dev server when enabled by env", () => {
+    const originalEnv = process.env.VALORIDE_WEBVIEW_HMR;
+    process.env.VALORIDE_WEBVIEW_HMR = "1";
+
+    try {
+      const provider = Object.create(WebviewProvider.prototype) as any;
+
+      expect(provider["shouldUseWebviewDevServer"]()).toBe(true);
+    } finally {
+      if (originalEnv === undefined) {
+        delete process.env.VALORIDE_WEBVIEW_HMR;
+      } else {
+        process.env.VALORIDE_WEBVIEW_HMR = originalEnv;
+      }
+    }
+  });
+
+  test("allows the webview dev server to be disabled by env", () => {
+    const originalEnv = process.env.VALORIDE_WEBVIEW_HMR;
+    process.env.VALORIDE_WEBVIEW_HMR = "0";
+
+    try {
+      const provider = Object.create(WebviewProvider.prototype) as any;
+
+      expect(provider["shouldUseWebviewDevServer"]()).toBe(false);
+    } finally {
+      if (originalEnv === undefined) {
+        delete process.env.VALORIDE_WEBVIEW_HMR;
+      } else {
+        process.env.VALORIDE_WEBVIEW_HMR = originalEnv;
+      }
+    }
+  });
 });

@@ -453,6 +453,7 @@ export const ExtensionStateContextProvider: React.FC<{
         try {
           // Clear sessionStorage
           sessionStorage.removeItem("jwtToken");
+          sessionStorage.removeItem("jwtSession");
           sessionStorage.removeItem("authenticatedPrincipal");
           sessionStorage.removeItem("authenticatedUser");
           sessionStorage.removeItem("valoride.persistJwt");
@@ -462,6 +463,7 @@ export const ExtensionStateContextProvider: React.FC<{
           // Clear localStorage
           localStorage.removeItem("jwtToken");
           localStorage.removeItem("authToken");
+          localStorage.removeItem("jwtSession");
           localStorage.removeItem("authenticatedPrincipal");
           localStorage.removeItem("authenticatedUser");
           localStorage.removeItem("valoride.persistJwt");
@@ -475,7 +477,12 @@ export const ExtensionStateContextProvider: React.FC<{
           // Dispatch event to notify other components/bridges of logout
           window.dispatchEvent(
             new CustomEvent("jwtTokenChanged", {
-              detail: { token: null, source: "logout" },
+              detail: { token: null, source: "logout", timestamp: Date.now() },
+            }),
+          );
+          window.dispatchEvent(
+            new CustomEvent("jwt-token-updated", {
+              detail: { token: null, source: "logout", timestamp: Date.now() },
             }),
           );
         } catch (error) {
@@ -524,7 +531,7 @@ export const ExtensionStateContextProvider: React.FC<{
 
   useEffect(() => {
     if (didHydrateState || typeof window === "undefined") {
-      return null;
+      return undefined;
     }
     const timeoutId = window.setTimeout(() => {
       console.warn(

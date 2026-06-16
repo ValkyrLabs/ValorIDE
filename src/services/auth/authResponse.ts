@@ -1,5 +1,6 @@
 import { AxiosResponseHeaders } from "axios";
 import type { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
+import { extractTenantContext } from "./tenantContext";
 
 const TOKEN_BODY_FIELDS = [
   "token",
@@ -20,6 +21,19 @@ const TOKEN_HEADER_FIELDS = [
   "x-jwt-token",
   "x-auth-token",
   "x-access-token",
+];
+
+const TOKEN_COOKIE_FIELDS = [
+  "VALKYR_AUTH",
+  "jwtSession",
+  "jwtToken",
+  "jwt",
+  "accessToken",
+  "access_token",
+  "sessionToken",
+  "authToken",
+  "idToken",
+  "id_token",
 ];
 
 const REFRESH_TOKEN_FIELDS = ["refreshToken", "refresh_token"];
@@ -68,6 +82,47 @@ const asTokenString = (value: unknown): string | undefined => {
   return bearerMatch ? bearerMatch[1].trim() : trimmed;
 };
 
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const extractCookieValue = (
+  cookieHeader: string,
+  cookieName: string,
+): string | undefined => {
+  const namePattern = escapeRegExp(cookieName);
+  const match = cookieHeader.match(
+    new RegExp(`(?:^|[,;]\\s*)${namePattern}=([^;,\\s]+)`, "i"),
+  );
+  return match?.[1];
+};
+
+const extractCookieToken = (
+  headers?: AxiosResponseHeaders | Record<string, any>,
+): string | undefined => {
+  const rawSetCookie = getCaseInsensitive(headers, "set-cookie");
+  const cookies = Array.isArray(rawSetCookie)
+    ? rawSetCookie
+    : rawSetCookie
+      ? [rawSetCookie]
+      : [];
+
+  for (const cookie of cookies.map(String)) {
+    for (const name of TOKEN_COOKIE_FIELDS) {
+      const rawValue = extractCookieValue(cookie, name);
+      if (!rawValue) {
+        continue;
+      }
+
+      const token = asTokenString(decodeURIComponent(rawValue));
+      if (token) {
+        return token;
+      }
+    }
+  }
+
+  return undefined;
+};
+
 const candidateBodies = (body: any) =>
   AUTH_BODY_CONTAINERS.map((container) =>
     container ? body?.[container] : body,
@@ -99,6 +154,11 @@ export const extractAuthToken = (
     if (token) {
       return token;
     }
+  }
+
+  const cookieToken = extractCookieToken(headers);
+  if (cookieToken) {
+    return cookieToken;
   }
 
   return undefined;
@@ -152,7 +212,10 @@ export const extractAuthenticatedUser = (body: any) => {
         candidate?.authenticatedPrincipal,
     );
     if (user) {
-      return user;
+      const tenantContext = extractTenantContext(candidate, user);
+      return tenantContext.tenantId && !user.tenantId
+        ? { ...user, tenantId: tenantContext.tenantId }
+        : user;
     }
   }
   return undefined;

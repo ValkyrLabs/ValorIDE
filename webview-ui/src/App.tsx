@@ -181,6 +181,8 @@ const AppContent = () => {
     | "contextPage"
     | "generatedFiles"
     | "receipts"
+    | "swarm"
+    | "agenticCommandCenter"
     | "userPreferences"
     | "serverConsole"
     | undefined

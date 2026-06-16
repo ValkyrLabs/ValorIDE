@@ -3,8 +3,32 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react-swc";
 import { resolve } from "path";
 
+const stripUnsafeGlobalEval = () => ({
+  name: "strip-unsafe-global-eval",
+  generateBundle(_options: unknown, bundle: Record<string, any>) {
+    for (const output of Object.values(bundle)) {
+      if (output?.type !== "chunk" || typeof output.code !== "string") {
+        continue;
+      }
+      output.code = output.code
+        .replace(
+          /try\{return new Function\("return this"\)\(\)\}catch\{return\{\}\}/g,
+          "return globalThis",
+        )
+        .replace(
+          /try\{return Function\("return this"\)\(\)\}catch\{return\{\}\}/g,
+          "return globalThis",
+        )
+        .replace(
+          /Function\("return this"\)\(\)/g,
+          "globalThis",
+        );
+    }
+  },
+});
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), stripUnsafeGlobalEval()],
 
   build: {
     outDir: "build",
@@ -34,13 +58,11 @@ export default defineConfig({
     },
   },
   define: {
-    "process.env": {
-      NODE_ENV: JSON.stringify(
-        process.env.IS_DEV ? "development" : "production",
-      ),
-      IS_DEV: JSON.stringify(process.env.IS_DEV),
-      IS_TEST: JSON.stringify(process.env.IS_TEST),
-    },
+    "process.env.NODE_ENV": JSON.stringify(
+      process.env.IS_DEV ? "development" : "production",
+    ),
+    "process.env.IS_DEV": JSON.stringify(process.env.IS_DEV),
+    "process.env.IS_TEST": JSON.stringify(process.env.IS_TEST),
   },
   resolve: {
     alias: [

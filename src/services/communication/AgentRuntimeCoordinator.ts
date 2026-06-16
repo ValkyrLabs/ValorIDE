@@ -78,7 +78,7 @@ type CapabilityEnvelope = {
   commands: string[];
   swarm: CapabilityAnnouncement;
   languages: string[];
-  features: Record<string, boolean>;
+  features: Record<string, boolean | string>;
 };
 
 const INSTANCE_ID_KEY = "valorideSwarmInstanceId" as const;
@@ -149,8 +149,10 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     };
 
     await this.ensureMothership(options);
-    await this.setupGitTelemetry();
-    this.registerCommands();
+    if (!this.isInitialized) {
+      await this.setupGitTelemetry();
+      this.registerCommands();
+    }
     this.isInitialized = true;
   }
 
@@ -174,6 +176,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.mothership = null;
     this.swarmNode = null;
     this.swarmTransport = null;
+    this.isInitialized = false;
   }
 
   private async ensureMothership(
@@ -181,6 +184,13 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   ): Promise<void> {
     if (this.mothership) {
       this.mothership.updateJwtToken(options.jwtToken);
+      if (!this.mothership.isConnected()) {
+        try {
+          await this.mothership.connect();
+        } catch (error) {
+          Logger.log(`Failed to reconnect to mothership: ${String(error)}`);
+        }
+      }
       return;
     }
 
@@ -260,6 +270,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const languages = await vscode.languages.getLanguages();
     const version = this.context.extension.packageJSON?.version ?? "0.0.0";
     const workspaceFolders = this.getWorkspaceFolders();
+    const { apiConfiguration, grayMatterSession, selectedLlmDetails } =
+      await getAllExtensionState(this.context);
+    const grayMatterReady =
+      grayMatterSession?.status === "ready" &&
+      grayMatterSession.capabilities.memoryQuery;
 
     const envelope: CapabilityEnvelope = {
       instanceId: this.instanceId ?? "unknown",
@@ -273,11 +288,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       languages: languages.slice(0, 40),
       swarm: this.capabilityRegistry.toSwarmAnnouncement({
         instanceId: this.instanceId ?? "unknown",
+        selectedModelId: this.resolveSelectedModelId(apiConfiguration),
+        selectedPromptId: selectedLlmDetails?.id,
+        selectedPromptName: selectedLlmDetails?.name,
         version,
         workspaceFolders,
       }),
       features: {
-        grayMatterMemory: true,
+        grayMatterMemory: grayMatterReady,
+        grayMatterStatus: grayMatterSession?.status ?? "unavailable",
+        llmPromptSelected: Boolean(selectedLlmDetails?.id),
         mcpMarketplace: !!(await this.context.globalState.get<boolean>(
           "valoride.mcpMarketplace.enabled",
         )),
@@ -867,5 +887,24 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.context.subscriptions.push(completeTaskCmd, refreshCapabilitiesCmd);
   }
 }
+
+let sharedAgentRuntimeCoordinator: AgentRuntimeCoordinator | null = null;
+
+export const initializeAgentRuntimeCoordinator = async (
+  context: vscode.ExtensionContext,
+  jwtToken: string,
+  principal?: { id?: string },
+): Promise<AgentRuntimeCoordinator> => {
+  if (!sharedAgentRuntimeCoordinator) {
+    sharedAgentRuntimeCoordinator = new AgentRuntimeCoordinator(context);
+  }
+  await sharedAgentRuntimeCoordinator.initialize(jwtToken, principal);
+  return sharedAgentRuntimeCoordinator;
+};
+
+export const disposeAgentRuntimeCoordinator = (): void => {
+  sharedAgentRuntimeCoordinator?.dispose();
+  sharedAgentRuntimeCoordinator = null;
+};
 
 export default AgentRuntimeCoordinator;

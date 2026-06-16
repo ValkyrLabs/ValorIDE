@@ -26,6 +26,7 @@ const PRINCIPAL_STORAGE_EVENT = "principal-storage-changed";
 const ROLE_PREFIX = "ROLE_";
 const JWT_STORAGE_KEY = "jwtToken";
 const AUTH_TOKEN_KEY = "authToken";
+const JWT_SESSION_KEY = "jwtSession";
 const AUTH_USER_STORAGE_KEY = "authenticatedUser";
 const JWT_PERSIST_FLAG_KEY = "valoride.persistJwt";
 const AUTH_SESSION_INVALIDATED_EVENT = "authSessionInvalidated";
@@ -47,6 +48,7 @@ const AUTH_STORAGE_KEYS = [
 const AUTH_COOKIE_NAMES = [
   "jwtSession",
   "jwtToken",
+  "authToken",
   "auth_token",
   "valoride_jwt",
   "temp_auth_token",
@@ -251,6 +253,15 @@ const dispatchPrincipalChange = () => {
     return;
   }
   window.dispatchEvent(new Event(PRINCIPAL_STORAGE_EVENT));
+};
+
+const dispatchJwtTokenChange = (token: string | null, source?: string) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  const detail = { token, source, timestamp: Date.now() };
+  window.dispatchEvent?.(new CustomEvent("jwtTokenChanged", { detail }));
+  window.dispatchEvent?.(new CustomEvent("jwt-token-updated", { detail }));
 };
 
 /**
@@ -469,6 +480,7 @@ export const storeJwtToken = (token?: string | null, source?: string): void => {
 
   try {
     sessionStorage.setItem(JWT_STORAGE_KEY, token);
+    sessionStorage.setItem(JWT_SESSION_KEY, token);
 
     const persistFlag =
       window.localStorage?.getItem(JWT_PERSIST_FLAG_KEY)?.toLowerCase() ??
@@ -478,16 +490,14 @@ export const storeJwtToken = (token?: string | null, source?: string): void => {
     if (shouldPersist) {
       window.localStorage?.setItem(JWT_STORAGE_KEY, token);
       window.localStorage?.setItem(AUTH_TOKEN_KEY, token);
+      window.localStorage?.setItem(JWT_SESSION_KEY, token);
     } else {
       window.localStorage?.removeItem(JWT_STORAGE_KEY);
       window.localStorage?.removeItem(AUTH_TOKEN_KEY);
+      window.localStorage?.removeItem(JWT_SESSION_KEY);
     }
 
-    window.dispatchEvent?.(
-      new CustomEvent("jwtTokenChanged", {
-        detail: { token, source },
-      }),
-    );
+    dispatchJwtTokenChange(token, source);
   } catch (error) {
     console.warn("Unable to persist JWT token", error);
   }
@@ -499,13 +509,11 @@ export const clearStoredJwtToken = (source?: string): void => {
   }
   try {
     sessionStorage.removeItem(JWT_STORAGE_KEY);
+    sessionStorage.removeItem(JWT_SESSION_KEY);
     window.localStorage?.removeItem(JWT_STORAGE_KEY);
     window.localStorage?.removeItem(AUTH_TOKEN_KEY);
-    window.dispatchEvent?.(
-      new CustomEvent("jwtTokenChanged", {
-        detail: { token: null, source },
-      }),
-    );
+    window.localStorage?.removeItem(JWT_SESSION_KEY);
+    dispatchJwtTokenChange(null, source);
   } catch (error) {
     console.warn("Unable to clear JWT token", error);
   }
@@ -600,11 +608,13 @@ export const hydrateStoredCredentials = (source?: string) => {
   try {
     const persistedToken =
       window.localStorage?.getItem(JWT_STORAGE_KEY) ||
-      window.localStorage?.getItem(AUTH_TOKEN_KEY);
+      window.localStorage?.getItem(AUTH_TOKEN_KEY) ||
+      window.localStorage?.getItem(JWT_SESSION_KEY);
 
     if (persistedToken) {
       token = persistedToken;
       sessionStorage.setItem(JWT_STORAGE_KEY, persistedToken);
+      sessionStorage.setItem(JWT_SESSION_KEY, persistedToken);
     }
 
     const persistedPrincipalRaw =
@@ -617,6 +627,7 @@ export const hydrateStoredCredentials = (source?: string) => {
     }
 
     if (token || principal) {
+      dispatchJwtTokenChange(token ?? null, source);
       window.dispatchEvent?.(
         new CustomEvent("credentialsHydrated", {
           detail: { token, principal, source },

@@ -20,7 +20,7 @@ export class XAIHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://api.x.ai/v1",
-      apiKey: this.options.xaiApiKey,
+      apiKey: this.options.xaiApiKey || "noop",
     });
   }
 

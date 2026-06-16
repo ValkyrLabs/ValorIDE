@@ -3,6 +3,7 @@ import axios from "axios";
 import { Logger } from "../logging/Logger";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { buildAuthTokensFromResponse } from "./authResponse";
+import { extractTenantContext } from "./tenantContext";
 
 export interface AuthTokens {
   jwtToken: string;
@@ -67,6 +68,16 @@ export class TokenStorageService {
 
       if (tokens.refreshToken) {
         await this.context.secrets.store("refreshToken", tokens.refreshToken);
+      }
+
+      const tenantContext = extractTenantContext(user);
+      if (tenantContext.tenantId) {
+        await this.context.secrets.store(
+          "tenantContext",
+          JSON.stringify(tenantContext),
+        );
+      } else {
+        await this.context.secrets.delete("tenantContext");
       }
 
       // Store complete auth state for restoration
@@ -200,6 +211,7 @@ export class TokenStorageService {
       await this.context.secrets.delete("valorideApiKey");
       await this.context.secrets.delete("refreshToken");
       await this.context.secrets.delete("authState");
+      await this.context.secrets.delete("tenantContext");
       await this.context.globalState.update(
         "authPersistenceEnabled",
         undefined,

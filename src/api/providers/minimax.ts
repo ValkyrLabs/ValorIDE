@@ -24,7 +24,7 @@ export class MinimaxHandler implements ApiHandler {
         this.options.minimaxApiLine === "china"
           ? "https://api.minimaxi.com/v1"
           : "https://api.minimax.io/v1",
-      apiKey: this.options.minimaxApiKey,
+      apiKey: this.options.minimaxApiKey || "noop",
     });
   }
 

@@ -32,11 +32,15 @@ import { searchWorkspaceFiles } from "@services/search/file-search";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import {
+  extractTenantContext,
+  mergeTenantContext,
+} from "@services/auth/tenantContext";
 import { ValoridePasswordLoginService } from "@services/auth/ValoridePasswordLoginService";
 import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
 import { getStatusBarService } from "@services/StatusBarService";
-import { ApiProvider, ModelInfo } from "@shared/api";
+import { ApiConfiguration, ApiProvider, ModelInfo } from "@shared/api";
 import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
 import {
   SwarmMessageType,
@@ -119,7 +123,9 @@ export class Controller {
   workspaceTracker: WorkspaceTracker;
   mcpHub: McpHub;
   accountService: ValorIDEAccountService;
-  private remoteCodingSessionOrchestrator = new RemoteCodingSessionOrchestrator(new RemoteCodingSessionRegistry());
+  private remoteCodingSessionOrchestrator = new RemoteCodingSessionOrchestrator(
+    new RemoteCodingSessionRegistry(),
+  );
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
   private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
 
@@ -238,6 +244,8 @@ export class Controller {
         undefined,
       );
       await updateGlobalState(this.context, "isLoggedIn", false);
+      await this.context.secrets.delete("tenantContext");
+      await updateGlobalState(this.context, "agenticState", undefined);
       await this.refreshGrayMatterSessionState(undefined);
 
       // Reset API provider to default
@@ -273,7 +281,12 @@ export class Controller {
       autoApprovalSettings,
       browserSettings,
       chatSettings,
+      selectedLlmDetails,
     } = await getAllExtensionState(this.context);
+    const taskApiConfiguration = this.resolveLlmDetailsApiConfiguration(
+      apiConfiguration,
+      selectedLlmDetails,
+    );
 
     if (autoApprovalSettings) {
       const updatedAutoApprovalSettings = {
@@ -295,7 +308,7 @@ export class Controller {
       (message) => this.postMessageToWebview(message),
       (taskId) => this.reinitExistingTaskFromId(taskId),
       () => this.cancelTask(),
-      apiConfiguration,
+      taskApiConfiguration,
       autoApprovalSettings,
       browserSettings,
       chatSettings,
@@ -310,6 +323,64 @@ export class Controller {
     const history = await this.getTaskWithId(taskId);
     if (history) {
       await this.initTask(undefined, undefined, history.historyItem);
+    }
+  }
+
+  private resolveLlmDetailsApiConfiguration(
+    apiConfiguration: ApiConfiguration,
+    selectedLlmDetails?: SelectedLlmDetails,
+  ): ApiConfiguration {
+    const selectedServiceId =
+      apiConfiguration.valkyraiServiceId || selectedLlmDetails?.id;
+    if (!selectedServiceId) {
+      return apiConfiguration;
+    }
+
+    if (
+      apiConfiguration.apiProvider === "valkyrai" ||
+      this.isMissingLocalApiCredential(apiConfiguration)
+    ) {
+      return {
+        ...apiConfiguration,
+        apiProvider: "valkyrai",
+        apiModelId: selectedServiceId,
+        valkyraiServiceId: selectedServiceId,
+      };
+    }
+
+    return apiConfiguration;
+  }
+
+  private isMissingLocalApiCredential(
+    apiConfiguration: ApiConfiguration,
+  ): boolean {
+    switch (apiConfiguration.apiProvider) {
+      case "valoride":
+        return !apiConfiguration.valorideApiKey?.trim();
+      case "openrouter":
+        return !apiConfiguration.openRouterApiKey?.trim();
+      case "deepseek":
+        return !apiConfiguration.deepSeekApiKey?.trim();
+      case "requesty":
+        return !apiConfiguration.requestyApiKey?.trim();
+      case "together":
+        return !apiConfiguration.togetherApiKey?.trim();
+      case "qwen":
+        return !apiConfiguration.qwenApiKey?.trim();
+      case "doubao":
+        return !apiConfiguration.doubaoApiKey?.trim();
+      case "moonshot":
+        return !apiConfiguration.moonshotApiKey?.trim();
+      case "minimax":
+        return !apiConfiguration.minimaxApiKey?.trim();
+      case "mistral":
+        return !apiConfiguration.mistralApiKey?.trim();
+      case "xai":
+        return !apiConfiguration.xaiApiKey?.trim();
+      case "sambanova":
+        return !apiConfiguration.sambanovaApiKey?.trim();
+      default:
+        return false;
     }
   }
 
@@ -559,10 +630,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-              username: message.user.name || null,
-              email: null, // Replace with actual email if available
-              avatarUrl: null, // Replace with actual avatar URL if available
-            }
+                username: message.user.name || null,
+                email: null, // Replace with actual email if available
+                avatarUrl: null, // Replace with actual avatar URL if available
+              }
             : undefined,
         );
         await this.postStateToWebview();
@@ -594,9 +665,7 @@ export class Controller {
             loginResult.tokens,
             loginResult.user,
           );
-          await this.refreshGrayMatterSessionState(
-            loginResult.tokens.jwtToken,
-          );
+          await this.refreshGrayMatterSessionState(loginResult.tokens.jwtToken);
           await this.postMessageToWebview({
             type: "accountLoginResult",
             requestId,
@@ -628,6 +697,9 @@ export class Controller {
       }
       case "accountLoginSuccess": {
         const customToken = message.customToken?.trim();
+        const authenticatedPrincipal = this.normalizePrincipalPayload(
+          message.authenticatedPrincipal,
+        );
         if (customToken) {
           await storeSecret(this.context, "jwtToken", customToken);
         }
@@ -640,6 +712,9 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "userInfo",
+            message.authenticatedPrincipal,
+          );
+          await this.storeTenantContextFromPayloads(
             message.authenticatedPrincipal,
           );
         }
@@ -1369,45 +1444,61 @@ export class Controller {
       case "updateLLMDetails": {
         try {
           const selected = message.llmDetails;
-          if (!selected?.id || !selected.initialPrompt) {
+          if (!selected?.id) {
             void vscode.window.showErrorMessage(
-              "Unable to load prompt — missing initial prompt text.",
+              "Unable to load LLMDetails selection.",
             );
             break;
           }
 
-          const normalizedSelection: SelectedLlmDetails = {
-            id: selected.id,
-            name: selected.name || selected.id,
-            description: selected.description,
-            tags: selected.tags || [],
-            ratingScore: selected.ratingScore,
-            promptType: selected.promptType ?? "SYSTEM",
-            initialPrompt: selected.initialPrompt,
-            prompt: selected.initialPrompt,
-            mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
-            source: "thorapi",
-            updatedAt: Date.now(),
+          const { apiConfiguration } = await getAllExtensionState(this.context);
+          const updatedApiConfiguration: ApiConfiguration = {
+            ...apiConfiguration,
+            apiProvider: "valkyrai",
+            apiModelId: selected.id,
+            valkyraiServiceId: selected.id,
           };
+          await updateApiConfiguration(this.context, updatedApiConfiguration);
+          if (this.task) {
+            this.task.api = buildApiHandler(updatedApiConfiguration);
+          }
 
-          await updateGlobalState(
-            this.context,
-            "selectedLlmDetails",
-            normalizedSelection,
-          );
-
-          try {
-            const promptService = getLLMPromptService();
-            promptService.applyManualSelection({
-              llmDetailsId: normalizedSelection.id,
-              name: normalizedSelection.name,
-              prompt: normalizedSelection.prompt,
-              mode: normalizedSelection.mode,
-              tags: normalizedSelection.tags,
+          const promptText = selected.initialPrompt?.trim();
+          let normalizedSelection: SelectedLlmDetails | undefined;
+          if (promptText) {
+            normalizedSelection = {
+              id: selected.id,
+              name: selected.name || selected.id,
+              description: selected.description,
+              tags: selected.tags || [],
+              ratingScore: selected.ratingScore,
+              promptType: selected.promptType ?? "SYSTEM",
+              initialPrompt: promptText,
+              prompt: promptText,
+              mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
               source: "thorapi",
-            });
-          } catch (error) {
-            console.error("Failed to apply prompt override:", error);
+              updatedAt: Date.now(),
+            };
+
+            await updateGlobalState(
+              this.context,
+              "selectedLlmDetails",
+              normalizedSelection,
+            );
+
+            try {
+              const promptService = getLLMPromptService();
+              promptService.applyManualSelection({
+                llmDetailsId: normalizedSelection.id,
+                name: normalizedSelection.name,
+                prompt: normalizedSelection.prompt,
+                mode: normalizedSelection.mode,
+                tags: normalizedSelection.tags,
+                source: "thorapi",
+              });
+            } catch (error) {
+              console.error("Failed to apply prompt override:", error);
+            }
           }
 
           try {
@@ -1417,16 +1508,13 @@ export class Controller {
             const broadcastMessage = broadcaster.selectPromptForTask(
               supervisorId,
               intent,
-              normalizedSelection.id,
-              normalizedSelection.tags || [],
+              selected.id,
+              normalizedSelection?.tags || selected.tags || [],
             );
             const targets =
               broadcaster.broadcastPromptSelection(broadcastMessage);
             targets.forEach((workerId) =>
-              broadcaster.acknowledgePromptReload(
-                workerId,
-                normalizedSelection.id || "",
-              ),
+              broadcaster.acknowledgePromptReload(workerId, selected.id || ""),
             );
             await this.postMessageToWebview({
               type: "swarm:broadcast",
@@ -1438,7 +1526,9 @@ export class Controller {
 
           await this.postStateToWebview();
           void vscode.window.showInformationMessage(
-            `LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`,
+            promptText
+              ? `LLM model switched to ${selected.name || selected.id}; prompt override applied.`
+              : `LLM model switched to ${selected.name || selected.id}.`,
           );
         } catch (error) {
           console.error("Failed to update LLMDetails selection:", error);
@@ -1526,7 +1616,9 @@ export class Controller {
           break;
         }
 
-        const result = this.remoteCodingSessionOrchestrator.handle(message.remoteCodingCommand);
+        const result = this.remoteCodingSessionOrchestrator.handle(
+          message.remoteCodingCommand,
+        );
         await this.postMessageToWebview({
           type: "remoteCodingSessionEvent",
           remoteCodingSessionEvent: result,
@@ -2106,9 +2198,10 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${extractionError instanceof Error
-                  ? extractionError.message
-                  : String(extractionError)
+                `Failed to extract archive: ${
+                  extractionError instanceof Error
+                    ? extractionError.message
+                    : String(extractionError)
                 }`,
               );
             }
@@ -2123,9 +2216,10 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
-                  ? unlinkError.message
-                  : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${
+                  unlinkError instanceof Error
+                    ? unlinkError.message
+                    : String(unlinkError)
                 }`,
               );
             });
@@ -2557,6 +2651,7 @@ export class Controller {
           "authenticatedPrincipal",
           authenticatedPrincipal,
         );
+        await this.storeTenantContextFromPayloads(authenticatedPrincipal);
       }
 
       // Store authentication state flags
@@ -2600,10 +2695,11 @@ export class Controller {
   private async refreshGrayMatterSessionState(token?: string) {
     const resolvedToken =
       token ||
-      (await getSecret(this.context, "graymatter-token")) ||
       (await getSecret(this.context, "jwtToken"));
+    const tenantContext = await this.readStoredTenantContext();
     const grayMatterSession = await createGrayMatterSessionState({
       baseUrl: getValkyraiBasePath(),
+      tenantContext,
       token: resolvedToken,
     });
     await updateGlobalState(
@@ -2616,6 +2712,55 @@ export class Controller {
       grayMatterSession.error,
     );
     return grayMatterSession;
+  }
+
+  private async storeTenantContextFromPayloads(...payloads: unknown[]) {
+    const tenantContext = mergeTenantContext(
+      ...payloads.map((payload) => extractTenantContext(payload)),
+    );
+    if (tenantContext.tenantId) {
+      await this.context.secrets.store(
+        "tenantContext",
+        JSON.stringify(tenantContext),
+      );
+    }
+  }
+
+  private normalizePrincipalPayload(payload: unknown) {
+    if (!payload) {
+      return undefined;
+    }
+    if (typeof payload === "string") {
+      try {
+        const parsed = JSON.parse(payload);
+        return parsed && typeof parsed === "object" ? parsed : undefined;
+      } catch {
+        return undefined;
+      }
+    }
+    return typeof payload === "object" ? payload : undefined;
+  }
+
+  private async readStoredTenantContext() {
+    const authenticatedPrincipal = await getGlobalState(
+      this.context,
+      "authenticatedPrincipal",
+    );
+    const userInfo = await getGlobalState(this.context, "userInfo");
+    const rawTenantContext = await this.context.secrets.get("tenantContext");
+    let tenantSecret = undefined;
+    if (rawTenantContext) {
+      try {
+        tenantSecret = JSON.parse(rawTenantContext);
+      } catch {
+        tenantSecret = undefined;
+      }
+    }
+    return mergeTenantContext(
+      extractTenantContext(authenticatedPrincipal),
+      extractTenantContext(userInfo),
+      tenantSecret,
+    );
   }
 
   // MCP Marketplace
@@ -3552,7 +3697,9 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         await this.initTask(undefined, undefined, historyItem); // clears existing task
       } catch (error) {
         const message =
-          error instanceof Error ? error.message : "Task history item unavailable";
+          error instanceof Error
+            ? error.message
+            : "Task history item unavailable";
         console.warn(`showTaskWithId failed for ${id}:`, error);
         await this.postStateToWebview();
         void vscode.window.showWarningMessage(
@@ -3999,16 +4146,18 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
-              ? subdirError.message
-              : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${
+              subdirError instanceof Error
+                ? subdirError.message
+                : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${
+          error instanceof Error ? error.message : String(error)
         }`,
       );
     }

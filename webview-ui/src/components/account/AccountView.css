@@ -110,6 +110,20 @@
   gap: 8px;
 }
 
+.nav-tabs.scroll-tabs .nav-link {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 10px;
+  white-space: normal;
+}
+
+.account-tab-label {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 .account-content {
   flex: 1;
   min-height: 0;

@@ -1,37 +1,19 @@
-import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
+import React, { memo, useState, useCallback, useMemo } from "react";
 import {
   UserPreference,
   UserPreferencePreferenceTypeEnum,
   Principal,
-  SalesOrder,
-  Customer,
-  Invoice,
 } from "@thorapi/model";
 import {
   useGetUserPreferencesQuery,
-  useGetUserPreferencesPagedQuery,
   useAddUserPreferenceMutation,
   useUpdateUserPreferenceMutation,
   useDeleteUserPreferenceMutation,
 } from "@thorapi/redux/services/UserPreferenceService";
-import { useGetSalesOrdersQuery } from "@thorapi/redux/services/SalesOrderService";
-import { useGetCustomersQuery } from "@thorapi/redux/services/CustomerService";
-import { useGetInvoicesQuery } from "@thorapi/redux/services/InvoiceService";
-import { useGetPrincipalsQuery } from "@thorapi/redux/services/PrincipalService";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import {
-  VSCodeButton,
-  VSCodeTextField,
-  VSCodeDropdown,
-  VSCodeOption,
-  VSCodeDivider,
-  VSCodeLink,
-  VSCodeDataGrid,
-  VSCodeDataGridRow,
-  VSCodeDataGridCell,
-} from "@vscode/webview-ui-toolkit/react";
+import { VSCodeButton, VSCodeDivider } from "@vscode/webview-ui-toolkit/react";
 import {
   Card,
   Badge,
@@ -42,15 +24,12 @@ import {
   Col,
   Alert,
   Modal,
-  Table,
 } from "react-bootstrap";
 import {
   FaEdit,
   FaTrash,
   FaPlus,
   FaUser,
-  FaShoppingCart,
-  FaFileInvoice,
   FaCog,
   FaChartLine,
   FaSave,
@@ -85,20 +64,20 @@ interface UserPreferencesProps {
 
 /**
  * Production-ready UserPreferences component using ThorAPI generated models and services.
- * Provides comprehensive user preference management with drill-down capabilities for
- * related data including SalesOrders, Customers, Principals, and Invoices.
+ * Provides user preference management with focused ThorAPI preference calls.
  *
  * Features:
  * - Real-time data fetching from ThorAPI services
  * - CRUD operations for user preferences
  * - Tabbed interface for different preference categories
- * - Data drill-down with modal views
+ * - Detail modal views
  * - Responsive design with VSCode theming
  * - Production-ready error handling and loading states
  */
 const UserPreferences: React.FC<UserPreferencesProps> = memo(
   ({ className }) => {
-    const { userInfo, authenticatedUser } = useExtensionState();
+    const { userInfo, authenticatedUser, jwtToken, isLoggedIn } =
+      useExtensionState();
     const [activePreferenceTab, setActivePreferenceTab] =
       useState<string>("uxlayout");
     const [selectedPreference, setSelectedPreference] =
@@ -116,31 +95,13 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
       isLoading: preferencesLoading,
       error: preferencesError,
       refetch: refetchPreferences,
-    } = useGetUserPreferencesQuery();
-
-    const {
-      data: salesOrders = [],
-      isLoading: salesOrdersLoading,
-      error: salesOrdersError,
-    } = useGetSalesOrdersQuery();
-
-    const {
-      data: customers = [],
-      isLoading: customersLoading,
-      error: customersError,
-    } = useGetCustomersQuery();
-
-    const {
-      data: invoices = [],
-      isLoading: invoicesLoading,
-      error: invoicesError,
-    } = useGetInvoicesQuery();
-
-    const {
-      data: principals = [],
-      isLoading: principalsLoading,
-      error: principalsError,
-    } = useGetPrincipalsQuery();
+    } = useGetUserPreferencesQuery({
+      authSessionKey:
+        jwtToken ||
+        userInfo?.id ||
+        authenticatedUser?.id ||
+        (isLoggedIn ? "authenticated" : "anonymous"),
+    });
 
     // ThorAPI Mutation Hooks
     const [addUserPreference, { isLoading: isAdding }] =
@@ -150,54 +111,48 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
     const [deleteUserPreference, { isLoading: isDeleting }] =
       useDeleteUserPreferenceMutation();
 
-    // Filtered preferences by type for tabbed interface
-    const preferencesByType = useMemo(() => {
-      return {
-        "ux-layout": userPreferences.filter(
-          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT,
-        ),
-        "ux-mode": userPreferences.filter(
-          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXMODE,
-        ),
-        "ux-theme": userPreferences.filter(
-          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXTHEME,
-        ),
-        measurement: userPreferences.filter(
-          (p) =>
-            p.preferenceType === UserPreferencePreferenceTypeEnum.MEASUREMENT,
-        ),
-      };
-    }, [userPreferences]);
-
-    // Combined loading state
-    const isLoading =
-      preferencesLoading ||
-      salesOrdersLoading ||
-      customersLoading ||
-      invoicesLoading ||
-      principalsLoading;
-
     // Get current user's principal ID for filtering
     const currentPrincipalId = userInfo?.id || authenticatedUser?.id;
 
-    // Filter user preferences for current user
+    // Filter user preferences for current user. If no principal is available yet,
+    // keep the API rows visible instead of blanking the tab.
     const currentUserPreferences = useMemo(() => {
+      if (!currentPrincipalId) {
+        return userPreferences;
+      }
       return userPreferences.filter(
         (pref) => getPreferencePrincipalId(pref) === currentPrincipalId,
       );
     }, [userPreferences, currentPrincipalId]);
 
+    // Filtered preferences by type for tabbed interface
+    const preferencesByType = useMemo(() => {
+      return {
+        "ux-layout": currentUserPreferences.filter(
+          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT,
+        ),
+        "ux-mode": currentUserPreferences.filter(
+          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXMODE,
+        ),
+        "ux-theme": currentUserPreferences.filter(
+          (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXTHEME,
+        ),
+        measurement: currentUserPreferences.filter(
+          (p) =>
+            p.preferenceType === UserPreferencePreferenceTypeEnum.MEASUREMENT,
+        ),
+      };
+    }, [currentUserPreferences]);
+
+    // Combined loading state
+    const isLoading = preferencesLoading;
+
     // Statistics calculations
     const stats = useMemo(() => {
       return {
         totalPreferences: currentUserPreferences.length,
-        totalSalesOrders: salesOrders.length,
-        totalCustomers: customers.length,
-        totalInvoices: invoices.length,
-        recentOrders: salesOrders.slice(0, 5),
-        recentInvoices: invoices.slice(0, 5),
       };
-    }, [currentUserPreferences, salesOrders, customers, invoices]);
+    }, [currentUserPreferences]);
 
     // Handle preference operations
     const handleSavePreference = useCallback(async () => {
@@ -417,7 +372,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
     // Render stats overview
     const renderStatsOverview = () => (
       <Row className="mb-4">
-        <Col md={3}>
+        <Col md={4}>
           <Card className="text-center">
             <Card.Body>
               <FaCog size={24} className="text-primary mb-2" />
@@ -426,158 +381,21 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
             </Card.Body>
           </Card>
         </Col>
-        <Col md={3}>
+        <Col md={4}>
           <Card className="text-center">
             <Card.Body>
-              <FaShoppingCart size={24} className="text-success mb-2" />
-              <h5>{stats.totalSalesOrders}</h5>
-              <small className="text-muted">Sales Orders</small>
+              <FaCog size={24} className="text-info mb-2" />
+              <h5>{preferencesByType["ux-layout"].length}</h5>
+              <small className="text-muted">Layout</small>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={3}>
+        <Col md={4}>
           <Card className="text-center">
             <Card.Body>
-              <FaUser size={24} className="text-info mb-2" />
-              <h5>{stats.totalCustomers}</h5>
-              <small className="text-muted">Customers</small>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={3}>
-          <Card className="text-center">
-            <Card.Body>
-              <FaFileInvoice size={24} className="text-warning mb-2" />
-              <h5>{stats.totalInvoices}</h5>
-              <small className="text-muted">Invoices</small>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    );
-
-    // Render recent activity section
-    const renderRecentActivity = () => (
-      <Row className="mb-4">
-        <Col md={6}>
-          <Card>
-            <Card.Header>
-              <FaShoppingCart className="me-2" />
-              Recent Sales Orders
-              <VSCodeLink
-                href="#view-all-orders"
-                className="float-end"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Navigate to sales orders view
-                  console.log("Navigate to sales orders");
-                }}
-              >
-                View All
-              </VSCodeLink>
-            </Card.Header>
-            <Card.Body>
-              {salesOrdersLoading ? (
-                <LoadingSpinner label="Loading orders..." size={16} />
-              ) : stats.recentOrders.length > 0 ? (
-                <Table size="sm" hover>
-                  <thead>
-                    <tr>
-                      <th>Order Date</th>
-                      <th>Customer</th>
-                      <th>Total</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.recentOrders.map((order) => (
-                      <tr key={order.id} style={{ cursor: "pointer" }}>
-                        <td>
-                          {order.orderDate
-                            ? format(new Date(order.orderDate), "MMM dd")
-                            : "N/A"}
-                        </td>
-                        <td>
-                          {order.customer?.principal?.firstName || "Unknown"}
-                        </td>
-                        <td>${order.totalAmount?.toFixed(2) || "0.00"}</td>
-                        <td>
-                          <Badge
-                            bg={
-                              order.status === "delivered"
-                                ? "success"
-                                : "warning"
-                            }
-                          >
-                            {order.status}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <div className="text-center text-muted py-3">
-                  <p>No recent sales orders found.</p>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={6}>
-          <Card>
-            <Card.Header>
-              <FaFileInvoice className="me-2" />
-              Recent Invoices
-              <VSCodeLink
-                href="#view-all-invoices"
-                className="float-end"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // TODO: Navigate to invoices view
-                  console.log("Navigate to invoices");
-                }}
-              >
-                View All
-              </VSCodeLink>
-            </Card.Header>
-            <Card.Body>
-              {invoicesLoading ? (
-                <LoadingSpinner label="Loading invoices..." size={16} />
-              ) : stats.recentInvoices.length > 0 ? (
-                <Table size="sm" hover>
-                  <thead>
-                    <tr>
-                      <th>Invoice Date</th>
-                      <th>Customer</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.recentInvoices.map((invoice) => (
-                      <tr key={invoice.id} style={{ cursor: "pointer" }}>
-                        <td>
-                          {invoice.createdDate
-                            ? format(new Date(invoice.createdDate), "MMM dd")
-                            : "N/A"}
-                        </td>
-                        <td>{"N/A" /* TODO: Add customer relationship */}</td>
-                        <td>${invoice.amount?.toFixed(2) || "0.00"}</td>
-                        <td>
-                          <Badge bg="info">
-                            {"N/A" /* TODO: Add status field */}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <div className="text-center text-muted py-3">
-                  <p>No recent invoices found.</p>
-                </div>
-              )}
+              <FaChartLine size={24} className="text-success mb-2" />
+              <h5>{preferencesByType.measurement.length}</h5>
+              <small className="text-muted">Measurements</small>
             </Card.Body>
           </Card>
         </Col>
@@ -832,37 +650,42 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
       </Modal>
     );
 
+    const formatQueryError = (error: unknown): string => {
+      if (!error) {
+        return "Unable to load preferences.";
+      }
+      if (typeof error === "string") {
+        return error;
+      }
+      const candidate = error as any;
+      if (typeof candidate?.data?.message === "string") {
+        return candidate.data.message;
+      }
+      if (typeof candidate?.error === "string") {
+        return candidate.error;
+      }
+      if (typeof candidate?.status === "number") {
+        return `ThorAPI returned HTTP ${candidate.status}.`;
+      }
+      if (typeof candidate?.status === "string") {
+        return "Preferences are temporarily unavailable.";
+      }
+      return "Unable to load preferences.";
+    };
+
     // Error handling
-    if (
-      preferencesError ||
-      salesOrdersError ||
-      customersError ||
-      invoicesError ||
-      principalsError
-    ) {
+    if (preferencesError) {
       return (
         <div className={`user-preferences-error ${className}`}>
           <Alert variant="danger">
-            <h5>Error Loading Data</h5>
-            <p>
-              There was an error loading the user preferences and related data:
-            </p>
-            <ul>
-              {preferencesError && (
-                <li>User Preferences: {String(preferencesError)}</li>
-              )}
-              {salesOrdersError && (
-                <li>Sales Orders: {String(salesOrdersError)}</li>
-              )}
-              {customersError && <li>Customers: {String(customersError)}</li>}
-              {invoicesError && <li>Invoices: {String(invoicesError)}</li>}
-              {principalsError && (
-                <li>Principals: {String(principalsError)}</li>
-              )}
-            </ul>
+            <h5>Error Loading Preferences</h5>
+            <p>{formatQueryError(preferencesError)}</p>
             <CoolButton
               variant="outline-danger"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                setErrorMessage("");
+                refetchPreferences();
+              }}
             >
               Retry
             </CoolButton>
@@ -884,14 +707,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
           }}
         >
           <div className="text-center">
-            <LoadingSpinner
-              label="Loading user preferences and related data..."
-              size={32}
-            />
+            <LoadingSpinner label="Loading user preferences..." size={32} />
             <div className="mt-3">
-              <small className="text-muted">
-                Fetching preferences, sales orders, customers, and invoices...
-              </small>
+              <small className="text-muted">Fetching preferences...</small>
             </div>
           </div>
         </div>
@@ -906,10 +724,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
               <FaUser className="me-2" />
               User Preferences
             </h3>
-            <p className="text-muted mb-0">
-              Manage your preferences and view related data including sales
-              orders, customers, and invoices.
-            </p>
+            <p className="text-muted mb-0">Manage your ValorIDE preferences.</p>
           </div>
           <div>
             <CoolButton
@@ -925,9 +740,6 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
 
         {/* Statistics Overview */}
         {renderStatsOverview()}
-
-        {/* Recent Activity */}
-        {renderRecentActivity()}
 
         <VSCodeDivider />
 

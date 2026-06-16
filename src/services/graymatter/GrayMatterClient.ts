@@ -251,7 +251,7 @@ export class GrayMatterClient {
         );
       case 402:
         return new GrayMatterClientError(
-          message || "GrayMatter account credits are required.",
+          message || "ValorIDE account credits are required.",
           "quota",
           response.status,
         );

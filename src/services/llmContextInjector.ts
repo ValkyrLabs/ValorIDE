@@ -1,11 +1,16 @@
 import * as vscode from "vscode";
+import { getGlobalState, getSecret } from "@core/storage/state";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { PromptService, getPromptService } from "./promptService";
 import { MemoryBankLoader, getMemoryBankLoader } from "./memoryBankLoader";
 import { LLMPromptService, getLLMPromptService } from "./llmPromptService";
 import {
   GrayMatterContextConfig,
   GrayMatterContextProvider,
+  getGrayMatterContextConfigFromSettings,
 } from "./graymatter/GrayMatterContextProvider";
+import { GrayMatterClient } from "./graymatter/GrayMatterClient";
+import type { GrayMatterSessionState } from "@shared/GrayMatterSession";
 
 /**
  * LLMContextInjector — Synthesizes all prompt configs into unified LLM system context
@@ -33,6 +38,7 @@ export interface InjectionConfig {
 }
 
 export class LLMContextInjector {
+  private context: vscode.ExtensionContext | null = null;
   private promptService: PromptService | null = null;
   private memoryBankLoader: MemoryBankLoader | null = null;
   private llmPromptService: LLMPromptService | null = null;
@@ -49,9 +55,11 @@ export class LLMContextInjector {
   constructor(
     logger: vscode.OutputChannel,
     grayMatterContextProvider?: GrayMatterContextProvider,
+    context?: vscode.ExtensionContext,
   ) {
     this.logger = logger;
     this.grayMatterContextProvider = grayMatterContextProvider ?? null;
+    this.context = context ?? null;
   }
 
   /**
@@ -182,21 +190,26 @@ export class LLMContextInjector {
   ): Promise<string> {
     const mergedConfig = { ...this.defaultConfig, ...config };
     const sections = this.generateBaseSections(mergedConfig);
+    const grayMatterConfig =
+      mergedConfig.grayMatter ??
+      (await this.createDefaultGrayMatterContextConfig(
+        mergedConfig.grayMatter?.seedQuery,
+      ));
 
     if (
-      mergedConfig.grayMatter?.enabled &&
-      mergedConfig.grayMatter.queryMemory &&
+      grayMatterConfig?.enabled &&
+      grayMatterConfig.queryMemory &&
       this.grayMatterContextProvider
     ) {
       const context = await this.grayMatterContextProvider.getContextForPrompt(
-        mergedConfig.grayMatter.seedQuery ?? "ValorIDE conversation start",
+        grayMatterConfig.seedQuery ?? "ValorIDE conversation start",
         {
-          enabled: mergedConfig.grayMatter.enabled,
-          maxTokens: mergedConfig.grayMatter.maxTokens,
-          queryMemory: mergedConfig.grayMatter.queryMemory,
-          scopes: mergedConfig.grayMatter.scopes,
-          seedQuery: mergedConfig.grayMatter.seedQuery,
-          timeoutMs: mergedConfig.grayMatter.timeoutMs,
+          enabled: grayMatterConfig.enabled,
+          maxTokens: grayMatterConfig.maxTokens,
+          queryMemory: grayMatterConfig.queryMemory,
+          scopes: grayMatterConfig.scopes,
+          seedQuery: grayMatterConfig.seedQuery,
+          timeoutMs: grayMatterConfig.timeoutMs,
         },
       );
       if (context?.formattedBlock) {
@@ -213,6 +226,39 @@ export class LLMContextInjector {
       `[LLMContextInjector] ✅ Async unified prompt generated (${unified.length} chars)`,
     );
     return unified;
+  }
+
+  private async createDefaultGrayMatterContextConfig(
+    seedQuery?: string,
+  ): Promise<GrayMatterContextConfig | undefined> {
+    if (!this.context) {
+      return undefined;
+    }
+
+    const [token, session] = await Promise.all([
+      getSecret(this.context, "jwtToken"),
+      getGlobalState(this.context, "grayMatterSession") as Promise<
+        GrayMatterSessionState | undefined
+      >,
+    ]);
+
+    if (
+      !token ||
+      session?.status !== "ready" ||
+      !session.capabilities.memoryQuery
+    ) {
+      return undefined;
+    }
+
+    const client = new GrayMatterClient({
+      baseUrl: getValkyraiBasePath(),
+      getAuthToken: () => token,
+    });
+
+    return getGrayMatterContextConfigFromSettings(
+      (query) => client.queryMemory(query),
+      seedQuery,
+    );
   }
 
   private generateBaseSections(mergedConfig: InjectionConfig): string[] {
@@ -457,10 +503,12 @@ export let llmContextInjector: LLMContextInjector | null = null;
 export async function initializeLLMContextInjector(
   logger: vscode.OutputChannel,
   grayMatterContextProvider?: GrayMatterContextProvider,
+  context?: vscode.ExtensionContext,
 ): Promise<void> {
   llmContextInjector = new LLMContextInjector(
     logger,
     grayMatterContextProvider,
+    context,
   );
   await llmContextInjector.initialize();
 }

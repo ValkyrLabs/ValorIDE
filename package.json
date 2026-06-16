@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.863",
+  "version": "3.20.868",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -398,6 +398,12 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "Reveal and focus the ValorIDE sidebar on every startup. ValorIDE still reveals once after first activation and remains available from the Activity Bar, command palette, and status bar.",
+          "scope": "application"
+        },
+        "valoride.webview.useDevServer": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Use the local Vite webview dev server while running the extension in development mode. Set to false to force bundled webview assets.",
           "scope": "application"
         },
         "valoride.graymatter.enabled": {

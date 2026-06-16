@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponseHeaders } from "axios";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
+import { Logger } from "../logging/Logger";
 import {
   buildAuthTokensFromResponse,
   extractAuthenticatedUser,
@@ -46,6 +47,91 @@ const extractErrorMessage = (error: unknown): string => {
   return String(message || "Login failed.");
 };
 
+const getCaseInsensitiveHeader = (
+  headers: AxiosResponseHeaders | any,
+  key: string,
+) => {
+  if (!headers) {
+    return undefined;
+  }
+
+  const direct = headers[key];
+  if (direct !== undefined) {
+    return direct;
+  }
+
+  const lowerKey = key.toLowerCase();
+  const matchingKey = Object.keys(headers).find(
+    (candidate) => candidate.toLowerCase() === lowerKey,
+  );
+  return matchingKey ? headers[matchingKey] : undefined;
+};
+
+const describeObjectKeys = (value: unknown): string => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return typeof value;
+  }
+
+  const keys = Object.keys(value as Record<string, unknown>).sort();
+  if (keys.length === 0) {
+    return "(none)";
+  }
+
+  const shownKeys = keys.slice(0, 20);
+  return keys.length > shownKeys.length
+    ? `${shownKeys.join(", ")} (+${keys.length - shownKeys.length} more)`
+    : shownKeys.join(", ");
+};
+
+const describeCookieNames = (headers: AxiosResponseHeaders | any): string => {
+  const rawSetCookie = getCaseInsensitiveHeader(headers, "set-cookie");
+  const cookies = Array.isArray(rawSetCookie)
+    ? rawSetCookie
+    : rawSetCookie
+      ? [rawSetCookie]
+      : [];
+  const names = new Set<string>();
+
+  for (const cookieHeader of cookies.map(String)) {
+    const cookieNamePattern = /(?:^|,\s*)([^=;,\s]+)=/g;
+    let match: RegExpExecArray | null;
+    while ((match = cookieNamePattern.exec(cookieHeader))) {
+      names.add(match[1]);
+    }
+  }
+
+  return names.size ? Array.from(names).sort().join(", ") : "(none)";
+};
+
+const describeAuthResponse = (
+  responseStatus: number,
+  body: unknown,
+  headers: AxiosResponseHeaders | any,
+) => {
+  const headerNames = headers ? Object.keys(headers).sort() : [];
+  const bodyKeys = describeObjectKeys(body);
+  const nestedKeys = ["data", "result", "auth", "session", "tokens"]
+    .map((container) => {
+      const value =
+        body && typeof body === "object"
+          ? (body as Record<string, unknown>)[container]
+          : undefined;
+      return value ? `${container}: ${describeObjectKeys(value)}` : undefined;
+    })
+    .filter(Boolean)
+    .join("; ");
+
+  return [
+    `status=${responseStatus}`,
+    `bodyKeys=${bodyKeys}`,
+    nestedKeys ? `nestedKeys=${nestedKeys}` : undefined,
+    `headerNames=${headerNames.length ? headerNames.join(", ") : "(none)"}`,
+    `setCookieNames=${describeCookieNames(headers)}`,
+  ]
+    .filter(Boolean)
+    .join("; ");
+};
+
 export class ValoridePasswordLoginService {
   async login({
     username,
@@ -82,7 +168,15 @@ export class ValoridePasswordLoginService {
         response.headers,
       );
       if (!tokens) {
-        throw new Error("Login response did not include a JWT token.");
+        const diagnostics = describeAuthResponse(
+          response.status,
+          response.data,
+          response.headers,
+        );
+        Logger.warn(`Password login response missing JWT. ${diagnostics}`);
+        throw new Error(
+          `Login response did not include a JWT token. ${diagnostics}`,
+        );
       }
 
       return {

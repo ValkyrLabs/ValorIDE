@@ -102,15 +102,15 @@ export function activate(context: vscode.ExtensionContext) {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
-          llmDetailsId: selectedLlmDetails.id,
-          name: selectedLlmDetails.name,
-          prompt: selectedLlmDetails.prompt,
-          mode: selectedLlmDetails.mode,
-          tags: selectedLlmDetails.tags,
-          source:
-            selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-          stackSpecific: true,
-        }
+            llmDetailsId: selectedLlmDetails.id,
+            name: selectedLlmDetails.name,
+            prompt: selectedLlmDetails.prompt,
+            mode: selectedLlmDetails.mode,
+            tags: selectedLlmDetails.tags,
+            source:
+              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+            stackSpecific: true,
+          }
         : undefined;
 
       await initializeLLMPromptService(
@@ -252,8 +252,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize ToolRelayService for remote control capabilities
     try {
-      const toolRelayMod =
-        await import("./services/communication/ToolRelayService");
+      const toolRelayMod = await import(
+        "./services/communication/ToolRelayService"
+      );
       const visibleWebview =
         WebviewProvider.getVisibleInstance() || sidebarWebview;
       if (visibleWebview?.controller) {
@@ -554,7 +555,8 @@ export function activate(context: vscode.ExtensionContext) {
   https://code.visualstudio.com/api/extension-guides/virtual-documents
   */
   const diffContentProvider = new (class
-    implements vscode.TextDocumentContentProvider {
+    implements vscode.TextDocumentContentProvider
+  {
     provideTextDocumentContent(uri: vscode.Uri): string {
       return Buffer.from(uri.query, "base64").toString("utf-8");
     }
@@ -570,7 +572,9 @@ export function activate(context: vscode.ExtensionContext) {
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
     const query = parseAuthCallbackQuery(uri.query);
-    Logger.log("URI callback received: " + buildAuthCallbackDiagnostics(path, query));
+    Logger.log(
+      "URI callback received: " + buildAuthCallbackDiagnostics(path, query),
+    );
     const visibleWebview = WebviewProvider.getVisibleInstance();
 
     Logger.log(
@@ -618,6 +622,15 @@ export function activate(context: vscode.ExtensionContext) {
               exchange.tokens.apiKey,
               exchange.user,
             );
+          } else {
+            await visibleWebview?.controller.postMessageToWebview({
+              type: "loginSuccess",
+              token: exchange.tokens.jwtToken,
+              authenticatedPrincipal: exchange.user
+                ? JSON.stringify(exchange.user)
+                : undefined,
+            });
+            await visibleWebview?.controller.postStateToWebview();
           }
           break;
         }

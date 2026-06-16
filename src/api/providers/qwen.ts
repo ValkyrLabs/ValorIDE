@@ -26,7 +26,7 @@ export class QwenHandler implements ApiHandler {
         this.options.qwenApiLine === "china"
           ? "https://dashscope.aliyuncs.com/compatible-mode/v1"
           : "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-      apiKey: this.options.qwenApiKey,
+      apiKey: this.options.qwenApiKey || "noop",
     });
   }
 

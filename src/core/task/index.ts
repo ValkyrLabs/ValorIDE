@@ -122,6 +122,8 @@ import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
 import { createAgentContextSectionForTask } from "@services/agentic/AgentContextAssembler";
 import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import { getLLMPromptService } from "@services/llmPromptService";
+import type { SelectedPrompt } from "@services/llmPromptService";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
 import {
@@ -156,6 +158,18 @@ import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
   path.join(os.homedir(), "Desktop"); // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
+
+const getSelectedRuntimePrompt = (): SelectedPrompt | null => {
+  try {
+    const selectedPrompt = getLLMPromptService().getSelectedPrompt();
+    return selectedPrompt?.prompt?.trim() ? selectedPrompt : null;
+  } catch {
+    return null;
+  }
+};
+
+const formatSelectedPromptAppendix = (selectedPrompt: SelectedPrompt) =>
+  `\n\n================================================================================\nSELECTED VALKYRAI PROMPT — ${selectedPrompt.name}\n================================================================================\n${selectedPrompt.prompt.trim()}`;
 
 type ToolResponse =
   | string
@@ -2327,7 +2341,7 @@ export class Task {
       const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool;
       const agentContextSection = await this.buildAgentContextSection();
 
-      let systemPrompt = await SYSTEM_PROMPT(
+      const fallbackSystemPrompt = await SYSTEM_PROMPT(
         cwd,
         supportsBrowserUse,
         this.mcpHub,
@@ -2336,6 +2350,15 @@ export class Task {
         this.chatSettings ?? DEFAULT_CHAT_SETTINGS,
         agentContextSection,
       );
+      const selectedRuntimePrompt = getSelectedRuntimePrompt();
+      let systemPrompt =
+        selectedRuntimePrompt?.mode === "SYSTEM"
+          ? selectedRuntimePrompt.prompt.trim()
+          : fallbackSystemPrompt;
+
+      if (selectedRuntimePrompt?.mode === "APPEND") {
+        systemPrompt += formatSelectedPromptAppendix(selectedRuntimePrompt);
+      }
 
       const settingsCustomInstructions = this.customInstructions?.trim();
       const preferredLanguage = getLanguageKey(

@@ -20,9 +20,51 @@ describe("authResponse", () => {
   });
 
   it("extracts bearer tokens from response headers", () => {
+    expect(extractAuthToken({}, { Authorization: "Bearer header-token" })).toBe(
+      "header-token",
+    );
+  });
+
+  it("extracts JWT tokens from auth cookies", () => {
     expect(
-      extractAuthToken({}, { Authorization: "Bearer header-token" }),
-    ).toBe("header-token");
+      extractAuthToken(
+        { status: "SUCCESS" },
+        {
+          "set-cookie": [
+            "XSRF-TOKEN=csrf-token; Path=/",
+            "jwtSession=cookie-token; Path=/; HttpOnly; Secure",
+          ],
+        },
+      ),
+    ).toBe("cookie-token");
+  });
+
+  it("extracts JWT tokens from the Valkyr auth cookie", () => {
+    expect(
+      extractAuthToken(
+        {
+          authenticatedPrincipal: { username: "super" },
+          tenantId: "tenant-1",
+        },
+        {
+          "set-cookie": [
+            "VALKYR_AUTH=valkyr-cookie-token; Path=/; HttpOnly; Secure; SameSite=None",
+          ],
+        },
+      ),
+    ).toBe("valkyr-cookie-token");
+  });
+
+  it("extracts JWT tokens from combined auth cookie headers", () => {
+    expect(
+      extractAuthToken(
+        { status: "SUCCESS" },
+        {
+          "set-cookie":
+            "XSRF-TOKEN=csrf-token; Path=/, jwtSession=combined-cookie-token; Path=/; HttpOnly; Secure",
+        },
+      ),
+    ).toBe("combined-cookie-token");
   });
 
   it("builds persisted auth tokens from nested response bodies", () => {
@@ -54,6 +96,22 @@ describe("authResponse", () => {
     ).toEqual({
       id: "user-1",
       username: "super",
+    });
+  });
+
+  it("preserves top-level tenant context on extracted users", () => {
+    expect(
+      extractAuthenticatedUser({
+        authenticatedPrincipal: {
+          id: "user-1",
+          username: "super",
+        },
+        tenantId: "tenant-1",
+      }),
+    ).toEqual({
+      id: "user-1",
+      username: "super",
+      tenantId: "tenant-1",
     });
   });
 

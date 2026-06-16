@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import type { JSXElementConstructor } from "react";
 import type { ProviderProps } from "react-redux";
 
@@ -32,6 +32,7 @@ describe("ExtensionStateContextProvider", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     delete (globalThis as any).localStorage;
     delete (globalThis as any).acquireVsCodeApi;
   });
@@ -56,6 +57,7 @@ describe("ExtensionStateContextProvider", () => {
   });
 
   it("renders the App shell without crashing", async () => {
+    vi.useFakeTimers();
     vi.unmock("@thorapi/redux/services/UsageTransactionService");
     vi.unmock("@thorapi/redux/services/ContentDataService");
     vi.unmock("@thorapi/redux/services/LlmDetailsService");
@@ -79,5 +81,12 @@ describe("ExtensionStateContextProvider", () => {
       ),
     ).not.toThrow();
     expect(screen.getByText(/Loading ValorIDE/i)).toBeInTheDocument();
+
+    await act(async () => {
+      vi.advanceTimersByTime(4000);
+      await Promise.resolve();
+    });
+
+    expect(screen.queryByText(/Loading ValorIDE/i)).not.toBeInTheDocument();
   }, 15000);
 });

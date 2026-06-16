@@ -20,7 +20,7 @@ export class RequestyHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://router.requesty.ai/v1",
-      apiKey: this.options.requestyApiKey,
+      apiKey: this.options.requestyApiKey || "noop",
       defaultHeaders: {
         "HTTP-Referer": "https://valkyrlabs.com/v1",
         "X-Title": "ValorIDE",
