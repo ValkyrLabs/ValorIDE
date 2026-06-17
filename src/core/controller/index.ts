@@ -33,6 +33,7 @@ import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
 import {
+  buildTenantHeaders,
   extractTenantContext,
   mergeTenantContext,
 } from "@services/auth/tenantContext";
@@ -1772,6 +1773,12 @@ export class Controller {
         }
         break;
       }
+      case "thorapiRequest": {
+        if (message.thorapiRequest) {
+          await this.handleThorapiWebviewRequest(message.thorapiRequest);
+        }
+        break;
+      }
       case "getThorapiFolderContents": {
         try {
           // Get thorapi folder contents
@@ -2693,9 +2700,7 @@ export class Controller {
   }
 
   private async refreshGrayMatterSessionState(token?: string) {
-    const resolvedToken =
-      token ||
-      (await getSecret(this.context, "jwtToken"));
+    const resolvedToken = token || (await getSecret(this.context, "jwtToken"));
     const tenantContext = await this.readStoredTenantContext();
     const grayMatterSession = await createGrayMatterSessionState({
       baseUrl: getValkyraiBasePath(),
@@ -2761,6 +2766,85 @@ export class Controller {
       extractTenantContext(userInfo),
       tenantSecret,
     );
+  }
+
+  private resolveThorapiWebviewUrl(url: string): string {
+    const basePath = getValkyraiBasePath().replace(/\/+$/, "");
+    const baseUrl = new URL(`${basePath}/`);
+    const resolved = new URL(url, baseUrl);
+
+    if (
+      resolved.origin !== baseUrl.origin ||
+      !resolved.pathname.startsWith(baseUrl.pathname.replace(/\/$/, ""))
+    ) {
+      throw new Error("Refusing ThorAPI request outside configured API host");
+    }
+
+    return resolved.toString();
+  }
+
+  private async handleThorapiWebviewRequest(
+    request: NonNullable<WebviewMessage["thorapiRequest"]>,
+  ) {
+    const { requestId } = request;
+    try {
+      const token = await getSecret(this.context, "jwtToken");
+      const tenantHeaders = buildTenantHeaders(
+        await this.readStoredTenantContext(),
+      );
+      const headers: Record<string, string> = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...tenantHeaders,
+      };
+
+      if (token) {
+        headers.authorization = `Bearer ${token}`;
+      }
+
+      const response = await axios.request({
+        url: this.resolveThorapiWebviewUrl(request.url),
+        method: request.method || "GET",
+        data: request.body,
+        params: request.params,
+        headers,
+        timeout: 30000,
+        validateStatus: () => true,
+      });
+
+      await this.postMessageToWebview({
+        type: "thorapiResponse",
+        thorapiResponse: {
+          requestId,
+          ok: response.status >= 200 && response.status < 300,
+          status: response.status,
+          statusText: response.statusText,
+          data: response.data,
+        },
+      });
+    } catch (error) {
+      const status = axios.isAxiosError(error)
+        ? error.response?.status
+        : undefined;
+      const statusText = axios.isAxiosError(error)
+        ? error.response?.statusText
+        : undefined;
+      const data = axios.isAxiosError(error) ? error.response?.data : undefined;
+      const errorMessage =
+        error instanceof Error ? error.message : "ThorAPI request failed";
+
+      await this.postMessageToWebview({
+        type: "thorapiResponse",
+        thorapiResponse: {
+          requestId,
+          ok: false,
+          status,
+          statusText,
+          data,
+          error: errorMessage,
+        },
+      });
+    }
   }
 
   // MCP Marketplace

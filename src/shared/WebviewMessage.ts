@@ -99,6 +99,7 @@ export interface WebviewMessage {
   | "accountLoginSuccess"
   | "accountLoginRequest"
   | "streamToThorapi"
+  | "thorapiRequest"
   | "openFileExplorerTab"
   | "getThorapiFolderContents"
   | "promptAddGeneratedToProject"
@@ -194,6 +195,14 @@ export interface WebviewMessage {
   taskIntent?: string;
   valkyraiHost?: string;
   remoteCodingCommand?: RemoteCodingCommand;
+  thorapiRequest?: {
+    requestId: string;
+    url: string;
+    method?: string;
+    body?: unknown;
+    params?: Record<string, unknown>;
+    headers?: Record<string, string>;
+  };
 }
 
 export type ValorIDEAskResponse =

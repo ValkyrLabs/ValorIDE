@@ -88,6 +88,7 @@ export interface ExtensionMessage {
     | "accountLoginResult"
     | "clearClientAuthState"
     | "streamToThorapiResult"
+    | "thorapiResponse"
     | "openFileExplorerResult"
     | "workspaceFiles"
     | "contentData"
@@ -232,6 +233,14 @@ export interface ExtensionMessage {
   swarmCommandResponse?: Record<string, unknown>;
   agenticState?: AgenticCapabilityCommandCenterState;
   remoteCodingSessionEvent?: RemoteCodingCommandResult;
+  thorapiResponse?: {
+    requestId: string;
+    ok: boolean;
+    status?: number;
+    statusText?: string;
+    data?: unknown;
+    error?: string;
+  };
 }
 
 export type Invoke =
