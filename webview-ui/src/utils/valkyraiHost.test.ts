@@ -16,7 +16,7 @@ describe("valkyrai host overrides connection URLs", () => {
   });
 
   it("updates the HTTP base path when the host changes", async () => {
-    const runtime = await import("../thorapi/src/runtime");
+    const runtime = await import("@thorapi/src");
     const hostUtils = await import("./valkyraiHost");
 
     const originalBasePath = runtime.BASE_PATH;
@@ -30,7 +30,7 @@ describe("valkyrai host overrides connection URLs", () => {
   });
 
   it("normalizes a bare ValkyrAI origin to the /v1 API base path", async () => {
-    const runtime = await import("../thorapi/src/runtime");
+    const runtime = await import("@thorapi/src");
     const hostUtils = await import("./valkyraiHost");
 
     hostUtils.setValkyraiHost("https://api-0.valkyrlabs.com");

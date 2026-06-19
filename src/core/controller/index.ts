@@ -28,6 +28,7 @@ import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService
 import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
+import { OpenAPIEditorPanel } from "../../views/openapi/OpenAPIEditorPanel";
 
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
@@ -356,6 +357,8 @@ export class Controller {
     apiConfiguration: ApiConfiguration,
   ): boolean {
     switch (apiConfiguration.apiProvider) {
+      case "valkyrai":
+        return !apiConfiguration.valkyraiServiceId?.trim();
       case "valoride":
         return !apiConfiguration.valorideApiKey?.trim();
       case "openrouter":
@@ -1027,6 +1030,9 @@ export class Controller {
         if (message.url) {
           await openUrlWithSimpleBrowser(message.url);
         }
+        break;
+      case "openOpenAPIEditor":
+        OpenAPIEditorPanel.open(this.context);
         break;
       case "fetchOpenGraphData":
         this.fetchOpenGraphData(message.text!);
@@ -2328,6 +2334,7 @@ export class Controller {
         case "moonshot":
         case "minimax":
         case "xai":
+        case "valkyrai":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
@@ -2433,7 +2440,15 @@ export class Controller {
           case "moonshot":
           case "minimax":
           case "xai":
+          case "valkyrai":
             await updateGlobalState(this.context, "apiModelId", newModelId);
+            if (apiConfiguration.apiProvider === "valkyrai") {
+              await updateGlobalState(
+                this.context,
+                "valkyraiServiceId",
+                newModelId,
+              );
+            }
             break;
           case "openrouter":
           case "valoride":
@@ -2674,14 +2689,14 @@ export class Controller {
           : undefined,
       });
 
-      const valorideProvider: ApiProvider = "valoride";
-      await updateGlobalState(this.context, "apiProvider", valorideProvider);
+      const valkyraiProvider: ApiProvider = "valkyrai";
+      await updateGlobalState(this.context, "apiProvider", valkyraiProvider);
 
       // Update API configuration with the new provider and API key
       const { apiConfiguration } = await getAllExtensionState(this.context);
       const updatedConfig = {
         ...apiConfiguration,
-        apiProvider: valorideProvider,
+        apiProvider: valkyraiProvider,
         valorideApiKey: apiKey,
       };
 

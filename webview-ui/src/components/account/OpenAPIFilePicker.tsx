@@ -7,10 +7,12 @@ import { vscode } from "../../utils/vscode";
 
 interface OpenAPIFilePickerProps {
   onFileSelected?: (file: File) => void;
+  onOpenEditor?: () => void;
 }
 
 const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
   onFileSelected,
+  onOpenEditor,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -229,6 +231,16 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
           >
             Select File
           </VSCodeButton>
+
+          {onOpenEditor && (
+            <VSCodeButton
+              appearance="secondary"
+              onClick={onOpenEditor}
+              disabled={isUploading}
+            >
+              Open Editor
+            </VSCodeButton>
+          )}
 
           {selectedFile && (
             <>

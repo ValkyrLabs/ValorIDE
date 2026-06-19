@@ -125,6 +125,9 @@ vi.mock("@thorapi/services/creditsApi", () => ({
   useRecordPaymentTransactionMutation: () => [
     vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
   ],
+  useRecordUsageTransactionMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+  ],
 }));
 
 vi.mock("@thorapi/redux/services/AccountBalanceService", () => ({
@@ -173,7 +176,13 @@ vi.mock("@shared/getApiMetrics", () => ({
 
 vi.mock("./CreditsHistoryTable", () => ({
   __esModule: true,
-  default: () => <div data-testid="credits-history-table" />,
+  default: (props: any) => (
+    <div
+      data-testid="credits-history-table"
+      data-payments-count={props.paymentsData?.length ?? 0}
+      data-usage-count={props.usageData?.length ?? 0}
+    />
+  ),
 }));
 
 vi.mock("./ApplicationsList", () => ({
@@ -421,11 +430,36 @@ describe("AccountView - Buy Credits button integration", () => {
       "user-123",
       expect.objectContaining({ skip: false }),
     );
-    expect(mockUseGetAccountBalancesQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ authSessionKey: "token" }),
-      expect.objectContaining({ skip: false }),
-    );
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
+  });
+
+  it("uses balance response history instead of querying raw transaction tables", () => {
+    mockUseGetUsageTransactionsQuery.mockClear();
+    mockUseGetPaymentTransactionsQuery.mockClear();
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: {
+        currentBalance: 25,
+        usageTransactions: [{ id: "usage-1", credits: 1 }],
+        payments: [{ id: "payment-1", credits: 50 }],
+      },
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <AccountView
+        onDone={() => {}}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => {}}
+      />,
+    );
+
+    const history = screen.getByTestId("credits-history-table");
+    expect(history).toHaveAttribute("data-usage-count", "1");
+    expect(history).toHaveAttribute("data-payments-count", "1");
+    expect(mockUseGetUsageTransactionsQuery).not.toHaveBeenCalled();
+    expect(mockUseGetPaymentTransactionsQuery).not.toHaveBeenCalled();
   });
 });
 

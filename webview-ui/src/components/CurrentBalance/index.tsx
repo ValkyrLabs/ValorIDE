@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaCreditCard, FaDollarSign } from "react-icons/fa";
+import { FaCreditCard } from "react-icons/fa";
 import { useGetAccountBalanceQuery } from "../../services/creditsApi";
 import LoadingSpinner from "../LoadingSpinner";
 import { Principal } from "@thorapi/model";
@@ -39,7 +39,7 @@ export const getCreditBalanceGuidance = (
     return {
       status: "low",
       label: "Low credits",
-      detail: `${needed.toFixed(2)} credits restores the starter safety buffer.`,
+      detail: `${Math.ceil(needed).toLocaleString()} credits restores the starter safety buffer.`,
       actionLabel: "Top up",
       color: "#ff9f1c",
     };
@@ -94,12 +94,14 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
   const currentBalance = accountBalance?.currentBalance || 0;
   const balanceGuidance = getCreditBalanceGuidance(currentBalance);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
+  const formatCredits = (amount: number) =>
+    new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    }).format(Math.max(0, Math.round(amount)));
+  const creditLabel = (amount: number) => {
+    const rounded = Math.max(0, Math.round(amount));
+    return `${formatCredits(rounded)} ${rounded === 1 ? "credit" : "credits"}`;
   };
 
   if (isLoading) {
@@ -117,7 +119,7 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
         style={style}
       >
         <span className="badge bg-info" style={{ fontSize: "0.9rem" }}>
-          <FaDollarSign className="me-1" />
+          <FaCreditCard className="me-1" />
           Balance unavailable
         </span>
         <button
@@ -150,7 +152,7 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
           }}
         >
           <FaCreditCard className="me-1" />
-          <h3 className="mb-0">{formatCurrency(currentBalance)}</h3>
+          <h3 className="mb-0">{creditLabel(currentBalance)}</h3>
         </span>
         <div className="d-flex flex-column lh-sm">
           <span style={{ color: balanceGuidance.color, fontWeight: 700 }}>

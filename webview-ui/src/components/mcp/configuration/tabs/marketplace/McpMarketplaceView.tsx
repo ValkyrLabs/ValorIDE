@@ -8,7 +8,7 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { FaSync, FaSearch, FaTimes } from "react-icons/fa";
+import { FaExternalLinkAlt, FaSync, FaSearch, FaTimes } from "react-icons/fa";
 import { McpMarketplaceItem } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
@@ -29,8 +29,20 @@ import {
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+
+const MCP_MARKETPLACE_HELP_URL =
+  "https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation";
 
 const McpMarketplaceView = () => {
+  const {
+    mcpServers: extensionMcpServers,
+    mcpMarketplaceCatalog,
+    mcpServersLoading,
+    mcpMarketplaceCatalogLoading,
+    mcpMarketplaceCatalogError,
+    refetchMcpData,
+  } = useExtensionState();
   const {
     data: mcpServers,
     error: serversError,
@@ -84,26 +96,55 @@ const McpMarketplaceView = () => {
     );
   }, [marketplaceItems]);
 
+  const extensionMarketplaceItems = mcpMarketplaceCatalog?.items || [];
+  const hasGeneratedMarketplaceItems =
+    sharedMarketplaceItems.length > 0 ||
+    sharedMarketplaceCatalog.items.length > 0;
+
   // Use direct marketplace items if available, otherwise fall back to catalog items
   const items =
     sharedMarketplaceItems.length > 0
       ? sharedMarketplaceItems
-      : sharedMarketplaceCatalog.items;
+      : sharedMarketplaceCatalog.items.length > 0
+        ? sharedMarketplaceCatalog.items
+        : extensionMarketplaceItems;
+  const displayedMcpServers =
+    sharedMcpServers.length > 0 ? sharedMcpServers : extensionMcpServers;
 
   // Combined loading and error states
-  const isLoading = serversLoading || catalogLoading || itemsLoading;
-  const error = serversError || catalogError || itemsError;
+  const isLoading =
+    (serversLoading ||
+      catalogLoading ||
+      itemsLoading ||
+      mcpServersLoading ||
+      mcpMarketplaceCatalogLoading) &&
+    items.length === 0;
+  const error =
+    items.length === 0
+      ? mcpMarketplaceCatalogError ||
+        itemsError ||
+        catalogError ||
+        (!hasGeneratedMarketplaceItems ? serversError : undefined)
+      : undefined;
 
   const handleRefresh = React.useCallback(() => {
     try {
       refetchServers();
       refetchCatalog();
       refetchItems();
+      refetchMcpData();
       vscode.postMessage({ type: "fetchMcpMarketplace", bool: true });
     } catch (error) {
       console.error("Failed to refresh marketplace:", error);
     }
-  }, [refetchServers, refetchCatalog, refetchItems]);
+  }, [refetchServers, refetchCatalog, refetchItems, refetchMcpData]);
+
+  const handleOpenHelp = React.useCallback(() => {
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: MCP_MARKETPLACE_HELP_URL,
+    });
+  }, []);
 
   const categories = useMemo(() => {
     const uniqueCategories = new Set(items.map((item) => item.category));
@@ -201,17 +242,34 @@ const McpMarketplaceView = () => {
             >
               {formatError(error)}
             </div>
-            {isRetryableError(error) && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "8px",
+                flexWrap: "wrap",
+              }}
+            >
+              {isRetryableError(error) && (
+                <VSCodeButton
+                  appearance="secondary"
+                  onClick={handleRefresh}
+                  disabled={isLoading}
+                  style={{ fontSize: "11px", padding: "4px 12px" }}
+                >
+                  <FaSync style={{ marginRight: "4px" }} />
+                  {isLoading ? "Retrying..." : "Retry"}
+                </VSCodeButton>
+              )}
               <VSCodeButton
                 appearance="secondary"
-                onClick={handleRefresh}
-                disabled={isLoading}
+                onClick={handleOpenHelp}
                 style={{ fontSize: "11px", padding: "4px 12px" }}
               >
-                <FaSync style={{ marginRight: "4px" }} />
-                {isLoading ? "Retrying..." : "Retry"}
+                <FaExternalLinkAlt style={{ marginRight: "4px" }} />
+                Help
               </VSCodeButton>
-            )}
+            </div>
           </div>
         </div>
       </>
@@ -416,7 +474,7 @@ const McpMarketplaceView = () => {
               <McpMarketplaceCard
                 key={item.mcpId}
                 item={item}
-                installedServers={sharedMcpServers}
+                installedServers={displayedMcpServers}
               />
             ))
           )}

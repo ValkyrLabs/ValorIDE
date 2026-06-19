@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
+import { useRecordUsageTransactionMutation } from "@thorapi/services/creditsApi";
+import { readStoredPrincipal } from "@thorapi/utils/accessControl";
 
 /**
- * Fires a one-time $0.01 debit when the webview starts up
+ * Fires a one-time 1 credit debit when the webview starts up
  * and a JWT is already present (auto-login sessions).
  * Guarded by sessionStorage to avoid duplicate charges per session.
  */
 const StartupDebit: React.FC = () => {
-  const [addUsageTransaction] = useAddUsageTransactionMutation();
+  const [recordUsageTransaction] = useRecordUsageTransactionMutation();
 
   useEffect(() => {
     const alreadyCharged = (() => {
@@ -36,17 +37,30 @@ const StartupDebit: React.FC = () => {
       return undefined; // No auto-login token; normal login flow will handle debit.
     }
 
+    const principal = readStoredPrincipal();
+    const accountId =
+      principal?.id !== undefined && principal?.id !== null
+        ? String(principal.id)
+        : principal?.username || principal?.email || "";
+    if (!accountId) {
+      return undefined;
+    }
+
     const sendDebit = async () => {
       try {
         const debit = {
-          spentAt: new Date(),
-          credits: 0.01,
+          spentAt: new Date().toISOString(),
+          credits: 1,
           modelProvider: "valoride",
           model: "auto-connect",
           promptTokens: 0,
           completionTokens: 0,
         } as any;
-        await addUsageTransaction(debit).unwrap();
+        await recordUsageTransaction({
+          accountId,
+          usage: debit,
+          idempotencyKey: `auto-connect-${accountId}`,
+        }).unwrap();
         try {
           sessionStorage.setItem("valoride.startupDebit.sent", "true");
         } catch {
@@ -61,7 +75,7 @@ const StartupDebit: React.FC = () => {
     // small delay allows store/middleware to fully mount
     const t = setTimeout(sendDebit, 250);
     return () => clearTimeout(t);
-  }, [addUsageTransaction]);
+  }, [recordUsageTransaction]);
 
   return null;
 };

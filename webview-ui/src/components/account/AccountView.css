@@ -723,6 +723,17 @@
   line-height: 1.25;
 }
 
+.context-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.context-page-header-actions vscode-button {
+  min-width: 72px;
+}
+
 .context-page-subtitle {
   margin-top: 4px;
   color: var(--vscode-descriptionForeground);

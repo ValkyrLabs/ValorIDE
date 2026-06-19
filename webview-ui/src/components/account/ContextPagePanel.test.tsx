@@ -48,7 +48,8 @@ const contextResponse = {
     pageRef: "ctx-page-123",
     traceId: "trace-123",
     taskIntent: "Generate a tenant app",
-    compactSummary: "Use account billing, app generation, and ContextPage evidence.",
+    compactSummary:
+      "Use account billing, app generation, and ContextPage evidence.",
     status: "compiled",
     tenantId: "main",
     tokenEstimate: 512,
@@ -175,7 +176,7 @@ describe("ContextPagePanel", () => {
         expect.objectContaining({
           taskIntent: "Generate a tenant app",
           tenantId: "main",
-          tokenBudget: 8000,
+          tokenBudget: 100,
           includeProcedures: true,
           includeRatings: true,
           filters: expect.objectContaining({
@@ -203,7 +204,7 @@ describe("ContextPagePanel", () => {
       expect(mockRecompressContextPage).toHaveBeenCalledWith(
         expect.objectContaining({
           contextPageRef: "ctx-page-123",
-          targetTokenBudget: 8000,
+          targetTokenBudget: 100,
           retainedItemRefs: ["item-1"],
         }),
       ),
@@ -251,7 +252,8 @@ describe("ContextPagePanel", () => {
     expect(screen.getByText("Billing policy memory")).toBeInTheDocument();
     expect(screen.getAllByText("memory-1").length).toBeGreaterThan(0);
     expect(
-      screen.getAllByText("Credits must be tenant scoped and idempotent.").length,
+      screen.getAllByText("Credits must be tenant scoped and idempotent.")
+        .length,
     ).toBeGreaterThan(0);
     expect(screen.getByText("Hydration Pointers")).toBeInTheDocument();
     expect(screen.getByText("ptr-1")).toBeInTheDocument();
@@ -264,6 +266,25 @@ describe("ContextPagePanel", () => {
     expect(screen.getByText("compression-1")).toBeInTheDocument();
     expect(
       screen.getByText("Recompressed billing and app generation evidence."),
+    ).toBeInTheDocument();
+  });
+
+  it("renders compile failures without throwing an unhandled rejection", async () => {
+    mockCompileContextPage.mockReturnValue({
+      unwrap: vi.fn().mockRejectedValue({
+        status: 400,
+        data: { message: "ContextPage compile request was invalid." },
+      }),
+    });
+
+    const { container } = render(<ContextPagePanel accountId="account-123" />);
+
+    const textAreas = container.querySelectorAll("vscode-text-area");
+    setWebComponentValue(textAreas[0], "Generate a tenant app");
+    fireEvent.click(screen.getByText("Compile"));
+
+    expect(
+      await screen.findByText("ContextPage compile request was invalid."),
     ).toBeInTheDocument();
   });
 });

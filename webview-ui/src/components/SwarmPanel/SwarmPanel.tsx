@@ -1,4 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
+import {
+  buildSwarmDiscoveryUrl,
+  getSwarmDiscoveryHeaders,
+} from "../../api/hooks/useDiscoveryQuery";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
 
 type AgentMeta = {
   id: string;
@@ -53,7 +58,28 @@ type ErrorAlert = {
   timestamp: number;
 };
 
-const SWARM_API_BASE = "http://localhost:8080/v1/swarm";
+const normalizeApiHost = () => {
+  const host = getValkyraiHost();
+  try {
+    const parsed = new URL(host);
+    const pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`.replace(
+      /\/+$/,
+      "",
+    );
+  } catch {
+    return "http://localhost:8080/v1";
+  }
+};
+
+const getSwarmApiBase = () => `${normalizeApiHost()}/swarm`;
+
+const getJsonHeaders = () => {
+  const headers = getSwarmDiscoveryHeaders();
+  headers.set("Content-Type", "application/json");
+  return headers;
+};
 
 function genMessageId() {
   return Math.random().toString(36).substring(2, 12);
@@ -72,7 +98,12 @@ const fetchAgentDiscovery = async (orgId?: string): Promise<AgentMeta[]> => {
   try {
     const org = orgId || getOrganizationId();
     const response = await fetch(
-      `${SWARM_API_BASE}/agents/discovery?orgId=${encodeURIComponent(org)}`,
+      buildSwarmDiscoveryUrl({
+        organizationId: org,
+        apiHost: getValkyraiHost(),
+        path: "agents/discovery",
+      }),
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok) throw new Error(`Discovery failed: ${response.status}`);
     return await response.json();
@@ -88,7 +119,8 @@ const fetchAgentHierarchy = async (
   try {
     const org = orgId || getOrganizationId();
     const response = await fetch(
-      `${SWARM_API_BASE}/agents/hierarchy?orgId=${encodeURIComponent(org)}`,
+      `${getSwarmApiBase()}/agents/hierarchy?organizationId=${encodeURIComponent(org)}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`Hierarchy fetch failed: ${response.status}`);
@@ -108,9 +140,9 @@ const sendChatMessage = async (
 ): Promise<ChatMessage | null> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${SWARM_API_BASE}/agent/${agentId}/chat`, {
+    const response = await fetch(`${getSwarmApiBase()}/agent/${agentId}/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getJsonHeaders(),
       body: JSON.stringify({
         organizationId: org,
         conversationId,
@@ -138,7 +170,8 @@ const fetchChatHistory = async (
   try {
     const org = getOrganizationId();
     const response = await fetch(
-      `${SWARM_API_BASE}/agent/${agentId}/chat/history?organizationId=${encodeURIComponent(org)}&conversationId=${encodeURIComponent(conversationId)}&page=${page}`,
+      `${getSwarmApiBase()}/agent/${agentId}/chat/history?organizationId=${encodeURIComponent(org)}&conversationId=${encodeURIComponent(conversationId)}&page=${page}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`History fetch failed: ${response.status}`);
@@ -156,7 +189,8 @@ const fetchBillingStatus = async (
   try {
     const org = organizationId || getOrganizationId();
     const response = await fetch(
-      `${SWARM_API_BASE}/billing/status?organizationId=${encodeURIComponent(org)}`,
+      `${getSwarmApiBase()}/billing/status?organizationId=${encodeURIComponent(org)}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok) {
       if (response.status === 402) {
@@ -229,9 +263,9 @@ const markMessageAsRead = async (
 ): Promise<boolean> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${SWARM_API_BASE}/chat/${messageId}/read`, {
+    const response = await fetch(`${getSwarmApiBase()}/chat/${messageId}/read`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getJsonHeaders(),
       body: JSON.stringify({ organizationId: org, readerId }),
     });
     return response.ok;

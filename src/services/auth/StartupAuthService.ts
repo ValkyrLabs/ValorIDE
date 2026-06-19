@@ -151,9 +151,9 @@ export class StartupAuthService {
       await updateGlobalState(this.context, "authenticatedPrincipal", user);
       await updateGlobalState(this.context, "isLoggedIn", true);
 
-      // Set API provider to valoride if we have tokens
+      // Set API provider to the unified ValkyrAI route if we have tokens
       if (tokens.apiKey) {
-        await updateGlobalState(this.context, "apiProvider", "valoride");
+        await updateGlobalState(this.context, "apiProvider", "valkyrai");
       }
 
       Logger.log("Extension authentication state updated successfully");

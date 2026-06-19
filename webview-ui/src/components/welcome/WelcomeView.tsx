@@ -4,7 +4,6 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { validateApiConfiguration } from "@thorapi/utils/validate";
 import { vscode } from "@thorapi/utils/vscode";
 import ApiOptions from "@thorapi/components/settings/ApiOptions";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import {
   readStoredPrincipal,
   hydrateStoredCredentials,
@@ -70,7 +69,6 @@ const WelcomeView = memo(() => {
 
   return (
     <>
-      <SystemAlerts />
       <div
         className="fixed inset-0 flex flex-col overflow-auto"
         style={{ background: "var(--vscode-editor-background)" }}

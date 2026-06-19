@@ -62,10 +62,10 @@ describe("CurrentBalance", () => {
 
     render(<CurrentBalance />);
 
-    expect(screen.getByText("$2.00")).toBeInTheDocument();
+    expect(screen.getByText("2 credits")).toBeInTheDocument();
     expect(screen.getByText("Low credits")).toBeInTheDocument();
     expect(
-      screen.getByText("3.00 credits restores the starter safety buffer."),
+      screen.getByText("3 credits restores the starter safety buffer."),
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Top up" }));

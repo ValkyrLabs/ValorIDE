@@ -67,6 +67,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: "@valkyrai/openapi-designer",
+        replacement: resolve(
+          __dirname,
+          "../../ValkyrAI/packages/component-library/src/openapi-designer",
+        ),
+      },
+      {
         find: "@utils/serverValkyraiHost",
         replacement: resolve(__dirname, "./src/utils/serverValkyraiHost"),
       },
@@ -76,19 +83,31 @@ export default defineConfig({
       },
       {
         find: "@thorapi/model",
-        replacement: resolve(__dirname, "./src/thorapi/model"),
+        replacement: resolve(
+          __dirname,
+          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model",
+        ),
       },
       {
         find: "@thorapi/src",
-        replacement: resolve(__dirname, "./src/thorapi/src"),
+        replacement: resolve(
+          __dirname,
+          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/src",
+        ),
       },
       {
         find: "@thorapi/redux",
-        replacement: resolve(__dirname, "./src/thorapi/redux"),
+        replacement: resolve(
+          __dirname,
+          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux",
+        ),
       },
       {
         find: "@thorapi/api",
-        replacement: resolve(__dirname, "./src/thorapi/api"),
+        replacement: resolve(
+          __dirname,
+          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api",
+        ),
       },
       {
         find: "@",
@@ -116,7 +135,13 @@ export default defineConfig({
       },
     ],
     // Ensure all dependencies share the same React singleton (fixes hooks issues)
-    dedupe: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
+    dedupe: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "react-redux",
+    ],
     extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
   },
 });

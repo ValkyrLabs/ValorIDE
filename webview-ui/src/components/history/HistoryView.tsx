@@ -26,7 +26,6 @@ import {
 } from "react-icons/fa";
 import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 type HistoryViewProps = {
@@ -162,7 +161,6 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
   return (
     <>
-      <SystemAlerts />
       <div
         style={{
           borderRadius: "10px",

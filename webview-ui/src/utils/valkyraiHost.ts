@@ -1,4 +1,4 @@
-import { Configuration, setBasePath } from "../thorapi/src/runtime";
+import { Configuration, setBasePath } from "@thorapi/src";
 
 type HostListener = (host: string) => void;
 

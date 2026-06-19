@@ -107,6 +107,7 @@ export interface WebviewMessage {
   | "startServer"
   | "uploadOpenAPISpec"
   | "uploadOpenAPISpecResult"
+  | "openOpenAPIEditor"
   | "openFile"
   | "trackFunnelEvent"
   | "remoteCodingSessionCommand";

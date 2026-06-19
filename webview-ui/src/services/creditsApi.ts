@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // AccountBalance DTO - matches ValkyrAI's AccountBalanceDTO
 export interface AccountBalance {
+  customerId?: string;
   currentBalance: number;
   payments: PaymentTransaction[];
   usageTransactions: UsageTransaction[];
@@ -53,6 +54,85 @@ export interface PaymentTransaction {
   transactionId?: string;
   description?: string;
 }
+
+const finiteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+  return undefined;
+};
+
+const normalizeCredits = (value: unknown): number => finiteNumber(value) ?? 0;
+
+export const normalizeAccountBalance = (payload: any): AccountBalance => {
+  const source = payload?.data ?? payload?.accountBalance ?? payload ?? {};
+  const payments = Array.isArray(source.payments)
+    ? source.payments
+    : Array.isArray(source.paymentTransactions)
+      ? source.paymentTransactions
+      : [];
+  const usageTransactions = Array.isArray(source.usageTransactions)
+    ? source.usageTransactions
+    : Array.isArray(source.usage)
+      ? source.usage
+      : [];
+  const derivedBalance =
+    payments.reduce(
+      (sum: number, payment: PaymentTransaction) =>
+        sum + normalizeCredits((payment as any).credits),
+      0,
+    ) -
+    usageTransactions.reduce(
+      (sum: number, usage: UsageTransaction) =>
+        sum +
+        normalizeCredits((usage as any).credits ?? (usage as any).meteredUnits),
+      0,
+    );
+  const explicitBalance = finiteNumber(
+    source.currentBalance,
+    source.current_balance,
+    source.balance,
+    source.availableCredits,
+    source.creditBalance,
+    source.credits,
+  );
+
+  return {
+    ...source,
+    customerId: source.customerId,
+    currentBalance:
+      explicitBalance !== undefined &&
+      !(explicitBalance === 0 && derivedBalance !== 0)
+        ? explicitBalance
+        : derivedBalance,
+    payments,
+    usageTransactions,
+  };
+};
+
+const getCustomerId = (payload: unknown): string | undefined => {
+  const value = (payload as any)?.data ?? payload;
+  const customerId = value?.customerId ?? value?.accountId ?? value?.id;
+  return typeof customerId === "string" && customerId.trim()
+    ? customerId.trim()
+    : undefined;
+};
+
+const hasQueryError = (
+  result: unknown,
+): result is {
+  error: { status?: number | string; data?: unknown; error?: string };
+} => Boolean((result as any)?.error);
+
+const getQueryData = (result: unknown): unknown => (result as any)?.data;
 
 // Balance response for mutations
 export interface BalanceResponse {
@@ -89,9 +169,54 @@ export const creditsApi = createApi({
      * Returns AccountBalance with computed currentBalance from payments - usage
      */
     getAccountBalance: builder.query<AccountBalance, string>({
-      query: (accountId) => `credits/${accountId}/balance`,
+      async queryFn(accountId, _api, _extraOptions, baseQuery) {
+        const requestBalance = (id: string) =>
+          baseQuery(`credits/${encodeURIComponent(id)}/balance`);
+
+        const summaryResult = await baseQuery("credits/me/balance/summary");
+        const summaryData = hasQueryError(summaryResult)
+          ? undefined
+          : getQueryData(summaryResult);
+        const summaryBalance =
+          summaryData !== undefined
+            ? normalizeAccountBalance(summaryData)
+            : undefined;
+        const summaryAccountId = getCustomerId(summaryData);
+        const primaryAccountId = summaryAccountId || accountId;
+
+        let balanceResult = await requestBalance(primaryAccountId);
+        if (
+          hasQueryError(balanceResult) &&
+          primaryAccountId !== accountId &&
+          accountId
+        ) {
+          balanceResult = await requestBalance(accountId);
+        }
+
+        if (hasQueryError(balanceResult)) {
+          if (summaryBalance) {
+            return { data: summaryBalance };
+          }
+          return { error: balanceResult.error as any };
+        }
+
+        const balance = normalizeAccountBalance(getQueryData(balanceResult));
+        const authoritativeBalance = finiteNumber(
+          summaryBalance?.currentBalance,
+          balance.currentBalance,
+        );
+
+        return {
+          data: {
+            ...balance,
+            customerId: balance.customerId || summaryAccountId,
+            currentBalance: authoritativeBalance ?? 0,
+          },
+        };
+      },
       providesTags: (result, error, accountId) => [
         { type: "AccountBalance", id: accountId },
+        { type: "AccountBalance", id: result?.customerId || "me" },
         { type: "Credits", id: "BALANCE" },
       ],
     }),
@@ -109,7 +234,7 @@ export const creditsApi = createApi({
       }
     >({
       query: ({ accountId, usage, idempotencyKey }) => ({
-        url: `credits/${accountId}/usage`,
+        url: `credits/${encodeURIComponent(accountId)}/usage`,
         method: "POST",
         body: usage,
         headers: {
@@ -135,7 +260,7 @@ export const creditsApi = createApi({
       }
     >({
       query: ({ accountId, payment, idempotencyKey }) => ({
-        url: `credits/${accountId}/payment`,
+        url: `credits/${encodeURIComponent(accountId)}/payment`,
         method: "POST",
         body: payment,
         headers: {

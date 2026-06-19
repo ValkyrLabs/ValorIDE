@@ -1,16 +1,7 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 import "./AccountView.css";
 
-import {
-  UsageTransaction,
-  PaymentTransaction,
-} from "@thorapi/model";
 import { useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery } from "@thorapi/services/creditsApi";
-import {
-  useAddUsageTransactionMutation,
-  useGetUsageTransactionsQuery,
-} from "@thorapi/redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
@@ -142,29 +133,32 @@ const AccountView = ({
     [valorideMessages],
   );
 
-  // Determine authenticated status
-  const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedUser || userInfo || jwtToken,
-  );
+  // Local immediate login flag to reveal tabs before context updates
+  const [didLogin, setDidLogin] = useState(false);
 
-  // Also consider presence of a stored JWT to avoid timing gaps
-  const hasStoredJwt = useMemo(() => {
+  // Also consider stored credentials to avoid auth hydration timing gaps.
+  const storedAuth = useMemo(() => {
     try {
       const storedPrincipal = readStoredPrincipal();
       const storedToken =
         sessionStorage.getItem("jwtToken") ||
         localStorage.getItem("jwtToken") ||
         localStorage.getItem("authToken");
-      // Both principal AND token must exist for auth to be valid
-      return Boolean(storedPrincipal && storedToken);
+      return {
+        hasStoredJwt: Boolean(storedPrincipal && storedToken),
+        storedPrincipal,
+      };
     } catch {
-      return false;
+      return { hasStoredJwt: false, storedPrincipal: null };
     }
-  }, [jwtToken]);
+  }, [jwtToken, didLogin]);
 
-  // Local immediate login flag to reveal tabs before context updates
-  const [didLogin, setDidLogin] = useState(false);
-  const authed = isAuthenticated || didLogin || hasStoredJwt;
+  const { hasStoredJwt, storedPrincipal } = storedAuth;
+  const hasAuthIdentity = Boolean(
+    authenticatedUser || userInfo || hasStoredJwt,
+  );
+  const hasBackendAuth = Boolean(jwtToken || didLogin || hasStoredJwt);
+  const authed = hasAuthIdentity && hasBackendAuth;
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<AccountTab>(
@@ -196,7 +190,7 @@ const AccountView = ({
   }, [authed, initialSwarmCommandResponse]);
 
   const { principal: resolvedPrincipal } = useAccessControl(
-    authenticatedUser || userInfo,
+    authenticatedUser || userInfo || storedPrincipal,
   );
   const principalId = resolvedPrincipal?.id;
   const accountId =
@@ -211,32 +205,13 @@ const AccountView = ({
     isFetching: isCreditBalanceFetching,
     refetch: refetchCreditBalance,
   } = useGetCreditAccountBalanceQuery(accountId, {
-    skip: !accountId,
-  });
-
-  const {
-    data: usageData,
-    isLoading: isUsageLoading,
-    refetch: refetchUsage,
-  } = useGetUsageTransactionsQuery(undefined, {
-    // Use broader auth signal so queries mount as soon as a token exists
-    skip: !authed,
-  });
-  const {
-    data: paymentsData,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentTransactionsQuery(undefined, {
-    // Use broader auth signal so queries mount as soon as a token exists
-    skip: !authed,
+    skip: !accountId || !hasBackendAuth,
   });
 
   // Combined loading state
-  const loading =
-    isCreditBalanceLoading ||
-    isCreditBalanceFetching ||
-    isUsageLoading ||
-    isPaymentsLoading;
+  const loading = isCreditBalanceLoading || isCreditBalanceFetching;
+  const usageData = creditBalanceData?.usageTransactions || [];
+  const paymentsData = creditBalanceData?.payments || [];
 
   const effectiveBalance = useMemo(() => {
     const rawBalance =
@@ -251,8 +226,6 @@ const AccountView = ({
     effectiveBalance <= Number(criticalBalanceThreshold);
 
   const [loginUser] = useLoginUserMutation();
-  const [addUsageTransaction] = useAddUsageTransactionMutation();
-
   const handleLogin = async (
     values: Login,
     { setSubmitting }: FormikHelpers<Login>,
@@ -309,20 +282,6 @@ const AccountView = ({
 
       setDidLogin(true);
       setActiveTab("account");
-
-      try {
-        const debit = {
-          spentAt: new Date(),
-          credits: 0.01,
-          modelProvider: "valoride",
-          model: "login-connect",
-          promptTokens: 0,
-          completionTokens: 0,
-        } as any;
-        await addUsageTransaction(debit).unwrap();
-      } catch (e) {
-        console.warn("Usage debit failed post-login:", e);
-      }
     } catch (error) {
       console.error("Login failed:", error);
       try {
@@ -608,9 +567,13 @@ const AccountView = ({
               <LoadingSpinner label="Loading applications..." size={32} />
             </div>
           )}
-          {/* Applications List */}
           <div style={{ marginBottom: "1em" }}>
-            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+            <OpenAPIFilePicker
+              onFileSelected={handleOpenAPIFileSelected}
+              onOpenEditor={() =>
+                vscode.postMessage({ type: "openOpenAPIEditor" })
+              }
+            />
             <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
         </div>
@@ -756,10 +719,6 @@ const AccountView = ({
                       onClick={async () => {
                         if (accountId) {
                           await refetchCreditBalance();
-                        }
-                        if (authed) {
-                          refetchUsage();
-                          refetchPayments();
                         }
                       }}
                     >

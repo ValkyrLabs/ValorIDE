@@ -121,12 +121,28 @@ const readAuthToken = () => {
   if (typeof window === "undefined") {
     return null;
   }
-  return (
-    window.sessionStorage.getItem("jwtToken") ||
-    window.sessionStorage.getItem("jwtSession") ||
-    window.localStorage.getItem("jwtToken") ||
-    window.localStorage.getItem("authToken")
-  );
+  const storageKeys = [
+    "jwtToken",
+    "jwtSession",
+    "authToken",
+    "auth_token",
+    "valoride_jwt",
+    "temp_auth_token",
+    "VALKYR_AUTH",
+  ];
+  for (const storage of [window.sessionStorage, window.localStorage]) {
+    for (const key of storageKeys) {
+      try {
+        const value = storage?.getItem?.(key);
+        if (value?.trim()) {
+          return value.replace(/^Bearer\s+/i, "").trim();
+        }
+      } catch {
+        // Ignore unavailable storage in webview/test sandboxes.
+      }
+    }
+  }
+  return null;
 };
 
 export const getSwarmDiscoveryHeaders = () => {

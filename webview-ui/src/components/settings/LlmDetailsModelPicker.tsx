@@ -120,9 +120,8 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
   isPopup,
 }) => {
   const { apiConfiguration, setApiConfiguration } = useExtensionState();
-  const [searchTerm, setSearchTerm] = useState(
-    apiConfiguration?.valkyraiServiceId || "",
-  );
+  const selectedServiceId = apiConfiguration?.valkyraiServiceId || "";
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -143,10 +142,6 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
   useMount(() => {
     vscode.postMessage({ type: "refreshLLMDetails" });
   });
-
-  useEffect(() => {
-    setSearchTerm(apiConfiguration?.valkyraiServiceId || "");
-  }, [apiConfiguration?.valkyraiServiceId]);
 
   // Listen for LLM models updates from extension
   useEffect(() => {
@@ -178,7 +173,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
       apiModelId: newModelId,
       valkyraiServiceId: newModelId,
     });
-    setSearchTerm(newModelId);
+    setSearchTerm("");
     if (selectedModel) {
       vscode.postMessage({
         type: "updateLLMDetails",
@@ -285,7 +280,13 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
     ].filter((m) => modelIds.some((id) => llmModels[id]?.provider === m.id));
   }, [modelIds, llmModels]);
 
-  const currentSelection = searchTerm ? llmModels[searchTerm] : undefined;
+  const currentSelection = selectedServiceId
+    ? llmModels[selectedServiceId]
+    : undefined;
+  const selectedLabel = currentSelection
+    ? `${currentSelection.name} (${currentSelection.provider})`
+    : "";
+  const inputValue = isDropdownVisible ? searchTerm : selectedLabel;
 
   return (
     <div style={{ width: "100%" }}>
@@ -318,7 +319,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
                   <FeatureCard
                     key={id}
                     isSelected={
-                      currentSelection?.id === id || searchTerm === id
+                      currentSelection?.id === id || selectedServiceId === id
                     }
                     onClick={() => {
                       handleModelChange(id);
@@ -338,12 +339,15 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
           <VSCodeTextField
             id="llm-details-search"
             placeholder="Search models by name or provider..."
-            value={searchTerm}
+            value={inputValue}
             onInput={(e) => {
               setSearchTerm((e.target as HTMLInputElement)?.value || "");
               setIsDropdownVisible(true);
             }}
-            onFocus={() => setIsDropdownVisible(true)}
+            onFocus={() => {
+              setSearchTerm("");
+              setIsDropdownVisible(true);
+            }}
             onKeyDown={handleKeyDown}
             style={{
               width: "100%",
@@ -351,7 +355,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
               position: "relative",
             }}
           >
-            {searchTerm && (
+            {(searchTerm || selectedServiceId) && (
               <div
                 className="input-icon-button"
                 aria-label="Clear search"

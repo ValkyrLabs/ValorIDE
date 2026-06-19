@@ -31,6 +31,7 @@ vi.mock("@shared/getApiMetrics", () => ({
 
 vi.mock("react-redux", () => ({
   useSelector: (selector: any) => selector(mockReduxState),
+  useDispatch: () => vi.fn(),
 }));
 
 vi.mock("@thorapi/components/BuyCredits", () => ({
@@ -112,7 +113,7 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     render(<SystemAlerts />);
 
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
+      expect(screen.getByText(/Credits need a top-up/i)).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId("buy-credits-modal")).not.toBeInTheDocument();
@@ -139,7 +140,7 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     render(<SystemAlerts />);
 
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
+      expect(screen.getByText(/Credits need a top-up/i)).toBeInTheDocument(),
     );
 
     await waitFor(() =>

@@ -12,7 +12,6 @@ import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import { vscode } from "@thorapi/utils/vscode";
 import { useChatInputPersistence } from "@thorapi/utils/useSessionStorage";
 import ChatTextArea from "@thorapi/components/chat/ChatTextArea";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import CapabilityCommandCenter from "@thorapi/components/agentic/CapabilityCommandCenter";
 
 // Custom hooks
@@ -229,7 +228,6 @@ const ChatView = ({
           overflow: "hidden",
         }}
       >
-        <SystemAlerts />
         <CapabilityCommandCenter />
         {/**TODO: get P2P working
 			<StatusBar

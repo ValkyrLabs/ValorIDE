@@ -4,7 +4,6 @@ import {
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import "./ApplicationProgress.css";
 
 interface ProgressStep {
@@ -179,7 +178,6 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
 
   return (
     <>
-      <SystemAlerts />
       <div className="application-progress">
         <div className="application-progress-header">
           <h2>Application Generation</h2>

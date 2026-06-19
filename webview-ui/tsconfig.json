@@ -18,18 +18,41 @@
     "allowImportingTsExtensions": true, // Add this line
     "baseUrl": ".",
     "paths": {
-      "@thorapi/model": ["src/thorapi/model/index.ts"],
-      "@thorapi/model/*": ["src/thorapi/model/*"],
-      "@thorapi/src": ["src/thorapi/src/index.ts"],
-      "@thorapi/redux/*": ["src/thorapi/redux/*"],
-      "@thorapi/redux/services": ["src/thorapi/redux/services/index.ts"],
+      "@thorapi/model": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model/index.ts"
+      ],
+      "@thorapi/model/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model/*"
+      ],
+      "@thorapi/src": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/src/index.ts"
+      ],
+      "@thorapi/redux": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux"
+      ],
+      "@thorapi/redux/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/*"
+      ],
+      "@thorapi/redux/services": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/services/index.ts"
+      ],
       "@thorapi/redux/services/*": [
-        "src/thorapi/redux/services/*",
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/services/*",
         "src/redux/services/*"
       ],
-      "@thorapi/api": ["src/thorapi/api/index.ts"],
-      "@thorapi/api/*": ["src/thorapi/api/*"],
+      "@thorapi/api": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api/index.ts"
+      ],
+      "@thorapi/api/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api/*"
+      ],
       "@thorapi/*": ["src/*"],
+      "@valkyrai/openapi-designer": [
+        "../../ValkyrAI/packages/component-library/src/openapi-designer"
+      ],
+      "@valkyrai/openapi-designer/*": [
+        "../../ValkyrAI/packages/component-library/src/openapi-designer/*"
+      ],
       "@shared/*": ["../src/shared/*"],
       "@valkyr/component-library/*": ["src/components/*"],
       "@utils/*": ["src/utils/*", "../src/utils/*"],
@@ -37,5 +60,5 @@
     }
   },
   "include": ["src"],
-  "exclude": ["src/**/*.spec.ts", "setupTests.js", "matchMedia.js"]
+  "exclude": ["src/**/*.spec.ts", "src/thorapi", "setupTests.js", "matchMedia.js"]
 }

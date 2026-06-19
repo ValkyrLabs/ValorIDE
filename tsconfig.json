@@ -18,7 +18,7 @@
     "noUnusedLocals": false,
     "downlevelIteration": true,
     "resolveJsonModule": true,
-    "rootDir": ".",
+    "rootDir": "..",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": false,
@@ -44,6 +44,12 @@
         "src/api/index.ts"
       ],
       "@thorapi/*": ["webview-ui/src/*", "src/*"],
+      "@valkyrai/openapi-designer": [
+        "../ValkyrAI/packages/component-library/src/openapi-designer"
+      ],
+      "@valkyrai/openapi-designer/*": [
+        "../ValkyrAI/packages/component-library/src/openapi-designer/*"
+      ],
       "@websocket/*": ["webview-ui/src/websocket/*"],
       "@core/*": ["src/core/*"],
       "@integrations/*": ["src/integrations/*"],

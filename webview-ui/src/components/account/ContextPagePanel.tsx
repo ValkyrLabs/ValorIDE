@@ -26,6 +26,7 @@ import {
   FaBrain,
   FaCompressAlt,
   FaDatabase,
+  FaExternalLinkAlt,
   FaExpandAlt,
   FaFileAlt,
   FaLink,
@@ -36,19 +37,32 @@ import {
 } from "react-icons/fa";
 
 import { sanitizeReceiptPayload } from "./ReceiptTraceInspector";
+import { vscode } from "@thorapi/utils/vscode";
 
 type ContextPagePanelProps = {
   accountId: string;
 };
+
+const DEFAULT_CONTEXT_TOKEN_BUDGET = 100;
+const CONTEXT_PAGE_HELP_URL =
+  "https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation";
 
 const getErrorText = (error: unknown): string => {
   if (!error) return "";
   if (typeof error === "string") return error;
   if (typeof error === "object") {
     const maybeData = (error as any).data;
+    if (typeof (error as any).error === "string") return (error as any).error;
     if (typeof maybeData?.message === "string") return maybeData.message;
     if (typeof maybeData?.error === "string") return maybeData.error;
-    if (typeof (error as any).message === "string") return (error as any).message;
+    if (typeof maybeData === "string") return maybeData;
+    if (typeof (error as any).message === "string")
+      return (error as any).message;
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "ContextPage operation failed";
+    }
   }
   return "ContextPage operation failed";
 };
@@ -64,7 +78,9 @@ const formatPercent = (value?: number): string | undefined => {
   return `${Math.round(normalized)}%`;
 };
 
-const compactLabel = (value?: string | number | boolean | null): string | undefined => {
+const compactLabel = (
+  value?: string | number | boolean | null,
+): string | undefined => {
   if (value === undefined || value === null || value === "") return undefined;
   if (typeof value === "boolean") return value ? "yes" : "no";
   return String(value).replace(/_/g, " ");
@@ -119,13 +135,22 @@ const ContextItemCard = ({ item }: { item: ContextPageItem }) => {
       {item.summary && <p>{item.summary}</p>}
       <div className="context-source-card-grid">
         <SourceMetric title="Source" value={item.sourceId} />
-        <SourceMetric title="Relevance" value={formatPercent(item.relevanceScore)} />
-        <SourceMetric title="Confidence" value={formatPercent(item.confidence)} />
+        <SourceMetric
+          title="Relevance"
+          value={formatPercent(item.relevanceScore)}
+        />
+        <SourceMetric
+          title="Confidence"
+          value={formatPercent(item.confidence)}
+        />
         <SourceMetric title="Retained" value={compactLabel(item.retained)} />
         <SourceMetric title="Hydrated" value={compactLabel(item.hydrated)} />
         <SourceMetric title="Policy" value={item.policyDecision} />
         <SourceMetric title="Rank" value={retrievalItem?.rank} />
-        <SourceMetric title="Final score" value={formatPercent(retrievalItem?.finalScore)} />
+        <SourceMetric
+          title="Final score"
+          value={formatPercent(retrievalItem?.finalScore)}
+        />
         <SourceMetric title="Text hash" value={retrievalItem?.textHash} />
       </div>
       {(retrievalItem?.textPreview || retrievalItem?.text) && (
@@ -185,20 +210,32 @@ const RetrievalReceiptView = ({ receipt }: { receipt?: RetrievalReceipt }) => {
       <div className="context-source-card-grid">
         <SourceMetric title="Receipt" value={receipt.receiptId} />
         <SourceMetric title="Trace" value={receipt.traceId} />
-        <SourceMetric title="Mode" value={compactLabel(receipt.retrievalMode as any)} />
-        <SourceMetric title="Status" value={compactLabel(receipt.retrievalStatus as any)} />
+        <SourceMetric
+          title="Mode"
+          value={compactLabel(receipt.retrievalMode as any)}
+        />
+        <SourceMetric
+          title="Status"
+          value={compactLabel(receipt.retrievalStatus as any)}
+        />
         <SourceMetric
           title="Action"
           value={compactLabel(receipt.recommendedAction as any)}
         />
-        <SourceMetric title="Quality" value={formatPercent(receipt.quality?.overallScore)} />
+        <SourceMetric
+          title="Quality"
+          value={formatPercent(receipt.quality?.overallScore)}
+        />
         <SourceMetric title="Results" value={receipt.quality?.resultCount} />
         <SourceMetric
           title="Coverage"
           value={compactLabel(receipt.coverage?.coverageStatus)}
         />
         <SourceMetric title="Sources" value={receipt.provenance?.sourceCount} />
-        <SourceMetric title="Source types" value={joinList(receipt.provenance?.sourceTypes)} />
+        <SourceMetric
+          title="Source types"
+          value={joinList(receipt.provenance?.sourceTypes)}
+        />
         <SourceMetric title="RBAC" value={receipt.policy?.rbacDecision} />
         <SourceMetric
           title="Tenant checked"
@@ -221,9 +258,15 @@ const RetrievalReceiptView = ({ receipt }: { receipt?: RetrievalReceipt }) => {
               key={`${item.memoryId || item.sourceId || "retrieval"}-${index}`}
             >
               <span>{compactLabel(item.sourceType) || "source"}</span>
-              <code>{item.memoryId || item.sourceId || item.entityId || "item"}</code>
-              <strong>{formatPercent(item.finalScore || item.similarityScore)}</strong>
-              {(item.textPreview || item.text) && <p>{item.textPreview || item.text}</p>}
+              <code>
+                {item.memoryId || item.sourceId || item.entityId || "item"}
+              </code>
+              <strong>
+                {formatPercent(item.finalScore || item.similarityScore)}
+              </strong>
+              {(item.textPreview || item.text) && (
+                <p>{item.textPreview || item.text}</p>
+              )}
             </div>
           ))}
         </div>
@@ -254,8 +297,14 @@ const CompressionReceiptView = ({
           value={formatPercent(receipt.confidenceChange)}
         />
         <SourceMetric title="Policy" value={receipt.policyDecision} />
-        <SourceMetric title="Retained" value={receipt.retainedItemRefs?.length} />
-        <SourceMetric title="Discarded" value={receipt.discardedItemRefs?.length} />
+        <SourceMetric
+          title="Retained"
+          value={receipt.retainedItemRefs?.length}
+        />
+        <SourceMetric
+          title="Discarded"
+          value={receipt.discardedItemRefs?.length}
+        />
         <SourceMetric
           title="Hydrated sources"
           value={receipt.hydratedSourcesIncluded?.length}
@@ -278,12 +327,16 @@ const ContextSourceDrilldown = ({
 }) => {
   const page = response.contextPage;
   const retrievalReceipt = response.retrievalReceipt || page.retrievalReceipt;
-  const compressionReceipt = response.compressionReceipt || page.compressionReceipt;
+  const compressionReceipt =
+    response.compressionReceipt || page.compressionReceipt;
   const items = page.items || [];
   const pointers = page.hydrationPointers || [];
 
   return (
-    <section className="context-source-drilldown" aria-label="Context source drilldown">
+    <section
+      className="context-source-drilldown"
+      aria-label="Context source drilldown"
+    >
       <div className="context-source-heading">
         <div>
           <span>{compactLabel(page.status) || "context"}</span>
@@ -293,7 +346,10 @@ const ContextSourceDrilldown = ({
       </div>
 
       <div className="context-source-card-grid">
-        <SourceMetric title="Confidence" value={formatPercent(page.confidence)} />
+        <SourceMetric
+          title="Confidence"
+          value={formatPercent(page.confidence)}
+        />
         <SourceMetric title="Freshness" value={formatPercent(page.freshness)} />
         <SourceMetric title="Policy" value={page.policy} />
         <SourceMetric title="Recommended" value={page.recommendedAction} />
@@ -344,10 +400,15 @@ const ContextSourceDrilldown = ({
           </div>
           <div className="context-source-card-grid">
             <SourceMetric title="Page policy" value={page.policy} />
-            <SourceMetric title="RBAC" value={retrievalReceipt?.policy?.rbacDecision} />
+            <SourceMetric
+              title="RBAC"
+              value={retrievalReceipt?.policy?.rbacDecision}
+            />
             <SourceMetric
               title="Tenant scope"
-              value={compactLabel(retrievalReceipt?.policy?.tenantScopeVerified)}
+              value={compactLabel(
+                retrievalReceipt?.policy?.tenantScopeVerified,
+              )}
             />
             <SourceMetric
               title="Policy notes"
@@ -363,13 +424,16 @@ const ContextSourceDrilldown = ({
 const ContextPagePanel = ({ accountId }: ContextPagePanelProps) => {
   const [tenantId, setTenantId] = useState("main");
   const [taskIntent, setTaskIntent] = useState("");
-  const [tokenBudget, setTokenBudget] = useState("8000");
+  const [tokenBudget, setTokenBudget] = useState(
+    String(DEFAULT_CONTEXT_TOKEN_BUDGET),
+  );
   const [pageRefInput, setPageRefInput] = useState("");
   const [submittedPageRef, setSubmittedPageRef] = useState("");
   const [pointerRefsInput, setPointerRefsInput] = useState("");
   const [traverseFromScope, setTraverseFromScope] = useState("intent");
   const [traverseToScope, setTraverseToScope] = useState("app_generation");
   const [operationReason, setOperationReason] = useState("");
+  const [localOperationError, setLocalOperationError] = useState("");
   const [latestResponse, setLatestResponse] = useState<
     ContextPageResponse | undefined
   >();
@@ -411,85 +475,122 @@ const ContextPagePanel = ({ accountId }: ContextPagePanelProps) => {
     recompressState.isLoading ||
     traverseState.isLoading ||
     lookupQuery.isFetching;
-  const operationError = getErrorText(
-    compileState.error ||
-      hydrateState.error ||
-      recompressState.error ||
-      traverseState.error ||
-      lookupQuery.error,
-  );
+  const operationError =
+    localOperationError ||
+    getErrorText(
+      compileState.error ||
+        hydrateState.error ||
+        recompressState.error ||
+        traverseState.error ||
+        lookupQuery.error,
+    );
   const traceId = activePage?.traceId || `valoride-context-trace-${uuidv4()}`;
+  const tokenBudgetValue = Number(tokenBudget) || DEFAULT_CONTEXT_TOKEN_BUDGET;
+
+  const handleContextPageError = (error: unknown) => {
+    setLocalOperationError(getErrorText(error));
+  };
 
   const handleCompile = async () => {
     if (!taskIntent.trim()) return;
-    const response = await compileContextPage({
-      taskIntent: taskIntent.trim(),
-      tenantId: tenantId.trim() || "main",
-      traceId,
-      tokenBudget: Number(tokenBudget) || 8000,
-      includeProcedures: true,
-      includeRatings: true,
-      filters: {
-        accountId,
-        sourceSurface: "valoride",
-      },
-    }).unwrap();
-    setLatestResponse(response);
-    setSubmittedPageRef("");
-    setPageRefInput(response.contextPage?.pageRef || "");
+    setLocalOperationError("");
+    try {
+      const response = await compileContextPage({
+        taskIntent: taskIntent.trim(),
+        tenantId: tenantId.trim() || "main",
+        traceId,
+        tokenBudget: tokenBudgetValue,
+        includeProcedures: true,
+        includeRatings: true,
+        filters: {
+          accountId,
+          sourceSurface: "valoride",
+        },
+      }).unwrap();
+      setLatestResponse(response);
+      setSubmittedPageRef("");
+      setPageRefInput(response.contextPage?.pageRef || "");
+    } catch (error) {
+      handleContextPageError(error);
+    }
   };
 
   const handleLookup = () => {
     const pageRef = pageRefInput.trim();
     if (!pageRef) return;
+    setLocalOperationError("");
     setSubmittedPageRef(pageRef);
   };
 
   const handleHydrate = async () => {
     if (!activePageRef) return;
-    const response = await hydrateContextPage({
-      contextPageRef: activePageRef,
-      pointerRefs,
-      maxItems: pointerRefs.length || 3,
-      traceId,
-      reason: operationReason.trim() || "Hydrate source details for current task.",
-    }).unwrap();
-    setLatestResponse(response);
-    setSubmittedPageRef("");
+    setLocalOperationError("");
+    try {
+      const response = await hydrateContextPage({
+        contextPageRef: activePageRef,
+        pointerRefs,
+        maxItems: pointerRefs.length || 3,
+        traceId,
+        reason:
+          operationReason.trim() || "Hydrate source details for current task.",
+      }).unwrap();
+      setLatestResponse(response);
+      setSubmittedPageRef("");
+    } catch (error) {
+      handleContextPageError(error);
+    }
   };
 
   const handleRecompress = async () => {
     if (!activePageRef) return;
-    const response = await recompressContextPage({
-      contextPageRef: activePageRef,
-      targetTokenBudget: Number(tokenBudget) || 8000,
-      retainedItemRefs,
-      evictedItemRefs: [],
-      traceId,
-      reason:
-        operationReason.trim() ||
-        "Collapse hydrated details back into bounded operating context.",
-    }).unwrap();
-    setLatestResponse(response);
-    setSubmittedPageRef("");
+    setLocalOperationError("");
+    try {
+      const response = await recompressContextPage({
+        contextPageRef: activePageRef,
+        targetTokenBudget: tokenBudgetValue,
+        retainedItemRefs,
+        evictedItemRefs: [],
+        traceId,
+        reason:
+          operationReason.trim() ||
+          "Collapse hydrated details back into bounded operating context.",
+      }).unwrap();
+      setLatestResponse(response);
+      setSubmittedPageRef("");
+    } catch (error) {
+      handleContextPageError(error);
+    }
   };
 
   const handleTraverse = async () => {
     if (!activePageRef) return;
-    const response = await traverseContextPage({
-      contextPageRef: activePageRef,
-      traversalType: ContextPageTraverseRequestTraversalTypeEnum.INTENTSHIFT,
-      fromScope: traverseFromScope.trim() || undefined,
-      toScope: traverseToScope.trim() || undefined,
-      reason: operationReason.trim() || "Track task/context movement in ValorIDE.",
-      traceId,
-      metadata: {
-        accountId,
-        sourceSurface: "valoride",
-      },
-    }).unwrap();
-    setLatestResponse(response);
-    setSubmittedPageRef("");
+    setLocalOperationError("");
+    try {
+      const response = await traverseContextPage({
+        contextPageRef: activePageRef,
+        traversalType: ContextPageTraverseRequestTraversalTypeEnum.INTENTSHIFT,
+        fromScope: traverseFromScope.trim() || undefined,
+        toScope: traverseToScope.trim() || undefined,
+        reason:
+          operationReason.trim() || "Track task/context movement in ValorIDE.",
+        traceId,
+        metadata: {
+          accountId,
+          sourceSurface: "valoride",
+        },
+      }).unwrap();
+      setLatestResponse(response);
+      setSubmittedPageRef("");
+    } catch (error) {
+      handleContextPageError(error);
+    }
+  };
+
+  const handleOpenHelp = () => {
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: CONTEXT_PAGE_HELP_URL,
+    });
   };
 
   return (
@@ -497,9 +598,17 @@ const ContextPagePanel = ({ accountId }: ContextPagePanelProps) => {
       <div className="context-page-header">
         <div>
           <h3>ContextPage</h3>
-          <div className="context-page-subtitle">{accountId || "No account"}</div>
+          <div className="context-page-subtitle">
+            {accountId || "No account"}
+          </div>
         </div>
-        <FaBrain aria-hidden="true" />
+        <div className="context-page-header-actions">
+          <VSCodeButton appearance="secondary" onClick={handleOpenHelp}>
+            <FaExternalLinkAlt />
+            Help
+          </VSCodeButton>
+          <FaBrain aria-hidden="true" />
+        </div>
       </div>
 
       <div className="context-page-grid">
