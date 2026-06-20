@@ -135,6 +135,8 @@ Layer 4:   LLMDetails override         (manual UI selection)
 
 **Injection contract**:
 
+- Before ordinary context injection, ValorIDE runs an invariant preflight query for durable `decision` records tagged as invariants, security, RBAC/ACL, generated-code, AspectJ, `vaix`/`vai`, testing, or product names.
+- Invariant decisions are deduplicated with ordinary memories, sorted ahead of general remembered context, and treated as binding agent operating constraints.
 - Query is fired at conversation start using a context-aware seed query derived from:
   - Current file path / language
   - Active task description (if a task is in progress)
