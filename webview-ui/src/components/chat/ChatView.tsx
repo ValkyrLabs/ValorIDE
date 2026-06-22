@@ -228,7 +228,7 @@ const ChatView = ({
           overflow: "hidden",
         }}
       >
-        <CapabilityCommandCenter />
+        {!task && <CapabilityCommandCenter />}
         {/**TODO: get P2P working
 			<StatusBar
 				wsConnected={wsConnected}

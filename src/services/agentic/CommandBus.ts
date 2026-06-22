@@ -1,7 +1,12 @@
 import { CapabilityDescriptor, CapabilityRegistry } from "./CapabilityRegistry";
 
-export type AgenticCommandSource = "cli" | "local" | "swarm";
-export type AgenticCommandStatus = "failed" | "rejected" | "success";
+export type AgenticCommandSource = "cli" | "local" | "mcp" | "swarm";
+export type AgenticCommandStatus =
+  | "approval-required"
+  | "failed"
+  | "queued"
+  | "rejected"
+  | "success";
 
 export interface AgenticCommand {
   capabilityId: string;
@@ -126,7 +131,7 @@ export class AgenticCommandBus {
           startedAt,
           false,
           true,
-          "rejected",
+          "approval-required",
           {
             code: "ERR_APPROVAL_REQUIRED",
             message: `Approval is required for ${command.capabilityId}.`,
@@ -179,12 +184,13 @@ export class AgenticCommandBus {
 
     try {
       const output = await handler(command, capability);
+      const status = inferCommandStatusFromOutput(output) ?? "success";
       return this.complete(
         command,
         startedAt,
         true,
         requiresApproval,
-        "success",
+        status,
         undefined,
         output,
         approvalReason,
@@ -332,6 +338,41 @@ const hasStructuredOutputFields = (output: Record<string, unknown>) =>
   ["artifacts", "output", "stderr", "stdout", "tool"].some((key) =>
     Object.prototype.hasOwnProperty.call(output, key),
   );
+
+const inferCommandStatusFromOutput = (
+  output: unknown,
+): AgenticCommandStatus | undefined => {
+  const buildModeStatus = getBuildModeStatus(output);
+  switch (buildModeStatus) {
+    case "approval-required":
+      return "approval-required";
+    case "failed":
+      return "failed";
+    case "queued":
+    case "running":
+      return "queued";
+    case "rejected":
+      return "rejected";
+    default:
+      return undefined;
+  }
+};
+
+const getBuildModeStatus = (output: unknown): string | undefined => {
+  if (!isRecord(output)) {
+    return undefined;
+  }
+  if (typeof output.buildModeStatus === "string") {
+    return output.buildModeStatus;
+  }
+  if (
+    isRecord(output.output) &&
+    typeof output.output.buildModeStatus === "string"
+  ) {
+    return output.output.buildModeStatus;
+  }
+  return undefined;
+};
 
 const normalizeArtifacts = (artifacts: unknown) => {
   if (!Array.isArray(artifacts)) {

@@ -16,12 +16,8 @@ export class ContentDataTool {
 
   constructor(
     postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
-    getValorIDEApiKey: () => Promise<string | undefined>,
   ) {
-    this.accountService = new ValorIDEAccountService(
-      postMessageToWebview,
-      getValorIDEApiKey,
-    );
+    this.accountService = new ValorIDEAccountService(postMessageToWebview);
   }
 
   /**
@@ -80,9 +76,8 @@ export class ContentDataTool {
  */
 export function createContentDataTool(
   postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
-  getValorIDEApiKey: () => Promise<string | undefined>,
 ): ContentDataTool {
-  return new ContentDataTool(postMessageToWebview, getValorIDEApiKey);
+  return new ContentDataTool(postMessageToWebview);
 }
 
 /**
@@ -97,13 +92,8 @@ export async function exampleUsage(): Promise<void> {
     console.log("Mock: Posting message to webview:", message.type);
   };
 
-  const mockGetApiKey = async (): Promise<string | undefined> => {
-    console.log("Mock: Getting API key from secure storage");
-    return undefined; // In real usage, this would return the actual JWT token
-  };
-
   // Create and use the tool
-  const tool = createContentDataTool(mockPostMessage, mockGetApiKey);
+  const tool = createContentDataTool(mockPostMessage);
   const result = await tool.fetchContentData();
 
   console.log("Tool result:", result);

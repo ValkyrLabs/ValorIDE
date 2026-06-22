@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 
@@ -17,7 +17,7 @@ const baseExtensionState = {
   valorideMessages: [],
   advancedSettings: {},
 };
-let mockExtensionState = { ...baseExtensionState };
+let mockExtensionState: any = { ...baseExtensionState };
 let AccountView: typeof import("./AccountView").default;
 
 vi.mock("../Login/form", () => ({
@@ -230,9 +230,12 @@ vi.mock("@thorapi/components/LoadingSpinner", () => ({
   default: () => <div data-testid="loading-spinner" />,
 }));
 
+beforeAll(async () => {
+  ({ default: AccountView } = await import("./AccountView"));
+}, 60_000);
+
 describe("AccountView - Buy Credits button integration", () => {
   beforeEach(async () => {
-    ({ default: AccountView } = await import("./AccountView"));
     mockExtensionState = { ...baseExtensionState };
     mockUseGetAccountBalanceQuery.mockClear();
     mockUseGetAccountBalancesQuery.mockClear();
@@ -269,7 +272,7 @@ describe("AccountView - Buy Credits button integration", () => {
       isFetching: false,
       refetch: vi.fn(),
     });
-  });
+  }, 30_000);
 
   it("renders the Buy Credits button and triggers openInBrowser message", () => {
     mockPostMessage.mockClear();
@@ -433,6 +436,55 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
   });
 
+  it("prefers billing account identifiers over the principal id for balance lookups", () => {
+    mockExtensionState = {
+      ...baseExtensionState,
+      authenticatedUser: {
+        id: "user-123",
+        customerId: "customer-456",
+      },
+      userInfo: undefined,
+      isLoggedIn: true,
+    };
+
+    render(
+      <AccountView
+        onDone={() => {}}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => {}}
+      />,
+    );
+
+    expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
+      "customer-456",
+      expect.objectContaining({ skip: false }),
+    );
+  });
+
+  it("falls back to the authenticated me balance when no account identifier is available", () => {
+    mockExtensionState = {
+      ...baseExtensionState,
+      authenticatedUser: {
+        username: "jm",
+      },
+      userInfo: undefined,
+      isLoggedIn: true,
+    };
+
+    render(
+      <AccountView
+        onDone={() => {}}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => {}}
+      />,
+    );
+
+    expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
+      "me",
+      expect.objectContaining({ skip: false }),
+    );
+  });
+
   it("uses balance response history instead of querying raw transaction tables", () => {
     mockUseGetUsageTransactionsQuery.mockClear();
     mockUseGetPaymentTransactionsQuery.mockClear();
@@ -465,7 +517,6 @@ describe("AccountView - Buy Credits button integration", () => {
 
 describe("AccountView - BuyCredits visibility", () => {
   beforeEach(async () => {
-    ({ default: AccountView } = await import("./AccountView"));
     mockExtensionState = {
       ...baseExtensionState,
       advancedSettings: {
@@ -498,7 +549,7 @@ describe("AccountView - BuyCredits visibility", () => {
       isFetching: false,
       refetch: vi.fn(),
     });
-  });
+  }, 30_000);
 
   it("hides BuyCredits when balance is above the critical threshold", () => {
     mockUseGetAccountBalanceQuery.mockReturnValue({

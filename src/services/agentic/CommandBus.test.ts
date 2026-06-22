@@ -10,7 +10,8 @@ import {
 
 const fixedNow = (() => {
   let count = 0;
-  return () => new Date(`2026-05-13T12:00:0${count++}.000Z`);
+  return () =>
+    new Date(`2026-05-13T12:00:${String(count++).padStart(2, "0")}.000Z`);
 })();
 
 describe("AgenticCommandBus", () => {
@@ -56,7 +57,42 @@ describe("AgenticCommandBus", () => {
     expect(auditSink).toHaveBeenCalledWith(result);
   });
 
-  it("rejects high-risk commands when approval is required but unavailable", async () => {
+  it("preserves MCP-origin command source in audit results", async () => {
+    const bus = new AgenticCommandBus({
+      capabilities: new CapabilityRegistry(createDefaultValorCapabilities()),
+      now: fixedNow,
+    });
+    bus.registerHandler("graymatter.memory", async (command) => ({
+      memoryRef: `gm:${command.payload.query}`,
+    }));
+
+    const result = await bus.execute({
+      capabilityId: "graymatter.memory",
+      correlationId: "mcp-correlation-1",
+      id: "cmd-mcp-memory-read",
+      payload: { query: "release invariants" },
+      source: "mcp",
+    });
+
+    expect(result).toMatchObject({
+      audit: {
+        capabilityId: "graymatter.memory",
+        correlationId: "mcp-correlation-1",
+        requiresApproval: false,
+        source: "mcp",
+      },
+      commandId: "cmd-mcp-memory-read",
+      output: { memoryRef: "gm:release invariants" },
+      status: "success",
+      tool: {
+        capabilityId: "graymatter.memory",
+        kind: "graymatter",
+        label: "Read and write GrayMatter memory",
+      },
+    });
+  });
+
+  it("returns approval-required when high-risk commands need unavailable approval", async () => {
     const bus = new AgenticCommandBus({
       capabilities: new CapabilityRegistry(createDefaultValorCapabilities()),
       now: fixedNow,
@@ -76,7 +112,7 @@ describe("AgenticCommandBus", () => {
         code: "ERR_APPROVAL_REQUIRED",
         message: "Approval is required for terminal.execute.",
       },
-      status: "rejected",
+      status: "approval-required",
     });
   });
 
@@ -171,6 +207,72 @@ describe("AgenticCommandBus", () => {
         capabilityId: "terminal.execute",
         label: "Execute local commands",
       },
+    });
+  });
+
+  it("preserves queued Build Mode outputs as queued command-bus results", async () => {
+    const bus = new AgenticCommandBus({
+      capabilities: new CapabilityRegistry(createDefaultValorCapabilities()),
+      now: fixedNow,
+    });
+    bus.registerHandler("terminal.execute", async () => ({
+      output: {
+        buildModeStatus: "queued",
+        queued: true,
+      },
+      stdout: "npm test queued for operator execution",
+    }));
+
+    const result = await bus.execute({
+      capabilityId: "terminal.execute",
+      id: "cmd-5",
+      payload: { command: "npm test" },
+      requiresApproval: false,
+      source: "local",
+    });
+
+    expect(result).toMatchObject({
+      commandId: "cmd-5",
+      output: {
+        buildModeStatus: "queued",
+        queued: true,
+      },
+      status: "queued",
+      stdout: "npm test queued for operator execution",
+    });
+  });
+
+  it("preserves failed Build Mode outputs as failed command-bus results", async () => {
+    const bus = new AgenticCommandBus({
+      capabilities: new CapabilityRegistry(createDefaultValorCapabilities()),
+      now: fixedNow,
+    });
+    bus.registerHandler("terminal.execute", async () => ({
+      output: {
+        buildModeStatus: "failed",
+        exitCode: 1,
+      },
+      stderr: "tests failed",
+      stdout: "failing test output",
+    }));
+
+    const result = await bus.execute({
+      capabilityId: "terminal.execute",
+      id: "cmd-6",
+      payload: { command: "npm test" },
+      requiresApproval: false,
+      source: "local",
+    });
+
+    expect(result).toMatchObject({
+      commandId: "cmd-6",
+      output: {
+        buildModeStatus: "failed",
+        exitCode: 1,
+      },
+      status: "failed",
+      stderr: "tests failed",
+      stdout: "failing test output",
     });
   });
 });

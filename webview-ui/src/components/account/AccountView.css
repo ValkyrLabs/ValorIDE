@@ -100,28 +100,113 @@
   gap: 16px;
 }
 
-.scroll-tabs-container {
+.lcars-account-tab-container {
   flex-shrink: 0;
+  margin: 6px 0 16px;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
 }
 
-.nav-tabs.scroll-tabs {
+.lcars-account-tabs {
+  align-items: flex-end;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 6px;
+  min-height: 48px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 8px 0;
+  scrollbar-color: var(--vscode-focusBorder) transparent;
+  scrollbar-width: thin;
+  white-space: nowrap;
 }
 
-.nav-tabs.scroll-tabs .nav-link {
+.lcars-account-tabs::-webkit-scrollbar {
+  height: 8px;
+}
+
+.lcars-account-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lcars-account-tabs::-webkit-scrollbar-thumb {
+  background: var(--vscode-focusBorder);
+  border-radius: 4px;
+}
+
+.lcars-account-tab-link {
   align-items: center;
-  display: flex;
+  background: var(--vscode-editorWidget-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
   gap: 8px;
-  min-height: 34px;
-  padding: 6px 10px;
-  white-space: normal;
+  min-height: 38px;
+  min-width: 118px;
+  overflow: hidden;
+  padding: 8px 14px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.lcars-account-tab-link:hover {
+  background: rgba(30, 229, 255, 0.08);
+  border-color: var(--vscode-focusBorder);
+  color: var(--vscode-foreground);
+  transform: translateY(-1px);
+}
+
+.lcars-account-tab-link.active {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 229, 255, 0.12),
+    rgba(122, 92, 255, 0.04)
+  );
+  border-color: var(--vscode-focusBorder);
+  color: var(--vscode-foreground);
+  font-weight: 700;
+}
+
+.lcars-account-tab-link.active::after {
+  background: linear-gradient(90deg, #1ee5ff, #7a5cff);
+  border-radius: 3px 3px 0 0;
+  bottom: 0;
+  box-shadow: 0 0 12px rgba(30, 229, 255, 0.6);
+  content: "";
+  height: 3px;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.lcars-account-tab-link.needs-attention {
+  border-color: rgba(255, 157, 0, 0.75);
+  color: #ffb84d;
+}
+
+.lcars-account-tab-link svg {
+  flex: 0 0 auto;
 }
 
 .account-tab-label {
   font-size: 12px;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .account-content {

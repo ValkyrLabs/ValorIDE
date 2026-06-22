@@ -39,4 +39,20 @@ describe("accessControl role handling", () => {
     );
     expect(roles).toHaveLength(2);
   });
+
+  it("preserves billing account identifiers needed for credit balance lookups", () => {
+    writeStoredPrincipal({
+      id: "user-123",
+      username: "demo",
+      customerId: "customer-456",
+      creditAccountId: "credit-789",
+      roles: [],
+      grantedAuthorities: [],
+    } as any);
+
+    const loaded = readStoredPrincipal() as any;
+
+    expect(loaded?.customerId).toBe("customer-456");
+    expect(loaded?.creditAccountId).toBe("credit-789");
+  });
 });

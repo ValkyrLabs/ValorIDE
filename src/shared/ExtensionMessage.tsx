@@ -15,15 +15,15 @@ import {
   McpViewTab,
 } from "./mcp";
 import { TelemetrySetting } from "./TelemetrySetting";
-import type {
-  BalanceResponse,
-  UsageTransaction,
-  PaymentTransaction,
-} from "./ValorIDEAccount";
 import { ValorIDERulesToggles } from "./valoride-rules";
 import type { GrayMatterSessionState } from "./GrayMatterSession";
 import type { AgenticCapabilityCommandCenterState } from "./AgenticState";
 import type { RemoteCodingCommandResult } from "../services/communication/RemoteCodingSessionOrchestrator";
+import type {
+  BuildModeAutomationSnapshot,
+  BuildModeCommandReceipt,
+  ValorTaskBridgePayload,
+} from "./BuildMode";
 
 export interface RemoteCommand {
   id: string;
@@ -72,9 +72,6 @@ export interface ExtensionMessage {
     | "isImageUrlResult"
     | "didUpdateSettings"
     | "addRemoteServerResult"
-    | "userCreditsBalance"
-    | "userCreditsUsage"
-    | "userCreditsPayments"
     | "totalTasksSize"
     | "addToInput"
     | "browserConnectionResult"
@@ -107,7 +104,10 @@ export interface ExtensionMessage {
     | "taskCompletionFilePreview"
     | "webviewError"
     | "remoteCodingSessionEvent"
-    | "serverConsoleNewMessage";
+    | "serverConsoleNewMessage"
+    | "valorBuildModeTask"
+    | "valorBuildModeAutomationSnapshot"
+    | "valorBuildModeCommandResult";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
@@ -145,6 +145,9 @@ export interface ExtensionMessage {
   models?: Record<string, any>; // For legacy llmDetailsUpdated payloads
   llmDetails?: LlmDetailsSummary[]; // Preferred llmDetails payload
   payload?: any;
+  valorTaskBridgePayload?: Partial<ValorTaskBridgePayload>;
+  buildModeAutomationSnapshot?: BuildModeAutomationSnapshot;
+  buildModeCommandReceipt?: BuildModeCommandReceipt;
   mcpServers?: McpServer[];
   customToken?: string;
   token?: string; // JWT token for authentication
@@ -170,9 +173,6 @@ export interface ExtensionMessage {
   relativePath?: string;
   url?: string;
   isImage?: boolean;
-  userCreditsBalance?: BalanceResponse;
-  userCreditsUsage?: UsageTransaction[];
-  userCreditsPayments?: PaymentTransaction[];
   totalTasksSize?: number | null;
   endpoint?: string;
   isBundled?: boolean;

@@ -184,6 +184,10 @@ export function activate(context: vscode.ExtensionContext) {
       },
     ),
   );
+  sidebarWebview.controller.startBuildModeAutomationMonitor();
+  context.subscriptions.push({
+    dispose: () => sidebarWebview.controller.stopBuildModeAutomationMonitor(),
+  });
 
   Logger.log("ValorIDE extension activated");
 

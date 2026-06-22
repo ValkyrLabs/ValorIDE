@@ -1,4 +1,3 @@
-import { BASE_PATH } from "@thorapi/src";
 import {
   applyCsrfHeader,
   CSRF_HEADER_NAME,
@@ -10,7 +9,11 @@ type HeadersLike = HeadersInit | undefined;
 
 export interface AuthRequestInit extends RequestInit {}
 
-const apiBasePath = BASE_PATH.replace(/\/+$/, "");
+const apiBasePath = (
+  process.env.VALORIDE_API_BASE_PATH ||
+  process.env.REACT_APP_BASE_PATH ||
+  "https://api-0.valkyrlabs.com/v1"
+).replace(/\/+$/, "");
 
 const toHeaders = (input: HeadersLike): Headers => {
   if (input instanceof Headers) {

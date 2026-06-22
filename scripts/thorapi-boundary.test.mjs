@@ -43,3 +43,39 @@ test("ValorIDE keeps generated ThorAPI in the webview only", () => {
     "sync script must not recreate root src/thorapi",
   );
 });
+
+test("account credits use the webview RTK Query client boundary", () => {
+  const forbiddenCreditBridgeTokens = [
+    "fetchUserCreditsData",
+    "userCreditsBalance",
+    "userCreditsUsage",
+    "userCreditsPayments",
+    "requestBalanceRefresh",
+  ];
+
+  const files = [
+    "src/shared/ExtensionMessage.tsx",
+    "src/shared/WebviewMessage.ts",
+    "src/core/controller/index.ts",
+    "src/services/account/ValorIDEAccountService.ts",
+    "webview-ui/src/context/ExtensionStateContext.tsx",
+    "webview-ui/src/components/account/AccountView.tsx",
+  ];
+
+  for (const file of files) {
+    const text = readText(file);
+    for (const token of forbiddenCreditBridgeTokens) {
+      assert.doesNotMatch(
+        text,
+        new RegExp(`\\b${token}\\b`),
+        `${file} must not reintroduce the extension-host credit bridge; use webview-ui/src/services/creditsApi.ts RTK Query endpoints instead`,
+      );
+    }
+  }
+
+  assert.match(
+    readText("webview-ui/src/components/account/AccountView.tsx"),
+    /useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery/,
+    "AccountView should read account credits through the creditsApi RTK Query hook",
+  );
+});

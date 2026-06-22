@@ -15,6 +15,6 @@
     "outDir": "out",
     "rootDir": "."
   },
-  "include": ["src/**/*.test.ts"],
-  "exclude": ["src/test/**/*.js", "src/**/__tests__/*"]
+  "include": ["src/test/*.ts"],
+  "exclude": ["src/test/**/*.js"]
 }

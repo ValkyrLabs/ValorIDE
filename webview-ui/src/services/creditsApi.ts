@@ -107,7 +107,15 @@ export const normalizeAccountBalance = (payload: any): AccountBalance => {
 
   return {
     ...source,
-    customerId: source.customerId,
+    customerId:
+      source.customerId ??
+      source.customer_id ??
+      source.accountId ??
+      source.account_id ??
+      source.billingAccountId ??
+      source.creditAccountId ??
+      source.customer?.id ??
+      source.account?.id,
     currentBalance:
       explicitBalance !== undefined &&
       !(explicitBalance === 0 && derivedBalance !== 0)
@@ -120,7 +128,16 @@ export const normalizeAccountBalance = (payload: any): AccountBalance => {
 
 const getCustomerId = (payload: unknown): string | undefined => {
   const value = (payload as any)?.data ?? payload;
-  const customerId = value?.customerId ?? value?.accountId ?? value?.id;
+  const customerId =
+    value?.customerId ??
+    value?.customer_id ??
+    value?.accountId ??
+    value?.account_id ??
+    value?.billingAccountId ??
+    value?.creditAccountId ??
+    value?.customer?.id ??
+    value?.account?.id ??
+    value?.id;
   return typeof customerId === "string" && customerId.trim()
     ? customerId.trim()
     : undefined;
@@ -133,6 +150,34 @@ const hasQueryError = (
 } => Boolean((result as any)?.error);
 
 const getQueryData = (result: unknown): unknown => (result as any)?.data;
+
+const hasLedgerRows = (balance?: AccountBalance): boolean =>
+  Boolean(balance?.payments.length || balance?.usageTransactions.length);
+
+export const mergeAccountBalance = (
+  summaryBalance?: AccountBalance,
+  balance?: AccountBalance,
+): AccountBalance | undefined => {
+  if (!summaryBalance) {
+    return balance;
+  }
+  if (!balance) {
+    return summaryBalance;
+  }
+
+  const shouldUseBalanceValue =
+    balance.currentBalance !== 0 ||
+    summaryBalance.currentBalance === 0 ||
+    hasLedgerRows(balance);
+
+  return {
+    ...balance,
+    customerId: balance.customerId || summaryBalance.customerId,
+    currentBalance: shouldUseBalanceValue
+      ? balance.currentBalance
+      : summaryBalance.currentBalance,
+  };
+};
 
 // Balance response for mutations
 export interface BalanceResponse {
@@ -184,6 +229,10 @@ export const creditsApi = createApi({
         const summaryAccountId = getCustomerId(summaryData);
         const primaryAccountId = summaryAccountId || accountId;
 
+        if (accountId === "me" && summaryBalance && !summaryAccountId) {
+          return { data: summaryBalance };
+        }
+
         let balanceResult = await requestBalance(primaryAccountId);
         if (
           hasQueryError(balanceResult) &&
@@ -200,17 +249,16 @@ export const creditsApi = createApi({
           return { error: balanceResult.error as any };
         }
 
-        const balance = normalizeAccountBalance(getQueryData(balanceResult));
-        const authoritativeBalance = finiteNumber(
-          summaryBalance?.currentBalance,
-          balance.currentBalance,
+        const balance = mergeAccountBalance(
+          summaryBalance,
+          normalizeAccountBalance(getQueryData(balanceResult)),
         );
 
         return {
           data: {
-            ...balance,
-            customerId: balance.customerId || summaryAccountId,
-            currentBalance: authoritativeBalance ?? 0,
+            ...balance!,
+            customerId: balance?.customerId || summaryAccountId,
+            currentBalance: balance?.currentBalance ?? 0,
           },
         };
       },

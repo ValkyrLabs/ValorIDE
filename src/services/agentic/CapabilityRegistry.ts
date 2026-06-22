@@ -1,5 +1,8 @@
 export type CapabilityKind =
+  | "automation"
   | "browser"
+  | "checkpoint"
+  | "connector"
   | "filesystem"
   | "graymatter"
   | "mcp"
@@ -40,7 +43,10 @@ export interface CapabilitySnapshotInput {
 }
 
 export interface LocalExecutionCapabilities {
+  automation: boolean;
   browser: boolean;
+  checkpoint: boolean;
+  connector: boolean;
   filesystem: boolean;
   mcp: boolean;
   terminal: boolean;
@@ -106,6 +112,32 @@ export const createDefaultValorCapabilities = (): CapabilityDescriptor[] => [
     requiresApproval: true,
     risk: "medium",
     localOnly: true,
+  },
+  {
+    id: "automation.schedule",
+    label: "Schedule guarded automations",
+    kind: "automation",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
+    localOnly: true,
+  },
+  {
+    id: "checkpoint.manage",
+    label: "Create and restore task checkpoints",
+    kind: "checkpoint",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
+    localOnly: true,
+  },
+  {
+    id: "connector.read",
+    label: "Read authorized connector data",
+    kind: "connector",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
   },
   {
     id: "thorapi.rest",
@@ -185,7 +217,10 @@ export class CapabilityRegistry {
       capabilities,
       generatedAt: this.now().toISOString(),
       localExecution: {
+        automation: hasCapability("automation.schedule"),
         browser: hasCapability("browser.automation"),
+        checkpoint: hasCapability("checkpoint.manage"),
+        connector: hasCapability("connector.read"),
         filesystem:
           hasCapability("filesystem.read") || hasCapability("filesystem.write"),
         mcp: hasCapability("mcp.tool"),

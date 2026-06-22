@@ -18,6 +18,7 @@ export interface AgenticSwarmState {
 }
 
 export type AgenticCommandStatus =
+  | "approval-required"
   | "queued"
   | "running"
   | "completed"

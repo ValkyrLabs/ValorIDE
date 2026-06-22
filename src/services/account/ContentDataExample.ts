@@ -48,15 +48,7 @@ export function createAccountServiceExample(): ValorIDEAccountService {
     // In real usage, this would send the message to the webview
   };
 
-  // Example getValorIDEApiKey function
-  const getValorIDEApiKey = async (): Promise<string | undefined> => {
-    // In real usage, this would retrieve the JWT token from VSCode's secure storage
-    // For this example, we'll return undefined to show error handling
-    console.log("Retrieving ValorIDE API key from secure storage...");
-    return undefined; // Replace with actual token retrieval
-  };
-
-  return new ValorIDEAccountService(postMessageToWebview, getValorIDEApiKey);
+  return new ValorIDEAccountService(postMessageToWebview);
 }
 
 /**

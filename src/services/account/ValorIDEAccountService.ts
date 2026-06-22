@@ -1,39 +1,12 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
-// Align account-related types with ThorAPI models (RTK/ThorAPI)
-// Note: We don't execute RTK Query here (extension host). The webview owns RTK.
-// These imports ensure consumers use the correct model shapes.
-import type { UsageTransaction, PaymentTransaction } from "@thorapi/model";
 
 export class ValorIDEAccountService {
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;
-  private getValorIDEApiKey: () => Promise<string | undefined>;
 
   constructor(
     postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
-    getValorIDEApiKey: () => Promise<string | undefined>,
   ) {
     this.postMessageToWebview = postMessageToWebview;
-    this.getValorIDEApiKey = getValorIDEApiKey;
-  }
-
-  // Obsolete REST helpers removed. Usage/Payments now flow through webview RTK.
-
-  /**
-   * Request account balance refresh via the webview RTK Query system.
-   * The webview component UsageTrackingHandler will handle this and
-   * respond back with 'usage_tracking_response' (balance_updated).
-   */
-  async requestBalanceRefresh(): Promise<void> {
-    try {
-      await this.postMessageToWebview({
-        type: "usage_tracking" as any,
-        action: "request_balance" as any,
-        data: {},
-      } as unknown as ExtensionMessage);
-    } catch (error) {
-      console.error("Failed to request balance refresh:", error);
-    }
   }
 
   /**

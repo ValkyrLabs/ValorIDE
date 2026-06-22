@@ -1,4 +1,12 @@
-import { memo, useState, useCallback, useEffect, useMemo } from "react";
+import {
+  memo,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
 import "./AccountView.css";
 
 import { useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery } from "@thorapi/services/creditsApi";
@@ -54,6 +62,7 @@ import {
   writeStoredPrincipal,
   readStoredPrincipal,
 } from "@thorapi/utils/accessControl";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import { CreditIntent } from "@thorapi/types/creditIntent";
 import { buildAccountLoginSuccessMessage } from "./accountAuthBridge";
 import { loginThroughExtensionHost } from "./extensionLogin";
@@ -106,6 +115,44 @@ const formatCreditCount = (value: number) =>
     minimumFractionDigits: 0,
   }).format(Math.max(0, Math.round(value)));
 
+const firstNonEmptyString = (...values: unknown[]): string | undefined => {
+  for (const value of values) {
+    if (value === undefined || value === null) {
+      continue;
+    }
+    const stringValue = String(value).trim();
+    if (stringValue) {
+      return stringValue;
+    }
+  }
+  return undefined;
+};
+
+const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
+  const explicitAccountId = firstNonEmptyString(
+    principal?.customerId,
+    principal?.creditAccountId,
+    principal?.billingAccountId,
+    principal?.accountId,
+    principal?.customer?.id,
+    principal?.account?.id,
+  );
+  if (explicitAccountId) {
+    return explicitAccountId;
+  }
+
+  const fallbackId = firstNonEmptyString(
+    principal?.id,
+    principal?.principalId,
+    principal?.ownerId,
+  );
+  const username = firstNonEmptyString(principal?.username);
+  const email = firstNonEmptyString(principal?.email);
+  return fallbackId && fallbackId !== username && fallbackId !== email
+    ? fallbackId
+    : undefined;
+};
+
 const AccountView = ({
   onDone,
   serverConsoleNeedsAttention,
@@ -140,20 +187,18 @@ const AccountView = ({
   const storedAuth = useMemo(() => {
     try {
       const storedPrincipal = readStoredPrincipal();
-      const storedToken =
-        sessionStorage.getItem("jwtToken") ||
-        localStorage.getItem("jwtToken") ||
-        localStorage.getItem("authToken");
+      const storedToken = getStoredJwtToken();
       return {
         hasStoredJwt: Boolean(storedPrincipal && storedToken),
+        storedToken,
         storedPrincipal,
       };
     } catch {
-      return { hasStoredJwt: false, storedPrincipal: null };
+      return { hasStoredJwt: false, storedToken: null, storedPrincipal: null };
     }
   }, [jwtToken, didLogin]);
 
-  const { hasStoredJwt, storedPrincipal } = storedAuth;
+  const { hasStoredJwt, storedPrincipal, storedToken } = storedAuth;
   const hasAuthIdentity = Boolean(
     authenticatedUser || userInfo || hasStoredJwt,
   );
@@ -163,6 +208,9 @@ const AccountView = ({
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<AccountTab>(
     authed ? "account" : "login",
+  );
+  const tabRefs = useRef<Partial<Record<AccountTab, HTMLButtonElement | null>>>(
+    {},
   );
 
   // Keep active tab in sync with authentication state
@@ -189,16 +237,24 @@ const AccountView = ({
     setActiveTab(authed ? "receipts" : "login");
   }, [authed, initialSwarmCommandResponse]);
 
+  useEffect(() => {
+    const activeTabElement = tabRefs.current[activeTab];
+    if (!activeTabElement?.scrollIntoView) {
+      return;
+    }
+    activeTabElement.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeTab]);
+
   const { principal: resolvedPrincipal } = useAccessControl(
     authenticatedUser || userInfo || storedPrincipal,
   );
-  const principalId = resolvedPrincipal?.id;
   const accountId =
-    typeof principalId === "string"
-      ? principalId
-      : principalId !== undefined && principalId !== null
-        ? String(principalId)
-        : "";
+    resolveCreditAccountKey(resolvedPrincipal as Record<string, any>) ||
+    (hasBackendAuth ? "me" : "");
   const {
     data: creditBalanceData,
     isLoading: isCreditBalanceLoading,
@@ -208,14 +264,28 @@ const AccountView = ({
     skip: !accountId || !hasBackendAuth,
   });
 
+  const lastBalanceRefreshKeyRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!accountId || !hasBackendAuth) {
+      lastBalanceRefreshKeyRef.current = undefined;
+      return;
+    }
+
+    const refreshKey = `${accountId}:${jwtToken || storedToken || "session"}`;
+    if (lastBalanceRefreshKeyRef.current === refreshKey) {
+      return;
+    }
+    lastBalanceRefreshKeyRef.current = refreshKey;
+    void refetchCreditBalance();
+  }, [accountId, hasBackendAuth, jwtToken, refetchCreditBalance, storedToken]);
+
   // Combined loading state
   const loading = isCreditBalanceLoading || isCreditBalanceFetching;
   const usageData = creditBalanceData?.usageTransactions || [];
   const paymentsData = creditBalanceData?.payments || [];
 
   const effectiveBalance = useMemo(() => {
-    const rawBalance =
-      firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
+    const rawBalance = firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
     return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
   }, [apiMetrics.totalCost, creditBalanceData?.currentBalance]);
   const criticalBalanceThreshold =
@@ -372,6 +442,80 @@ const AccountView = ({
     typedAgenticState?.swarm?.instanceId ||
     typedAgenticState?.swarm?.lastError ||
     "No SWARM registration ACK yet.";
+  const accountTabs = useMemo<
+    Array<{
+      key: Exclude<AccountTab, "login">;
+      label: string;
+      title: string;
+      icon: ReactNode;
+      needsAttention?: boolean;
+    }>
+  >(
+    () => [
+      {
+        key: "account",
+        label: "Account",
+        title: "Account",
+        icon: <FaUserEdit />,
+      },
+      {
+        key: "applications",
+        label: "Applications",
+        title: "Applications",
+        icon: <FaAppStore />,
+      },
+      {
+        key: "appGeneration",
+        label: "App Generation",
+        title: "App Generation",
+        icon: <FaHammer />,
+      },
+      {
+        key: "contextPage",
+        label: "Context Pages",
+        title: "Context Pages",
+        icon: <FaBrain />,
+      },
+      {
+        key: "generatedFiles",
+        label: "Generated Files",
+        title: "Generated Files",
+        icon: <FaFileArchive />,
+      },
+      {
+        key: "receipts",
+        label: "Receipts",
+        title: "Receipts",
+        icon: <FaReceipt />,
+      },
+      {
+        key: "swarm",
+        label: "SWARM",
+        title: "SWARM",
+        icon: <FaNetworkWired />,
+      },
+      {
+        key: "agenticCommandCenter",
+        label: "Agentic Command Center",
+        title: "Agentic Command Center",
+        icon: <FaBrain />,
+      },
+      {
+        key: "serverConsole",
+        label: "Server Console",
+        title: "Server Console",
+        icon: <FaServer />,
+        needsAttention: serverConsoleNeedsAttention,
+      },
+      {
+        key: "userPreferences",
+        label: "User Preferences",
+        title: "User Preferences",
+        icon: <FaUserEdit />,
+      },
+    ],
+    [serverConsoleNeedsAttention],
+  );
 
   return (
     <div
@@ -409,110 +553,34 @@ const AccountView = ({
       )}
 
       {/* Tab navigation */}
-      <div className="scroll-tabs-container">
-        <div className="nav-tabs scroll-tabs">
-          {/* Removed Login tab button as requested */}
-          {authed && (
-            <>
-              <div
-                className={`nav-link ${activeTab === "account" ? "active" : ""}`}
-                onClick={() => setActiveTab("account")}
-                style={{ cursor: "pointer" }}
-                title="Account"
-              >
-                <FaUserEdit />
-                <span className="account-tab-label">Account</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
-                onClick={() => setActiveTab("applications")}
-                style={{ cursor: "pointer" }}
-                title="Applications"
-              >
-                <FaAppStore />
-                <span className="account-tab-label">Applications</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "appGeneration" ? "active" : ""}`}
-                onClick={() => setActiveTab("appGeneration")}
-                style={{ cursor: "pointer" }}
-                title="App Generation"
-              >
-                <FaHammer />
-                <span className="account-tab-label">App Generation</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "contextPage" ? "active" : ""}`}
-                onClick={() => setActiveTab("contextPage")}
-                style={{ cursor: "pointer" }}
-                title="Context Pages"
-              >
-                <FaBrain />
-                <span className="account-tab-label">Context Pages</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
-                onClick={() => setActiveTab("generatedFiles")}
-                style={{ cursor: "pointer" }}
-                title="Generated Files"
-              >
-                <FaFileArchive />
-                <span className="account-tab-label">Generated Files</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "receipts" ? "active" : ""}`}
-                onClick={() => setActiveTab("receipts")}
-                style={{ cursor: "pointer" }}
-                title="Receipts"
-              >
-                <FaReceipt />
-                <span className="account-tab-label">Receipts</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "swarm" ? "active" : ""}`}
-                onClick={() => setActiveTab("swarm")}
-                style={{ cursor: "pointer" }}
-                title="SWARM"
-              >
-                <FaNetworkWired />
-                <span className="account-tab-label">SWARM</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "agenticCommandCenter" ? "active" : ""}`}
-                onClick={() => setActiveTab("agenticCommandCenter")}
-                style={{ cursor: "pointer" }}
-                title="Agentic Command Center"
-              >
-                <FaBrain />
-                <span className="account-tab-label">
-                  Agentic Command Center
-                </span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention ? "needs-attention" : ""}`}
-                onClick={() => {
-                  setActiveTab("serverConsole");
-                  onClearServerConsoleNeedsAttention();
+      {authed && (
+        <nav className="lcars-account-tab-container" aria-label="Account tabs">
+          <div className="lcars-account-tabs lcars-variant-cyan" role="tablist">
+            {accountTabs.map((tab) => (
+              <button
+                key={tab.key}
+                ref={(element) => {
+                  tabRefs.current[tab.key] = element;
                 }}
-                style={{ cursor: "pointer" }}
-                title="Server Console"
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                className={`lcars-account-tab-link ${activeTab === tab.key ? "active" : ""} ${tab.needsAttention ? "needs-attention" : ""}`}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  if (tab.key === "serverConsole") {
+                    onClearServerConsoleNeedsAttention();
+                  }
+                }}
+                title={tab.title}
               >
-                <FaServer />
-                <span className="account-tab-label">Server Console</span>
-              </div>
-              <div
-                className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
-                onClick={() => setActiveTab("userPreferences")}
-                style={{ cursor: "pointer" }}
-                title="User Preferences"
-              >
-                <FaUserEdit />
-                <span className="account-tab-label">User Preferences</span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+                {tab.icon}
+                <span className="account-tab-label">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* Tab content */}
       {activeTab === "login" ? (

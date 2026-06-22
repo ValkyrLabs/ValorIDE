@@ -3,6 +3,7 @@ import * as childProcess from "child_process";
 import * as path from "path";
 import * as readline from "readline";
 import { fileExistsAtPath } from "@utils/fs";
+import "@utils/path";
 import { ValorIDEIgnoreController } from "@core/ignore/ValorIDEIgnoreController";
 
 /*
