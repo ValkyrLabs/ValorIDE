@@ -135,6 +135,11 @@ export class FileToolHandler extends BaseToolHandler {
       );
     }
 
+    const generatedArtifactError = getGeneratedArtifactEditError(relPath);
+    if (generatedArtifactError) {
+      return fail(generatedArtifactError);
+    }
+
     const validateEdit = (edit: PSREdit, idx: number): string | undefined => {
       if (!edit || typeof edit !== "object") {
         return `edit ${idx} is not an object`;
@@ -393,6 +398,14 @@ export class FileToolHandler extends BaseToolHandler {
           block.name,
           missingParam,
         ),
+      };
+    }
+
+    const generatedArtifactError = getGeneratedArtifactEditError(relPath);
+    if (generatedArtifactError) {
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(generatedArtifactError),
       };
     }
 
@@ -1213,16 +1226,7 @@ export class FileToolHandler extends BaseToolHandler {
             ),
           };
         }
-        if (!regex) {
-          this.context.consecutiveMistakeCount++;
-          return {
-            shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError(
-              "search_files",
-              "regex",
-            ),
-          };
-        }
+        const effectiveRegex = regex?.trim() ? regex : ".";
         this.context.consecutiveMistakeCount = 0;
 
         const pathAccess = this.getPathAccess();
@@ -1245,14 +1249,19 @@ export class FileToolHandler extends BaseToolHandler {
         const results = await regexSearchFiles(
           this.context.cwd,
           absolutePath,
-          regex,
+          effectiveRegex,
           filePattern,
           this.context.valorideIgnoreController,
         );
+        const content =
+          effectiveRegex === "."
+            ? `No search regex was provided, so ValorIDE searched for any non-empty line.\n\n${results}`
+            : results;
 
         const completeMessage = JSON.stringify({
           ...sharedMessageProps,
-          content: results,
+          regex: effectiveRegex,
+          content,
           operationIsLocatedInWorkspace: isLocatedInWorkspace(
             block.params.path,
           ),
@@ -1324,3 +1333,34 @@ export class FileToolHandler extends BaseToolHandler {
     return formatResponse.valorideIgnoreError(relPath);
   }
 }
+
+const getGeneratedArtifactEditError = (
+  relPath: string | undefined,
+): string | undefined => {
+  if (!relPath || !isGeneratedThorApiArtifactPath(relPath)) {
+    return undefined;
+  }
+  return `Generated ThorAPI artifact edits are blocked for ${relPath}. Update the OpenAPI/VAIX/ThorAPI source contract or template and regenerate instead.`;
+};
+
+const isGeneratedThorApiArtifactPath = (value: string): boolean => {
+  const normalized = value
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .toLowerCase();
+  return (
+    normalized.includes("/thorapi/") ||
+    normalized.startsWith("thorapi/") ||
+    normalized.includes("/src/thorapi/") ||
+    normalized.includes("/generated/thorapi/") ||
+    normalized.includes("/generated/") ||
+    normalized.startsWith("generated/") ||
+    normalized.includes("/__generated__/") ||
+    normalized.startsWith("__generated__/") ||
+    normalized.includes("/src/generated/") ||
+    normalized.startsWith("src/generated/") ||
+    /(?:^|\/)generated\.[cm]?[jt]sx?$/.test(normalized) ||
+    normalized.includes("/src/shared/proto/") ||
+    normalized.startsWith("src/shared/proto/")
+  );
+};

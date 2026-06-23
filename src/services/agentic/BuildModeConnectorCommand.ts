@@ -1,4 +1,5 @@
 import type { BuildModeScopeContext } from "@shared/BuildMode";
+import { redactCommandSecrets } from "./BuildModeCommandPolicy";
 
 export interface BuildModeConnectorReadDescriptor {
   action: string;
@@ -14,12 +15,54 @@ export interface BuildModeConnectorReadDescriptor {
   traceId?: string;
 }
 
+export interface BuildModeConnectorIntentDescriptor
+  extends BuildModeConnectorReadDescriptor {
+  intent: "mutation" | "read";
+}
+
 const READ_ACTIONS = new Set(["get", "list", "read", "search"]);
+const MUTATION_ACTIONS = new Set([
+  "archive",
+  "compose",
+  "create",
+  "delete",
+  "deliver",
+  "forward",
+  "move",
+  "mutate",
+  "reply",
+  "send",
+  "trash",
+  "update",
+]);
 
 export const parseBuildModeConnectorReadCommand = (
   command: string,
   scope?: BuildModeScopeContext,
 ): BuildModeConnectorReadDescriptor | undefined => {
+  const intent = parseBuildModeConnectorIntent(command, scope);
+  if (intent?.intent !== "read") {
+    return undefined;
+  }
+  return {
+    action: intent.action,
+    connectorId: intent.connectorId,
+    connectorName: intent.connectorName,
+    dataClass: intent.dataClass,
+    queryRef: intent.queryRef,
+    receiptRef: intent.receiptRef,
+    recordCount: intent.recordCount,
+    resourceUri: intent.resourceUri,
+    scopeRef: intent.scopeRef,
+    status: intent.status,
+    traceId: intent.traceId,
+  };
+};
+
+export const parseBuildModeConnectorIntent = (
+  command: string,
+  scope?: BuildModeScopeContext,
+): BuildModeConnectorIntentDescriptor | undefined => {
   const target = command.match(
     /^connector:(?<target>[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/i,
   )?.groups?.target;
@@ -28,12 +71,24 @@ export const parseBuildModeConnectorReadCommand = (
   }
   const [connectorId, action] = target.split(".");
   const normalizedAction = action.toLowerCase();
-  if (!connectorId || !READ_ACTIONS.has(normalizedAction)) {
+  const intent = READ_ACTIONS.has(normalizedAction)
+    ? "read"
+    : MUTATION_ACTIONS.has(normalizedAction)
+      ? "mutation"
+      : undefined;
+  if (!connectorId || !intent) {
     return undefined;
   }
 
-  const dataClass = readCommandField(command, "data");
-  const queryRef = readCommandField(command, "query");
+  const dataClass =
+    readCommandField(command, "data") ??
+    (intent === "mutation" ? "connector.mutation" : undefined);
+  const queryRef =
+    readCommandField(command, "query") ??
+    readCommandField(command, "intent") ??
+    (intent === "mutation"
+      ? `${connectorId.toLowerCase()}:${normalizedAction}`
+      : undefined);
   if (!dataClass || !queryRef) {
     return undefined;
   }
@@ -48,17 +103,20 @@ export const parseBuildModeConnectorReadCommand = (
     connectorId: connectorId.toLowerCase(),
     connectorName: toConnectorDisplayName(connectorId),
     dataClass: redactConnectorValue(dataClass),
+    intent,
     queryRef: redactConnectorValue(queryRef),
     receiptRef: receiptRef ? redactConnectorValue(receiptRef) : undefined,
     recordCount,
     resourceUri: resourceUri ? redactConnectorValue(resourceUri) : undefined,
     scopeRef: scope
-      ? `${scope.tenantId}/${scope.principalId}`
-      : readCommandField(command, "scope"),
+      ? redactConnectorValue(`${scope.tenantId}/${scope.principalId}`)
+      : redactOptionalConnectorValue(readCommandField(command, "scope")),
     status:
-      toConnectorStatus(readCommandField(command, "status")) ??
-      (receiptRef ? "authorized" : "partial"),
-    traceId: readCommandField(command, "trace"),
+      intent === "mutation"
+        ? "blocked"
+        : (toConnectorStatus(readCommandField(command, "status")) ??
+          (receiptRef ? "authorized" : "partial")),
+    traceId: redactOptionalConnectorValue(readCommandField(command, "trace")),
   };
 };
 
@@ -94,6 +152,11 @@ export const summarizeBuildModeConnectorRead = (
   descriptor.receiptRef
     ? `${descriptor.connectorName} ${descriptor.dataClass} read is backed by connector receipt ${descriptor.receiptRef}.`
     : `${descriptor.connectorName} ${descriptor.dataClass} read metadata captured; attach the external connector receipt to prove record access.`;
+
+export const summarizeBlockedConnectorMutation = (
+  descriptor: BuildModeConnectorIntentDescriptor,
+): string =>
+  `${descriptor.connectorName} ${descriptor.action} was blocked in Build Mode. Connector mutations require an external approved connector workflow and are not executed by the connector read lane.`;
 
 const readCommandField = (
   command: string,
@@ -152,7 +215,9 @@ const toConnectorDisplayName = (connectorId: string): string => {
     .join(" ");
 };
 
+const redactOptionalConnectorValue = (
+  value: string | undefined,
+): string | undefined => (value ? redactConnectorValue(value) : undefined);
+
 const redactConnectorValue = (value: string): string =>
-  value
-    .replace(/\bsk-[A-Za-z0-9_-]{8,}\b/g, "[redacted-secret]")
-    .replace(/\b(token|secret|password)=([^&\s]+)/gi, "$1=[redacted]");
+  redactCommandSecrets(value);

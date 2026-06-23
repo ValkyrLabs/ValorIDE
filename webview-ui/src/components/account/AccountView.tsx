@@ -153,6 +153,23 @@ const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
     : undefined;
 };
 
+const hasUnmeteredAccountAccess = (
+  principal?: Record<string, any> | null,
+  balance?: Record<string, any> | null,
+) => {
+  const plan = firstNonEmptyString(
+    balance?.plan,
+    balance?.billingPlan,
+    principal?.plan,
+    principal?.billingPlan,
+  )?.toLowerCase();
+  return (
+    balance?.unmetered === true ||
+    principal?.unmetered === true ||
+    plan === "unmetered"
+  );
+};
+
 const AccountView = ({
   onDone,
   serverConsoleNeedsAttention,
@@ -255,45 +272,59 @@ const AccountView = ({
   const accountId =
     resolveCreditAccountKey(resolvedPrincipal as Record<string, any>) ||
     (hasBackendAuth ? "me" : "");
+  const balanceAccountId = accountId || (hasBackendAuth ? "me" : "");
   const {
     data: creditBalanceData,
     isLoading: isCreditBalanceLoading,
     isFetching: isCreditBalanceFetching,
+    error: creditBalanceError,
     refetch: refetchCreditBalance,
-  } = useGetCreditAccountBalanceQuery(accountId, {
-    skip: !accountId || !hasBackendAuth,
+  } = useGetCreditAccountBalanceQuery(balanceAccountId, {
+    skip: !balanceAccountId || !hasBackendAuth,
   });
 
   const lastBalanceRefreshKeyRef = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (!accountId || !hasBackendAuth) {
+    if (!balanceAccountId || !hasBackendAuth) {
       lastBalanceRefreshKeyRef.current = undefined;
       return;
     }
 
-    const refreshKey = `${accountId}:${jwtToken || storedToken || "session"}`;
+    const refreshKey = `${balanceAccountId}:${jwtToken || storedToken || "session"}`;
     if (lastBalanceRefreshKeyRef.current === refreshKey) {
       return;
     }
     lastBalanceRefreshKeyRef.current = refreshKey;
     void refetchCreditBalance();
-  }, [accountId, hasBackendAuth, jwtToken, refetchCreditBalance, storedToken]);
+  }, [
+    balanceAccountId,
+    hasBackendAuth,
+    jwtToken,
+    refetchCreditBalance,
+    storedToken,
+  ]);
 
   // Combined loading state
   const loading = isCreditBalanceLoading || isCreditBalanceFetching;
   const usageData = creditBalanceData?.usageTransactions || [];
   const paymentsData = creditBalanceData?.payments || [];
+  const hasUnmeteredAccess = hasUnmeteredAccountAccess(
+    resolvedPrincipal as Record<string, any>,
+    creditBalanceData as Record<string, any>,
+  );
 
   const effectiveBalance = useMemo(() => {
-    const rawBalance = firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
+    const rawBalance =
+      firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
     return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
   }, [apiMetrics.totalCost, creditBalanceData?.currentBalance]);
   const criticalBalanceThreshold =
     advancedSettings?.budgetAlerts?.criticalThreshold;
   const shouldShowBuyCredits =
-    creditIntent ||
-    criticalBalanceThreshold === undefined ||
-    effectiveBalance <= Number(criticalBalanceThreshold);
+    !hasUnmeteredAccess &&
+    (creditIntent ||
+      criticalBalanceThreshold === undefined ||
+      effectiveBalance <= Number(criticalBalanceThreshold));
 
   const [loginUser] = useLoginUserMutation();
   const handleLogin = async (
@@ -460,25 +491,25 @@ const AccountView = ({
       },
       {
         key: "applications",
-        label: "Applications",
+        label: "Apps",
         title: "Applications",
         icon: <FaAppStore />,
       },
       {
         key: "appGeneration",
-        label: "App Generation",
+        label: "Build",
         title: "App Generation",
         icon: <FaHammer />,
       },
       {
         key: "contextPage",
-        label: "Context Pages",
+        label: "Context",
         title: "Context Pages",
         icon: <FaBrain />,
       },
       {
         key: "generatedFiles",
-        label: "Generated Files",
+        label: "Files",
         title: "Generated Files",
         icon: <FaFileArchive />,
       },
@@ -496,20 +527,20 @@ const AccountView = ({
       },
       {
         key: "agenticCommandCenter",
-        label: "Agentic Command Center",
+        label: "Command",
         title: "Agentic Command Center",
         icon: <FaBrain />,
       },
       {
         key: "serverConsole",
-        label: "Server Console",
+        label: "Console",
         title: "Server Console",
         icon: <FaServer />,
         needsAttention: serverConsoleNeedsAttention,
       },
       {
         key: "userPreferences",
-        label: "User Preferences",
+        label: "Prefs",
         title: "User Preferences",
         icon: <FaUserEdit />,
       },
@@ -573,6 +604,7 @@ const AccountView = ({
                   }
                 }}
                 title={tab.title}
+                aria-label={tab.title}
               >
                 {tab.icon}
                 <span className="account-tab-label">{tab.label}</span>
@@ -774,24 +806,34 @@ const AccountView = ({
                 ) : (
                   <>
                     <FaCreditCard aria-hidden="true" />
-                    <CountUp
-                      end={effectiveBalance}
-                      duration={0.66}
-                      decimals={0}
-                      separator=","
-                    />
-                    <VSCodeButton
-                      appearance="icon"
-                      className="mt-1"
-                      disabled={!accountId && !authed}
-                      onClick={async () => {
-                        if (accountId) {
-                          await refetchCreditBalance();
-                        }
-                      }}
-                    >
-                      <FaRecycle />
-                    </VSCodeButton>
+                    {creditBalanceError ? (
+                      <span style={{ fontSize: "0.45em" }}>
+                        Unable to load
+                      </span>
+                    ) : hasUnmeteredAccess ? (
+                      <span data-testid="unmetered-balance">Unlimited</span>
+                    ) : (
+                      <CountUp
+                        end={effectiveBalance}
+                        duration={0.66}
+                        decimals={0}
+                        separator=","
+                      />
+                    )}
+                    {!hasUnmeteredAccess && (
+                      <VSCodeButton
+                        appearance="icon"
+                        className="mt-1"
+                        disabled={!balanceAccountId && !authed}
+                        onClick={async () => {
+                          if (balanceAccountId) {
+                            await refetchCreditBalance();
+                          }
+                        }}
+                      >
+                        <FaRecycle />
+                      </VSCodeButton>
+                    )}
                   </>
                 )}
               </div>
@@ -860,6 +902,7 @@ const AccountView = ({
             <div className="grow flex flex-col min-h-0 pb-0">
               <CreditsHistoryTable
                 isLoading={loading}
+                error={creditBalanceError}
                 usageData={usageData || []}
                 paymentsData={paymentsData || []}
               />

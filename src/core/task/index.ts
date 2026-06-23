@@ -154,6 +154,7 @@ import { getStatusBarService } from "@services/StatusBarService";
 import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
+import { resolveCommandRequiresApproval } from "./tools/commandApproval";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -3916,7 +3917,7 @@ export class Task {
             const requiresApprovalRaw: string | undefined =
               block.params.requires_approval;
             const requiresApprovalPerLLM =
-              requiresApprovalRaw?.toLowerCase() === "true";
+              resolveCommandRequiresApproval(requiresApprovalRaw);
 
             try {
               if (block.partial) {
@@ -3944,17 +3945,6 @@ export class Task {
                     await this.sayAndCreateMissingParamError(
                       "execute_command",
                       "command",
-                    ),
-                  );
-
-                  break;
-                }
-                if (!requiresApprovalRaw) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "execute_command",
-                      "requires_approval",
                     ),
                   );
 
@@ -5250,12 +5240,6 @@ export class Task {
     } catch (e) {
       // Non-fatal: budget check issues shouldn't break the task
       console.error("Budget check failed:", e);
-    }
-
-    // Optional: throttle between API calls
-    const delay = this.chatSettings?.apiThrottleMs;
-    if (typeof delay === "number" && delay > 0) {
-      await new Promise((r) => setTimeout(r, delay));
     }
 
     // Save checkpoint if this is the first API request

@@ -24,6 +24,7 @@ describe("CapabilityRegistry", () => {
         "terminal.execute",
         "browser.automation",
         "mcp.tool",
+        "workflow.execute",
         "automation.schedule",
         "checkpoint.manage",
         "connector.read",
@@ -38,8 +39,12 @@ describe("CapabilityRegistry", () => {
       checkpoint: true,
       connector: true,
       filesystem: true,
+      graymatter: true,
       mcp: true,
+      swarm: true,
       terminal: true,
+      thorapi: true,
+      workflow: true,
     });
   });
 
@@ -58,5 +63,9 @@ describe("CapabilityRegistry", () => {
       announcement.capabilities.map((capability) => capability.id),
     ).not.toContain("terminal.execute");
     expect(announcement.localExecution.terminal).toBe(false);
+    expect(announcement.localExecution.graymatter).toBe(true);
+    expect(announcement.localExecution.swarm).toBe(true);
+    expect(announcement.localExecution.thorapi).toBe(true);
+    expect(announcement.localExecution.workflow).toBe(true);
   });
 });

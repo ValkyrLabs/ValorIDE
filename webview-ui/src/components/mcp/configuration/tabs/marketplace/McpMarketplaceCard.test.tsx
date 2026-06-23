@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import McpMarketplaceCard from "./McpMarketplaceCard";
+import McpMarketplaceCard, {
+  getMarketplaceInstallId,
+} from "./McpMarketplaceCard";
 
 const mockPostMessage = vi.fn();
 
@@ -76,5 +78,42 @@ describe("McpMarketplaceCard", () => {
         url: "https://github.com/ValkyrLabs/graymatter-mcp",
       }),
     );
+  });
+
+  it("uses install aliases and passes the displayed marketplace item to the extension host", async () => {
+    const user = userEvent.setup();
+    const item = {
+      ...baseItem,
+      mcpId: "app-graymatter",
+      mcpServerId: "graymatter-memory",
+      slug: "graymatter",
+      name: "GrayMatter",
+    };
+    const { getByText } = render(
+      <McpMarketplaceCard item={item as any} installedServers={[]} />,
+    );
+
+    expect(getMarketplaceInstallId(item as any)).toBe("graymatter-memory");
+
+    await user.click(getByText("Install"));
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "downloadMcp",
+      mcpId: "graymatter-memory",
+      mcpMarketplaceItem: item,
+    });
+  });
+
+  it("marks GrayMatter installed when the built-in MCP server is registered", () => {
+    render(
+      <McpMarketplaceCard
+        item={{ ...baseItem, mcpId: "graymatter", name: "GrayMatter" } as any}
+        installedServers={[
+          { name: "graymatter-memory", config: "", status: "connected" },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Installed")).toBeInTheDocument();
   });
 });

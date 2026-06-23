@@ -72,18 +72,72 @@ const finiteNumber = (...values: unknown[]): number | undefined => {
 
 const normalizeCredits = (value: unknown): number => finiteNumber(value) ?? 0;
 
+const firstArray = (source: Record<string, any>, ...keys: string[]): any[] => {
+  for (const key of keys) {
+    const value = source[key];
+    if (Array.isArray(value)) {
+      return value;
+    }
+    if (Array.isArray(value?.content)) {
+      return value.content;
+    }
+    if (Array.isArray(value?.items)) {
+      return value.items;
+    }
+    if (Array.isArray(value?.results)) {
+      return value.results;
+    }
+    if (Array.isArray(value?.data)) {
+      return value.data;
+    }
+  }
+  return [];
+};
+
+const normalizeUsageRows = (source: Record<string, any>): UsageTransaction[] => {
+  const directRows = firstArray(
+    source,
+    "usageTransactions",
+    "usage",
+    "usageHistory",
+    "usage_history",
+  );
+  if (directRows.length) {
+    return directRows;
+  }
+
+  return firstArray(source, "creditDebitReceipts", "receipts").map(
+    (receipt) => ({
+      ...(receipt?.usageTransaction ?? receipt),
+      id: receipt?.usageTransaction?.id ?? receipt?.id ?? receipt?.receiptRef,
+      spentAt:
+        receipt?.usageTransaction?.spentAt ??
+        receipt?.spentAt ??
+        receipt?.createdAt ??
+        receipt?.createdDate,
+      credits:
+        receipt?.usageTransaction?.credits ??
+        receipt?.credits ??
+        receipt?.amountCredits,
+      description:
+        receipt?.description ??
+        receipt?.actionType ??
+        receipt?.actionRef ??
+        receipt?.receiptRef,
+    }),
+  );
+};
+
 export const normalizeAccountBalance = (payload: any): AccountBalance => {
   const source = payload?.data ?? payload?.accountBalance ?? payload ?? {};
-  const payments = Array.isArray(source.payments)
-    ? source.payments
-    : Array.isArray(source.paymentTransactions)
-      ? source.paymentTransactions
-      : [];
-  const usageTransactions = Array.isArray(source.usageTransactions)
-    ? source.usageTransactions
-    : Array.isArray(source.usage)
-      ? source.usage
-      : [];
+  const payments = firstArray(
+    source,
+    "payments",
+    "paymentTransactions",
+    "paymentHistory",
+    "payment_history",
+  );
+  const usageTransactions = normalizeUsageRows(source);
   const derivedBalance =
     payments.reduce(
       (sum: number, payment: PaymentTransaction) =>
@@ -151,8 +205,74 @@ const hasQueryError = (
 
 const getQueryData = (result: unknown): unknown => (result as any)?.data;
 
+const shouldSurfaceQueryError = (error: {
+  status?: number | string;
+}): boolean =>
+  error.status === 401 ||
+  error.status === 403 ||
+  error.status === "FETCH_ERROR" ||
+  error.status === "TIMEOUT_ERROR" ||
+  error.status === "PARSING_ERROR";
+
 const hasLedgerRows = (balance?: AccountBalance): boolean =>
   Boolean(balance?.payments.length || balance?.usageTransactions.length);
+
+const uniqueStrings = (values: Array<string | undefined>): string[] =>
+  Array.from(
+    new Set(
+      values
+        .map((value) => value?.trim())
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
+
+export const getAccountBalancePath = (accountId: string): string =>
+  accountId === "me"
+    ? "credits/me/balance"
+    : `credits/${encodeURIComponent(accountId)}/balance`;
+
+export const resolvePrimaryBalanceAccountId = (
+  accountId: string,
+  summaryAccountId?: string,
+): string => (accountId === "me" ? summaryAccountId || "me" : accountId);
+
+export const resolveBalanceLookupAccountIds = (
+  accountId: string,
+  summaryAccountId?: string,
+): string[] =>
+  uniqueStrings([
+    accountId,
+    summaryAccountId,
+    accountId === "me" ? undefined : "me",
+  ]);
+
+const exampleQuery = (example: Record<string, unknown>): string =>
+  `example=${encodeURIComponent(JSON.stringify(example))}`;
+
+const normalizeBalanceList = (payload: unknown): AccountBalance[] => {
+  const source = (payload as any)?.data ?? payload;
+  const rows = Array.isArray(source)
+    ? source
+    : Array.isArray((source as any)?.content)
+      ? (source as any).content
+      : Array.isArray((source as any)?.items)
+        ? (source as any).items
+        : Array.isArray((source as any)?.results)
+          ? (source as any).results
+          : [];
+  return rows.map(normalizeAccountBalance);
+};
+
+const chooseBestBalance = (
+  candidates: Array<AccountBalance | undefined>,
+): AccountBalance | undefined =>
+  candidates
+    .filter((candidate): candidate is AccountBalance => Boolean(candidate))
+    .sort((a, b) => {
+      const aHasValue = a.currentBalance !== 0 || hasLedgerRows(a);
+      const bHasValue = b.currentBalance !== 0 || hasLedgerRows(b);
+      return Number(bHasValue) - Number(aHasValue);
+    })[0];
 
 export const mergeAccountBalance = (
   summaryBalance?: AccountBalance,
@@ -215,48 +335,96 @@ export const creditsApi = createApi({
      */
     getAccountBalance: builder.query<AccountBalance, string>({
       async queryFn(accountId, _api, _extraOptions, baseQuery) {
-        const requestBalance = (id: string) =>
-          baseQuery(`credits/${encodeURIComponent(id)}/balance`);
-
-        const summaryResult = await baseQuery("credits/me/balance/summary");
-        const summaryData = hasQueryError(summaryResult)
-          ? undefined
-          : getQueryData(summaryResult);
-        const summaryBalance =
-          summaryData !== undefined
-            ? normalizeAccountBalance(summaryData)
-            : undefined;
-        const summaryAccountId = getCustomerId(summaryData);
-        const primaryAccountId = summaryAccountId || accountId;
-
-        if (accountId === "me" && summaryBalance && !summaryAccountId) {
-          return { data: summaryBalance };
-        }
-
-        let balanceResult = await requestBalance(primaryAccountId);
-        if (
-          hasQueryError(balanceResult) &&
-          primaryAccountId !== accountId &&
-          accountId
-        ) {
-          balanceResult = await requestBalance(accountId);
-        }
-
-        if (hasQueryError(balanceResult)) {
-          if (summaryBalance) {
-            return { data: summaryBalance };
+        let blockingError:
+          | { status?: number | string; data?: unknown; error?: string }
+          | undefined;
+        const requestBalance = async (path: string) => {
+          const result = await baseQuery(path);
+          if (hasQueryError(result)) {
+            if (shouldSurfaceQueryError(result.error)) {
+              blockingError ??= result.error;
+            }
+            return undefined;
           }
-          return { error: balanceResult.error as any };
+          return getQueryData(result);
+        };
+
+        const summaryPayloads = await Promise.all([
+          requestBalance("credits/me/balance/summary"),
+          requestBalance("CreditBalanceSummary"),
+        ]);
+        const summaryBalances = summaryPayloads.flatMap((payload) =>
+          Array.isArray((payload as any)?.data) ||
+          Array.isArray(payload) ||
+          Array.isArray((payload as any)?.content) ||
+          Array.isArray((payload as any)?.items)
+            ? normalizeBalanceList(payload)
+            : payload !== undefined
+              ? [normalizeAccountBalance(payload)]
+              : [],
+        );
+        const summaryBalance = chooseBestBalance(summaryBalances);
+        const summaryAccountId = getCustomerId(summaryBalance);
+        const primaryAccountId = resolvePrimaryBalanceAccountId(
+          accountId,
+          summaryAccountId,
+        );
+        const candidateIds = resolveBalanceLookupAccountIds(
+          primaryAccountId,
+          summaryAccountId,
+        );
+        const balancePayloads: unknown[] = [];
+
+        for (const id of candidateIds) {
+          const encoded = encodeURIComponent(id);
+          const payloads = await Promise.all([
+            requestBalance(getAccountBalancePath(id)),
+            id === "me" ? undefined : requestBalance(`AccountBalance/${encoded}`),
+            id === "me"
+              ? undefined
+              : requestBalance(
+                  `AccountBalance?${exampleQuery({ customerId: id })}`,
+                ),
+            id === "me"
+              ? undefined
+              : requestBalance(
+                  `CreditBalanceSummary?${exampleQuery({ customerId: id })}`,
+                ),
+          ]);
+          balancePayloads.push(...payloads.filter(Boolean));
         }
+
+        balancePayloads.push(
+          await requestBalance("AccountBalance"),
+          await requestBalance("CreditBalanceSummary"),
+        );
+        const balanceCandidates = balancePayloads.flatMap((payload) =>
+          Array.isArray((payload as any)?.data) ||
+          Array.isArray(payload) ||
+          Array.isArray((payload as any)?.content) ||
+          Array.isArray((payload as any)?.items)
+            ? normalizeBalanceList(payload)
+            : payload !== undefined
+              ? [normalizeAccountBalance(payload)]
+              : [],
+        );
+        const selectedBalance = chooseBestBalance([
+          ...balanceCandidates,
+          summaryBalance,
+        ]);
 
         const balance = mergeAccountBalance(
           summaryBalance,
-          normalizeAccountBalance(getQueryData(balanceResult)),
+          selectedBalance,
         );
+
+        if (!balance && blockingError) {
+          return { error: blockingError as any };
+        }
 
         return {
           data: {
-            ...balance!,
+            ...balance,
             customerId: balance?.customerId || summaryAccountId,
             currentBalance: balance?.currentBalance ?? 0,
           },

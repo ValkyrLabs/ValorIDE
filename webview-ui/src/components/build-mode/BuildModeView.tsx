@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type {
+  BuildModeApprovalThreshold,
   BuildModeCommand,
   BuildModeCommandApproval,
   BuildModePromptExecutionContext,
@@ -9,10 +10,15 @@ import {
   createScheduledAutomationCommand,
   createWorkflowMcpCommand,
   deriveBuildModeAutonomousQueuePlan,
+  deriveBuildModeAutonomyDecision,
+  formatBuildModeMcpToolCommandLine,
   getBuildModeCurrentConsecutiveCommandCount,
   getBuildModeCommandCatalog,
+  getBuildModeMcpToolCommands,
+  getBuildModeMcpToolTarget,
   getBuildModePromptExecutionContext,
   getNextBuildModeExecutionAction,
+  formatAppBundleDiffArtifactRef,
   formatEvidenceArtifactProof,
   renderBuildModeFinalReport,
 } from "./valorTaskBridge";
@@ -54,6 +60,21 @@ const routeLabel: Record<
   "enterprise-proxy": "Use enterprise proxy",
 };
 
+const approvalThresholdRank: Record<BuildModeApprovalThreshold, number> = {
+  none: 0,
+  operator: 1,
+  owner: 2,
+  admin: 3,
+};
+
+const maxApprovalThreshold = (
+  current: BuildModeApprovalThreshold,
+  candidate: BuildModeApprovalThreshold,
+): BuildModeApprovalThreshold =>
+  approvalThresholdRank[candidate] > approvalThresholdRank[current]
+    ? candidate
+    : current;
+
 const Panel = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="build-mode__panel" aria-label={title}>
     <h2>{title}</h2>
@@ -79,6 +100,40 @@ const List = ({ values }: { values: string[] }) => (
 const canOpenBuildModeArtifact = (uri: string): boolean =>
   uri.startsWith("valoride://build-mode/artifacts/");
 
+const canOpenBuildModePreviewUrl = (url: string | undefined): boolean => {
+  if (!url || /<redacted/i.test(url)) {
+    return false;
+  }
+  try {
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return false;
+    }
+    const hostname = parsed.hostname.toLowerCase();
+    return (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname.endsWith(".localhost")
+    );
+  } catch {
+    return false;
+  }
+};
+
+const formatScheduledAutomationScheduler = (
+  scheduler: ValorTaskBridgePayload["scheduledAutomations"][number]["scheduler"],
+): string =>
+  (scheduler ?? "valkyrai-cron") === "valkyrai-cron"
+    ? "ValkyrAI cron workflow launcher"
+    : "unknown scheduler";
+
+const hasValkyraiCronRegistration = (
+  automation: ValorTaskBridgePayload["scheduledAutomations"][number],
+): boolean =>
+  (automation.scheduler ?? "valkyrai-cron") === "valkyrai-cron" &&
+  Boolean(automation.valkyraiScheduleUri);
+
 export const BuildModeView = ({
   payload,
   onClose,
@@ -95,36 +150,89 @@ export const BuildModeView = ({
   const [promptProfileId, setPromptProfileId] = useState(
     payload.selectedPromptProfileId,
   );
+  const selectedPromptProfile =
+    payload.promptProfiles.find((profile) => profile.id === promptProfileId) ??
+    payload.promptProfiles[0];
+  const selectedPromptBundle =
+    payload.promptBundles.find(
+      (bundle) => bundle.id === selectedPromptProfile?.promptBundleRef,
+    ) ??
+    payload.promptBundles.find(
+      (bundle) => bundle.id === payload.selectedPromptBundleId,
+    ) ??
+    payload.promptBundles[0];
+  const selectedPayload = useMemo(
+    () => ({
+      ...payload,
+      selectedProviderRoute: providerRoute,
+      selectedPromptBundleId:
+        selectedPromptBundle?.id ?? payload.selectedPromptBundleId,
+      selectedPromptProfileId: selectedPromptProfile?.id ?? promptProfileId,
+    }),
+    [
+      payload,
+      promptProfileId,
+      providerRoute,
+      selectedPromptBundle?.id,
+      selectedPromptProfile?.id,
+    ],
+  );
   const finalReportMarkdown = useMemo(
-    () => renderBuildModeFinalReport(payload),
-    [payload],
+    () => renderBuildModeFinalReport(selectedPayload),
+    [selectedPayload],
   );
   const commandById = useMemo(
     () =>
       new Map(
-        getBuildModeCommandCatalog(payload).map((command) => [
+        getBuildModeCommandCatalog(selectedPayload).map((command) => [
           command.id,
           command,
         ]),
       ),
-    [payload],
+    [selectedPayload],
   );
+  const mcpToolCommands = useMemo(
+    () => getBuildModeMcpToolCommands(selectedPayload),
+    [selectedPayload],
+  );
+  const latestReceiptByCommandId = useMemo(() => {
+    const latest = new Map<
+      string,
+      ValorTaskBridgePayload["commandReceipts"][number]
+    >();
+    for (const receipt of selectedPayload.commandReceipts) {
+      const current = latest.get(receipt.commandId);
+      if (
+        !current ||
+        Date.parse(receipt.createdAt) >= Date.parse(current.createdAt)
+      ) {
+        latest.set(receipt.commandId, receipt);
+      }
+    }
+    return latest;
+  }, [selectedPayload.commandReceipts]);
   const nextExecutionAction = useMemo(
-    () => getNextBuildModeExecutionAction(payload),
-    [payload],
+    () => getNextBuildModeExecutionAction(selectedPayload),
+    [selectedPayload],
+  );
+  const autonomyDecision = useMemo(
+    () => deriveBuildModeAutonomyDecision(selectedPayload),
+    [selectedPayload],
   );
   const autonomousQueuePlan = useMemo(
-    () => deriveBuildModeAutonomousQueuePlan(payload),
-    [payload],
+    () => deriveBuildModeAutonomousQueuePlan(selectedPayload),
+    [selectedPayload],
   );
   const currentConsecutiveCommands = useMemo(
-    () => getBuildModeCurrentConsecutiveCommandCount(payload.commandReceipts),
-    [payload.commandReceipts],
+    () =>
+      getBuildModeCurrentConsecutiveCommandCount(
+        selectedPayload.commandReceipts,
+      ),
+    [selectedPayload.commandReceipts],
   );
-  const canRunNextExecutionStep =
-    payload.autonomyDecision.status === "continue";
+  const canRunNextExecutionStep = autonomyDecision.status === "continue";
   const canApproveNextExecutionStep =
-    payload.autonomyDecision.status === "approval-required";
+    autonomyDecision.status === "approval-required";
   const dispatchableAutonomousCommands =
     autonomousQueuePlan.dispatchableCommandIds
       .map((commandId) => commandById.get(commandId))
@@ -143,11 +251,21 @@ export const BuildModeView = ({
     const permission = payload.toolPermissions.find(
       (item) => item.capabilityId === command.capabilityId,
     );
+    const permissionThreshold =
+      permission?.approvalThreshold && permission.approvalThreshold !== "none"
+        ? permission.approvalThreshold
+        : "operator";
+    const decisionThreshold =
+      autonomyDecision.status === "approval-required" &&
+      autonomyDecision.nextCommandId === command.id &&
+      autonomyDecision.requiredApprovalThreshold
+        ? autonomyDecision.requiredApprovalThreshold
+        : "operator";
     return {
       approved: true,
       approverPrincipalId: payload.scope.principalId,
       approverRoles: payload.scope.roles,
-      threshold: permission?.approvalThreshold ?? "operator",
+      threshold: maxApprovalThreshold(permissionThreshold, decisionThreshold),
       reason: `Approved in Build Mode for ${command.label}.`,
       createdAt: new Date().toISOString(),
     };
@@ -160,17 +278,25 @@ export const BuildModeView = ({
       command,
       approval,
       providerRoute,
-      getBuildModePromptExecutionContext(payload, promptProfileId),
+      getBuildModePromptExecutionContext(selectedPayload, promptProfileId),
       Array.from(commandById.values()),
     );
-  const runGuardedCommand = (command: BuildModeCommand) => {
-    if (canApproveCommandFromRunner(command)) {
-      runCommand(command, createApproval(command));
-      return;
-    }
+  const runRunnableCommand = (command: BuildModeCommand) => {
     if (canRunCommandFromRunner(command)) {
       runCommand(command);
     }
+  };
+  const approveAndRunCommand = (command: BuildModeCommand) => {
+    if (canApproveCommandFromRunner(command)) {
+      runCommand(command, createApproval(command));
+    }
+  };
+  const runGuardedCommand = (command: BuildModeCommand) => {
+    if (canApproveCommandFromRunner(command)) {
+      approveAndRunCommand(command);
+      return;
+    }
+    runRunnableCommand(command);
   };
   const runAutonomousQueue = () => {
     if (!dispatchableAutonomousCommands.length) {
@@ -179,22 +305,10 @@ export const BuildModeView = ({
     onRunAutonomousQueue?.(
       dispatchableAutonomousCommands,
       providerRoute,
-      getBuildModePromptExecutionContext(payload, promptProfileId),
+      getBuildModePromptExecutionContext(selectedPayload, promptProfileId),
       Array.from(commandById.values()),
     );
   };
-
-  const selectedPromptProfile =
-    payload.promptProfiles.find((profile) => profile.id === promptProfileId) ??
-    payload.promptProfiles[0];
-  const selectedPromptBundle =
-    payload.promptBundles.find(
-      (bundle) => bundle.id === selectedPromptProfile?.promptBundleRef,
-    ) ??
-    payload.promptBundles.find(
-      (bundle) => bundle.id === payload.selectedPromptBundleId,
-    ) ??
-    payload.promptBundles[0];
 
   return (
     <main className="build-mode" data-testid="build-mode-view">
@@ -240,6 +354,9 @@ export const BuildModeView = ({
             </div>
             <h3>Intent</h3>
             <p>{payload.appBundle.intent}</p>
+            <div className="build-mode__muted">
+              proof: {payload.appBundle.receiptIds?.join(", ") || "none"}
+            </div>
             <h3>Artifacts</h3>
             <List
               values={payload.appBundle.artifacts.map(
@@ -262,6 +379,14 @@ export const BuildModeView = ({
             <List values={payload.scope.roles} />
             <h3>Policy Refs</h3>
             <List values={payload.scope.policyRefs} />
+            <h3>Ignored Path Patterns</h3>
+            <List
+              values={
+                payload.scope.ignoredPathPatterns?.length
+                  ? payload.scope.ignoredPathPatterns
+                  : ["none"]
+              }
+            />
           </Panel>
 
           <Panel title="Component Bundle Inspector">
@@ -271,6 +396,9 @@ export const BuildModeView = ({
                   <div className="build-mode__item-title">{bundle.name}</div>
                   <div className="build-mode__muted">
                     {bundle.framework} - {bundle.generatedBy} - {bundle.status}
+                  </div>
+                  <div className="build-mode__muted">
+                    proof: {bundle.receiptIds?.join(", ") || "none"}
                   </div>
                   <h3>Entrypoints</h3>
                   <List values={bundle.entrypoints} />
@@ -288,6 +416,10 @@ export const BuildModeView = ({
                   <div className="build-mode__muted">
                     {module.version} - {module.safetyLevel}
                   </div>
+                  <div className="build-mode__muted">
+                    proof: {module.receiptIds?.join(", ") || "none"}
+                  </div>
+                  <code>{module.id}</code>
                 </article>
               ))}
             </div>
@@ -327,6 +459,9 @@ export const BuildModeView = ({
                     {capability.requiresApproval ? " - approval required" : ""}
                   </div>
                   <div>{capability.enabled ? "Enabled" : "Disabled"}</div>
+                  <div className="build-mode__muted">
+                    proof: {capability.receiptIds?.join(", ") || "none"}
+                  </div>
                 </article>
               ))}
             </div>
@@ -341,6 +476,9 @@ export const BuildModeView = ({
                   </div>
                   <div className="build-mode__muted">
                     {guardrail.enforcement}
+                  </div>
+                  <div className="build-mode__muted">
+                    receipts: {guardrail.receiptIds?.join(", ") || "none"}
                   </div>
                   <div>{guardrail.summary}</div>
                 </article>
@@ -363,6 +501,9 @@ export const BuildModeView = ({
                   <div className="build-mode__muted">
                     receipts{" "}
                     {permission.receiptRequired ? "required" : "optional"}
+                  </div>
+                  <div className="build-mode__muted">
+                    proof: {permission.receiptIds?.join(", ") || "none"}
                   </div>
                   <List values={permission.scopeRefs} />
                 </article>
@@ -396,19 +537,23 @@ export const BuildModeView = ({
                 }
               />
             </div>
+            <div className="build-mode__muted">
+              policy proof:{" "}
+              {payload.autonomyPolicy.receiptIds?.join(", ") || "none"}
+            </div>
             <h3>Autonomy Decision</h3>
             <div className="build-mode__item">
               <div className="build-mode__item-title">
-                {payload.autonomyDecision.status}
+                {autonomyDecision.status}
               </div>
-              <div>{payload.autonomyDecision.summary}</div>
+              <div>{autonomyDecision.summary}</div>
               <div className="build-mode__muted">
-                {payload.autonomyDecision.nextCommandId ?? "no next command"} -{" "}
-                {payload.autonomyDecision.capabilityId ?? "no capability"}
+                {autonomyDecision.nextCommandId ?? "no next command"} -{" "}
+                {autonomyDecision.capabilityId ?? "no capability"}
               </div>
             </div>
             <h3>Decision Reasons</h3>
-            <List values={payload.autonomyDecision.reasonCodes} />
+            <List values={autonomyDecision.reasonCodes} />
             <h3>Autonomous Queue Plan</h3>
             <div className="build-mode__item">
               <div className="build-mode__item-title">
@@ -461,6 +606,9 @@ export const BuildModeView = ({
                   </div>
                   <div>{rule.reason}</div>
                   <code>{rule.pattern}</code>
+                  <div className="build-mode__muted">
+                    proof: {rule.receiptIds?.join(", ") || "none"}
+                  </div>
                   {rule.commandKinds?.length ? (
                     <List values={rule.commandKinds} />
                   ) : null}
@@ -495,7 +643,8 @@ export const BuildModeView = ({
                         <button
                           aria-label={`Run ${createCommand.label}`}
                           className="build-mode__button"
-                          onClick={() => runCommand(createCommand)}
+                          disabled={!canUseGuardedCommandControl(createCommand)}
+                          onClick={() => runGuardedCommand(createCommand)}
                           type="button"
                         >
                           Create
@@ -505,7 +654,10 @@ export const BuildModeView = ({
                         <button
                           aria-label={`Rollback ${checkpoint.label}`}
                           className="build-mode__button build-mode__button--danger"
-                          onClick={() => runCommand(rollbackCommand)}
+                          disabled={
+                            !canUseGuardedCommandControl(rollbackCommand)
+                          }
+                          onClick={() => runGuardedCommand(rollbackCommand)}
                           type="button"
                         >
                           Rollback
@@ -633,22 +785,22 @@ export const BuildModeView = ({
                     aria-label="Run Next Execution Step"
                     className="build-mode__button"
                     disabled={!canRunNextExecutionStep}
-                    onClick={() => runCommand(nextExecutionAction.command)}
+                    onClick={() =>
+                      runRunnableCommand(nextExecutionAction.command)
+                    }
                     type="button"
                   >
                     Run Next
                   </button>
                   {nextExecutionAction.command.requiresApproval ||
-                  nextExecutionAction.command.status === "approval-required" ? (
+                  nextExecutionAction.command.status === "approval-required" ||
+                  canApproveCommandFromRunner(nextExecutionAction.command) ? (
                     <button
                       aria-label="Approve Next Execution Step"
                       className="build-mode__button"
                       disabled={!canApproveNextExecutionStep}
                       onClick={() =>
-                        runCommand(
-                          nextExecutionAction.command,
-                          createApproval(nextExecutionAction.command),
-                        )
+                        approveAndRunCommand(nextExecutionAction.command)
                       }
                       type="button"
                     >
@@ -711,6 +863,36 @@ export const BuildModeView = ({
                   </div>
                   <h3>Loop Phases</h3>
                   <List values={runtime.loopPhaseIds} />
+                  {runtime.receiptIds.length ? (
+                    <>
+                      <h3>Receipts</h3>
+                      <List values={runtime.receiptIds} />
+                    </>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel title="Local Model Runtime">
+            <div className="build-mode__cards">
+              {payload.localModelRuntimes.map((runtime) => (
+                <article className="build-mode__item" key={runtime.id}>
+                  <div className="build-mode__item-title">{runtime.label}</div>
+                  <div className="build-mode__muted">
+                    {runtime.modelRef} - {runtime.status} -{" "}
+                    {runtime.executionMode}
+                  </div>
+                  <div>Runtime: {runtime.runtimeId}</div>
+                  <div>Provider: {runtime.providerCredentialId}</div>
+                  <div className="build-mode__muted">
+                    Endpoint: {runtime.endpointRef}
+                  </div>
+                  {runtime.healthCheckCommandId ? (
+                    <div>Health check: {runtime.healthCheckCommandId}</div>
+                  ) : null}
+                  <h3>Capabilities</h3>
+                  <List values={runtime.capabilityIds} />
                   {runtime.receiptIds.length ? (
                     <>
                       <h3>Receipts</h3>
@@ -823,6 +1005,10 @@ export const BuildModeView = ({
                 value={`${payload.creditUsageReceipts.reduce((sum, receipt) => sum + receipt.actualCredits, 0)} credits`}
               />
             </div>
+            <div className="build-mode__muted">
+              estimate proof:{" "}
+              {payload.creditEstimate.receiptIds?.join(", ") || "none"}
+            </div>
             <h3>Provider Route</h3>
             <select
               aria-label="Provider route"
@@ -845,14 +1031,16 @@ export const BuildModeView = ({
             <List
               values={payload.creditUsageReceipts.map(
                 (receipt) =>
-                  `${receipt.commandId} (${receipt.capabilityId}, ${receipt.providerRoute}, ${receipt.commandStatus}): ${receipt.actualCredits} credits`,
+                  `${receipt.commandId} (${receipt.capabilityId}, ${receipt.providerRoute}, ${receipt.commandStatus}): ${receipt.actualCredits} credits (${receipt.providerCredits} provider, ${receipt.hostedInfrastructureCredits} hosted)${receipt.billingSummary ? ` - ${receipt.billingSummary}` : ""}`,
               )}
             />
+            <h3>Estimate Assumptions</h3>
+            <List values={payload.creditEstimate.assumptions} />
             <h3>Credential References</h3>
             <List
               values={payload.providerCredentials.map(
                 (credential) =>
-                  `${credential.id} (${credential.tenantScoped ? "tenant scoped" : "local"})`,
+                  `${credential.id} (${credential.tenantScoped ? "tenant scoped" : "local"}; proof: ${credential.receiptIds?.join(", ") || "none"})`,
               )}
             />
           </Panel>
@@ -871,10 +1059,15 @@ export const BuildModeView = ({
               ))}
             </select>
             {selectedPromptProfile && (
-              <p>
-                {selectedPromptProfile.description} (
-                {selectedPromptProfile.promptBundleRef})
-              </p>
+              <>
+                <p>
+                  {selectedPromptProfile.description} (
+                  {selectedPromptProfile.promptBundleRef})
+                </p>
+                <div className="build-mode__muted">
+                  proof: {selectedPromptProfile.receiptIds?.join(", ") || "none"}
+                </div>
+              </>
             )}
           </Panel>
 
@@ -912,7 +1105,146 @@ export const BuildModeView = ({
             )}
           </Panel>
 
+          <Panel title="Connector Access">
+            <div className="build-mode__cards">
+              {payload.connectorBindings.length ? (
+                payload.connectorBindings.map((binding) => (
+                  <article className="build-mode__item" key={binding.id}>
+                    <div className="build-mode__item-title">
+                      {binding.connectorName}
+                    </div>
+                    <div>
+                      {binding.connectorId} - {binding.status}
+                    </div>
+                    <div className="build-mode__muted">
+                      data: {binding.dataClasses.join(", ") || "none"}
+                    </div>
+                    <div className="build-mode__muted">
+                      actions: {binding.allowedActions.join(", ") || "none"}
+                    </div>
+                    <div className="build-mode__muted">
+                      commands: {binding.commandIds.join(", ") || "none"}
+                    </div>
+                    <div className="build-mode__muted">
+                      proof: {binding.receiptIds?.join(", ") || "none"}
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <p>No connector access bindings loaded.</p>
+              )}
+            </div>
+          </Panel>
+
           <Panel title="MCP Server And Workflow Tools">
+            <h3>MCP Servers</h3>
+            <div className="build-mode__cards">
+              {payload.mcpServers.length ? (
+                payload.mcpServers.map((server) => (
+                  <article className="build-mode__item" key={server.id}>
+                    <div className="build-mode__item-title">
+                      {server.name}
+                    </div>
+                    <div>
+                      {server.transport} - {server.status} - {server.scope}
+                    </div>
+                    <div className="build-mode__muted">
+                      tools: {server.toolIds.join(", ") || "none"}
+                    </div>
+                    <div className="build-mode__muted">
+                      proof: {server.receiptIds?.join(", ") || "none"}
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <p>No MCP servers loaded.</p>
+              )}
+            </div>
+            <h3>MCP Tool Registry</h3>
+            <div className="build-mode__cards">
+              {payload.mcpTools.length ? (
+                payload.mcpTools.map((tool) => (
+                  <article className="build-mode__item" key={tool.id}>
+                    <div className="build-mode__item-title">{tool.name}</div>
+                    <div>
+                      {tool.capabilityId} - {tool.status}
+                    </div>
+                    <div className="build-mode__muted">
+                      server: {tool.serverId}
+                    </div>
+                    {tool.execModuleId ? (
+                      <div className="build-mode__muted">
+                        ExecModule {tool.execModuleId}
+                      </div>
+                    ) : null}
+                    {tool.workflowRef ? <code>{tool.workflowRef}</code> : null}
+                    <div className="build-mode__muted">
+                      proof: {tool.receiptIds?.join(", ") || "none"}
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <p>No MCP tool registry loaded.</p>
+              )}
+            </div>
+            <h3>Connected MCP Tools</h3>
+            <div className="build-mode__cards">
+              {mcpToolCommands.length ? (
+                mcpToolCommands.map((command) => {
+                  const receipt = latestReceiptByCommandId.get(command.id);
+                  const target = getBuildModeMcpToolTarget(command, receipt);
+                  const resultArtifact = receipt?.artifacts?.find(
+                    (artifact) =>
+                      artifact.kind === "mcp_result" &&
+                      artifact.commandId === command.id,
+                  );
+
+                  return (
+                    <article className="build-mode__item" key={command.id}>
+                      <div className="build-mode__item-title">
+                        {command.label}
+                      </div>
+                      <div>
+                        {target.serverName ?? "mcp"}{" "}
+                        {target.toolName ? `- ${target.toolName}` : ""}
+                      </div>
+                      <div className="build-mode__muted">
+                        {command.capabilityId} - {command.status}
+                      </div>
+                      <div className="build-mode__muted">
+                        proof: {receipt?.id ?? command.receiptId ?? "none"}
+                      </div>
+                      {resultArtifact ? (
+                        <div className="build-mode__muted">
+                          artifact: {resultArtifact.id}
+                        </div>
+                      ) : null}
+                      {command.assignedSwarmRole ? (
+                        <div className="build-mode__muted">
+                          role: {command.assignedSwarmRole} -{" "}
+                          {command.assignedRuntimeId}
+                        </div>
+                      ) : null}
+                      <code>
+                        {formatBuildModeMcpToolCommandLine(command, receipt)}
+                      </code>
+                      <button
+                        aria-label={`Run ${command.label}`}
+                        className="build-mode__button"
+                        disabled={!canUseGuardedCommandControl(command)}
+                        onClick={() => runGuardedCommand(command)}
+                        type="button"
+                      >
+                        Run Tool
+                      </button>
+                    </article>
+                  );
+                })
+              ) : (
+                <p>No connected MCP tool commands loaded.</p>
+              )}
+            </div>
+            <h3>Workflow MCP Bindings</h3>
             <div className="build-mode__cards">
               {payload.workflowMcpBindings.map((binding) => {
                 const generatedCommand = createWorkflowMcpCommand(binding);
@@ -929,6 +1261,13 @@ export const BuildModeView = ({
                       {binding.workflowRef} -{" "}
                       {binding.approvalRequired ? "approval required" : "auto"}
                     </div>
+                    <div className="build-mode__muted">
+                      ExecModule {binding.execModuleId}
+                    </div>
+                    <div className="build-mode__muted">
+                      proof: {binding.receiptIds?.join(", ") || "none"}
+                    </div>
+                    <code>{binding.inputContractRef}</code>
                     {command.assignedSwarmRole ? (
                       <div className="build-mode__muted">
                         role: {command.assignedSwarmRole} -{" "}
@@ -958,7 +1297,10 @@ export const BuildModeView = ({
                 onRunDueAutomations?.(
                   Array.from(commandById.values()),
                   providerRoute,
-                  getBuildModePromptExecutionContext(payload, promptProfileId),
+                  getBuildModePromptExecutionContext(
+                    selectedPayload,
+                    promptProfileId,
+                  ),
                 )
               }
               type="button"
@@ -985,7 +1327,8 @@ export const BuildModeView = ({
                         : ""}
                     </div>
                     <div className="build-mode__muted">
-                      scheduler: {automation.scheduler ?? "valkyrai-cron"}
+                      scheduler:{" "}
+                      {formatScheduledAutomationScheduler(automation.scheduler)}
                       {automation.valkyraiWorkflowId
                         ? ` - ${automation.valkyraiWorkflowId}`
                         : ""}
@@ -1039,9 +1382,12 @@ export const BuildModeView = ({
                       <button
                         aria-label={`Pause ${automation.label}`}
                         className="build-mode__button"
-                        onClick={() =>
-                          onSetAutomationStatus?.(automation.id, "paused")
-                        }
+                        disabled={!hasValkyraiCronRegistration(automation)}
+                        onClick={() => {
+                          if (hasValkyraiCronRegistration(automation)) {
+                            onSetAutomationStatus?.(automation.id, "paused");
+                          }
+                        }}
                         type="button"
                       >
                         Pause
@@ -1051,9 +1397,12 @@ export const BuildModeView = ({
                       <button
                         aria-label={`Resume ${automation.label}`}
                         className="build-mode__button"
-                        onClick={() =>
-                          onSetAutomationStatus?.(automation.id, "scheduled")
-                        }
+                        disabled={!hasValkyraiCronRegistration(automation)}
+                        onClick={() => {
+                          if (hasValkyraiCronRegistration(automation)) {
+                            onSetAutomationStatus?.(automation.id, "scheduled");
+                          }
+                        }}
                         type="button"
                       >
                         Resume
@@ -1108,20 +1457,19 @@ export const BuildModeView = ({
                         aria-label={`Run ${command.label}`}
                         className="build-mode__button"
                         disabled={!canRunCommandFromRunner(command)}
-                        onClick={() => runCommand(command)}
+                        onClick={() => runRunnableCommand(command)}
                         type="button"
                       >
                         Run
                       </button>
                       {command.requiresApproval ||
-                      command.status === "approval-required" ? (
+                      command.status === "approval-required" ||
+                      canApproveCommandFromRunner(command) ? (
                         <button
                           aria-label={`Approve ${command.label}`}
                           className="build-mode__button"
                           disabled={!canApproveCommandFromRunner(command)}
-                          onClick={() =>
-                            runCommand(command, createApproval(command))
-                          }
+                          onClick={() => approveAndRunCommand(command)}
                           type="button"
                         >
                           Approve & Run
@@ -1216,9 +1564,20 @@ export const BuildModeView = ({
               <div className="build-mode__actions">
                 <button
                   className="build-mode__button"
-                  onClick={() =>
-                    onOpenPreview?.(payload.browserVerification.previewUrl!)
+                  disabled={
+                    !canOpenBuildModePreviewUrl(
+                      payload.browserVerification.previewUrl,
+                    )
                   }
+                  onClick={() => {
+                    if (
+                      canOpenBuildModePreviewUrl(
+                        payload.browserVerification.previewUrl,
+                      )
+                    ) {
+                      onOpenPreview?.(payload.browserVerification.previewUrl!);
+                    }
+                  }}
                   type="button"
                 >
                   Open Preview
@@ -1227,13 +1586,14 @@ export const BuildModeView = ({
                   .filter((command) => command.kind === "verify")
                   .map((command) => (
                     <button
+                      aria-label={`Run ${command.label} from Browser Verification panel`}
                       className="build-mode__button"
                       disabled={!canUseGuardedCommandControl(command)}
                       key={command.id}
                       onClick={() => runGuardedCommand(command)}
                       type="button"
                     >
-                      Run Verification
+                      Run {command.label}
                     </button>
                   ))}
               </div>
@@ -1276,12 +1636,40 @@ export const BuildModeView = ({
             {payload.appBundleDiffs.map((diff) => (
               <article className="build-mode__item" key={diff.id}>
                 <div className="build-mode__item-title">{diff.title}</div>
+                <div className="build-mode__muted">
+                  {diff.appBundleId} - {diff.generatedAt}
+                </div>
                 <h3>Added</h3>
-                <List values={diff.addedArtifacts} />
+                <List
+                  values={diff.addedArtifacts.map((artifactPath) =>
+                    formatAppBundleDiffArtifactRef(
+                      payload.appBundle,
+                      artifactPath,
+                    ),
+                  )}
+                />
                 <h3>Changed</h3>
-                <List values={diff.changedArtifacts} />
+                <List
+                  values={diff.changedArtifacts.map((artifactPath) =>
+                    formatAppBundleDiffArtifactRef(
+                      payload.appBundle,
+                      artifactPath,
+                    ),
+                  )}
+                />
                 <h3>Removed</h3>
-                <List values={diff.removedArtifacts} />
+                <List
+                  values={diff.removedArtifacts.map((artifactPath) =>
+                    formatAppBundleDiffArtifactRef(
+                      payload.appBundle,
+                      artifactPath,
+                    ),
+                  )}
+                />
+                <h3>Receipts</h3>
+                <List values={diff.receiptIds} />
+                <h3>Evidence</h3>
+                <List values={diff.evidenceArtifactIds} />
               </article>
             ))}
           </Panel>

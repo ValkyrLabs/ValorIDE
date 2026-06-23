@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  getAccountBalancePath,
   isInsufficientFunds,
   mergeAccountBalance,
   normalizeAccountBalance,
+  resolveBalanceLookupAccountIds,
+  resolvePrimaryBalanceAccountId,
 } from "./creditsApi";
 
 describe("creditsApi isInsufficientFunds", () => {
@@ -100,5 +103,20 @@ describe("mergeAccountBalance", () => {
     });
 
     expect(mergeAccountBalance(summary, fullBalance)?.currentBalance).toBe(72);
+  });
+});
+
+describe("creditsApi balance request resolution", () => {
+  it("prefers explicit account ids over me when the summary exposes one", () => {
+    expect(resolvePrimaryBalanceAccountId("me", "acct-123")).toBe("acct-123");
+    expect(getAccountBalancePath("me")).toBe("credits/me/balance");
+  });
+
+  it("keeps me as a fallback after explicit account ids", () => {
+    expect(resolveBalanceLookupAccountIds("acct-123", "acct-456")).toEqual([
+      "acct-123",
+      "acct-456",
+      "me",
+    ]);
   });
 });

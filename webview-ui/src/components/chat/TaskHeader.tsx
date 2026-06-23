@@ -23,7 +23,6 @@ import {
   FaCopy,
   FaCheck,
   FaDollarSign,
-  FaClock,
 } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
 import TaskThermometer from "@thorapi/components/TaskThermometer";
@@ -219,11 +218,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     vscode.postMessage({ type: "requestSetBudgetLimit" });
   };
 
-  const setApiThrottle = () => {
-    // Ask the extension to show an input box and persist the value
-    vscode.postMessage({ type: "requestSetApiThrottle" });
-  };
-
   return (
     <div style={{ padding: "10px 13px 10px 13px" }}>
       <div
@@ -360,22 +354,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               </VSCodeButton>
             </div>
           )}
-
-          <VSCodeButton
-            appearance="icon"
-            title={
-              chatSettings?.apiThrottleMs != null
-                ? `Throttle: ${chatSettings.apiThrottleMs} ms`
-                : "Set API throttle"
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              setApiThrottle();
-            }}
-            style={{ marginLeft: 2 }}
-          >
-            <FaClock />
-          </VSCodeButton>
 
           <VSCodeButton
             appearance="icon"
@@ -638,18 +616,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     style={{ marginLeft: 2 }}
                   >
                     <FaDollarSign />
-                  </VSCodeButton>
-                  <VSCodeButton
-                    appearance="icon"
-                    title={
-                      chatSettings?.apiThrottleMs != null
-                        ? `Throttle: ${chatSettings.apiThrottleMs} ms`
-                        : "Set API throttle"
-                    }
-                    onClick={setApiThrottle}
-                    style={{ marginLeft: 2 }}
-                  >
-                    <FaClock />
                   </VSCodeButton>
                   <DeleteButton
                     taskSize={formatSize(currentTaskItem?.size)}

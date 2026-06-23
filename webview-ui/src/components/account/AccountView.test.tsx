@@ -414,7 +414,7 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(screen.getByText("ContextPage")).toBeInTheDocument();
   });
 
-  it("fetches balance using userInfo when authenticatedUser is missing", () => {
+  it("fetches the resolved account balance when authenticatedUser is missing", () => {
     mockExtensionState = {
       ...baseExtensionState,
       authenticatedUser: undefined,
@@ -436,7 +436,7 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
   });
 
-  it("prefers billing account identifiers over the principal id for balance lookups", () => {
+  it("uses explicit billing identifiers before falling back to authenticated me", () => {
     mockExtensionState = {
       ...baseExtensionState,
       authenticatedUser: {
@@ -483,6 +483,34 @@ describe("AccountView - Buy Credits button integration", () => {
       "me",
       expect.objectContaining({ skip: false }),
     );
+  });
+
+  it("does not treat super accounts as unmetered without an explicit API flag", () => {
+    mockExtensionState = {
+      ...baseExtensionState,
+      authenticatedUser: {
+        id: "super",
+        username: "super",
+      },
+      userInfo: undefined,
+      isLoggedIn: true,
+    };
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 2_000_000 },
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <AccountView
+        onDone={() => {}}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => {}}
+      />,
+    );
+
+    expect(screen.queryByTestId("unmetered-balance")).not.toBeInTheDocument();
   });
 
   it("uses balance response history instead of querying raw transaction tables", () => {

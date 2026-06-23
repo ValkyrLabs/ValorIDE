@@ -8,12 +8,14 @@ import type {
   BuildModeAgentRuntimeBinding,
   BuildModeCommand,
   BuildModeEvidenceArtifact,
+  BuildModeLocalModelRuntimeBinding,
   BuildModeCommandPolicyRule,
   BuildModeCommandReceipt,
   BuildModeExecutionPlanStep,
   GrayMatterContextPack,
   BuildModePromptExecutionContext,
   BuildModeReadinessGate,
+  BuildModeSwarmRoleAssignment,
   ProviderCredentialRef,
   ScheduledAutomationBinding,
   ValorTaskBridgePayload,
@@ -27,6 +29,273 @@ const providerRoutes = new Set([
   "local-model",
   "enterprise-proxy",
 ]);
+const launchSources = new Set(["SageChat", "AppGallery", "Workflow", "Mock"]);
+const appArtifactKinds = ["generated", "editable", "asset", "config"] as const;
+const componentGeneratedByValues = [
+  "Aurora",
+  "ThorAPI",
+  "Manual",
+  "Workflow",
+] as const;
+const componentStatuses = ["ready", "needs-review", "blocked"] as const;
+const execModuleSafetyLevels = [
+  "readonly",
+  "approval-required",
+  "destructive",
+] as const;
+const mcpServerTransports = ["stdio", "sse", "http", "workflow"] as const;
+const mcpServerStatuses = [
+  "connected",
+  "available",
+  "requires-approval",
+  "blocked",
+] as const;
+const mcpServerScopes = ["private", "workspace", "tenant", "public"] as const;
+const mcpToolStatuses = [
+  "available",
+  "requires-approval",
+  "blocked",
+] as const;
+const connectorBindingStatuses = [
+  "authorized",
+  "available",
+  "requires-approval",
+  "blocked",
+] as const;
+const connectorReadActions = ["get", "list", "read", "search"] as const;
+const grayMatterPolicies = [
+  "answer-confidently",
+  "requires-review",
+  "do-not-answer",
+] as const;
+const grayMatterAnswerPolicies = [
+  "answer-confidently",
+  "requires-review",
+  "do-not-answer",
+  "retry",
+  "clarify",
+] as const;
+const grayMatterRetrievalStatuses = [
+  "ready",
+  "partial-coverage",
+  "low-confidence",
+  "stale-context",
+  "conflicting-context",
+  "blocked",
+] as const;
+const grayMatterInvariantStatuses = [
+  "passed",
+  "warning",
+  "blocked",
+  "missing",
+] as const;
+const receiptKinds = [
+  "checkpoint",
+  "context",
+  "generation",
+  "final_report",
+  "file_write",
+  "shell_command",
+  "connector_data",
+  "workflow",
+  "mcp_tool",
+  "scheduled_automation",
+  "browser_verification",
+  "credit_usage",
+] as const;
+const receiptStatuses = [
+  "pending",
+  "approved",
+  "running",
+  "succeeded",
+  "failed",
+] as const;
+const creditCurrencies = ["ValkyrCredits", "USD"] as const;
+const commandStatuses = [
+  "queued",
+  "approval-required",
+  "running",
+  "succeeded",
+  "failed",
+  "rejected",
+] as const;
+const promptBundleSources = ["Valkyr", "Workspace", "Enterprise"] as const;
+const promptBundlePolicies = ["locked", "editable", "review-required"] as const;
+const automationStatuses = ["draft", "scheduled", "paused", "blocked"] as const;
+const automationRunStatuses = ["failed", "skipped", "succeeded"] as const;
+const capabilityKinds = [
+  "automation",
+  "browser",
+  "checkpoint",
+  "connector",
+  "filesystem",
+  "graymatter",
+  "mcp",
+  "psr",
+  "swarm",
+  "terminal",
+  "thorapi",
+  "workflow",
+] as const;
+const riskLevels = ["low", "medium", "high"] as const;
+const guardrailEnforcements = [
+  "hard-block",
+  "approval-required",
+  "receipt-required",
+] as const;
+const permissionDecisions = ["allow", "approval-required", "deny"] as const;
+const approvalThresholds = ["none", "operator", "owner", "admin"] as const;
+const commandPolicyEffects = ["allow", "approval-required", "deny"] as const;
+const checkpointStatuses = [
+  "planned",
+  "created",
+  "rollback-ready",
+  "restored",
+  "failed",
+] as const;
+const safeEditTools = ["psr.edit", "filesystem.write"] as const;
+const safeEditStatuses = [
+  "draft",
+  "queued",
+  "approval-required",
+  "applied",
+  "blocked",
+] as const;
+const swarmRoleValues = [
+  "Supervisor",
+  "Spec Architect",
+  "ThorAPI Generator",
+  "Workflow Engineer",
+  "Aurora UI Engineer",
+  "Security Auditor",
+  "Test Runner",
+  "Browser Verifier",
+  "Deploy Operator",
+] as const;
+const swarmStatuses = [
+  "idle",
+  "assigned",
+  "running",
+  "blocked",
+  "complete",
+] as const;
+const agentLoopStatuses = [
+  "pending",
+  "ready",
+  "running",
+  "blocked",
+  "complete",
+] as const;
+const runtimeKinds = [
+  "Codex",
+  "OpenClaw",
+  "ValorIDE",
+  "ThorAPI",
+  "VAIX",
+] as const;
+const runtimeStatuses = [
+  "available",
+  "selected",
+  "running",
+  "blocked",
+  "offline",
+] as const;
+const handoffPolicies = [
+  "supervised",
+  "operator-approved",
+  "autonomous-local",
+] as const;
+const localModelExecutionModes = [
+  "workspace-local",
+  "developer-machine",
+  "tenant-isolated",
+] as const;
+const thorApiVaixSurfaces = ["ThorAPI", "VAIX"] as const;
+const thorApiVaixPolicies = [
+  "readonly-generated",
+  "approval-required",
+  "blocked",
+] as const;
+const autonomyModes = [
+  "manual",
+  "approval-gated",
+  "autonomous-local",
+  "disabled",
+] as const;
+const readinessGateStatuses = [
+  "passed",
+  "pending",
+  "blocked",
+  "failed",
+] as const;
+const executionPlanStatuses = [
+  "pending",
+  "ready",
+  "running",
+  "approval-required",
+  "blocked",
+  "complete",
+  "failed",
+] as const;
+const commandKinds = [
+  "test",
+  "build",
+  "inspect",
+  "edit",
+  "deploy",
+  "verify",
+  "automation",
+  "checkpoint",
+  "connector",
+  "mcp",
+  "report",
+  "swarm",
+  "workflow",
+] as const;
+const policyDecisions = ["allow", "approval-required", "reject"] as const;
+const executionModes = [
+  "agentic-command-bus",
+  "approval-gate",
+  "operator-handoff",
+  "policy-blocked",
+] as const;
+const operatorActions = [
+  "approve",
+  "continue",
+  "inspect",
+  "monitor",
+  "none",
+  "revise",
+] as const;
+const evidenceKinds = [
+  "app_bundle_diff",
+  "browser_console",
+  "browser_screenshot",
+  "checkpoint",
+  "command_stdout",
+  "connector_data",
+  "final_report",
+  "file_write",
+  "graymatter_context",
+  "mcp_result",
+  "swarm_handoff",
+  "workflow_receipt",
+] as const;
+const browserStatuses = ["not-started", "running", "passed", "failed"] as const;
+const finalReportStatuses = ["draft", "ready"] as const;
+
+const coerceEnumValue = <T extends string>(
+  value: unknown,
+  allowedValues: readonly T[],
+  fallback: T,
+): T => (allowedValues.includes(value as T) ? (value as T) : fallback);
+const coerceProviderRoute = (
+  route: unknown,
+  fallback: ValorTaskBridgePayload["selectedProviderRoute"] = digitalProductProBuildModePayload.selectedProviderRoute,
+): ValorTaskBridgePayload["selectedProviderRoute"] =>
+  providerRoutes.has(String(route))
+    ? (route as ValorTaskBridgePayload["selectedProviderRoute"])
+    : fallback;
 
 const hasTaskPayloadShape = (
   value: unknown,
@@ -49,13 +318,117 @@ const sanitizeCredentialRefs = (
 ): ProviderCredentialRef[] =>
   (refs ?? digitalProductProBuildModePayload.providerCredentials).map(
     (ref) => ({
-      id: ref.id,
-      route: ref.route,
-      displayName: ref.displayName,
+      id: redactBuildModeText(ref.id),
+      route: coerceProviderRoute(ref.route),
+      displayName: redactBuildModeText(ref.displayName),
       tenantScoped: Boolean(ref.tenantScoped),
       secretAvailable: Boolean(ref.secretAvailable),
+      receiptIds: sanitizeStringRefs(ref.receiptIds ?? []),
     }),
   );
+
+const secretFieldPattern =
+  /(?:api[_-]?key|token|secret|password|private[_-]?key|access[_-]?key|access[_-]?token)/i;
+
+interface BuiltInApprovalRule {
+  pattern: RegExp;
+  reason: string;
+  reasonCode: string;
+  threshold: BuildModeApprovalThreshold;
+}
+
+const builtInApprovalRules: BuiltInApprovalRule[] = [
+  {
+    pattern:
+      /\b(?:vercel\b.*--prod|netlify\s+deploy\b.*--prod|deploy\b.*\b(?:prod|production)\b|production\b.*\bdeploy)\b/i,
+    reason: "Production deploy requires approval.",
+    reasonCode: "built-in-approval:production-deploy",
+    threshold: "owner",
+  },
+  {
+    pattern: /\b(?:stripe|billing|invoice|refund|charge|payment)\b/i,
+    reason: "Billing mutation requires approval.",
+    reasonCode: "built-in-approval:billing-mutation",
+    threshold: "owner",
+  },
+  {
+    pattern:
+      /\b(?:gmail|sendgrid|mailgun|smtp)\b.*\b(?:send|deliver|compose|reply|forward)\b/i,
+    reason: "Email send operation requires approval.",
+    reasonCode: "built-in-approval:email-send",
+    threshold: "owner",
+  },
+  {
+    pattern: /\bmcp\b.*\b(?:publish|register|expose|public)\b/i,
+    reason: "Public MCP publication requires approval.",
+    reasonCode: "built-in-approval:public-mcp",
+    threshold: "owner",
+  },
+  {
+    pattern: /\b(?:npm|pnpm|yarn)\s+(?:run\s+)?publish\b/i,
+    reason: "Public package publication requires approval.",
+    reasonCode: "built-in-approval:package-publication",
+    threshold: "owner",
+  },
+  {
+    pattern: /\bgit\s+push\b/i,
+    reason: "Remote git mutation requires approval.",
+    reasonCode: "built-in-approval:git-push",
+    threshold: "operator",
+  },
+  {
+    pattern: /\bgit\s+(?:reset\s+--hard|clean\s+-[^\s]*f)\b/i,
+    reason: "Destructive git cleanup requires approval.",
+    reasonCode: "built-in-approval:git-destructive-cleanup",
+    threshold: "owner",
+  },
+  {
+    pattern: /\brm\s+-[^\s]*(?=[^\s]*r)(?=[^\s]*f)[^\s]*\b/i,
+    reason: "Recursive forced deletion requires approval.",
+    reasonCode: "built-in-approval:recursive-forced-deletion",
+    threshold: "owner",
+  },
+  {
+    pattern:
+      /\b(?:terraform\s+(?:apply|destroy)|pulumi\s+up|kubectl\s+delete|docker\s+system\s+prune)\b/i,
+    reason: "Infrastructure mutation requires approval.",
+    reasonCode: "built-in-approval:infrastructure-mutation",
+    threshold: "owner",
+  },
+  {
+    pattern: /\b(?:drop\s+(?:database|schema|table)|truncate\s+table)\b/i,
+    reason: "Database destructive operation requires approval.",
+    reasonCode: "built-in-approval:database-destructive-operation",
+    threshold: "owner",
+  },
+  {
+    pattern: /(?:^|\s)(?:\d?>>|\d?>\|?)\s*(?!&\d)\S+/i,
+    reason: "Shell redirection write requires approval.",
+    reasonCode: "built-in-approval:shell-redirection-write",
+    threshold: "operator",
+  },
+  {
+    pattern:
+      /(?:^|[;&|]\s*)(?:sudo\s+)?(?:mv|cp|touch|truncate|rm|rmdir|unlink)\s+(?!-(?:h|-help)\b)/i,
+    reason: "Shell file mutation requires approval.",
+    reasonCode: "built-in-approval:shell-file-mutation",
+    threshold: "operator",
+  },
+  {
+    pattern:
+      /(?:^|[;&|]\s*)(?:sudo\s+)?(?:sed\s+-[^\s]*i|perl\s+-[^\s]*p[^\s]*i|tee(?:\s+-[A-Za-z-]+)*\s+)\b/i,
+    reason: "Shell file mutation requires approval.",
+    reasonCode: "built-in-approval:shell-file-mutation",
+    threshold: "operator",
+  },
+  {
+    pattern:
+      /\b(?:node|bun|deno|python3?|ruby|php|perl)\b[\s\S]*?(?:^|\s)(?:-[ec]\b|--eval\b|--command\b)[\s\S]*?(?:(?:fs\.)?(?:writeFile|writeFileSync|appendFile|appendFileSync|createWriteStream|copyFile|copyFileSync|rename|renameSync|rm|rmSync|unlink|unlinkSync|mkdir|mkdirSync)\s*\(|Deno\.(?:writeTextFile|writeFile|remove|mkdir|rename)\s*\(|Bun\.write\s*\(|open\s*\(\s*["'][^"']+["']\s*,\s*["'][^"']*[wax][^"']*["']|Path\s*\(\s*["'][^"']+["']\s*\)\s*\.\s*(?:write_text|write_bytes|unlink|mkdir|rename)\s*\(|(?:os|Path)\s*\.\s*(?:remove|unlink|rmdir|mkdir|makedirs|rename)\s*\(|shutil\.(?:rmtree|move|copy|copyfile|copytree)\s*\(|File\.(?:write|open|delete|rename|mkdir)\s*\()/i,
+    reason: "Interpreter inline file mutation requires approval.",
+    reasonCode: "built-in-approval:interpreter-inline-file-mutation",
+    threshold: "operator",
+  },
+];
 
 export const coerceValorTaskBridgePayload = (
   value: unknown,
@@ -64,87 +437,174 @@ export const coerceValorTaskBridgePayload = (
     return digitalProductProBuildModePayload;
   }
 
-  const route = providerRoutes.has(String(value.selectedProviderRoute))
-    ? value.selectedProviderRoute
-    : digitalProductProBuildModePayload.selectedProviderRoute;
+  const route = coerceProviderRoute(value.selectedProviderRoute);
+  const source = launchSources.has(String(value.source))
+    ? value.source
+    : digitalProductProBuildModePayload.source;
 
+  const providerCredentialSecretPaths = findBuildModeSecretMaterialPaths(
+    value.providerCredentials,
+    "payload.providerCredentials",
+  );
+  const sanitizedProviderCredentials = sanitizeCredentialRefs(
+    value.providerCredentials,
+  );
+  const launchSecretPaths = Array.from(
+    new Set([
+      ...providerCredentialSecretPaths,
+      ...findBuildModeSecretMaterialPaths(
+        {
+          ...value,
+          providerCredentials: sanitizedProviderCredentials,
+        },
+        "payload",
+      ),
+    ]),
+  );
+  const sanitizedAppBundle = sanitizeAppBundle(value.appBundle);
   const payload = {
     ...digitalProductProBuildModePayload,
     ...value,
+    source: source as ValorTaskBridgePayload["source"],
+    taskId: redactBuildModeText(value.taskId),
+    primaryLine: redactBuildModeText(
+      value.primaryLine ?? digitalProductProBuildModePayload.primaryLine,
+    ),
+    appBundle: sanitizedAppBundle,
     selectedProviderRoute:
       route as ValorTaskBridgePayload["selectedProviderRoute"],
-    scope: value.scope ?? digitalProductProBuildModePayload.scope,
-    grayMatterContextPack: normalizeGrayMatterContextPack(
-      value.grayMatterContextPack,
+    scope: sanitizeScopeContext(
+      value.scope ?? digitalProductProBuildModePayload.scope,
     ),
-    providerCredentials: sanitizeCredentialRefs(value.providerCredentials),
-    componentBundles:
+    grayMatterContextPack: sanitizeGrayMatterContextPack(
+      normalizeGrayMatterContextPack(value.grayMatterContextPack),
+    ),
+    creditEstimate: sanitizeCreditEstimate(
+      value.creditEstimate ?? digitalProductProBuildModePayload.creditEstimate,
+    ),
+    providerCredentials: sanitizedProviderCredentials,
+    componentBundles: (
       value.componentBundles ??
-      digitalProductProBuildModePayload.componentBundles,
-    execModules:
-      value.execModules ?? digitalProductProBuildModePayload.execModules,
-    receipts: value.receipts ?? digitalProductProBuildModePayload.receipts,
-    creditUsageReceipts:
+      digitalProductProBuildModePayload.componentBundles
+    ).map(sanitizeComponentBundle),
+    execModules: (
+      value.execModules ?? digitalProductProBuildModePayload.execModules
+    ).map(sanitizeExecModule),
+    receipts: (
+      value.receipts ?? digitalProductProBuildModePayload.receipts
+    ).map(sanitizeReceipt),
+    creditUsageReceipts: (
       value.creditUsageReceipts ??
-      digitalProductProBuildModePayload.creditUsageReceipts,
-    promptProfiles:
-      value.promptProfiles ?? digitalProductProBuildModePayload.promptProfiles,
-    promptBundles:
-      value.promptBundles ?? digitalProductProBuildModePayload.promptBundles,
-    selectedPromptBundleId:
+      digitalProductProBuildModePayload.creditUsageReceipts
+    ).map(sanitizeCreditUsageReceipt),
+    promptProfiles: (
+      value.promptProfiles ?? digitalProductProBuildModePayload.promptProfiles
+    ).map(sanitizePromptProfile),
+    promptBundles: (
+      value.promptBundles ?? digitalProductProBuildModePayload.promptBundles
+    ).map(sanitizePromptBundle),
+    selectedPromptProfileId: redactBuildModeText(
+      value.selectedPromptProfileId ??
+        digitalProductProBuildModePayload.selectedPromptProfileId,
+    ),
+    selectedPromptBundleId: redactBuildModeText(
       value.selectedPromptBundleId ??
-      digitalProductProBuildModePayload.selectedPromptBundleId,
-    workflowMcpBindings:
+        digitalProductProBuildModePayload.selectedPromptBundleId,
+    ),
+    mcpServers: (
+      value.mcpServers ?? digitalProductProBuildModePayload.mcpServers
+    ).map(sanitizeMcpServer),
+    mcpTools: (
+      value.mcpTools ?? digitalProductProBuildModePayload.mcpTools
+    ).map(sanitizeMcpTool),
+    connectorBindings: (
+      value.connectorBindings ??
+      digitalProductProBuildModePayload.connectorBindings
+    ).map(sanitizeConnectorBinding),
+    workflowMcpBindings: (
       value.workflowMcpBindings ??
-      digitalProductProBuildModePayload.workflowMcpBindings,
-    scheduledAutomations:
+      digitalProductProBuildModePayload.workflowMcpBindings
+    ).map(sanitizeWorkflowMcpBinding),
+    scheduledAutomations: (
       value.scheduledAutomations ??
-      digitalProductProBuildModePayload.scheduledAutomations,
-    capabilities:
-      value.capabilities ?? digitalProductProBuildModePayload.capabilities,
-    guardrails:
-      value.guardrails ?? digitalProductProBuildModePayload.guardrails,
-    toolPermissions:
-      value.toolPermissions ??
-      digitalProductProBuildModePayload.toolPermissions,
-    commandPolicyRules:
+      digitalProductProBuildModePayload.scheduledAutomations
+    ).map(sanitizeScheduledAutomationBinding),
+    capabilities: (
+      value.capabilities ?? digitalProductProBuildModePayload.capabilities
+    ).map(sanitizeCapability),
+    guardrails: (
+      value.guardrails ?? digitalProductProBuildModePayload.guardrails
+    ).map(sanitizeGuardrail),
+    toolPermissions: (
+      value.toolPermissions ?? digitalProductProBuildModePayload.toolPermissions
+    ).map(sanitizeToolPermission),
+    commandPolicyRules: (
       value.commandPolicyRules ??
-      digitalProductProBuildModePayload.commandPolicyRules,
-    checkpoints:
-      value.checkpoints ?? digitalProductProBuildModePayload.checkpoints,
-    safeEditPlans:
-      value.safeEditPlans ?? digitalProductProBuildModePayload.safeEditPlans,
-    swarmRoles:
-      value.swarmRoles ?? digitalProductProBuildModePayload.swarmRoles,
-    agentLoop: value.agentLoop ?? digitalProductProBuildModePayload.agentLoop,
-    agentRuntimes:
-      value.agentRuntimes ?? digitalProductProBuildModePayload.agentRuntimes,
-    thorApiVaixBindings:
+      digitalProductProBuildModePayload.commandPolicyRules
+    ).map(sanitizeCommandPolicyRule),
+    checkpoints: (
+      value.checkpoints ?? digitalProductProBuildModePayload.checkpoints
+    ).map(sanitizeCheckpoint),
+    safeEditPlans: (
+      value.safeEditPlans ?? digitalProductProBuildModePayload.safeEditPlans
+    ).map(sanitizeSafeEditPlan),
+    swarmRoles: (
+      value.swarmRoles ?? digitalProductProBuildModePayload.swarmRoles
+    ).map(sanitizeSwarmRoleAssignment),
+    agentLoop: (
+      value.agentLoop ?? digitalProductProBuildModePayload.agentLoop
+    ).map(sanitizeAgentLoopPhase),
+    agentRuntimes: (
+      value.agentRuntimes ?? digitalProductProBuildModePayload.agentRuntimes
+    ).map(sanitizeAgentRuntimeBinding),
+    localModelRuntimes: (
+      value.localModelRuntimes ??
+      digitalProductProBuildModePayload.localModelRuntimes
+    ).map(sanitizeLocalModelRuntimeBinding),
+    thorApiVaixBindings: (
       value.thorApiVaixBindings ??
-      digitalProductProBuildModePayload.thorApiVaixBindings,
-    autonomyPolicy:
+      digitalProductProBuildModePayload.thorApiVaixBindings
+    ).map(sanitizeThorApiVaixBinding),
+    autonomyPolicy: sanitizeAutonomyPolicy(
       value.autonomyPolicy ?? digitalProductProBuildModePayload.autonomyPolicy,
-    readinessGates:
-      value.readinessGates ?? digitalProductProBuildModePayload.readinessGates,
-    executionPlan:
-      value.executionPlan ?? digitalProductProBuildModePayload.executionPlan,
-    commands: value.commands ?? digitalProductProBuildModePayload.commands,
-    commandReceipts:
-      value.commandReceipts ??
-      digitalProductProBuildModePayload.commandReceipts,
-    evidenceArtifacts:
+    ),
+    readinessGates: (
+      value.readinessGates ?? digitalProductProBuildModePayload.readinessGates
+    ).map(sanitizeReadinessGate),
+    executionPlan: (
+      value.executionPlan ?? digitalProductProBuildModePayload.executionPlan
+    ).map(sanitizeExecutionPlanStep),
+    commands: (
+      value.commands ?? digitalProductProBuildModePayload.commands
+    ).map(sanitizeBuildModeCommand),
+    commandReceipts: (
+      value.commandReceipts ?? digitalProductProBuildModePayload.commandReceipts
+    ).map(sanitizeBuildModeCommandReceipt),
+    evidenceArtifacts: (
       value.evidenceArtifacts ??
-      digitalProductProBuildModePayload.evidenceArtifacts,
-    browserVerification:
+      digitalProductProBuildModePayload.evidenceArtifacts
+    ).map(sanitizeEvidenceArtifact),
+    browserVerification: sanitizeBrowserVerification(
       value.browserVerification ??
-      digitalProductProBuildModePayload.browserVerification,
-    finalReport:
+        digitalProductProBuildModePayload.browserVerification,
+    ),
+    finalReport: sanitizeFinalReport(
       value.finalReport ?? digitalProductProBuildModePayload.finalReport,
-    appBundleDiffs: value.appBundleDiffs ?? deriveAppBundleDiffs(value),
+    ),
+    appBundleDiffs: (
+      value.appBundleDiffs ??
+      deriveAppBundleDiffs({ appBundle: sanitizedAppBundle })
+    ).map(sanitizeAppBundleDiff),
   } as ValorTaskBridgePayload;
+  const autonomyDecision = deriveBuildModeAutonomyDecision(payload);
   return {
     ...payload,
-    autonomyDecision: deriveBuildModeAutonomyDecision(payload),
+    autonomyDecision: launchSecretPaths.length
+      ? blockAutonomyForLaunchSecretMaterial(
+          autonomyDecision,
+          launchSecretPaths,
+        )
+      : autonomyDecision,
   };
 };
 
@@ -169,6 +629,493 @@ const normalizeGrayMatterContextPack = (
   };
 };
 
+const redactOptionalBuildModeText = (
+  value: string | undefined,
+): string | undefined => (value ? redactBuildModeText(value) : value);
+
+const sanitizeStringRefs = (refs: string[]): string[] =>
+  refs.map(redactBuildModeText);
+
+const sanitizeScopeContext = (
+  scope: ValorTaskBridgePayload["scope"],
+): ValorTaskBridgePayload["scope"] => ({
+  ...scope,
+  ignoredPathPatterns: scope.ignoredPathPatterns?.map(redactBuildModeText),
+  policyRefs: sanitizeStringRefs(scope.policyRefs),
+  principalId: redactBuildModeText(scope.principalId),
+  projectId: redactOptionalBuildModeText(scope.projectId),
+  roles: sanitizeStringRefs(scope.roles),
+  tenantId: redactBuildModeText(scope.tenantId),
+  workspaceRoot: redactBuildModeText(scope.workspaceRoot),
+});
+
+const sanitizeAppBundle = (
+  bundle: ValorTaskBridgePayload["appBundle"],
+): ValorTaskBridgePayload["appBundle"] => ({
+  ...bundle,
+  artifacts: bundle.artifacts.map((artifact) => ({
+    ...artifact,
+    checksum: redactOptionalBuildModeText(artifact.checksum),
+    kind: coerceEnumValue(artifact.kind, appArtifactKinds, "generated"),
+    path: redactBuildModeText(artifact.path),
+  })),
+  componentBundleIds: sanitizeStringRefs(bundle.componentBundleIds),
+  createdAt: redactBuildModeText(bundle.createdAt),
+  execModuleIds: sanitizeStringRefs(bundle.execModuleIds),
+  id: redactBuildModeText(bundle.id),
+  intent: redactBuildModeText(bundle.intent),
+  name: redactBuildModeText(bundle.name),
+  productLine: redactBuildModeText(bundle.productLine),
+  receiptIds: sanitizeStringRefs(bundle.receiptIds ?? []),
+  sourceSessionId: redactBuildModeText(bundle.sourceSessionId),
+  version: redactBuildModeText(bundle.version),
+});
+
+const sanitizeComponentBundle = (
+  bundle: ValorTaskBridgePayload["componentBundles"][number],
+): ValorTaskBridgePayload["componentBundles"][number] => ({
+  ...bundle,
+  editablePaths: sanitizeStringRefs(bundle.editablePaths),
+  entrypoints: sanitizeStringRefs(bundle.entrypoints),
+  framework: redactBuildModeText(bundle.framework),
+  generatedBy: coerceEnumValue(
+    bundle.generatedBy,
+    componentGeneratedByValues,
+    "Manual",
+  ),
+  generatedPaths: sanitizeStringRefs(bundle.generatedPaths),
+  id: redactBuildModeText(bundle.id),
+  name: redactBuildModeText(bundle.name),
+  receiptIds: sanitizeStringRefs(bundle.receiptIds ?? []),
+  status: coerceEnumValue(bundle.status, componentStatuses, "blocked"),
+});
+
+const sanitizeExecModule = (
+  execModule: ValorTaskBridgePayload["execModules"][number],
+): ValorTaskBridgePayload["execModules"][number] => ({
+  ...execModule,
+  capability: redactBuildModeText(execModule.capability),
+  id: redactBuildModeText(execModule.id),
+  inputSchemaRef: redactBuildModeText(execModule.inputSchemaRef),
+  name: redactBuildModeText(execModule.name),
+  outputSchemaRef: redactBuildModeText(execModule.outputSchemaRef),
+  owner: redactBuildModeText(execModule.owner),
+  receiptIds: sanitizeStringRefs(execModule.receiptIds ?? []),
+  safetyLevel: coerceEnumValue(
+    execModule.safetyLevel,
+    execModuleSafetyLevels,
+    "approval-required",
+  ),
+  version: redactBuildModeText(execModule.version),
+});
+
+const sanitizeMcpServer = (
+  server: ValorTaskBridgePayload["mcpServers"][number],
+): ValorTaskBridgePayload["mcpServers"][number] => ({
+  ...server,
+  id: redactBuildModeText(server.id),
+  name: redactBuildModeText(server.name),
+  receiptIds: sanitizeStringRefs(server.receiptIds ?? []),
+  scope: coerceEnumValue(server.scope, mcpServerScopes, "private"),
+  status: coerceEnumValue(server.status, mcpServerStatuses, "blocked"),
+  toolIds: sanitizeStringRefs(server.toolIds),
+  transport: coerceEnumValue(server.transport, mcpServerTransports, "stdio"),
+});
+
+const sanitizeMcpTool = (
+  tool: ValorTaskBridgePayload["mcpTools"][number],
+): ValorTaskBridgePayload["mcpTools"][number] => ({
+  ...tool,
+  capabilityId: redactBuildModeText(tool.capabilityId),
+  execModuleId: redactOptionalBuildModeText(tool.execModuleId),
+  id: redactBuildModeText(tool.id),
+  inputSchemaRef: redactOptionalBuildModeText(tool.inputSchemaRef),
+  name: redactBuildModeText(tool.name),
+  outputSchemaRef: redactOptionalBuildModeText(tool.outputSchemaRef),
+  receiptIds: sanitizeStringRefs(tool.receiptIds ?? []),
+  serverId: redactBuildModeText(tool.serverId),
+  status: coerceEnumValue(tool.status, mcpToolStatuses, "blocked"),
+  workflowRef: redactOptionalBuildModeText(tool.workflowRef),
+});
+
+const sanitizeConnectorBinding = (
+  binding: ValorTaskBridgePayload["connectorBindings"][number],
+): ValorTaskBridgePayload["connectorBindings"][number] => ({
+  ...binding,
+  allowedActions: binding.allowedActions
+    .map((action) => coerceEnumValue(action, connectorReadActions, "read"))
+    .filter((action, index, actions) => actions.indexOf(action) === index),
+  commandIds: sanitizeStringRefs(binding.commandIds),
+  connectorId: redactBuildModeText(binding.connectorId),
+  connectorName: redactBuildModeText(binding.connectorName),
+  dataClasses: sanitizeStringRefs(binding.dataClasses),
+  id: redactBuildModeText(binding.id),
+  receiptIds: sanitizeStringRefs(binding.receiptIds ?? []),
+  scopeRef: redactOptionalBuildModeText(binding.scopeRef),
+  status: coerceEnumValue(
+    binding.status,
+    connectorBindingStatuses,
+    "blocked",
+  ),
+});
+
+const sanitizeGrayMatterContextPack = (
+  pack: GrayMatterContextPack,
+): GrayMatterContextPack => ({
+  ...pack,
+  compiledAt: redactBuildModeText(pack.compiledAt),
+  id: redactBuildModeText(pack.id),
+  answerPolicy: coerceEnumValue(
+    pack.answerPolicy,
+    grayMatterAnswerPolicies,
+    "requires-review",
+  ),
+  invariantPreflightStatus: coerceEnumValue(
+    pack.invariantPreflightStatus,
+    grayMatterInvariantStatuses,
+    "missing",
+  ),
+  majorTaskRefs: sanitizeStringRefs(pack.majorTaskRefs),
+  memoryEntryIds: sanitizeStringRefs(pack.memoryEntryIds),
+  policy: coerceEnumValue(pack.policy, grayMatterPolicies, "requires-review"),
+  preflightReceiptId: redactOptionalBuildModeText(pack.preflightReceiptId),
+  retrievalReceiptIds: sanitizeStringRefs(pack.retrievalReceiptIds),
+  retrievalTraceId: redactOptionalBuildModeText(pack.retrievalTraceId),
+  retrievalStatus: coerceEnumValue(
+    pack.retrievalStatus,
+    grayMatterRetrievalStatuses,
+    "blocked",
+  ),
+  source: redactBuildModeText(pack.source),
+  sourceRefs: sanitizeStringRefs(pack.sourceRefs),
+  summary: redactBuildModeText(pack.summary),
+});
+
+const sanitizeCreditEstimate = (
+  estimate: ValorTaskBridgePayload["creditEstimate"],
+): ValorTaskBridgePayload["creditEstimate"] => ({
+  ...estimate,
+  assumptions: sanitizeStringRefs(estimate.assumptions),
+  currency: coerceEnumValue(
+    estimate.currency,
+    creditCurrencies,
+    "ValkyrCredits",
+  ),
+  id: redactBuildModeText(estimate.id),
+  providerRoute: coerceProviderRoute(estimate.providerRoute),
+  receiptIds: sanitizeStringRefs(estimate.receiptIds ?? []),
+});
+
+const sanitizePromptProfile = (
+  profile: ValorTaskBridgePayload["promptProfiles"][number],
+): ValorTaskBridgePayload["promptProfiles"][number] => ({
+  ...profile,
+  description: redactBuildModeText(profile.description),
+  id: redactBuildModeText(profile.id),
+  modelFamily: redactBuildModeText(profile.modelFamily),
+  name: redactBuildModeText(profile.name),
+  promptBundleRef: redactBuildModeText(profile.promptBundleRef),
+  receiptIds: sanitizeStringRefs(profile.receiptIds ?? []),
+});
+
+const sanitizePromptBundle = (
+  bundle: ValorTaskBridgePayload["promptBundles"][number],
+): ValorTaskBridgePayload["promptBundles"][number] => ({
+  ...bundle,
+  id: redactBuildModeText(bundle.id),
+  loadedAt: redactBuildModeText(bundle.loadedAt),
+  name: redactBuildModeText(bundle.name),
+  policy: coerceEnumValue(
+    bundle.policy,
+    promptBundlePolicies,
+    "review-required",
+  ),
+  receiptIds: sanitizeStringRefs(bundle.receiptIds),
+  sections: bundle.sections.map((section) => ({
+    ...section,
+    checksum: redactOptionalBuildModeText(section.checksum),
+    id: redactBuildModeText(section.id),
+    purpose: redactBuildModeText(section.purpose),
+    sourceRef: redactBuildModeText(section.sourceRef),
+    title: redactBuildModeText(section.title),
+  })),
+  source: coerceEnumValue(bundle.source, promptBundleSources, "Workspace"),
+  version: redactBuildModeText(bundle.version),
+});
+
+const sanitizePromptExecutionContext = (
+  context: BuildModePromptExecutionContext | undefined,
+): BuildModePromptExecutionContext | undefined =>
+  context
+    ? {
+        ...context,
+        promptBundleId: redactBuildModeText(context.promptBundleId),
+        promptBundlePolicy: coerceEnumValue(
+          context.promptBundlePolicy,
+          promptBundlePolicies,
+          "review-required",
+        ),
+        promptBundleReceiptIds: sanitizeStringRefs(
+          context.promptBundleReceiptIds,
+        ),
+        promptBundleVersion: redactBuildModeText(context.promptBundleVersion),
+        promptProfileId: redactBuildModeText(context.promptProfileId),
+        promptProfileName: redactBuildModeText(context.promptProfileName),
+      }
+    : context;
+
+const sanitizeWorkflowMcpBinding = (
+  binding: WorkflowMcpBinding,
+): WorkflowMcpBinding => ({
+  ...binding,
+  execModuleId: redactBuildModeText(binding.execModuleId),
+  id: redactBuildModeText(binding.id),
+  inputContractRef: redactBuildModeText(binding.inputContractRef),
+  receiptIds: sanitizeStringRefs(binding.receiptIds ?? []),
+  serverName: redactBuildModeText(binding.serverName),
+  toolName: redactBuildModeText(binding.toolName),
+  workflowRef: redactBuildModeText(binding.workflowRef),
+});
+
+const sanitizeCapability = (
+  capability: ValorTaskBridgePayload["capabilities"][number],
+): ValorTaskBridgePayload["capabilities"][number] => ({
+  ...capability,
+  id: redactBuildModeText(capability.id),
+  kind: coerceEnumValue(capability.kind, capabilityKinds, "workflow"),
+  label: redactBuildModeText(capability.label),
+  receiptIds: sanitizeStringRefs(capability.receiptIds ?? []),
+  risk: coerceEnumValue(capability.risk, riskLevels, "high"),
+});
+
+const sanitizeGuardrail = (
+  guardrail: ValorTaskBridgePayload["guardrails"][number],
+): ValorTaskBridgePayload["guardrails"][number] => ({
+  ...guardrail,
+  enforcement: coerceEnumValue(
+    guardrail.enforcement,
+    guardrailEnforcements,
+    "hard-block",
+  ),
+  id: redactBuildModeText(guardrail.id),
+  label: redactBuildModeText(guardrail.label),
+  receiptIds: sanitizeStringRefs(guardrail.receiptIds ?? []),
+  summary: redactBuildModeText(guardrail.summary),
+});
+
+const sanitizeToolPermission = (
+  permission: ValorTaskBridgePayload["toolPermissions"][number],
+): ValorTaskBridgePayload["toolPermissions"][number] => ({
+  ...permission,
+  approvalThreshold: coerceEnumValue(
+    permission.approvalThreshold,
+    approvalThresholds,
+    "operator",
+  ),
+  capabilityId: redactBuildModeText(permission.capabilityId),
+  decision: coerceEnumValue(permission.decision, permissionDecisions, "deny"),
+  id: redactBuildModeText(permission.id),
+  label: redactBuildModeText(permission.label),
+  reason: redactBuildModeText(permission.reason),
+  receiptIds: sanitizeStringRefs(permission.receiptIds ?? []),
+  scopeRefs: sanitizeStringRefs(permission.scopeRefs),
+});
+
+const sanitizeCommandPolicyRule = (
+  rule: ValorTaskBridgePayload["commandPolicyRules"][number],
+): ValorTaskBridgePayload["commandPolicyRules"][number] => ({
+  ...rule,
+  commandKinds: rule.commandKinds?.map((kind) =>
+    coerceEnumValue(kind, commandKinds, "workflow"),
+  ),
+  effect: coerceEnumValue(rule.effect, commandPolicyEffects, "deny"),
+  id: redactBuildModeText(rule.id),
+  label: redactBuildModeText(rule.label),
+  pattern: redactBuildModeText(rule.pattern),
+  reason: redactBuildModeText(rule.reason),
+  receiptIds: sanitizeStringRefs(rule.receiptIds ?? []),
+});
+
+const sanitizeCheckpoint = (
+  checkpoint: ValorTaskBridgePayload["checkpoints"][number],
+): ValorTaskBridgePayload["checkpoints"][number] => ({
+  ...checkpoint,
+  commandId: redactOptionalBuildModeText(checkpoint.commandId),
+  createdAt: redactOptionalBuildModeText(checkpoint.createdAt),
+  hash: redactOptionalBuildModeText(checkpoint.hash),
+  id: redactBuildModeText(checkpoint.id),
+  label: redactBuildModeText(checkpoint.label),
+  receiptIds: sanitizeStringRefs(checkpoint.receiptIds),
+  rollbackCommandId: redactOptionalBuildModeText(checkpoint.rollbackCommandId),
+  status: coerceEnumValue(checkpoint.status, checkpointStatuses, "planned"),
+  summary: redactBuildModeText(checkpoint.summary),
+});
+
+const sanitizeSafeEditPlan = (
+  plan: ValorTaskBridgePayload["safeEditPlans"][number],
+): ValorTaskBridgePayload["safeEditPlans"][number] => ({
+  ...plan,
+  commandId: redactBuildModeText(plan.commandId),
+  id: redactBuildModeText(plan.id),
+  label: redactBuildModeText(plan.label),
+  protectedPaths: sanitizeStringRefs(plan.protectedPaths),
+  receiptIds: sanitizeStringRefs(plan.receiptIds),
+  status: coerceEnumValue(plan.status, safeEditStatuses, "blocked"),
+  summary: redactBuildModeText(plan.summary),
+  targetPaths: sanitizeStringRefs(plan.targetPaths),
+  tool: coerceEnumValue(plan.tool, safeEditTools, "psr.edit"),
+});
+
+const sanitizeSwarmRoleAssignment = (
+  assignment: ValorTaskBridgePayload["swarmRoles"][number],
+): ValorTaskBridgePayload["swarmRoles"][number] => ({
+  ...assignment,
+  currentFocus: redactBuildModeText(assignment.currentFocus),
+  owner: redactBuildModeText(assignment.owner),
+  role: coerceEnumValue(assignment.role, swarmRoleValues, "Supervisor"),
+  status: coerceEnumValue(assignment.status, swarmStatuses, "blocked"),
+});
+
+const sanitizeAgentLoopPhase = (
+  phase: BuildModeAgentLoopPhase,
+): BuildModeAgentLoopPhase => ({
+  ...phase,
+  capabilityIds: sanitizeStringRefs(phase.capabilityIds),
+  id: redactBuildModeText(phase.id),
+  label: redactBuildModeText(phase.label),
+  receiptIds: sanitizeStringRefs(phase.receiptIds),
+  status: coerceEnumValue(phase.status, agentLoopStatuses, "blocked"),
+});
+
+const sanitizeAgentRuntimeBinding = (
+  runtime: BuildModeAgentRuntimeBinding,
+): BuildModeAgentRuntimeBinding => ({
+  ...runtime,
+  id: redactBuildModeText(runtime.id),
+  label: redactBuildModeText(runtime.label),
+  loopPhaseIds: sanitizeStringRefs(runtime.loopPhaseIds),
+  handoffPolicy: coerceEnumValue(
+    runtime.handoffPolicy,
+    handoffPolicies,
+    "operator-approved",
+  ),
+  ownerRole: coerceEnumValue(runtime.ownerRole, swarmRoleValues, "Supervisor"),
+  promptProfileId: redactBuildModeText(runtime.promptProfileId),
+  providerRoute: coerceProviderRoute(runtime.providerRoute),
+  receiptIds: sanitizeStringRefs(runtime.receiptIds),
+  runtime: coerceEnumValue(runtime.runtime, runtimeKinds, "ValorIDE"),
+  status: coerceEnumValue(runtime.status, runtimeStatuses, "blocked"),
+});
+
+const sanitizeLocalModelRuntimeBinding = (
+  runtime: BuildModeLocalModelRuntimeBinding,
+): BuildModeLocalModelRuntimeBinding => ({
+  ...runtime,
+  capabilityIds: sanitizeStringRefs(runtime.capabilityIds),
+  endpointRef: redactBuildModeText(runtime.endpointRef),
+  executionMode: coerceEnumValue(
+    runtime.executionMode,
+    localModelExecutionModes,
+    "workspace-local",
+  ),
+  healthCheckCommandId: redactBuildModeText(runtime.healthCheckCommandId),
+  id: redactBuildModeText(runtime.id),
+  label: redactBuildModeText(runtime.label),
+  modelRef: redactBuildModeText(runtime.modelRef),
+  providerCredentialId: redactBuildModeText(runtime.providerCredentialId),
+  receiptIds: sanitizeStringRefs(runtime.receiptIds),
+  runtimeId: redactBuildModeText(runtime.runtimeId),
+  status: coerceEnumValue(runtime.status, runtimeStatuses, "blocked"),
+});
+
+const sanitizeThorApiVaixBinding = (
+  binding: ValorTaskBridgePayload["thorApiVaixBindings"][number],
+): ValorTaskBridgePayload["thorApiVaixBindings"][number] => ({
+  ...binding,
+  clientRef: redactBuildModeText(binding.clientRef),
+  editableAdapterPaths: sanitizeStringRefs(binding.editableAdapterPaths),
+  generatedPaths: sanitizeStringRefs(binding.generatedPaths),
+  id: redactBuildModeText(binding.id),
+  operationRefs: sanitizeStringRefs(binding.operationRefs),
+  policy: coerceEnumValue(binding.policy, thorApiVaixPolicies, "blocked"),
+  receiptIds: sanitizeStringRefs(binding.receiptIds),
+  serviceName: redactBuildModeText(binding.serviceName),
+  surface: coerceEnumValue(binding.surface, thorApiVaixSurfaces, "ThorAPI"),
+});
+
+const sanitizeAutonomyPolicy = (
+  policy: ValorTaskBridgePayload["autonomyPolicy"],
+): ValorTaskBridgePayload["autonomyPolicy"] => ({
+  ...policy,
+  allowedCapabilityIds: sanitizeStringRefs(policy.allowedCapabilityIds),
+  approvalRequiredCapabilityIds: sanitizeStringRefs(
+    policy.approvalRequiredCapabilityIds,
+  ),
+  escalationRefs: sanitizeStringRefs(policy.escalationRefs),
+  id: redactBuildModeText(policy.id),
+  label: redactBuildModeText(policy.label),
+  mode: coerceEnumValue(policy.mode, autonomyModes, "disabled"),
+  receiptIds: sanitizeStringRefs(policy.receiptIds ?? []),
+  stopConditions: sanitizeStringRefs(policy.stopConditions),
+});
+
+const sanitizeReadinessGate = (
+  gate: BuildModeReadinessGate,
+): BuildModeReadinessGate => ({
+  ...gate,
+  commandIds: sanitizeStringRefs(gate.commandIds),
+  evidenceArtifactIds: sanitizeStringRefs(gate.evidenceArtifactIds),
+  id: redactBuildModeText(gate.id),
+  label: redactBuildModeText(gate.label),
+  requiredCapabilityIds: sanitizeStringRefs(gate.requiredCapabilityIds),
+  requiredReceiptIds: sanitizeStringRefs(gate.requiredReceiptIds),
+  status: coerceEnumValue(gate.status, readinessGateStatuses, "blocked"),
+  summary: redactBuildModeText(gate.summary),
+});
+
+const sanitizeExecutionPlanStep = (
+  step: BuildModeExecutionPlanStep,
+): BuildModeExecutionPlanStep => ({
+  ...step,
+  commandIds: sanitizeStringRefs(step.commandIds),
+  dependencyStepIds: sanitizeStringRefs(step.dependencyStepIds),
+  id: redactBuildModeText(step.id),
+  label: redactBuildModeText(step.label),
+  nextAction: redactBuildModeText(step.nextAction),
+  readinessGateIds: sanitizeStringRefs(step.readinessGateIds),
+  receiptIds: sanitizeStringRefs(step.receiptIds),
+  runtimeId: redactBuildModeText(step.runtimeId),
+  status: coerceEnumValue(step.status, executionPlanStatuses, "blocked"),
+  summary: redactBuildModeText(step.summary),
+});
+
+const sanitizeAppBundleDiff = (diff: AppBundleDiff): AppBundleDiff => ({
+  ...diff,
+  addedArtifacts: sanitizeStringRefs(diff.addedArtifacts),
+  appBundleId: redactBuildModeText(diff.appBundleId),
+  changedArtifacts: sanitizeStringRefs(diff.changedArtifacts),
+  evidenceArtifactIds: sanitizeStringRefs(diff.evidenceArtifactIds),
+  generatedAt: redactBuildModeText(diff.generatedAt),
+  id: redactBuildModeText(diff.id),
+  receiptIds: sanitizeStringRefs(diff.receiptIds),
+  removedArtifacts: sanitizeStringRefs(diff.removedArtifacts),
+  title: redactBuildModeText(diff.title),
+});
+
+const sanitizeBrowserVerification = (
+  verification: BrowserVerificationStatus,
+): BrowserVerificationStatus => ({
+  ...verification,
+  artifactIds: verification.artifactIds.map(redactBuildModeText),
+  previewUrl: verification.previewUrl
+    ? redactBuildModeText(verification.previewUrl)
+    : verification.previewUrl,
+  screenshotReceiptId: verification.screenshotReceiptId
+    ? redactBuildModeText(verification.screenshotReceiptId)
+    : verification.screenshotReceiptId,
+  status: coerceEnumValue(verification.status, browserStatuses, "failed"),
+});
+
 export const deriveAppBundleDiffs = (value: {
   appBundle: ValorTaskBridgePayload["appBundle"];
 }): AppBundleDiff[] => {
@@ -188,12 +1135,47 @@ export const deriveAppBundleDiffs = (value: {
     {
       id: `app-bundle-diff-${value.appBundle.id}`,
       title: `${value.appBundle.name} generated artifact diff`,
+      appBundleId: value.appBundle.id,
+      generatedAt: value.appBundle.createdAt,
       addedArtifacts,
       changedArtifacts,
       removedArtifacts: [],
+      receiptIds: sanitizeStringRefs(value.appBundle.receiptIds ?? []),
+      evidenceArtifactIds: [],
     },
   ];
 };
+
+export const formatAppBundleDiffArtifactRef = (
+  appBundle: ValorTaskBridgePayload["appBundle"],
+  artifactPath: string,
+): string => {
+  const artifact = appBundle.artifacts?.find(
+    (candidate) => candidate.path === artifactPath,
+  );
+  if (!artifact) {
+    return artifactPath;
+  }
+  const proof = [
+    artifact.kind,
+    artifact.checksum ? `hash ${artifact.checksum}` : undefined,
+  ]
+    .filter(Boolean)
+    .join("; ");
+  return proof ? `${artifactPath} (${proof})` : artifactPath;
+};
+
+const formatAppBundleDiffArtifactList = (
+  appBundle: ValorTaskBridgePayload["appBundle"],
+  artifactPaths: string[],
+): string =>
+  artifactPaths.length
+    ? artifactPaths
+        .map((artifactPath) =>
+          formatAppBundleDiffArtifactRef(appBundle, artifactPath),
+        )
+        .join(", ")
+    : "none";
 
 export const createWorkflowMcpCommand = (
   binding: WorkflowMcpBinding,
@@ -201,8 +1183,8 @@ export const createWorkflowMcpCommand = (
   id: `cmd-workflow-${binding.id}`,
   kind: "workflow",
   label: `Run ${binding.toolName}`,
-  command: `mcp:${binding.serverName}.${binding.toolName} workflow:${binding.workflowRef} input:${binding.inputContractRef}`,
-  capabilityId: "mcp.tool",
+  command: `mcp:${binding.serverName}.${binding.toolName} execmodule:${binding.execModuleId} workflow:${binding.workflowRef} input:${binding.inputContractRef}`,
+  capabilityId: "workflow.execute",
   requiresApproval: binding.approvalRequired,
   status: binding.approvalRequired ? "approval-required" : "queued",
 });
@@ -264,6 +1246,85 @@ export const getBuildModeCommandCatalog = (
       status: receipt.status,
     };
   });
+};
+
+export const getBuildModeMcpToolCommands = (
+  payload: ValorTaskBridgePayload,
+): BuildModeCommand[] =>
+  getBuildModeCommandCatalog(payload).filter(
+    (command) => command.kind === "mcp" || command.capabilityId === "mcp.tool",
+  );
+
+const readMetadataString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length ? value : undefined;
+
+export const getBuildModeMcpToolTarget = (
+  command: BuildModeCommand,
+  receipt?: BuildModeCommandReceipt,
+): { serverName?: string; toolName?: string } => {
+  const artifact = receipt?.artifacts?.find(
+    (item) =>
+      item.kind === "mcp_result" &&
+      item.commandId === command.id &&
+      (!item.receiptId || item.receiptId === receipt.id),
+  );
+  const serverName = readMetadataString(artifact?.metadata?.serverName);
+  const toolName = readMetadataString(artifact?.metadata?.toolName);
+  if (serverName || toolName) {
+    return { serverName, toolName };
+  }
+
+  const target = command.command.match(/\bmcp:([^\s]+)/)?.[1];
+  if (!target) {
+    return {};
+  }
+  const separatorIndex = target.indexOf(".");
+  if (separatorIndex < 1 || separatorIndex >= target.length - 1) {
+    return { serverName: target };
+  }
+  return {
+    serverName: target.slice(0, separatorIndex),
+    toolName: target.slice(separatorIndex + 1),
+  };
+};
+
+export const formatBuildModeMcpToolCommandLine = (
+  command: BuildModeCommand,
+  receipt?: BuildModeCommandReceipt,
+): string => {
+  const target = getBuildModeMcpToolTarget(command, receipt);
+  const artifact = receipt?.artifacts?.find(
+    (item) =>
+      item.kind === "mcp_result" &&
+      item.commandId === command.id &&
+      (!item.receiptId || item.receiptId === receipt.id),
+  );
+  const metadata = artifact?.metadata;
+  const proof = [
+    target.serverName && target.toolName
+      ? `${target.serverName}.${target.toolName}`
+      : target.serverName,
+    `status ${command.status}`,
+    `capability ${command.capabilityId}`,
+    command.assignedSwarmRole ? `role ${command.assignedSwarmRole}` : undefined,
+    command.assignedRuntimeId ? `runtime ${command.assignedRuntimeId}` : undefined,
+    receipt ? `receipt ${receipt.id}` : "receipt none",
+    artifact ? `artifact ${artifact.id}` : undefined,
+    readMetadataString(metadata?.status)
+      ? `result ${readMetadataString(metadata?.status)}`
+      : undefined,
+    readMetadataString(metadata?.executionId)
+      ? `execution ${readMetadataString(metadata?.executionId)}`
+      : undefined,
+    readMetadataString(metadata?.traceId)
+      ? `trace ${readMetadataString(metadata?.traceId)}`
+      : undefined,
+    typeof metadata?.resourceCount === "number"
+      ? `resources ${metadata.resourceCount}`
+      : undefined,
+  ].filter(Boolean);
+
+  return `${command.label}: ${proof.join("; ")}`;
 };
 
 const assignCommandSwarmContext = (
@@ -419,6 +1480,9 @@ export interface BuildModeAutonomousQueuePlan {
   updatedAt: string;
 }
 
+const isPendingBuildModeCommand = (command: BuildModeCommand): boolean =>
+  command.status === "queued" || command.status === "approval-required";
+
 export const getNextBuildModeExecutionAction = (
   payload: ValorTaskBridgePayload,
 ): NextBuildModeExecutionAction | undefined => {
@@ -438,9 +1502,41 @@ export const getNextBuildModeExecutionAction = (
       .map((commandId) => commandById.get(commandId))
       .find(
         (item): item is BuildModeCommand =>
-          Boolean(item) &&
-          item.status !== "succeeded" &&
-          item.status !== "running",
+          Boolean(item) && isPendingBuildModeCommand(item),
+      );
+    if (command) {
+      return { command, step };
+    }
+  }
+
+  return undefined;
+};
+
+const getNextPendingBuildModeExecutionAction = (
+  payload: ValorTaskBridgePayload,
+): NextBuildModeExecutionAction | undefined => {
+  const commandById = new Map(
+    getBuildModeCommandCatalog(payload).map((command) => [command.id, command]),
+  );
+  const stepById = new Map(
+    payload.executionPlan.map((step) => [step.id, step]),
+  );
+
+  for (const step of payload.executionPlan) {
+    if (
+      step.status !== "pending" ||
+      !step.dependencyStepIds.every(
+        (dependencyId) => stepById.get(dependencyId)?.status === "complete",
+      )
+    ) {
+      continue;
+    }
+
+    const command = step.commandIds
+      .map((commandId) => commandById.get(commandId))
+      .find(
+        (item): item is BuildModeCommand =>
+          Boolean(item) && isPendingBuildModeCommand(item),
       );
     if (command) {
       return { command, step };
@@ -454,6 +1550,9 @@ export const deriveBuildModeAutonomyDecision = (
   payload: ValorTaskBridgePayload,
 ): BuildModeAutonomyDecision => {
   const nextExecutionAction = getNextBuildModeExecutionAction(payload);
+  const nextPendingExecutionAction = nextExecutionAction
+    ? undefined
+    : getNextPendingBuildModeExecutionAction(payload);
   const currentConsecutiveCommands = getBuildModeCurrentConsecutiveCommandCount(
     payload.commandReceipts,
   );
@@ -468,8 +1567,9 @@ export const deriveBuildModeAutonomyDecision = (
   const estimatedCreditsRemaining =
     payload.autonomyPolicy.maxEstimatedCredits -
     payload.creditEstimate.estimatedCredits;
-  const nextCommand = nextExecutionAction?.command;
-  const nextStep = nextExecutionAction?.step;
+  const nextCommand =
+    nextExecutionAction?.command ?? nextPendingExecutionAction?.command;
+  const nextStep = nextExecutionAction?.step ?? nextPendingExecutionAction?.step;
   const pendingApprovalReceipt = nextCommand
     ? latestCommandReceipts.find(
         (receipt) =>
@@ -501,9 +1601,22 @@ export const deriveBuildModeAutonomyDecision = (
   const commandPolicyPreflight = nextCommand
     ? evaluateCommandPolicyPreflight(nextCommand, payload.commandPolicyRules)
     : undefined;
+  const builtInApprovalPreflight = nextCommand
+    ? evaluateBuiltInApprovalPreflight(nextCommand)
+    : undefined;
+  const connectorMutationPreflight = nextCommand
+    ? evaluateConnectorMutationPreflight(nextCommand)
+    : undefined;
+  const thorApiVaixPreflight = nextCommand
+    ? evaluateThorApiVaixLauncherPreflight(nextCommand)
+    : undefined;
   const fileSafetyPreflight = nextCommand
     ? evaluateFileSafetyPreflight(nextCommand, payload)
     : undefined;
+  const ownershipPreflight =
+    nextCommand && nextStep
+      ? evaluateRuntimeOwnershipPreflight(nextCommand, nextStep, payload)
+      : undefined;
   const receiptProofPreflight =
     payload.autonomyPolicy.receiptRequired && nextStep
       ? evaluateDependencyReceiptProofPreflight(
@@ -543,13 +1656,14 @@ export const deriveBuildModeAutonomyDecision = (
       (nextCommand.requiresApproval ||
         nextCommand.status === "approval-required" ||
         nextCommandKindRequiresApproval ||
+        builtInApprovalPreflight ||
         approvalRequiredToolPermission ||
         payload.autonomyPolicy.approvalRequiredCapabilityIds.includes(
           nextCommand.capabilityId,
         )),
   );
-  const requiredApprovalThreshold = nextCapabilityId
-    ? getRequiredApprovalThreshold(payload, nextCapabilityId)
+  const requiredApprovalThreshold = nextCommand
+    ? getRequiredApprovalThreshold(payload, nextCommand)
     : undefined;
 
   let status: BuildModeAutonomyDecision["status"] = "continue";
@@ -580,6 +1694,10 @@ export const deriveBuildModeAutonomyDecision = (
     status = "blocked";
     summary = "Autonomy is blocked by the estimated credit cap.";
     reasonCodes.push("credit-cap-exceeded");
+  } else if (nextPendingExecutionAction) {
+    status = "blocked";
+    summary = `Autonomy is waiting for execution step ${nextPendingExecutionAction.step.label} to become ready.`;
+    reasonCodes.push(`plan-step-pending:${nextPendingExecutionAction.step.id}`);
   } else if (!nextExecutionAction) {
     status = "complete";
     summary = "No runnable Build Mode execution step remains.";
@@ -592,10 +1710,22 @@ export const deriveBuildModeAutonomyDecision = (
     status = "blocked";
     summary = commandPolicyPreflight.reason;
     reasonCodes.push(commandPolicyPreflight.reasonCode);
+  } else if (connectorMutationPreflight) {
+    status = "blocked";
+    summary = connectorMutationPreflight.reason;
+    reasonCodes.push(connectorMutationPreflight.reasonCode);
+  } else if (thorApiVaixPreflight) {
+    status = "blocked";
+    summary = thorApiVaixPreflight.reason;
+    reasonCodes.push(thorApiVaixPreflight.reasonCode);
   } else if (fileSafetyPreflight) {
     status = "blocked";
     summary = fileSafetyPreflight.reason;
     reasonCodes.push(fileSafetyPreflight.reasonCode);
+  } else if (ownershipPreflight) {
+    status = "blocked";
+    summary = ownershipPreflight.reason;
+    reasonCodes.push(...ownershipPreflight.reasonCodes);
   } else if (receiptProofPreflight) {
     status = "blocked";
     summary = receiptProofPreflight.reason;
@@ -619,6 +1749,7 @@ export const deriveBuildModeAutonomyDecision = (
     payload.autonomyPolicy.mode === "manual" ||
     pendingApprovalReceipt ||
     commandPolicyPreflight?.decision === "approval-required" ||
+    builtInApprovalPreflight ||
     nextRequiresApproval
   ) {
     status = "approval-required";
@@ -633,6 +1764,9 @@ export const deriveBuildModeAutonomyDecision = (
     }
     if (commandPolicyPreflight?.decision === "approval-required") {
       reasonCodes.push(commandPolicyPreflight.reasonCode);
+    }
+    if (builtInApprovalPreflight) {
+      reasonCodes.push(builtInApprovalPreflight.reasonCode);
     }
     if (approvalRequiredToolPermission) {
       reasonCodes.push(
@@ -672,7 +1806,8 @@ export const deriveBuildModeAutonomousQueuePlan = (
 ): BuildModeAutonomousQueuePlan => {
   const decision = deriveBuildModeAutonomyDecision(payload);
   const nextExecutionAction = getNextBuildModeExecutionAction(payload);
-  const nextCommandId = nextExecutionAction?.command.id;
+  const nextCommandId =
+    nextExecutionAction?.command.id ?? decision.nextCommandId;
   return {
     status: decision.status,
     summary: decision.summary,
@@ -722,6 +1857,110 @@ interface DependencyReceiptProofPreflightResult {
   receiptIds: string[];
 }
 
+interface RuntimeOwnershipPreflightResult {
+  reason: string;
+  reasonCodes: string[];
+}
+
+const evaluateRuntimeOwnershipPreflight = (
+  command: BuildModeCommand,
+  step: BuildModeExecutionPlanStep,
+  payload: ValorTaskBridgePayload,
+): RuntimeOwnershipPreflightResult | undefined => {
+  const reasons: string[] = [];
+  const reasonCodes: string[] = [];
+
+  if (!payload.agentRuntimes.length) {
+    reasons.push("agent runtime registry is missing");
+    reasonCodes.push("runtime-registry-missing");
+  }
+  if (!payload.swarmRoles.length) {
+    reasons.push("swarm role registry is missing");
+    reasonCodes.push("swarm-role-registry-missing");
+  }
+
+  if (!command.executionPlanStepId) {
+    reasons.push(`${command.id} is missing executionPlanStepId`);
+    reasonCodes.push(`execution-step-missing:${command.id}`);
+  } else if (command.executionPlanStepId !== step.id) {
+    reasons.push(
+      `${command.id} executionPlanStepId ${command.executionPlanStepId} does not match ${step.id}`,
+    );
+    reasonCodes.push(`execution-step-mismatch:${command.id}`);
+  }
+
+  const runtime = command.assignedRuntimeId
+    ? payload.agentRuntimes.find(
+        (candidate) => candidate.id === command.assignedRuntimeId,
+      )
+    : undefined;
+  if (!command.assignedRuntimeId) {
+    reasons.push(`${command.id} is missing assignedRuntimeId`);
+    reasonCodes.push(`runtime-missing:${command.id}`);
+  } else {
+    if (command.assignedRuntimeId !== step.runtimeId) {
+      reasons.push(
+        `${command.id} assignedRuntimeId ${command.assignedRuntimeId} does not match ${step.runtimeId}`,
+      );
+      reasonCodes.push(`runtime-step-mismatch:${command.id}`);
+    }
+    if (!runtime) {
+      reasons.push(
+        `${command.id} references missing agentRuntime ${command.assignedRuntimeId}`,
+      );
+      reasonCodes.push(`runtime-not-found:${command.assignedRuntimeId}`);
+    } else if (!isDispatchableRuntimeStatus(runtime.status)) {
+      reasons.push(
+        `${command.id} agentRuntime ${runtime.id} is ${runtime.status}`,
+      );
+      reasonCodes.push(`runtime-unavailable:${runtime.id}`);
+    }
+  }
+
+  const role = command.assignedSwarmRole
+    ? payload.swarmRoles.find(
+        (candidate) => candidate.role === command.assignedSwarmRole,
+      )
+    : undefined;
+  if (!command.assignedSwarmRole) {
+    reasons.push(`${command.id} is missing assignedSwarmRole`);
+    reasonCodes.push(`swarm-role-missing:${command.id}`);
+  } else {
+    if (!role) {
+      reasons.push(
+        `${command.id} references missing swarmRole ${command.assignedSwarmRole}`,
+      );
+      reasonCodes.push(`swarm-role-not-found:${command.assignedSwarmRole}`);
+    } else if (!isDispatchableSwarmRoleStatus(role.status)) {
+      reasons.push(`${command.id} swarmRole ${role.role} is ${role.status}`);
+      reasonCodes.push(`swarm-role-unavailable:${role.role}`);
+    }
+    if (runtime && runtime.ownerRole !== command.assignedSwarmRole) {
+      reasons.push(
+        `${command.id} assignedSwarmRole ${command.assignedSwarmRole} does not match runtime ${runtime.id} ownerRole ${runtime.ownerRole}`,
+      );
+      reasonCodes.push(`runtime-owner-role-mismatch:${runtime.id}`);
+    }
+  }
+
+  if (!reasons.length) {
+    return undefined;
+  }
+
+  return {
+    reason: `Autonomy is blocked by runtime ownership proof: ${reasons.join("; ")}.`,
+    reasonCodes,
+  };
+};
+
+const isDispatchableRuntimeStatus = (
+  status: BuildModeAgentRuntimeBinding["status"],
+): boolean => status === "available" || status === "selected";
+
+const isDispatchableSwarmRoleStatus = (
+  status: BuildModeSwarmRoleAssignment["status"],
+): boolean => status === "assigned" || status === "idle";
+
 const evaluateDependencyReceiptProofPreflight = (
   step: BuildModeExecutionPlanStep,
   executionPlan: BuildModeExecutionPlanStep[],
@@ -743,7 +1982,7 @@ const evaluateDependencyReceiptProofPreflight = (
     }
   }
 
-  for (const commandId of dependencyCommandIds) {
+  for (const commandId of Array.from(dependencyCommandIds)) {
     const dependencyStep = stepByCommandId.get(commandId);
     const receipt = latestReceiptByCommandId.get(commandId);
     if (dependencyStep && !dependencyStep.receiptIds.length) {
@@ -891,44 +2130,290 @@ const redactBuildModeText = (value: string): string =>
     .replace(SECRET_QUERY_PARAM, `$1${SECRET_REDACTION}`)
     .replace(AUTHORIZATION_BEARER, `$1${SECRET_REDACTION}`);
 
+const findBuildModeSecretMaterialPaths = (
+  value: unknown,
+  path: string = "payload",
+  seen: Set<unknown> = new Set(),
+): string[] => {
+  if (typeof value === "string") {
+    return redactBuildModeText(value) === value ? [] : [path];
+  }
+  if (!value || typeof value !== "object") {
+    return [];
+  }
+  if (seen.has(value)) {
+    return [];
+  }
+  seen.add(value);
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) =>
+      findBuildModeSecretMaterialPaths(item, `${path}[${index}]`, seen),
+    );
+  }
+  return Object.entries(value as Record<string, unknown>).flatMap(
+    ([key, nested]) => {
+      const nestedPath = `${path}.${key}`;
+      if (
+        secretFieldPattern.test(key) &&
+        typeof nested === "string" &&
+        nested.trim() &&
+        !isSecretReferenceString(nested)
+      ) {
+        return [nestedPath];
+      }
+      return findBuildModeSecretMaterialPaths(nested, nestedPath, seen);
+    },
+  );
+};
+
+const isSecretReferenceString = (value: string): boolean => {
+  const normalized = value.trim().toLowerCase();
+  return (
+    normalized.startsWith("credential-ref") ||
+    normalized.startsWith("provider-credential") ||
+    normalized.startsWith("secret-ref:") ||
+    normalized.startsWith("vault://") ||
+    normalized.startsWith("keychain://") ||
+    normalized.startsWith("valkyrai://credentials/")
+  );
+};
+
+const blockAutonomyForLaunchSecretMaterial = (
+  decision: BuildModeAutonomyDecision,
+  secretPaths: string[],
+): BuildModeAutonomyDecision => ({
+  ...decision,
+  status: "blocked",
+  summary: `Autonomy is blocked because the Build Mode launch payload contains inline secret material at ${secretPaths.join(", ")}.`,
+  blockingGateIds: decision.blockingGateIds,
+  blockingReceiptIds: decision.blockingReceiptIds,
+  reasonCodes: [
+    ...decision.reasonCodes,
+    "launch-payload-secret-material",
+    ...secretPaths.map((path) => `launch-secret-path:${path}`),
+  ],
+});
+
+const sanitizeReceipt = (
+  receipt: ValorTaskBridgePayload["receipts"][number],
+): ValorTaskBridgePayload["receipts"][number] => ({
+  ...receipt,
+  actor: redactBuildModeText(receipt.actor),
+  createdAt: redactBuildModeText(receipt.createdAt),
+  id: redactBuildModeText(receipt.id),
+  kind: coerceEnumValue(receipt.kind, receiptKinds, "context"),
+  status: coerceEnumValue(receipt.status, receiptStatuses, "failed"),
+  summary: redactBuildModeText(receipt.summary),
+  targetRef: receipt.targetRef
+    ? redactBuildModeText(receipt.targetRef)
+    : receipt.targetRef,
+  title: redactBuildModeText(receipt.title),
+});
+
+const sanitizeCreditUsageReceipt = (
+  receipt: ValorTaskBridgePayload["creditUsageReceipts"][number],
+): ValorTaskBridgePayload["creditUsageReceipts"][number] => ({
+  ...receipt,
+  capabilityId: redactBuildModeText(receipt.capabilityId),
+  commandId: redactBuildModeText(receipt.commandId),
+  estimateId: redactBuildModeText(receipt.estimateId),
+  id: redactBuildModeText(receipt.id),
+  commandStatus: coerceEnumValue(
+    receipt.commandStatus,
+    commandStatuses,
+    "failed",
+  ),
+  providerRoute: coerceProviderRoute(receipt.providerRoute),
+  billingSummary: receipt.billingSummary
+    ? redactBuildModeText(receipt.billingSummary)
+    : receipt.billingSummary,
+});
+
+const sanitizeBuildModeCommand = (
+  command: BuildModeCommand,
+): BuildModeCommand => ({
+  ...command,
+  assignedRuntimeId: command.assignedRuntimeId
+    ? redactBuildModeText(command.assignedRuntimeId)
+    : command.assignedRuntimeId,
+  capabilityId: redactBuildModeText(command.capabilityId),
+  command: redactBuildModeText(command.command),
+  executionPlanStepId: command.executionPlanStepId
+    ? redactBuildModeText(command.executionPlanStepId)
+    : command.executionPlanStepId,
+  id: redactBuildModeText(command.id),
+  kind: coerceEnumValue(command.kind, commandKinds, "workflow"),
+  label: redactBuildModeText(command.label),
+  protectedPaths: command.protectedPaths?.map(redactBuildModeText),
+  receiptId: command.receiptId
+    ? redactBuildModeText(command.receiptId)
+    : command.receiptId,
+  assignedSwarmRole: command.assignedSwarmRole
+    ? coerceEnumValue(command.assignedSwarmRole, swarmRoleValues, "Supervisor")
+    : command.assignedSwarmRole,
+  status: coerceEnumValue(command.status, commandStatuses, "rejected"),
+  targetPaths: command.targetPaths?.map(redactBuildModeText),
+});
+
+const sanitizeFinalReport = (
+  report: ValorTaskBridgePayload["finalReport"],
+): ValorTaskBridgePayload["finalReport"] => ({
+  ...report,
+  filesChanged: report.filesChanged.map(redactBuildModeText),
+  gaps: report.gaps.map(redactBuildModeText),
+  nextHandoff: report.nextHandoff.map(redactBuildModeText),
+  status: coerceEnumValue(report.status, finalReportStatuses, "draft"),
+  testsRun: report.testsRun.map(redactBuildModeText),
+  title: redactBuildModeText(report.title),
+});
+
 const sanitizeEvidenceArtifact = (
   artifact: BuildModeEvidenceArtifact,
 ): BuildModeEvidenceArtifact => ({
   ...artifact,
+  kind: coerceEnumValue(artifact.kind, evidenceKinds, "command_stdout"),
   title: redactBuildModeText(artifact.title),
   uri: redactBuildModeText(artifact.uri),
   summary: artifact.summary
     ? redactBuildModeText(artifact.summary)
     : artifact.summary,
   metadata: artifact.metadata
-    ? Object.fromEntries(
-        Object.entries(artifact.metadata).map(([key, value]) => [
-          key,
-          typeof value === "string" ? redactBuildModeText(value) : value,
-        ]),
-      )
+    ? redactBuildModeArtifactMetadata(artifact.metadata)
     : artifact.metadata,
 });
+
+const redactBuildModeArtifactMetadata = (
+  metadata: NonNullable<BuildModeEvidenceArtifact["metadata"]>,
+): NonNullable<BuildModeEvidenceArtifact["metadata"]> =>
+  Object.fromEntries(
+    Object.entries(metadata).flatMap(([key, value]) => {
+      const redacted = redactBuildModeMetadataPrimitive(value, key);
+      return redacted === undefined ? [] : [[key, redacted]];
+    }),
+  );
+
+const redactBuildModeMetadataPrimitive = (
+  value: unknown,
+  key?: string,
+): string | number | boolean | undefined => {
+  if (typeof value === "string") {
+    if (
+      key &&
+      secretFieldPattern.test(key) &&
+      !isSecretReferenceString(value)
+    ) {
+      return SECRET_REDACTION;
+    }
+    return redactBuildModeText(value);
+  }
+  if (typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+  return undefined;
+};
 
 const sanitizeBuildModeCommandReceipt = (
   receipt: BuildModeCommandReceipt,
 ): BuildModeCommandReceipt => ({
   ...receipt,
+  capabilityId: redactBuildModeText(receipt.capabilityId),
+  commandId: redactBuildModeText(receipt.commandId),
+  createdAt: redactBuildModeText(receipt.createdAt),
+  id: redactBuildModeText(receipt.id),
+  status: coerceEnumValue(receipt.status, commandStatuses, "rejected"),
   summary: redactBuildModeText(receipt.summary),
   operatorActionSummary: receipt.operatorActionSummary
     ? redactBuildModeText(receipt.operatorActionSummary)
     : receipt.operatorActionSummary,
   policyReasons: receipt.policyReasons?.map(redactBuildModeText),
+  executionMode: receipt.executionMode
+    ? coerceEnumValue(receipt.executionMode, executionModes, "policy-blocked")
+    : receipt.executionMode,
+  nextOperatorAction: receipt.nextOperatorAction
+    ? coerceEnumValue(receipt.nextOperatorAction, operatorActions, "inspect")
+    : receipt.nextOperatorAction,
+  policyDecision: receipt.policyDecision
+    ? coerceEnumValue(receipt.policyDecision, policyDecisions, "reject")
+    : receipt.policyDecision,
+  requiredApprovalThreshold: receipt.requiredApprovalThreshold
+    ? coerceEnumValue(
+        receipt.requiredApprovalThreshold,
+        approvalThresholds,
+        "operator",
+      )
+    : receipt.requiredApprovalThreshold,
   approval: receipt.approval
     ? {
         ...receipt.approval,
+        approverPrincipalId: redactBuildModeText(
+          receipt.approval.approverPrincipalId,
+        ),
+        approverRoles: sanitizeStringRefs(receipt.approval.approverRoles),
         reason: redactBuildModeText(receipt.approval.reason),
+        threshold: coerceEnumValue(
+          receipt.approval.threshold,
+          approvalThresholds,
+          "operator",
+        ),
       }
     : receipt.approval,
+  assignedRuntimeId: redactOptionalBuildModeText(receipt.assignedRuntimeId),
+  assignedSwarmRole: receipt.assignedSwarmRole
+    ? coerceEnumValue(receipt.assignedSwarmRole, swarmRoleValues, "Supervisor")
+    : receipt.assignedSwarmRole,
+  executionPlanStepId: redactOptionalBuildModeText(receipt.executionPlanStepId),
+  grayMatterContextProof: receipt.grayMatterContextProof
+    ? {
+        ...receipt.grayMatterContextProof,
+        answerPolicy: coerceEnumValue(
+          receipt.grayMatterContextProof.answerPolicy,
+          grayMatterAnswerPolicies,
+          "requires-review",
+        ),
+        contextPackId: redactBuildModeText(
+          receipt.grayMatterContextProof.contextPackId,
+        ),
+        invariantPreflightStatus: coerceEnumValue(
+          receipt.grayMatterContextProof.invariantPreflightStatus,
+          grayMatterInvariantStatuses,
+          "missing",
+        ),
+        preflightReceiptId: redactOptionalBuildModeText(
+          receipt.grayMatterContextProof.preflightReceiptId,
+        ),
+        retrievalReceiptIds: sanitizeStringRefs(
+          receipt.grayMatterContextProof.retrievalReceiptIds,
+        ),
+        retrievalTraceId: redactOptionalBuildModeText(
+          receipt.grayMatterContextProof.retrievalTraceId,
+        ),
+        retrievalStatus: coerceEnumValue(
+          receipt.grayMatterContextProof.retrievalStatus,
+          grayMatterRetrievalStatuses,
+          "blocked",
+        ),
+      }
+    : receipt.grayMatterContextProof,
+  promptContext: sanitizePromptExecutionContext(receipt.promptContext),
+  scope: receipt.scope ? sanitizeScopeContext(receipt.scope) : receipt.scope,
   artifacts: receipt.artifacts?.map(sanitizeEvidenceArtifact),
   creditUsageReceipt: receipt.creditUsageReceipt
     ? {
         ...receipt.creditUsageReceipt,
+        capabilityId: redactBuildModeText(
+          receipt.creditUsageReceipt.capabilityId,
+        ),
+        commandId: redactBuildModeText(receipt.creditUsageReceipt.commandId),
+        estimateId: redactBuildModeText(receipt.creditUsageReceipt.estimateId),
+        id: redactBuildModeText(receipt.creditUsageReceipt.id),
+        commandStatus: coerceEnumValue(
+          receipt.creditUsageReceipt.commandStatus,
+          commandStatuses,
+          "failed",
+        ),
+        providerRoute: coerceProviderRoute(
+          receipt.creditUsageReceipt.providerRoute,
+        ),
         billingSummary: receipt.creditUsageReceipt.billingSummary
           ? redactBuildModeText(receipt.creditUsageReceipt.billingSummary)
           : receipt.creditUsageReceipt.billingSummary,
@@ -940,22 +2425,38 @@ const sanitizeScheduledAutomationBinding = (
   automation: ScheduledAutomationBinding,
 ): ScheduledAutomationBinding => ({
   ...automation,
+  id: redactBuildModeText(automation.id),
   label: redactBuildModeText(automation.label),
+  lastRunAt: redactOptionalBuildModeText(automation.lastRunAt),
+  lastRunReceiptId: redactOptionalBuildModeText(automation.lastRunReceiptId),
+  lastRunStatus: automation.lastRunStatus
+    ? coerceEnumValue(automation.lastRunStatus, automationRunStatuses, "failed")
+    : automation.lastRunStatus,
+  nextRunAt: redactOptionalBuildModeText(automation.nextRunAt),
+  providerRoute: automation.providerRoute
+    ? coerceProviderRoute(automation.providerRoute)
+    : automation.providerRoute,
   schedule: redactBuildModeText(automation.schedule),
   workflowRef: redactBuildModeText(automation.workflowRef),
   commandRef: automation.commandRef
     ? redactBuildModeText(automation.commandRef)
     : automation.commandRef,
+  promptContext: sanitizePromptExecutionContext(automation.promptContext),
   valkyraiScheduleUri: automation.valkyraiScheduleUri
     ? redactBuildModeText(automation.valkyraiScheduleUri)
     : automation.valkyraiScheduleUri,
   valkyraiWorkflowId: automation.valkyraiWorkflowId
     ? redactBuildModeText(automation.valkyraiWorkflowId)
     : automation.valkyraiWorkflowId,
+  receiptIds: sanitizeStringRefs(automation.receiptIds),
   runHistory: automation.runHistory?.map((run) => ({
     ...run,
+    completedAt: redactBuildModeText(run.completedAt),
     error: run.error ? redactBuildModeText(run.error) : run.error,
+    receiptId: redactBuildModeText(run.receiptId),
+    status: coerceEnumValue(run.status, automationRunStatuses, "failed"),
   })),
+  status: coerceEnumValue(automation.status, automationStatuses, "blocked"),
 });
 
 const evaluateSecretPreflight = (
@@ -1068,6 +2569,75 @@ const evaluateCommandPolicyPreflight = (
   );
 };
 
+const evaluateBuiltInApprovalPreflight = (
+  command: BuildModeCommand,
+): CommandPolicyPreflightResult | undefined => {
+  const matched = builtInApprovalRules.find((rule) =>
+    rule.pattern.test(command.command),
+  );
+  return matched
+    ? {
+        decision: "approval-required",
+        reason: matched.reason,
+        reasonCode: matched.reasonCode,
+      }
+    : undefined;
+};
+
+const connectorMutationActions = new Set([
+  "archive",
+  "compose",
+  "create",
+  "delete",
+  "deliver",
+  "forward",
+  "move",
+  "mutate",
+  "reply",
+  "send",
+  "trash",
+  "update",
+]);
+
+const evaluateConnectorMutationPreflight = (
+  command: BuildModeCommand,
+): FileSafetyPreflightResult | undefined => {
+  const target = command.command.match(
+    /^connector:([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/i,
+  )?.[1];
+  if (!target) {
+    return undefined;
+  }
+  const [connectorId, action] = target.split(".");
+  const normalizedAction = action?.toLowerCase();
+  if (
+    !connectorId ||
+    !normalizedAction ||
+    !connectorMutationActions.has(normalizedAction)
+  ) {
+    return undefined;
+  }
+  return {
+    reason: `${toConnectorDisplayName(connectorId)} ${normalizedAction} was blocked in Build Mode. Connector mutations require an external approved connector workflow and are not executed by the connector read lane.`,
+    reasonCode: `connector-mutation-blocked:${connectorId.toLowerCase()}.${normalizedAction}`,
+  };
+};
+
+const toConnectorDisplayName = (connectorId: string): string => {
+  const normalized = connectorId.toLowerCase();
+  if (normalized === "gmail") {
+    return "Gmail";
+  }
+  if (normalized === "google-calendar") {
+    return "Google Calendar";
+  }
+  return normalized
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((part) => `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+};
+
 interface FileSafetyPreflightResult {
   reason: string;
   reasonCode: string;
@@ -1096,21 +2666,43 @@ const evaluateFileSafetyPreflight = (
   return undefined;
 };
 
+const evaluateThorApiVaixLauncherPreflight = (
+  command: BuildModeCommand,
+): FileSafetyPreflightResult | undefined =>
+  looksLikeDirectThorApiVaixShortcut(command.command) &&
+  !usesThorApiVaixLauncher(command.command)
+    ? {
+        reason:
+          "ThorAPI/VAIX operations must use ./vaix or ./vai project launchers instead of direct generator/build shortcuts.",
+        reasonCode: "thorapi-vaix-launcher-required",
+      }
+    : undefined;
+
 const getBlockedProtectedPath = (
   command: BuildModeCommand,
   payload: ValorTaskBridgePayload,
 ): string | undefined => {
+  if (!looksLikeGeneratedArtifactMutationCommand(command)) {
+    return undefined;
+  }
+  const targetPaths = (command.targetPaths ?? [])
+    .map(normalizePathForPolicy)
+    .filter(Boolean);
+  const commandPathCandidates = extractCommandPathCandidates(command.command)
+    .map(normalizePathForPolicy)
+    .filter(Boolean);
+  const inferredGeneratedPaths = Array.from(
+    new Set([...targetPaths, ...commandPathCandidates]),
+  ).filter(isGeneratedThorApiArtifactPath);
   const protectedPaths = Array.from(
     new Set([
       ...(command.protectedPaths ?? []),
       ...payload.appBundle.artifacts
         .filter((artifact) => artifact.kind === "generated")
         .map((artifact) => artifact.path),
+      ...inferredGeneratedPaths,
     ]),
   )
-    .map(normalizePathForPolicy)
-    .filter(Boolean);
-  const targetPaths = (command.targetPaths ?? [])
     .map(normalizePathForPolicy)
     .filter(Boolean);
   const commandText = normalizePathForPolicy(command.command);
@@ -1128,7 +2720,12 @@ const getBlockedIgnoredPath = (
   payload: ValorTaskBridgePayload,
 ): { path: string; pattern: string } | undefined => {
   const patterns = payload.scope.ignoredPathPatterns ?? [];
-  const targetPaths = (command.targetPaths ?? [])
+  const targetPaths = Array.from(
+    new Set([
+      ...(command.targetPaths ?? []),
+      ...extractCommandPathCandidates(command.command),
+    ]),
+  )
     .map(normalizePathForPolicy)
     .filter(Boolean);
 
@@ -1149,6 +2746,258 @@ const getBlockedIgnoredPath = (
 
 const normalizePathForPolicy = (value: string): string =>
   value.replace(/\\/g, "/").replace(/^\.\//, "").replace(/\/+/g, "/");
+
+const tokenizeCommandText = (value: string): string[] => {
+  const tokens: string[] = [];
+  let current = "";
+  let quote: "'" | '"' | undefined;
+  let escaped = false;
+
+  for (const char of value) {
+    if (escaped) {
+      current += char;
+      escaped = false;
+      continue;
+    }
+    if (char === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      if (char === quote) {
+        quote = undefined;
+      } else {
+        current += char;
+      }
+      continue;
+    }
+    if (char === "'" || char === '"') {
+      quote = char;
+      continue;
+    }
+    if (/\s/.test(char) || char === ";" || char === "|") {
+      if (current) {
+        tokens.push(current);
+        current = "";
+      }
+      continue;
+    }
+    current += char;
+  }
+
+  if (current) {
+    tokens.push(current);
+  }
+  return tokens;
+};
+
+const normalizeCommandPathToken = (token: string): string | undefined => {
+  const normalized = token
+    .trim()
+    .replace(/^[<>]+/, "")
+    .replace(/[),]+$/g, "");
+  if (
+    !normalized ||
+    looksLikeInlineCodePathWrapper(normalized) ||
+    (normalized.startsWith("-") && !normalized.startsWith("--")) ||
+    normalized.includes("://") ||
+    normalized.startsWith("data:") ||
+    normalized.startsWith("$")
+  ) {
+    return undefined;
+  }
+  return normalized;
+};
+
+const looksLikeInlineCodePathWrapper = (value: string): boolean =>
+  /[()]/.test(value) && /["']/.test(value);
+
+const expandCommandPathToken = (token: string): string[] => {
+  const prefixedPath = token.match(/^(?:psr|input|file|path|target):(.+)$/i);
+  if (prefixedPath?.[1]) {
+    return [prefixedPath[1]];
+  }
+
+  const optionValue = token.match(/^[A-Za-z0-9_.-]+=([^=].+)$/);
+  if (optionValue?.[1]) {
+    return [optionValue[1]];
+  }
+
+  const flagValue = token.match(/^--[A-Za-z0-9_.-]+=([^=].+)$/);
+  if (flagValue?.[1]) {
+    return [flagValue[1]];
+  }
+
+  return [token];
+};
+
+const looksLikeWorkspacePath = (value: string): boolean =>
+  value.startsWith("/") ||
+  value.startsWith("./") ||
+  value.startsWith("../") ||
+  value.includes("/");
+
+const extractCommandPathCandidates = (commandText: string): string[] => {
+  const tokens = tokenizeCommandText(commandText);
+  const candidates: string[] = [];
+  let expectsRedirectionTarget = false;
+  for (let index = 0; index < tokens.length; index += 1) {
+    const rawToken = tokens[index];
+    if (expectsRedirectionTarget) {
+      const candidate = normalizeCommandPathToken(rawToken);
+      if (candidate && !isShellRedirectionFdTarget(candidate)) {
+        for (const expanded of expandCommandPathToken(candidate)) {
+          candidates.push(expanded);
+        }
+      }
+      expectsRedirectionTarget = false;
+      continue;
+    }
+
+    if (isShellRedirectionOperator(rawToken)) {
+      expectsRedirectionTarget = true;
+      continue;
+    }
+
+    const redirectTarget = extractInlineShellRedirectionTarget(rawToken);
+    if (redirectTarget) {
+      const candidate = normalizeCommandPathToken(redirectTarget);
+      if (candidate && !isShellRedirectionFdTarget(candidate)) {
+        for (const expanded of expandCommandPathToken(candidate)) {
+          candidates.push(expanded);
+        }
+      }
+      continue;
+    }
+
+    const force =
+      /^(?:psr|input|file|path|target):/i.test(rawToken) ||
+      /^[A-Za-z0-9_.-]+=/.test(rawToken) ||
+      /^--[A-Za-z0-9_.-]+=/.test(rawToken);
+    for (const expanded of expandCommandPathToken(rawToken)) {
+      const candidate = normalizeCommandPathToken(expanded);
+      if (candidate && (force || looksLikeWorkspacePath(candidate))) {
+        candidates.push(candidate);
+      }
+    }
+  }
+  for (const inlineTarget of extractInlineInterpreterMutationPathCandidates(
+    commandText,
+  )) {
+    const candidate = normalizeCommandPathToken(inlineTarget);
+    if (candidate) {
+      for (const expanded of expandCommandPathToken(candidate)) {
+        candidates.push(expanded);
+      }
+    }
+  }
+  return Array.from(new Set(candidates));
+};
+
+const hasInlineInterpreterFileMutation = (commandText: string): boolean =>
+  /\b(?:node|bun|deno|python3?|ruby|php|perl)\b[\s\S]*?(?:^|\s)(?:-[ec]\b|--eval\b|--command\b)[\s\S]*?(?:(?:fs\.)?(?:writeFile|writeFileSync|appendFile|appendFileSync|createWriteStream|copyFile|copyFileSync|rename|renameSync|rm|rmSync|unlink|unlinkSync|mkdir|mkdirSync)\s*\(|Deno\.(?:writeTextFile|writeFile|remove|mkdir|rename)\s*\(|Bun\.write\s*\(|open\s*\(\s*["'][^"']+["']\s*,\s*["'][^"']*[wax][^"']*["']|Path\s*\(\s*["'][^"']+["']\s*\)\s*\.\s*(?:write_text|write_bytes|unlink|mkdir|rename)\s*\(|(?:os|Path)\s*\.\s*(?:remove|unlink|rmdir|mkdir|makedirs|rename)\s*\(|shutil\.(?:rmtree|move|copy|copyfile|copytree)\s*\(|File\.(?:write|open|delete|rename|mkdir)\s*\()/i.test(
+    commandText,
+  );
+
+const extractInlineInterpreterMutationPathCandidates = (
+  commandText: string,
+): string[] => {
+  if (!hasInlineInterpreterFileMutation(commandText)) {
+    return [];
+  }
+  const candidates: string[] = [];
+  const patterns = [
+    /\b(?:fs\.)?(?:writeFile|writeFileSync|appendFile|appendFileSync|createWriteStream|rm|rmSync|unlink|unlinkSync|mkdir|mkdirSync)\s*\(\s*["']([^"']+)["']/gi,
+    /\b(?:fs\.)?(?:copyFile|copyFileSync|rename|renameSync)\s*\(\s*["'][^"']+["']\s*,\s*["']([^"']+)["']/gi,
+    /\bDeno\.(?:writeTextFile|writeFile|remove|mkdir|rename)\s*\(\s*["']([^"']+)["']/gi,
+    /\bBun\.write\s*\(\s*["']([^"']+)["']/gi,
+    /\bopen\s*\(\s*["']([^"']+)["']\s*,\s*["'][^"']*[wax][^"']*["']/gi,
+    /\bPath\s*\(\s*["']([^"']+)["']\s*\)\s*\.\s*(?:write_text|write_bytes|unlink|mkdir|rename)\s*\(/gi,
+    /\b(?:os|Path)\s*\.\s*(?:remove|unlink|rmdir|mkdir|makedirs|rename)\s*\(\s*["']([^"']+)["']/gi,
+    /\bshutil\.(?:rmtree|copytree)\s*\(\s*["']([^"']+)["']/gi,
+    /\bshutil\.(?:move|copy|copyfile)\s*\(\s*["'][^"']+["']\s*,\s*["']([^"']+)["']/gi,
+    /\bFile\.(?:write|open|delete|mkdir)\s*\(\s*["']([^"']+)["']/gi,
+    /\bFile\.rename\s*\(\s*["'][^"']+["']\s*,\s*["']([^"']+)["']/gi,
+  ];
+  for (const pattern of patterns) {
+    pattern.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(commandText)) !== null) {
+      if (match[1]) {
+        candidates.push(match[1]);
+      }
+      if (match[0] === "") {
+        pattern.lastIndex++;
+      }
+    }
+  }
+  return candidates;
+};
+
+const isShellRedirectionOperator = (token: string): boolean =>
+  /^(?:\d+|&)?(?:>>?|>\||<<?)$/.test(token);
+
+const extractInlineShellRedirectionTarget = (
+  token: string,
+): string | undefined => {
+  const match = token.match(/^(?:\d+|&)?(?:>>?|>\||<<?)(.+)$/);
+  return match?.[1];
+};
+
+const isShellRedirectionFdTarget = (value: string): boolean =>
+  /^&?(?:\d+|-)$/.test(value);
+
+const looksLikeGeneratedArtifactMutationCommand = (
+  command: BuildModeCommand,
+): boolean => {
+  if (
+    ["edit", "deploy"].includes(command.kind) ||
+    ["filesystem.write", "psr.edit"].includes(command.capabilityId)
+  ) {
+    return true;
+  }
+  if (hasInlineInterpreterFileMutation(command.command)) {
+    return true;
+  }
+  return /\b(?:apply\s+patch|patch|write|replace|overwrite|delete|remove|rm|mv|cp|sed\s+-i|perl\s+-pi|truncate)\b|^(?:psr|file-write):/i.test(
+    command.command,
+  );
+};
+
+const isGeneratedThorApiArtifactPath = (value: string): boolean => {
+  const normalized = normalizePathForPolicy(value).toLowerCase();
+  return (
+    normalized.includes("/thorapi/") ||
+    normalized.startsWith("thorapi/") ||
+    normalized.includes("/src/thorapi/") ||
+    normalized.includes("/generated/thorapi/") ||
+    normalized.includes("/src/shared/proto/") ||
+    normalized.startsWith("src/shared/proto/")
+  );
+};
+
+const usesThorApiVaixLauncher = (commandText: string): boolean =>
+  /(?:^|\s)(?:\.\/)?vai(?:x)?(?:\s|$)/i.test(commandText);
+
+const looksLikeDirectThorApiVaixShortcut = (commandText: string): boolean => {
+  const normalized = commandText.toLowerCase();
+  if (
+    /\b(?:npm|pnpm|yarn)\s+(?:run\s+)?(?:generate:thorapi|generate:thorapi-client|thorapi-client|openapi-generator|generate)\b/.test(
+      normalized,
+    ) &&
+    /\b(?:thorapi|openapi|typescript-redux-query|api\.hbs|valkyrai)\b/.test(
+      normalized,
+    )
+  ) {
+    return true;
+  }
+  return (
+    /\b(?:mvn|gradle)\b/.test(normalized) &&
+    /\b(?:generate|generate-sources|openapi|thorapi|typescript-redux-query|api\.hbs|valkyrai)\b/.test(
+      normalized,
+    )
+  );
+};
 
 const pathMatchesProtectedPath = (
   targetPath: string,
@@ -1201,7 +3050,7 @@ const isRunnableExecutionStep = (
   step: BuildModeExecutionPlanStep,
   stepById: Map<string, BuildModeExecutionPlanStep>,
 ): boolean => {
-  if (["complete", "failed", "blocked"].includes(step.status)) {
+  if (!["approval-required", "ready", "running"].includes(step.status)) {
     return false;
   }
   return step.dependencyStepIds.every(
@@ -1267,6 +3116,11 @@ export const mergeBuildModeCommandReceipt = (
     readinessGates,
     sanitizedReceipt,
   );
+  const agentRuntimes = deriveAgentRuntimes(
+    payload.agentRuntimes,
+    sanitizedReceipt,
+  );
+  const swarmRoles = deriveSwarmRoles(payload.swarmRoles, sanitizedReceipt);
   const partialPayload = {
     ...payload,
     commandReceipts,
@@ -1278,6 +3132,8 @@ export const mergeBuildModeCommandReceipt = (
     creditUsageReceipts,
     readinessGates,
     executionPlan,
+    agentRuntimes,
+    swarmRoles,
   };
   const autonomyDecision = deriveBuildModeAutonomyDecision(partialPayload);
 
@@ -1291,6 +3147,8 @@ export const mergeBuildModeCommandReceipt = (
     creditUsageReceipts,
     readinessGates,
     executionPlan,
+    agentRuntimes,
+    swarmRoles,
     autonomyDecision,
     scheduledAutomations,
     agentLoop: deriveAgentLoop(payload.agentLoop, commands, sanitizedReceipt),
@@ -1310,6 +3168,82 @@ export const mergeBuildModeCommandReceipt = (
       sanitizedReceipt,
     ),
   };
+};
+
+const deriveAgentRuntimes = (
+  runtimes: ValorTaskBridgePayload["agentRuntimes"],
+  receipt: BuildModeCommandReceipt,
+): ValorTaskBridgePayload["agentRuntimes"] =>
+  runtimes.map((runtime) => {
+    if (runtime.id !== receipt.assignedRuntimeId) {
+      return runtime;
+    }
+    const receiptIds = Array.from(new Set([...runtime.receiptIds, receipt.id]));
+    return {
+      ...runtime,
+      receiptIds,
+      status: getRuntimeStatusFromReceipt(receipt.status),
+    };
+  });
+
+const getRuntimeStatusFromReceipt = (
+  status: BuildModeCommandReceipt["status"],
+): BuildModeAgentRuntimeBinding["status"] => {
+  if (status === "running") {
+    return "running";
+  }
+  if (status === "approval-required") {
+    return "selected";
+  }
+  if (status === "succeeded" || status === "failed" || status === "rejected") {
+    return "available";
+  }
+  return "selected";
+};
+
+const deriveSwarmRoles = (
+  roles: ValorTaskBridgePayload["swarmRoles"],
+  receipt: BuildModeCommandReceipt,
+): ValorTaskBridgePayload["swarmRoles"] =>
+  roles.map((role) => {
+    if (role.role !== receipt.assignedSwarmRole) {
+      return role;
+    }
+    return {
+      ...role,
+      currentFocus: getSwarmRoleFocusFromReceipt(receipt),
+      status: getSwarmRoleStatusFromReceipt(receipt.status),
+    };
+  });
+
+const getSwarmRoleStatusFromReceipt = (
+  status: BuildModeCommandReceipt["status"],
+): BuildModeSwarmRoleAssignment["status"] => {
+  if (status === "running") {
+    return "running";
+  }
+  if (status === "approval-required") {
+    return "blocked";
+  }
+  if (status === "failed" || status === "rejected") {
+    return "blocked";
+  }
+  if (status === "succeeded") {
+    return "assigned";
+  }
+  return "assigned";
+};
+
+const getSwarmRoleFocusFromReceipt = (
+  receipt: BuildModeCommandReceipt,
+): string => {
+  if (receipt.status === "running") {
+    return `Running ${receipt.commandId}: ${receipt.summary}`;
+  }
+  if (receipt.status === "approval-required") {
+    return `Waiting for approval on ${receipt.commandId}: ${receipt.summary}`;
+  }
+  return `Latest ${receipt.commandId} receipt ${receipt.id}: ${receipt.status}. ${receipt.summary}`;
 };
 
 export const mergeBuildModeAutomationSnapshot = (
@@ -1334,19 +3268,53 @@ export const mergeBuildModeAutomationSnapshot = (
 
 const getRequiredApprovalThreshold = (
   payload: ValorTaskBridgePayload,
-  capabilityId: string,
+  command: BuildModeCommand,
 ): BuildModeApprovalThreshold => {
+  const thresholds: BuildModeApprovalThreshold[] = [];
   const permission = payload.toolPermissions.find(
-    (item) => item.capabilityId === capabilityId,
+    (item) => item.capabilityId === command.capabilityId,
   );
   if (
     permission?.approvalThreshold &&
     permission.approvalThreshold !== "none"
   ) {
-    return permission.approvalThreshold;
+    thresholds.push(permission.approvalThreshold);
   }
-  return "operator";
+  if (command.kind === "deploy") {
+    thresholds.push("owner");
+  }
+  if (command.kind === "edit" || command.requiresApproval) {
+    thresholds.push("operator");
+  }
+  for (const rule of builtInApprovalRules) {
+    if (rule.pattern.test(command.command)) {
+      thresholds.push(rule.threshold);
+    }
+  }
+  if (
+    payload.autonomyPolicy.approvalRequiredCapabilityIds.includes(
+      command.capabilityId,
+    )
+  ) {
+    thresholds.push("operator");
+  }
+  return thresholds.reduce(maxApprovalThreshold, "operator");
 };
+
+const approvalThresholdRank: Record<BuildModeApprovalThreshold, number> = {
+  none: 0,
+  operator: 1,
+  owner: 2,
+  admin: 3,
+};
+
+const maxApprovalThreshold = (
+  current: BuildModeApprovalThreshold,
+  candidate: BuildModeApprovalThreshold,
+): BuildModeApprovalThreshold =>
+  approvalThresholdRank[candidate] > approvalThresholdRank[current]
+    ? candidate
+    : current;
 
 const getLatestAutonomyDecisionTimestamp = (
   payload: ValorTaskBridgePayload,
@@ -1535,7 +3503,10 @@ const deriveFinalReportReadinessGate = (
   const finalReportArtifacts = evidenceArtifacts.filter(
     (artifact) => artifact.kind === "final_report",
   );
-  const finalReportReceiptIds = finalReportArtifacts
+  const finalReportProofArtifacts = finalReportArtifacts.filter((artifact) =>
+    hasWrittenFinalReportReceiptProof(artifact, commandReceipts),
+  );
+  const finalReportReceiptIds = finalReportProofArtifacts
     .map((artifact) => artifact.receiptId)
     .filter((receiptId): receiptId is string => Boolean(receiptId));
   const finalReportArtifactIds = finalReportArtifacts.map(
@@ -1553,7 +3524,7 @@ const deriveFinalReportReadinessGate = (
     const blockingIncomplete = blockingGates.some(
       (item) => item.status !== "passed",
     );
-    const hasFinalReportProof = finalReportReceiptIds.length > 0;
+    const hasFinalReportProof = finalReportProofArtifacts.length > 0;
     const browserPassed = browserVerification.status === "passed";
     const status: BuildModeReadinessGate["status"] = blockingFailure
       ? "failed"
@@ -1572,10 +3543,31 @@ const deriveFinalReportReadinessGate = (
       status,
       summary:
         status === "passed"
-          ? "Final report has a receipt and all blocking readiness gates passed."
+          ? "Final report has durable GrayMatter memory and artifact integrity proof, and all blocking readiness gates passed."
           : gate.summary,
     };
   });
+};
+
+const hasWrittenFinalReportReceiptProof = (
+  artifact: BuildModeEvidenceArtifact,
+  commandReceipts: BuildModeCommandReceipt[],
+): boolean => {
+  const metadata = artifact.metadata;
+  const receipt = artifact.receiptId
+    ? commandReceipts.find((item) => item.id === artifact.receiptId)
+    : undefined;
+  return (
+    receipt?.capabilityId === "graymatter.memory" &&
+    receipt.status === "succeeded" &&
+    Boolean(artifact.commandId) &&
+    artifact.commandId === receipt.commandId &&
+    metadata?.memoryStatus === "written" &&
+    typeof metadata.contentHash === "string" &&
+    /^sha256:[a-f0-9]{64}$/.test(metadata.contentHash) &&
+    typeof metadata.byteSize === "number" &&
+    metadata.byteSize > 0
+  );
 };
 
 const mergeEvidenceArtifacts = (
@@ -1627,7 +3619,7 @@ const toCheckpointStatus = (
     case "running":
       return isRollback ? "rollback-ready" : "planned";
     case "approval-required":
-      return "rollback-ready";
+      return isRollback ? "rollback-ready" : "planned";
     case "failed":
     case "rejected":
       return "failed";
@@ -1640,6 +3632,13 @@ const getCheckpointHashFromReceipt = (
   receipt: BuildModeCommandReceipt,
 ): string | undefined => {
   for (const artifact of receipt.artifacts ?? []) {
+    if (
+      artifact.kind !== "checkpoint" ||
+      artifact.commandId !== receipt.commandId ||
+      artifact.receiptId !== receipt.id
+    ) {
+      continue;
+    }
     const checkpointHash = artifact.metadata?.checkpointHash;
     if (typeof checkpointHash === "string" && checkpointHash.length > 0) {
       return checkpointHash;
@@ -1714,6 +3713,8 @@ const deriveScheduledAutomations = (
         getScheduledAutomationNextRunAt(receipt) ?? automation.nextRunAt,
       receiptIds: Array.from(new Set([...automation.receiptIds, receipt.id])),
       runHistory,
+      scheduler:
+        getScheduledAutomationScheduler(receipt) ?? automation.scheduler,
       status:
         getScheduledAutomationLifecycleStatus(receipt) ??
         (runStatus ? automation.status : undefined) ??
@@ -1771,6 +3772,18 @@ const getScheduledAutomationNextRunAt = (
     const nextRunAt = artifact.metadata?.nextRunAt;
     if (typeof nextRunAt === "string" && nextRunAt.length > 0) {
       return nextRunAt;
+    }
+  }
+  return undefined;
+};
+
+const getScheduledAutomationScheduler = (
+  receipt: BuildModeCommandReceipt,
+): ScheduledAutomationBinding["scheduler"] | undefined => {
+  for (const artifact of receipt.artifacts ?? []) {
+    const scheduler = artifact.metadata?.scheduler;
+    if (scheduler === "valkyrai-cron") {
+      return scheduler;
     }
   }
   return undefined;
@@ -1882,18 +3895,29 @@ const deriveBrowserVerification = (
   if (receipt.capabilityId !== "browser.automation") {
     return current;
   }
+  const proof = getBrowserReceiptProof(receipt);
   const artifactIds = Array.from(
-    new Set([
-      ...current.artifactIds,
-      ...(receipt.artifacts ?? []).map((artifact) => artifact.id),
-    ]),
+    new Set([...current.artifactIds, ...proof.artifactIds]),
   );
+  const consoleErrorCount =
+    proof.consoleErrorCount ?? current.consoleErrorCount;
 
   if (receipt.status === "succeeded") {
+    const expectedPreviewUrl = normalizeBrowserProofUrl(current.previewUrl);
+    const proofPassed =
+      proof.hasScreenshotArtifact &&
+      proof.screenshotCaptured &&
+      proof.screenshotHasIntegrityProof &&
+      browserProofUrlMatches(proof.screenshotCurrentUrl, expectedPreviewUrl) &&
+      proof.hasConsoleArtifact &&
+      proof.consoleHasIntegrityProof &&
+      browserProofUrlMatches(proof.consoleCurrentUrl, expectedPreviewUrl) &&
+      proof.consoleErrorCount === 0;
     return {
       ...current,
       artifactIds,
-      status: "passed",
+      consoleErrorCount,
+      status: proofPassed ? "passed" : "failed",
       screenshotReceiptId: receipt.id,
     };
   }
@@ -1901,6 +3925,7 @@ const deriveBrowserVerification = (
     return {
       ...current,
       artifactIds,
+      consoleErrorCount,
       status: "failed",
       screenshotReceiptId: receipt.id,
     };
@@ -1909,6 +3934,94 @@ const deriveBrowserVerification = (
     return { ...current, artifactIds, status: "running" };
   }
   return { ...current, artifactIds };
+};
+
+const getBrowserReceiptProof = (
+  receipt: BuildModeCommandReceipt,
+): {
+  artifactIds: string[];
+  consoleErrorCount?: number;
+  consoleCurrentUrl?: string;
+  hasConsoleArtifact: boolean;
+  consoleHasIntegrityProof: boolean;
+  hasScreenshotArtifact: boolean;
+  screenshotHasIntegrityProof: boolean;
+  screenshotCaptured: boolean;
+  screenshotCurrentUrl?: string;
+} => {
+  const artifacts = receipt.artifacts ?? [];
+  const screenshotArtifact = artifacts.find(
+    (artifact) =>
+      artifact.kind === "browser_screenshot" &&
+      artifact.receiptId === receipt.id &&
+      artifact.commandId === receipt.commandId,
+  );
+  const consoleArtifact = artifacts.find(
+    (artifact) =>
+      artifact.kind === "browser_console" &&
+      artifact.receiptId === receipt.id &&
+      artifact.commandId === receipt.commandId,
+  );
+  const consoleErrorCount =
+    typeof consoleArtifact?.metadata?.consoleErrorCount === "number"
+      ? consoleArtifact.metadata.consoleErrorCount
+      : undefined;
+  return {
+    artifactIds: artifacts.map((artifact) => artifact.id),
+    consoleErrorCount,
+    consoleCurrentUrl:
+      typeof consoleArtifact?.metadata?.currentUrl === "string"
+        ? consoleArtifact.metadata.currentUrl
+        : undefined,
+    hasConsoleArtifact: Boolean(consoleArtifact),
+    consoleHasIntegrityProof: hasEvidenceArtifactIntegrityProof(consoleArtifact),
+    hasScreenshotArtifact: Boolean(screenshotArtifact),
+    screenshotHasIntegrityProof:
+      hasEvidenceArtifactIntegrityProof(screenshotArtifact),
+    screenshotCaptured: screenshotArtifact
+      ? screenshotArtifact.metadata?.screenshotCaptured === true
+      : false,
+    screenshotCurrentUrl:
+      typeof screenshotArtifact?.metadata?.currentUrl === "string"
+        ? screenshotArtifact.metadata.currentUrl
+        : undefined,
+  };
+};
+
+const browserProofUrlMatches = (
+  currentUrl: string | undefined,
+  expectedPreviewUrl: string | undefined,
+): boolean =>
+  !expectedPreviewUrl ||
+  normalizeBrowserProofUrl(currentUrl) === expectedPreviewUrl;
+
+const normalizeBrowserProofUrl = (url: string | undefined): string | undefined => {
+  if (!url) {
+    return undefined;
+  }
+  try {
+    const parsed = new URL(url);
+    parsed.hash = "";
+    if (parsed.pathname.length > 1) {
+      parsed.pathname = parsed.pathname.replace(/\/+$/, "");
+    }
+    return parsed.toString();
+  } catch {
+    return url.replace(/#.*$/, "").replace(/\/+$/, "");
+  }
+};
+
+const hasEvidenceArtifactIntegrityProof = (
+  artifact: BuildModeEvidenceArtifact | undefined,
+): boolean => {
+  const contentHash = artifact?.metadata?.contentHash;
+  const byteSize = artifact?.metadata?.byteSize;
+  return (
+    typeof contentHash === "string" &&
+    /^sha256:[a-f0-9]{64}$/.test(contentHash) &&
+    typeof byteSize === "number" &&
+    byteSize > 0
+  );
 };
 
 const deriveFinalReport = (
@@ -2074,12 +4187,20 @@ const deriveAutomationRunHandoff = (
   ];
 };
 
+const formatScheduledAutomationScheduler = (
+  scheduler: ScheduledAutomationBinding["scheduler"] | undefined,
+): string =>
+  (scheduler ?? "valkyrai-cron") === "valkyrai-cron"
+    ? "ValkyrAI cron workflow launcher"
+    : "unknown scheduler";
+
 const deriveCheckpointHandoff = (
   checkpoints: ValorTaskBridgePayload["checkpoints"],
 ): string[] =>
-  checkpoints.map(
-    (checkpoint) => `Checkpoint ${checkpoint.label}: ${checkpoint.status}.`,
-  );
+  checkpoints.map((checkpoint) => {
+    const proof = checkpoint.receiptIds.join(", ") || "none";
+    return `Checkpoint ${checkpoint.label}: ${checkpoint.status}; proof: ${proof}.`;
+  });
 
 const deriveAutomationSnapshotFinalReport = (
   current: ValorTaskBridgePayload["finalReport"],
@@ -2098,6 +4219,7 @@ const deriveAutomationSnapshotFinalReport = (
       [
         `Automation ${automation.label}: ${automation.status}`,
         `schedule ${automation.schedule}`,
+        `scheduler ${formatScheduledAutomationScheduler(automation.scheduler)}`,
         `next ${automation.nextRunAt ?? "not scheduled"}`,
         automation.lastRunAt
           ? `last ${automation.lastRunStatus ?? "unknown"} at ${automation.lastRunAt}`
@@ -2143,7 +4265,7 @@ const deriveTestsRun = (
   command: BuildModeCommand | undefined,
   receipt: BuildModeCommandReceipt,
 ): string[] => {
-  if (command?.kind !== "test") {
+  if (command?.kind !== "test" && command?.kind !== "build") {
     return current;
   }
 
@@ -2239,6 +4361,7 @@ export const renderBuildModeFinalReport = (
       .join("; ");
   });
   const nextExecutionAction = getNextBuildModeExecutionAction(payload);
+  const autonomyDecision = deriveBuildModeAutonomyDecision(payload);
   const autonomousQueuePlan = deriveBuildModeAutonomousQueuePlan(payload);
   const receiptLines = [
     ...payload.receipts.map((receipt) => `${receipt.id}: ${receipt.status}`),
@@ -2249,6 +4372,10 @@ export const renderBuildModeFinalReport = (
         }; next: ${receipt.nextOperatorAction ?? "inspect"}]${
           receipt.policyReasons?.length
             ? ` (${receipt.policyReasons.join("; ")})`
+            : ""
+        }${
+          receipt.requiredApprovalThreshold
+            ? ` threshold ${receipt.requiredApprovalThreshold}`
             : ""
         }${
           receipt.approval
@@ -2301,6 +4428,16 @@ export const renderBuildModeFinalReport = (
     `major task refs: ${contextPack.majorTaskRefs.join(", ") || "none"}`,
     contextPack.summary,
   ];
+  const browserArtifactLines = getBrowserVerificationArtifactLines(payload);
+  const latestReceiptByCommandId = getLatestReceiptByCommandId(
+    payload.commandReceipts,
+  );
+  const mcpToolLines = getBuildModeMcpToolCommands(payload).map((command) =>
+    formatBuildModeMcpToolCommandLine(
+      command,
+      latestReceiptByCommandId.get(command.id),
+    ),
+  );
 
   return redactBuildModeText(
     [
@@ -2308,11 +4445,27 @@ export const renderBuildModeFinalReport = (
       `Status: ${payload.finalReport.status}`,
       `Task: ${payload.taskId}`,
       `App Bundle: ${payload.appBundle.name} ${payload.appBundle.version}`,
+      `App Bundle Proof: ${payload.appBundle.receiptIds?.join(", ") || "none"}`,
       `Tenant: ${payload.scope.tenantId}`,
       `Principal: ${payload.scope.principalId}`,
       `Workspace: ${payload.scope.workspaceRoot}`,
+      `Credit Estimate Proof: ${payload.creditEstimate.receiptIds?.join(", ") || "none"}`,
       `Context Pack: ${payload.grayMatterContextPack.id}`,
       section("GrayMatter Context", grayMatterContextLines),
+      section(
+        "Component Bundles",
+        payload.componentBundles.map(
+          (bundle) =>
+            `${bundle.name}: ${bundle.framework} ${bundle.generatedBy} ${bundle.status} (entrypoints: ${bundle.entrypoints.join(", ") || "none"}; proof: ${bundle.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "ExecModule Registry",
+        payload.execModules.map(
+          (module) =>
+            `${module.name}: ${module.safetyLevel} (${module.inputSchemaRef} -> ${module.outputSchemaRef}; proof: ${module.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
       section("Run Audit Summary", commandOutcomeLines),
       section(
         "Agent Loop",
@@ -2326,6 +4479,49 @@ export const renderBuildModeFinalReport = (
         ),
       ),
       section(
+        "Local Model Runtime Registry",
+        payload.localModelRuntimes.map(
+          (runtime) =>
+            `${runtime.label}: ${runtime.modelRef} ${runtime.status} (${runtime.executionMode}; runtime ${runtime.runtimeId}; endpoint ${runtime.endpointRef}; capabilities: ${runtime.capabilityIds.join(", ") || "none"}; proof: ${runtime.receiptIds.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "Swarm Roles",
+        payload.swarmRoles.map(
+          (assignment) =>
+            `${assignment.role}: ${assignment.status} (${assignment.owner}) - ${assignment.currentFocus}`,
+        ),
+      ),
+      section(
+        "Workflow MCP Bindings",
+        payload.workflowMcpBindings.map(
+          (binding) =>
+            `${binding.toolName}: ${binding.serverName} ${binding.workflowRef} (${binding.execModuleId}; proof: ${binding.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "MCP Server Registry",
+        payload.mcpServers.map(
+          (server) =>
+            `${server.name}: ${server.transport} ${server.status} ${server.scope} (tools: ${server.toolIds.join(", ") || "none"}; proof: ${server.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "MCP Tool Registry",
+        payload.mcpTools.map(
+          (tool) =>
+            `${tool.name}: ${tool.capabilityId} ${tool.status} (${tool.serverId}${tool.execModuleId ? `; execModule ${tool.execModuleId}` : ""}${tool.workflowRef ? `; workflow ${tool.workflowRef}` : ""}; proof: ${tool.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "Connector Access Registry",
+        payload.connectorBindings.map(
+          (binding) =>
+            `${binding.connectorName}: ${binding.status} (${binding.connectorId}; data: ${binding.dataClasses.join(", ") || "none"}; actions: ${binding.allowedActions.join(", ") || "none"}; commands: ${binding.commandIds.join(", ") || "none"}; proof: ${binding.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section("MCP Tool Commands", mcpToolLines),
+      section(
         "ThorAPI And VAIX",
         payload.thorApiVaixBindings.map(
           (binding) =>
@@ -2338,20 +4534,21 @@ export const renderBuildModeFinalReport = (
         `current command receipts: ${payload.commandReceipts.length}`,
         `max estimated credits: ${payload.autonomyPolicy.maxEstimatedCredits}`,
         `estimated credits: ${payload.creditEstimate.estimatedCredits}`,
+        `policy proof: ${payload.autonomyPolicy.receiptIds?.join(", ") || "none"}`,
         `allowed capabilities: ${payload.autonomyPolicy.allowedCapabilityIds.join(", ") || "none"}`,
         `approval required: ${payload.autonomyPolicy.approvalRequiredCapabilityIds.join(", ") || "none"}`,
       ]),
       section("Autonomy Decision", [
-        `${payload.autonomyDecision.status}: ${payload.autonomyDecision.summary}`,
-        `next step: ${payload.autonomyDecision.nextStepId ?? "none"}`,
-        `next command: ${payload.autonomyDecision.nextCommandId ?? "none"}`,
-        `capability: ${payload.autonomyDecision.capabilityId ?? "none"}`,
-        `approval threshold: ${payload.autonomyDecision.requiredApprovalThreshold ?? "none"}`,
-        `command slots remaining: ${payload.autonomyDecision.commandSlotsRemaining}`,
-        `estimated credits remaining: ${payload.autonomyDecision.estimatedCreditsRemaining}`,
-        `blocking gates: ${payload.autonomyDecision.blockingGateIds.join(", ") || "none"}`,
-        `blocking receipts: ${payload.autonomyDecision.blockingReceiptIds.join(", ") || "none"}`,
-        `reasons: ${payload.autonomyDecision.reasonCodes.join(", ") || "none"}`,
+        `${autonomyDecision.status}: ${autonomyDecision.summary}`,
+        `next step: ${autonomyDecision.nextStepId ?? "none"}`,
+        `next command: ${autonomyDecision.nextCommandId ?? "none"}`,
+        `capability: ${autonomyDecision.capabilityId ?? "none"}`,
+        `approval threshold: ${autonomyDecision.requiredApprovalThreshold ?? "none"}`,
+        `command slots remaining: ${autonomyDecision.commandSlotsRemaining}`,
+        `estimated credits remaining: ${autonomyDecision.estimatedCreditsRemaining}`,
+        `blocking gates: ${autonomyDecision.blockingGateIds.join(", ") || "none"}`,
+        `blocking receipts: ${autonomyDecision.blockingReceiptIds.join(", ") || "none"}`,
+        `reasons: ${autonomyDecision.reasonCodes.join(", ") || "none"}`,
       ]),
       section("Autonomous Queue Plan", [
         `${autonomousQueuePlan.status}: ${autonomousQueuePlan.summary}`,
@@ -2370,9 +4567,18 @@ export const renderBuildModeFinalReport = (
       ]),
       section("Credit Usage", [
         `estimate: ${payload.creditEstimate.estimatedCredits} ${payload.creditEstimate.currency}`,
+        `hosted estimate: ${payload.creditEstimate.estimatedHostedInfrastructureCredits}`,
         `provider route: ${payload.selectedProviderRoute}`,
+        `assumptions: ${payload.creditEstimate.assumptions.join("; ") || "none"}`,
         ...creditUsageLines,
       ]),
+      section(
+        "Provider Credentials",
+        payload.providerCredentials.map(
+          (credential) =>
+            `${credential.displayName}: ${credential.route} (${credential.tenantScoped ? "tenant scoped" : "local"}, secret ${credential.secretAvailable ? "available" : "not available"}; proof: ${credential.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
       section(
         "Readiness Gates",
         payload.readinessGates.map(
@@ -2398,10 +4604,29 @@ export const renderBuildModeFinalReport = (
       section("Command Status", commandLines),
       section("Receipt Trail", receiptLines),
       section(
+        "Prompt Profiles",
+        payload.promptProfiles.map(
+          (profile) =>
+            `${profile.name}: ${profile.modelFamily} (${profile.promptBundleRef}; proof: ${profile.receiptIds?.join(", ") || "none"})`,
+        ),
+      ),
+      section(
         "Prompt Bundles",
         payload.promptBundles.map(
           (bundle) =>
             `${bundle.name}: ${bundle.policy} (${bundle.sections.length} sections, receipts: ${bundle.receiptIds.join(", ") || "none"})`,
+        ),
+      ),
+      section(
+        "Capability Matrix",
+        payload.capabilities.map(
+          (capability) => {
+            const approval = capability.requiresApproval
+              ? " approval-required"
+              : "";
+            const proof = capability.receiptIds?.join(", ") || "none";
+            return `${capability.label}: ${capability.enabled ? "enabled" : "disabled"} ${capability.kind} ${capability.risk}${approval} (proof: ${proof})`;
+          },
         ),
       ),
       section(
@@ -2414,27 +4639,28 @@ export const renderBuildModeFinalReport = (
         "Tool Permissions",
         payload.toolPermissions.map(
           (permission) =>
-            `${permission.label}: ${permission.decision} (${permission.capabilityId}, threshold: ${permission.approvalThreshold}, receipt: ${permission.receiptRequired ? "required" : "optional"})`,
+            `${permission.label}: ${permission.decision} (${permission.capabilityId}, threshold: ${permission.approvalThreshold}, receipt: ${permission.receiptRequired ? "required" : "optional"}, proof: ${permission.receiptIds?.join(", ") || "none"})`,
         ),
       ),
       section(
         "Command Policy",
         payload.commandPolicyRules.map(
-          (rule) => `${rule.label}: ${rule.effect} (${rule.pattern})`,
+          (rule) =>
+            `${rule.label}: ${rule.effect} (${rule.pattern}; proof: ${rule.receiptIds?.join(", ") || "none"})`,
         ),
       ),
       section(
         "Checkpoints",
-        payload.checkpoints.map(
-          (checkpoint) =>
-            `${checkpoint.label}: ${checkpoint.status}${checkpoint.hash ? ` (${checkpoint.hash})` : ""}`,
-        ),
+        payload.checkpoints.map((checkpoint) => {
+          const proof = checkpoint.receiptIds.join(", ") || "none";
+          return `${checkpoint.label}: ${checkpoint.status}${checkpoint.hash ? ` (${checkpoint.hash})` : ""}; proof: ${proof}`;
+        }),
       ),
       section(
         "Safe Edits",
         payload.safeEditPlans.map(
           (plan) =>
-            `${plan.label}: ${plan.status} (${plan.targetPaths.join(", ")})`,
+            `${plan.label}: ${plan.status} (${plan.targetPaths.join(", ")}; proof: ${plan.receiptIds.join(", ") || "none"})`,
         ),
       ),
       section("Browser Verification", [
@@ -2443,7 +4669,15 @@ export const renderBuildModeFinalReport = (
         `screenshot receipt: ${payload.browserVerification.screenshotReceiptId ?? "none"}`,
         `console errors: ${payload.browserVerification.consoleErrorCount}`,
         `artifacts: ${payload.browserVerification.artifactIds.join(", ") || "none"}`,
+        ...browserArtifactLines,
       ]),
+      section(
+        "App Bundle Diffs",
+        payload.appBundleDiffs.map(
+          (diff) =>
+            `${diff.title}: ${diff.appBundleId} at ${diff.generatedAt}; added ${formatAppBundleDiffArtifactList(payload.appBundle, diff.addedArtifacts)}; changed ${formatAppBundleDiffArtifactList(payload.appBundle, diff.changedArtifacts)}; removed ${formatAppBundleDiffArtifactList(payload.appBundle, diff.removedArtifacts)}; receipts ${diff.receiptIds.join(", ") || "none"}; evidence ${diff.evidenceArtifactIds.join(", ") || "none"}`,
+        ),
+      ),
       section(
         "Evidence Artifacts",
         payload.evidenceArtifacts.map((artifact) => {
@@ -2457,7 +4691,7 @@ export const renderBuildModeFinalReport = (
           [
             `${automation.label}: ${automation.status}`,
             `schedule ${automation.schedule}`,
-            `scheduler ${automation.scheduler ?? "valkyrai-cron"}`,
+            `scheduler ${formatScheduledAutomationScheduler(automation.scheduler)}`,
             automation.providerRoute
               ? `provider ${automation.providerRoute}`
               : undefined,
@@ -2495,6 +4729,7 @@ export const renderBuildModeFinalReport = (
         `workspace: ${payload.scope.workspaceRoot}`,
         `roles: ${payload.scope.roles.join(", ") || "none"}`,
         `policies: ${payload.scope.policyRefs.join(", ") || "none"}`,
+        `ignored paths: ${payload.scope.ignoredPathPatterns?.join(", ") || "none"}`,
       ]),
       section("Files Changed", payload.finalReport.filesChanged),
       section("Tests Run", payload.finalReport.testsRun),
@@ -2513,6 +4748,11 @@ export const formatEvidenceArtifactProof = (
   }
   const parts = [
     formatProofPart("execution", metadata.executionId),
+    formatProofPart("diff", metadata.diffId),
+    formatProofPart("app bundle", metadata.appBundleId),
+    formatProofPart("added", metadata.addedArtifactCount),
+    formatProofPart("changed", metadata.changedArtifactCount),
+    formatProofPart("removed", metadata.removedArtifactCount),
     formatProofPart("state", metadata.executionState),
     formatProofPart("receipt", metadata.receiptRef),
     formatProofPart("trace", metadata.traceId),
@@ -2525,9 +4765,51 @@ export const formatEvidenceArtifactProof = (
     formatProofPart("query", metadata.queryRef),
     formatProofPart("records", metadata.recordCount),
     formatProofPart("resource", metadata.resourceUri),
+    formatProofPart("memory", metadata.memoryId),
+    formatProofPart("memory status", metadata.memoryStatus),
+    formatProofPart("memory error", metadata.memoryError),
+    formatProofPart("context pack", metadata.contextPackId),
+    formatProofPart("retrieval status", metadata.retrievalStatus),
+    formatProofPart("preflight", metadata.invariantPreflightStatus),
+    formatProofPart("retrieval receipts", metadata.retrievalReceiptCount),
+    formatProofPart("memory entries", metadata.memoryEntryCount),
+    formatProofPart("url", metadata.currentUrl),
+    formatProofPart("screenshot", metadata.screenshotCaptured),
+    formatProofPart("console errors", metadata.consoleErrorCount),
+    formatProofPart("hash", metadata.contentHash),
+    formatProofPart("source hash", metadata.sourceContentHash),
+    formatProofPart("bytes", metadata.byteSize),
+    formatProofPart("exit", metadata.exitCode),
+    formatProofPart("completed", metadata.completed),
+    formatProofPart("background", metadata.background),
+    formatProofPart("timed out", metadata.timedOut),
+    formatProofPart("deploy", metadata.deployId),
+    formatProofPart("draft", metadata.deployDraft),
+    formatProofPart("target", metadata.deployTarget),
+    formatProofPart("environment", metadata.deployEnvironment),
+    formatProofPart("preview", metadata.deployPreviewUrl),
   ].filter(Boolean);
   return parts.length ? parts.join("; ") : undefined;
 };
+
+const getBrowserVerificationArtifactLines = (
+  payload: ValorTaskBridgePayload,
+): string[] =>
+  payload.browserVerification.artifactIds.flatMap((artifactId) => {
+    const artifact = payload.evidenceArtifacts.find(
+      (candidate) => candidate.id === artifactId,
+    );
+    if (
+      !artifact ||
+      !["browser_console", "browser_screenshot"].includes(artifact.kind)
+    ) {
+      return [];
+    }
+    const proof = formatEvidenceArtifactProof(artifact);
+    return [
+      `${artifact.title}: ${artifact.kind}${artifact.receiptId ? ` receipt ${artifact.receiptId}` : ""}${proof ? `; ${proof}` : ""}`,
+    ];
+  });
 
 const formatProofPart = (
   label: string,

@@ -106,6 +106,7 @@ export interface ExtensionMessage {
     | "remoteCodingSessionEvent"
     | "serverConsoleNewMessage"
     | "valorBuildModeTask"
+    | "valorBuildModeLaunchRejected"
     | "valorBuildModeAutomationSnapshot"
     | "valorBuildModeCommandResult";
   text?: string;

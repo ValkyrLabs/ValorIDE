@@ -168,6 +168,8 @@ const coercePrincipalFromString = (
         billingAccountId: parsed.billingAccountId,
         creditAccountId: parsed.creditAccountId,
         customerId: parsed.customerId,
+        customer: parsed.customer,
+        account: parsed.account,
         principalId: parsed.principalId,
         ownerId: parsed.ownerId,
         firstName: parsed.firstName,
@@ -333,6 +335,14 @@ const sanitizePrincipalForStorage = (
       billingAccountId: p.billingAccountId,
       creditAccountId: p.creditAccountId,
       customerId: p.customerId,
+      customer:
+        p.customer && typeof p.customer === "object"
+          ? { id: p.customer.id, name: p.customer.name }
+          : undefined,
+      account:
+        p.account && typeof p.account === "object"
+          ? { id: p.account.id, name: p.account.name }
+          : undefined,
       principalId: p.principalId,
       ownerId: p.ownerId,
       firstName: p.firstName,
@@ -378,6 +388,10 @@ export const writeStoredPrincipal = (
       "id",
       "username",
       "email",
+      "accountId",
+      "billingAccountId",
+      "creditAccountId",
+      "customerId",
       "ownerId",
       "principalId",
       "firstName",

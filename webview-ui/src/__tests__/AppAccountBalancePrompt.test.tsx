@@ -447,6 +447,57 @@ describe("App account balance prompt", () => {
     });
   });
 
+  it("shows structured Build Mode launch rejections and clears them on a valid launch", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "valorBuildModeLaunchRejected",
+            payload: {
+              issues: [
+                "Build Mode task payload requires an appBundle object.",
+                "Build Mode task workspaceRoot is outside the active workspace.",
+              ],
+              summary:
+                "Build Mode task payload requires an appBundle object. Build Mode task workspaceRoot is outside the active workspace.",
+            },
+          },
+        }),
+      );
+    });
+
+    await waitFor(() =>
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        "Build Mode launch rejected.",
+      ),
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "requires an appBundle object",
+    );
+    expect(screen.queryByTestId("build-mode-view")).not.toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "valorBuildModeTask",
+            payload: digitalProductProBuildModePayload,
+          },
+        }),
+      );
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId("build-mode-view")).toBeInTheDocument(),
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
   it("merges Build Mode automation snapshots into the open cockpit", async () => {
     appTestHarness.apiErrors.showAccountBalance = false;
     const { default: App } = await import("../App");
@@ -790,10 +841,27 @@ describe("App account balance prompt", () => {
             id: "checkpoint-pre-edit-dpp",
           }),
         ]),
+        agentRuntimes: expect.arrayContaining([
+          expect.objectContaining({
+            id: "runtime-codex-build-operator",
+            ownerRole: "Supervisor",
+          }),
+        ]),
+        swarmRoles: expect.arrayContaining([
+          expect.objectContaining({
+            role: "Supervisor",
+            status: "assigned",
+          }),
+        ]),
         commandCatalog: expect.arrayContaining([
           expect.objectContaining({
             id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
             capabilityId: "mcp.tool",
+          }),
+        ]),
+        commandReceipts: expect.arrayContaining([
+          expect.objectContaining({
+            id: "build-command-receipt-fixture-context",
           }),
         ]),
         commandPolicyRules: expect.arrayContaining([
@@ -908,6 +976,23 @@ describe("App account balance prompt", () => {
           promptBundlePolicy: "locked",
           promptBundleReceiptIds: ["receipt-prompt-bundle-dpp-001"],
         },
+        checkpoints: expect.arrayContaining([
+          expect.objectContaining({
+            id: "checkpoint-pre-edit-dpp",
+          }),
+        ]),
+        agentRuntimes: expect.arrayContaining([
+          expect.objectContaining({
+            id: "runtime-codex-build-operator",
+            ownerRole: "Supervisor",
+          }),
+        ]),
+        swarmRoles: expect.arrayContaining([
+          expect.objectContaining({
+            role: "Supervisor",
+            status: "assigned",
+          }),
+        ]),
         commands: [
           expect.objectContaining({
             id: "cmd-test",

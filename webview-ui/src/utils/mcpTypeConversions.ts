@@ -139,17 +139,32 @@ export function convertThorMcpMarketplaceItemToShared(thorItem) {
   try {
     return {
       mcpId:
+        thorItem.mcpId ||
         thorItem.mcpServerId ||
         thorItem.slug ||
+        thorItem.serviceId ||
         thorItem.id ||
         thorItem.name ||
         "",
-      githubUrl: thorItem.githubUrl || "",
-      name: thorItem.name || "Unknown Item",
-      author: thorItem.author || "Unknown Author",
+      mcpServerId: thorItem.mcpServerId || undefined,
+      slug: thorItem.slug || undefined,
+      serviceId: thorItem.serviceId || thorItem.service?.id || undefined,
+      applicationId:
+        thorItem.applicationId || thorItem.application?.id || undefined,
+      apiBaseUrl: thorItem.apiBaseUrl || undefined,
+      manifestUrl: thorItem.manifestUrl || undefined,
+      githubUrl: thorItem.githubUrl || thorItem.repoUrl || "",
+      repoUrl: thorItem.repoUrl || undefined,
+      name: thorItem.name || thorItem.displayName || "Unknown Item",
+      displayName: thorItem.displayName || undefined,
+      author:
+        thorItem.author ||
+        thorItem.creator ||
+        thorItem.owner ||
+        "Unknown Author",
       description: thorItem.description || "",
       icon: thorItem.icon || "",
-      logoUrl: thorItem.logoUrl || "",
+      logoUrl: thorItem.logoUrl || thorItem.iconUrl || "",
       category: thorItem.category || "Uncategorized",
       tags:
         thorItem.tags
@@ -161,9 +176,15 @@ export function convertThorMcpMarketplaceItemToShared(thorItem) {
       requiresApiKey: Boolean(thorItem.requiresApiKey),
       readmeContent: thorItem.readmeContent || undefined,
       llmsInstallationContent: thorItem.llmsInstallationContent || undefined,
-      isRecommended: Boolean(thorItem.isRecommended),
-      githubStars: Math.max(0, Number(thorItem.githubStars) || 0),
-      downloadCount: Math.max(0, Number(thorItem.downloadCount) || 0),
+      isRecommended: Boolean(thorItem.isRecommended || thorItem.curated),
+      githubStars: Math.max(
+        0,
+        Number(thorItem.githubStars ?? thorItem.stars) || 0,
+      ),
+      downloadCount: Math.max(
+        0,
+        Number(thorItem.downloadCount ?? thorItem.installCount) || 0,
+      ),
       createdAt: safeDateToISOString(thorItem.createdAt),
       updatedAt: safeDateToISOString(thorItem.updatedAt),
       lastGithubSync: safeDateToISOString(thorItem.lastGithubSync),

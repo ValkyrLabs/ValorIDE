@@ -46,6 +46,8 @@ describe("accessControl role handling", () => {
       username: "demo",
       customerId: "customer-456",
       creditAccountId: "credit-789",
+      customer: { id: "nested-customer-1", name: "Nested Customer" },
+      account: { id: "nested-account-1", name: "Nested Account" },
       roles: [],
       grantedAuthorities: [],
     } as any);
@@ -54,5 +56,7 @@ describe("accessControl role handling", () => {
 
     expect(loaded?.customerId).toBe("customer-456");
     expect(loaded?.creditAccountId).toBe("credit-789");
+    expect(loaded?.customer?.id).toBe("nested-customer-1");
+    expect(loaded?.account?.id).toBe("nested-account-1");
   });
 });

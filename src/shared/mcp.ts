@@ -91,8 +91,16 @@ export type McpToolCallResponse = {
 
 export interface McpMarketplaceItem {
   mcpId: string;
+  mcpServerId?: string;
+  slug?: string;
+  serviceId?: string;
+  applicationId?: string;
+  apiBaseUrl?: string;
+  manifestUrl?: string;
   githubUrl: string;
+  repoUrl?: string;
   name: string;
+  displayName?: string;
   author: string;
   description: string;
   icon: string;

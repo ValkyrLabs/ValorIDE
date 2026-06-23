@@ -64,7 +64,7 @@ export interface BuildModeScheduledAutomationRecord {
   providerRoute?: ProviderRoute;
   runHistory?: BuildModeAutomationRunHistoryEntry[];
   schedule: string;
-  scheduler?: "local" | "valkyrai-cron";
+  scheduler?: "valkyrai-cron";
   status: "paused" | "scheduled";
   taskId: string;
   tenantId?: string;
@@ -106,10 +106,6 @@ export interface BuildModeAutomationStatusUpdateRequest {
   updatedAt: Date;
 }
 
-export type BuildModeAutomationExecutor = (
-  record: BuildModeScheduledAutomationRecord,
-) => Promise<{ receiptId: string; status: "failed" | "succeeded" }>;
-
 interface BuildModeAutomationStore {
   records: BuildModeScheduledAutomationRecord[];
   version: 1;
@@ -118,7 +114,10 @@ interface BuildModeAutomationStore {
 const MAX_RUN_HISTORY = 20;
 
 export class BuildModeAutomationScheduler {
-  constructor(private readonly globalStoragePath: string) {}
+  constructor(
+    private readonly globalStoragePath: string,
+    private readonly cronLauncher?: BuildModeValkyraiCronLauncher,
+  ) {}
 
   async getSnapshot(refreshedAt: Date): Promise<BuildModeAutomationSnapshot> {
     const storagePath = this.getStoragePath();
@@ -148,12 +147,13 @@ export class BuildModeAutomationScheduler {
       createScheduleId(request.taskId, parsed.workflowRef, parsed.schedule);
     const existing = store.records.find((record) => record.id === id);
     const valkyraiWorkflowId = extractValkyraiWorkflowId(parsed.workflowRef);
-    if (!request.cronLauncher) {
+    const cronLauncher = request.cronLauncher ?? this.cronLauncher;
+    if (!cronLauncher) {
       throw new Error(
         "Build Mode automation scheduling must use the ValkyrAI cron workflow launcher.",
       );
     }
-    const cronStatus = await request.cronLauncher({
+    const cronStatus = await cronLauncher({
       activate: true,
       cronExpression: parsed.schedule,
       scheduleId: id,
@@ -200,14 +200,9 @@ export class BuildModeAutomationScheduler {
   }
 
   async listDue(now: Date): Promise<BuildModeScheduledAutomationRecord[]> {
-    const store = await this.readStore(this.getStoragePath());
-    return store.records.filter(
-      (record) =>
-        record.status === "scheduled" &&
-        record.scheduler !== "valkyrai-cron" &&
-        Boolean(record.nextRunAt) &&
-        new Date(record.nextRunAt!).getTime() <= now.getTime(),
-    );
+    // ValkyrAI cron owns schedule firing; Build Mode only keeps a cockpit snapshot.
+    await this.getSnapshot(now);
+    return [];
   }
 
   async updateStatus(
@@ -225,7 +220,8 @@ export class BuildModeAutomationScheduler {
     const existingNextRunAt = existing.nextRunAt
       ? new Date(existing.nextRunAt)
       : undefined;
-    if (existing.scheduler === "valkyrai-cron" && !request.cronLauncher) {
+    const cronLauncher = request.cronLauncher ?? this.cronLauncher;
+    if (!cronLauncher) {
       throw new Error(
         "Build Mode automation lifecycle updates must use the ValkyrAI cron workflow launcher.",
       );
@@ -238,17 +234,14 @@ export class BuildModeAutomationScheduler {
     const valkyraiWorkflowId =
       existing.valkyraiWorkflowId ??
       extractValkyraiWorkflowId(existing.workflowRef);
-    const cronStatus =
-      existing.scheduler === "valkyrai-cron" && request.cronLauncher
-        ? await request.cronLauncher({
-            activate: request.status === "scheduled",
-            cronExpression: existing.schedule,
-            scheduleId: existing.id,
-            taskId: existing.taskId,
-            workflowId: valkyraiWorkflowId,
-            workflowRef: existing.workflowRef,
-          })
-        : undefined;
+    const cronStatus = await cronLauncher({
+      activate: request.status === "scheduled",
+      cronExpression: existing.schedule,
+      scheduleId: existing.id,
+      taskId: existing.taskId,
+      workflowId: valkyraiWorkflowId,
+      workflowRef: existing.workflowRef,
+    });
     const record: BuildModeScheduledAutomationRecord = {
       ...existing,
       nextRunAt: cronStatus?.quartzNextFireTime ?? nextRunAt,
@@ -256,16 +249,11 @@ export class BuildModeAutomationScheduler {
       status: request.status,
       updatedAt: request.updatedAt.toISOString(),
       valkyraiScheduleUri:
-        existing.scheduler === "valkyrai-cron"
-          ? (existing.valkyraiScheduleUri ??
-            `valkyrai://vaiworkflow/${encodeURIComponent(
-              valkyraiWorkflowId,
-            )}/schedule`)
-          : existing.valkyraiScheduleUri,
-      valkyraiWorkflowId:
-        existing.scheduler === "valkyrai-cron"
-          ? valkyraiWorkflowId
-          : existing.valkyraiWorkflowId,
+        existing.valkyraiScheduleUri ??
+        `valkyrai://vaiworkflow/${encodeURIComponent(
+          valkyraiWorkflowId,
+        )}/schedule`,
+      valkyraiWorkflowId,
     };
     await this.writeStore(storagePath, {
       records: store.records.map((item) =>
@@ -326,78 +314,10 @@ export class BuildModeAutomationScheduler {
     return { record, storagePath };
   }
 
-  async runDue(
-    now: Date,
-    executor: BuildModeAutomationExecutor,
-  ): Promise<BuildModeAutomationRunResult[]> {
-    const due = await this.listDue(now);
-    const results: BuildModeAutomationRunResult[] = [];
-    for (const record of due) {
-      if (!record.workflowCommandId) {
-        const receiptId = createRunAttemptReceiptId(record.id, now, "skipped");
-        const marked = await this.markRunAttempt({
-          completedAt: now,
-          error: "Scheduled automation does not have a workflow command id.",
-          receiptId,
-          scheduleId: record.id,
-          status: "skipped",
-        });
-        const runReceipt = createAutomationRunAttemptReceipt({
-          completedAt: now,
-          error: "Scheduled automation does not have a workflow command id.",
-          receiptId,
-          record: marked.record,
-          status: "skipped",
-        });
-        results.push({
-          error: "Scheduled automation does not have a workflow command id.",
-          record: marked.record,
-          runReceipt,
-          runReceiptId: marked.record.lastRunReceiptId,
-          status: "skipped",
-        });
-        continue;
-      }
-      try {
-        const execution = await executor(record);
-        const marked = await this.markRunAttempt({
-          completedAt: now,
-          receiptId: execution.receiptId,
-          scheduleId: record.id,
-          status: execution.status,
-        });
-        results.push({
-          record: marked.record,
-          runReceiptId: execution.receiptId,
-          status: execution.status,
-        });
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        const receiptId = createRunAttemptReceiptId(record.id, now, "failed");
-        const marked = await this.markRunAttempt({
-          completedAt: now,
-          error: message,
-          receiptId,
-          scheduleId: record.id,
-          status: "failed",
-        });
-        const runReceipt = createAutomationRunAttemptReceipt({
-          completedAt: now,
-          error: message,
-          receiptId,
-          record: marked.record,
-          status: "failed",
-        });
-        results.push({
-          error: message,
-          record: marked.record,
-          runReceipt,
-          runReceiptId: marked.record.lastRunReceiptId,
-          status: "failed",
-        });
-      }
-    }
-    return results;
+  async runDue(now: Date): Promise<BuildModeAutomationRunResult[]> {
+    // ValkyrAI cron owns schedule firing; Build Mode only keeps a cockpit snapshot.
+    await this.getSnapshot(now);
+    return [];
   }
 
   private getStoragePath(): string {
@@ -415,7 +335,9 @@ export class BuildModeAutomationScheduler {
       const raw = await fs.readFile(storagePath, "utf8");
       const parsed = JSON.parse(raw) as Partial<BuildModeAutomationStore>;
       return {
-        records: Array.isArray(parsed.records) ? parsed.records : [],
+        records: Array.isArray(parsed.records)
+          ? parsed.records.map(normalizeStoredScheduleRecord)
+          : [],
         version: 1,
       };
     } catch (error) {
@@ -494,6 +416,21 @@ export const parseBuildModeScheduleCommand = (
   return { schedule, workflowCommandId, workflowRef };
 };
 
+const normalizeStoredScheduleRecord = (
+  record: BuildModeScheduledAutomationRecord,
+): BuildModeScheduledAutomationRecord => ({
+  ...record,
+  scheduler: "valkyrai-cron",
+  valkyraiScheduleUri:
+    record.valkyraiScheduleUri ??
+    `valkyrai://vaiworkflow/${encodeURIComponent(
+      record.valkyraiWorkflowId ??
+        extractValkyraiWorkflowId(record.workflowRef),
+    )}/schedule`,
+  valkyraiWorkflowId:
+    record.valkyraiWorkflowId ?? extractValkyraiWorkflowId(record.workflowRef),
+});
+
 const extractAutomationId = (commandId: string): string | undefined =>
   commandId.startsWith("cmd-automation-")
     ? commandId.slice("cmd-automation-".length)
@@ -503,13 +440,6 @@ const extractValkyraiWorkflowId = (workflowRef: string): string =>
   workflowRef.startsWith("workflow:")
     ? workflowRef.slice("workflow:".length)
     : workflowRef;
-
-const createRunAttemptReceiptId = (
-  scheduleId: string,
-  completedAt: Date,
-  status: "failed" | "skipped",
-): string =>
-  `build-automation-${status}-${stableHash(`${scheduleId}:${completedAt.toISOString()}:${status}`).slice(0, 12)}`;
 
 const createLifecycleReceiptId = (
   scheduleId: string,
@@ -565,79 +495,14 @@ const createAutomationLifecycleReceipt = (
           nextRunAt: record.nextRunAt,
           schedule: record.schedule,
           scheduleId: record.id,
+          scheduler: "valkyrai-cron",
+          schedulerSource: "valkyrai-cron-workflow-launcher",
+          storageUri: record.valkyraiScheduleUri,
           workflowCommandId: record.workflowCommandId,
+          workflowId: record.valkyraiWorkflowId,
           workflowRef: record.workflowRef,
         },
         createdAt: updatedAt.toISOString(),
-      },
-    ],
-  };
-};
-
-const createAutomationRunAttemptReceipt = ({
-  completedAt,
-  error,
-  receiptId,
-  record,
-  status,
-}: {
-  completedAt: Date;
-  error?: string;
-  receiptId: string;
-  record: BuildModeScheduledAutomationRecord;
-  status: "failed" | "skipped";
-}): BuildModeCommandReceipt => {
-  const commandId = record.commandId ?? `cmd-automation-${record.id}`;
-  const summary =
-    status === "skipped"
-      ? `Scheduled automation ${record.id} skipped: ${error ?? "No runnable workflow command was available"}. Next run: ${record.nextRunAt ?? "not scheduled"}.`
-      : `Scheduled automation ${record.id} failed before completion: ${error ?? "Unknown error"}. Next run: ${record.nextRunAt ?? "not scheduled"}.`;
-  return {
-    id: receiptId,
-    commandId,
-    capabilityId: "automation.schedule",
-    status: "failed",
-    approved: true,
-    requiresApproval: false,
-    summary,
-    createdAt: completedAt.toISOString(),
-    executionMode: "operator-handoff",
-    nextOperatorAction: status === "skipped" ? "revise" : "inspect",
-    operatorActionSummary:
-      status === "skipped"
-        ? "Attach a workflow command to this scheduled automation or revise the schedule before the next run."
-        : "Inspect the failed scheduled automation receipt, repair the workflow command or environment, then let the next scheduled run proceed.",
-    policyDecision: "allow",
-    policyReasons: ["Build Mode scheduled automation run attempt."],
-    scope:
-      record.tenantId && record.principalId && record.workspaceRoot
-        ? {
-            tenantId: record.tenantId,
-            principalId: record.principalId,
-            roles: ["Owner", "BuildOperator"],
-            workspaceRoot: record.workspaceRoot,
-            policyRefs: ["build-mode:scheduled-automation"],
-          }
-        : undefined,
-    artifacts: [
-      {
-        id: `${receiptId}-artifact-1`,
-        kind: "workflow_receipt",
-        title: `Automation ${status} run receipt`,
-        uri: `valoride://build-mode/automations/${encodeURIComponent(record.id)}/runs/${encodeURIComponent(receiptId)}`,
-        commandId,
-        receiptId,
-        summary,
-        metadata: {
-          automationRunStatus: status,
-          error,
-          nextRunAt: record.nextRunAt,
-          schedule: record.schedule,
-          scheduleId: record.id,
-          workflowCommandId: record.workflowCommandId,
-          workflowRef: record.workflowRef,
-        },
-        createdAt: completedAt.toISOString(),
       },
     ],
   };

@@ -7,6 +7,7 @@ export type ProviderRoute =
 export type CommandKind =
   | "test"
   | "build"
+  | "inspect"
   | "edit"
   | "deploy"
   | "verify"
@@ -153,6 +154,7 @@ export interface AppBundle {
   artifacts: AppBundleArtifact[];
   componentBundleIds: string[];
   execModuleIds: string[];
+  receiptIds?: string[];
 }
 
 export interface ComponentBundle {
@@ -164,6 +166,7 @@ export interface ComponentBundle {
   entrypoints: string[];
   editablePaths: string[];
   generatedPaths: string[];
+  receiptIds?: string[];
 }
 
 export interface ExecModuleMetadata {
@@ -175,6 +178,7 @@ export interface ExecModuleMetadata {
   outputSchemaRef: string;
   owner: string;
   safetyLevel: "readonly" | "approval-required" | "destructive";
+  receiptIds?: string[];
 }
 
 export interface GrayMatterContextPack {
@@ -223,6 +227,7 @@ export interface CreditEstimate {
   estimatedHostedInfrastructureCredits: number;
   providerRoute: ProviderRoute;
   assumptions: string[];
+  receiptIds?: string[];
 }
 
 export interface CreditUsageReceipt {
@@ -245,6 +250,7 @@ export interface ProviderCredentialRef {
   displayName: string;
   tenantScoped: boolean;
   secretAvailable: boolean;
+  receiptIds?: string[];
 }
 
 export interface PromptProfile {
@@ -253,6 +259,7 @@ export interface PromptProfile {
   description: string;
   modelFamily: string;
   promptBundleRef: string;
+  receiptIds?: string[];
 }
 
 export interface PromptBundleSection {
@@ -285,18 +292,56 @@ export interface BuildModePromptExecutionContext {
 
 export interface WorkflowMcpBinding {
   id: string;
+  execModuleId: string;
   serverName: string;
   toolName: string;
   workflowRef: string;
   inputContractRef: string;
   approvalRequired: boolean;
+  receiptIds?: string[];
+}
+
+export interface BuildModeMcpServerBinding {
+  id: string;
+  name: string;
+  transport: "stdio" | "sse" | "http" | "workflow";
+  status: "connected" | "available" | "requires-approval" | "blocked";
+  scope: "private" | "workspace" | "tenant" | "public";
+  toolIds: string[];
+  receiptIds?: string[];
+}
+
+export interface BuildModeMcpToolBinding {
+  id: string;
+  serverId: string;
+  name: string;
+  capabilityId: string;
+  status: "available" | "requires-approval" | "blocked";
+  execModuleId?: string;
+  workflowRef?: string;
+  inputSchemaRef?: string;
+  outputSchemaRef?: string;
+  approvalRequired: boolean;
+  receiptIds?: string[];
+}
+
+export interface BuildModeConnectorBinding {
+  id: string;
+  connectorId: string;
+  connectorName: string;
+  status: "authorized" | "available" | "requires-approval" | "blocked";
+  dataClasses: string[];
+  allowedActions: Array<"get" | "list" | "read" | "search">;
+  commandIds: string[];
+  scopeRef?: string;
+  receiptIds?: string[];
 }
 
 export interface ScheduledAutomationBinding {
   id: string;
   label: string;
   schedule: string;
-  scheduler?: "local" | "valkyrai-cron";
+  scheduler?: "valkyrai-cron";
   workflowRef: string;
   commandRef?: string;
   providerRoute?: ProviderRoute;
@@ -324,7 +369,7 @@ export interface BuildModeAutomationSnapshotRecord {
   id: string;
   label: string;
   schedule: string;
-  scheduler?: "local" | "valkyrai-cron";
+  scheduler?: "valkyrai-cron";
   status: "paused" | "scheduled";
   taskId: string;
   workflowRef: string;
@@ -403,6 +448,7 @@ export interface BuildModeCapability {
   requiresApproval: boolean;
   risk: BuildModeRisk;
   localOnly?: boolean;
+  receiptIds?: string[];
 }
 
 export interface BuildModeGuardrail {
@@ -410,6 +456,7 @@ export interface BuildModeGuardrail {
   label: string;
   enforcement: "hard-block" | "approval-required" | "receipt-required";
   summary: string;
+  receiptIds?: string[];
 }
 
 export interface BuildModeToolPermission {
@@ -421,6 +468,7 @@ export interface BuildModeToolPermission {
   reason: string;
   scopeRefs: string[];
   receiptRequired: boolean;
+  receiptIds?: string[];
 }
 
 export interface BuildModeCheckpoint {
@@ -455,6 +503,7 @@ export interface BuildModeCommandPolicyRule {
   reason: string;
   enabled: boolean;
   commandKinds?: CommandKind[];
+  receiptIds?: string[];
 }
 
 export interface BuildModeSwarmRoleAssignment {
@@ -485,6 +534,20 @@ export interface BuildModeAgentRuntimeBinding {
   receiptIds: string[];
 }
 
+export interface BuildModeLocalModelRuntimeBinding {
+  id: string;
+  label: string;
+  runtimeId: string;
+  providerCredentialId: string;
+  modelRef: string;
+  endpointRef: string;
+  status: BuildModeRuntimeStatus;
+  executionMode: "workspace-local" | "developer-machine" | "tenant-isolated";
+  capabilityIds: string[];
+  healthCheckCommandId?: string;
+  receiptIds: string[];
+}
+
 export interface ThorApiVaixBinding {
   id: string;
   surface: BuildModeThorApiVaixSurface;
@@ -508,6 +571,7 @@ export interface BuildModeAutonomyPolicy {
   stopConditions: string[];
   escalationRefs: string[];
   receiptRequired: boolean;
+  receiptIds?: string[];
 }
 
 export type BuildModeAutonomyDecisionStatus =
@@ -559,6 +623,7 @@ export interface BuildModeExecutionPlanStep {
 }
 
 export type BuildModeEvidenceArtifactKind =
+  | "app_bundle_diff"
   | "browser_console"
   | "browser_screenshot"
   | "checkpoint"
@@ -566,6 +631,7 @@ export type BuildModeEvidenceArtifactKind =
   | "connector_data"
   | "final_report"
   | "file_write"
+  | "graymatter_context"
   | "mcp_result"
   | "swarm_handoff"
   | "workflow_receipt";
@@ -599,6 +665,7 @@ export interface BuildModeCommandReceipt {
   executionPlanStepId?: string;
   policyDecision?: BuildModePolicyDecision;
   policyReasons?: string[];
+  requiredApprovalThreshold?: BuildModeApprovalThreshold;
   approval?: BuildModeCommandApproval;
   scope?: BuildModeScopeContext;
   promptContext?: BuildModePromptExecutionContext;
@@ -627,9 +694,13 @@ export interface FinalReport {
 export interface AppBundleDiff {
   id: string;
   title: string;
+  appBundleId: string;
+  generatedAt: string;
   addedArtifacts: string[];
   changedArtifacts: string[];
   removedArtifacts: string[];
+  receiptIds: string[];
+  evidenceArtifactIds: string[];
 }
 
 export interface ValorTaskBridgePayload {
@@ -650,6 +721,9 @@ export interface ValorTaskBridgePayload {
   selectedPromptProfileId: string;
   promptBundles: PromptBundle[];
   selectedPromptBundleId: string;
+  mcpServers: BuildModeMcpServerBinding[];
+  mcpTools: BuildModeMcpToolBinding[];
+  connectorBindings: BuildModeConnectorBinding[];
   workflowMcpBindings: WorkflowMcpBinding[];
   scheduledAutomations: ScheduledAutomationBinding[];
   capabilities: BuildModeCapability[];
@@ -661,6 +735,7 @@ export interface ValorTaskBridgePayload {
   swarmRoles: BuildModeSwarmRoleAssignment[];
   agentLoop: BuildModeAgentLoopPhase[];
   agentRuntimes: BuildModeAgentRuntimeBinding[];
+  localModelRuntimes: BuildModeLocalModelRuntimeBinding[];
   thorApiVaixBindings: ThorApiVaixBinding[];
   autonomyPolicy: BuildModeAutonomyPolicy;
   autonomyDecision: BuildModeAutonomyDecision;

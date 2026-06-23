@@ -25,10 +25,10 @@ const DEFAULT_DENY_PATTERNS = [
   "**/.DS_Store",
 ];
 
-/** Very small, dependency‑free path guard.
+/** Very small, dependency-free path guard.
  *  - Confines edits to workspace by default
  *  - Blocks common deny patterns
- *  - Optionally honors a project ".valorignore" line‑by‑line (prefix '#' for comments)
+ *  - Honors project ".valorignore" and ".valorideignore" line-by-line
  */
 export class PathAccess {
   private root: string;
@@ -40,30 +40,17 @@ export class PathAccess {
     this.root = path.resolve(opts.workspaceRoot);
     this.allowOutside = !!opts.allowOutsideWorkspace;
 
-    const hasLocalValorideRules = fs.existsSync(
-      path.join(this.root, ".valoriderules"),
-    );
-
-    const denyPatterns: string[] = [];
-
-    if (hasLocalValorideRules) {
-      denyPatterns.push(...DEFAULT_DENY_PATTERNS);
-    }
+    const denyPatterns: string[] = [...DEFAULT_DENY_PATTERNS];
 
     if (opts.denyGlobs?.length) {
-      denyPatterns.push(...opts.denyGlobs);
+      denyPatterns.push(...opts.denyGlobs.flatMap(normalizeIgnorePattern));
     }
 
     if (opts.additionalDenyPaths?.length) {
       denyPatterns.push(...opts.additionalDenyPaths);
     }
 
-    denyPatterns.push(
-      ...loadIgnorePatterns(path.join(this.root, ".valorignore"), this.root),
-    );
-    denyPatterns.push(
-      ...loadIgnorePatterns(path.join(this.root, ".valorideignore"), this.root),
-    );
+    denyPatterns.push(...loadWorkspaceIgnorePatterns(this.root));
 
     this.denies = Array.from(new Set(denyPatterns));
   }
@@ -150,6 +137,16 @@ function matchGlob(relPath: string, pattern: string): boolean {
   return regex.test(normalizedPath);
 }
 
+export function loadWorkspaceIgnorePatterns(workspaceRoot: string): string[] {
+  const root = path.resolve(workspaceRoot);
+  return Array.from(
+    new Set([
+      ...loadIgnorePatterns(path.join(root, ".valorignore"), root),
+      ...loadIgnorePatterns(path.join(root, ".valorideignore"), root),
+    ]),
+  );
+}
+
 function loadIgnorePatterns(
   ignoreFilePath: string,
   workspaceRoot: string,
@@ -199,6 +196,9 @@ function loadIgnorePatterns(
       const includePath = path.isAbsolute(includeTarget)
         ? includeTarget
         : path.resolve(workspaceRoot, includeTarget);
+      if (!isPathInsideWorkspace(includePath, workspaceRoot)) {
+        continue;
+      }
       patterns.push(...loadIgnorePatterns(includePath, workspaceRoot, visited));
       continue;
     }
@@ -213,6 +213,12 @@ function loadIgnorePatterns(
   }
 
   return patterns;
+}
+
+function isPathInsideWorkspace(candidatePath: string, workspaceRoot: string): boolean {
+  const root = path.resolve(workspaceRoot);
+  const candidate = path.resolve(candidatePath);
+  return candidate === root || candidate.startsWith(`${root}${path.sep}`);
 }
 
 function normalizeIgnorePattern(rawPattern: string): string[] {

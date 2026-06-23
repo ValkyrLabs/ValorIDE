@@ -144,9 +144,9 @@ export class OpenAiNativeHandler implements ApiHandler {
       case "gpt-5.5-chat-latest":
       case "gpt-5.5-codex":
       case "gpt-5.4":
+      case "gpt-5.4-codex":
       case "gpt-5.4-mini":
       case "gpt-5.4-nano":
-      case "gpt-5.3-codex":
       case "gpt-5.3-codex-spark":
       case "gpt-5.2":
       case "gpt-5.2-chat-latest":

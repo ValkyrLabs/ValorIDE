@@ -2,6 +2,203 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import BuildModeView from "./BuildModeView";
 import { digitalProductProBuildModePayload } from "./buildModeFixtures";
+import type {
+  BuildModeCommandReceipt,
+  ValorTaskBridgePayload,
+} from "@shared/BuildMode";
+
+const createSucceededCommandReceipt = (
+  id: string,
+  commandId: string,
+  capabilityId: string,
+  createdAt: string,
+): BuildModeCommandReceipt => ({
+  id,
+  commandId,
+  capabilityId,
+  status: "succeeded",
+  approved: true,
+  requiresApproval: false,
+  summary: `${commandId} completed.`,
+  createdAt,
+});
+
+const allowTerminalExecute = (
+  payload: ValorTaskBridgePayload,
+): ValorTaskBridgePayload["toolPermissions"] =>
+  payload.toolPermissions.map((permission) =>
+    permission.capabilityId === "terminal.execute"
+      ? {
+          ...permission,
+          approvalThreshold: "none",
+          decision: "allow",
+        }
+      : permission,
+  );
+
+const withRunnableTestStep = (
+  payload: ValorTaskBridgePayload = digitalProductProBuildModePayload,
+): ValorTaskBridgePayload => ({
+  ...payload,
+  autonomyPolicy: {
+    ...payload.autonomyPolicy,
+    mode: "autonomous-local",
+    approvalRequiredCapabilityIds:
+      payload.autonomyPolicy.approvalRequiredCapabilityIds.filter(
+        (capabilityId) => capabilityId !== "terminal.execute",
+      ),
+  },
+  executionPlan: payload.executionPlan.map((step) => {
+    if (step.id === "plan-safe-edits") {
+      return {
+        ...step,
+        status: "complete",
+        receiptIds: ["receipt-safe-edit-checkout-copy"],
+      };
+    }
+    if (step.id === "plan-thorapi-vaix") {
+      return {
+        ...step,
+        status: "complete",
+        receiptIds: ["receipt-openapi-update", "receipt-vaix-generate"],
+      };
+    }
+    if (step.id === "plan-tests") {
+      return { ...step, status: "ready" };
+    }
+    return step;
+  }),
+  commandReceipts: [
+    ...payload.commandReceipts,
+    createSucceededCommandReceipt(
+      "receipt-safe-edit-checkout-copy",
+      "cmd-safe-edit-checkout-copy",
+      "psr.edit",
+      "2026-06-22T12:00:00.000Z",
+    ),
+    createSucceededCommandReceipt(
+      "receipt-openapi-update",
+      "cmd-openapi-update-spec",
+      "psr.edit",
+      "2026-06-22T12:01:00.000Z",
+    ),
+    createSucceededCommandReceipt(
+      "receipt-vaix-generate",
+      "cmd-vaix-generate-thorapi",
+      "terminal.execute",
+      "2026-06-22T12:02:00.000Z",
+    ),
+  ],
+  toolPermissions: allowTerminalExecute(payload),
+});
+
+const withApprovalRequiredBrowserStep = (
+  payload: ValorTaskBridgePayload = digitalProductProBuildModePayload,
+): ValorTaskBridgePayload => {
+  const testStepPayload = withRunnableTestStep(payload);
+  return {
+    ...testStepPayload,
+    autonomyPolicy: {
+      ...testStepPayload.autonomyPolicy,
+      maxConsecutiveCommands: 10,
+    },
+    executionPlan: testStepPayload.executionPlan.map((step) => {
+      if (step.id === "plan-tests") {
+        return {
+          ...step,
+          status: "complete",
+          receiptIds: ["receipt-test-success", "receipt-build-success"],
+        };
+      }
+      if (step.id === "plan-browser") {
+        return { ...step, status: "approval-required" };
+      }
+      return step;
+    }),
+    commands: testStepPayload.commands.map((command) =>
+      command.id === "cmd-open-generated-preview"
+        ? {
+            ...command,
+            receiptId: "receipt-open-generated-preview",
+            status: "succeeded",
+          }
+        : command,
+    ),
+    commandReceipts: [
+      ...testStepPayload.commandReceipts,
+      createSucceededCommandReceipt(
+        "receipt-open-generated-preview",
+        "cmd-open-generated-preview",
+        "browser.automation",
+        "2026-06-22T12:02:30.000Z",
+      ),
+      createSucceededCommandReceipt(
+        "receipt-test-success",
+        "cmd-test",
+        "terminal.execute",
+        "2026-06-22T12:03:00.000Z",
+      ),
+      createSucceededCommandReceipt(
+        "receipt-build-success",
+        "cmd-build",
+        "terminal.execute",
+        "2026-06-22T12:04:00.000Z",
+      ),
+    ],
+  };
+};
+
+const withDirectMcpToolCommand = (
+  payload: ValorTaskBridgePayload = digitalProductProBuildModePayload,
+): ValorTaskBridgePayload => ({
+  ...payload,
+  commands: [
+    ...payload.commands,
+    {
+      id: "cmd-mcp-graymatter-search",
+      kind: "mcp",
+      label: "Search GrayMatter memory",
+      command: "mcp:graymatter.searchMemory input:context/search.json",
+      capabilityId: "mcp.tool",
+      assignedRuntimeId: "runtime-openclaw-workflow-operator",
+      assignedSwarmRole: "Workflow Engineer",
+      requiresApproval: true,
+      status: "succeeded",
+      receiptId: "receipt-mcp-graymatter-search",
+    },
+  ],
+  commandReceipts: [
+    ...payload.commandReceipts,
+    {
+      id: "receipt-mcp-graymatter-search",
+      commandId: "cmd-mcp-graymatter-search",
+      capabilityId: "mcp.tool",
+      status: "succeeded",
+      approved: true,
+      requiresApproval: true,
+      summary: "GrayMatter MCP search completed.",
+      createdAt: "2026-06-22T12:05:00.000Z",
+      artifacts: [
+        {
+          id: "artifact-mcp-graymatter-search",
+          kind: "mcp_result",
+          title: "GrayMatter MCP search result",
+          uri: "valoride://build-mode/artifacts/mcp-graymatter-search",
+          commandId: "cmd-mcp-graymatter-search",
+          receiptId: "receipt-mcp-graymatter-search",
+          metadata: {
+            executionId: "mcp-exec-001",
+            serverName: "graymatter",
+            status: "succeeded",
+            toolName: "searchMemory",
+            traceId: "mcp-trace-001",
+          },
+          createdAt: "2026-06-22T12:05:00.000Z",
+        },
+      ],
+    },
+  ],
+});
 
 describe("BuildModeView", () => {
   const expectedPromptContext = expect.objectContaining({
@@ -21,6 +218,9 @@ describe("BuildModeView", () => {
       screen.getByText("Build Mode: Digital Product Pro"),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("App Bundle Inspector")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/proof: receipt-generation-dpp-001/).length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText("tenant-valkyr-demo")).toBeInTheDocument();
     expect(screen.getByText("principal-valhalla-operator")).toBeInTheDocument();
     expect(
@@ -30,6 +230,8 @@ describe("BuildModeView", () => {
     expect(
       screen.getAllByText("policy:generated-thorapi-readonly").length,
     ).toBeGreaterThan(0);
+    expect(screen.getByText("Ignored Path Patterns")).toBeInTheDocument();
+    expect(screen.getByText("secrets/")).toBeInTheDocument();
     expect(screen.getByText("gm-context-pack-dpp-001")).toBeInTheDocument();
     expect(screen.getByText("Retrieval Status")).toBeInTheDocument();
     expect(screen.getByText("Invariant Preflight")).toBeInTheDocument();
@@ -49,11 +251,19 @@ describe("BuildModeView", () => {
     expect(
       screen.getAllByText("digitalProduct.fulfillPurchase").length,
     ).toBeGreaterThan(1);
+    expect(
+      screen.getAllByText("execmodule-digital-product-fulfillment").length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText("ThorAPI And VAIX")).toBeInTheDocument();
     expect(screen.getByText("DigitalProductService")).toBeInTheDocument();
     expect(
       screen.getByText(/ThorAPI - readonly-generated/),
     ).toBeInTheDocument();
+    expect(
+      screen.getAllByText(
+        "apps/digital-product-pro/openapi/digital-product.yaml (editable)",
+      ).length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText("issuePrivateDownloadEntitlement"),
     ).toBeInTheDocument();
@@ -61,6 +271,9 @@ describe("BuildModeView", () => {
     expect(
       screen.getByText("Read authorized connector data"),
     ).toBeInTheDocument();
+    expect(screen.getAllByText(/proof: receipt-context-dpp-001/).length).toBeGreaterThan(
+      0,
+    );
     expect(screen.getByText("Generated ThorAPI code")).toBeInTheDocument();
     expect(screen.getByText("Tool Permissions")).toBeInTheDocument();
     expect(screen.getByText("Guarded file writes")).toBeInTheDocument();
@@ -71,6 +284,34 @@ describe("BuildModeView", () => {
       screen.getByText("Valhalla approval-gated local autonomy"),
     ).toBeInTheDocument();
     expect(screen.getByText("Autonomy Decision")).toBeInTheDocument();
+    expect(
+      screen.getByText(/scheduler: ValkyrAI cron workflow launcher/),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Connector Access")).toBeInTheDocument();
+    expect(screen.getByText("Gmail")).toBeInTheDocument();
+    expect(screen.getByText("Google Calendar")).toBeInTheDocument();
+    expect(screen.getByText("Google Tasks")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/commands: cmd-connector-gmail-thread/).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/ExecModule execmodule-digital-product-fulfillment/)
+        .length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("MCP Servers")).toBeInTheDocument();
+    expect(screen.getByText("MCP Tool Registry")).toBeInTheDocument();
+    expect(screen.getAllByText("private-valkyr-workflows").length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getAllByText("digitalProduct.fulfillPurchase").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/proof: receipt-workflow-dpp-001/).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByText(/credential-ref-valkyr-credits.*proof: receipt-context-dpp-001/),
+    ).toBeInTheDocument();
     expect(
       screen.getAllByText(
         "Operator approval is required before running Apply checkout copy edit.",
@@ -93,7 +334,17 @@ describe("BuildModeView", () => {
     expect(screen.getAllByText("Estimated Credits").length).toBeGreaterThan(0);
     expect(
       screen.getByText(
-        "bootstrap-credit-estimate (graymatter.context, valkyr-credits, succeeded): 0 credits",
+        "estimate proof: receipt-credit-estimate-dpp-001",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "bootstrap-credit-estimate (graymatter.context, valkyr-credits, succeeded): 0 credits (0 provider, 0 hosted)",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Hosted infrastructure credits apply even when a BYO provider key is selected.",
       ),
     ).toBeInTheDocument();
     expect(screen.getAllByText("approval-gated").length).toBeGreaterThan(0);
@@ -114,9 +365,41 @@ describe("BuildModeView", () => {
     expect(
       screen.getAllByText("Unit test command stdout").length,
     ).toBeGreaterThan(0);
+    expect(screen.getAllByText(/completed false/).length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText(/sha256:fixture-command-stdout/),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("Initial app bundle diff")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("app-bundle-digital-product-pro").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("receipt-generation-dpp-001").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByText(
+        "apps/digital-product-pro/app-bundle.json (config; hash sha256:bundle-fixture)",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText("Authorized Calendar connector read").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Authorized Tasks connector read").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/connector google-calendar; data calendar\.events/)
+        .length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/connector google-tasks; data task\.list/).length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText("Pre-edit checkpoint proof")).toBeInTheDocument();
     expect(screen.getByText("Safe Edits")).toBeInTheDocument();
     expect(screen.getByText("Checkout copy refinement")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("build-command-receipt-safe-edit-policy").length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getAllByText("apps/digital-product-pro/src/pages/Checkout.tsx")
         .length,
@@ -125,8 +408,44 @@ describe("BuildModeView", () => {
       screen.getByText("Nightly fulfillment smoke check"),
     ).toBeInTheDocument();
     expect(
+      screen.getAllByText("Inspect private workflow MCP server").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("build-command-receipt-mcp-server-inspect").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("artifact-mcp-server-inspect-dpp-001").length,
+    ).toBeGreaterThan(0);
+    expect(
       screen.getByText("Read order-support Gmail thread"),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText("Update OpenAPI purchase spec"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Generate ThorAPI through VAIX"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Inspect generated ThorAPI artifact"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText("Generated ThorAPI artifact inspection").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("build-command-receipt-generated-artifact-read")
+        .length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("Generate app bundle diff")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("App bundle diff receipt").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("build-command-receipt-app-bundle-diff").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByText("Read launch-window Calendar events"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Read launch task checklist")).toBeInTheDocument();
     expect(screen.getByText("provider: valkyr-credits")).toBeInTheDocument();
     expect(
       screen.getByText(
@@ -145,14 +464,56 @@ describe("BuildModeView", () => {
     expect(screen.getByText("Readiness Gates")).toBeInTheDocument();
     expect(screen.getByText("Safe edits applied")).toBeInTheDocument();
     expect(screen.getByText("Browser evidence captured")).toBeInTheDocument();
+    expect(
+      screen.getByText("ThorAPI generated through VAIX"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Draft deploy ready")).toBeInTheDocument();
     expect(screen.getAllByText(/blocks run/).length).toBeGreaterThan(0);
     expect(screen.getByText("Execution Plan")).toBeInTheDocument();
     expect(screen.getByText("Apply safe editable changes")).toBeInTheDocument();
     expect(screen.getByText("Run tests and build")).toBeInTheDocument();
     expect(screen.getByText("Run unit tests, then build.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Update OpenAPI and generate ThorAPI"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Approve the OpenAPI spec update before VAIX generation.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Ship draft deploy")).toBeInTheDocument();
+    expect(
+      screen.getByText("Approve and run the draft deploy command."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Agent Runtime Lanes")).toBeInTheDocument();
     expect(screen.getByText("Codex local build operator")).toBeInTheDocument();
+    expect(
+      screen.getByText("ValorIDE ThorAPI and VAIX generator"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Codex Aurora UI engineer")).toBeInTheDocument();
     expect(screen.getByText("OpenClaw workflow executor")).toBeInTheDocument();
+    expect(screen.getByText("ValorIDE deploy operator")).toBeInTheDocument();
+    expect(screen.getByText("Local Model Runtime")).toBeInTheDocument();
+    expect(
+      screen.getByText("Local browser/report verifier model"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("local://valoride-verifier/default - available - workspace-local"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Endpoint: workspace-local:valoride-verifier"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Health check: cmd-browser-verify")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(
+        "role: Deploy Operator - runtime-valkyr-deploy-operator",
+      ).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(
+        "role: ThorAPI Generator - runtime-thorapi-vaix-generator",
+      ).length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getAllByText("Compile GrayMatter context").length,
     ).toBeGreaterThan(0);
@@ -163,24 +524,47 @@ describe("BuildModeView", () => {
       screen.getByText("build-command-receipt-fixture-context"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("approval-gate - next: approve"),
-    ).toBeInTheDocument();
+      screen.getAllByText("approval-gate - next: approve").length,
+    ).toBeGreaterThan(0);
     expect(
-      screen.getByText(
+      screen.getAllByText(
         "Prompt Valhalla Build Operator - prompt-bundle-valhalla-001@2026.06.21",
-      ),
-    ).toBeInTheDocument();
+      ).length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText(
         "Review and approve this command with the required threshold before dispatch.",
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Command declares approval required."),
-    ).toBeInTheDocument();
+      screen.getAllByText("Command declares approval required.").length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText(/Digital Product Pro Build Mode Report/),
     ).toBeInTheDocument();
+  });
+
+  it("renders direct MCP tool commands with receipt artifact proof", () => {
+    render(<BuildModeView payload={withDirectMcpToolCommand()} />);
+
+    expect(screen.getByText("Connected MCP Tools")).toBeInTheDocument();
+    expect(screen.getAllByText("Search GrayMatter memory").length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.getByText(/graymatter - searchMemory/)).toBeInTheDocument();
+    expect(screen.getAllByText(/mcp.tool - succeeded/).length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getByText(/proof: receipt-mcp-graymatter-search/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/artifact: artifact-mcp-graymatter-search/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/Search GrayMatter memory: graymatter.searchMemory/)
+        .length,
+    ).toBeGreaterThan(0);
   });
 
   it("renders swarm role ownership for commands and receipts", () => {
@@ -192,12 +576,16 @@ describe("BuildModeView", () => {
       ).length,
     ).toBeGreaterThan(0);
     expect(
-      screen.getAllByText("role: Supervisor - runtime-codex-build-operator")
+      screen.getAllByText(
+        "role: Aurora UI Engineer - runtime-aurora-ui-engineer",
+      ).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("ThorAPI Generator").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Aurora UI Engineer").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Role Browser Verifier - runtime-valoride-verifier")
         .length,
     ).toBeGreaterThan(0);
-    expect(
-      screen.getByText("Role Browser Verifier - runtime-valoride-verifier"),
-    ).toBeInTheDocument();
   });
 
   it("renders GrayMatter proof on command receipts", () => {
@@ -256,6 +644,41 @@ describe("BuildModeView", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("renders artifact integrity proof in evidence artifact cards", () => {
+    render(
+      <BuildModeView
+        payload={{
+          ...digitalProductProBuildModePayload,
+          evidenceArtifacts: [
+            {
+              id: "artifact-final-report-proof",
+              kind: "final_report",
+              title: "Final report proof",
+              uri: "valoride://build-mode/artifacts/task-alpha/cmd-final-report/final-report-final_report.md",
+              commandId: "cmd-final-report",
+              receiptId: "receipt-final-report",
+              summary: "Stored final report.",
+              createdAt: "2026-06-21T21:20:00.000Z",
+              metadata: {
+                byteSize: 1234,
+                contentHash:
+                  "sha256:4dd7fbf317fb40ca8ecf96a6b46098674dd7fbf317fb40ca8ecf96a6b4609867",
+                memoryStatus: "written",
+              },
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Final report proof")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(
+        /memory status written; hash sha256:4dd7fbf317fb40ca8ecf96a6b46098674dd7fbf317fb40ca8ecf96a6b4609867; bytes 1234/,
+      ).length,
+    ).toBeGreaterThan(0);
+  });
+
   it("emits artifact open requests for durable Build Mode artifact uris", () => {
     const onOpenArtifact = vi.fn();
     render(
@@ -302,6 +725,9 @@ describe("BuildModeView", () => {
       screen.getByText("Security Audit Prompt Bundle"),
     ).toBeInTheDocument();
     expect(screen.getByText("Security review doctrine")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/proof: receipt-prompt-bundle-security-001/).length,
+    ).toBeGreaterThan(0);
   });
 
   it("emits selected provider and prompt context with command requests", () => {
@@ -309,23 +735,7 @@ describe("BuildModeView", () => {
     render(
       <BuildModeView
         onRunCommand={onRunCommand}
-        payload={{
-          ...digitalProductProBuildModePayload,
-          autonomyDecision: {
-            ...digitalProductProBuildModePayload.autonomyDecision,
-            nextCommandId: "cmd-test",
-            nextStepId: "plan-tests",
-            status: "continue",
-          },
-          executionPlan: digitalProductProBuildModePayload.executionPlan.map(
-            (step) =>
-              step.id === "plan-safe-edits"
-                ? { ...step, status: "complete" }
-                : step.id === "plan-tests"
-                  ? { ...step, status: "ready" }
-                  : step,
-          ),
-        }}
+        payload={withRunnableTestStep()}
       />,
     );
 
@@ -350,6 +760,31 @@ describe("BuildModeView", () => {
       }),
       expect.any(Array),
     );
+  });
+
+  it("renders final report with the selected provider route and prompt profile", () => {
+    render(<BuildModeView payload={digitalProductProBuildModePayload} />);
+
+    expect(screen.getByText(/provider route: valkyr-credits/)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Provider route"), {
+      target: { value: "local-model" },
+    });
+    fireEvent.change(screen.getByLabelText("Prompt profile"), {
+      target: { value: "prompt-profile-security-auditor" },
+    });
+
+    expect(screen.getByText(/provider route: local-model/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Security Auditor: frontier \(prompt-bundle-security-001; proof: receipt-prompt-bundle-security-001\)/,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Security Audit Prompt Bundle: review-required \(1 sections, receipts: receipt-prompt-bundle-security-001\)/,
+      ),
+    ).toBeInTheDocument();
   });
 
   it("disables command runner actions that are not the next runbook command", () => {
@@ -410,6 +845,16 @@ describe("BuildModeView", () => {
                   receiptIds: ["receipt-safe-edit-checkout-copy"],
                 };
               }
+              if (step.id === "plan-thorapi-vaix") {
+                return {
+                  ...step,
+                  status: "complete",
+                  receiptIds: [
+                    "receipt-openapi-update",
+                    "receipt-vaix-generate",
+                  ],
+                };
+              }
               if (step.id === "plan-tests") {
                 return { ...step, status: "ready" };
               }
@@ -444,6 +889,12 @@ describe("BuildModeView", () => {
       />,
     );
 
+    fireEvent.change(screen.getByLabelText("Provider route"), {
+      target: { value: "local-model" },
+    });
+    fireEvent.change(screen.getByLabelText("Prompt profile"), {
+      target: { value: "prompt-profile-security-auditor" },
+    });
     fireEvent.click(
       screen.getByRole("button", { name: "Run Autonomous Queue" }),
     );
@@ -455,8 +906,14 @@ describe("BuildModeView", () => {
           capabilityId: "terminal.execute",
         }),
       ],
-      "valkyr-credits",
-      expectedPromptContext,
+      "local-model",
+      expect.objectContaining({
+        promptProfileId: "prompt-profile-security-auditor",
+        promptProfileName: "Security Auditor",
+        promptBundleId: "prompt-bundle-security-001",
+        promptBundlePolicy: "review-required",
+        promptBundleReceiptIds: ["receipt-prompt-bundle-security-001"],
+      }),
       expect.any(Array),
     );
   });
@@ -466,23 +923,7 @@ describe("BuildModeView", () => {
     render(
       <BuildModeView
         onRunCommand={onRunCommand}
-        payload={{
-          ...digitalProductProBuildModePayload,
-          autonomyDecision: {
-            ...digitalProductProBuildModePayload.autonomyDecision,
-            nextCommandId: "cmd-test",
-            nextStepId: "plan-tests",
-            status: "continue",
-          },
-          executionPlan: digitalProductProBuildModePayload.executionPlan.map(
-            (step) =>
-              step.id === "plan-safe-edits"
-                ? { ...step, status: "complete" }
-                : step.id === "plan-tests"
-                  ? { ...step, status: "ready" }
-                  : step,
-          ),
-        }}
+        payload={withRunnableTestStep()}
       />,
     );
 
@@ -498,6 +939,41 @@ describe("BuildModeView", () => {
       expectedPromptContext,
       expect.any(Array),
     );
+  });
+
+  it("blocks manual command runs when the derived runtime ownership proof is unavailable", () => {
+    const onRunCommand = vi.fn();
+    render(
+      <BuildModeView
+        onRunCommand={onRunCommand}
+        payload={{
+          ...withRunnableTestStep(),
+          autonomyDecision: {
+            ...digitalProductProBuildModePayload.autonomyDecision,
+            nextCommandId: "cmd-test",
+            nextStepId: "plan-tests",
+            status: "continue",
+          },
+          agentRuntimes: digitalProductProBuildModePayload.agentRuntimes.map(
+            (runtime) =>
+              runtime.id === "runtime-codex-build-operator"
+                ? { ...runtime, status: "blocked" }
+                : runtime,
+          ),
+        }}
+      />,
+    );
+
+    expect(
+      screen.getAllByText(/Autonomy is blocked by runtime ownership proof/)
+        .length,
+    ).toBeGreaterThan(0);
+    const runUnitTests = screen.getByRole("button", {
+      name: "Run Unit tests",
+    });
+    expect(runUnitTests).toBeDisabled();
+    fireEvent.click(runUnitTests);
+    expect(onRunCommand).not.toHaveBeenCalled();
   });
 
   it("disables approval runner actions that are not the next runbook command", () => {
@@ -522,23 +998,7 @@ describe("BuildModeView", () => {
     render(
       <BuildModeView
         onRunCommand={onRunCommand}
-        payload={{
-          ...digitalProductProBuildModePayload,
-          autonomyDecision: {
-            ...digitalProductProBuildModePayload.autonomyDecision,
-            nextCommandId: "cmd-browser-verify",
-            nextStepId: "plan-browser-verify",
-            status: "approval-required",
-          },
-          executionPlan: digitalProductProBuildModePayload.executionPlan.map(
-            (step) =>
-              step.id === "plan-safe-edits" || step.id === "plan-tests"
-                ? { ...step, status: "complete" }
-                : step.id === "plan-browser-verify"
-                  ? { ...step, status: "approval-required" }
-                  : step,
-          ),
-        }}
+        payload={withApprovalRequiredBrowserStep()}
       />,
     );
 
@@ -563,7 +1023,7 @@ describe("BuildModeView", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
-          capabilityId: "mcp.tool",
+          capabilityId: "workflow.execute",
         }),
       ]),
     );
@@ -608,6 +1068,45 @@ describe("BuildModeView", () => {
     );
   });
 
+  it("uses the autonomy decision threshold when approving hard-rule commands", () => {
+    const onRunCommand = vi.fn();
+    render(
+      <BuildModeView
+        onRunCommand={onRunCommand}
+        payload={withRunnableTestStep({
+          ...digitalProductProBuildModePayload,
+          commands: digitalProductProBuildModePayload.commands.map((command) =>
+            command.id === "cmd-test"
+              ? {
+                  ...command,
+                  command:
+                    "valkyr deploy --target production --app digital-product-pro",
+                  requiresApproval: false,
+                  status: "queued",
+                }
+              : command,
+          ),
+        })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Approve Unit tests" }));
+
+    expect(onRunCommand).toHaveBeenCalledWith(
+      expect.objectContaining({
+        capabilityId: "terminal.execute",
+        id: "cmd-test",
+      }),
+      expect.objectContaining({
+        approved: true,
+        threshold: "owner",
+      }),
+      "valkyr-credits",
+      expectedPromptContext,
+      expect.any(Array),
+    );
+  });
+
   it("blocks next execution controls when the autonomy decision is blocked", () => {
     const onRunCommand = vi.fn();
     render(
@@ -615,13 +1114,15 @@ describe("BuildModeView", () => {
         onRunCommand={onRunCommand}
         payload={{
           ...digitalProductProBuildModePayload,
-          autonomyDecision: {
-            ...digitalProductProBuildModePayload.autonomyDecision,
-            reasonCodes: ["secret-inline-literal"],
-            status: "blocked",
-            summary:
-              "Autonomy is blocked because the next command includes inline secret material.",
-          },
+          commands: digitalProductProBuildModePayload.commands.map((command) =>
+            command.id === "cmd-safe-edit-checkout-copy"
+              ? {
+                  ...command,
+                  command:
+                    "psr.edit target:apps/digital-product-pro/src/pages/Checkout.tsx token=inline-secret",
+                }
+              : command,
+          ),
         }}
       />,
     );
@@ -640,7 +1141,7 @@ describe("BuildModeView", () => {
     expect(onRunCommand).not.toHaveBeenCalled();
   });
 
-  it("emits checkpoint rollback commands from checkpoint controls", () => {
+  it("blocks out-of-order checkpoint rollback commands from checkpoint controls", () => {
     const onRunCommand = vi.fn();
     render(
       <BuildModeView
@@ -649,21 +1150,59 @@ describe("BuildModeView", () => {
       />,
     );
 
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Rollback Pre-edit checkpoint",
-      }),
+    const rollback = screen.getByRole("button", {
+      name: "Rollback Pre-edit checkpoint",
+    });
+    expect(rollback).toBeDisabled();
+    fireEvent.click(rollback);
+    expect(onRunCommand).not.toHaveBeenCalled();
+  });
+
+  it("emits approval metadata for checkpoint creation only when it is the next runbook action", () => {
+    const onRunCommand = vi.fn();
+    render(
+      <BuildModeView
+        onRunCommand={onRunCommand}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          commandReceipts:
+            digitalProductProBuildModePayload.commandReceipts.filter(
+              (receipt) =>
+                receipt.id !== "build-command-receipt-checkpoint-create",
+            ),
+          executionPlan: digitalProductProBuildModePayload.executionPlan.map(
+            (step) => {
+              if (step.id === "plan-checkpoint") {
+                return { ...step, status: "approval-required" };
+              }
+              if (step.id === "plan-safe-edits") {
+                return { ...step, status: "pending" };
+              }
+              return step;
+            },
+          ),
+        }}
+      />,
     );
+
+    const createCheckpoint = screen
+      .getAllByRole("button", { name: "Run Create checkpoint" })
+      .find((button) => !button.hasAttribute("disabled"));
+    expect(createCheckpoint).toBeDefined();
+    fireEvent.click(createCheckpoint!);
 
     expect(onRunCommand).toHaveBeenCalledWith(
       expect.objectContaining({
         capabilityId: "checkpoint.manage",
-        command: "checkpoint:rollback checkpoint-pre-edit-dpp",
-        id: "cmd-checkpoint-rollback",
+        command: "checkpoint:create pre-edit digital-product-pro",
+        id: "cmd-checkpoint-create",
         kind: "checkpoint",
-        requiresApproval: true,
       }),
-      undefined,
+      expect.objectContaining({
+        approved: true,
+        approverPrincipalId: "principal-valhalla-operator",
+        threshold: "operator",
+      }),
       "valkyr-credits",
       expectedPromptContext,
       expect.any(Array),
@@ -719,12 +1258,58 @@ describe("BuildModeView", () => {
       "http://localhost:5173/apps/digital-product-pro",
     );
 
+    expect(screen.getByRole("button", {
+      name: "Run Open generated preview from Browser Verification panel",
+    })).toBeDisabled();
     const runVerification = screen.getByRole("button", {
-      name: "Run Verification",
+      name: "Run Browser verification from Browser Verification panel",
     });
     expect(runVerification).toBeDisabled();
     fireEvent.click(runVerification);
     expect(onRunCommand).not.toHaveBeenCalled();
+  });
+
+  it("blocks external browser preview URLs from opening outside browser automation approval", () => {
+    const onOpenPreview = vi.fn();
+    render(
+      <BuildModeView
+        onOpenPreview={onOpenPreview}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          browserVerification: {
+            ...digitalProductProBuildModePayload.browserVerification,
+            previewUrl: "https://example.com/apps/digital-product-pro",
+          },
+        }}
+      />,
+    );
+
+    const openPreview = screen.getByRole("button", { name: "Open Preview" });
+    expect(openPreview).toBeDisabled();
+    fireEvent.click(openPreview);
+    expect(onOpenPreview).not.toHaveBeenCalled();
+  });
+
+  it("blocks redacted browser preview URLs from opening", () => {
+    const onOpenPreview = vi.fn();
+    render(
+      <BuildModeView
+        onOpenPreview={onOpenPreview}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          browserVerification: {
+            ...digitalProductProBuildModePayload.browserVerification,
+            previewUrl:
+              "http://localhost:5173/apps/digital-product-pro?token=<redacted-secret>",
+          },
+        }}
+      />,
+    );
+
+    const openPreview = screen.getByRole("button", { name: "Open Preview" });
+    expect(openPreview).toBeDisabled();
+    fireEvent.click(openPreview);
+    expect(onOpenPreview).not.toHaveBeenCalled();
   });
 
   it("emits browser verification approvals when verification is next", () => {
@@ -732,27 +1317,15 @@ describe("BuildModeView", () => {
     render(
       <BuildModeView
         onRunCommand={onRunCommand}
-        payload={{
-          ...digitalProductProBuildModePayload,
-          autonomyDecision: {
-            ...digitalProductProBuildModePayload.autonomyDecision,
-            nextCommandId: "cmd-browser-verify",
-            nextStepId: "plan-browser",
-            status: "approval-required",
-          },
-          executionPlan: digitalProductProBuildModePayload.executionPlan.map(
-            (step) =>
-              step.id === "plan-safe-edits" || step.id === "plan-tests"
-                ? { ...step, status: "complete" }
-                : step.id === "plan-browser"
-                  ? { ...step, status: "approval-required" }
-                  : step,
-          ),
-        }}
+        payload={withApprovalRequiredBrowserStep()}
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Run Verification" }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Run Browser verification from Browser Verification panel",
+      }),
+    );
 
     expect(onRunCommand).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -770,7 +1343,7 @@ describe("BuildModeView", () => {
     );
   });
 
-  it("blocks out-of-order MCP workflow tool commands", () => {
+  it("blocks out-of-order workflow commands", () => {
     const onRunCommand = vi.fn();
     render(
       <BuildModeView
@@ -788,7 +1361,7 @@ describe("BuildModeView", () => {
     expect(onRunCommand).not.toHaveBeenCalled();
   });
 
-  it("emits MCP workflow tool approvals when workflow execution is next", () => {
+  it("emits workflow approvals when workflow execution is next", () => {
     const onRunCommand = vi.fn();
     render(
       <BuildModeView
@@ -797,7 +1370,7 @@ describe("BuildModeView", () => {
           ...digitalProductProBuildModePayload,
           autonomyDecision: {
             ...digitalProductProBuildModePayload.autonomyDecision,
-            capabilityId: "mcp.tool",
+            capabilityId: "workflow.execute",
             nextCommandId: "cmd-workflow-workflow-mcp-dpp-fulfillment",
             nextStepId: "plan-workflow",
             requiredApprovalThreshold: "owner",
@@ -805,9 +1378,12 @@ describe("BuildModeView", () => {
           },
           executionPlan: digitalProductProBuildModePayload.executionPlan.map(
             (step) =>
-              ["plan-safe-edits", "plan-tests", "plan-browser"].includes(
-                step.id,
-              )
+              [
+                "plan-safe-edits",
+                "plan-thorapi-vaix",
+                "plan-tests",
+                "plan-browser",
+              ].includes(step.id)
                 ? { ...step, status: "complete" }
                 : step.id === "plan-workflow"
                   ? { ...step, status: "approval-required" }
@@ -825,9 +1401,9 @@ describe("BuildModeView", () => {
 
     expect(onRunCommand).toHaveBeenCalledWith(
       expect.objectContaining({
-        capabilityId: "mcp.tool",
+        capabilityId: "workflow.execute",
         command:
-          "mcp:private-valkyr-workflows.digitalProduct.fulfillPurchase workflow:workflow:digital-product-fulfillment input:schemas/digitalProduct.fulfillPurchase.input.json",
+          "mcp:private-valkyr-workflows.digitalProduct.fulfillPurchase execmodule:execmodule-digital-product-fulfillment workflow:workflow:digital-product-fulfillment input:schemas/digitalProduct.fulfillPurchase.input.json",
         id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
         kind: "workflow",
         requiresApproval: true,
@@ -882,7 +1458,7 @@ describe("BuildModeView", () => {
             ...digitalProductProBuildModePayload.commandReceipts,
             {
               approved: true,
-              capabilityId: "mcp.tool",
+              capabilityId: "workflow.execute",
               commandId: "cmd-workflow-workflow-mcp-dpp-fulfillment",
               createdAt: "2026-06-22T12:20:00.000Z",
               id: "receipt-workflow-run-dpp-001",
@@ -893,9 +1469,12 @@ describe("BuildModeView", () => {
           ],
           executionPlan: digitalProductProBuildModePayload.executionPlan.map(
             (step) =>
-              ["plan-safe-edits", "plan-tests", "plan-browser"].includes(
-                step.id,
-              )
+              [
+                "plan-safe-edits",
+                "plan-thorapi-vaix",
+                "plan-tests",
+                "plan-browser",
+              ].includes(step.id)
                 ? { ...step, status: "complete" }
                 : step.id === "plan-workflow"
                   ? { ...step, status: "approval-required" }
@@ -949,7 +1528,7 @@ describe("BuildModeView", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
-          capabilityId: "mcp.tool",
+          capabilityId: "workflow.execute",
         }),
         expect.objectContaining({
           id: "cmd-automation-automation-nightly-fulfillment-check",
@@ -1008,7 +1587,11 @@ describe("BuildModeView", () => {
         digitalProductProBuildModePayload.scheduledAutomations.map(
           (automation) => ({
             ...automation,
+            scheduler: "valkyrai-cron" as const,
             status: "scheduled" as const,
+            valkyraiScheduleUri:
+              "valkyrai://vaiworkflow/workflow:digital-product-fulfillment/schedule",
+            valkyraiWorkflowId: "workflow:digital-product-fulfillment",
           }),
         ),
     };
@@ -1018,7 +1601,11 @@ describe("BuildModeView", () => {
         digitalProductProBuildModePayload.scheduledAutomations.map(
           (automation) => ({
             ...automation,
+            scheduler: "valkyrai-cron" as const,
             status: "paused" as const,
+            valkyraiScheduleUri:
+              "valkyrai://vaiworkflow/workflow:digital-product-fulfillment/schedule",
+            valkyraiWorkflowId: "workflow:digital-product-fulfillment",
           }),
         ),
     };
@@ -1055,5 +1642,34 @@ describe("BuildModeView", () => {
       "automation-nightly-fulfillment-check",
       "scheduled",
     );
+  });
+
+  it("blocks scheduled automation lifecycle controls without ValkyrAI cron registration proof", () => {
+    const onSetAutomationStatus = vi.fn();
+    render(
+      <BuildModeView
+        onSetAutomationStatus={onSetAutomationStatus}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          scheduledAutomations:
+            digitalProductProBuildModePayload.scheduledAutomations.map(
+              (automation) => ({
+                ...automation,
+                scheduler: "valkyrai-cron" as const,
+                status: "scheduled" as const,
+                valkyraiScheduleUri: undefined,
+                valkyraiWorkflowId: undefined,
+              }),
+            ),
+        }}
+      />,
+    );
+
+    const pause = screen.getByRole("button", {
+      name: "Pause Nightly fulfillment smoke check",
+    });
+    expect(pause).toBeDisabled();
+    fireEvent.click(pause);
+    expect(onSetAutomationStatus).not.toHaveBeenCalled();
   });
 });

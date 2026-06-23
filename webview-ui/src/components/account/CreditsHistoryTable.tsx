@@ -13,12 +13,14 @@ import { formatDollars, formatTimestamp } from "@thorapi/utils/format";
 
 interface CreditsHistoryTableProps {
   isLoading: boolean;
+  error?: unknown;
   usageData: UsageTransaction[];
   paymentsData: PaymentTransaction[];
 }
 
 const CreditsHistoryTable = ({
   isLoading,
+  error,
   usageData,
   paymentsData,
 }: CreditsHistoryTableProps) => {
@@ -80,6 +82,12 @@ const CreditsHistoryTable = ({
           <div className="flex justify-center items-center p-4">
             <div className="text-[var(--vscode-descriptionForeground)]">
               Loading...
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center p-4">
+            <div className="text-[var(--vscode-errorForeground)]">
+              Unable to load credit history
             </div>
           </div>
         ) : (

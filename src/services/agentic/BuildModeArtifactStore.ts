@@ -10,11 +10,15 @@ export interface BuildModeArtifactWriteRequest {
   extension: string;
   globalStoragePath: string;
   kind: string;
+  mimeType?: string;
   taskId: string;
 }
 
 export interface BuildModeArtifactWriteResult {
+  byteSize: number;
+  contentHash: string;
   filePath: string;
+  mimeType?: string;
   uri: string;
 }
 
@@ -28,6 +32,8 @@ export const persistBuildModeArtifact = async (
   request: BuildModeArtifactWriteRequest,
 ): Promise<BuildModeArtifactWriteResult> => {
   const content = redactArtifactContent(request.content);
+  const contentHash = createBuildModeArtifactContentHash(content);
+  const byteSize = getArtifactContentByteSize(content);
   const taskId = sanitizePathSegment(request.taskId);
   const commandId = sanitizePathSegment(request.commandId);
   const kind = sanitizePathSegment(request.kind);
@@ -47,7 +53,10 @@ export const persistBuildModeArtifact = async (
   const filePath = path.join(directory, filename);
   await fs.writeFile(filePath, content);
   return {
+    byteSize,
+    contentHash,
     filePath,
+    mimeType: request.mimeType,
     uri: `valoride://build-mode/artifacts/${encodeURIComponent(
       taskId,
     )}/${encodeURIComponent(commandId)}/${encodeURIComponent(filename)}`,
@@ -56,6 +65,16 @@ export const persistBuildModeArtifact = async (
 
 const redactArtifactContent = (content: Buffer | string): Buffer | string =>
   typeof content === "string" ? redactCommandSecrets(content) : content;
+
+export const createBuildModeArtifactContentHash = (
+  content: Buffer | string,
+): string =>
+  `sha256:${crypto.createHash("sha256").update(content).digest("hex")}`;
+
+const getArtifactContentByteSize = (content: Buffer | string): number =>
+  Buffer.isBuffer(content)
+    ? content.byteLength
+    : Buffer.byteLength(content, "utf8");
 
 export const decodeBuildModeDataUrl = (
   value: string,
@@ -121,8 +140,8 @@ export const resolveBuildModeArtifactUri = (
 };
 
 const createArtifactId = (content: Buffer | string): string => {
-  const hash = crypto.createHash("sha256").update(content).digest("hex");
-  return `${new Date().toISOString()}-${hash.slice(0, 12)}`;
+  const hash = createBuildModeArtifactContentHash(content).slice("sha256:".length);
+  return `artifact-${hash.slice(0, 12)}`;
 };
 
 const sanitizePathSegment = (value: string): string =>

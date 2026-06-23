@@ -220,6 +220,33 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
+const describeThorapiArgs = (args: any): string => {
+  const baseUrl = resolveBaseUrl();
+  const rawUrl = typeof args === "string" ? args : args?.url || "";
+  try {
+    return new URL(rawUrl, baseUrl).toString();
+  } catch {
+    return `${baseUrl.replace(/\/+$/, "")}/${String(rawUrl).replace(/^\/+/, "")}`;
+  }
+};
+
+const withThorapiFetchContext = (result: any, args: any) => {
+  if (!result?.error || result.error.status !== "FETCH_ERROR") {
+    return result;
+  }
+
+  return {
+    ...result,
+    error: {
+      ...result.error,
+      data: {
+        message: `ThorAPI request failed to fetch ${describeThorapiArgs(args)}.`,
+        cause: result.error.error,
+      },
+    },
+  };
+};
+
 const customBaseQuery: BaseQueryFn = async (
   args: any,
   api: any,
@@ -251,7 +278,7 @@ const customBaseQuery: BaseQueryFn = async (
     }
   }
 
-  return result;
+  return withThorapiFetchContext(result, args);
 };
 
 export default customBaseQuery;

@@ -7,7 +7,7 @@ import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 import { ChatContent } from "./ChatContent";
 import { TelemetrySetting } from "./TelemetrySetting";
 import { LlmDetailsSummary } from "./llm";
-import { McpViewTab } from "./mcp";
+import { McpMarketplaceItem, McpViewTab } from "./mcp";
 import type { RemoteCodingCommand } from "../services/communication/RemoteCodingSessionOrchestrator";
 import type { ValorTaskBridgePayload } from "./BuildMode";
 
@@ -137,6 +137,7 @@ export interface WebviewMessage {
   chatSettings?: ChatSettings;
   chatContent?: ChatContent;
   mcpId?: string;
+  mcpMarketplaceItem?: McpMarketplaceItem;
   timeout?: number;
   tab?: McpViewTab;
   // For toggleToolAutoApprove

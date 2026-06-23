@@ -1100,6 +1100,17 @@ export const openAiNativeModels = {
     description:
       "GPT-5.4 frontier model for agentic, coding, and professional workflows.",
   },
+  "gpt-5.4-codex": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.5,
+    outputPrice: 15.0,
+    cacheReadsPrice: 0.25,
+    description:
+      "GPT-5.4 Codex preset for long-horizon code editing and autonomous engineering tasks.",
+  },
   "gpt-5.4-mini": {
     maxTokens: 128_000,
     contextWindow: 400_000,
@@ -1121,17 +1132,6 @@ export const openAiNativeModels = {
     cacheReadsPrice: 0.02,
     description:
       "GPT-5.4 nano for fast, low-cost classification, extraction, ranking, and subagent tasks.",
-  },
-  "gpt-5.3-codex": {
-    maxTokens: 128_000,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0,
-    outputPrice: 0,
-    cacheReadsPrice: 0,
-    description:
-      "GPT-5.3 Codex coding model (ChatGPT subscription/OAuth route in some providers).",
   },
   "gpt-5.3-codex-spark": {
     maxTokens: 8_192,

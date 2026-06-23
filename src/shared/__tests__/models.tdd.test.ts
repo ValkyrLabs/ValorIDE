@@ -31,6 +31,7 @@ describe("model catalog defaults", () => {
     expect(openAiNativeModels["gpt-5.5-chat-latest"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.5-codex"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.4"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.4-codex"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.4-mini"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.4-nano"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.2"]).toBeDefined();
@@ -38,7 +39,7 @@ describe("model catalog defaults", () => {
     expect(openAiNativeModels["gpt-5.2-chat-latest"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.2-codex"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.1-codex-mini"]).toBeDefined();
-    expect(openAiNativeModels["gpt-5.3-codex"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.3-codex"]).toBeUndefined();
     expect(openAiNativeModels["gpt-5.3-codex-spark"]).toBeDefined();
   });
 

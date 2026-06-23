@@ -7,7 +7,7 @@ import {
 } from "../services/appService";
 import { Application } from "@thorapi/model/Application";
 
-const JWT_SECRET_KEY = "valor_jwt_token";
+const JWT_SECRET_KEYS = ["jwtToken", "valor_jwt_token"] as const;
 
 /**
  * Registers Valor app commands and enables Redux sync with the webview.
@@ -22,7 +22,11 @@ export function registerAppCommands(
     vscode.commands.registerCommand("valor.listMyApps", async () => {
       try {
         // Retrieve JWT from VSCode secrets storage
-        const jwt = await context.secrets.get(JWT_SECRET_KEY);
+        const jwt = (
+          await Promise.all(
+            JWT_SECRET_KEYS.map((key) => context.secrets.get(key)),
+          )
+        ).find((token): token is string => Boolean(token));
         if (!jwt) {
           vscode.window.showErrorMessage("You must login to Valkyr first.");
           return;

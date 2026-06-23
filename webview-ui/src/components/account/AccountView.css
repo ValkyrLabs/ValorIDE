@@ -102,29 +102,25 @@
 
 .lcars-account-tab-container {
   flex-shrink: 0;
-  margin: 6px 0 16px;
+  margin: 0 0 14px;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
 }
 
 .lcars-account-tabs {
-  align-items: flex-end;
+  align-items: center;
   display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-  min-height: 48px;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 0;
   min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 10px 8px 0;
-  scrollbar-color: var(--vscode-focusBorder) transparent;
-  scrollbar-width: thin;
-  white-space: nowrap;
+  overflow: visible;
+  padding: 0;
 }
 
 .lcars-account-tabs::-webkit-scrollbar {
-  height: 8px;
+  display: none;
 }
 
 .lcars-account-tabs::-webkit-scrollbar-track {
@@ -139,18 +135,23 @@
 .lcars-account-tab-link {
   align-items: center;
   background: var(--vscode-editorWidget-background);
+  background: color-mix(
+    in srgb,
+    var(--vscode-editorWidget-background) 86%,
+    transparent
+  );
   border: 1px solid var(--vscode-panel-border);
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
+  border-radius: 4px;
   color: var(--vscode-descriptionForeground);
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
-  gap: 8px;
-  min-height: 38px;
-  min-width: 118px;
+  gap: 5px;
+  justify-content: center;
+  min-height: 28px;
+  min-width: 0;
   overflow: hidden;
-  padding: 8px 14px;
+  padding: 4px 8px;
   position: relative;
   text-align: center;
   text-decoration: none;
@@ -167,14 +168,13 @@
   background: rgba(30, 229, 255, 0.08);
   border-color: var(--vscode-focusBorder);
   color: var(--vscode-foreground);
-  transform: translateY(-1px);
 }
 
 .lcars-account-tab-link.active {
   background: linear-gradient(
     180deg,
-    rgba(30, 229, 255, 0.12),
-    rgba(122, 92, 255, 0.04)
+    rgba(30, 229, 255, 0.18),
+    rgba(30, 229, 255, 0.06)
   );
   border-color: var(--vscode-focusBorder);
   color: var(--vscode-foreground);
@@ -183,14 +183,14 @@
 
 .lcars-account-tab-link.active::after {
   background: linear-gradient(90deg, #1ee5ff, #7a5cff);
-  border-radius: 3px 3px 0 0;
+  border-radius: 2px;
   bottom: 0;
   box-shadow: 0 0 12px rgba(30, 229, 255, 0.6);
   content: "";
-  height: 3px;
-  left: 0;
+  height: 2px;
+  left: 6px;
   position: absolute;
-  right: 0;
+  right: 6px;
 }
 
 .lcars-account-tab-link.needs-attention {
@@ -200,13 +200,16 @@
 
 .lcars-account-tab-link svg {
   flex: 0 0 auto;
+  height: 13px;
+  width: 13px;
 }
 
 .account-tab-label {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .account-content {

@@ -58,6 +58,44 @@ const getPreferencePrincipalId = (
   );
 };
 
+const getLocalPreferenceFallbacks = (): UserPreference[] => {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const now = new Date();
+  const values = [
+    {
+      key: "layout-mode",
+      type: UserPreferencePreferenceTypeEnum.UXLAYOUT,
+    },
+    {
+      key: "theme-mode",
+      type: UserPreferencePreferenceTypeEnum.UXTHEME,
+    },
+    {
+      key: "bootswatch-theme",
+      type: UserPreferencePreferenceTypeEnum.UXTHEME,
+    },
+  ];
+
+  return values.flatMap(({ key, type }) => {
+    const preference = window.localStorage.getItem(key);
+    if (!preference) {
+      return [];
+    }
+    return [
+      {
+        id: `local-${key}`,
+        preferenceType: type,
+        preference,
+        createdDate: now,
+        lastModifiedDate: now,
+      } as UserPreference,
+    ];
+  });
+};
+
 interface UserPreferencesProps {
   className?: string;
 }
@@ -102,6 +140,13 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
         authenticatedUser?.id ||
         (isLoggedIn ? "authenticated" : "anonymous"),
     });
+    const localFallbackPreferences = useMemo(getLocalPreferenceFallbacks, []);
+    const usingLocalPreferenceFallback =
+      Boolean(preferencesError) && userPreferences.length === 0;
+    const effectiveUserPreferences =
+      usingLocalPreferenceFallback
+        ? localFallbackPreferences
+        : userPreferences;
 
     // ThorAPI Mutation Hooks
     const [addUserPreference, { isLoading: isAdding }] =
@@ -117,13 +162,17 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
     // Filter user preferences for current user. If no principal is available yet,
     // keep the API rows visible instead of blanking the tab.
     const currentUserPreferences = useMemo(() => {
-      if (!currentPrincipalId) {
-        return userPreferences;
+      if (!currentPrincipalId || usingLocalPreferenceFallback) {
+        return effectiveUserPreferences;
       }
-      return userPreferences.filter(
+      return effectiveUserPreferences.filter(
         (pref) => getPreferencePrincipalId(pref) === currentPrincipalId,
       );
-    }, [userPreferences, currentPrincipalId]);
+    }, [
+      effectiveUserPreferences,
+      currentPrincipalId,
+      usingLocalPreferenceFallback,
+    ]);
 
     // Filtered preferences by type for tabbed interface
     const preferencesByType = useMemo(() => {
@@ -673,27 +722,6 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
       return "Unable to load preferences.";
     };
 
-    // Error handling
-    if (preferencesError) {
-      return (
-        <div className={`user-preferences-error ${className}`}>
-          <Alert variant="danger">
-            <h5>Error Loading Preferences</h5>
-            <p>{formatQueryError(preferencesError)}</p>
-            <CoolButton
-              variant="outline-danger"
-              onClick={() => {
-                setErrorMessage("");
-                refetchPreferences();
-              }}
-            >
-              Retry
-            </CoolButton>
-          </Alert>
-        </div>
-      );
-    }
-
     // Loading state
     if (isLoading) {
       return (
@@ -737,6 +765,27 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
             </CoolButton>
           </div>
         </div>
+
+        {preferencesError && (
+          <Alert variant="warning">
+            <div className="d-flex justify-content-between align-items-center gap-3">
+              <span>
+                Preferences are using local fallback data.{" "}
+                {formatQueryError(preferencesError)}
+              </span>
+              <CoolButton
+                variant="outline-warning"
+                size="sm"
+                onClick={() => {
+                  setErrorMessage("");
+                  refetchPreferences();
+                }}
+              >
+                Retry
+              </CoolButton>
+            </div>
+          </Alert>
+        )}
 
         {/* Statistics Overview */}
         {renderStatsOverview()}

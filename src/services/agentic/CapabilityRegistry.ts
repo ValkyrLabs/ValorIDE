@@ -9,7 +9,8 @@ export type CapabilityKind =
   | "psr"
   | "swarm"
   | "terminal"
-  | "thorapi";
+  | "thorapi"
+  | "workflow";
 
 export type CapabilityRisk = "low" | "medium" | "high";
 
@@ -48,8 +49,12 @@ export interface LocalExecutionCapabilities {
   checkpoint: boolean;
   connector: boolean;
   filesystem: boolean;
+  graymatter: boolean;
   mcp: boolean;
+  swarm: boolean;
   terminal: boolean;
+  thorapi: boolean;
+  workflow: boolean;
 }
 
 export interface CapabilityAnnouncement extends CapabilitySnapshotInput {
@@ -112,6 +117,14 @@ export const createDefaultValorCapabilities = (): CapabilityDescriptor[] => [
     requiresApproval: true,
     risk: "medium",
     localOnly: true,
+  },
+  {
+    id: "workflow.execute",
+    label: "Run ValkyrAI workflows",
+    kind: "workflow",
+    enabled: true,
+    requiresApproval: true,
+    risk: "high",
   },
   {
     id: "automation.schedule",
@@ -223,8 +236,12 @@ export class CapabilityRegistry {
         connector: hasCapability("connector.read"),
         filesystem:
           hasCapability("filesystem.read") || hasCapability("filesystem.write"),
+        graymatter: hasCapability("graymatter.memory"),
         mcp: hasCapability("mcp.tool"),
+        swarm: hasCapability("swarm.command"),
         terminal: hasCapability("terminal.execute"),
+        thorapi: hasCapability("thorapi.rest"),
+        workflow: hasCapability("workflow.execute"),
       },
     };
   }

@@ -44,6 +44,11 @@ describe("BuildModeArtifactStore", () => {
     expect(artifact.uri).toBe(
       "valoride://build-mode/artifacts/task-alpha/cmd-test/attempt-1-command_stdout.txt",
     );
+    expect(artifact).toMatchObject({
+      byteSize: Buffer.byteLength("tests passed", "utf8"),
+      contentHash:
+        "sha256:068f867c954b3a3c289010d3b24cdf43f45355d55bcbf1f999ceff23da1c5852",
+    });
   });
 
   it("decodes browser screenshot data urls for durable artifact writes", () => {
@@ -77,6 +82,9 @@ describe("BuildModeArtifactStore", () => {
     expect(stored).not.toContain("sk-live-secretvalue1234567890");
     expect(stored).not.toContain("secret-token");
     expect(stored).not.toContain("secret-value");
+    expect(artifact.contentHash).toBe(
+      "sha256:08616016640268137054e3642e04fb05cdeda4f670ed493fd8d8c9ebea2aa358",
+    );
   });
 
   it("resolves stored artifact uris without allowing path traversal", async () => {

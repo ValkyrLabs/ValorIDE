@@ -206,6 +206,9 @@ const AppContent = () => {
   const [buildModePayload, setBuildModePayload] = useState<
     ValorTaskBridgePayload | undefined
   >(undefined);
+  const [buildModeLaunchError, setBuildModeLaunchError] = useState<
+    { issues: string[]; summary: string } | undefined
+  >(undefined);
   const [creditIntent, setCreditIntent] = useState<CreditIntent | undefined>(
     undefined,
   );
@@ -361,6 +364,7 @@ const AppContent = () => {
           break;
 
         case "valorBuildModeTask": {
+          setBuildModeLaunchError(undefined);
           setBuildModePayload(
             coerceValorTaskBridgePayload(
               message.valorTaskBridgePayload ?? message.payload,
@@ -369,6 +373,41 @@ const AppContent = () => {
           vscode.postMessage({
             type: "valorBuildModeRequestAutomationSnapshot",
           });
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(false);
+          setShowGeneratedFiles(false);
+          setShowServerConsole(false);
+          setShowApplicationProgress(false);
+          setShowFileExplorer(true);
+          break;
+        }
+
+        case "valorBuildModeLaunchRejected": {
+          const payload =
+            message.payload && typeof message.payload === "object"
+              ? (message.payload as {
+                  issues?: unknown;
+                  summary?: unknown;
+                })
+              : {};
+          const issues = Array.isArray(payload.issues)
+            ? payload.issues.filter(
+                (issue): issue is string => typeof issue === "string",
+              )
+            : [];
+          const summary =
+            typeof payload.summary === "string"
+              ? payload.summary
+              : issues.join(" ");
+          setBuildModeLaunchError({
+            issues,
+            summary:
+              summary ||
+              "Build Mode task launch was rejected by the Valor task bridge.",
+          });
+          setBuildModePayload(undefined);
           setShowSettings(false);
           setShowHistory(false);
           setShowMcp(false);
@@ -614,6 +653,12 @@ const AppContent = () => {
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}
+          {buildModeLaunchError && !buildModePayload && (
+            <section className="error-message" role="alert">
+              <strong>Build Mode launch rejected.</strong>{" "}
+              {buildModeLaunchError.summary}
+            </section>
+          )}
           {buildModePayload && (
             <BuildModeView
               payload={buildModePayload}
@@ -639,6 +684,8 @@ const AppContent = () => {
                     scope: buildModePayload.scope,
                     providerRoute:
                       providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
                     promptContext,
                   },
                 })
@@ -658,6 +705,7 @@ const AppContent = () => {
                         .filter((artifact) => artifact.kind === "generated")
                         .map((artifact) => artifact.path),
                     })),
+                    appBundle: buildModePayload.appBundle,
                     taskId: buildModePayload.taskId,
                     scope: buildModePayload.scope,
                     autonomyPolicy: buildModePayload.autonomyPolicy,
@@ -676,9 +724,13 @@ const AppContent = () => {
                       buildModePayload.grayMatterContextPack,
                     providerRoute:
                       providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
                     requireGrayMatterContext: true,
                     promptContext,
                     checkpoints: buildModePayload.checkpoints,
+                    agentRuntimes: buildModePayload.agentRuntimes,
+                    swarmRoles: buildModePayload.swarmRoles,
                     commandCatalog: commandCatalog ?? buildModePayload.commands,
                     commandReceipts: buildModePayload.commandReceipts,
                     commandPolicyRules: buildModePayload.commandPolicyRules,
@@ -708,6 +760,7 @@ const AppContent = () => {
                   type: "valorBuildModeRunCommand",
                   payload: {
                     approval,
+                    appBundle: buildModePayload.appBundle,
                     taskId: buildModePayload.taskId,
                     scope: buildModePayload.scope,
                     autonomyPolicy: buildModePayload.autonomyPolicy,
@@ -726,10 +779,15 @@ const AppContent = () => {
                       buildModePayload.grayMatterContextPack,
                     providerRoute:
                       providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
                     requireGrayMatterContext: true,
                     promptContext,
                     checkpoints: buildModePayload.checkpoints,
+                    agentRuntimes: buildModePayload.agentRuntimes,
+                    swarmRoles: buildModePayload.swarmRoles,
                     commandCatalog: commandCatalog ?? buildModePayload.commands,
+                    commandReceipts: buildModePayload.commandReceipts,
                     commandPolicyRules: buildModePayload.commandPolicyRules,
                     executionPlan: buildModePayload.executionPlan,
                     readinessGates: buildModePayload.readinessGates,

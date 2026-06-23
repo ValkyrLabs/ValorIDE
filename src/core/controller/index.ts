@@ -44,6 +44,8 @@ import {
 import { ValoridePasswordLoginService } from "@services/auth/ValoridePasswordLoginService";
 import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
+import { GrayMatterClient } from "@services/graymatter/GrayMatterClient";
+import { createGrayMatterMemoryService } from "@services/graymatter/GrayMatterMemoryQueueStorage";
 import { getStatusBarService } from "@services/StatusBarService";
 import { ApiConfiguration, ApiProvider, ModelInfo } from "@shared/api";
 import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
@@ -119,6 +121,8 @@ import {
   BuildModeCheckpointExecutionResult,
   BuildModeCommandRequest,
   BuildModeConnectorReadResult,
+  BuildModeDeployExecutionResult,
+  BuildModeFileReadExecutionResult,
   BuildModeFinalReportPublishResult,
   BuildModeMcpExecutionResult,
   BuildModeSafeEditExecutionResult,
@@ -131,22 +135,34 @@ import {
   serializeBuildModeConnectorReadArtifact,
   summarizeBuildModeConnectorRead,
 } from "@services/agentic/BuildModeConnectorCommand";
-import { BuildModeAutomationMonitor } from "@services/agentic/BuildModeAutomationMonitor";
 import {
   createBuildModeAutonomousQueueBlockedReceipt,
   validateBuildModeAutonomousQueueDispatch,
 } from "@services/agentic/BuildModeAutonomousQueue";
-import { redactCommandSecrets } from "@services/agentic/BuildModeCommandPolicy";
+import {
+  findSecretMaterialPaths,
+  redactCommandSecrets,
+} from "@services/agentic/BuildModeCommandPolicy";
 import {
   BuildModeAutomationScheduler,
   BuildModeValkyraiCronScheduleRequest,
   BuildModeValkyraiCronScheduleStatus,
 } from "@services/agentic/BuildModeAutomationScheduler";
+import { launchValkyraiCronWorkflowSchedule } from "@services/agentic/ValkyraiCronWorkflowLauncher";
 import {
   decodeBuildModeDataUrl,
   persistBuildModeArtifact,
   resolveBuildModeArtifactUri,
 } from "@services/agentic/BuildModeArtifactStore";
+import { prepareBuildModeFinalReportPublication } from "@services/agentic/BuildModeFinalReportPublisher";
+import {
+  executeBuildModeFileWriteCommand,
+  parseBuildModeFileWriteCommand,
+} from "@services/agentic/BuildModeFileWriteCommand";
+import {
+  executeBuildModeFileReadCommand,
+  parseBuildModeFileReadCommand,
+} from "@services/agentic/BuildModeFileReadCommand";
 import { coerceBuildModeTaskLaunchPayload } from "@services/agentic/BuildModeTaskBridge";
 import { precisionSearchAndReplace } from "@services/psr";
 import { authFetch } from "@utils/authFetch";
@@ -156,7 +172,9 @@ import {
 } from "@services/agentic/AgenticStateModel";
 import { resolveBuildModeExecutionWorkspaceRoot } from "@services/agentic/BuildModeWorkspaceRoot";
 import type {
+  AppBundle,
   BuildModeAutomationSnapshot,
+  BuildModeAgentRuntimeBinding,
   BuildModeAutonomyPolicy,
   BuildModeCheckpoint,
   BuildModeCommand,
@@ -167,9 +185,12 @@ import type {
   BuildModePromptExecutionContext,
   BuildModeReadinessGate,
   BuildModeScopeContext,
+  BuildModeSwarmRoleAssignment,
   BuildModeToolPermission,
   GrayMatterContextPack,
+  ProviderCredentialRef,
   ProviderRoute,
+  Receipt,
 } from "@shared/BuildMode";
 
 /*
@@ -220,8 +241,39 @@ const isGrayMatterContextPackLike = (
   );
 };
 
+const isAppBundleLike = (value: unknown): value is AppBundle => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const candidate = value as Partial<AppBundle>;
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.name === "string" &&
+    typeof candidate.createdAt === "string" &&
+    Array.isArray(candidate.artifacts)
+  );
+};
+
 const extractBuildModeVerificationUrl = (command: string): string | undefined =>
   command.match(/https?:\/\/[^\s'")]+/i)?.[0];
+
+const extractBuildModeCommandOption = (
+  command: string,
+  optionNames: string[],
+): string | undefined => {
+  for (const optionName of optionNames) {
+    const pattern = new RegExp(
+      `--${optionName}(?:=|\\s+)(?:"([^"]+)"|'([^']+)'|([^\\s]+))`,
+      "i",
+    );
+    const match = command.match(pattern);
+    const value = match?.[1] ?? match?.[2] ?? match?.[3];
+    if (value) {
+      return redactCommandSecrets(value);
+    }
+  }
+  return undefined;
+};
 
 const countBrowserConsoleErrors = (logs: string): number =>
   logs
@@ -298,6 +350,7 @@ const parseBuildModeMcpCommand = (
 ):
   | {
       argsJson?: string;
+      execModuleId?: string;
       inputRef?: string;
       serverName: string;
       toolName: string;
@@ -316,6 +369,8 @@ const parseBuildModeMcpCommand = (
   const argsMatch = command.match(/\bargs:(?<args>\{.*\})\s*$/s);
   return {
     argsJson: argsMatch?.groups?.args,
+    execModuleId: command.match(/\bexecmodule:(?<execModuleId>\S+)/i)?.groups
+      ?.execModuleId,
     inputRef: command.match(/\binput:(?<inputRef>\S+)/i)?.groups?.inputRef,
     serverName: target.slice(0, separatorIndex),
     toolName: target.slice(separatorIndex + 1),
@@ -379,7 +434,6 @@ export class Controller {
   );
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
   private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
-  private buildModeAutomationMonitor?: BuildModeAutomationMonitor;
   private readonly buildModeTerminalManager = new TerminalManager();
 
   constructor(
@@ -434,8 +488,6 @@ export class Controller {
   */
   async dispose() {
     this.outputChannel.appendLine("Starting ValorIDEProvider disposal...");
-
-    this.stopBuildModeAutomationMonitor();
 
     try {
       await this.clearTask();
@@ -494,11 +546,14 @@ export class Controller {
 
   private async queueAndPostBuildModeCommand({
     approval,
+    agentRuntimes,
     autonomyPolicy,
     browserPreviewUrl,
     command,
+    appBundle,
     commandCatalog,
     commandPolicyRules,
+    commandReceipts,
     checkpoints,
     currentConsecutiveCommands,
     creditEstimateId,
@@ -508,19 +563,25 @@ export class Controller {
     finalReportMarkdown,
     grayMatterContextPack,
     promptContext,
+    providerCredentials,
     providerRoute,
     readinessGates,
+    receipts,
     requireGrayMatterContext,
     scope,
+    swarmRoles,
     taskId,
     toolPermissions,
   }: {
     approval?: BuildModeCommandApproval;
+    agentRuntimes?: BuildModeAgentRuntimeBinding[];
     autonomyPolicy?: BuildModeAutonomyPolicy;
     browserPreviewUrl?: string;
     command: BuildModeCommand;
+    appBundle?: AppBundle;
     commandCatalog?: BuildModeCommand[];
     commandPolicyRules?: BuildModeCommandPolicyRule[];
+    commandReceipts?: BuildModeCommandReceipt[];
     checkpoints?: BuildModeCheckpoint[];
     currentConsecutiveCommands?: number;
     creditEstimateId?: string;
@@ -530,21 +591,30 @@ export class Controller {
     finalReportMarkdown?: string;
     grayMatterContextPack?: GrayMatterContextPack;
     promptContext?: BuildModePromptExecutionContext;
+    providerCredentials?: ProviderCredentialRef[];
     providerRoute?: ProviderRoute;
     readinessGates?: BuildModeReadinessGate[];
+    receipts?: Receipt[];
     requireGrayMatterContext?: boolean;
     scope?: BuildModeScopeContext;
+    swarmRoles?: BuildModeSwarmRoleAssignment[];
     taskId: string;
     toolPermissions?: BuildModeToolPermission[];
   }): Promise<BuildModeCommandReceipt> {
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    const workspaceRoot = resolveBuildModeExecutionWorkspaceRoot({
+      activeWorkspaceRoot: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
+      scopeWorkspaceRoot: scope?.workspaceRoot,
+    });
     const queued = await queueBuildModeCommand({
       approval,
+      agentRuntimes,
+      appBundle,
       autonomyPolicy,
       browserPreviewUrl,
       command,
       commandCatalog,
       commandPolicyRules,
+      commandReceipts,
       checkpoints,
       currentConsecutiveCommands,
       creditEstimateId,
@@ -568,8 +638,17 @@ export class Controller {
           command.capabilityId === "connector.read"
             ? (request) => this.executeBuildModeConnectorRead(request)
             : undefined,
+        executeDeploy:
+          command.kind === "deploy"
+            ? (request) => this.executeBuildModeDeploy(request)
+            : undefined,
+        executeFileRead:
+          command.capabilityId === "filesystem.read"
+            ? (request) => this.executeBuildModeFileRead(request)
+            : undefined,
         executeMcpTool:
-          command.capabilityId === "mcp.tool"
+          command.capabilityId === "mcp.tool" ||
+          command.capabilityId === "workflow.execute"
             ? (request) => this.executeBuildModeMcpTool(request)
             : undefined,
         executeSwarmHandoff:
@@ -591,11 +670,14 @@ export class Controller {
             : undefined,
       },
       executionPlan,
+      providerCredentials,
       providerRoute,
       promptContext,
       readinessGates,
+      receipts,
       requireGrayMatterContext,
       scope,
+      swarmRoles,
       taskId,
       toolPermissions,
       workspaceRoot,
@@ -666,6 +748,7 @@ export class Controller {
     });
     if (!workspaceRoot) {
       return {
+        background: false,
         completed: false,
         exitCode: undefined,
         stderr:
@@ -728,10 +811,62 @@ export class Controller {
     return {
       artifactUri: artifact.uri,
       background: timedOut || !completed,
+      byteSize: artifact.byteSize,
       completed,
+      contentHash: artifact.contentHash,
       exitCode: timedOut ? undefined : exitCode,
       stdout: redactedStdoutText,
       timedOut,
+    };
+  }
+
+  private async executeBuildModeDeploy(
+    request: BuildModeCommandRequest,
+  ): Promise<BuildModeDeployExecutionResult> {
+    const commandText = request.command.command;
+    const isDraftDeploy = /\s--draft(?:\s|$)/i.test(commandText);
+    const looksProduction =
+      /\b(?:prod|production)\b/i.test(commandText) ||
+      /\s--prod(?:\s|$)/i.test(commandText);
+    if (!isDraftDeploy || looksProduction) {
+      return {
+        draft: isDraftDeploy,
+        environment: extractBuildModeCommandOption(commandText, [
+          "environment",
+          "env",
+        ]),
+        exitCode: 1,
+        isError: true,
+        stderr:
+          "Build Mode deploy runner only executes draft deploy commands; production deploys remain approval-gated operator handoffs.",
+        target: extractBuildModeCommandOption(commandText, ["app", "target"]),
+      };
+    }
+
+    const terminalResult = await this.executeBuildModeTerminalCommand(request);
+    const stdout = terminalResult.stdout ?? "";
+    const stderr = terminalResult.stderr;
+    const completed = terminalResult.completed === true;
+    return {
+      artifactUri: terminalResult.artifactUri,
+      byteSize: terminalResult.byteSize,
+      commandHash: terminalResult.commandHash,
+      contentHash: terminalResult.contentHash,
+      deployId:
+        stdout.match(/\bdeploy(?:ment)?[-_:]([A-Za-z0-9_.-]+)/i)?.[0] ??
+        undefined,
+      draft: true,
+      environment:
+        extractBuildModeCommandOption(commandText, ["environment", "env"]) ??
+        "draft",
+      exitCode: terminalResult.exitCode,
+      isError: !completed || terminalResult.exitCode !== 0,
+      previewUrl: stdout.match(/https?:\/\/[^\s'")]+/i)?.[0],
+      stderr,
+      stdout:
+        stdout ||
+        "Draft deploy command dispatched through the ValorIDE terminal manager.",
+      target: extractBuildModeCommandOption(commandText, ["app", "target"]),
     };
   }
 
@@ -780,73 +915,20 @@ export class Controller {
           })
         : undefined;
       return {
+        consoleLogByteSize: consoleArtifact.byteSize,
+        consoleLogContentHash: consoleArtifact.contentHash,
         consoleLogUri: consoleArtifact.uri,
         consoleErrorCount,
         currentUrl: result.currentUrl ?? url,
         logs,
+        screenshotByteSize: screenshotArtifact?.byteSize,
+        screenshotContentHash: screenshotArtifact?.contentHash,
         screenshotUri: screenshotArtifact?.uri,
         status: consoleErrorCount > 0 ? "failed" : "passed",
       };
     } finally {
       await browserSession.dispose();
     }
-  }
-
-  startBuildModeAutomationMonitor(intervalMs: number = 60_000): void {
-    if (this.buildModeAutomationMonitor) {
-      return;
-    }
-    const monitor = new BuildModeAutomationMonitor({
-      intervalMs,
-      logger: (message) => this.outputChannel.appendLine(message),
-      runDue: async (now) => {
-        const run = await this.runDueBuildModeAutomations(
-          [],
-          "build-mode-scheduled-automation",
-          undefined,
-          now,
-        );
-        for (const receipt of run.receipts) {
-          await this.postMessageToWebview({
-            type: "valorBuildModeCommandResult",
-            buildModeCommandReceipt: receipt,
-            payload: {
-              agenticStatus:
-                receipt.status === "succeeded" ? "success" : "failed",
-              commandId: receipt.commandId,
-              taskId: "build-mode-scheduled-automation",
-            },
-          });
-        }
-        await this.postBuildModeAutomationSnapshot(now);
-        return {
-          executedCount: run.results.filter(
-            (result) =>
-              result.status === "succeeded" || result.status === "failed",
-          ).length,
-          receiptIds: [
-            ...run.receipts.map((receipt) => receipt.id),
-            ...run.results
-              .map((result) => result.runReceiptId)
-              .filter((receiptId): receiptId is string => Boolean(receiptId)),
-          ],
-          skippedCount: run.results.filter(
-            (result) => result.status === "skipped",
-          ).length,
-        };
-      },
-    });
-    this.buildModeAutomationMonitor = monitor;
-    this.disposables.push({
-      dispose: () => this.stopBuildModeAutomationMonitor(),
-    });
-    monitor.start();
-    this.outputChannel.appendLine("Build Mode automation monitor started");
-  }
-
-  stopBuildModeAutomationMonitor(): void {
-    this.buildModeAutomationMonitor?.stop();
-    this.buildModeAutomationMonitor = undefined;
   }
 
   private async getBuildModeAutomationSnapshot(
@@ -875,10 +957,9 @@ export class Controller {
   ): Promise<BuildModeCommandReceipt | undefined> {
     const scheduler = new BuildModeAutomationScheduler(
       this.context.globalStorageUri.fsPath,
+      (cronRequest) => this.launchBuildModeValkyraiCronSchedule(cronRequest),
     );
     const result = await scheduler.updateStatus({
-      cronLauncher: (cronRequest) =>
-        this.launchBuildModeValkyraiCronSchedule(cronRequest),
       id,
       status,
       updatedAt: now,
@@ -903,13 +984,12 @@ export class Controller {
   ): Promise<BuildModeAutomationScheduleExecutionResult> {
     const scheduler = new BuildModeAutomationScheduler(
       this.context.globalStorageUri.fsPath,
+      (cronRequest) => this.launchBuildModeValkyraiCronSchedule(cronRequest),
     );
     const result = await scheduler.schedule({
       command: request.command,
       commandCatalog: request.commandCatalog,
       createdAt: new Date(),
-      cronLauncher: (cronRequest) =>
-        this.launchBuildModeValkyraiCronSchedule(cronRequest),
       promptContext: request.promptContext,
       providerRoute: request.providerRoute,
       scope: request.scope,
@@ -920,6 +1000,10 @@ export class Controller {
       nextRunAt: result.record.nextRunAt,
       schedule: result.record.schedule,
       scheduleId: result.record.id,
+      scheduler:
+        result.record.scheduler === "valkyrai-cron"
+          ? "valkyrai-cron"
+          : undefined,
       storageUri:
         result.record.valkyraiScheduleUri ??
         `valoride://build-mode/automations/${encodeURIComponent(
@@ -933,27 +1017,7 @@ export class Controller {
   private async launchBuildModeValkyraiCronSchedule(
     request: BuildModeValkyraiCronScheduleRequest,
   ): Promise<BuildModeValkyraiCronScheduleStatus> {
-    const endpoint = `${normalizeValkyraiHost(getValkyraiBasePath())}/vaiworkflow/${encodeURIComponent(
-      request.workflowId,
-    )}/schedule`;
-    const response = await authFetch(endpoint, {
-      body: JSON.stringify({
-        activate: request.activate,
-        cronExpression: request.cronExpression,
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
-    if (!response.ok) {
-      const body = await response.text().catch(() => "");
-      throw new Error(
-        `ValkyrAI cron workflow schedule failed for ${request.workflowRef}: ${response.status}${body ? ` ${body}` : ""}`,
-      );
-    }
-    return (await response.json()) as BuildModeValkyraiCronScheduleStatus;
+    return launchValkyraiCronWorkflowSchedule(request);
   }
 
   async runDueBuildModeAutomations(
@@ -964,104 +1028,107 @@ export class Controller {
     providerRoute?: ProviderRoute,
     promptContext?: BuildModePromptExecutionContext,
   ) {
+    void commands;
+    void taskId;
+    void scope;
+    void providerRoute;
+    void promptContext;
     const scheduler = new BuildModeAutomationScheduler(
       this.context.globalStorageUri.fsPath,
     );
-    const receipts: BuildModeCommandReceipt[] = [];
-    const results = await scheduler.runDue(now, async (record) => {
-      const workflowCommand =
-        commands.find((command) => command.id === record.workflowCommandId) ??
-        record.workflowCommandSnapshot;
-      if (!workflowCommand) {
-        throw new Error(
-          `Scheduled workflow command is unavailable: ${record.workflowCommandId}.`,
-        );
-      }
-      const runScope =
-        scope ??
-        (record.tenantId && record.principalId && record.workspaceRoot
-          ? {
-              tenantId: record.tenantId,
-              principalId: record.principalId,
-              roles: ["Owner", "BuildOperator"],
-              workspaceRoot: record.workspaceRoot,
-              policyRefs: ["build-mode:scheduled-automation"],
-            }
-          : undefined);
-      const queued = await queueBuildModeCommand({
-        approval: {
-          approved: true,
-          approverPrincipalId:
-            runScope?.principalId ??
-            record.principalId ??
-            "build-mode-scheduler",
-          approverRoles: ["Owner", "BuildOperator"],
-          threshold: "owner",
-          reason: `Scheduled automation ${record.id} is firing ${record.workflowRef}.`,
-          createdAt: now.toISOString(),
-        },
-        command: workflowCommand,
-        executionHooks: {
-          executeConnectorRead:
-            workflowCommand.capabilityId === "connector.read"
-              ? (request) => this.executeBuildModeConnectorRead(request)
-              : undefined,
-          executeMcpTool:
-            workflowCommand.capabilityId === "mcp.tool"
-              ? (request) => this.executeBuildModeMcpTool(request)
-              : undefined,
-          executeSwarmHandoff:
-            workflowCommand.capabilityId === "swarm.command"
-              ? (request) => this.executeBuildModeSwarmHandoff(request)
-              : undefined,
-        },
-        promptContext: record.promptContext ?? promptContext,
-        providerRoute: record.providerRoute ?? providerRoute,
-        scope: runScope,
-        taskId,
-        workspaceRoot: record.workspaceRoot,
-      });
-      receipts.push(queued.receipt);
-      return {
-        receiptId: queued.receipt.id,
-        status: queued.receipt.status === "succeeded" ? "succeeded" : "failed",
-      };
-    });
-    const syntheticReceipts = results
-      .map((result) => result.runReceipt)
-      .filter((receipt): receipt is BuildModeCommandReceipt =>
-        Boolean(receipt),
-      );
-    return { receipts: [...receipts, ...syntheticReceipts], results };
+    const results = await scheduler.runDue(now);
+    return { receipts: [], results };
   }
 
   private async publishBuildModeFinalReport(
     request: BuildModeCommandRequest,
   ): Promise<BuildModeFinalReportPublishResult> {
-    const markdown = request.finalReportMarkdown?.trim();
-    if (!markdown) {
+    const rawMarkdown = request.finalReportMarkdown?.trim();
+    if (!rawMarkdown) {
       throw new Error(
         "No final report markdown was provided for Build Mode publication.",
       );
     }
-    const title =
-      markdown.match(/^#\s+(?<title>.+)$/m)?.groups?.title?.trim() ??
-      request.command.label;
+    const publication = prepareBuildModeFinalReportPublication(
+      rawMarkdown,
+      request.command.label,
+    );
     const artifact = await persistBuildModeArtifact({
       artifactId: "final-report",
       commandId: request.command.id,
-      content: markdown,
+      content: publication.markdown,
       extension: "md",
       globalStoragePath: this.context.globalStorageUri.fsPath,
       kind: "final_report",
       taskId: request.taskId,
     });
+    const memoryWrite = await this.writeBuildModeFinalReportMemory({
+      artifactUri: artifact.uri,
+      byteSize: publication.byteSize,
+      markdown: publication.markdown,
+      request,
+      title: publication.title,
+    });
     return {
       artifactUri: artifact.uri,
-      byteSize: Buffer.byteLength(markdown, "utf8"),
-      reportTitle: title,
-      summary: "Final report captured with all available Build Mode evidence.",
+      byteSize: publication.byteSize,
+      memoryError: memoryWrite.error
+        ? redactCommandSecrets(memoryWrite.error)
+        : undefined,
+      memoryId: memoryWrite.memoryId,
+      memoryStatus: memoryWrite.status,
+      reportTitle: publication.title,
+      summary:
+        memoryWrite.status === "written"
+          ? "Final report captured with all available Build Mode evidence and written to GrayMatter memory."
+          : memoryWrite.status === "queued"
+            ? "Final report captured with all available Build Mode evidence and queued for GrayMatter memory."
+            : "Final report captured with all available Build Mode evidence; GrayMatter memory write needs operator review.",
     };
+  }
+
+  private async writeBuildModeFinalReportMemory({
+    artifactUri,
+    byteSize,
+    markdown,
+    request,
+    title,
+  }: {
+    artifactUri: string;
+    byteSize: number;
+    markdown: string;
+    request: BuildModeCommandRequest;
+    title: string;
+  }) {
+    const client = new GrayMatterClient({
+      baseUrl: getValkyraiBasePath(),
+      getAuthToken: () => getSecret(this.context, "jwtToken"),
+      getTenantContext: () => this.readStoredTenantContext(),
+    });
+    const memory = createGrayMatterMemoryService(this.context, client);
+    return memory.writeMemory({
+      content: markdown,
+      metadata: {
+        appBundleTaskId: request.taskId,
+        artifactUri,
+        byteSize,
+        commandId: request.command.id,
+        principalId: request.scope?.principalId,
+        projectId: request.scope?.projectId,
+        reportTitle: title,
+        source: "valoride-build-mode-final-report",
+        tenantId: request.scope?.tenantId,
+        workspaceRoot: request.scope?.workspaceRoot,
+      },
+      tags: [
+        "valoride",
+        "build-mode",
+        "final-report",
+        request.taskId,
+        request.command.id,
+      ],
+      type: "artifact",
+    });
   }
 
   private async executeBuildModeConnectorRead(
@@ -1095,6 +1162,7 @@ export class Controller {
       connectorId: descriptor.connectorId,
       connectorName: descriptor.connectorName,
       dataClass: descriptor.dataClass,
+      isError: descriptor.status !== "authorized",
       queryRef: descriptor.queryRef,
       receiptRef: descriptor.receiptRef,
       recordCount: descriptor.recordCount,
@@ -1121,7 +1189,8 @@ export class Controller {
         ?.runtime;
     const handoffId = `swarm-handoff-${request.command.id}`;
     const traceId = `swarm-trace-${request.taskId}-${request.command.id}`;
-    const summary = `${swarmRole} accepted Build Mode handoff for ${request.command.label}.`;
+    const status: BuildModeSwarmHandoffResult["status"] = "queued";
+    const summary = `${swarmRole} queued Build Mode handoff for ${request.command.label}.`;
     const artifact = await persistBuildModeArtifact({
       artifactId: handoffId,
       commandId: request.command.id,
@@ -1133,6 +1202,7 @@ export class Controller {
           projectId: request.scope?.projectId,
           runtimeId,
           summary,
+          status,
           swarmRole,
           taskId: request.taskId,
           tenantId: request.scope?.tenantId,
@@ -1150,7 +1220,7 @@ export class Controller {
       artifactUri: artifact.uri,
       handoffId,
       runtimeId,
-      status: "accepted",
+      status,
       summary,
       swarmRole,
       taskId: request.taskId,
@@ -1242,6 +1312,17 @@ export class Controller {
       request,
       parsed,
     );
+    const secretArgumentPaths = findSecretMaterialPaths(
+      toolArguments,
+      "mcpArgs",
+    );
+    if (secretArgumentPaths.length) {
+      throw new Error(
+        `Build Mode MCP arguments contain inline secret material at ${secretArgumentPaths.join(
+          ", ",
+        )}. Use provider credential refs or secret refs instead.`,
+      );
+    }
     const workflowId = parsed.workflowRef
       ? extractBuildModeWorkflowId(parsed.workflowRef)
       : undefined;
@@ -1266,6 +1347,7 @@ export class Controller {
 
     return {
       contentText: summarizeMcpToolResponse(response),
+      execModuleId: parsed.execModuleId,
       isError: response.isError,
       resourceUris: response.content
         .filter((item) => item.type === "resource")
@@ -1308,7 +1390,7 @@ export class Controller {
     if (!response.ok) {
       const body = await response.text().catch(() => "");
       throw new Error(
-        `ValkyrAI workflow execution failed for ${parsed.workflowRef}: ${response.status}${body ? ` ${body}` : ""}`,
+        `ValkyrAI workflow execution failed for ${parsed.workflowRef}: ${response.status}${body ? ` ${redactCommandSecrets(body)}` : ""}`,
       );
     }
     const body = (await response.json()) as {
@@ -1336,6 +1418,7 @@ export class Controller {
       ]
         .filter(Boolean)
         .join(" "),
+      execModuleId: parsed.execModuleId,
       executionId: body.executionId,
       executionState,
       isError: ["FAILED", "ERROR", "CANCELLED"].includes(
@@ -1375,7 +1458,10 @@ export class Controller {
         const inputPath = pathAccess.resolve(parsed.inputRef);
         try {
           const inputContent = await fs.readFile(inputPath, "utf8");
-          return JSON.parse(inputContent) as Record<string, unknown>;
+          const input = JSON.parse(inputContent) as Record<string, unknown>;
+          return parsed.execModuleId
+            ? { execModuleId: parsed.execModuleId, ...input }
+            : input;
         } catch (error) {
           if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
             throw error;
@@ -1389,8 +1475,9 @@ export class Controller {
       }
     }
 
-    if (parsed.workflowRef || parsed.inputRef) {
+    if (parsed.workflowRef || parsed.inputRef || parsed.execModuleId) {
       return {
+        execModuleId: parsed.execModuleId,
         inputContractRef: parsed.inputRef,
         workflowRef: parsed.workflowRef,
       };
@@ -1412,22 +1499,48 @@ export class Controller {
       );
     }
 
-    const parsed = parseBuildModePsrCommand(request.command.command);
-    if (!parsed) {
+    const parsedPsr = parseBuildModePsrCommand(request.command.command);
+    const parsedFileWrite = parseBuildModeFileWriteCommand(
+      request.command.command,
+    );
+    if (!parsedPsr && !parsedFileWrite) {
       throw new Error(
-        'Build Mode safe edit command must use psr:<path> replace:"..." with:"...".',
+        'Build Mode safe edit command must use psr:<path> replace:"..." with:"..." or file-write:<path> content:"...".',
       );
     }
 
-    const targetPath = request.command.targetPaths?.[0] ?? parsed.targetPath;
+    if (parsedFileWrite) {
+      const targetPath =
+        request.command.targetPaths?.[0] ?? parsedFileWrite.targetPath;
+      const result = await executeBuildModeFileWriteCommand({
+        command: {
+          ...parsedFileWrite,
+          targetPath,
+        },
+        pathAccess: new PathAccess({ workspaceRoot }),
+        workspaceRoot,
+      });
+      return {
+        artifactUri: `valoride://build-mode/commands/${encodeURIComponent(
+          request.command.id,
+        )}/file_write`,
+        bytesDelta: result.bytesDelta,
+        editsApplied: 1,
+        editsRequested: 1,
+        filePath: result.filePath,
+        postHash: result.postHash,
+      };
+    }
+
+    const targetPath = request.command.targetPaths?.[0] ?? parsedPsr.targetPath;
     const result = await precisionSearchAndReplace(
       workspaceRoot,
       targetPath,
       [
         {
           kind: "contextual",
-          find: parsed.find,
-          replace: parsed.replace,
+          find: parsedPsr.find,
+          replace: parsedPsr.replace,
           occurrence: "first",
         },
       ],
@@ -1448,6 +1561,56 @@ export class Controller {
       postHash: result.postHash,
       skipped: result.skipped,
       warnings: result.warnings,
+    };
+  }
+
+  private async executeBuildModeFileRead(
+    request: BuildModeCommandRequest,
+  ): Promise<BuildModeFileReadExecutionResult> {
+    const workspaceRoot = resolveBuildModeExecutionWorkspaceRoot({
+      activeWorkspaceRoot: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
+      requestWorkspaceRoot: request.workspaceRoot,
+      scopeWorkspaceRoot: request.scope?.workspaceRoot,
+    });
+    if (!workspaceRoot) {
+      throw new Error(
+        "No workspace root is available for Build Mode file inspection.",
+      );
+    }
+
+    const parsed = parseBuildModeFileReadCommand(request.command.command);
+    if (!parsed) {
+      throw new Error(
+        "Build Mode file inspection command must use file-read:<path>.",
+      );
+    }
+    const targetPath = request.command.targetPaths?.[0] ?? parsed.targetPath;
+    const result = await executeBuildModeFileReadCommand({
+      command: {
+        ...parsed,
+        targetPath,
+      },
+      pathAccess: new PathAccess({ workspaceRoot }),
+      workspaceRoot,
+    });
+    const extension = path.extname(result.filePath).replace(/^\./, "") || "txt";
+    const artifact = await persistBuildModeArtifact({
+      artifactId: "file-read",
+      commandId: request.command.id,
+      content: result.content,
+      extension,
+      globalStoragePath: this.context.globalStorageUri.fsPath,
+      kind: "command_stdout",
+      taskId: request.taskId,
+    });
+    return {
+      artifactUri: artifact.uri,
+      byteSize: artifact.byteSize,
+      contentHash: artifact.contentHash,
+      filePath: result.filePath,
+      lineCount: result.lineCount,
+      sourceContentHash: result.contentHash,
+      truncated: result.truncated,
     };
   }
 
@@ -2408,7 +2571,7 @@ export class Controller {
           }
 
           // 2. download MCP
-          await this.downloadMcp(message.mcpId);
+          await this.downloadMcp(message.mcpId, message.mcpMarketplaceItem);
         }
         break;
       }
@@ -2860,6 +3023,13 @@ export class Controller {
           this.outputChannel.appendLine(
             `Build Mode task launch rejected: ${summary}`,
           );
+          await this.postMessageToWebview({
+            type: "valorBuildModeLaunchRejected",
+            payload: {
+              issues: result.issues,
+              summary,
+            },
+          });
           vscode.window.showWarningMessage(
             `Build Mode task launch was rejected: ${summary}`,
           );
@@ -2895,6 +3065,15 @@ export class Controller {
         const commandCatalog = Array.isArray(payload.commandCatalog)
           ? (payload.commandCatalog as BuildModeCommand[])
           : undefined;
+        const commandReceipts = Array.isArray(payload.commandReceipts)
+          ? (payload.commandReceipts as BuildModeCommandReceipt[])
+          : undefined;
+        const agentRuntimes = Array.isArray(payload.agentRuntimes)
+          ? (payload.agentRuntimes as BuildModeAgentRuntimeBinding[])
+          : undefined;
+        const swarmRoles = Array.isArray(payload.swarmRoles)
+          ? (payload.swarmRoles as BuildModeSwarmRoleAssignment[])
+          : undefined;
         const checkpoints = Array.isArray(payload.checkpoints)
           ? (payload.checkpoints as BuildModeCheckpoint[])
           : undefined;
@@ -2936,10 +3115,19 @@ export class Controller {
         )
           ? payload.promptContext
           : undefined;
+        const providerCredentials = Array.isArray(payload.providerCredentials)
+          ? (payload.providerCredentials as ProviderCredentialRef[])
+          : undefined;
+        const receipts = Array.isArray(payload.receipts)
+          ? (payload.receipts as Receipt[])
+          : undefined;
         const grayMatterContextPack = isGrayMatterContextPackLike(
           payload.grayMatterContextPack,
         )
           ? payload.grayMatterContextPack
+          : undefined;
+        const appBundle = isAppBundleLike(payload.appBundle)
+          ? payload.appBundle
           : undefined;
         const requireGrayMatterContext =
           payload.requireGrayMatterContext === true;
@@ -2952,12 +3140,15 @@ export class Controller {
 
         await this.queueAndPostBuildModeCommand({
           approval,
+          agentRuntimes,
+          appBundle,
           autonomyPolicy,
           browserPreviewUrl,
+          checkpoints,
           command,
           commandCatalog,
           commandPolicyRules,
-          checkpoints,
+          commandReceipts,
           currentConsecutiveCommands,
           creditEstimateId,
           dispatchSource: "command",
@@ -2965,11 +3156,14 @@ export class Controller {
           finalReportMarkdown,
           grayMatterContextPack,
           executionPlan,
+          providerCredentials,
           providerRoute,
           promptContext,
           readinessGates,
+          receipts,
           requireGrayMatterContext,
           scope,
+          swarmRoles,
           taskId,
           toolPermissions,
         });
@@ -3000,6 +3194,12 @@ export class Controller {
         const commandReceipts = Array.isArray(payload.commandReceipts)
           ? (payload.commandReceipts as BuildModeCommandReceipt[])
           : undefined;
+        const agentRuntimes = Array.isArray(payload.agentRuntimes)
+          ? (payload.agentRuntimes as BuildModeAgentRuntimeBinding[])
+          : undefined;
+        const swarmRoles = Array.isArray(payload.swarmRoles)
+          ? (payload.swarmRoles as BuildModeSwarmRoleAssignment[])
+          : undefined;
         const checkpoints = Array.isArray(payload.checkpoints)
           ? (payload.checkpoints as BuildModeCheckpoint[])
           : undefined;
@@ -3041,10 +3241,19 @@ export class Controller {
         )
           ? payload.promptContext
           : undefined;
+        const providerCredentials = Array.isArray(payload.providerCredentials)
+          ? (payload.providerCredentials as ProviderCredentialRef[])
+          : undefined;
+        const receipts = Array.isArray(payload.receipts)
+          ? (payload.receipts as Receipt[])
+          : undefined;
         const grayMatterContextPack = isGrayMatterContextPackLike(
           payload.grayMatterContextPack,
         )
           ? payload.grayMatterContextPack
+          : undefined;
+        const appBundle = isAppBundleLike(payload.appBundle)
+          ? payload.appBundle
           : undefined;
         const requireGrayMatterContext =
           payload.requireGrayMatterContext === true;
@@ -3054,8 +3263,16 @@ export class Controller {
           );
           break;
         }
+        const workspaceRoot = resolveBuildModeExecutionWorkspaceRoot({
+          activeWorkspaceRoot:
+            vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
+          scopeWorkspaceRoot: scope?.workspaceRoot,
+        });
         const validation = validateBuildModeAutonomousQueueDispatch({
+          agentRuntimes,
           autonomyPolicy,
+          browserPreviewUrl,
+          checkpoints,
           command,
           commandCatalog,
           commandReceipts,
@@ -3063,17 +3280,26 @@ export class Controller {
           currentConsecutiveCommands,
           estimatedCredits,
           executionPlan,
+          finalReportMarkdown,
           grayMatterContextPack,
+          promptContext,
+          providerCredentials,
+          providerRoute,
           protectedPaths: command.protectedPaths,
           readinessGates,
+          receipts,
           requireGrayMatterContext,
           scope,
+          swarmRoles,
           toolPermissions,
-          workspaceRoot: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
+          workspaceRoot,
         });
         if (!validation.dispatchable) {
           const receipt = createBuildModeAutonomousQueueBlockedReceipt({
+            agentRuntimes,
             autonomyPolicy,
+            browserPreviewUrl,
+            checkpoints,
             command,
             commandCatalog,
             commandReceipts,
@@ -3081,22 +3307,30 @@ export class Controller {
             currentConsecutiveCommands,
             estimatedCredits,
             executionPlan,
+            finalReportMarkdown,
             grayMatterContextPack,
             protectedPaths: command.protectedPaths,
             promptContext,
+            providerCredentials,
+            providerRoute,
             readinessGates,
+            receipts,
             requireGrayMatterContext,
             scope,
+            swarmRoles,
             taskId,
             toolPermissions,
             validation,
-            workspaceRoot: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath,
+            workspaceRoot,
           });
           await this.postMessageToWebview({
             type: "valorBuildModeCommandResult",
             buildModeCommandReceipt: receipt,
             payload: {
-              agenticStatus: "rejected",
+              agenticStatus:
+                receipt.status === "approval-required"
+                  ? "approval-required"
+                  : "rejected",
               commandId: command.id,
               taskId,
             },
@@ -3108,6 +3342,8 @@ export class Controller {
         }
 
         await this.queueAndPostBuildModeCommand({
+          agentRuntimes,
+          appBundle,
           autonomyPolicy,
           browserPreviewUrl,
           command,
@@ -3121,11 +3357,14 @@ export class Controller {
           finalReportMarkdown,
           grayMatterContextPack,
           executionPlan,
+          providerCredentials,
           providerRoute,
           promptContext,
           readinessGates,
+          receipts,
           requireGrayMatterContext,
           scope,
+          swarmRoles,
           taskId,
           toolPermissions,
         });
@@ -3249,7 +3488,7 @@ export class Controller {
           vscode.window.showInformationMessage(
             valkyraiCronCount
               ? `ValkyrAI cron owns ${valkyraiCronCount} Build Mode scheduled automation${valkyraiCronCount === 1 ? "" : "s"}; refreshed the schedule snapshot.`
-              : "No local Build Mode scheduled automations are due.",
+              : "No Build Mode scheduled automations are registered.",
           );
         } else {
           vscode.window.showInformationMessage(
@@ -4397,6 +4636,14 @@ export class Controller {
     );
   }
 
+  private async readStoredJwtToken() {
+    return (
+      (await getSecret(this.context, "jwtToken")) ||
+      (await this.context.secrets.get("valor_jwt_token")) ||
+      (await getSecret(this.context, "valkyraiJwt"))
+    );
+  }
+
   private resolveThorapiWebviewUrl(url: string): string {
     const basePath = getValkyraiBasePath().replace(/\/+$/, "");
     const baseUrl = new URL(`${basePath}/`);
@@ -4417,13 +4664,14 @@ export class Controller {
   ) {
     const { requestId } = request;
     try {
-      const token = await getSecret(this.context, "jwtToken");
+      const token = await this.readStoredJwtToken();
       const tenantHeaders = buildTenantHeaders(
         await this.readStoredTenantContext(),
       );
       const headers: Record<string, string> = {
         Accept: "application/json",
         "Content-Type": "application/json",
+        ...(request.headers ?? {}),
         ...tenantHeaders,
       };
 
@@ -4482,20 +4730,114 @@ export class Controller {
     silent: boolean = false,
   ): Promise<McpMarketplaceCatalog | undefined> {
     try {
-      const token = await getSecret(this.context, "jwtToken");
+      const token = await this.readStoredJwtToken();
+      const tenantHeaders = buildTenantHeaders(
+        await this.readStoredTenantContext(),
+      );
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
+        ...tenantHeaders,
       };
       if (token) {
         headers["authorization"] = `Bearer ${token}`;
       }
 
-      const response = await axios.get<McpMarketplaceItem[]>(
-        `${getValkyraiBasePath()}/v1/McpMarketplace`,
-        { headers, timeout: 10000 },
-      );
+      const basePath = getValkyraiBasePath().replace(/\/+$/, "");
+      const endpoints = [
+        `${basePath}/McpMarketplaceItem`,
+        `${basePath}/McpMarketplaceCatalog`,
+        `${basePath}/McpMarketplace`,
+      ];
+      let responseData: unknown;
+      let lastError: unknown;
 
-      const items = Array.isArray(response.data) ? response.data : [];
+      for (const endpoint of endpoints) {
+        try {
+          const response = await axios.get(endpoint, {
+            headers,
+            timeout: 10000,
+          });
+          responseData = response.data;
+          lastError = undefined;
+          break;
+        } catch (error) {
+          lastError = error;
+          if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+            throw error;
+          }
+        }
+      }
+
+      if (lastError) {
+        const catalog: McpMarketplaceCatalog = { items: [] };
+        await updateGlobalState(this.context, "mcpMarketplaceCatalog", catalog);
+        return catalog;
+      }
+
+      const extractMarketplaceItems = (payload: unknown): unknown[] => {
+        const source = (payload as any)?.data ?? payload;
+        if (Array.isArray(source)) {
+          if (source.some((item) => Array.isArray((item as any)?.items))) {
+            return source.flatMap((item) => extractMarketplaceItems(item));
+          }
+          return source;
+        }
+        if (Array.isArray((source as any)?.content)) {
+          return extractMarketplaceItems((source as any).content);
+        }
+        if (Array.isArray((source as any)?.results)) {
+          return extractMarketplaceItems((source as any).results);
+        }
+        if (Array.isArray((source as any)?.items)) {
+          return extractMarketplaceItems((source as any).items);
+        }
+        return [];
+      };
+      const normalizeMarketplaceItem = (item: any): McpMarketplaceItem => ({
+        mcpId:
+          item?.mcpId ||
+          item?.mcpServerId ||
+          item?.slug ||
+          item?.serviceId ||
+          item?.id ||
+          item?.name ||
+          "",
+        mcpServerId: item?.mcpServerId,
+        slug: item?.slug,
+        serviceId: item?.serviceId || item?.service?.id,
+        applicationId: item?.applicationId || item?.application?.id,
+        apiBaseUrl: item?.apiBaseUrl,
+        manifestUrl: item?.manifestUrl,
+        githubUrl: item?.githubUrl || item?.repoUrl || "",
+        repoUrl: item?.repoUrl,
+        name: item?.name || item?.displayName || "Unknown MCP",
+        displayName: item?.displayName,
+        author: item?.author || item?.creator || item?.owner || "",
+        description: item?.description || item?.summary || "",
+        icon: item?.icon || "",
+        logoUrl: item?.logoUrl || item?.iconUrl || "",
+        category: item?.category || "Uncategorized",
+        tags: Array.isArray(item?.tags)
+          ? item.tags
+              .map((tag: any) =>
+                typeof tag === "string" ? tag : tag?.name || tag?.label || "",
+              )
+              .filter(Boolean)
+          : [],
+        requiresApiKey: Boolean(item?.requiresApiKey),
+        readmeContent: item?.readmeContent,
+        llmsInstallationContent: item?.llmsInstallationContent,
+        isRecommended: Boolean(item?.isRecommended || item?.curated),
+        githubStars: Number(item?.githubStars ?? item?.stars ?? 0) || 0,
+        downloadCount:
+          Number(item?.downloadCount ?? item?.installCount ?? 0) || 0,
+        createdAt: String(item?.createdAt ?? item?.createdDate ?? ""),
+        updatedAt: String(item?.updatedAt ?? item?.lastModifiedDate ?? ""),
+        lastGithubSync: String(item?.lastGithubSync ?? item?.updatedAt ?? ""),
+      });
+      const items = extractMarketplaceItems(responseData).map(
+        normalizeMarketplaceItem,
+      );
       const catalog: McpMarketplaceCatalog = { items };
 
       // Store in global state
@@ -4589,12 +4931,59 @@ export class Controller {
     }
   }
 
-  private async downloadMcp(mcpId: string) {
+  private async downloadMcp(
+    mcpId: string,
+    marketplaceItem?: McpMarketplaceItem,
+  ) {
     try {
+      const getMarketplaceAliases = (
+        item?: Partial<McpMarketplaceItem>,
+      ): string[] => {
+        const aliases = [
+          item?.mcpServerId,
+          item?.slug,
+          item?.serviceId,
+          item?.mcpId,
+          item?.name,
+          item?.displayName,
+        ]
+          .map((value) => String(value ?? "").trim())
+          .filter(Boolean);
+        const lowerAliases = aliases.map((alias) => alias.toLowerCase());
+        if (
+          lowerAliases.some(
+            (alias) =>
+              alias === "graymatter" || alias.includes("graymatter"),
+          )
+        ) {
+          aliases.push("graymatter-memory");
+        }
+        return Array.from(new Set(aliases));
+      };
+
+      const cachedCatalog = (await getGlobalState(
+        this.context,
+        "mcpMarketplaceCatalog",
+      )) as McpMarketplaceCatalog | undefined;
+      const target = String(mcpId).trim().toLowerCase();
+      const cachedMarketplaceItem = cachedCatalog?.items?.find((item) =>
+        getMarketplaceAliases(item).some(
+          (alias) => alias.toLowerCase() === target,
+        ),
+      );
+      const sourceItem = marketplaceItem || cachedMarketplaceItem;
+      const aliases = getMarketplaceAliases(sourceItem);
+      const serviceIdentifiers = Array.from(new Set([mcpId, ...aliases]))
+        .map((value) => String(value).trim())
+        .filter(Boolean);
+
       // First check if we already have this MCP server installed
       const servers = this.mcpHub?.getServers() || [];
-      const isInstalled = servers.some(
-        (server: McpServer) => server.name === mcpId,
+      const isInstalled = servers.some((server: McpServer) =>
+        serviceIdentifiers.some(
+          (identifier) =>
+            server.name.toLowerCase() === identifier.toLowerCase(),
+        ),
       );
 
       if (isInstalled) {
@@ -4602,9 +4991,13 @@ export class Controller {
       }
 
       // Get JWT token for authentication (same as ApplicationService)
-      const token = await this.context.secrets.get("jwtToken");
+      const token = await this.readStoredJwtToken();
+      const tenantHeaders = buildTenantHeaders(
+        await this.readStoredTenantContext(),
+      );
       const headers: any = {
         "Content-Type": "application/json",
+        ...tenantHeaders,
       };
       if (token) {
         headers["authorization"] = `Bearer ${token}`;
@@ -4620,76 +5013,93 @@ export class Controller {
         );
 
       let response: any;
-      let resolvedServiceId = mcpId;
+      let resolvedServiceId = serviceIdentifiers[0] || mcpId;
+      let lastLookupError: unknown;
 
-      try {
-        response = await getServiceByIdentifier(resolvedServiceId);
-      } catch (initialError) {
-        const isNotFound =
-          axios.isAxiosError(initialError) &&
-          initialError.response?.status === 404;
+      for (const identifier of serviceIdentifiers) {
+        try {
+          response = await getServiceByIdentifier(identifier);
+          resolvedServiceId = identifier;
+          lastLookupError = undefined;
+          break;
+        } catch (error) {
+          lastLookupError = error;
+          const isNotFound =
+            axios.isAxiosError(error) && error.response?.status === 404;
 
-        if (!isNotFound) {
-          throw initialError;
+          if (!isNotFound) {
+            throw error;
+          }
         }
-
-        // Fallback: resolve marketplace item IDs to a concrete service identifier
-        // (slug, id, or name) then retry /mcp/services/{slug}.
-        const serviceListResponse = await axios.get<any>(
-          `${getValkyraiBasePath()}/mcp/services`,
-          {
-            headers,
-            timeout: 10000,
-          },
-        );
-
-        const services = Array.isArray(serviceListResponse.data)
-          ? serviceListResponse.data
-          : [];
-        const target = String(mcpId).trim().toLowerCase();
-
-        const matchedService = services.find((service: any) => {
-          const candidates = [
-            service?.slug,
-            service?.id,
-            service?.mcpServerId,
-            service?.name,
-            service?.displayName,
-          ]
-            .filter((value) => value !== undefined && value !== null)
-            .map((value) => String(value).trim().toLowerCase());
-
-          return candidates.includes(target);
-        });
-
-        const fallbackIdentifier =
-          matchedService?.slug ||
-          matchedService?.id ||
-          matchedService?.mcpServerId ||
-          matchedService?.name;
-
-        if (!fallbackIdentifier) {
-          throw initialError;
-        }
-
-        resolvedServiceId = String(fallbackIdentifier);
-        response = await getServiceByIdentifier(resolvedServiceId);
       }
 
-      if (!response.data) {
-        throw new Error("Invalid response from MCP marketplace API");
+      if (!response) {
+        // Fallback: resolve marketplace item IDs to a concrete service identifier
+        // (slug, id, or name) then retry /mcp/services/{slug}.
+        try {
+          const serviceListResponse = await axios.get<any>(
+            `${getValkyraiBasePath()}/mcp/services`,
+            {
+              headers,
+              timeout: 10000,
+            },
+          );
+
+          const services = Array.isArray(serviceListResponse.data)
+            ? serviceListResponse.data
+            : [];
+          const targetIdentifiers = serviceIdentifiers.map((identifier) =>
+            identifier.toLowerCase(),
+          );
+
+          const matchedService = services.find((service: any) => {
+            const candidates = [
+              service?.slug,
+              service?.id,
+              service?.mcpServerId,
+              service?.name,
+              service?.displayName,
+            ]
+              .filter((value) => value !== undefined && value !== null)
+              .map((value) => String(value).trim().toLowerCase());
+
+            return candidates.some((candidate) =>
+              targetIdentifiers.includes(candidate),
+            );
+          });
+
+          const fallbackIdentifier =
+            matchedService?.slug ||
+            matchedService?.id ||
+            matchedService?.mcpServerId ||
+            matchedService?.name;
+
+          if (fallbackIdentifier) {
+            resolvedServiceId = String(fallbackIdentifier);
+            response = await getServiceByIdentifier(resolvedServiceId);
+          }
+        } catch (error) {
+          lastLookupError = error;
+        }
+      }
+
+      if (!response?.data && !sourceItem) {
+        throw lastLookupError instanceof Error
+          ? lastLookupError
+          : new Error("MCP server not found in marketplace.");
       }
 
       console.log("[downloadMcp] Response from MCP services API", { response });
 
-      const mcpService = response.data;
+      const mcpService = response?.data ?? sourceItem ?? {};
       const normalizedMcpId =
-        mcpService.slug || mcpService.id || mcpService.mcpServerId || mcpId;
-
-      // Validate required fields
-      if (!mcpService.apiBaseUrl && !mcpService.manifestUrl) {
-        throw new Error("Missing service configuration in MCP service details");
-      }
+        mcpService.slug ||
+        mcpService.mcpServerId ||
+        mcpService.serviceId ||
+        mcpService.id ||
+        sourceItem?.mcpId ||
+        resolvedServiceId ||
+        mcpId;
 
       // Construct the download details response from the service registry
       const mcpDetails: McpDownloadResponse = {
@@ -4699,17 +5109,32 @@ export class Controller {
           mcpService.name ||
           mcpService.slug ||
           String(normalizedMcpId),
-        author: mcpService.author || "Unknown",
-        description: mcpService.description || "",
-        githubUrl: mcpService.githubUrl || mcpService.repoUrl || "",
-        llmsInstallationContent: "",
-        readmeContent: "", // Will be populated from manifest or README
-        requiresApiKey: false,
+        author:
+          mcpService.author ||
+          mcpService.creator ||
+          mcpService.owner ||
+          "Unknown",
+        description: mcpService.description || sourceItem?.description || "",
+        githubUrl:
+          mcpService.githubUrl ||
+          mcpService.repoUrl ||
+          sourceItem?.githubUrl ||
+          sourceItem?.repoUrl ||
+          "",
+        llmsInstallationContent:
+          mcpService.llmsInstallationContent ||
+          sourceItem?.llmsInstallationContent ||
+          "",
+        readmeContent:
+          mcpService.readmeContent || sourceItem?.readmeContent || "",
+        requiresApiKey: Boolean(
+          mcpService.requiresApiKey || sourceItem?.requiresApiKey,
+        ),
       };
 
-      // Try to fetch README from GitHub if there's a pattern we can detect
-      // For now, set a placeholder README
-      mcpDetails.readmeContent = `# ${mcpDetails.name}\n\n${mcpDetails.description}\n\nAuthor: ${mcpDetails.author}`;
+      if (!mcpDetails.readmeContent) {
+        mcpDetails.readmeContent = `# ${mcpDetails.name}\n\n${mcpDetails.description}\n\nAuthor: ${mcpDetails.author}`;
+      }
 
       // Send details to webview
       await this.postMessageToWebview({

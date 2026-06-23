@@ -26,7 +26,7 @@ const createPassthroughCronLauncher =
       workflowStatus: request.activate ? "READY" : "PAUSED",
     })) as jest.MockedFunction<BuildModeValkyraiCronLauncher>;
 
-const markStoredAutomationAsLegacyLocal = async (
+const writeLegacyLocalScheduler = async (
   storagePath: string,
   ids: string[],
 ) => {
@@ -92,6 +92,40 @@ describe("BuildModeAutomationScheduler", () => {
     ).rejects.toThrow(
       "Build Mode automation scheduling must use the ValkyrAI cron workflow launcher.",
     );
+  });
+
+  it("uses the constructor ValkyrAI cron launcher for schedule creation", async () => {
+    const scheduler = new BuildModeAutomationScheduler(tempDir, cronLauncher);
+
+    const scheduled = await scheduler.schedule({
+      command: {
+        id: "cmd-automation-automation-nightly-fulfillment-check",
+        kind: "automation",
+        label: "Schedule nightly smoke check",
+        command:
+          "schedule:0 7 * * * workflow:workflow:digital-product-fulfillment command:cmd-workflow-workflow-mcp-dpp-fulfillment",
+        capabilityId: "automation.schedule",
+        requiresApproval: true,
+        status: "approval-required",
+      },
+      createdAt: new Date("2026-06-22T03:00:00.000Z"),
+      taskId: "build-mode-task",
+    });
+
+    expect(cronLauncher).toHaveBeenCalledWith({
+      activate: true,
+      cronExpression: "0 7 * * *",
+      scheduleId: "automation-nightly-fulfillment-check",
+      taskId: "build-mode-task",
+      workflowId: "digital-product-fulfillment",
+      workflowRef: "workflow:digital-product-fulfillment",
+    });
+    expect(scheduled.record).toMatchObject({
+      scheduler: "valkyrai-cron",
+      valkyraiScheduleUri:
+        "valkyrai://vaiworkflow/digital-product-fulfillment/schedule",
+      valkyraiWorkflowId: "digital-product-fulfillment",
+    });
   });
 
   it("persists scheduled automations with tenant scope and next run metadata", async () => {
@@ -348,9 +382,9 @@ describe("BuildModeAutomationScheduler", () => {
     expect(JSON.parse(raw).records).toHaveLength(1);
   });
 
-  it("lists due scheduled automations and ignores future runs", async () => {
+  it("does not list ValkyrAI cron owned automations as locally due", async () => {
     const scheduler = new BuildModeAutomationScheduler(tempDir);
-    const dueSchedule = await scheduler.schedule({
+    await scheduler.schedule({
       cronLauncher,
       command: {
         id: "cmd-automation-due",
@@ -380,17 +414,25 @@ describe("BuildModeAutomationScheduler", () => {
       createdAt: new Date("2026-06-22T03:00:00.000Z"),
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(futureSchedule.storagePath, [
-      dueSchedule.record.id,
-      futureSchedule.record.id,
-    ]);
 
     const due = await scheduler.listDue(new Date("2026-06-22T07:01:00.000Z"));
 
-    expect(due.map((record) => record.id)).toEqual(["due"]);
+    expect(due).toEqual([]);
+
+    const snapshot = await scheduler.getSnapshot(
+      new Date("2026-06-22T07:01:00.000Z"),
+    );
+    expect(snapshot.records.map((record) => record.scheduler)).toEqual([
+      "valkyrai-cron",
+      "valkyrai-cron",
+    ]);
+    expect(snapshot.records[1]).toMatchObject({
+      id: futureSchedule.record.id,
+      valkyraiScheduleUri: "valkyrai://vaiworkflow/future/schedule",
+    });
   });
 
-  it("runs due automations through an executor and marks the next run", async () => {
+  it("normalizes legacy local schedule records onto ValkyrAI cron", async () => {
     const scheduler = new BuildModeAutomationScheduler(tempDir);
     const scheduled = await scheduler.schedule({
       cronLauncher,
@@ -407,38 +449,66 @@ describe("BuildModeAutomationScheduler", () => {
       createdAt: new Date("2026-06-22T08:00:00.000Z"),
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(scheduled.storagePath, [
+    await writeLegacyLocalScheduler(scheduled.storagePath, [
       scheduled.record.id,
     ]);
 
-    const results = await scheduler.runDue(
-      new Date("2026-06-23T07:01:00.000Z"),
-      async (record) => {
-        expect(record.workflowCommandId).toBe(
-          "cmd-workflow-workflow-mcp-dpp-fulfillment",
-        );
-        return {
-          receiptId: "build-command-receipt-workflow-run-001",
-          status: "succeeded",
-        };
-      },
-    );
-
-    expect(results).toEqual([
-      expect.objectContaining({
-        runReceiptId: "build-command-receipt-workflow-run-001",
-        status: "succeeded",
-      }),
-    ]);
-    expect(results[0].record).toMatchObject({
-      lastRunAt: "2026-06-23T07:01:00.000Z",
-      lastRunReceiptId: "build-command-receipt-workflow-run-001",
-      lastRunStatus: "succeeded",
-      nextRunAt: "2026-06-24T07:00:00.000Z",
+    await expect(
+      scheduler.listDue(new Date("2026-06-23T07:01:00.000Z")),
+    ).resolves.toEqual([]);
+    await expect(
+      scheduler.runDue(new Date("2026-06-23T07:01:00.000Z")),
+    ).resolves.toEqual([]);
+    await expect(
+      scheduler.getSnapshot(new Date("2026-06-23T07:01:00.000Z")),
+    ).resolves.toMatchObject({
+      records: [
+        expect.objectContaining({
+          id: "automation-nightly-fulfillment-check",
+          scheduler: "valkyrai-cron",
+          valkyraiScheduleUri:
+            "valkyrai://vaiworkflow/digital-product-fulfillment/schedule",
+          valkyraiWorkflowId: "digital-product-fulfillment",
+        }),
+      ],
     });
   });
 
-  it("provides the stored workflow command snapshot to due runs without a live command catalog", async () => {
+  it("does not run due automations locally because ValkyrAI cron launches them", async () => {
+    const scheduler = new BuildModeAutomationScheduler(tempDir);
+    await scheduler.schedule({
+      cronLauncher,
+      command: {
+        id: "cmd-automation-automation-nightly-fulfillment-check",
+        kind: "automation",
+        label: "Schedule nightly smoke check",
+        command:
+          "schedule:0 7 * * * workflow:workflow:digital-product-fulfillment command:cmd-workflow-workflow-mcp-dpp-fulfillment",
+        capabilityId: "automation.schedule",
+        requiresApproval: true,
+        status: "approval-required",
+      },
+      createdAt: new Date("2026-06-22T08:00:00.000Z"),
+      taskId: "build-mode-task",
+    });
+    const results = await scheduler.runDue(
+      new Date("2026-06-23T07:01:00.000Z"),
+    );
+
+    expect(results).toEqual([]);
+    const snapshot = await scheduler.getSnapshot(
+      new Date("2026-06-23T07:01:00.000Z"),
+    );
+    expect(snapshot.records[0]).toMatchObject({
+      scheduler: "valkyrai-cron",
+    });
+    expect(snapshot.records[0].lastRunAt).toBeUndefined();
+    expect(snapshot.records[0].lastRunReceiptId).toBeUndefined();
+    expect(snapshot.records[0].lastRunStatus).toBeUndefined();
+    expect(snapshot.records[0].runHistory).toBeUndefined();
+  });
+
+  it("keeps sanitized workflow command snapshots for ValkyrAI cron handoff visibility", async () => {
     const scheduler = new BuildModeAutomationScheduler(tempDir);
     const scheduled = await scheduler.schedule({
       cronLauncher,
@@ -466,29 +536,31 @@ describe("BuildModeAutomationScheduler", () => {
       createdAt: new Date("2026-06-22T08:00:00.000Z"),
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(scheduled.storagePath, [
-      scheduled.record.id,
-    ]);
 
-    const executor = jest.fn(async (record) => {
-      expect(record.workflowCommandSnapshot).toMatchObject({
-        id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
-        command: "mcp:graymatter.runWorkflow input:workflows/nightly.json",
-      });
-      return {
-        receiptId: "build-command-receipt-workflow-run-001",
-        status: "succeeded" as const,
-      };
+    const raw = await fs.readFile(scheduled.storagePath, "utf8");
+    expect(JSON.parse(raw)).toMatchObject({
+      records: [
+        expect.objectContaining({
+          workflowCommandSnapshot: expect.objectContaining({
+            id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
+            command: "mcp:graymatter.runWorkflow input:workflows/nightly.json",
+          }),
+        }),
+      ],
     });
-    const results = await scheduler.runDue(
-      new Date("2026-06-23T07:01:00.000Z"),
-      executor,
-    );
+    await expect(
+      scheduler.getSnapshot(new Date("2026-06-23T07:01:00.000Z")),
+    ).resolves.toMatchObject({
+      records: [
+        expect.not.objectContaining({
+          workflowCommandSnapshot: expect.anything(),
+        }),
+      ],
+    });
 
-    expect(executor).toHaveBeenCalledTimes(1);
-    expect(results[0]).toMatchObject({
-      runReceiptId: "build-command-receipt-workflow-run-001",
-      status: "succeeded",
+    expect(scheduled.record.workflowCommandSnapshot).toMatchObject({
+      id: "cmd-workflow-workflow-mcp-dpp-fulfillment",
+      command: "mcp:graymatter.runWorkflow input:workflows/nightly.json",
     });
   });
 
@@ -528,13 +600,12 @@ describe("BuildModeAutomationScheduler", () => {
       },
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(scheduled.storagePath, [
-      scheduled.record.id,
-    ]);
-    await scheduler.runDue(new Date("2026-06-23T07:01:00.000Z"), async () => ({
+    await scheduler.markRunAttempt({
+      completedAt: new Date("2026-06-23T07:01:00.000Z"),
       receiptId: "build-command-receipt-workflow-run-001",
       status: "succeeded",
-    }));
+      scheduleId: scheduled.record.id,
+    });
 
     const snapshot = await scheduler.getSnapshot(
       new Date("2026-06-23T07:02:00.000Z"),
@@ -661,7 +732,13 @@ describe("BuildModeAutomationScheduler", () => {
         nextRunAt: "2026-06-23T07:00:00.000Z",
         schedule: "0 7 * * *",
         scheduleId: "automation-nightly-fulfillment-check",
+        scheduler: "valkyrai-cron",
+        schedulerSource: "valkyrai-cron-workflow-launcher",
+        storageUri:
+          "valkyrai://vaiworkflow/digital-product-fulfillment/schedule",
         workflowCommandId: "cmd-workflow-workflow-mcp-dpp-fulfillment",
+        workflowId: "digital-product-fulfillment",
+        workflowRef: "workflow:digital-product-fulfillment",
       },
       uri: "valoride://build-mode/automations/automation-nightly-fulfillment-check/status/paused",
     });
@@ -688,12 +765,15 @@ describe("BuildModeAutomationScheduler", () => {
     expect(resumed.lifecycleReceipt?.artifacts?.[0].metadata).toMatchObject({
       automationStatus: "scheduled",
       nextRunAt: "2026-06-24T07:00:00.000Z",
+      scheduler: "valkyrai-cron",
+      schedulerSource: "valkyrai-cron-workflow-launcher",
+      storageUri: "valkyrai://vaiworkflow/digital-product-fulfillment/schedule",
     });
   });
 
-  it("skips due automations without a workflow command id", async () => {
+  it("does not synthesize skipped receipts for cron-owned automations without a workflow command id", async () => {
     const scheduler = new BuildModeAutomationScheduler(tempDir);
-    const scheduled = await scheduler.schedule({
+    await scheduler.schedule({
       cronLauncher,
       command: {
         id: "cmd-automation-automation-nightly-fulfillment-check",
@@ -708,53 +788,28 @@ describe("BuildModeAutomationScheduler", () => {
       createdAt: new Date("2026-06-22T08:00:00.000Z"),
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(scheduled.storagePath, [
-      scheduled.record.id,
-    ]);
 
     const results = await scheduler.runDue(
       new Date("2026-06-23T07:01:00.000Z"),
-      async () => {
-        throw new Error("executor should not be called");
-      },
     );
 
-    expect(results).toEqual([
-      expect.objectContaining({
-        error: "Scheduled automation does not have a workflow command id.",
-        record: expect.objectContaining({
-          lastRunAt: "2026-06-23T07:01:00.000Z",
-          lastRunReceiptId: expect.stringMatching(/^build-automation-skipped-/),
-          lastRunStatus: "skipped",
-          nextRunAt: "2026-06-24T07:00:00.000Z",
-        }),
-        runReceipt: expect.objectContaining({
-          capabilityId: "automation.schedule",
-          commandId: "cmd-automation-automation-nightly-fulfillment-check",
-          executionMode: "operator-handoff",
-          nextOperatorAction: "revise",
-          status: "failed",
-          summary: expect.stringContaining(
-            "Scheduled automation automation-nightly-fulfillment-check skipped",
-          ),
-        }),
-        status: "skipped",
-      }),
-    ]);
-    expect(results[0].runReceipt?.artifacts?.[0]).toMatchObject({
-      kind: "workflow_receipt",
-      metadata: {
-        automationRunStatus: "skipped",
-        error: "Scheduled automation does not have a workflow command id.",
-        nextRunAt: "2026-06-24T07:00:00.000Z",
-        scheduleId: "automation-nightly-fulfillment-check",
-      },
+    expect(results).toEqual([]);
+    const snapshot = await scheduler.getSnapshot(
+      new Date("2026-06-23T07:01:00.000Z"),
+    );
+    expect(snapshot.records[0]).toMatchObject({
+      scheduler: "valkyrai-cron",
     });
+    expect(snapshot.records[0].lastRunAt).toBeUndefined();
+    expect(snapshot.records[0].lastRunReceiptId).toBeUndefined();
+    expect(snapshot.records[0].lastRunStatus).toBeUndefined();
+    expect(snapshot.records[0].runHistory).toBeUndefined();
+    expect(snapshot.records[0].workflowCommandId).toBeUndefined();
   });
 
-  it("marks failed due automations and advances the next run", async () => {
+  it("does not synthesize local failure receipts for cron-owned automations", async () => {
     const scheduler = new BuildModeAutomationScheduler(tempDir);
-    const scheduled = await scheduler.schedule({
+    await scheduler.schedule({
       cronLauncher,
       command: {
         id: "cmd-automation-automation-nightly-fulfillment-check",
@@ -769,45 +824,20 @@ describe("BuildModeAutomationScheduler", () => {
       createdAt: new Date("2026-06-22T08:00:00.000Z"),
       taskId: "build-mode-task",
     });
-    await markStoredAutomationAsLegacyLocal(scheduled.storagePath, [
-      scheduled.record.id,
-    ]);
-
     const results = await scheduler.runDue(
       new Date("2026-06-23T07:01:00.000Z"),
-      async () => {
-        throw new Error("workflow command missing from current catalog");
-      },
     );
 
-    expect(results).toEqual([
-      expect.objectContaining({
-        error: "workflow command missing from current catalog",
-        record: expect.objectContaining({
-          lastRunAt: "2026-06-23T07:01:00.000Z",
-          lastRunReceiptId: expect.stringMatching(/^build-automation-failed-/),
-          lastRunStatus: "failed",
-          nextRunAt: "2026-06-24T07:00:00.000Z",
-        }),
-        runReceipt: expect.objectContaining({
-          capabilityId: "automation.schedule",
-          commandId: "cmd-automation-automation-nightly-fulfillment-check",
-          executionMode: "operator-handoff",
-          nextOperatorAction: "inspect",
-          status: "failed",
-          summary: expect.stringContaining(
-            "Scheduled automation automation-nightly-fulfillment-check failed before completion",
-          ),
-        }),
-        status: "failed",
-      }),
-    ]);
-    expect(results[0].runReceipt?.artifacts?.[0]).toMatchObject({
-      metadata: {
-        automationRunStatus: "failed",
-        error: "workflow command missing from current catalog",
-        workflowCommandId: "cmd-workflow-workflow-mcp-dpp-fulfillment",
-      },
+    expect(results).toEqual([]);
+    const snapshot = await scheduler.getSnapshot(
+      new Date("2026-06-23T07:01:00.000Z"),
+    );
+    expect(snapshot.records[0]).toMatchObject({
+      scheduler: "valkyrai-cron",
     });
+    expect(snapshot.records[0].lastRunAt).toBeUndefined();
+    expect(snapshot.records[0].lastRunReceiptId).toBeUndefined();
+    expect(snapshot.records[0].lastRunStatus).toBeUndefined();
+    expect(snapshot.records[0].runHistory).toBeUndefined();
   });
 });

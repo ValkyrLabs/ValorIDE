@@ -384,6 +384,9 @@ export const ExtensionStateContextProvider: React.FC<{
           setMcpMarketplaceCatalog(message.mcpMarketplaceCatalog);
           setMcpMarketplaceCatalogLoading(false);
           setMcpMarketplaceCatalogError(null);
+        } else if (message.error) {
+          setMcpMarketplaceCatalogLoading(false);
+          setMcpMarketplaceCatalogError(message.error);
         }
         break;
       }

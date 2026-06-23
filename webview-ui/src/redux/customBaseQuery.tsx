@@ -10,6 +10,8 @@ import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
 import { applyCsrfHeader, shouldAttachCsrfToken } from "@thorapi/utils/csrfToken";
 import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import { refreshCsrfToken } from "@thorapi/utils/authFetch";
+import { applyTenantHeaders } from "@thorapi/utils/tenantContext";
+import { vscode } from "@thorapi/utils/vscode";
 
 const getRequestPath = (arg: unknown): string => {
   const url = typeof arg === "string" ? arg : (arg as { url?: string })?.url;
@@ -63,15 +65,159 @@ const buildBaseQuery = () =>
         headers.set("jwtSession", token);
       }
 
+      applyTenantHeaders(headers);
       const method = typeof arg === "string" ? undefined : arg?.method;
       return applyCsrfHeader(headers, method);
     },
   });
 
+type ThorapiBridgeResult =
+  | { data: unknown }
+  | {
+      error: {
+        status?: number | string;
+        data?: unknown;
+        error?: string;
+      };
+    };
+
+const createRequestId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `thorapi-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const headersToRecord = (
+  headers: unknown,
+): Record<string, string> | undefined => {
+  if (!headers) {
+    return undefined;
+  }
+  try {
+    if (headers instanceof Headers) {
+      const result: Record<string, string> = {};
+      headers.forEach((value, key) => {
+        result[key] = value;
+      });
+      return result;
+    }
+    if (Array.isArray(headers)) {
+      return Object.fromEntries(headers as Array<[string, string]>);
+    }
+    if (typeof headers === "object") {
+      return Object.fromEntries(
+        Object.entries(headers as Record<string, unknown>).map(
+          ([key, value]) => [key, String(value)],
+        ),
+      );
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+};
+
+const argsToThorapiRequest = (args: any) => {
+  if (typeof args === "string") {
+    return {
+      url: args,
+      method: "GET",
+    };
+  }
+
+  return {
+    url: args?.url || "",
+    method: args?.method || "GET",
+    body: args?.body,
+    params: args?.params,
+    headers: headersToRecord(args?.headers),
+  };
+};
+
+const hasCustomResponseHandler = (args: unknown): boolean =>
+  typeof args === "object" &&
+  args !== null &&
+  "responseHandler" in (args as Record<string, unknown>);
+
+const shouldUseExtensionThorapiBridge = (args: unknown): boolean =>
+  typeof window !== "undefined" &&
+  vscode.isAvailable() &&
+  !isLoginRequest(args) &&
+  !hasCustomResponseHandler(args);
+
+const extensionThorapiBaseQuery = async (
+  args: any,
+): Promise<ThorapiBridgeResult> => {
+  const requestId = createRequestId();
+  const request = argsToThorapiRequest(args);
+
+  return new Promise<ThorapiBridgeResult>((resolve) => {
+    let handleResponse: (event: MessageEvent) => void = () => undefined;
+    const timeoutId = window.setTimeout(() => {
+      window.removeEventListener("message", handleResponse);
+      resolve({
+        error: {
+          status: "TIMEOUT_ERROR",
+          error: "ThorAPI request timed out.",
+        },
+      });
+    }, 30000);
+
+    handleResponse = (event: MessageEvent) => {
+      const message = event.data;
+      const response = message?.thorapiResponse;
+      if (
+        message?.type !== "thorapiResponse" ||
+        response?.requestId !== requestId
+      ) {
+        return;
+      }
+
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("message", handleResponse);
+
+      if (response.ok) {
+        resolve({ data: response.data });
+        return;
+      }
+
+      resolve({
+        error: {
+          status: response.status ?? "FETCH_ERROR",
+          data: response.data,
+          error:
+            response.error || response.statusText || "ThorAPI request failed.",
+        },
+      });
+    };
+
+    window.addEventListener("message", handleResponse);
+    vscode.postMessage({
+      type: "thorapiRequest",
+      thorapiRequest: {
+        requestId,
+        ...request,
+      },
+    });
+  });
+};
+
 const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
   const isLogin = isLoginRequest(args);
   if (isLogin) {
     clearStoredAuthSession("pre-login");
+  }
+
+  if (shouldUseExtensionThorapiBridge(args)) {
+    const result = await extensionThorapiBaseQuery(args);
+    if (isExpiredSessionError((result as any).error)) {
+      clearStoredAuthSession("api-auth-error");
+    }
+    return result;
   }
 
   const baseQuery = buildBaseQuery();
