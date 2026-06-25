@@ -82,6 +82,7 @@ describe("useDiscoveryQuery host-aware Swarm discovery", () => {
     expect(getSwarmDiscoveryHeaders().get("Authorization")).toBe(
       "Bearer session-token",
     );
+    expect(getSwarmDiscoveryHeaders().get("jwtSession")).toBe("session-token");
   });
 
   it("classifies auth, RBAC, cloud, local, and empty recovery states", () => {

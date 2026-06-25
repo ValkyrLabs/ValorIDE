@@ -8,7 +8,7 @@
  * This server-side computation ensures consistency across all clients.
  */
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "@thorapi/redux/customBaseQuery";
+import customBaseQuery from "../redux/customBaseQuery";
 import type {
   AppGenerationRequest,
   AppGenerationTraceResponse,
@@ -28,6 +28,7 @@ export interface AccountBalance {
   customerId?: string;
   currentBalance: number;
   payments: PaymentTransaction[];
+  paymentTransactions?: PaymentTransaction[];
   usageTransactions: UsageTransaction[];
 }
 
@@ -176,6 +177,7 @@ export const normalizeAccountBalance = (payload: any): AccountBalance => {
         ? explicitBalance
         : derivedBalance,
     payments,
+    paymentTransactions: payments,
     usageTransactions,
   };
 };
@@ -214,8 +216,12 @@ const shouldSurfaceQueryError = (error: {
   error.status === "TIMEOUT_ERROR" ||
   error.status === "PARSING_ERROR";
 
+const getLedgerRowCount = (balance?: AccountBalance): number =>
+  (balance?.payments?.length ?? balance?.paymentTransactions?.length ?? 0) +
+  (balance?.usageTransactions?.length ?? 0);
+
 const hasLedgerRows = (balance?: AccountBalance): boolean =>
-  Boolean(balance?.payments.length || balance?.usageTransactions.length);
+  getLedgerRowCount(balance) > 0;
 
 const uniqueStrings = (values: Array<string | undefined>): string[] =>
   Array.from(
@@ -263,15 +269,16 @@ const normalizeBalanceList = (payload: unknown): AccountBalance[] => {
   return rows.map(normalizeAccountBalance);
 };
 
-const chooseBestBalance = (
+export const chooseBestBalance = (
   candidates: Array<AccountBalance | undefined>,
 ): AccountBalance | undefined =>
   candidates
     .filter((candidate): candidate is AccountBalance => Boolean(candidate))
     .sort((a, b) => {
-      const aHasValue = a.currentBalance !== 0 || hasLedgerRows(a);
-      const bHasValue = b.currentBalance !== 0 || hasLedgerRows(b);
-      return Number(bHasValue) - Number(aHasValue);
+      const score = (candidate: AccountBalance) =>
+        getLedgerRowCount(candidate) * 10 + (candidate.currentBalance !== 0 ? 1 : 0);
+
+      return score(b) - score(a);
     })[0];
 
 export const mergeAccountBalance = (

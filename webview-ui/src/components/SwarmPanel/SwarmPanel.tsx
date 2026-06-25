@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   buildSwarmDiscoveryUrl,
   getSwarmDiscoveryHeaders,
+  requestSwarmJson,
 } from "../../api/hooks/useDiscoveryQuery";
 import { getValkyraiHost } from "../../utils/valkyraiHost";
 
@@ -97,7 +98,7 @@ function getOrganizationId(): string {
 const fetchAgentDiscovery = async (orgId?: string): Promise<AgentMeta[]> => {
   try {
     const org = orgId || getOrganizationId();
-    const response = await fetch(
+    const response = await requestSwarmJson<AgentMeta[]>(
       buildSwarmDiscoveryUrl({
         organizationId: org,
         apiHost: getValkyraiHost(),
@@ -106,7 +107,7 @@ const fetchAgentDiscovery = async (orgId?: string): Promise<AgentMeta[]> => {
       { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok) throw new Error(`Discovery failed: ${response.status}`);
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Agent discovery failed:", e);
     return [];
@@ -118,13 +119,13 @@ const fetchAgentHierarchy = async (
 ): Promise<AgentHierarchy[]> => {
   try {
     const org = orgId || getOrganizationId();
-    const response = await fetch(
+    const response = await requestSwarmJson<AgentHierarchy[]>(
       `${getSwarmApiBase()}/agents/hierarchy?organizationId=${encodeURIComponent(org)}`,
       { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`Hierarchy fetch failed: ${response.status}`);
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Hierarchy fetch failed:", e);
     return [];
@@ -140,22 +141,28 @@ const sendChatMessage = async (
 ): Promise<ChatMessage | null> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${getSwarmApiBase()}/agent/${agentId}/chat`, {
-      method: "POST",
-      headers: getJsonHeaders(),
-      body: JSON.stringify({
-        organizationId: org,
-        conversationId,
-        senderId,
-        message,
-        senderType,
-      }),
-    });
+    const response = await requestSwarmJson<ChatMessage>(
+      `${getSwarmApiBase()}/agent/${agentId}/chat`,
+      {
+        method: "POST",
+        headers: getJsonHeaders(),
+        body: JSON.stringify({
+          organizationId: org,
+          conversationId,
+          senderId,
+          message,
+          senderType,
+        }),
+      },
+    );
     if (!response.ok) {
-      const error = await response.text();
+      const error =
+        typeof response.data === "string"
+          ? response.data
+          : JSON.stringify(response.data ?? {});
       throw new Error(`Chat send failed (${response.status}): ${error}`);
     }
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.error("Chat send failed:", e);
     return null;
@@ -169,14 +176,16 @@ const fetchChatHistory = async (
 ): Promise<ChatMessage[]> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(
+    const response = await requestSwarmJson<
+      { content?: ChatMessage[] } | ChatMessage[]
+    >(
       `${getSwarmApiBase()}/agent/${agentId}/chat/history?organizationId=${encodeURIComponent(org)}&conversationId=${encodeURIComponent(conversationId)}&page=${page}`,
       { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`History fetch failed: ${response.status}`);
-    const data = await response.json();
-    return data.content || data;
+    const data = response.data;
+    return Array.isArray(data) ? data : data.content || [];
   } catch (e) {
     console.warn("Chat history fetch failed:", e);
     return [];
@@ -188,7 +197,7 @@ const fetchBillingStatus = async (
 ): Promise<BillingStatus | null> => {
   try {
     const org = organizationId || getOrganizationId();
-    const response = await fetch(
+    const response = await requestSwarmJson<BillingStatus>(
       `${getSwarmApiBase()}/billing/status?organizationId=${encodeURIComponent(org)}`,
       { headers: getSwarmDiscoveryHeaders() },
     );
@@ -198,7 +207,7 @@ const fetchBillingStatus = async (
       }
       return null;
     }
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Billing status fetch failed:", e);
     return null;
@@ -263,11 +272,14 @@ const markMessageAsRead = async (
 ): Promise<boolean> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${getSwarmApiBase()}/chat/${messageId}/read`, {
-      method: "POST",
-      headers: getJsonHeaders(),
-      body: JSON.stringify({ organizationId: org, readerId }),
-    });
+    const response = await requestSwarmJson(
+      `${getSwarmApiBase()}/chat/${messageId}/read`,
+      {
+        method: "POST",
+        headers: getJsonHeaders(),
+        body: JSON.stringify({ organizationId: org, readerId }),
+      },
+    );
     return response.ok;
   } catch (e) {
     console.warn("Mark read failed:", e);

@@ -1622,7 +1622,9 @@ export const deriveBuildModeAutonomyDecision = (
       ? evaluateDependencyReceiptProofPreflight(
           nextStep,
           payload.executionPlan,
+          getBuildModeCommandCatalog(payload),
           payload.commandReceipts,
+          payload.checkpoints,
         )
       : undefined;
   const contextPackPreflight = nextExecutionAction
@@ -1964,7 +1966,9 @@ const isDispatchableSwarmRoleStatus = (
 const evaluateDependencyReceiptProofPreflight = (
   step: BuildModeExecutionPlanStep,
   executionPlan: BuildModeExecutionPlanStep[],
+  commandCatalog: BuildModeCommand[],
   commandReceipts: BuildModeCommandReceipt[],
+  checkpoints: ValorTaskBridgePayload["checkpoints"],
 ): DependencyReceiptProofPreflightResult | undefined => {
   const dependencySteps = collectDependencySteps(step, executionPlan);
   const dependencyCommandIds = new Set(
@@ -1975,6 +1979,9 @@ const evaluateDependencyReceiptProofPreflight = (
   }
 
   const latestReceiptByCommandId = getLatestReceiptByCommandId(commandReceipts);
+  const commandById = new Map(
+    commandCatalog.map((command) => [command.id, command]),
+  );
   const stepByCommandId = new Map<string, BuildModeExecutionPlanStep>();
   for (const dependency of dependencySteps) {
     for (const commandId of dependency.commandIds) {
@@ -1993,12 +2000,38 @@ const evaluateDependencyReceiptProofPreflight = (
       };
     }
     if (!receipt) {
-      continue;
+      return {
+        reason: `Autonomy is blocked because dependency receipt proof is missing for ${commandId}.`,
+        reasonCodes: [`dependency-receipt-missing:${commandId}`],
+        receiptIds: [],
+      };
     }
     if (receipt.status !== "succeeded") {
       return {
         reason: `Autonomy is blocked because dependency command ${commandId} latest receipt is ${receipt.status}.`,
         reasonCodes: [`dependency-receipt-not-succeeded:${commandId}`],
+        receiptIds: [receipt.id],
+      };
+    }
+    const command = commandById.get(commandId);
+    if (!command) {
+      return {
+        reason: `Autonomy is blocked because dependency command ${commandId} is missing from the command catalog.`,
+        reasonCodes: [`dependency-command-missing:${commandId}`],
+        receiptIds: [receipt.id],
+      };
+    }
+    if (command.status !== "succeeded") {
+      return {
+        reason: `Autonomy is blocked because dependency command ${commandId} is ${command.status}.`,
+        reasonCodes: [`dependency-command-not-succeeded:${commandId}`],
+        receiptIds: [receipt.id],
+      };
+    }
+    if (command.receiptId !== receipt.id) {
+      return {
+        reason: `Autonomy is blocked because dependency command ${commandId} receiptId ${command.receiptId ?? "missing"} does not match latest receipt ${receipt.id}.`,
+        reasonCodes: [`dependency-command-receipt-mismatch:${commandId}`],
         receiptIds: [receipt.id],
       };
     }
@@ -2009,6 +2042,68 @@ const evaluateDependencyReceiptProofPreflight = (
         receiptIds: [receipt.id],
       };
     }
+    if (isMutableBuildModeDependencyCommand(command)) {
+      const checkpointPreflight = evaluateMutableDependencyCheckpointPreflight(
+        command,
+        checkpoints,
+        commandReceipts,
+      );
+      if (checkpointPreflight) {
+        return checkpointPreflight;
+      }
+    }
+  }
+
+  return undefined;
+};
+
+const isMutableBuildModeDependencyCommand = (
+  command: BuildModeCommand,
+): boolean =>
+  command.kind === "edit" ||
+  command.capabilityId === "psr.edit" ||
+  command.capabilityId === "filesystem.write";
+
+const evaluateMutableDependencyCheckpointPreflight = (
+  command: BuildModeCommand,
+  checkpoints: ValorTaskBridgePayload["checkpoints"],
+  commandReceipts: BuildModeCommandReceipt[],
+): DependencyReceiptProofPreflightResult | undefined => {
+  const checkpoint = checkpoints.find(
+    (candidate) =>
+      candidate.status === "rollback-ready" &&
+      Boolean(candidate.hash) &&
+      candidate.receiptIds.length > 0,
+  );
+  if (!checkpoint) {
+    return {
+      reason: `Autonomy is blocked because mutable dependency ${command.id} requires a rollback-ready checkpoint with hash and receipt proof before advancing.`,
+      reasonCodes: [`mutable-dependency-checkpoint-missing:${command.id}`],
+      receiptIds: [],
+    };
+  }
+
+  const checkpointReceiptIds = new Set(checkpoint.receiptIds);
+  const hasCheckpointArtifactProof = commandReceipts.some(
+    (receipt) =>
+      checkpointReceiptIds.has(receipt.id) &&
+      receipt.capabilityId === "checkpoint.manage" &&
+      receipt.status === "succeeded" &&
+      receipt.artifacts?.some((artifact) => {
+        const metadata = artifact.metadata ?? {};
+        return (
+          artifact.kind === "checkpoint" &&
+          metadata.checkpointAction === "create" &&
+          metadata.checkpointHash === checkpoint.hash
+        );
+      }),
+  );
+  if (!hasCheckpointArtifactProof) {
+    return {
+      reason: `Autonomy is blocked because rollback-ready checkpoint ${checkpoint.id} requires a succeeded checkpoint.manage receipt with checkpoint artifact proof before advancing past mutable dependency ${command.id}.`,
+      reasonCodes: [`mutable-dependency-checkpoint-proof-missing:${command.id}`],
+      receiptIds: checkpoint.receiptIds,
+    };
   }
 
   return undefined;
@@ -2117,6 +2212,9 @@ const SECRET_KEY_VALUE =
 const SECRET_QUERY_PARAM =
   /([?&](?:api[_-]?key|token|secret|password|access[_-]?key|access[_-]?token)=)([^&#\s]+)/gi;
 
+const SECRET_URL_USERINFO =
+  /\b((?:https?|wss?):\/\/)([^/?#\s@]+@)(?=[^/?#\s]+)/gi;
+
 const AUTHORIZATION_BEARER =
   /\b(Authorization\s*:\s*Bearer\s+)[A-Za-z0-9._~+/-]{8,}=*/gi;
 
@@ -2128,6 +2226,7 @@ const redactBuildModeText = (value: string): string =>
     .replace(SECRET_ASSIGNMENT, `$1=${SECRET_REDACTION}`)
     .replace(SECRET_KEY_VALUE, `$1${SECRET_REDACTION}`)
     .replace(SECRET_QUERY_PARAM, `$1${SECRET_REDACTION}`)
+    .replace(SECRET_URL_USERINFO, `$1${SECRET_REDACTION}@`)
     .replace(AUTHORIZATION_BEARER, `$1${SECRET_REDACTION}`);
 
 const findBuildModeSecretMaterialPaths = (
@@ -2456,6 +2555,7 @@ const sanitizeScheduledAutomationBinding = (
     receiptId: redactBuildModeText(run.receiptId),
     status: coerceEnumValue(run.status, automationRunStatuses, "failed"),
   })),
+  scheduler: "valkyrai-cron",
   status: coerceEnumValue(automation.status, automationStatuses, "blocked"),
 });
 

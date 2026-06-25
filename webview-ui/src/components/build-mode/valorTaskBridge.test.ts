@@ -32,6 +32,34 @@ const safeEditSuccessReceipt: BuildModeCommandReceipt = {
   createdAt: "2026-06-22T12:00:00.000Z",
 };
 
+const openApiUpdateSuccessReceipt: BuildModeCommandReceipt = {
+  id: "receipt-openapi-update",
+  commandId: "cmd-openapi-update-spec",
+  capabilityId: "psr.edit",
+  status: "succeeded",
+  approved: true,
+  requiresApproval: false,
+  summary: "OpenAPI purchase spec updated.",
+  createdAt: "2026-06-22T12:01:00.000Z",
+};
+
+const vaixGenerateSuccessReceipt: BuildModeCommandReceipt = {
+  id: "receipt-vaix-generate",
+  commandId: "cmd-vaix-generate-thorapi",
+  capabilityId: "terminal.execute",
+  status: "succeeded",
+  approved: true,
+  requiresApproval: false,
+  summary: "ThorAPI generated through VAIX.",
+  createdAt: "2026-06-22T12:02:00.000Z",
+};
+
+const completedDependencyReceipts = [
+  safeEditSuccessReceipt,
+  openApiUpdateSuccessReceipt,
+  vaixGenerateSuccessReceipt,
+];
+
 describe("valorTaskBridge", () => {
   it("falls back to the Digital Product Pro fixture for incomplete payloads", () => {
     const payload = coerceValorTaskBridgePayload({ taskId: "missing" });
@@ -290,6 +318,40 @@ describe("valorTaskBridge", () => {
     expect(serialized).toContain("<redacted-secret>");
     expect(serialized).not.toContain("preview-secret-token");
     expect(report).not.toContain("preview-secret-token");
+  });
+
+  it("redacts browser preview URL credentials and blocks autonomy", () => {
+    const payload = coerceValorTaskBridgePayload({
+      ...digitalProductProBuildModePayload,
+      browserVerification: {
+        ...digitalProductProBuildModePayload.browserVerification,
+        previewUrl:
+          "http://preview-user:preview-password@localhost:5173/apps/digital-product-pro",
+      },
+    });
+
+    const serialized = JSON.stringify(payload);
+    const report = renderBuildModeFinalReport(payload);
+
+    expect(payload.browserVerification.previewUrl).toBe(
+      "http://<redacted-secret>@localhost:5173/apps/digital-product-pro",
+    );
+    expect(payload.autonomyDecision).toMatchObject({
+      status: "blocked",
+      summary:
+        "Autonomy is blocked because the Build Mode launch payload contains inline secret material at payload.browserVerification.previewUrl.",
+    });
+    expect(payload.autonomyDecision.reasonCodes).toEqual(
+      expect.arrayContaining([
+        "launch-payload-secret-material",
+        "launch-secret-path:payload.browserVerification.previewUrl",
+      ]),
+    );
+    expect(serialized).toContain("<redacted-secret>");
+    expect(serialized).not.toContain("preview-user");
+    expect(serialized).not.toContain("preview-password");
+    expect(report).not.toContain("preview-user");
+    expect(report).not.toContain("preview-password");
   });
 
   it("redacts launch payload receipts and evidence before report rendering", () => {
@@ -1516,7 +1578,7 @@ describe("valorTaskBridge", () => {
       ),
       commandReceipts: [
         ...digitalProductProBuildModePayload.commandReceipts,
-        safeEditSuccessReceipt,
+        ...completedDependencyReceipts,
       ],
       toolPermissions: digitalProductProBuildModePayload.toolPermissions.map(
         (permission) =>
@@ -1539,6 +1601,210 @@ describe("valorTaskBridge", () => {
       blockedCommandIds: [],
       receiptRequired: true,
     });
+  });
+
+  it("blocks autonomous queue dispatch when dependency receipt objects are missing", () => {
+    const plan = deriveBuildModeAutonomousQueuePlan({
+      ...digitalProductProBuildModePayload,
+      autonomyPolicy: {
+        ...digitalProductProBuildModePayload.autonomyPolicy,
+        mode: "autonomous-local",
+        approvalRequiredCapabilityIds:
+          digitalProductProBuildModePayload.autonomyPolicy.approvalRequiredCapabilityIds.filter(
+            (capabilityId) => capabilityId !== "terminal.execute",
+          ),
+      },
+      executionPlan: digitalProductProBuildModePayload.executionPlan.map(
+        (step) => {
+          if (step.id === "plan-safe-edits") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-safe-edit-checkout-copy"],
+            };
+          }
+          if (step.id === "plan-thorapi-vaix") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-openapi-update", "receipt-vaix-generate"],
+            };
+          }
+          if (step.id === "plan-tests") {
+            return { ...step, status: "ready" as const };
+          }
+          return step;
+        },
+      ),
+      commandReceipts:
+        digitalProductProBuildModePayload.commandReceipts.filter(
+          (receipt) => receipt.commandId !== "cmd-safe-edit-checkout-copy",
+        ),
+      toolPermissions: digitalProductProBuildModePayload.toolPermissions.map(
+        (permission) =>
+          permission.capabilityId === "terminal.execute"
+            ? {
+                ...permission,
+                approvalThreshold: "none" as const,
+                decision: "allow" as const,
+              }
+            : permission,
+      ),
+    });
+
+    expect(plan).toMatchObject({
+      status: "blocked",
+      nextStepId: "plan-tests",
+      nextCommandId: "cmd-test",
+      dispatchableCommandIds: [],
+      blockedCommandIds: ["cmd-test"],
+      receiptRequired: true,
+    });
+    expect(plan.summary).toBe(
+      "Autonomy is blocked because dependency receipt proof is missing for cmd-safe-edit-checkout-copy.",
+    );
+    expect(plan.reasonCodes).toContain(
+      "dependency-receipt-missing:cmd-safe-edit-checkout-copy",
+    );
+  });
+
+  it("blocks autonomous queue dispatch past mutable edits without rollback checkpoint proof", () => {
+    const plan = deriveBuildModeAutonomousQueuePlan({
+      ...digitalProductProBuildModePayload,
+      autonomyPolicy: {
+        ...digitalProductProBuildModePayload.autonomyPolicy,
+        mode: "autonomous-local",
+        approvalRequiredCapabilityIds:
+          digitalProductProBuildModePayload.autonomyPolicy.approvalRequiredCapabilityIds.filter(
+            (capabilityId) => capabilityId !== "terminal.execute",
+          ),
+      },
+      checkpoints: [],
+      executionPlan: digitalProductProBuildModePayload.executionPlan.map(
+        (step) => {
+          if (step.id === "plan-safe-edits") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-safe-edit-checkout-copy"],
+            };
+          }
+          if (step.id === "plan-thorapi-vaix") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-openapi-update", "receipt-vaix-generate"],
+            };
+          }
+          if (step.id === "plan-tests") {
+            return { ...step, status: "ready" as const };
+          }
+          return step;
+        },
+      ),
+      commandReceipts: [
+        ...digitalProductProBuildModePayload.commandReceipts,
+        ...completedDependencyReceipts,
+      ],
+      toolPermissions: digitalProductProBuildModePayload.toolPermissions.map(
+        (permission) =>
+          permission.capabilityId === "terminal.execute"
+            ? {
+                ...permission,
+                approvalThreshold: "none" as const,
+                decision: "allow" as const,
+              }
+            : permission,
+      ),
+    });
+
+    expect(plan).toMatchObject({
+      status: "blocked",
+      nextStepId: "plan-tests",
+      nextCommandId: "cmd-test",
+      dispatchableCommandIds: [],
+      blockedCommandIds: ["cmd-test"],
+    });
+    expect(plan.summary).toBe(
+      "Autonomy is blocked because mutable dependency cmd-safe-edit-checkout-copy requires a rollback-ready checkpoint with hash and receipt proof before advancing.",
+    );
+    expect(plan.reasonCodes).toContain(
+      "mutable-dependency-checkpoint-missing:cmd-safe-edit-checkout-copy",
+    );
+  });
+
+  it("blocks autonomous queue dispatch when rollback checkpoint artifact proof is missing", () => {
+    const plan = deriveBuildModeAutonomousQueuePlan({
+      ...digitalProductProBuildModePayload,
+      autonomyPolicy: {
+        ...digitalProductProBuildModePayload.autonomyPolicy,
+        mode: "autonomous-local",
+        approvalRequiredCapabilityIds:
+          digitalProductProBuildModePayload.autonomyPolicy.approvalRequiredCapabilityIds.filter(
+            (capabilityId) => capabilityId !== "terminal.execute",
+          ),
+      },
+      executionPlan: digitalProductProBuildModePayload.executionPlan.map(
+        (step) => {
+          if (step.id === "plan-safe-edits") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-safe-edit-checkout-copy"],
+            };
+          }
+          if (step.id === "plan-thorapi-vaix") {
+            return {
+              ...step,
+              status: "complete" as const,
+              receiptIds: ["receipt-openapi-update", "receipt-vaix-generate"],
+            };
+          }
+          if (step.id === "plan-tests") {
+            return { ...step, status: "ready" as const };
+          }
+          return step;
+        },
+      ),
+      commandReceipts: [
+        ...digitalProductProBuildModePayload.commandReceipts.map((receipt) =>
+          receipt.id === "build-command-receipt-checkpoint-create"
+            ? { ...receipt, artifacts: [] }
+            : receipt,
+        ),
+        ...completedDependencyReceipts,
+      ],
+      toolPermissions: digitalProductProBuildModePayload.toolPermissions.map(
+        (permission) =>
+          permission.capabilityId === "terminal.execute"
+            ? {
+                ...permission,
+                approvalThreshold: "none" as const,
+                decision: "allow" as const,
+              }
+            : permission,
+      ),
+    });
+
+    expect(plan).toMatchObject({
+      status: "blocked",
+      nextStepId: "plan-tests",
+      nextCommandId: "cmd-test",
+      dispatchableCommandIds: [],
+      blockedCommandIds: ["cmd-test"],
+    });
+    expect(plan.summary).toBe(
+      "Autonomy is blocked because rollback-ready checkpoint checkpoint-pre-edit-dpp requires a succeeded checkpoint.manage receipt with checkpoint artifact proof before advancing past mutable dependency cmd-safe-edit-checkout-copy.",
+    );
+    expect(plan.reasonCodes).toContain(
+      "mutable-dependency-checkpoint-proof-missing:cmd-safe-edit-checkout-copy",
+    );
+    expect(plan.blockingReceiptIds).toEqual(
+      expect.arrayContaining([
+        "receipt-checkpoint-dpp-001",
+        "build-command-receipt-checkpoint-create",
+      ]),
+    );
   });
 
   it("skips rejected commands when deriving the next autonomous queue dispatch", () => {
@@ -1660,7 +1926,7 @@ describe("valorTaskBridge", () => {
       ),
       commandReceipts: [
         ...digitalProductProBuildModePayload.commandReceipts,
-        safeEditSuccessReceipt,
+        ...completedDependencyReceipts,
       ],
       toolPermissions: digitalProductProBuildModePayload.toolPermissions.map(
         (permission) =>
@@ -1732,7 +1998,7 @@ describe("valorTaskBridge", () => {
       ),
       commandReceipts: [
         ...digitalProductProBuildModePayload.commandReceipts,
-        safeEditSuccessReceipt,
+        ...completedDependencyReceipts,
       ],
       swarmRoles: digitalProductProBuildModePayload.swarmRoles.map((role) =>
         role.role === "Supervisor"
@@ -3058,6 +3324,7 @@ describe("valorTaskBridge", () => {
     const decision = deriveBuildModeAutonomyDecision({
       ...digitalProductProBuildModePayload,
       commandReceipts: [
+        ...digitalProductProBuildModePayload.commandReceipts,
         {
           id: "receipt-cmd-test-old-failed",
           commandId: "cmd-test",
@@ -3085,7 +3352,12 @@ describe("valorTaskBridge", () => {
       nextCommandId: "cmd-safe-edit-checkout-copy",
       status: "approval-required",
     });
-    expect(decision.blockingReceiptIds).toEqual([]);
+    expect(decision.blockingReceiptIds).toContain(
+      "build-command-receipt-safe-edit-policy",
+    );
+    expect(decision.blockingReceiptIds).not.toContain(
+      "receipt-cmd-test-old-failed",
+    );
     expect(decision.reasonCodes).not.toContain("blocked-receipt:cmd-test");
   });
 
@@ -3183,7 +3455,8 @@ describe("valorTaskBridge", () => {
             : permission,
       ),
       commandReceipts: [
-        safeEditSuccessReceipt,
+        ...digitalProductProBuildModePayload.commandReceipts,
+        ...completedDependencyReceipts,
         {
           id: "receipt-future-browser-approval",
           commandId: "cmd-browser-verify",
@@ -4716,6 +4989,7 @@ describe("valorTaskBridge", () => {
           status: "succeeded",
         },
       ],
+      scheduler: "valkyrai-cron",
       status: "paused",
     });
     expect(

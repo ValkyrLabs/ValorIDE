@@ -51,7 +51,8 @@ describe("valkyrai host overrides connection URLs", () => {
     );
 
     expect(derivedWs).toBeDefined();
-    expect(getWebsocketUrl()).toBe(derivedWs);
+    expect(derivedWs).toBe("wss://example.test/v1");
+    expect(getWebsocketUrl()).toBe("wss://example.test/v1/chat");
     expect(getWebsocketUrl()).not.toBe(originalWsUrl);
   });
 });

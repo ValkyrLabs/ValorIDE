@@ -39,6 +39,7 @@ import {
 import type { BuildModeCommandPolicyEvaluation } from "./BuildModeCommandPolicy";
 import {
   evaluateBuildModeCommandPolicy,
+  isGeneratedThorApiArtifactPath,
   redactCommandSecrets,
 } from "./BuildModeCommandPolicy";
 import {
@@ -58,10 +59,21 @@ import {
   executeBuildModeFileWriteCommand,
   parseBuildModeFileWriteCommand,
 } from "./BuildModeFileWriteCommand";
-import { executeBuildModeTerminalCommand } from "./BuildModeTerminalCommand";
+import {
+  evaluateBuildModeNativeTerminalCommand,
+  executeBuildModeTerminalCommand,
+} from "./BuildModeTerminalCommand";
 import { createBuildModeArtifactContentHash } from "./BuildModeArtifactStore";
 import { PathAccess } from "../access/PathAccess";
 import fs from "fs";
+
+const SUPPORTED_SENSITIVE_WORKFLOW_ACTION_CLASSES = new Set([
+  "billing-mutation",
+  "email-send",
+  "public-mcp-publication",
+  "production-deploy",
+  "destructive-operation",
+]);
 
 export interface BuildModeCommandRequest {
   approval?: BuildModeCommandApproval;
@@ -734,6 +746,7 @@ export const queueBuildModeCommand = async (
         editResult,
         "psr",
         "Build Mode precision edit runner",
+        guardedRequest,
       );
     }
     return toQueuedSafeEditOutput(
@@ -755,6 +768,7 @@ export const queueBuildModeCommand = async (
         editResult,
         "filesystem",
         "Build Mode file writer",
+        guardedRequest,
       );
     }
     const nativeWriteResult = await tryExecuteNativeFileWrite(guardedRequest);
@@ -766,6 +780,7 @@ export const queueBuildModeCommand = async (
         nativeWriteResult,
         "filesystem",
         "Build Mode file writer",
+        guardedRequest,
       );
     }
     return toQueuedSafeEditOutput(
@@ -977,6 +992,13 @@ const tryExecuteNativeTerminalCommand = async (
   request: BuildModeCommandRequest,
 ): Promise<BuildModeTerminalExecutionResult | undefined> => {
   if (request.command.kind !== "test" && request.command.kind !== "build") {
+    return undefined;
+  }
+  const nativePolicy = evaluateBuildModeNativeTerminalCommand(
+    request.command.command,
+    request.command.kind,
+  );
+  if (!nativePolicy.allowed) {
     return undefined;
   }
   const workspaceRoot = getBuildModeWorkspaceRoot(request);
@@ -2221,51 +2243,58 @@ const toAutomationScheduleOutput = (
   taskId: string | undefined,
   label: string,
   result: BuildModeAutomationScheduleExecutionResult,
-) => ({
-  artifacts: [
-    {
-      ...createCommandArtifact(
-        commandId,
-        "workflow_receipt",
-        "Scheduled automation receipt",
-      ),
-      metadata: {
-        nextRunAt: result.nextRunAt,
-        schedule: result.schedule,
-        scheduleId: result.scheduleId,
-        scheduler: result.scheduler,
-        schedulerSource: "valkyrai-cron-workflow-launcher",
-        storageUri: result.storageUri,
-        summary: `${result.scheduleId} registered ${result.workflowRef} with the ValkyrAI cron workflow launcher on ${result.schedule}${result.nextRunAt ? `; next run ${result.nextRunAt}` : ""}.`,
-        workflowCommandId: result.workflowCommandId,
-        workflowRef: result.workflowRef,
+) => {
+  if (result.scheduler !== "valkyrai-cron") {
+    throw new Error(
+      "Build Mode automation scheduling must return ValkyrAI cron workflow launcher proof.",
+    );
+  }
+  return {
+    artifacts: [
+      {
+        ...createCommandArtifact(
+          commandId,
+          "workflow_receipt",
+          "Scheduled automation receipt",
+        ),
+        metadata: {
+          nextRunAt: result.nextRunAt,
+          schedule: result.schedule,
+          scheduleId: result.scheduleId,
+          scheduler: result.scheduler,
+          schedulerSource: "valkyrai-cron-workflow-launcher",
+          storageUri: result.storageUri,
+          summary: `${result.scheduleId} registered ${result.workflowRef} with the ValkyrAI cron workflow launcher on ${result.schedule}${result.nextRunAt ? `; next run ${result.nextRunAt}` : ""}.`,
+          workflowCommandId: result.workflowCommandId,
+          workflowRef: result.workflowRef,
+        },
+        uri:
+          result.storageUri ??
+          `valoride://build-mode/commands/${encodeURIComponent(commandId)}/workflow_receipt/${encodeURIComponent(
+            result.scheduleId,
+          )}`,
       },
-      uri:
-        result.storageUri ??
-        `valoride://build-mode/commands/${encodeURIComponent(commandId)}/workflow_receipt/${encodeURIComponent(
-          result.scheduleId,
-        )}`,
+    ],
+    output: {
+      buildModeStatus: "succeeded" as BuildModeCommandStatus,
+      nextRunAt: result.nextRunAt,
+      queued: false,
+      schedule: result.schedule,
+      scheduleId: result.scheduleId,
+      scheduler: result.scheduler,
+      schedulerSource: "valkyrai-cron-workflow-launcher",
+      taskId,
+      workflowCommandId: result.workflowCommandId,
+      workflowRef: result.workflowRef,
     },
-  ],
-  output: {
-    buildModeStatus: "succeeded" as BuildModeCommandStatus,
-    nextRunAt: result.nextRunAt,
-    queued: false,
-    schedule: result.schedule,
-    scheduleId: result.scheduleId,
-    scheduler: result.scheduler,
-    schedulerSource: "valkyrai-cron-workflow-launcher",
-    taskId,
-    workflowCommandId: result.workflowCommandId,
-    workflowRef: result.workflowRef,
-  },
-  stdout: `${label} registered ${result.workflowRef} with the ValkyrAI cron workflow launcher on ${result.schedule}${result.nextRunAt ? `; next run ${result.nextRunAt}` : ""}.`,
-  tool: {
-    capabilityId: "automation.schedule",
-    kind: "automation",
-    label: "ValkyrAI cron workflow launcher",
-  },
-});
+    stdout: `${label} registered ${result.workflowRef} with the ValkyrAI cron workflow launcher on ${result.schedule}${result.nextRunAt ? `; next run ${result.nextRunAt}` : ""}.`,
+    tool: {
+      capabilityId: "automation.schedule",
+      kind: "automation",
+      label: "ValkyrAI cron workflow launcher",
+    },
+  };
+};
 
 const toMcpExecutionOutput = (
   commandId: string,
@@ -2284,13 +2313,27 @@ const toMcpExecutionOutput = (
   const sensitiveActionClassList = result.sensitiveActionClasses
     ?.map(redactCommandSecrets)
     .map((item) => item.trim())
+    .map((item) => item.toLowerCase())
     .filter(Boolean);
   const sensitiveActionClasses = sensitiveActionClassList?.join(",");
+  const unsupportedSensitiveActionClasses = sensitiveActionClassList?.filter(
+    (item) => !SUPPORTED_SENSITIVE_WORKFLOW_ACTION_CLASSES.has(item),
+  );
+  const hasMcpResultProof =
+    Boolean(result.status) ||
+    Boolean(result.executionId) ||
+    Boolean(result.traceId) ||
+    Boolean(resourceUris?.length);
+  const hasUnsupportedSensitiveActionClass =
+    commandKind === "workflow" &&
+    Boolean(unsupportedSensitiveActionClasses?.length);
   const missingSensitiveWorkflowApproval =
     commandKind === "workflow" &&
     Boolean(sensitiveActionClassList?.length) &&
     !hasOwnerApproval(request?.approval);
   const requiresReceipt = commandKind === "workflow";
+  const missingMcpResultProof =
+    commandKind === "mcp" && !result.isError && !hasMcpResultProof;
   const missingWorkflowReceipt =
     requiresReceipt && !result.isError && !result.receiptRef;
   const missingWorkflowIdentity =
@@ -2300,7 +2343,11 @@ const toMcpExecutionOutput = (
     (!result.workflowRef || (!result.executionId && !result.traceId));
   const buildModeStatus: BuildModeCommandStatus = result.isError
     ? "failed"
-    : missingWorkflowReceipt
+    : missingMcpResultProof
+      ? "failed"
+      : hasUnsupportedSensitiveActionClass
+        ? "failed"
+      : missingWorkflowReceipt
       ? "failed"
       : missingWorkflowIdentity
         ? "failed"
@@ -2316,7 +2363,11 @@ const toMcpExecutionOutput = (
   const failed = buildModeStatus === "failed";
   const proofSummary = missingWorkflowReceipt
     ? "Missing workflow execution receipt."
-    : missingWorkflowIdentity
+    : missingMcpResultProof
+      ? "Missing MCP result proof."
+      : hasUnsupportedSensitiveActionClass
+        ? `Unsupported sensitive workflow action class ${unsupportedSensitiveActionClasses?.join(", ")}.`
+      : missingWorkflowIdentity
       ? "Missing workflow execution identity."
       : missingSensitiveWorkflowApproval
         ? `Sensitive workflow ${sensitiveActionClasses} requires owner approval proof.`
@@ -2698,16 +2749,23 @@ const toSafeEditOutput = (
   result: BuildModeSafeEditExecutionResult,
   kind: "filesystem" | "psr",
   toolLabel: string,
+  request?: BuildModeCommandRequest,
 ) => {
+  const resultPathIssues = request
+    ? validateSafeEditResultFilePath(result.filePath, request)
+    : [];
   const buildModeStatus: BuildModeCommandStatus =
-    result.editsApplied > 0 ? "succeeded" : "failed";
+    result.editsApplied > 0 && !resultPathIssues.length
+      ? "succeeded"
+      : "failed";
   const skippedSummary = result.skipped?.length
     ? ` Skipped: ${result.skipped
         .map((item) => `${item.index}:${item.reason}`)
         .join(", ")}.`
     : "";
-  const warningSummary = result.warnings?.length
-    ? ` Warnings: ${result.warnings.join(", ")}.`
+  const warnings = [...(result.warnings ?? []), ...resultPathIssues];
+  const warningSummary = warnings.length
+    ? ` Warnings: ${warnings.join(", ")}.`
     : "";
 
   return {
@@ -2724,6 +2782,9 @@ const toSafeEditOutput = (
           editsRequested: result.editsRequested,
           filePath: result.filePath,
           postHash: result.postHash,
+          pathPolicyIssues: resultPathIssues.length
+            ? resultPathIssues.join("; ")
+            : undefined,
           summary: `${result.editsApplied}/${result.editsRequested} edits applied to ${result.filePath}.`,
         },
         uri:
@@ -2748,6 +2809,62 @@ const toSafeEditOutput = (
     },
   };
 };
+
+const validateSafeEditResultFilePath = (
+  filePath: string,
+  request: BuildModeCommandRequest,
+): string[] => {
+  const normalizedFilePath = normalizeBuildModeArtifactPath(filePath);
+  const issues: string[] = [];
+  if (isGeneratedThorApiArtifactPath(normalizedFilePath)) {
+    issues.push(
+      `Safe edit result targets generated ThorAPI artifact ${normalizedFilePath}; update OpenAPI/VAIX inputs and regenerate instead`,
+    );
+  }
+  const protectedPaths = [
+    ...(request.protectedPaths ?? []),
+    ...(request.command.protectedPaths ?? []),
+  ]
+    .map(normalizeBuildModeArtifactPath)
+    .filter(Boolean);
+  for (const protectedPath of protectedPaths) {
+    if (pathMatchesBuildModeArtifactPath(normalizedFilePath, protectedPath)) {
+      issues.push(`Safe edit result targets protected path ${protectedPath}`);
+    }
+  }
+  const workspaceRoot = getBuildModeWorkspaceRoot(request);
+  if (workspaceRoot) {
+    const access = new PathAccess({
+      additionalDenyPaths: protectedPaths,
+      denyGlobs: request.scope?.ignoredPathPatterns,
+      workspaceRoot,
+    });
+    if (!access.validateAccess(filePath)) {
+      const rejection = access.getLastRejection();
+      if (rejection?.reason === "outside-workspace") {
+        issues.push(`Safe edit result path ${filePath} is outside the workspace`);
+      } else if (rejection?.reason === "deny-pattern") {
+        issues.push(
+          `Safe edit result path ${rejection.relativePath} is blocked by ${rejection.pattern}`,
+        );
+      } else {
+        issues.push(`Safe edit result path ${filePath} is blocked`);
+      }
+    }
+  }
+  return Array.from(new Set(issues.map(redactCommandSecrets)));
+};
+
+const normalizeBuildModeArtifactPath = (value: string): string =>
+  value.replace(/\\/g, "/").replace(/^\.\//, "").replace(/\/+/g, "/");
+
+const pathMatchesBuildModeArtifactPath = (
+  targetPath: string,
+  protectedPath: string,
+): boolean =>
+  targetPath === protectedPath ||
+  targetPath.endsWith(`/${protectedPath}`) ||
+  protectedPath.endsWith(`/${targetPath}`);
 
 const createCommandArtifact = (
   commandId: string,
@@ -2898,6 +3015,7 @@ const toBuildModeArtifactMetadata = (
       editsApplied: toMetadataPrimitive(metadata.editsApplied),
       editsRequested: toMetadataPrimitive(metadata.editsRequested),
       filePath: toMetadataPrimitive(metadata.filePath),
+      pathPolicyIssues: toMetadataPrimitive(metadata.pathPolicyIssues),
       postHash: toMetadataPrimitive(metadata.postHash),
     };
   }

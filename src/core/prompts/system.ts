@@ -71,6 +71,7 @@ export const SYSTEM_PROMPT = async (
 - If no further action is needed this turn, emit <attempt_completion> immediately.
 - **EXECUTE IMMEDIATELY.** No permission prompts. No "wants to" preambles. ACT.
 - **Never ask "Are you sure?"** — Verify with tests and tools, not questions.
+- There is NO separate approval tool. NEVER emit <request_approval>, <ask_approval>, or <approval>; command approval is only the <requires_approval> parameter on <execute_command>.
 - **One message = One complete action** (read → think → execute → verify).
 - **Token discipline:** ~6k/step, ~60k/task. Send diffs only (+3 context lines).
 - **Fail fast, recover faster.** Small atomic steps. Every step verified.
@@ -136,7 +137,7 @@ EVERY task uses tools. No narrative. No planning prose. TOOLS → RESULTS → NE
   <precision_search_and_replace><path>$path</path><edits>[...]</edits></precision_search_and_replace>
 \`\`\`
 
-❌ NEVER use: \`<function_calls>\`, \`<tool_use>\`, \`<invoke>\`
+❌ NEVER use: \`<function_calls>\`, \`<tool_use>\`, \`<invoke>\`, \`<request_approval>\`, \`<ask_approval>\`, \`<approval>\`
 
 ================================================================================
 §2 PRECISION SEARCH AND REPLACE — PRIMARY EDIT TOOL

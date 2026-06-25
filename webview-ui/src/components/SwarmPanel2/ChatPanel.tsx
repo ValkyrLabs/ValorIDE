@@ -15,11 +15,36 @@ import {
   Typography,
   message as antdMessage,
 } from "antd";
+import {
+  getSwarmDiscoveryHeaders,
+  requestSwarmJson,
+} from "../../api/hooks/useDiscoveryQuery";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
 
 const { Text } = Typography;
 const { TextArea } = Input;
 
-const SWARM_API_BASE = "http://localhost:8080/v1/swarm";
+const normalizeApiHost = () => {
+  try {
+    const parsed = new URL(getValkyraiHost());
+    const pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`.replace(
+      /\/+$/,
+      "",
+    );
+  } catch {
+    return "http://localhost:8080/v1";
+  }
+};
+
+const getSwarmApiBase = () => `${normalizeApiHost()}/swarm`;
+
+const getJsonHeaders = () => {
+  const headers = getSwarmDiscoveryHeaders();
+  headers.set("Content-Type", "application/json");
+  return headers;
+};
 
 type ChatMessage = {
   id: string;
@@ -34,18 +59,22 @@ type ChatMessage = {
 const fetchChatHistory = async (
   agentId: string,
   conversationId: string,
+  organizationId: string,
 ): Promise<ChatMessage[]> => {
   try {
     const url = new URL(
-      `${SWARM_API_BASE}/agent/${encodeURIComponent(agentId)}/chat/history`,
+      `${getSwarmApiBase()}/agent/${encodeURIComponent(agentId)}/chat/history`,
     );
     url.searchParams.set("conversationId", conversationId);
-    const response = await fetch(url.toString());
+    url.searchParams.set("organizationId", organizationId);
+    const response = await requestSwarmJson<
+      { content?: ChatMessage[] } | ChatMessage[]
+    >(url.toString(), { headers: getSwarmDiscoveryHeaders() });
     if (!response.ok) {
       throw new Error(`History fetch failed (${response.status})`);
     }
 
-    const payload = await response.json();
+    const payload = response.data;
     if (Array.isArray(payload)) {
       return payload;
     }
@@ -64,19 +93,17 @@ const sendChatMessage = async (
   conversationId: string,
   message: string,
   senderId: string,
+  organizationId: string,
 ): Promise<ChatMessage | null> => {
   try {
-    const response = await fetch(
-      `${SWARM_API_BASE}/agent/${encodeURIComponent(agentId)}/chat`,
+    const response = await requestSwarmJson<ChatMessage>(
+      `${getSwarmApiBase()}/agent/${encodeURIComponent(agentId)}/chat`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getJsonHeaders(),
         body: JSON.stringify({
           conversationId,
-          organizationId:
-            (window as any).__valkyr_organizationId || "org-default",
+          organizationId,
           senderId,
           message,
           senderType: "USER",
@@ -85,11 +112,14 @@ const sendChatMessage = async (
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorText =
+        typeof response.data === "string"
+          ? response.data
+          : JSON.stringify(response.data ?? {});
       throw new Error(errorText || `HTTP ${response.status}`);
     }
 
-    return (await response.json()) as ChatMessage;
+    return response.data;
   } catch (error) {
     console.warn("Failed to send chat message", error);
     antdMessage.error("Failed to send message. Please try again.");
@@ -106,6 +136,7 @@ interface ChatPanelProps {
 
 const ChatPanel: React.FC<ChatPanelProps> = ({
   agentId,
+  organizationId,
   userId,
   conversationId,
 }) => {
@@ -135,7 +166,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
-    fetchChatHistory(agentId, conversationId)
+    fetchChatHistory(agentId, conversationId, organizationId)
       .then((history) => {
         if (isMounted) {
           setMessages(history);
@@ -151,7 +182,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [agentId, conversationId, scrollToBottom]);
+  }, [agentId, conversationId, organizationId, scrollToBottom]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -183,6 +214,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
       conversationId,
       trimmed,
       userId,
+      organizationId,
     );
     if (response) {
       setMessages((prev) =>

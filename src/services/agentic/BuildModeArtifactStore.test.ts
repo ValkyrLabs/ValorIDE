@@ -110,6 +110,21 @@ describe("BuildModeArtifactStore", () => {
     expect(
       resolveBuildModeArtifactUri(
         tempDir,
+        `${artifact.uri}?token=<redacted-secret>`,
+      ),
+    ).toBeUndefined();
+    expect(
+      resolveBuildModeArtifactUri(tempDir, `${artifact.uri}#fragment`),
+    ).toBeUndefined();
+    expect(
+      resolveBuildModeArtifactUri(
+        tempDir,
+        "valoride://artifact-user:artifact-password@build-mode/artifacts/task-alpha/cmd-test/attempt-1-command_stdout.txt",
+      ),
+    ).toBeUndefined();
+    expect(
+      resolveBuildModeArtifactUri(
+        tempDir,
         "valoride://build-mode/commands/cmd-test/command_stdout",
       ),
     ).toBeUndefined();

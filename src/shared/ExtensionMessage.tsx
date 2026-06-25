@@ -240,6 +240,8 @@ export interface ExtensionMessage {
     status?: number;
     statusText?: string;
     data?: unknown;
+    headers?: Record<string, string>;
+    bodyBase64?: string;
     error?: string;
   };
 }
@@ -444,13 +446,13 @@ export interface ValorIDEAskUseMcpServer {
 
 export interface ValorIDEPlanModeResponse {
   response: string;
-  options?: string[];
+  options?: unknown[];
   selected?: string;
 }
 
 export interface ValorIDEAskQuestion {
   question: string;
-  options?: string[];
+  options?: unknown[];
   selected?: string;
 }
 
@@ -473,6 +475,8 @@ export interface ValorIDEApiReqInfo {
   cacheWrites?: number;
   cacheReads?: number;
   cost?: number;
+  isComplete?: boolean;
+  usagePending?: boolean;
   cancelReason?: ValorIDEApiReqCancelReason;
   streamingFailedMessage?: string;
 }

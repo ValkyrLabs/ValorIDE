@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  chooseBestBalance,
   getAccountBalancePath,
   isInsufficientFunds,
   mergeAccountBalance,
@@ -54,6 +55,25 @@ describe("normalizeAccountBalance", () => {
         customerId: "acct-123",
         currentBalance: 72,
         payments: [],
+        paymentTransactions: [],
+        usageTransactions: [],
+      }),
+    );
+  });
+
+  it("preserves paymentTransactions for generated consumers", () => {
+    expect(
+      normalizeAccountBalance({
+        customerId: "acct-123",
+        paymentTransactions: [{ credits: 12, amountCents: 1200 }],
+        usageTransactions: [],
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        customerId: "acct-123",
+        currentBalance: 12,
+        payments: [{ credits: 12, amountCents: 1200 }],
+        paymentTransactions: [{ credits: 12, amountCents: 1200 }],
         usageTransactions: [],
       }),
     );
@@ -71,6 +91,23 @@ describe("normalizeAccountBalance", () => {
         currentBalance: 34,
       }),
     );
+  });
+});
+
+describe("chooseBestBalance", () => {
+  it("prefers richer ledger data over a zero-row summary with the same balance", () => {
+    const summary = normalizeAccountBalance({
+      customerId: "acct-123",
+      currentBalance: 72,
+    });
+    const detailed = normalizeAccountBalance({
+      customerId: "acct-123",
+      currentBalance: 72,
+      paymentTransactions: [{ credits: 100 }],
+      usageTransactions: [{ credits: 28 }],
+    });
+
+    expect(chooseBestBalance([summary, detailed])).toEqual(detailed);
   });
 });
 

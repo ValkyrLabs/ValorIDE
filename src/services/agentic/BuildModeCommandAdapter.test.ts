@@ -2002,20 +2002,20 @@ describe("BuildModeCommandAdapter", () => {
       path.join(os.tmpdir(), "valor-build-mode-terminal-"),
     );
     try {
+      await fsp.writeFile(
+        path.join(workspaceRoot, "package.json"),
+        JSON.stringify({
+          scripts: {
+            test: "node -e \"process.stdout.write('unit tests passed')\"",
+          },
+        }),
+      );
+
       const executed = await queueBuildModeCommand(
         {
-          approval: {
-            approved: true,
-            approverPrincipalId: "principal-valhalla-operator",
-            approverRoles: ["Owner", "BuildOperator"],
-            threshold: "operator",
-            reason: "Approved test command with shell redirection.",
-            createdAt: "2026-06-21T21:59:00.000Z",
-          },
           command: {
             ...baseCommand,
-            command:
-              "printf passed > test-proof.txt && printf 'unit tests passed'",
+            command: "npm test",
           },
           scope: {
             ...baseScope,
@@ -2026,9 +2026,6 @@ describe("BuildModeCommandAdapter", () => {
         fixedNow,
       );
 
-      await expect(
-        fsp.readFile(path.join(workspaceRoot, "test-proof.txt"), "utf8"),
-      ).resolves.toBe("passed");
       expect(executed.agenticResult).toMatchObject({
         commandId: "cmd-test",
         output: {
@@ -2040,7 +2037,7 @@ describe("BuildModeCommandAdapter", () => {
           exitCode: 0,
         },
         status: "success",
-        stdout: "unit tests passed",
+        stdout: expect.stringContaining("unit tests passed"),
       });
       expect(executed.receipt).toMatchObject({
         capabilityId: "terminal.execute",
@@ -2062,6 +2059,59 @@ describe("BuildModeCommandAdapter", () => {
           }),
         }),
       );
+    } finally {
+      await fsp.rm(workspaceRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("does not execute approved shell control commands through the native terminal fallback", async () => {
+    const workspaceRoot = await fsp.mkdtemp(
+      path.join(os.tmpdir(), "valor-build-mode-terminal-"),
+    );
+    try {
+      const executed = await queueBuildModeCommand(
+        {
+          approval: {
+            approved: true,
+            approverPrincipalId: "principal-valhalla-operator",
+            approverRoles: ["Owner", "BuildOperator"],
+            threshold: "operator",
+            reason: "Approved external terminal handoff.",
+            createdAt: "2026-06-21T21:59:00.000Z",
+          },
+          command: {
+            ...baseCommand,
+            command:
+              "printf passed > test-proof.txt && printf 'unit tests passed'",
+          },
+          scope: {
+            ...baseScope,
+            workspaceRoot,
+          },
+          taskId: "task-1",
+        },
+        fixedNow,
+      );
+
+      await expect(
+        fsp.access(path.join(workspaceRoot, "test-proof.txt")),
+      ).rejects.toThrow();
+      expect(executed.agenticResult).toMatchObject({
+        commandId: "cmd-test",
+        output: {
+          buildModeStatus: "queued",
+          queued: true,
+        },
+        status: "queued",
+        stdout: "Unit tests queued for ValorIDE operator approval/execution.",
+      });
+      expect(executed.receipt).toMatchObject({
+        capabilityId: "terminal.execute",
+        commandId: "cmd-test",
+        executionMode: "operator-handoff",
+        nextOperatorAction: "monitor",
+        status: "queued",
+      });
     } finally {
       await fsp.rm(workspaceRoot, { recursive: true, force: true });
     }
@@ -3006,6 +3056,42 @@ describe("BuildModeCommandAdapter", () => {
     expect(JSON.stringify(queued)).not.toContain("browser-secret-token");
   });
 
+  it("rejects credentialed preview URLs even when the command URL is safe", async () => {
+    const browserHook = jest.fn();
+    const queued = await queueBuildModeCommand(
+      {
+        browserPreviewUrl:
+          "http://browser-user:browser-password@localhost:5173/apps/digital-product-pro",
+        command: {
+          ...baseCommand,
+          id: "cmd-browser-credentialed-preview-url",
+          kind: "verify",
+          label: "Browser verification",
+          capabilityId: "browser.automation",
+          command: "open http://localhost:5173/apps/digital-product-pro",
+          requiresApproval: false,
+        },
+        executionHooks: {
+          executeBrowserVerification: browserHook,
+        },
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+
+    expect(queued.receipt).toMatchObject({
+      commandId: "cmd-browser-credentialed-preview-url",
+      policyDecision: "reject",
+      policyReasons: expect.arrayContaining([
+        "Browser verification URL contains inline secret material.",
+      ]),
+      status: "rejected",
+    });
+    expect(browserHook).not.toHaveBeenCalled();
+    expect(JSON.stringify(queued)).not.toContain("browser-user");
+    expect(JSON.stringify(queued)).not.toContain("browser-password");
+  });
+
   it("executes approved browser verification through the injected browser hook", async () => {
     const executed = await queueBuildModeCommand(
       {
@@ -3120,7 +3206,7 @@ describe("BuildModeCommandAdapter", () => {
             consoleLogUri:
               "valoride://build-mode/browser/console?token=browser-console-token",
             currentUrl:
-              "http://localhost:5173/apps/digital-product-pro?token=browser-current-token",
+              "http://browser-user:browser-password@localhost:5173/apps/digital-product-pro?token=browser-current-token",
             screenshotByteSize: 2048,
             screenshotContentHash:
               "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -3137,14 +3223,17 @@ describe("BuildModeCommandAdapter", () => {
     const serialized = JSON.stringify(executed.receipt);
 
     expect(serialized).toContain("token=<redacted>");
+    expect(serialized).toContain("http://<redacted-secret>@localhost");
     expect(serialized).not.toContain("browser-current-token");
     expect(serialized).not.toContain("browser-console-token");
     expect(serialized).not.toContain("browser-screenshot-token");
+    expect(serialized).not.toContain("browser-user");
+    expect(serialized).not.toContain("browser-password");
     expect(executed.receipt).toMatchObject({
       commandId: "cmd-browser-hook-secret-url",
       status: "succeeded",
       summary: expect.stringContaining(
-        "http://localhost:5173/apps/digital-product-pro?token=<redacted>",
+        "http://<redacted-secret>@localhost:5173/apps/digital-product-pro?token=<redacted>",
       ),
     });
     expect(executed.receipt.artifacts).toEqual(
@@ -3443,8 +3532,66 @@ describe("BuildModeCommandAdapter", () => {
       nextOperatorAction: "inspect",
       status: "failed",
       summary:
-      "Apply checkout copy edit applied 0/1 edits to apps/shop/src/Checkout.tsx. Skipped: 0:context_no_match. Policy: Command declares approval required. Safe edit commands require approval.",
+        "Apply checkout copy edit applied 0/1 edits to apps/shop/src/Checkout.tsx. Skipped: 0:context_no_match. Policy: Command declares approval required. Safe edit commands require approval.",
     });
+  });
+
+  it("fails injected safe edit results that claim generated ThorAPI paths", async () => {
+    const executed = await queueBuildModeCommand(
+      {
+        approval: {
+          approved: true,
+          approverPrincipalId: "principal-valhalla-operator",
+          approverRoles: ["Owner", "BuildOperator"],
+          threshold: "operator",
+          reason: "Approved safe edit.",
+          createdAt: "2026-06-21T21:59:00.000Z",
+        },
+        command: {
+          ...baseCommand,
+          id: "cmd-safe-edit-generated-result",
+          kind: "edit",
+          label: "Apply checkout copy edit",
+          command: 'psr:apps/shop/src/Checkout.tsx replace:"old" with:"new"',
+          capabilityId: "psr.edit",
+          requiresApproval: true,
+          targetPaths: ["apps/shop/src/Checkout.tsx"],
+        },
+        executionHooks: {
+          executeSafeEdit: async () => ({
+            bytesDelta: 4,
+            editsApplied: 1,
+            editsRequested: 1,
+            filePath: "apps/shop/thorapi/redux/ProductService.tsx",
+            postHash: "post-hash",
+          }),
+        },
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+
+    expect(executed.receipt).toMatchObject({
+      commandId: "cmd-safe-edit-generated-result",
+      creditUsageReceipt: {
+        actualCredits: 0,
+        commandStatus: "failed",
+      },
+      nextOperatorAction: "inspect",
+      status: "failed",
+    });
+    expect(executed.receipt.summary).toContain(
+      "Safe edit result targets generated ThorAPI artifact apps/shop/thorapi/redux/ProductService.tsx",
+    );
+    expect(executed.receipt.artifacts).toContainEqual(
+      expect.objectContaining({
+        kind: "file_write",
+        metadata: expect.objectContaining({
+          pathPolicyIssues:
+            "Safe edit result targets generated ThorAPI artifact apps/shop/thorapi/redux/ProductService.tsx; update OpenAPI/VAIX inputs and regenerate instead",
+        }),
+      }),
+    );
   });
 
   it("executes approved filesystem writes through the guarded edit lane", async () => {
@@ -4315,12 +4462,12 @@ describe("BuildModeCommandAdapter", () => {
         {
           kind: "mcp_result",
           title: "MCP artifact token=artifact-secret-value",
-          uri: "https://example.test/artifact?token=artifact-secret-token",
+          uri: "https://artifact-user:artifact-password@example.test/artifact?token=artifact-secret-token",
           metadata: {
             executionId: "exec-1",
             receiptRef: "receipt-1",
             resourceUri:
-              "https://example.test/resource?access_token=resource-secret-token",
+              "https://resource-user:resource-password@example.test/resource?access_token=resource-secret-token",
             status: "READY",
             summary: "MCP result included ghp_secretvalue1234567890",
             traceId: "ghp_tracevalue1234567890",
@@ -4331,7 +4478,8 @@ describe("BuildModeCommandAdapter", () => {
       elapsedMs: 42,
       output: {},
       status: "success",
-      stdout: "MCP completed with api_key=stdout-secret-value.",
+      stdout:
+        "MCP completed with api_key=stdout-secret-value. Artifact mirror: https://stdout-user:stdout-password@example.test/output",
       tool: {
         capabilityId: "mcp.tool",
         kind: "mcp",
@@ -4345,10 +4493,16 @@ describe("BuildModeCommandAdapter", () => {
     expect(serialized).toContain("<redacted");
     expect(serialized).not.toContain("artifact-secret-value");
     expect(serialized).not.toContain("artifact-secret-token");
+    expect(serialized).not.toContain("artifact-user");
+    expect(serialized).not.toContain("artifact-password");
     expect(serialized).not.toContain("resource-secret-token");
+    expect(serialized).not.toContain("resource-user");
+    expect(serialized).not.toContain("resource-password");
     expect(serialized).not.toContain("ghp_secretvalue1234567890");
     expect(serialized).not.toContain("ghp_tracevalue1234567890");
     expect(serialized).not.toContain("stdout-secret-value");
+    expect(serialized).not.toContain("stdout-user");
+    expect(serialized).not.toContain("stdout-password");
   });
 
   it("keeps MCP credential refs but still requires approval before tool execution", async () => {
@@ -4377,6 +4531,55 @@ describe("BuildModeCommandAdapter", () => {
       ]),
       status: "approval-required",
     });
+  });
+
+  it("fails MCP hook results that do not include concrete result proof", async () => {
+    const executed = await queueBuildModeCommand(
+      {
+        approval: {
+          approved: true,
+          approverPrincipalId: "principal-valhalla-operator",
+          approverRoles: ["Owner", "BuildOperator"],
+          threshold: "owner",
+          reason: "Approved MCP lookup.",
+          createdAt: "2026-06-21T21:59:00.000Z",
+        },
+        command: {
+          ...baseCommand,
+          id: "cmd-mcp-no-proof",
+          kind: "mcp",
+          label: "Lookup GrayMatter context",
+          command: "mcp:graymatter.lookup args:{\"query\":\"app\"}",
+          capabilityId: "mcp.tool",
+          requiresApproval: true,
+        },
+        executionHooks: {
+          executeMcpTool: async () => ({
+            contentText: "Lookup completed but no trace was returned.",
+            serverName: "graymatter",
+            toolName: "lookup",
+          }),
+        },
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+
+    expect(executed.agenticResult).toMatchObject({
+      status: "failed",
+    });
+    expect(executed.receipt).toMatchObject({
+      capabilityId: "mcp.tool",
+      commandId: "cmd-mcp-no-proof",
+      status: "failed",
+      summary: expect.stringContaining("Missing MCP result proof."),
+    });
+    expect(executed.receipt.artifacts).toContainEqual(
+      expect.objectContaining({
+        kind: "mcp_result",
+        summary: expect.stringContaining("Missing MCP result proof."),
+      }),
+    );
   });
 
   it("rejects target paths blocked by .valorideignore", async () => {
@@ -4969,6 +5172,73 @@ describe("BuildModeCommandAdapter", () => {
           receiptRef: "workflow_execution:wf-run-002",
           sensitiveActionClasses: "email-send",
           workflowRef: "workflow:customer-notification",
+        }),
+      }),
+    );
+  });
+
+  it("fails workflow hook results with unsupported sensitive action classes", async () => {
+    const executed = await queueBuildModeCommand(
+      {
+        approval: {
+          approved: true,
+          approverPrincipalId: "principal-valhalla-operator",
+          approverRoles: ["Owner", "BuildOperator"],
+          threshold: "owner",
+          reason: "Approved workflow execution.",
+          createdAt: "2026-06-21T21:59:00.000Z",
+        },
+        command: {
+          ...baseCommand,
+          id: "cmd-workflow-unsupported-sensitive-action",
+          kind: "workflow",
+          label: "Run credential export workflow",
+          command:
+            "mcp:private-valkyr-workflows.credential.export workflow:workflow:credential-export",
+          capabilityId: "workflow.execute",
+          requiresApproval: true,
+        },
+        executionHooks: {
+          executeMcpTool: async () => ({
+            contentText: "Credential export workflow accepted run wf-run-003.",
+            executionId: "wf-run-003",
+            executionState: "SUCCESS",
+            receiptRef: "workflow_execution:wf-run-003",
+            sensitiveActionClasses: ["Credential-Export"],
+            serverName: "private-valkyr-workflows",
+            status: "READY",
+            toolName: "credential.export",
+            traceId: "workflow-wf-run-003",
+            workflowRef: "workflow:credential-export",
+          }),
+        },
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+
+    expect(executed.receipt).toMatchObject({
+      commandId: "cmd-workflow-unsupported-sensitive-action",
+      creditUsageReceipt: {
+        actualCredits: 0,
+        commandStatus: "failed",
+        hostedInfrastructureCredits: 0,
+        providerCredits: 0,
+      },
+      executionMode: "agentic-command-bus",
+      nextOperatorAction: "inspect",
+      status: "failed",
+      summary: expect.stringContaining(
+        "Unsupported sensitive workflow action class credential-export.",
+      ),
+    });
+    expect(executed.receipt.artifacts).toContainEqual(
+      expect.objectContaining({
+        kind: "workflow_receipt",
+        metadata: expect.objectContaining({
+          receiptRef: "workflow_execution:wf-run-003",
+          sensitiveActionClasses: "credential-export",
+          workflowRef: "workflow:credential-export",
         }),
       }),
     );
@@ -5623,6 +5893,64 @@ describe("BuildModeCommandAdapter", () => {
         capabilityId: "workflow.execute",
       }),
     ]);
+  });
+
+  it("fails approved scheduled automations when the hook does not prove ValkyrAI cron ownership", async () => {
+    const executed = await queueBuildModeCommand(
+      {
+        approval: {
+          approved: true,
+          approverPrincipalId: "principal-valhalla-operator",
+          approverRoles: ["Owner", "BuildOperator"],
+          threshold: "owner",
+          reason: "Approved recurring automation.",
+          createdAt: "2026-06-21T21:59:00.000Z",
+        },
+        command: {
+          ...baseCommand,
+          id: "cmd-automation",
+          kind: "automation",
+          label: "Schedule nightly smoke check",
+          command:
+            "schedule:0 7 * * * workflow:workflow:digital-product-fulfillment",
+          capabilityId: "automation.schedule",
+          requiresApproval: true,
+        },
+        executionHooks: {
+          executeAutomationSchedule: async () => ({
+            nextRunAt: "2026-06-22T07:00:00.000Z",
+            schedule: "0 7 * * *",
+            scheduleId: "automation-nightly-fulfillment-check",
+            storageUri:
+              "valoride://build-mode/automations/automation-nightly-fulfillment-check",
+            workflowRef: "workflow:digital-product-fulfillment",
+          }),
+        },
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+
+    expect(executed.agenticResult).toMatchObject({
+      error: {
+        code: "ERR_COMMAND_FAILED",
+        message:
+          "Build Mode automation scheduling must return ValkyrAI cron workflow launcher proof.",
+      },
+      status: "failed",
+    });
+    expect(executed.receipt).toMatchObject({
+      capabilityId: "automation.schedule",
+      commandId: "cmd-automation",
+      status: "failed",
+    });
+    expect(executed.receipt.artifacts ?? []).not.toContainEqual(
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          schedulerSource: "valkyrai-cron-workflow-launcher",
+        }),
+      }),
+    );
   });
 
   it("requires approval before checkpoint creation through the checkpoint capability", async () => {

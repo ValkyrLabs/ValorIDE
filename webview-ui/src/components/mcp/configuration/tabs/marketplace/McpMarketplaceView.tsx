@@ -13,19 +13,10 @@ import { McpMarketplaceItem } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
-import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
-import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi/redux/services/McpMarketplaceCatalogService";
-import { useGetMcpMarketplaceItemsQuery } from "@thorapi/redux/services/McpMarketplaceItemService";
-import {
-  convertThorMcpServersToShared,
-  convertThorMcpMarketplaceCatalogsToShared,
-  convertThorMcpMarketplaceItemsToShared,
-} from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
-  safeConvert,
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
@@ -43,101 +34,29 @@ const McpMarketplaceView = () => {
     mcpMarketplaceCatalogError,
     refetchMcpData,
   } = useExtensionState();
-  const {
-    data: mcpServers,
-    error: serversError,
-    isLoading: serversLoading,
-    refetch: refetchServers,
-  } = useGetMcpServersQuery();
-  const {
-    data: marketplaceCatalogs,
-    error: catalogError,
-    isLoading: catalogLoading,
-    refetch: refetchCatalog,
-  } = useGetMcpMarketplaceCatalogsQuery();
-  const {
-    data: marketplaceItems,
-    error: itemsError,
-    isLoading: itemsLoading,
-    refetch: refetchItems,
-  } = useGetMcpMarketplaceItemsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<
     "newest" | "stars" | "name" | "downloadCount"
   >("downloadCount");
 
-  // Convert ThorAPI data to shared format with error handling
-  const sharedMcpServers = React.useMemo(() => {
-    return safeConvert(
-      mcpServers,
-      convertThorMcpServersToShared,
-      [],
-      "McpMarketplaceView - MCP Servers",
-    );
-  }, [mcpServers]);
-
-  const sharedMarketplaceCatalog = React.useMemo(() => {
-    return safeConvert(
-      marketplaceCatalogs,
-      convertThorMcpMarketplaceCatalogsToShared,
-      { items: [] },
-      "McpMarketplaceView - Marketplace Catalog",
-    );
-  }, [marketplaceCatalogs]);
-
-  // Convert marketplace items directly
-  const sharedMarketplaceItems = React.useMemo(() => {
-    return safeConvert(
-      marketplaceItems,
-      convertThorMcpMarketplaceItemsToShared,
-      [],
-      "McpMarketplaceView - Marketplace Items",
-    );
-  }, [marketplaceItems]);
-
   const extensionMarketplaceItems = mcpMarketplaceCatalog?.items || [];
-  const hasGeneratedMarketplaceItems =
-    sharedMarketplaceItems.length > 0 ||
-    sharedMarketplaceCatalog.items.length > 0;
-
-  // Use direct marketplace items if available, otherwise fall back to catalog items
-  const items =
-    sharedMarketplaceItems.length > 0
-      ? sharedMarketplaceItems
-      : sharedMarketplaceCatalog.items.length > 0
-        ? sharedMarketplaceCatalog.items
-        : extensionMarketplaceItems;
-  const displayedMcpServers =
-    sharedMcpServers.length > 0 ? sharedMcpServers : extensionMcpServers;
+  const items = extensionMarketplaceItems;
+  const displayedMcpServers = extensionMcpServers;
 
   // Combined loading and error states
   const isLoading =
-    (serversLoading ||
-      catalogLoading ||
-      itemsLoading ||
-      mcpServersLoading ||
-      mcpMarketplaceCatalogLoading) &&
-    items.length === 0;
-  const error =
-    items.length === 0
-      ? mcpMarketplaceCatalogError ||
-        itemsError ||
-        catalogError ||
-        (!hasGeneratedMarketplaceItems ? serversError : undefined)
-      : undefined;
+    (mcpServersLoading || mcpMarketplaceCatalogLoading) && items.length === 0;
+  const error = items.length === 0 ? mcpMarketplaceCatalogError : undefined;
 
   const handleRefresh = React.useCallback(() => {
     try {
-      refetchServers();
-      refetchCatalog();
-      refetchItems();
       refetchMcpData();
       vscode.postMessage({ type: "fetchMcpMarketplace", bool: true });
     } catch (error) {
       console.error("Failed to refresh marketplace:", error);
     }
-  }, [refetchServers, refetchCatalog, refetchItems, refetchMcpData]);
+  }, [refetchMcpData]);
 
   const handleOpenHelp = React.useCallback(() => {
     vscode.postMessage({

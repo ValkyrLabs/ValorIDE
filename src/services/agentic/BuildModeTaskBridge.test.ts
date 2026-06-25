@@ -7569,6 +7569,93 @@ describe("BuildModeTaskBridge", () => {
     );
   });
 
+  it("rejects unsafe artifact uris that claim integrity proof", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        capabilities: [
+          {
+            enabled: true,
+            id: "tool.test",
+            kind: "terminal",
+            label: "Test runner",
+            requiresApproval: false,
+            risk: "low",
+          },
+        ],
+        commands: [
+          {
+            capabilityId: "tool.test",
+            command: "npm test",
+            id: "cmd-test",
+            kind: "test",
+            label: "Run tests",
+            requiresApproval: false,
+            status: "queued",
+          },
+        ],
+        commandReceipts: [
+          {
+            actor: "Test Runner",
+            artifacts: [
+              {
+                commandId: "cmd-test",
+                createdAt: "2026-06-22T12:00:00.000Z",
+                id: "artifact-nested-traversal-uri",
+                kind: "command_stdout",
+                metadata: {
+                  byteSize: 512,
+                  contentHash:
+                    "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                },
+                receiptId: "command-receipt-test",
+                title: "Nested traversal output",
+                uri: "valoride://build-mode/artifacts/task-alpha/cmd-test/%2E%2E%2Fsecret.txt",
+              },
+            ],
+            capabilityId: "tool.test",
+            commandId: "cmd-test",
+            createdAt: "2026-06-22T12:00:00.000Z",
+            id: "command-receipt-test",
+            kind: "command",
+            policyDecision: "allow",
+            status: "succeeded",
+            summary: "Tests passed.",
+            title: "Test receipt",
+          },
+        ],
+        evidenceArtifacts: [
+          {
+            commandId: "cmd-test",
+            createdAt: "2026-06-22T12:00:00.000Z",
+            id: "artifact-top-level-redacted-query-uri",
+            kind: "command_stdout",
+            metadata: {
+              byteSize: 512,
+              contentHash:
+                "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            },
+            receiptId: "command-receipt-test",
+            title: "Top-level redacted query output",
+            uri: "valoride://build-mode/artifacts/task-alpha/cmd-test/output-command_stdout.txt?token=<redacted-secret>",
+          },
+        ],
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        "Build Mode commandReceipt command-receipt-test artifact artifact-nested-traversal-uri uri must be a safe Build Mode artifact URI before it can be used as artifact proof.",
+        "Build Mode evidenceArtifact artifact-top-level-redacted-query-uri uri must be a safe Build Mode artifact URI before it can be used as artifact proof.",
+      ]),
+    );
+  });
+
   it("rejects evidence artifacts that cite a command receipt for a different command", () => {
     const result = coerceBuildModeTaskLaunchPayload(
       {
@@ -8118,6 +8205,75 @@ describe("BuildModeTaskBridge", () => {
             kind: "mcp_result",
             metadata: {
               serverName: "graymatter",
+            },
+            receiptId: "command-receipt-mcp-lookup",
+            title: "MCP result",
+            uri: "valoride://build-mode/artifacts/mcp-lookup",
+          },
+        ],
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        "Build Mode commandReceipt command-receipt-mcp-lookup succeeded mcp.tool requires mcp_result artifact metadata with serverName, toolName, and status, executionId, traceId, or resourceCount proof.",
+      ]),
+    );
+  });
+
+  it("rejects succeeded MCP tools when resourceCount proof is zero", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        capabilities: [
+          {
+            enabled: true,
+            id: "mcp.tool",
+            kind: "mcp",
+            label: "MCP tool",
+            requiresApproval: false,
+            risk: "medium",
+          },
+        ],
+        commands: [
+          {
+            capabilityId: "mcp.tool",
+            command: "mcp:graymatter.lookup args:{\"query\":\"app\"}",
+            id: "cmd-mcp-lookup",
+            kind: "mcp",
+            label: "Lookup context",
+            requiresApproval: false,
+            status: "succeeded",
+          },
+        ],
+        commandReceipts: [
+          {
+            approved: true,
+            capabilityId: "mcp.tool",
+            commandId: "cmd-mcp-lookup",
+            createdAt: "2026-06-22T12:05:00.000Z",
+            id: "command-receipt-mcp-lookup",
+            policyDecision: "allow",
+            requiresApproval: false,
+            status: "succeeded",
+            summary: "MCP lookup completed with empty resource proof.",
+          },
+        ],
+        evidenceArtifacts: [
+          {
+            commandId: "cmd-mcp-lookup",
+            createdAt: "2026-06-22T12:05:00.000Z",
+            id: "artifact-mcp-lookup",
+            kind: "mcp_result",
+            metadata: {
+              resourceCount: 0,
+              serverName: "graymatter",
+              toolName: "lookup",
             },
             receiptId: "command-receipt-mcp-lookup",
             title: "MCP result",
@@ -8885,6 +9041,87 @@ describe("BuildModeTaskBridge", () => {
     expect(result.issues).toEqual(
       expect.arrayContaining([
         "Build Mode commandReceipt command-receipt-workflow-customer-notification sensitive workflow email-send requires owner approval proof before succeeded status.",
+      ]),
+    );
+  });
+
+  it("rejects workflow receipts with unsupported sensitive action classes", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        capabilities: [
+          {
+            enabled: true,
+            id: "workflow.execute",
+            kind: "workflow",
+            label: "Run ValkyrAI workflows",
+            requiresApproval: true,
+            risk: "high",
+          },
+        ],
+        commands: [
+          {
+            capabilityId: "workflow.execute",
+            command:
+              "mcp:private-valkyr-workflows.credential.export workflow:workflow:credential-export",
+            id: "cmd-workflow-credential-export",
+            kind: "workflow",
+            label: "Run credential export workflow",
+            requiresApproval: true,
+            status: "succeeded",
+          },
+        ],
+        commandReceipts: [
+          {
+            approval: {
+              approved: true,
+              approverPrincipalId: "principal-valhalla-operator",
+              approverRoles: ["Owner", "BuildOperator"],
+              createdAt: "2026-06-22T12:00:00.000Z",
+              reason: "Approved workflow execution.",
+              threshold: "owner",
+            },
+            approved: true,
+            capabilityId: "workflow.execute",
+            commandId: "cmd-workflow-credential-export",
+            createdAt: "2026-06-22T12:00:00.000Z",
+            id: "command-receipt-workflow-credential-export",
+            policyDecision: "approval-required",
+            requiredApprovalThreshold: "owner",
+            requiresApproval: true,
+            status: "succeeded",
+            summary: "Credential export workflow execution completed.",
+          },
+        ],
+        evidenceArtifacts: [
+          {
+            commandId: "cmd-workflow-credential-export",
+            createdAt: "2026-06-22T12:00:00.000Z",
+            id: "artifact-workflow-credential-export",
+            kind: "workflow_receipt",
+            metadata: {
+              executionId: "wf-run-credential-export-001",
+              executionState: "SUCCESS",
+              receiptRef: "workflow_execution:wf-run-credential-export-001",
+              sensitiveActionClasses: "credential-export",
+              workflowRef: "workflow:credential-export",
+            },
+            receiptId: "command-receipt-workflow-credential-export",
+            title: "Credential export workflow receipt proof",
+            uri: "valoride://build-mode/artifacts/workflow-credential-export",
+          },
+        ],
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        "Build Mode commandReceipt command-receipt-workflow-credential-export workflow_receipt sensitiveActionClasses contains unsupported class credential-export.",
       ]),
     );
   });
@@ -10224,6 +10461,32 @@ describe("BuildModeTaskBridge", () => {
       "Build Mode task payload contains inline secret material at payload.grayMatterContextPack.summary.",
     ]);
     expect(JSON.stringify(result.issues)).not.toContain("launch-secret-token");
+  });
+
+  it("rejects credentialed browser preview launch URLs without echoing them", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        browserVerification: {
+          artifactIds: [],
+          consoleErrorCount: 0,
+          previewUrl:
+            "http://preview-user:preview-password@localhost:5173/apps/digital-product-pro",
+          status: "not-started",
+        },
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual([
+      "Build Mode task payload contains inline secret material at payload.browserVerification.previewUrl.",
+    ]);
+    expect(JSON.stringify(result.issues)).not.toContain("preview-user");
+    expect(JSON.stringify(result.issues)).not.toContain("preview-password");
   });
 
   it("rejects launch receipt and evidence secret material without echoing it", () => {

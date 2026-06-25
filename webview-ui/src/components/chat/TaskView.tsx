@@ -140,7 +140,11 @@ const TaskView: React.FC<TaskViewProps> = ({
     return modifiedMessages.filter((message) => {
       switch (message.ask) {
         case "completion_result":
-          if (message.text === "") {
+          if (
+            message.text === "" &&
+            !message.summaryMarkdown &&
+            !message.changesSummary
+          ) {
             return false;
           }
           break;

@@ -105,6 +105,10 @@ export const resolveBuildModeArtifactUri = (
   if (
     parsed.protocol !== "valoride:" ||
     parsed.hostname !== "build-mode" ||
+    parsed.username ||
+    parsed.password ||
+    parsed.search ||
+    parsed.hash ||
     !parsed.pathname.startsWith("/artifacts/")
   ) {
     return undefined;

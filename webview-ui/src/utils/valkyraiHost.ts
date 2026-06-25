@@ -92,12 +92,20 @@ export const deriveWsUrlFromHost = (host?: string): string | undefined => {
     return undefined;
   }
   if (/^wss?:\/\//i.test(trimmed)) {
-    return trimmed;
+    try {
+      const parsed = new URL(trimmed);
+      return trimTrailingSlashes(parsed.toString());
+    } catch {
+      return trimTrailingSlashes(trimmed);
+    }
   }
   try {
     const base = new URL(trimmed);
     const protocol = base.protocol === "https:" ? "wss:" : "ws:";
-    return `${protocol}//${base.host}`;
+    const pathname = base.pathname.replace(/\/+$/, "");
+    base.protocol = protocol;
+    base.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return trimTrailingSlashes(base.toString());
   } catch {
     return undefined;
   }

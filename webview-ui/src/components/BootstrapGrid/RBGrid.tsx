@@ -143,23 +143,7 @@ const RBGrid: React.FC<RBGridProps> = ({
       );
     }
 
-    return (
-      <td
-        onDoubleClick={() => onCellDoubleClick?.(rowId, columnKey, value)}
-        onFocus={() => onCellFocus?.(rowIndex, colIndex)}
-        onKeyDown={(e) =>
-          onCellKeyDownNav?.(e, rowIndex, colIndex, rowId, columnKey, value)
-        }
-        tabIndex={isActive ? 0 : -1}
-        style={{
-          cursor: "pointer",
-          backgroundColor: isActive ? "#e7f3ff" : undefined,
-          outline: isActive ? "2px solid #0066cc" : "none",
-        }}
-      >
-        {value == null ? "" : String(value).substring(0, 100)}
-      </td>
-    );
+    return <>{value == null ? "" : String(value).substring(0, 100)}</>;
   };
 
   return (

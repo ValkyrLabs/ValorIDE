@@ -190,6 +190,38 @@ describe("customBaseQuery", () => {
     expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
   });
 
+  it("adds stored auth headers to VS Code bridged requests", async () => {
+    vi.resetModules();
+    sessionStorage.setItem("jwtToken", "session-token");
+    const postMessage = vi.fn((message: any) => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "thorapiResponse",
+            thorapiResponse: {
+              requestId: message.thorapiRequest.requestId,
+              ok: true,
+              status: 200,
+              data: { ok: true },
+            },
+          },
+        }),
+      );
+    });
+    vi.stubGlobal("acquireVsCodeApi", () => ({
+      postMessage,
+      getState: vi.fn(),
+      setState: vi.fn((state) => state),
+    }));
+    const { default: bridgedBaseQuery } = await import("./customBaseQuery");
+
+    await bridgedBaseQuery("credits/me/balance", baseQueryApi, {});
+
+    const request = postMessage.mock.calls[0][0].thorapiRequest;
+    expect(request.headers.Authorization).toBe("Bearer session-token");
+    expect(request.headers.jwtSession).toBe("session-token");
+  });
+
   it("uses cookie transport for generated ThorAPI calls without bearer fallback", async () => {
     sessionStorage.setItem("jwtToken", "stale-token");
     localStorage.setItem("jwtToken", "stale-token");

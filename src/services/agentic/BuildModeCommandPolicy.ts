@@ -78,6 +78,9 @@ const SECRET_KEY_PATTERN =
 const QUOTED_SECRET_PROPERTY =
   /(["'])([^"']*(?:api[_-]?key|token|secret|password|private[_-]?key|access[_-]?key|access[_-]?token)[^"']*)\1(\s*:\s*)(["'])([^"']+)\4/gi;
 
+const SECRET_URL_USERINFO =
+  /\b((?:https?|wss?):\/\/)([^/?#\s@]+@)(?=[^/?#\s]+)/gi;
+
 const APPROVAL_MAX_AGE_MS = 15 * 60 * 1000;
 const APPROVAL_FUTURE_SKEW_MS = 60 * 1000;
 const REQUIRED_FINAL_REPORT_SECTIONS = [
@@ -328,6 +331,10 @@ export const redactCommandSecrets = (command: string): string => {
     .replace(
       /([?&](?:token|secret|password|api[_-]?key|private[_-]?key|access[_-]?key|access[_-]?token)=)([^&#\s]+)/gi,
       "$1<redacted>",
+    )
+    .replace(
+      SECRET_URL_USERINFO,
+      "$1<redacted-secret>@",
     );
 };
 
@@ -579,52 +586,56 @@ const evaluateBrowserVerificationPolicy = (
     return [];
   }
 
-  const browserUrl =
-    extractBrowserVerificationUrl(command.command) ?? options.browserPreviewUrl;
-  if (!browserUrl) {
+  const browserUrls = Array.from(
+    new Set(
+      [extractBrowserVerificationUrl(command.command), options.browserPreviewUrl]
+        .filter((url): url is string => Boolean(url?.trim())),
+    ),
+  );
+  if (!browserUrls.length) {
     return [];
   }
 
-  if (findSecretMaterialPaths(browserUrl, "browserUrl").length) {
-    return [
-      {
+  const decisions: Array<{ decision: BuildModePolicyDecision; reason: string }> =
+    [];
+
+  for (const browserUrl of browserUrls) {
+    if (findSecretMaterialPaths(browserUrl, "browserUrl").length) {
+      decisions.push({
         decision: "reject",
         reason: "Browser verification URL contains inline secret material.",
-      },
-    ];
-  }
+      });
+      continue;
+    }
 
-  let parsed: URL;
-  try {
-    parsed = new URL(browserUrl);
-  } catch {
-    return [
-      {
+    let parsed: URL;
+    try {
+      parsed = new URL(browserUrl);
+    } catch {
+      decisions.push({
         decision: "reject",
         reason: "Browser verification URL is invalid.",
-      },
-    ];
-  }
+      });
+      continue;
+    }
 
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    return [
-      {
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      decisions.push({
         decision: "reject",
         reason: `Browser verification URL protocol is not allowed: ${parsed.protocol}.`,
-      },
-    ];
+      });
+      continue;
+    }
+
+    if (!isLoopbackBrowserHost(parsed.hostname)) {
+      decisions.push({
+        decision: "approval-required",
+        reason: `External browser verification URL requires approval: ${parsed.hostname}.`,
+      });
+    }
   }
 
-  if (isLoopbackBrowserHost(parsed.hostname)) {
-    return [];
-  }
-
-  return [
-    {
-      decision: "approval-required",
-      reason: `External browser verification URL requires approval: ${parsed.hostname}.`,
-    },
-  ];
+  return decisions;
 };
 
 const evaluateFinalReportPublicationPolicy = (
@@ -1744,7 +1755,7 @@ const looksLikeGeneratedArtifactMutationCommand = (
   );
 };
 
-const isGeneratedThorApiArtifactPath = (value: string): boolean => {
+export const isGeneratedThorApiArtifactPath = (value: string): boolean => {
   const normalized = normalizePathForPolicy(value).toLowerCase();
   return (
     normalized.includes("/thorapi/") ||

@@ -59,13 +59,13 @@ export interface OpenRouterModelPickerProps {
 const kimiFeaturedId = kimiOpenRouterModelIds[0] || "moonshotai/kimi-k2";
 const featuredModels = [
   {
-    id: "anthropic/claude-sonnet-4.5",
-    description: "Leading model for agentic coding",
+    id: "anthropic/claude-sonnet-4.6",
+    description: "Current Claude Sonnet for agentic coding",
     label: "Best",
   },
   {
-    id: "openai/gpt-5.2",
-    description: "Latest ChatGPT 5.2 with strong coding and reasoning",
+    id: "openai/gpt-5.5",
+    description: "Current OpenAI flagship for coding and reasoning",
     label: "Flagship",
   },
   {
@@ -237,9 +237,12 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
 
   const showBudgetSlider = useMemo(() => {
     return (
-      selectedModelId?.toLowerCase().includes("claude-3-7-sonnet") ||
-      selectedModelId?.toLowerCase().includes("claude-3.7-sonnet") ||
-      selectedModelId?.toLowerCase().includes("claude-3.7-sonnet:thinking")
+      selectedModelId?.toLowerCase().includes("claude-sonnet-4.6") ||
+      selectedModelId?.toLowerCase().includes("claude-sonnet-4-6") ||
+      selectedModelId?.toLowerCase().includes("claude-haiku-4.5") ||
+      selectedModelId?.toLowerCase().includes("claude-haiku-4-5") ||
+      selectedModelId?.toLowerCase().includes("claude-opus-4.8") ||
+      selectedModelId?.toLowerCase().includes("claude-opus-4-8")
     );
   }, [selectedModelId]);
 
@@ -398,9 +401,9 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
             If you're unsure which model to choose, ValorIDE works best with{" "}
             <VSCodeLink
               style={{ display: "inline", fontSize: "inherit" }}
-              onClick={() => handleModelChange("anthropic/claude-3.7-sonnet")}
+              onClick={() => handleModelChange("anthropic/claude-sonnet-4.6")}
             >
-              anthropic/claude-3.7-sonnet.
+              anthropic/claude-sonnet-4.6.
             </VSCodeLink>
             You can also try searching "free" for no-cost options currently
             available.

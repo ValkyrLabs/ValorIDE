@@ -98,6 +98,18 @@ describe("BuildModeCommandPolicy secret material detection", () => {
     expect(redacted).toContain('"token":"secret-ref:tenant/workflow"');
     expect(redacted).not.toContain("raw-workflow-secret");
   });
+
+  it("redacts URL embedded credentials and flags them as secret material", () => {
+    const value =
+      "browser:verify url:http://preview-user:preview-password@localhost:5173/apps/digital-product-pro";
+
+    expect(redactCommandSecrets(value)).toBe(
+      "browser:verify url:http://<redacted-secret>@localhost:5173/apps/digital-product-pro",
+    );
+    expect(findSecretMaterialPaths({ previewUrl: value })).toEqual([
+      "payload.previewUrl",
+    ]);
+  });
 });
 
 describe("BuildModeCommandPolicy generated artifact protection", () => {

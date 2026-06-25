@@ -6,44 +6,30 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@thorapi/utils/vscode";
 import ServersToggleList from "./ServersToggleList";
-import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
-import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
-  safeConvert,
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { VscRefresh, VscServer } from "react-icons/vsc";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const InstalledServersView = () => {
   const {
-    data: mcpServers,
-    error,
-    isLoading,
-    refetch,
-  } = useGetMcpServersQuery();
+    mcpServers,
+    mcpServersError: error,
+    mcpServersLoading: isLoading,
+  } = useExtensionState();
 
   const handleRefresh = React.useCallback(() => {
     try {
-      refetch();
       vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
     } catch (error) {
       console.error("Failed to refresh MCP servers:", error);
     }
-  }, [refetch]);
-
-  // Convert ThorAPI MCP servers to shared format with error handling
-  const sharedMcpServers = React.useMemo(() => {
-    return safeConvert(
-      mcpServers,
-      convertThorMcpServersToShared,
-      [],
-      "InstalledServersView",
-    );
-  }, [mcpServers]);
+  }, []);
 
   return (
     <>
@@ -147,7 +133,7 @@ const InstalledServersView = () => {
           </div>
         ) : (
           <ServersToggleList
-            servers={sharedMcpServers}
+            servers={mcpServers}
             isExpandable={true}
             hasTrashIcon={false}
           />

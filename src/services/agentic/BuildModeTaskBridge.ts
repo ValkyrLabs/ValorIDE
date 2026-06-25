@@ -5540,7 +5540,7 @@ const validateMcpToolReceiptProof = (
       (Boolean(readNonEmptyString(metadata.status)) ||
         Boolean(readNonEmptyString(metadata.executionId)) ||
         Boolean(readNonEmptyString(metadata.traceId)) ||
-        readFiniteNumber(metadata.resourceCount) !== undefined)
+        (readFiniteNumber(metadata.resourceCount) ?? 0) > 0)
     );
   });
 
@@ -6556,6 +6556,12 @@ const validateEvidenceArtifactIntegrityMetadata = (
       continue;
     }
     const id = readNonEmptyString(artifact.id) ?? "unknown";
+    const uri = readNonEmptyString(artifact.uri);
+    if (uri && !isSafeBuildModeEvidenceArtifactUri(uri)) {
+      issues.push(
+        `Build Mode ${owner} ${id} uri must be a safe Build Mode artifact URI before it can be used as artifact proof.`,
+      );
+    }
     if (!contentHash || !/^sha256:[a-f0-9]{64}$/.test(contentHash)) {
       issues.push(
         `Build Mode ${owner} ${id} contentHash must be a sha256 hash before it can be used as artifact proof.`,
@@ -6566,6 +6572,46 @@ const validateEvidenceArtifactIntegrityMetadata = (
         `Build Mode ${owner} ${id} byteSize must be positive before it can be used as artifact proof.`,
       );
     }
+  }
+};
+
+const isSafeBuildModeEvidenceArtifactUri = (uri: string): boolean => {
+  if (/<redacted/i.test(uri)) {
+    return false;
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(uri);
+  } catch {
+    return true;
+  }
+  if (
+    parsed.protocol !== "valoride:" ||
+    parsed.hostname !== "build-mode" ||
+    !parsed.pathname.startsWith("/artifacts/")
+  ) {
+    return true;
+  }
+  if (parsed.username || parsed.password || parsed.search || parsed.hash) {
+    return false;
+  }
+  try {
+    return parsed.pathname
+      .split("/")
+      .filter(Boolean)
+      .slice(1)
+      .every((segment) => {
+        const decoded = decodeURIComponent(segment);
+        return (
+          decoded &&
+          decoded !== "." &&
+          decoded !== ".." &&
+          !decoded.includes("/") &&
+          !decoded.includes("\\")
+        );
+      });
+  } catch {
+    return false;
   }
 };
 

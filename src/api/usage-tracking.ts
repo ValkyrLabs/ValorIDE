@@ -80,48 +80,23 @@ export function getModelPricing(
     Record<string, { inputCost: number; outputCost: number }>
   > = {
     openai: {
-      "gpt-5.2": { inputCost: 0.00000175, outputCost: 0.000014 },
-      "gpt-5.2-chat-latest": { inputCost: 0.00000175, outputCost: 0.000014 },
-      "gpt-5.1": { inputCost: 0.00000125, outputCost: 0.00001 },
-      "gpt-5.1-chat-latest": { inputCost: 0.00000125, outputCost: 0.00001 },
-      "gpt-4o": { inputCost: 0.0000025, outputCost: 0.00001 },
-      "gpt-4o-mini": { inputCost: 0.00000015, outputCost: 0.0000006 },
-      "gpt-4-turbo": { inputCost: 0.00001, outputCost: 0.00003 },
-      "gpt-4": { inputCost: 0.00003, outputCost: 0.00006 },
-      "gpt-3.5-turbo": { inputCost: 0.0000005, outputCost: 0.0000015 },
-      "o1-preview": { inputCost: 0.000015, outputCost: 0.00006 },
-      "o1-mini": { inputCost: 0.000003, outputCost: 0.000012 },
+      "gpt-5.5": { inputCost: 0.000005, outputCost: 0.00003 },
+      "gpt-5.4": { inputCost: 0.0000025, outputCost: 0.000015 },
+      "gpt-5.4-mini": { inputCost: 0.00000075, outputCost: 0.0000045 },
+      "gpt-5.4-nano": { inputCost: 0.0000002, outputCost: 0.00000125 },
     },
     anthropic: {
-      "claude-sonnet-4-5-20250929": {
-        inputCost: 0.000003,
-        outputCost: 0.000015,
-      }, // Claude Sonnet 4.5
-      "claude-haiku-4-5-20251001": {
-        inputCost: 0.000001,
-        outputCost: 0.000005,
-      },
-      "claude-3-5-sonnet-20241022": {
-        inputCost: 0.000003,
-        outputCost: 0.000015,
-      },
-      "claude-opus-4-1-20250805": {
-        inputCost: 0.000015,
-        outputCost: 0.000075,
-      },
-      "claude-opus-4-5-20251101": {
+      "claude-opus-4-8": {
         inputCost: 0.000005,
         outputCost: 0.000025,
       },
-      "claude-3-5-haiku-20241022": {
+      "claude-sonnet-4-6": {
+        inputCost: 0.000003,
+        outputCost: 0.000015,
+      },
+      "claude-haiku-4-5-20251001": {
         inputCost: 0.000001,
         outputCost: 0.000005,
-      },
-      "claude-3-opus-20240229": { inputCost: 0.000015, outputCost: 0.000075 },
-      "claude-3-sonnet-20240229": { inputCost: 0.000003, outputCost: 0.000015 },
-      "claude-3-haiku-20240307": {
-        inputCost: 0.00000025,
-        outputCost: 0.00000125,
       },
     },
     gemini: {

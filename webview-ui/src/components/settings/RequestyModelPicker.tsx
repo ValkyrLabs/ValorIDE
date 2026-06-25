@@ -161,7 +161,11 @@ const RequestyModelPicker: React.FC<RequestyModelPickerProps> = ({
   }, [selectedIndex]);
 
   const showBudgetSlider = useMemo(() => {
-    return selectedModelId?.includes("claude-3-7-sonnet");
+    return (
+      selectedModelId?.includes("claude-sonnet-4-6") ||
+      selectedModelId?.includes("claude-haiku-4-5") ||
+      selectedModelId?.includes("claude-opus-4-8")
+    );
   }, [selectedModelId]);
 
   return (
@@ -274,11 +278,9 @@ const RequestyModelPicker: React.FC<RequestyModelPickerProps> = ({
             If you're unsure which model to choose, ValorIDE works best with{" "}
             <VSCodeLink
               style={{ display: "inline", fontSize: "inherit" }}
-              onClick={() =>
-                handleModelChange("anthropic/claude-3-7-sonnet-latest")
-              }
+              onClick={() => handleModelChange("anthropic/claude-sonnet-4-6")}
             >
-              anthropic/claude-3-7-sonnet-latest.
+              anthropic/claude-sonnet-4-6.
             </VSCodeLink>
           </>
         </p>

@@ -709,6 +709,43 @@ describe("BuildModeView", () => {
     );
   });
 
+  it("blocks malformed Build Mode artifact open requests", () => {
+    const onOpenArtifact = vi.fn();
+    render(
+      <BuildModeView
+        onOpenArtifact={onOpenArtifact}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          evidenceArtifacts: [
+            {
+              id: "artifact-terminal-traversal",
+              kind: "command_stdout",
+              title: "Traversal stdout",
+              uri: "valoride://build-mode/artifacts/task-alpha/cmd-test/%2E%2E%2Fsecret.txt",
+              commandId: "cmd-test",
+              receiptId: "receipt-test",
+              summary: "Stored terminal output.",
+              createdAt: "2026-06-21T21:20:00.000Z",
+            },
+            {
+              id: "artifact-terminal-redacted-query",
+              kind: "command_stdout",
+              title: "Redacted query stdout",
+              uri: "valoride://build-mode/artifacts/task-alpha/cmd-test/output-command_stdout.txt?token=<redacted-secret>",
+              commandId: "cmd-test",
+              receiptId: "receipt-test",
+              summary: "Stored terminal output.",
+              createdAt: "2026-06-21T21:20:00.000Z",
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Open Artifact" })).toBeNull();
+    expect(onOpenArtifact).not.toHaveBeenCalled();
+  });
+
   it("supports provider route and prompt profile selection", () => {
     render(<BuildModeView payload={digitalProductProBuildModePayload} />);
 
@@ -861,6 +898,30 @@ describe("BuildModeView", () => {
               return step;
             },
           ),
+          commands: digitalProductProBuildModePayload.commands.map((command) => {
+            if (command.id === "cmd-safe-edit-checkout-copy") {
+              return {
+                ...command,
+                receiptId: "receipt-safe-edit-checkout-copy",
+                status: "succeeded" as const,
+              };
+            }
+            if (command.id === "cmd-openapi-update-spec") {
+              return {
+                ...command,
+                receiptId: "receipt-openapi-update",
+                status: "succeeded" as const,
+              };
+            }
+            if (command.id === "cmd-vaix-generate-thorapi") {
+              return {
+                ...command,
+                receiptId: "receipt-vaix-generate",
+                status: "succeeded" as const,
+              };
+            }
+            return command;
+          }),
           commandReceipts: [
             ...digitalProductProBuildModePayload.commandReceipts,
             {
@@ -872,6 +933,26 @@ describe("BuildModeView", () => {
               requiresApproval: false,
               summary: "Safe edit applied.",
               createdAt: "2026-06-22T12:00:00.000Z",
+            },
+            {
+              id: "receipt-openapi-update",
+              commandId: "cmd-openapi-update-spec",
+              capabilityId: "psr.edit",
+              status: "succeeded",
+              approved: true,
+              requiresApproval: true,
+              summary: "OpenAPI spec update applied.",
+              createdAt: "2026-06-22T12:01:00.000Z",
+            },
+            {
+              id: "receipt-vaix-generate",
+              commandId: "cmd-vaix-generate-thorapi",
+              capabilityId: "terminal.execute",
+              status: "succeeded",
+              approved: true,
+              requiresApproval: true,
+              summary: "ThorAPI generated through VAIX.",
+              createdAt: "2026-06-22T12:02:00.000Z",
             },
           ],
           toolPermissions:
@@ -1301,6 +1382,28 @@ describe("BuildModeView", () => {
             ...digitalProductProBuildModePayload.browserVerification,
             previewUrl:
               "http://localhost:5173/apps/digital-product-pro?token=<redacted-secret>",
+          },
+        }}
+      />,
+    );
+
+    const openPreview = screen.getByRole("button", { name: "Open Preview" });
+    expect(openPreview).toBeDisabled();
+    fireEvent.click(openPreview);
+    expect(onOpenPreview).not.toHaveBeenCalled();
+  });
+
+  it("blocks browser preview URLs with embedded credentials", () => {
+    const onOpenPreview = vi.fn();
+    render(
+      <BuildModeView
+        onOpenPreview={onOpenPreview}
+        payload={{
+          ...digitalProductProBuildModePayload,
+          browserVerification: {
+            ...digitalProductProBuildModePayload.browserVerification,
+            previewUrl:
+              "http://preview-user:preview-password@localhost:5173/apps/digital-product-pro",
           },
         }}
       />,

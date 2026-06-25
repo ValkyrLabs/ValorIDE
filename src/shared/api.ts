@@ -141,25 +141,13 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 }
 
 // Anthropic
-// https://docs.anthropic.com/en/docs/about-valoride/models // prices updated 2025-01-02
+// https://platform.claude.com/docs/en/about-claude/models/overview
 export type AnthropicModelId = keyof typeof anthropicModels;
-export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-7x";
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-6";
 export const anthropicModels = {
-  "claude-sonnet-4-7x": {
-    maxTokens: 64_000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-    description:
-      "Claude Sonnet 4.7x - frontier Sonnet preset for agentic coding, long tool loops, and high-context repository work.",
-  },
-  "claude-opus-4-7x": {
+  "claude-opus-4-8": {
     maxTokens: 128_000,
-    contextWindow: 200_000,
+    contextWindow: 1_000_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 5.0,
@@ -167,157 +155,31 @@ export const anthropicModels = {
     cacheWritesPrice: 6.25,
     cacheReadsPrice: 0.5,
     description:
-      "Claude Opus 4.7x - highest-capability Claude preset for complex planning, architecture, and agent orchestration.",
+      "Claude Opus 4.8 - Anthropic's most capable Opus-tier model for complex reasoning and agentic coding.",
   },
   "claude-sonnet-4-6": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.6 - current balanced Claude model for speed, intelligence, coding, and agent workflows.",
+  },
+  "claude-haiku-4-5-20251001": {
     maxTokens: 64_000,
     contextWindow: 200_000,
     supportsImages: true,
     supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
+    inputPrice: 1.0,
+    outputPrice: 5.0,
+    cacheWritesPrice: 1.25,
+    cacheReadsPrice: 0.1,
     description:
-      "Claude Sonnet 4.6 - latest Sonnet generation with strong coding and agent performance.",
-  },
-  "claude-opus-4-6": {
-    maxTokens: 128_000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 5.0,
-    outputPrice: 25.0,
-    cacheWritesPrice: 6.25,
-    cacheReadsPrice: 0.5,
-    description:
-      "Claude Opus 4.6 - most capable Claude model for complex coding and agent workflows.",
-  },
-  "claude-sonnet-4-5-20250929": {
-    maxTokens: 8_192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-    description:
-      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
-  },
-  "claude-haiku-4-5-20251001": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: false,
-    supportsPromptCache: true,
-    inputPrice: 0.8,
-    outputPrice: 4.0,
-    cacheWritesPrice: 1.0,
-    cacheReadsPrice: 0.08,
-  },
-  "claude-sonnet-4-20250514": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-  },
-  "claude-opus-4-20250514": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 15.0,
-    outputPrice: 75.0,
-    cacheWritesPrice: 18.75,
-    cacheReadsPrice: 1.5,
-  },
-  "claude-opus-4-1-20250805": {
-    maxTokens: 8_192,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 15.0,
-    outputPrice: 75.0,
-    cacheWritesPrice: 18.75,
-    cacheReadsPrice: 1.5,
-  },
-  "claude-opus-4-5-20251101": {
-    maxTokens: 8_192,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 5.0,
-    outputPrice: 25.0,
-    cacheWritesPrice: 6.25,
-    cacheReadsPrice: 0.5,
-  },
-  "claude-3-7-sonnet-20250219": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-  },
-  "claude-3-5-sonnet-20241022": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0, // $3 per million input tokens
-    outputPrice: 15.0, // $15 per million output tokens
-    cacheWritesPrice: 3.75, // $3.75 per million tokens
-    cacheReadsPrice: 0.3, // $0.30 per million tokens
-  },
-  "claude-3-5-haiku-20241022": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: false,
-    supportsPromptCache: true,
-    inputPrice: 0.8,
-    outputPrice: 4.0,
-    cacheWritesPrice: 1.0,
-    cacheReadsPrice: 0.08,
-  },
-  "claude-3-opus-20240229": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 15.0,
-    outputPrice: 75.0,
-    cacheWritesPrice: 18.75,
-    cacheReadsPrice: 1.5,
-  },
-  "claude-3-haiku-20240307": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.25,
-    outputPrice: 1.25,
-    cacheWritesPrice: 0.3,
-    cacheReadsPrice: 0.03,
-  },
-  "claude-haiku-4-5-20251016": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: false,
-    supportsPromptCache: true,
-    inputPrice: 0.3,
-    outputPrice: 1.5,
-    cacheWritesPrice: 0.375,
-    cacheReadsPrice: 0.03,
+      "Claude Haiku 4.5 - current fastest Claude model with near-frontier intelligence for high-throughput subagent work.",
   },
 } as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
 
@@ -325,7 +187,7 @@ export const anthropicModels = {
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html
 export type BedrockModelId = keyof typeof bedrockModels;
 export const bedrockDefaultModelId: BedrockModelId =
-  "anthropic.claude-sonnet-4-5-20250929-v1:0";
+  "anthropic.claude-sonnet-4-6";
 export const bedrockModels = {
   "amazon.nova-pro-v1:0": {
     maxTokens: 5000,
@@ -354,80 +216,41 @@ export const bedrockModels = {
     inputPrice: 0.035,
     outputPrice: 0.14,
   },
-  "anthropic.claude-sonnet-4-5-20250929-v1:0": {
-    maxTokens: 64000, // maxOutput
-    contextWindow: 200_000, // maxInput
+  "anthropic.claude-opus-4-8": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
     supportsImages: true, // vision
     supportsPromptCache: true, // assume prompt cache is supported
-    inputPrice: 3.0, //  per million input tokens
-    outputPrice: 15.0, //  per million output tokens
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
     description:
-      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
+      "Claude Opus 4.8 - Anthropic's most capable Opus-tier model for complex reasoning and agentic coding.",
   },
-
-  "anthropic.claude-3-7-sonnet-20250219-v1:0": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
+  "anthropic.claude-sonnet-4-6": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
     supportsImages: true,
-
     supportsPromptCache: true,
     inputPrice: 3.0,
     outputPrice: 15.0,
     cacheWritesPrice: 3.75,
     cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.6 - current balanced Claude model for speed, intelligence, coding, and agent workflows.",
   },
-  "anthropic.claude-3-5-sonnet-20241022-v2:0": {
-    maxTokens: 8192,
+  "anthropic.claude-haiku-4-5-20251001-v1:0": {
+    maxTokens: 64_000,
     contextWindow: 200_000,
     supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-  },
-  "anthropic.claude-3-5-haiku-20241022-v1:0": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: false,
     supportsPromptCache: true,
     inputPrice: 1.0,
     outputPrice: 5.0,
-    cacheWritesPrice: 1.0,
-    cacheReadsPrice: 0.08,
-  },
-  "anthropic.claude-3-5-sonnet-20240620-v1:0": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-  },
-  "anthropic.claude-3-opus-20240229-v1:0": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 15.0,
-    outputPrice: 75.0,
-  },
-  "anthropic.claude-3-sonnet-20240229-v1:0": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-  },
-  "anthropic.claude-3-haiku-20240307-v1:0": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 0.25,
-    outputPrice: 1.25,
+    cacheWritesPrice: 1.25,
+    cacheReadsPrice: 0.1,
+    description:
+      "Claude Haiku 4.5 - current fastest Claude model with near-frontier intelligence for high-throughput subagent work.",
   },
   "deepseek.r1-v1:0": {
     maxTokens: 8_000,
@@ -441,10 +264,10 @@ export const bedrockModels = {
 
 // OpenRouter
 // https://openrouter.ai/models?order=newest&supported_parameters=tools
-export const openRouterDefaultModelId = "anthropic/claude-sonnet-4.5"; // will always exist in openRouterModels
+export const openRouterDefaultModelId = "anthropic/claude-sonnet-4.6"; // will always exist in openRouterModels
 export const openRouterDefaultModelInfo: ModelInfo = {
-  maxTokens: 8_192,
-  contextWindow: 200_000,
+  maxTokens: 128_000,
+  contextWindow: 1_000_000,
   supportsImages: true,
 
   supportsPromptCache: true,
@@ -453,7 +276,7 @@ export const openRouterDefaultModelInfo: ModelInfo = {
   cacheWritesPrice: 3.75,
   cacheReadsPrice: 0.3,
   description:
-    "Claude 4.5 Sonnet delivers stronger reasoning and coding with built-in prompt caching and tool use, making it a reliable default for OpenRouter users.\n\nRead more at the Claude 4.5 overview: https://docs.claude.com/en/docs/about-claude/models/overview",
+    "Claude Sonnet 4.6 is the current balanced Claude model for speed, intelligence, coding, and agent workflows.",
 };
 
 // Kimi (Moonshot) models available via OpenRouter and partner routers
@@ -596,78 +419,43 @@ export const minimaxDefaultModelId = "MiniMax-M2.7" satisfies MinimaxModelId;
 // https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-valoride
 // https://cloud.google.com/vertex-ai/generative-ai/pricing#partner-models
 export type VertexModelId = keyof typeof vertexModels;
-export const vertexDefaultModelId: VertexModelId = "claude-sonnet-4-5@20250929";
+export const vertexDefaultModelId: VertexModelId = "claude-sonnet-4-6";
 export const vertexModels = {
-  "claude-sonnet-4-5@20250929": {
-    maxTokens: 64000, // maxOutput
-    contextWindow: 200_000, // maxInput
+  "claude-opus-4-8": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
     supportsImages: true, // vision
     supportsPromptCache: true, // assume prompt cache is supported
-    inputPrice: 3.0, //  per million input tokens
-    outputPrice: 15.0, //  per million output tokens
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
     description:
-      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
+      "Claude Opus 4.8 - Anthropic's most capable Opus-tier model for complex reasoning and agentic coding.",
   },
-
-  "claude-3-7-sonnet@20250219": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-  },
-  "claude-3-5-sonnet-v2@20241022": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
-    supportsImages: true,
-
-    supportsPromptCache: true,
-    inputPrice: 3.0,
-    outputPrice: 15.0,
-    cacheWritesPrice: 3.75,
-    cacheReadsPrice: 0.3,
-  },
-  "claude-3-5-sonnet@20240620": {
-    maxTokens: 8192,
-    contextWindow: 200_000,
+  "claude-sonnet-4-6": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 3.0,
     outputPrice: 15.0,
     cacheWritesPrice: 3.75,
     cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.6 - current balanced Claude model for speed, intelligence, coding, and agent workflows.",
   },
-  "claude-3-5-haiku@20241022": {
-    maxTokens: 8192,
+  "claude-haiku-4-5@20251001": {
+    maxTokens: 64_000,
     contextWindow: 200_000,
-    supportsImages: false,
+    supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 1.0,
     outputPrice: 5.0,
     cacheWritesPrice: 1.25,
     cacheReadsPrice: 0.1,
-  },
-  "claude-3-opus@20240229": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 15.0,
-    outputPrice: 75.0,
-    cacheWritesPrice: 18.75,
-    cacheReadsPrice: 1.5,
-  },
-  "claude-3-haiku@20240307": {
-    maxTokens: 4096,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.25,
-    outputPrice: 1.25,
-    cacheWritesPrice: 0.3,
-    cacheReadsPrice: 0.03,
+    description:
+      "Claude Haiku 4.5 - current fastest Claude model with near-frontier intelligence for high-throughput subagent work.",
   },
   "gemini-2.0-flash-001": {
     maxTokens: 8192,
@@ -1052,13 +840,13 @@ export const ollamaModelPresets = {
 export type OllamaModelPresetId = keyof typeof ollamaModelPresets;
 
 // OpenAI Native
-// https://openai.com/api/pricing/
+// https://developers.openai.com/api/docs/models
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
 export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.5";
 export const openAiNativeModels = {
   "gpt-5.5": {
     maxTokens: 128_000,
-    contextWindow: 1_050_000,
+    contextWindow: 1_000_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 5.0,
@@ -1067,31 +855,9 @@ export const openAiNativeModels = {
     description:
       "GPT-5.5 frontier model preset for high-capability coding and agentic workflows.",
   },
-  "gpt-5.5-chat-latest": {
-    maxTokens: 128_000,
-    contextWindow: 1_050_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 5.0,
-    outputPrice: 30.0,
-    cacheReadsPrice: 0.5,
-    description:
-      "GPT-5.5 ChatGPT-style latest alias for interactive assistant workflows.",
-  },
-  "gpt-5.5-codex": {
-    maxTokens: 128_000,
-    contextWindow: 1_050_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 5.0,
-    outputPrice: 30.0,
-    cacheReadsPrice: 0.5,
-    description:
-      "GPT-5.5 Codex preset for long-horizon code editing and autonomous engineering tasks.",
-  },
   "gpt-5.4": {
     maxTokens: 128_000,
-    contextWindow: 1_050_000,
+    contextWindow: 1_000_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 2.5,
@@ -1099,17 +865,6 @@ export const openAiNativeModels = {
     cacheReadsPrice: 0.25,
     description:
       "GPT-5.4 frontier model for agentic, coding, and professional workflows.",
-  },
-  "gpt-5.4-codex": {
-    maxTokens: 128_000,
-    contextWindow: 1_050_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 2.5,
-    outputPrice: 15.0,
-    cacheReadsPrice: 0.25,
-    description:
-      "GPT-5.4 Codex preset for long-horizon code editing and autonomous engineering tasks.",
   },
   "gpt-5.4-mini": {
     maxTokens: 128_000,
@@ -1132,259 +887,6 @@ export const openAiNativeModels = {
     cacheReadsPrice: 0.02,
     description:
       "GPT-5.4 nano for fast, low-cost classification, extraction, ranking, and subagent tasks.",
-  },
-  "gpt-5.3-codex-spark": {
-    maxTokens: 8_192,
-    contextWindow: 128_000,
-    supportsImages: false,
-    supportsPromptCache: true,
-    inputPrice: 0,
-    outputPrice: 0,
-    cacheReadsPrice: 0,
-    description:
-      "GPT-5.3 Codex Spark fast text-only coding model (ChatGPT subscription/OAuth route in some providers).",
-  },
-  "gpt-5.2": {
-    maxTokens: 8_192,
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.75,
-    outputPrice: 14.0,
-    cacheReadsPrice: 0.175,
-  },
-  "gpt-5.2-chat-latest": {
-    maxTokens: 16_384,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.75,
-    outputPrice: 14.0,
-    cacheReadsPrice: 0.175,
-  },
-  "gpt-5.2-codex": {
-    maxTokens: 128_000,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.75,
-    outputPrice: 14.0,
-    cacheReadsPrice: 0.175,
-  },
-  "gpt-5.1-2025-11-13": {
-    maxTokens: 8_192,
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5.1": {
-    maxTokens: 8_192,
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5-codex": {
-    maxTokens: 8_192,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5.1-codex-max": {
-    maxTokens: 128000,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5.1-codex": {
-    maxTokens: 64000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5.1-codex-mini": {
-    maxTokens: 128_000,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.25,
-    outputPrice: 2.0,
-    cacheReadsPrice: 0.025,
-  },
-  "gpt-5.1-chat-latest": {
-    maxTokens: 8_192,
-    contextWindow: 400_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5-2025-08-07": {
-    maxTokens: 8_192, // 128000 breaks context window truncation
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.25,
-    outputPrice: 10.0,
-    cacheReadsPrice: 0.125,
-  },
-  "gpt-5-mini-2025-08-07": {
-    maxTokens: 8_192,
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.25,
-    outputPrice: 2.0,
-    cacheReadsPrice: 0.025,
-  },
-  "gpt-5-nano-2025-08-07": {
-    maxTokens: 8_192,
-    contextWindow: 272000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.05,
-    outputPrice: 0.4,
-    cacheReadsPrice: 0.005,
-  },
-  "nectarine-alpha-new-reasoning-effort-2025-07-25": {
-    maxTokens: 8_192,
-    contextWindow: 256000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0,
-    outputPrice: 0,
-    cacheReadsPrice: 0,
-  },
-  o3: {
-    maxTokens: 100_000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 2.0,
-    outputPrice: 8.0,
-    cacheReadsPrice: 0.5,
-  },
-  "o4-mini": {
-    maxTokens: 100_000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.1,
-    outputPrice: 4.4,
-    cacheReadsPrice: 0.275,
-  },
-  "gpt-4.1": {
-    maxTokens: 32_768,
-    contextWindow: 1_047_576,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 2,
-    outputPrice: 8,
-    cacheReadsPrice: 0.5,
-  },
-  "gpt-4.1-mini": {
-    maxTokens: 32_768,
-    contextWindow: 1_047_576,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.4,
-    outputPrice: 1.6,
-    cacheReadsPrice: 0.1,
-  },
-  "gpt-4.1-nano": {
-    maxTokens: 32_768,
-    contextWindow: 1_047_576,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.1,
-    outputPrice: 0.4,
-    cacheReadsPrice: 0.025,
-  },
-  "o3-mini": {
-    maxTokens: 100_000,
-    contextWindow: 200_000,
-    supportsImages: false,
-    supportsPromptCache: true,
-    inputPrice: 1.1,
-    outputPrice: 4.4,
-    cacheReadsPrice: 0.55,
-  },
-  // don't support tool use yet
-  o1: {
-    maxTokens: 100_000,
-    contextWindow: 200_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 15,
-    outputPrice: 60,
-    cacheReadsPrice: 7.5,
-  },
-  "o1-preview": {
-    maxTokens: 32_768,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 15,
-    outputPrice: 60,
-    cacheReadsPrice: 7.5,
-  },
-  "o1-mini": {
-    maxTokens: 65_536,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 1.1,
-    outputPrice: 4.4,
-    cacheReadsPrice: 0.55,
-  },
-  "gpt-4o": {
-    maxTokens: 4_096,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 2.5,
-    outputPrice: 10,
-    cacheReadsPrice: 1.25,
-  },
-  "gpt-4o-mini": {
-    maxTokens: 16_384,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 0.15,
-    outputPrice: 0.6,
-    cacheReadsPrice: 0.075,
-  },
-  "chatgpt-4o-latest": {
-    maxTokens: 16_384,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: false,
-    inputPrice: 5,
-    outputPrice: 15,
-  },
-  "gpt-4.5-preview": {
-    maxTokens: 16_384,
-    contextWindow: 128_000,
-    supportsImages: true,
-    supportsPromptCache: true,
-    inputPrice: 75,
-    outputPrice: 150,
   },
 } as const satisfies Record<string, ModelInfo>;
 
@@ -2278,10 +1780,10 @@ export const sambanovaModels = {
 
 // Requesty
 // https://requesty.ai/models
-export const requestyDefaultModelId = "anthropic/claude-3-7-sonnet-latest";
+export const requestyDefaultModelId = "anthropic/claude-sonnet-4-6";
 export const requestyDefaultModelInfo: ModelInfo = {
-  maxTokens: 8192,
-  contextWindow: 200_000,
+  maxTokens: 128_000,
+  contextWindow: 1_000_000,
   supportsImages: true,
 
   supportsPromptCache: true,
@@ -2290,5 +1792,5 @@ export const requestyDefaultModelInfo: ModelInfo = {
   cacheWritesPrice: 3.75,
   cacheReadsPrice: 0.3,
   description:
-    "Anthropic's most intelligent model. Highest level of intelligence and capability.",
+    "Claude Sonnet 4.6 is the current balanced Claude model for speed, intelligence, coding, and agent workflows.",
 };

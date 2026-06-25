@@ -20,6 +20,37 @@ interface ApplicationsListProps {
   title?: string;
 }
 
+const DEFAULT_VALKYRAI_WEB_BASE_URL = "https://valkyrlabs.com";
+
+const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
+
+const getValkyraiWebBaseUrl = () => {
+  const windowBase =
+    typeof window !== "undefined"
+      ? (window as any).__valorideValkyraiWebBaseUrl
+      : undefined;
+  const envBase = import.meta.env?.VITE_VALKYRAI_WEB_BASE_URL;
+  const rawBase =
+    (typeof windowBase === "string" && windowBase.trim()) ||
+    (typeof envBase === "string" && envBase.trim()) ||
+    DEFAULT_VALKYRAI_WEB_BASE_URL;
+  return trimTrailingSlashes(rawBase);
+};
+
+export const getApplicationOpenUrl = (application: Application): string => {
+  const entrypointUrl = String(application.entrypointUrl || "").trim();
+  if (entrypointUrl) {
+    return entrypointUrl;
+  }
+
+  const applicationId = String(application.id || "").trim();
+  if (!applicationId) {
+    return getValkyraiWebBaseUrl();
+  }
+
+  return `${getValkyraiWebBaseUrl()}/application-detail/${encodeURIComponent(applicationId)}`;
+};
+
 const ApplicationsList: React.FC<ApplicationsListProps> = ({
   showTitle = true,
   title = "Available Applications",
@@ -201,6 +232,23 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     </div>
   );
 
+  const formatApplicationsError = (value: unknown) => {
+    const candidate = value as
+      | { status?: unknown; error?: unknown; data?: unknown }
+      | undefined;
+    const status = candidate?.status;
+    const data = candidate?.data as any;
+    const message =
+      candidate?.error ||
+      (typeof data === "string" ? data : data?.message || data?.error);
+    return [
+      status ? `Status ${String(status)}` : "Request failed",
+      message ? String(message) : undefined,
+    ]
+      .filter(Boolean)
+      .join(": ");
+  };
+
   if (isLoading) {
     return (
       <div className="applications-list">
@@ -217,7 +265,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return (
       <div className="applications-list">
         {renderHeader()}
-        <div>No Applications Available</div>
+        <div
+          role="alert"
+          style={{
+            border: "1px solid var(--vscode-inputValidation-errorBorder)",
+            background: "var(--vscode-inputValidation-errorBackground)",
+            color: "var(--vscode-inputValidation-errorForeground)",
+            padding: "10px 12px",
+            borderRadius: 4,
+            marginBottom: 12,
+          }}
+        >
+          Failed to load applications. {formatApplicationsError(error)}
+        </div>
       </div>
     );
   }
@@ -232,18 +292,12 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   }
 
   const handleApplicationSelect = (application: Application) => {
-    if (application.id) {
-      // Use VSCode command to open external URL instead of window.open
-      // This avoids the sandboxed webview popup blocking issue
+    const openUrl = getApplicationOpenUrl(application);
+    if (openUrl) {
+      // Use VSCode command to open external URL instead of window.open.
       vscode.postMessage({
         type: "openInBrowser",
-        url: application.id,
-      });
-    } else if (application.entrypointUrl) {
-      // Fallback to entrypointUrl
-      vscode.postMessage({
-        type: "openInBrowser",
-        url: application.entrypointUrl,
+        url: openUrl,
       });
     } else {
       alert(`Selected application: ${application.name || "Unknown"}`);
@@ -671,9 +725,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     {app.id && (
                       <div className="application-buttons">
                         <VSCodeButtonLink
-                          href={
-                            "http://localhost:5173/application-detail/" + app.id
-                          }
+                          href={getApplicationOpenUrl(app)}
                           appearance="secondary"
                           className="w-full"
                         >
@@ -779,9 +831,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     {app.id && (
                       <div className="application-buttons">
                         <VSCodeButtonLink
-                          href={
-                            "http://localhost:5173/application-detail/" + app.id
-                          }
+                          href={getApplicationOpenUrl(app)}
                           appearance="secondary"
                           className="w-full"
                         >

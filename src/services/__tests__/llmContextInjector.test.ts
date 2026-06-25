@@ -120,6 +120,38 @@ describe("LLMContextInjector", () => {
     expect(typeof partialPrompt).toBe("string");
   });
 
+  it("does not replace the built-in prompt when a SYSTEM LLMDetails prompt is active", () => {
+    injector = new LLMContextInjector(mockLogger);
+    (injector as any).promptService = {
+      getSystemPrompt: () => "BUILT-IN VALORIDE PROMPT: use tools and completion reports.",
+    };
+    (injector as any).llmPromptService = {
+      getSelectedPrompt: () => ({
+        source: "thorapi",
+        llmDetailsId: "llm-details-1",
+        name: "GrayMatter Prompt",
+        prompt: "SERVER PROMPT: use GrayMatter business context.",
+        mode: "SYSTEM",
+        tags: ["graymatter"],
+        stackSpecific: true,
+      }),
+    };
+
+    const prompt = injector.generateSystemPrompt({
+      includeSystemPrompt: true,
+      includeThorAPICatalog: false,
+      includeSwarmRules: false,
+      includeMemoryBank: false,
+      includeLLMDetailsOverride: true,
+    });
+
+    expect(prompt).toContain("SERVER PROMPT");
+    expect(prompt).toContain("BUILT-IN VALORIDE PROMPT");
+    expect(prompt.indexOf("SERVER PROMPT")).toBeLessThan(
+      prompt.indexOf("BUILT-IN VALORIDE PROMPT"),
+    );
+  });
+
   it("should handle missing services gracefully", async () => {
     injector = new LLMContextInjector(mockLogger);
     await injector.initialize();

@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.886",
+  "version": "3.20.897",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -448,6 +448,11 @@
           "minimum": 250,
           "markdownDescription": "Timeout in milliseconds for GrayMatter context queries."
         },
+        "valoride.hooks.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Enable Cline-compatible ValorIDE lifecycle hooks from ~/.valoride/hooks, .valoride/hooks, and .clinerules/hooks. Hooks receive JSON on stdin and may return JSON or HOOK_CONTROL-prefixed JSON on stdout."
+        },
         "valoride.P2P.turnServers": {
           "type": "array",
           "markdownDescription": "List of ICE/TURN servers for P2P (RTCConfiguration. Each entry may be a string URL or an object with { urls, username, credential }).",
@@ -550,7 +555,7 @@
     "webview-errors": "node ./scripts/webview_error_server.js",
     "map-source": "node ./scripts/map_source.js",
     "capture-console": "node ./scripts/capture_console.js",
-    "build": "node esbuild.js",
+    "build": "npm run build:webview && node esbuild.js",
     "build:full": "npm run compile",
     "build:release": "npm run format:fix && npm install && tsc && npm run v",
     "build-staging": "build --mode staging",

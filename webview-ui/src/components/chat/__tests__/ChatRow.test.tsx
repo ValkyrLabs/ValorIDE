@@ -1,5 +1,5 @@
 import React from "react";
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import ChatRow, {
   ChatRowContent,
@@ -209,6 +209,55 @@ describe("ChatRow Content - completion_result summary handling", () => {
   });
 });
 
+describe("ChatRow Content - follow-up questions", () => {
+  it("renders Sage-style selectable option cards from question aliases", () => {
+    const sendMessageFromChatRow = vi.fn();
+    const message = {
+      type: "ask",
+      ask: "followup",
+      ts: Date.now(),
+      text: JSON.stringify({
+        message: "Choose how ValorIDE should continue.",
+        choices: [
+          {
+            command: "/new secure-intake",
+            label: "Generate Secure Intake",
+            description: "Create the app bundle and hand it to ValorIDE.",
+            value: "Generate Secure Intake",
+          },
+        ],
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+          sendMessageFromChatRow={sendMessageFromChatRow}
+        />
+      </ProviderAny>,
+    );
+
+    expect(
+      screen.getByText("Choose how ValorIDE should continue."),
+    ).toBeTruthy();
+    expect(screen.getByText("/new secure-intake")).toBeTruthy();
+    expect(screen.getByText("Generate Secure Intake")).toBeTruthy();
+
+    fireEvent.click(screen.getByText("Generate Secure Intake"));
+
+    expect(sendMessageFromChatRow).toHaveBeenCalledWith(
+      "Generate Secure Intake",
+      [],
+    );
+  });
+});
+
 describe("ChatRow Content - precision search & replace summary", () => {
   it("shows the PSR file and edit details when expanded", () => {
     const psrTool = {
@@ -283,7 +332,8 @@ describe("ChatRow Content - command header", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("ValorIDE executing command: ls -la")).toBeTruthy();
+    expect(screen.getByText("ValorIDE executing command:")).toBeTruthy();
+    expect(screen.getByText("ls -la")).toBeTruthy();
   });
 });
 

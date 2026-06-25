@@ -59,35 +59,12 @@ export const useMessageHandling = ({
         if (messages.length === 0) {
           await TaskServiceClient.newTask({ text, images });
         } else if (valorideAsk) {
-          switch (valorideAsk) {
-            case "followup":
-            case "plan_mode_respond":
-            case "tool":
-            case "browser_action_launch":
-            case "command":
-            case "command_output":
-            case "use_mcp_server":
-            case "completion_result":
-            case "resume_task":
-            case "resume_completed_task":
-            case "mistake_limit_reached":
-            case "new_task":
-              vscode.postMessage({
-                type: "askResponse",
-                askResponse: "messageResponse",
-                text,
-                images,
-              });
-              break;
-            case "condense":
-              vscode.postMessage({
-                type: "askResponse",
-                askResponse: "messageResponse",
-                text,
-                images,
-              });
-              break;
-          }
+          vscode.postMessage({
+            type: "askResponse",
+            askResponse: "messageResponse",
+            text,
+            images,
+          });
         } else {
           vscode.postMessage({
             type: "userMessage",

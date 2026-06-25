@@ -16,6 +16,7 @@ export interface WebviewMessage {
     | "addRemoteServer"
     | "apiConfiguration"
     | "webviewDidLaunch"
+    | "retrySwarmRegistration"
     | "requestTheme"
     | "newTask"
     | "condense"
@@ -212,6 +213,7 @@ export interface WebviewMessage {
     body?: unknown;
     params?: Record<string, unknown>;
     headers?: Record<string, string>;
+    responseType?: "json" | "arraybuffer";
   };
 }
 

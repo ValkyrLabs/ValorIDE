@@ -155,6 +155,7 @@ import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
 import { resolveCommandRequiresApproval } from "./tools/commandApproval";
+import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -168,9 +169,6 @@ const getSelectedRuntimePrompt = (): SelectedPrompt | null => {
     return null;
   }
 };
-
-const formatSelectedPromptAppendix = (selectedPrompt: SelectedPrompt) =>
-  `\n\n================================================================================\nSELECTED VALKYRAI PROMPT — ${selectedPrompt.name}\n================================================================================\n${selectedPrompt.prompt.trim()}`;
 
 type ToolResponse =
   | string
@@ -1560,10 +1558,18 @@ export class Task {
     if (lastApiReqStartedIndex !== -1) {
       const lastApiReqStarted =
         modifiedValorIDEMessages[lastApiReqStartedIndex];
-      const { cost, cancelReason }: ValorIDEApiReqInfo = JSON.parse(
-        lastApiReqStarted.text || "{}",
-      );
-      if (cost === undefined && cancelReason === undefined) {
+      const {
+        cost,
+        cancelReason,
+        isComplete,
+        usagePending,
+      }: ValorIDEApiReqInfo = JSON.parse(lastApiReqStarted.text || "{}");
+      if (
+        cost === undefined &&
+        cancelReason === undefined &&
+        isComplete !== true &&
+        usagePending !== true
+      ) {
         modifiedValorIDEMessages.splice(lastApiReqStartedIndex, 1);
       }
     }
@@ -2352,14 +2358,10 @@ export class Task {
         agentContextSection,
       );
       const selectedRuntimePrompt = getSelectedRuntimePrompt();
-      let systemPrompt =
-        selectedRuntimePrompt?.mode === "SYSTEM"
-          ? selectedRuntimePrompt.prompt.trim()
-          : fallbackSystemPrompt;
-
-      if (selectedRuntimePrompt?.mode === "APPEND") {
-        systemPrompt += formatSelectedPromptAppendix(selectedRuntimePrompt);
-      }
+      let systemPrompt = composeRuntimeSystemPrompt(
+        fallbackSystemPrompt,
+        selectedRuntimePrompt,
+      );
 
       const settingsCustomInstructions = this.customInstructions?.trim();
       const preferredLanguage = getLanguageKey(
@@ -4812,9 +4814,13 @@ export class Task {
                 resultTitleLine.toLowerCase() !== initialTitleLine.toLowerCase()
                   ? resultTitleLine
                   : initialTitleLine;
-              return candidate.length > 120
-                ? `${candidate.slice(0, 120)}...`
-                : candidate;
+              const sanitizedCandidate = candidate
+                .replace(/^#{1,6}\s+/, "")
+                .replace(/^[^A-Za-z0-9]+/, "")
+                .trim();
+              return sanitizedCandidate.length > 120
+                ? `${sanitizedCandidate.slice(0, 120)}...`
+                : sanitizedCandidate || "Task";
             })();
             const summaryCompletedAt = new Date().toISOString();
             const buildSummaryMarkdown = (
@@ -5338,6 +5344,15 @@ export class Task {
       let inputTokens = 0;
       let outputTokens = 0;
       let totalCost: number | undefined;
+      let apiReqComplete = false;
+      let usagePending = false;
+
+      const hasUsageDetails = () =>
+        inputTokens > 0 ||
+        outputTokens > 0 ||
+        cacheWriteTokens > 0 ||
+        cacheReadTokens > 0 ||
+        totalCost !== undefined;
 
       // update api_req_started. we can't use api_req_finished anymore since it's a unique case where it could come after a streaming message (ie in the middle of being updated or executed)
       // fortunately api_req_finished was always parsed out for the gui anyways, so it remains solely for legacy purposes to keep track of prices in tasks from history
@@ -5346,13 +5361,23 @@ export class Task {
         cancelReason?: ValorIDEApiReqCancelReason,
         streamingFailedMessage?: string,
       ) => {
-        this.valorideMessages[lastApiReqIndex].text = JSON.stringify({
-          ...JSON.parse(this.valorideMessages[lastApiReqIndex].text || "{}"),
-          tokensIn: inputTokens,
-          tokensOut: outputTokens,
-          cacheWrites: cacheWriteTokens,
-          cacheReads: cacheReadTokens,
-          cost:
+        const existingInfo = JSON.parse(
+          this.valorideMessages[lastApiReqIndex].text || "{}",
+        );
+        const nextInfo: ValorIDEApiReqInfo = {
+          ...existingInfo,
+          isComplete: apiReqComplete || undefined,
+          usagePending: usagePending && !hasUsageDetails() ? true : undefined,
+          cancelReason,
+          streamingFailedMessage,
+        };
+
+        if (hasUsageDetails()) {
+          nextInfo.tokensIn = inputTokens;
+          nextInfo.tokensOut = outputTokens;
+          nextInfo.cacheWrites = cacheWriteTokens;
+          nextInfo.cacheReads = cacheReadTokens;
+          nextInfo.cost =
             totalCost ??
             calculateApiCostAnthropic(
               this.api.getModel().info,
@@ -5360,10 +5385,62 @@ export class Task {
               outputTokens,
               cacheWriteTokens,
               cacheReadTokens,
-            ),
-          cancelReason,
-          streamingFailedMessage,
+            );
+        }
+
+        this.valorideMessages[lastApiReqIndex].text = JSON.stringify({
+          ...nextInfo,
         } satisfies ValorIDEApiReqInfo);
+      };
+
+      const applyUsageChunk = (chunk: ApiStreamChunk) => {
+        if (chunk.type !== "usage") {
+          return;
+        }
+        didReceiveUsageChunk = true;
+        inputTokens += chunk.inputTokens;
+        outputTokens += chunk.outputTokens;
+        cacheWriteTokens += chunk.cacheWriteTokens ?? 0;
+        cacheReadTokens += chunk.cacheReadTokens ?? 0;
+        totalCost = chunk.totalCost;
+        usagePending = false;
+
+        // Update status bar with token usage
+        getStatusBarService().update({
+          model: this.api.getModel().id,
+          inputTokens,
+          outputTokens,
+          cacheTokens: cacheWriteTokens + cacheReadTokens,
+          status: "streaming",
+        });
+      };
+
+      const trackUsageAndRefreshBalance = async (logContext: string) => {
+        if (!hasUsageDetails()) {
+          return;
+        }
+        try {
+          const { trackApiUsageWithPricing } = await import(
+            "../../api/usage-tracking"
+          );
+          await trackApiUsageWithPricing(
+            currentProviderId,
+            this.api.getModel().id,
+            inputTokens,
+            outputTokens,
+          );
+        } catch (err) {
+          console.error(
+            `Failed to track usage after stream ${logContext}:`,
+            err,
+          );
+        }
+        try {
+          const { WebviewProvider } = await import("../webview/index");
+          WebviewProvider.getVisibleInstance()
+            ?.getUsageTrackingService()
+            .requestBalance();
+        } catch {}
       };
 
       const abortStream = async (
@@ -5420,6 +5497,7 @@ export class Task {
       await this.resetStreamingState();
 
       const stream = this.attemptApiRequest(previousApiReqIndex); // yields only if the first chunk is successful, otherwise will allow the user to retry the request (most likely due to rate limit error, which gets thrown on the first chunk)
+      const streamIterator = stream[Symbol.asyncIterator]();
       let assistantMessage = "";
       let reasoningMessage = "";
       this.isStreaming = true;
@@ -5430,28 +5508,58 @@ export class Task {
         status: "streaming",
       });
       let didReceiveUsageChunk = false;
+      let didStartBackgroundUsageDrain = false;
+      const drainStreamUsageInBackground = () => {
+        if (didStartBackgroundUsageDrain) {
+          return;
+        }
+        didStartBackgroundUsageDrain = true;
+        void (async () => {
+          let didUpdateUsage = false;
+          try {
+            while (true) {
+              const next = await streamIterator.next();
+              if (next.done) {
+                break;
+              }
+              const chunk = next.value;
+              if (chunk?.type === "usage") {
+                applyUsageChunk(chunk);
+                didUpdateUsage = true;
+              }
+            }
+          } catch (err) {
+            console.warn(
+              "Failed to drain API stream usage in background:",
+              err,
+            );
+          } finally {
+            apiReqComplete = true;
+            usagePending = false;
+            if (didUpdateUsage || !hasUsageDetails()) {
+              updateApiReqMsg();
+              await this.saveValorIDEMessagesAndUpdateHistory();
+              await this.postStateToWebview();
+            }
+            if (didUpdateUsage) {
+              await trackUsageAndRefreshBalance("(background drain)");
+            }
+          }
+        })();
+      };
       try {
-        for await (const chunk of stream) {
+        while (true) {
+          const next = await streamIterator.next();
+          if (next.done) {
+            break;
+          }
+          const chunk = next.value;
           if (!chunk) {
             continue;
           }
           switch (chunk.type) {
             case "usage":
-              didReceiveUsageChunk = true;
-              inputTokens += chunk.inputTokens;
-              outputTokens += chunk.outputTokens;
-              cacheWriteTokens += chunk.cacheWriteTokens ?? 0;
-              cacheReadTokens += chunk.cacheReadTokens ?? 0;
-              totalCost = chunk.totalCost;
-
-              // Update status bar with token usage
-              getStatusBarService().update({
-                model: this.api.getModel().id,
-                inputTokens,
-                outputTokens,
-                cacheTokens: cacheWriteTokens + cacheReadTokens,
-                status: "streaming",
-              });
+              applyUsageChunk(chunk);
               break;
             case "reasoning":
               // reasoning will always come before assistant message
@@ -5485,12 +5593,16 @@ export class Task {
               // only need to gracefully abort if this instance isn't abandoned (sometimes openrouter stream hangs, in which case this would affect future instances of valoride)
               await abortStream("user_cancelled");
             }
+            await streamIterator.return?.(undefined);
             break; // aborts the stream
           }
 
           if (this.didRejectTool) {
             // userContent has a tool rejection, so interrupt the assistant's response to present the user's feedback
             assistantMessage += "\n\n[Response interrupted by user feedback]";
+            apiReqComplete = true;
+            usagePending = !hasUsageDetails();
+            drainStreamUsageInBackground();
             // this.userMessageContentReady = true // instead of setting this preemptively, we allow the present iterator to finish and set userMessageContentReady when its ready
             break;
           }
@@ -5500,6 +5612,9 @@ export class Task {
           if (this.didAlreadyUseTool) {
             assistantMessage +=
               "\n\n[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]";
+            apiReqComplete = true;
+            usagePending = !hasUsageDetails();
+            drainStreamUsageInBackground();
             break;
           }
         }
@@ -5523,42 +5638,18 @@ export class Task {
 
       // OpenRouter/ValorIDE may not return token usage as part of the stream (since it may abort early), so we fetch after the stream is finished
       // (updateApiReq below will update the api_req_started message with the usage details. we do this async so it updates the api_req_started message in the background)
-      if (!didReceiveUsageChunk) {
+      if (!didReceiveUsageChunk && !didStartBackgroundUsageDrain) {
         this.api.getApiStreamUsage?.().then(async (apiStreamUsage) => {
           if (apiStreamUsage) {
-            inputTokens += apiStreamUsage.inputTokens;
-            outputTokens += apiStreamUsage.outputTokens;
-            cacheWriteTokens += apiStreamUsage.cacheWriteTokens ?? 0;
-            cacheReadTokens += apiStreamUsage.cacheReadTokens ?? 0;
-            totalCost = apiStreamUsage.totalCost;
+            applyUsageChunk(apiStreamUsage);
           }
+          apiReqComplete = true;
+          usagePending = false;
           updateApiReqMsg();
           await this.saveValorIDEMessagesAndUpdateHistory();
           await this.postStateToWebview();
 
-          // Track usage and update balance on server via webview
-          try {
-            const { trackApiUsageWithPricing } = await import(
-              "../../api/usage-tracking"
-            );
-            await trackApiUsageWithPricing(
-              currentProviderId,
-              this.api.getModel().id,
-              inputTokens,
-              outputTokens,
-            );
-          } catch (err) {
-            console.error(
-              "Failed to track usage after stream (fetch path):",
-              err,
-            );
-          }
-          try {
-            const { WebviewProvider } = await import("../webview/index");
-            WebviewProvider.getVisibleInstance()
-              ?.getUsageTrackingService()
-              .requestBalance();
-          } catch {}
+          await trackUsageAndRefreshBalance("(fetch path)");
         });
       }
 
@@ -5568,6 +5659,8 @@ export class Task {
       }
 
       this.didCompleteReadingStream = true;
+      apiReqComplete = true;
+      usagePending = didStartBackgroundUsageDrain && !hasUsageDetails();
 
       // set any blocks to be complete to allow processAssistantBlocks to finish and set userMessageContentReady to true
       // (could be a text block that had no subsequent tool uses, or a text block at the very end, or an invalid tool use, etc. whatever the case, processAssistantBlocks relies on these blocks either to be completed or the user to reject a block in order to proceed and eventually set userMessageContentReady to true)
@@ -5586,26 +5679,7 @@ export class Task {
       await this.saveValorIDEMessagesAndUpdateHistory();
       await this.postStateToWebview();
 
-      // Track usage and update balance on server via webview
-      try {
-        const { trackApiUsageWithPricing } = await import(
-          "../../api/usage-tracking"
-        );
-        await trackApiUsageWithPricing(
-          currentProviderId,
-          this.api.getModel().id,
-          inputTokens,
-          outputTokens,
-        );
-      } catch (err) {
-        console.error("Failed to track usage after stream:", err);
-      }
-      try {
-        const { WebviewProvider } = await import("../webview/index");
-        WebviewProvider.getVisibleInstance()
-          ?.getUsageTrackingService()
-          .requestBalance();
-      } catch {}
+      await trackUsageAndRefreshBalance("");
 
       // now add to apiconversationhistory
       // need to save assistant responses to file before proceeding to tool use since user can exit at any moment and we wouldn't be able to save the assistant's response

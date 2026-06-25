@@ -362,7 +362,22 @@ const validateRequiredDependencyReceipts = (
       ];
     }
     const command = commandById.get(commandId);
-    if (command && isMutableDependencyCommand(command)) {
+    if (!command) {
+      return [
+        `Autonomous queue dependency command ${commandId} is missing from the command catalog.`,
+      ];
+    }
+    if (command.status !== "succeeded") {
+      return [
+        `Autonomous queue dependency command ${commandId} is not succeeded: ${command.status}.`,
+      ];
+    }
+    if (command.receiptId !== receipt.id) {
+      return [
+        `Autonomous queue dependency command ${commandId} receiptId ${command.receiptId ?? "missing"} does not match latest receipt ${receipt.id}.`,
+      ];
+    }
+    if (isMutableDependencyCommand(command)) {
       return validateMutableDependencyCheckpointProof(
         command,
         checkpoints,

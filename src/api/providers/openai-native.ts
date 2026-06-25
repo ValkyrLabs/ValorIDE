@@ -10,10 +10,15 @@ import {
   openAiNativeModels,
 } from "@shared/api";
 import { convertToOpenAiMessages } from "../transform/openai-format";
-import { calculateApiCostOpenAI } from "../../utils/cost";
 import { ApiStream } from "../transform/stream";
 import type { ChatCompletionReasoningEffort } from "openai/resources/chat/completions";
+import type {
+  EasyInputMessage,
+  ResponseInputMessageContentList,
+  ResponseStreamEvent,
+} from "openai/resources/responses/responses";
 import { resolveOpenAiNativeAuthToken } from "./openai-native-auth";
+import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
 
 interface OpenAiNativeHandlerOptions {
   openAiNativeApiKey?: string;
@@ -54,29 +59,142 @@ export class OpenAiNativeHandler implements ApiHandler {
     info: ModelInfo,
     usage: OpenAI.Completions.CompletionUsage | undefined,
   ): ApiStream {
-    const inputTokens = usage?.prompt_tokens || 0; // sum of cache hits and misses
-    const outputTokens = usage?.completion_tokens || 0;
-    const cacheReadTokens = usage?.prompt_tokens_details?.cached_tokens || 0;
-    const cacheWriteTokens = 0;
-    const totalCost = calculateApiCostOpenAI(
-      info,
-      inputTokens,
-      outputTokens,
-      cacheWriteTokens,
-      cacheReadTokens,
-    );
-    const nonCachedInputTokens = Math.max(
-      0,
-      inputTokens - cacheReadTokens - cacheWriteTokens,
-    );
-    yield {
-      type: "usage",
-      inputTokens: nonCachedInputTokens,
-      outputTokens: outputTokens,
-      cacheWriteTokens: cacheWriteTokens,
-      cacheReadTokens: cacheReadTokens,
-      totalCost: totalCost,
-    };
+    yield normalizeOpenAiUsageChunk(info, usage);
+  }
+
+  private convertToResponsesInput(
+    messages: Anthropic.Messages.MessageParam[],
+  ): EasyInputMessage[] {
+    return messages
+      .map((message): EasyInputMessage | undefined => {
+        if (typeof message.content === "string") {
+          return {
+            role: message.role,
+            content: message.content,
+          };
+        }
+
+        if (message.role === "assistant") {
+          const text = message.content
+            .map((part) => {
+              if (part.type === "text") return part.text;
+              if (part.type === "tool_use") {
+                return `<${part.name}>\n${JSON.stringify(part.input)}\n</${part.name}>`;
+              }
+              return "";
+            })
+            .filter(Boolean)
+            .join("\n\n");
+
+          return text
+            ? {
+                role: "assistant",
+                content: text,
+              }
+            : undefined;
+        }
+
+        const content = message.content.reduce<ResponseInputMessageContentList>(
+          (acc, part) => {
+            if (part.type === "text") {
+              acc.push({ type: "input_text", text: part.text });
+            } else if (part.type === "image") {
+              acc.push({
+                type: "input_image",
+                detail: "auto",
+                image_url:
+                  part.source.type === "base64"
+                    ? `data:${part.source.media_type};base64,${part.source.data}`
+                    : part.source.url,
+              });
+            } else if (part.type === "tool_result") {
+              const toolText =
+                typeof part.content === "string"
+                  ? part.content
+                  : (part.content ?? [])
+                      .map((block) => {
+                        if (block.type === "text") return block.text;
+                        if (block.type === "image") {
+                          return "(tool result image omitted from Responses input)";
+                        }
+                        return "";
+                      })
+                      .filter(Boolean)
+                      .join("\n");
+              acc.push({
+                type: "input_text",
+                text: `<tool_result id="${part.tool_use_id}">\n${toolText}\n</tool_result>`,
+              });
+            }
+            return acc;
+          },
+          [],
+        );
+
+        return {
+          role: message.role,
+          content,
+        };
+      })
+      .filter((message): message is EasyInputMessage => Boolean(message));
+  }
+
+  private async *createResponsesMessage(
+    systemPrompt: string,
+    messages: Anthropic.Messages.MessageParam[],
+  ): ApiStream {
+    const client = await this.ensureClient();
+    const model = this.getModel();
+    const stream = await client.responses.create({
+      model: model.id,
+      instructions: systemPrompt,
+      input: this.convertToResponsesInput(messages),
+      stream: true,
+      reasoning: {
+        effort:
+          (this.options.reasoningEffort as ChatCompletionReasoningEffort) ||
+          "medium",
+        summary: "auto",
+      },
+    });
+
+    for await (const event of stream as AsyncIterable<ResponseStreamEvent>) {
+      switch (event.type) {
+        case "response.output_text.delta":
+          if (event.delta) {
+            yield {
+              type: "text",
+              text: event.delta,
+            };
+          }
+          break;
+        case "response.reasoning_summary_text.delta":
+          if (event.delta) {
+            yield {
+              type: "reasoning",
+              reasoning: event.delta,
+            };
+          }
+          break;
+        case "response.reasoning_summary.delta":
+          if (typeof event.delta === "string" && event.delta) {
+            yield {
+              type: "reasoning",
+              reasoning: event.delta,
+            };
+          }
+          break;
+        case "response.completed":
+          yield normalizeOpenAiUsageChunk(model.info, event.response.usage);
+          break;
+        case "response.failed":
+          throw new Error(
+            event.response.error?.message || "OpenAI response failed",
+          );
+        case "error":
+          throw new Error(event.message || "OpenAI response stream failed");
+      }
+    }
   }
 
   @withRetry()
@@ -88,105 +206,11 @@ export class OpenAiNativeHandler implements ApiHandler {
     const model = this.getModel();
 
     switch (model.id) {
-      case "o1":
-      case "o1-preview":
-      case "o1-mini": {
-        // o1 doesn't support streaming, non-1 temp, or system prompt
-        const response = await client.chat.completions.create({
-          model: model.id,
-          messages: [
-            { role: "user", content: systemPrompt },
-            ...convertToOpenAiMessages(messages),
-          ],
-        });
-        yield {
-          type: "text",
-          text: response.choices[0]?.message.content || "",
-        };
-
-        yield* this.yieldUsage(model.info, response.usage);
-
-        break;
-      }
-      case "o4-mini":
-      case "o3":
-      case "o3-mini": {
-        const stream = await client.chat.completions.create({
-          model: model.id,
-          messages: [
-            { role: "developer", content: systemPrompt },
-            ...convertToOpenAiMessages(messages),
-          ],
-          stream: true,
-          stream_options: { include_usage: true },
-          reasoning_effort:
-            (this.options.reasoningEffort as ChatCompletionReasoningEffort) ||
-            "medium",
-        });
-
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta;
-          if (delta?.content) {
-            yield {
-              type: "text",
-              text: delta.content,
-            };
-          }
-          if (chunk.usage) {
-            // Only last chunk contains usage
-            yield* this.yieldUsage(model.info, chunk.usage);
-          }
-        }
-        break;
-      }
-      case "nectarine-alpha-new-reasoning-effort-2025-07-25":
       case "gpt-5.5":
-      case "gpt-5.5-chat-latest":
-      case "gpt-5.5-codex":
       case "gpt-5.4":
-      case "gpt-5.4-codex":
       case "gpt-5.4-mini":
       case "gpt-5.4-nano":
-      case "gpt-5.3-codex-spark":
-      case "gpt-5.2":
-      case "gpt-5.2-chat-latest":
-      case "gpt-5.2-codex":
-      case "gpt-5.1-2025-11-13":
-      case "gpt-5.1":
-      case "gpt-5.1-codex":
-      case "gpt-5.1-codex-max":
-      case "gpt-5.1-chat-latest":
-      case "gpt-5-codex":
-      case "gpt-5-2025-08-07":
-      case "gpt-5-mini-2025-08-07":
-      case "gpt-5-nano-2025-08-07":
-        const stream = await client.chat.completions.create({
-          model: model.id,
-          temperature: 1,
-          messages: [
-            { role: "developer", content: systemPrompt },
-            ...convertToOpenAiMessages(messages),
-          ],
-          stream: true,
-          stream_options: { include_usage: true },
-          reasoning_effort:
-            (this.options.reasoningEffort as ChatCompletionReasoningEffort) ||
-            "medium",
-        });
-
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta;
-          if (delta?.content) {
-            yield {
-              type: "text",
-              text: delta.content,
-            };
-          }
-          if (chunk.usage) {
-            // Only last chunk contains usage
-            yield* this.yieldUsage(model.info, chunk.usage);
-          }
-        }
+        yield* this.createResponsesMessage(systemPrompt, messages);
         break;
       default: {
         const stream = await client.chat.completions.create({
@@ -207,6 +231,16 @@ export class OpenAiNativeHandler implements ApiHandler {
             yield {
               type: "text",
               text: delta.content,
+            };
+          }
+          if (
+            delta &&
+            "reasoning_content" in delta &&
+            delta.reasoning_content
+          ) {
+            yield {
+              type: "reasoning",
+              reasoning: (delta.reasoning_content as string | undefined) || "",
             };
           }
           if (chunk.usage) {

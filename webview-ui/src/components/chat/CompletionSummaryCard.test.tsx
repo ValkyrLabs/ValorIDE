@@ -45,4 +45,21 @@ describe("CompletionSummaryCard", () => {
     // The result content should still be rendered
     expect(screen.getByText(/feature was implemented/i)).toBeInTheDocument();
   });
+
+  it("strips the rich task-complete heading from summary markdown", () => {
+    const markdown = `# 🎯 Implement feature X — COMPLETED\n\n## 📊 Executive Summary\n- Shipped.`;
+    render(
+      <MockExtensionStateProvider>
+        <CompletionSummaryCard
+          markdown={markdown}
+          title={"Implement feature X"}
+        />
+      </MockExtensionStateProvider>,
+    );
+
+    expect(
+      screen.queryByText(/🎯 Implement feature X — COMPLETED/),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/Executive Summary/)).toBeInTheDocument();
+  });
 });

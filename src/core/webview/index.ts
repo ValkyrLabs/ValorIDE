@@ -327,6 +327,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   private getHtmlContent(webview: vscode.Webview): string {
     // Get the local path to main script run in the webview,
     // then convert it to a uri we can use in the webview.
+    const assetVersion = Date.now().toString(36);
 
     // The CSS file from the React build output
     const stylesUri = getUri(webview, this.context.extensionUri, [
@@ -334,14 +335,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       "webview",
       "assets",
       "index.css",
-    ]);
+    ]).with({ query: `v=${assetVersion}` });
     // The JS file from the React build output
     const scriptUri = getUri(webview, this.context.extensionUri, [
       "dist",
       "webview",
       "assets",
       "index.js",
-    ]);
+    ]).with({ query: `v=${assetVersion}` });
 
     // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
 

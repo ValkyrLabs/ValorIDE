@@ -140,6 +140,12 @@ const safeEditReceipt: BuildModeCommandReceipt = {
   createdAt: "2026-06-21T21:00:00.000Z",
 };
 
+const completedSafeEditCommand: BuildModeCommand = {
+  ...safeEditCommand,
+  receiptId: safeEditReceipt.id,
+  status: "succeeded",
+};
+
 const checkpointReceipt: BuildModeCommandReceipt = {
   id: "receipt-checkpoint-create",
   commandId: "cmd-checkpoint-create",
@@ -387,7 +393,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
       }),
@@ -415,7 +421,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: unownedCommand,
-        commandCatalog: [safeEditCommand, unownedCommand],
+        commandCatalog: [completedSafeEditCommand, unownedCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
       }),
@@ -437,7 +443,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateBuildModeAutonomousQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
       }),
@@ -467,7 +473,7 @@ describe("BuildModeAutonomousQueue", () => {
         ),
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
         swarmRoles: swarmRoles.map((role) =>
@@ -497,7 +503,7 @@ describe("BuildModeAutonomousQueue", () => {
         ),
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
         swarmRoles: swarmRoles.map((role) =>
@@ -667,7 +673,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [],
         executionPlan: executionPlan.map((step) =>
           step.id === "plan-safe-edits" ? { ...step, receiptIds: [] } : step,
@@ -688,7 +694,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [],
         executionPlan,
       }),
@@ -702,13 +708,57 @@ describe("BuildModeAutonomousQueue", () => {
     });
   });
 
+  it("rejects dependency receipts when the dependency command is not marked succeeded", () => {
+    expect(
+      validateQueueDispatch({
+        autonomyPolicy: baseAutonomyPolicy,
+        command: testCommand,
+        commandCatalog: [safeEditCommand, testCommand],
+        commandReceipts: [safeEditReceipt],
+        executionPlan,
+      }),
+    ).toMatchObject({
+      dispatchable: false,
+      nextCommandId: "cmd-test",
+      nextStepId: "plan-tests",
+      reasons: expect.arrayContaining([
+        "Autonomous queue dependency command cmd-safe-edit is not succeeded: queued.",
+      ]),
+    });
+  });
+
+  it("rejects dependency receipts when the dependency command receiptId disagrees", () => {
+    expect(
+      validateQueueDispatch({
+        autonomyPolicy: baseAutonomyPolicy,
+        command: testCommand,
+        commandCatalog: [
+          {
+            ...completedSafeEditCommand,
+            receiptId: "receipt-stale-safe-edit",
+          },
+          testCommand,
+        ],
+        commandReceipts: [safeEditReceipt],
+        executionPlan,
+      }),
+    ).toMatchObject({
+      dispatchable: false,
+      nextCommandId: "cmd-test",
+      nextStepId: "plan-tests",
+      reasons: expect.arrayContaining([
+        "Autonomous queue dependency command cmd-safe-edit receiptId receipt-stale-safe-edit does not match latest receipt receipt-safe-edit.",
+      ]),
+    });
+  });
+
   it("rejects advancing past mutable dependency without rollback-ready checkpoint proof", () => {
     expect(
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         checkpoints: [],
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
       }),
@@ -733,7 +783,7 @@ describe("BuildModeAutonomousQueue", () => {
           },
         ],
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [
           safeEditReceipt,
           {
@@ -759,7 +809,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [
           {
             ...safeEditReceipt,
@@ -784,7 +834,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan: executionPlan.map((step) =>
           step.id === "plan-safe-edits"
@@ -808,7 +858,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
         grayMatterContextPack: {
@@ -833,7 +883,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan,
         grayMatterContextPack,
@@ -854,7 +904,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: safeEditCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         executionPlan,
       }),
     ).toMatchObject({
@@ -872,7 +922,7 @@ describe("BuildModeAutonomousQueue", () => {
       validateQueueDispatch({
         autonomyPolicy: baseAutonomyPolicy,
         command: testCommand,
-        commandCatalog: [safeEditCommand, testCommand],
+        commandCatalog: [completedSafeEditCommand, testCommand],
         commandReceipts: [safeEditReceipt],
         executionPlan: executionPlan.map((step) =>
           step.id === "plan-tests"

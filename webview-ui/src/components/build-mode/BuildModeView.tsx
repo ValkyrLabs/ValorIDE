@@ -1,4 +1,13 @@
 import { useMemo, useState, type ReactNode } from "react";
+import {
+  FaBolt,
+  FaCheckCircle,
+  FaClock,
+  FaExclamationTriangle,
+  FaPlay,
+  FaShieldAlt,
+  FaTimes,
+} from "react-icons/fa";
 import type {
   BuildModeApprovalThreshold,
   BuildModeCommand,
@@ -75,11 +84,31 @@ const maxApprovalThreshold = (
     ? candidate
     : current;
 
-const Panel = ({ title, children }: { title: string; children: ReactNode }) => (
-  <section className="build-mode__panel" aria-label={title}>
+const Panel = ({
+  children,
+  id,
+  title,
+}: {
+  children: ReactNode;
+  id?: string;
+  title: string;
+}) => (
+  <section className="build-mode__panel" aria-label={title} id={id}>
     <h2>{title}</h2>
     {children}
   </section>
+);
+
+const StatusPill = ({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "good" | "neutral" | "warn" | "danger";
+}) => (
+  <span className={`build-mode__status-pill build-mode__status-pill--${tone}`}>
+    {children}
+  </span>
 );
 
 const Stat = ({ label, value }: { label: string; value: ReactNode }) => (
@@ -97,8 +126,43 @@ const List = ({ values }: { values: string[] }) => (
   </ul>
 );
 
-const canOpenBuildModeArtifact = (uri: string): boolean =>
-  uri.startsWith("valoride://build-mode/artifacts/");
+const canOpenBuildModeArtifact = (uri: string): boolean => {
+  if (!uri || /<redacted/i.test(uri)) {
+    return false;
+  }
+  try {
+    const parsed = new URL(uri);
+    if (
+      parsed.protocol !== "valoride:" ||
+      parsed.hostname !== "build-mode" ||
+      parsed.username ||
+      parsed.password ||
+      parsed.search ||
+      parsed.hash ||
+      !parsed.pathname.startsWith("/artifacts/")
+    ) {
+      return false;
+    }
+    const segments = parsed.pathname
+      .split("/")
+      .filter(Boolean)
+      .slice(1)
+      .map((segment) => decodeURIComponent(segment));
+    return (
+      segments.length === 3 &&
+      segments.every(
+        (segment) =>
+          segment &&
+          segment !== "." &&
+          segment !== ".." &&
+          !segment.includes("/") &&
+          !segment.includes("\\"),
+      )
+    );
+  } catch {
+    return false;
+  }
+};
 
 const canOpenBuildModePreviewUrl = (url: string | undefined): boolean => {
   if (!url || /<redacted/i.test(url)) {
@@ -107,6 +171,9 @@ const canOpenBuildModePreviewUrl = (url: string | undefined): boolean => {
   try {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) {
+      return false;
+    }
+    if (parsed.username || parsed.password) {
       return false;
     }
     const hostname = parsed.hostname.toLowerCase();
@@ -230,6 +297,23 @@ export const BuildModeView = ({
       ),
     [selectedPayload.commandReceipts],
   );
+  const readinessPassedCount = selectedPayload.readinessGates.filter(
+    (gate) => gate.status === "passed",
+  ).length;
+  const blockingGateCount = selectedPayload.readinessGates.filter(
+    (gate) => gate.blocksRun && gate.status !== "passed",
+  ).length;
+  const commandStatusCounts = selectedPayload.commands.reduce(
+    (counts, command) => ({
+      ...counts,
+      [command.status]: (counts[command.status] ?? 0) + 1,
+    }),
+    {} as Record<string, number>,
+  );
+  const cronRegisteredCount = selectedPayload.scheduledAutomations.filter(
+    hasValkyraiCronRegistration,
+  ).length;
+  const nextCommand = nextExecutionAction?.command;
   const canRunNextExecutionStep = autonomyDecision.status === "continue";
   const canApproveNextExecutionStep =
     autonomyDecision.status === "approval-required";
@@ -330,16 +414,86 @@ export const BuildModeView = ({
               className="build-mode__button"
               onClick={onClose}
               type="button"
+              title="Close Build Mode"
             >
+              <FaTimes aria-hidden="true" />
               Close
             </button>
           )}
         </div>
       </header>
 
+      <section className="build-mode__operator-strip" aria-label="Build Mode status">
+        <div className="build-mode__operator-main">
+          <div className="build-mode__operator-kicker">Next</div>
+          <div className="build-mode__operator-title">
+            {nextExecutionAction
+              ? `${nextExecutionAction.step.label}: ${nextExecutionAction.command.label}`
+              : "No runnable command"}
+          </div>
+          <div className="build-mode__operator-detail">
+            {nextCommand ? nextCommand.command : autonomyDecision.summary}
+          </div>
+        </div>
+        <div className="build-mode__operator-metrics" aria-label="Build Mode metrics">
+          <StatusPill tone={blockingGateCount ? "warn" : "good"}>
+            <FaShieldAlt aria-hidden="true" />
+            {readinessPassedCount}/{selectedPayload.readinessGates.length} gates
+          </StatusPill>
+          <StatusPill tone={autonomyDecision.status === "continue" ? "good" : "warn"}>
+            <FaBolt aria-hidden="true" />
+            {autonomyDecision.status}
+          </StatusPill>
+          <StatusPill tone={commandStatusCounts.failed ? "danger" : "neutral"}>
+            <FaCheckCircle aria-hidden="true" />
+            {commandStatusCounts.succeeded ?? 0} done
+          </StatusPill>
+          <StatusPill tone="neutral">
+            <FaClock aria-hidden="true" />
+            {cronRegisteredCount}/{selectedPayload.scheduledAutomations.length} cron
+          </StatusPill>
+          <StatusPill tone={blockingGateCount ? "warn" : "neutral"}>
+            <FaExclamationTriangle aria-hidden="true" />
+            {blockingGateCount} blockers
+          </StatusPill>
+        </div>
+        <div className="build-mode__operator-actions">
+          <button
+            aria-label="Run next Build Mode command"
+            className="build-mode__button build-mode__button--primary"
+            disabled={!nextCommand || !canRunNextExecutionStep}
+            onClick={() => nextCommand && runRunnableCommand(nextCommand)}
+            title="Run next Build Mode command"
+            type="button"
+          >
+            <FaPlay aria-hidden="true" />
+            Run
+          </button>
+          <button
+            aria-label="Approve and run next Build Mode command"
+            className="build-mode__button"
+            disabled={!nextCommand || !canApproveNextExecutionStep}
+            onClick={() => nextCommand && approveAndRunCommand(nextCommand)}
+            title="Approve and run next Build Mode command"
+            type="button"
+          >
+            <FaCheckCircle aria-hidden="true" />
+            Approve
+          </button>
+        </div>
+      </section>
+
+      <nav className="build-mode__section-nav" aria-label="Build Mode sections">
+        <a href="#build-mode-runbook">Runbook</a>
+        <a href="#build-mode-automation">Automation</a>
+        <a href="#build-mode-context">Context</a>
+        <a href="#build-mode-evidence">Evidence</a>
+        <a href="#build-mode-report">Report</a>
+      </nav>
+
       <div className="build-mode__body">
         <div className="build-mode__column">
-          <Panel title="App Bundle Inspector">
+          <Panel id="build-mode-context" title="App Bundle Inspector">
             <div className="build-mode__grid">
               <Stat label="Bundle ID" value={payload.appBundle.id} />
               <Stat label="Version" value={payload.appBundle.version} />
@@ -761,7 +915,7 @@ export const BuildModeView = ({
             </div>
           </Panel>
 
-          <Panel title="Execution Plan">
+          <Panel id="build-mode-runbook" title="Execution Plan">
             {nextExecutionAction ? (
               <article className="build-mode__item build-mode__command">
                 <div>
@@ -1289,7 +1443,7 @@ export const BuildModeView = ({
             </div>
           </Panel>
 
-          <Panel title="Scheduled Automations">
+          <Panel id="build-mode-automation" title="Scheduled Automations">
             <button
               aria-label="Refresh scheduled automations"
               className="build-mode__button"
@@ -1600,7 +1754,7 @@ export const BuildModeView = ({
             )}
           </Panel>
 
-          <Panel title="Evidence Artifacts">
+          <Panel id="build-mode-evidence" title="Evidence Artifacts">
             <div className="build-mode__cards">
               {payload.evidenceArtifacts.map((artifact) => {
                 const proof = formatEvidenceArtifactProof(artifact);
@@ -1674,7 +1828,7 @@ export const BuildModeView = ({
             ))}
           </Panel>
 
-          <Panel title="Final Report">
+          <Panel id="build-mode-report" title="Final Report">
             <pre className="build-mode__code">{finalReportMarkdown}</pre>
           </Panel>
         </div>

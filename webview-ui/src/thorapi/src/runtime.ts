@@ -16,11 +16,27 @@ Template file: typescript-redux-query/runtime.mustache
 
 import { Meta, OptimisticUpdate, QueryKey, QueryOptions, Rollback, TransformStrategy, Update } from "redux-query";
 
+type ViteImportMeta = ImportMeta & {
+    env?: {
+        VITE_basePath?: string;
+    };
+};
+
+const getViteBasePath = (): string => {
+    const viteEnv = (import.meta as ViteImportMeta).env;
+    return typeof viteEnv?.VITE_basePath === "string" ? viteEnv.VITE_basePath : "";
+};
+
+const sanitizeBasePath = (value?: string): string => {
+    const raw = (value ?? "").trim();
+    return raw ? raw.replace(/\/+$/, "") : "";
+};
+
 // un-comment for Vite apps
-export let BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
+export let BASE_PATH = sanitizeBasePath(getViteBasePath());
 
 // un-comment for Create REact APp apps
-// export let BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
+// export let BASE_PATH = sanitizeBasePath(process.env.REACT_APP_BASE_PATH);
 
 
 
@@ -30,9 +46,10 @@ export const Configuration = {
                   // BASE_PATH as the default.
 };
 
-export const setBasePath = (basePath: string) => {
-    BASE_PATH = (basePath || "").replace(/\/+$/, "");
+export const setBasePath = (basePath?: string) => {
+    BASE_PATH = sanitizeBasePath(basePath ?? getViteBasePath());
     Configuration.basePath = BASE_PATH;
+    return BASE_PATH;
 };
 
 export interface TypedQueryConfig<TState, TBody> {

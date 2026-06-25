@@ -36,6 +36,7 @@ import { PathAccess } from "@services/access/PathAccess";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import { initializeAgentRuntimeCoordinator } from "@services/communication/AgentRuntimeCoordinator";
 import {
   buildTenantHeaders,
   extractTenantContext,
@@ -169,6 +170,7 @@ import { authFetch } from "@utils/authFetch";
 import {
   appendCommandAudit,
   createAgenticCommandCenterState,
+  updateSwarmState,
 } from "@services/agentic/AgenticStateModel";
 import { resolveBuildModeExecutionWorkspaceRoot } from "@services/agentic/BuildModeWorkspaceRoot";
 import type {
@@ -2118,6 +2120,7 @@ export class Controller {
         try {
           await this.postStateToWebview();
           this.workspaceTracker?.populateFilePaths(); // don't await
+          void this.retrySwarmRegistration("webview launch");
         } catch (err) {
           console.error("Error during webviewDidLaunch initialization:", err);
         }
@@ -2170,6 +2173,9 @@ export class Controller {
           }
         });
 
+        break;
+      case "retrySwarmRegistration":
+        await this.retrySwarmRegistration("manual retry");
         break;
       case "showChatView": {
         this.postMessageToWebview({
@@ -2392,6 +2398,7 @@ export class Controller {
             error,
           );
         }
+        await this.retrySwarmRegistration("ValkyrAI host change");
         break;
       }
       case "refreshOpenAiModels":
@@ -4644,6 +4651,48 @@ export class Controller {
     );
   }
 
+  private async retrySwarmRegistration(reason: string): Promise<void> {
+    try {
+      const jwtToken = await this.readStoredJwtToken();
+      const { authenticatedPrincipal, userInfo, agenticState } =
+        await getAllExtensionState(this.context);
+      const currentAgenticState =
+        createAgenticCommandCenterState(agenticState);
+
+      if (!jwtToken) {
+        const nextAgenticState = updateSwarmState(currentAgenticState, {
+          lastError: "Sign in before connecting SWARM.",
+          status: "offline",
+        });
+        await updateGlobalState(this.context, "agenticState", nextAgenticState);
+        await this.postStateToWebview();
+        Logger.log(`SWARM retry skipped (${reason}): missing JWT token`);
+        return;
+      }
+
+      const principal = (authenticatedPrincipal || userInfo || {}) as {
+        id?: string;
+        principalId?: string;
+      };
+      await initializeAgentRuntimeCoordinator(this.context, jwtToken, {
+        id: principal.id || principal.principalId,
+      });
+      await this.postStateToWebview();
+    } catch (error) {
+      const { agenticState } = await getAllExtensionState(this.context);
+      const nextAgenticState = updateSwarmState(
+        createAgenticCommandCenterState(agenticState),
+        {
+          lastError: error instanceof Error ? error.message : String(error),
+          status: "error",
+        },
+      );
+      await updateGlobalState(this.context, "agenticState", nextAgenticState);
+      await this.postStateToWebview();
+      Logger.log(`SWARM retry failed (${reason}): ${String(error)}`);
+    }
+  }
+
   private resolveThorapiWebviewUrl(url: string): string {
     const basePath = getValkyraiBasePath().replace(/\/+$/, "");
     const baseUrl = new URL(`${basePath}/`);
@@ -4675,8 +4724,18 @@ export class Controller {
         ...tenantHeaders,
       };
 
-      if (token) {
+      const hasAuthorizationHeader = Object.keys(headers).some(
+        (key) => key.toLowerCase() === "authorization",
+      );
+      const hasJwtSessionHeader = Object.keys(headers).some(
+        (key) => key.toLowerCase() === "jwtsession",
+      );
+
+      if (token && !hasAuthorizationHeader) {
         headers.authorization = `Bearer ${token}`;
+      }
+      if (token && !hasJwtSessionHeader) {
+        headers.jwtSession = token;
       }
 
       const response = await axios.request({
@@ -4685,9 +4744,23 @@ export class Controller {
         data: request.body,
         params: request.params,
         headers,
+        responseType:
+          request.responseType === "arraybuffer" ? "arraybuffer" : "json",
         timeout: 30000,
         validateStatus: () => true,
       });
+      const responseHeaders = Object.fromEntries(
+        Object.entries(response.headers).map(([key, value]) => [
+          key,
+          Array.isArray(value) ? value.join(", ") : String(value),
+        ]),
+      );
+      const responseBuffer =
+        request.responseType === "arraybuffer"
+          ? Buffer.isBuffer(response.data)
+            ? response.data
+            : Buffer.from(response.data)
+          : undefined;
 
       await this.postMessageToWebview({
         type: "thorapiResponse",
@@ -4696,7 +4769,10 @@ export class Controller {
           ok: response.status >= 200 && response.status < 300,
           status: response.status,
           statusText: response.statusText,
-          data: response.data,
+          data:
+            request.responseType === "arraybuffer" ? undefined : response.data,
+          headers: responseHeaders,
+          bodyBase64: responseBuffer?.toString("base64"),
         },
       });
     } catch (error) {
@@ -4735,11 +4811,13 @@ export class Controller {
         await this.readStoredTenantContext(),
       );
       const headers: Record<string, string> = {
+        Accept: "application/json",
         "Content-Type": "application/json",
         ...tenantHeaders,
       };
       if (token) {
         headers["authorization"] = `Bearer ${token}`;
+        headers.jwtSession = token;
       }
 
       const basePath = getValkyraiBasePath().replace(/\/+$/, "");
@@ -4996,11 +5074,13 @@ export class Controller {
         await this.readStoredTenantContext(),
       );
       const headers: any = {
+        Accept: "application/json",
         "Content-Type": "application/json",
         ...tenantHeaders,
       };
       if (token) {
         headers["authorization"] = `Bearer ${token}`;
+        headers.jwtSession = token;
       }
 
       const getServiceByIdentifier = async (identifier: string) =>

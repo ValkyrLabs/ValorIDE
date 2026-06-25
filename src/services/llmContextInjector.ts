@@ -4,6 +4,7 @@ import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { PromptService, getPromptService } from "./promptService";
 import { MemoryBankLoader, getMemoryBankLoader } from "./memoryBankLoader";
 import { LLMPromptService, getLLMPromptService } from "./llmPromptService";
+import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
 import {
   GrayMatterContextConfig,
   GrayMatterContextProvider,
@@ -107,22 +108,18 @@ export class LLMContextInjector {
         }
       }
 
-      const shouldReplaceSystemPrompt =
-        !!selectedPrompt &&
-        selectedPrompt.mode === "SYSTEM" &&
-        !!selectedPrompt.prompt;
-
-      // Layer 1: Base system prompt (§0–§10) or replacement
-      if (shouldReplaceSystemPrompt) {
-        sections.push(this.formatCustomPromptSection(selectedPrompt!));
-        this.logger.appendLine(
-          `[LLMContextInjector] ✅ Layer 1: Custom system prompt applied (${selectedPrompt!.name})`,
-        );
-      } else if (mergedConfig.includeSystemPrompt && this.promptService) {
+      // Layer 1: Base system prompt (§0–§10), never replaced by LLMDetails.
+      if (mergedConfig.includeSystemPrompt && this.promptService) {
         const systemText = this.promptService.getSystemPrompt();
-        sections.push(systemText);
+        sections.push(
+          selectedPrompt?.mode === "SYSTEM"
+            ? composeRuntimeSystemPrompt(systemText, selectedPrompt)
+            : systemText,
+        );
         this.logger.appendLine(
-          "[LLMContextInjector] ✅ Layer 1: System prompt injected",
+          selectedPrompt?.mode === "SYSTEM"
+            ? `[LLMContextInjector] ✅ Layer 1: Custom prompt plus built-in ValorIDE prompt injected (${selectedPrompt.name})`
+            : "[LLMContextInjector] ✅ Layer 1: System prompt injected",
         );
       }
 
@@ -275,15 +272,13 @@ export class LLMContextInjector {
       }
     }
 
-    const shouldReplaceSystemPrompt =
-      !!selectedPrompt &&
-      selectedPrompt.mode === "SYSTEM" &&
-      !!selectedPrompt.prompt;
-
-    if (shouldReplaceSystemPrompt) {
-      sections.push(this.formatCustomPromptSection(selectedPrompt!));
-    } else if (mergedConfig.includeSystemPrompt && this.promptService) {
-      sections.push(this.promptService.getSystemPrompt());
+    if (mergedConfig.includeSystemPrompt && this.promptService) {
+      const systemText = this.promptService.getSystemPrompt();
+      sections.push(
+        selectedPrompt?.mode === "SYSTEM"
+          ? composeRuntimeSystemPrompt(systemText, selectedPrompt)
+          : systemText,
+      );
     }
 
     if (mergedConfig.includeThorAPICatalog && this.promptService) {

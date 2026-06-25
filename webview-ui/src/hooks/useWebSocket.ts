@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
+import { getWebsocketUrl, isValidWsUrl } from "../websocket/websocket";
 
 export interface WebSocketMessage {
   type: string;
@@ -10,12 +12,101 @@ interface UseWebSocketOptions {
   maxReconnectAttempts?: number;
 }
 
+const toWsProtocol = (value: string): string =>
+  value.startsWith("http://")
+    ? value.replace("http://", "ws://")
+    : value.startsWith("https://")
+      ? value.replace("https://", "wss://")
+      : value;
+
+const appendAuthToken = (value: string, token: string | null): string => {
+  if (!token) {
+    return value;
+  }
+
+  try {
+    const url = new URL(value);
+    if (!url.searchParams.has("token")) {
+      url.searchParams.set("token", token);
+    }
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
+
+const resolveWebSocketUrl = (value: string): string => {
+  const candidate = toWsProtocol(value.trim());
+  if (/^wss?:\/\//i.test(candidate)) {
+    return appendAuthToken(candidate, getStoredJwtToken());
+  }
+
+  const configuredBase = getWebsocketUrl();
+  if (!isValidWsUrl(configuredBase)) {
+    return candidate;
+  }
+
+  try {
+    const base = new URL(configuredBase);
+    if (candidate.startsWith("/")) {
+      base.searchParams.set("topic", candidate);
+      return appendAuthToken(base.toString(), getStoredJwtToken());
+    }
+
+    const resolved = new URL(
+      candidate,
+      `${base.toString().replace(/\/+$/, "")}/`,
+    );
+    return appendAuthToken(resolved.toString(), getStoredJwtToken());
+  } catch {
+    return candidate;
+  }
+};
+
+const useJwtTokenVersion = () => {
+  const [tokenVersion, setTokenVersion] = useState(0);
+
+  useEffect(() => {
+    const bumpTokenVersion = () => {
+      setTokenVersion((version) => version + 1);
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (
+        event.key === "jwtToken" ||
+        event.key === "jwtSession" ||
+        event.key === "authToken"
+      ) {
+        bumpTokenVersion();
+      }
+    };
+
+    window.addEventListener("jwtTokenChanged", bumpTokenVersion);
+    window.addEventListener("jwt-token-updated", bumpTokenVersion);
+    window.addEventListener("credentialsHydrated", bumpTokenVersion);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("jwtTokenChanged", bumpTokenVersion);
+      window.removeEventListener("jwt-token-updated", bumpTokenVersion);
+      window.removeEventListener("credentialsHydrated", bumpTokenVersion);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  return tokenVersion;
+};
+
 export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
   const { reconnectInterval = 3000, maxReconnectAttempts = 5 } = options;
 
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const tokenVersion = useJwtTokenVersion();
+  const resolvedUrl = useMemo(
+    () => resolveWebSocketUrl(url),
+    [url, tokenVersion],
+  );
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
@@ -23,18 +114,10 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
 
   const connect = useCallback(() => {
     try {
-      // Convert HTTP/HTTPS URLs to WebSocket URLs if needed
-      let wsUrl = url;
-      if (url.startsWith("http://")) {
-        wsUrl = url.replace("http://", "ws://");
-      } else if (url.startsWith("https://")) {
-        wsUrl = url.replace("https://", "wss://");
-      }
-
-      const ws = new WebSocket(wsUrl);
+      const ws = new WebSocket(resolvedUrl);
 
       ws.onopen = () => {
-        console.log("[WebSocket] Connected to", wsUrl);
+        console.log("[WebSocket] Connected to", resolvedUrl);
         setIsConnected(true);
         setError(null);
         reconnectAttemptsRef.current = 0;
@@ -56,7 +139,7 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
       };
 
       ws.onclose = () => {
-        console.log("[WebSocket] Disconnected from", wsUrl);
+        console.log("[WebSocket] Disconnected from", resolvedUrl);
         setIsConnected(false);
         wsRef.current = null;
 
@@ -78,7 +161,7 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
       console.error("[WebSocket] Connection failed:", err);
       setError(err);
     }
-  }, [url, reconnectInterval, maxReconnectAttempts]);
+  }, [resolvedUrl, reconnectInterval, maxReconnectAttempts]);
 
   useEffect(() => {
     connect();
@@ -87,9 +170,15 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      if (
+        wsRef.current &&
+        (wsRef.current.readyState === WebSocket.CONNECTING ||
+          wsRef.current.readyState === WebSocket.OPEN)
+      ) {
+        wsRef.current.onclose = null;
         wsRef.current.close();
       }
+      wsRef.current = null;
     };
   }, [connect]);
 

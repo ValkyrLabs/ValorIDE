@@ -667,7 +667,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 <VSCodeButton
                   appearance="secondary"
                   onClick={() =>
-                    vscode.postMessage({ type: "webviewDidLaunch" })
+                    vscode.postMessage({ type: "retrySwarmRegistration" })
                   }
                 >
                   Retry SWARM

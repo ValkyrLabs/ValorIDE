@@ -32,8 +32,10 @@ export const getValkyraiBasePath = () => {
 export const getValkyraiWsBase = () => {
   try {
     const base = new URL(getValkyraiBasePath());
-    const protocol = base.protocol === "https:" ? "wss:" : "ws:";
-    return `${protocol}//${base.host}`;
+    base.protocol = base.protocol === "https:" ? "wss:" : "ws:";
+    const pathname = base.pathname.replace(/\/+$/, "");
+    base.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return base.toString().replace(/\/+$/, "");
   } catch {
     return "ws://localhost:8080";
   }

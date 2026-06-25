@@ -1741,8 +1741,8 @@ const ApiOptions = ({
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              Extended thinking is available for models as Sonnet-3-7, o3-mini,
-              Deepseek R1, etc. More info on{" "}
+              Extended thinking is available for current Claude 4 models, GPT-5
+              reasoning models, Deepseek R1, etc. More info on{" "}
               <VSCodeLink
                 href="https://docs.litellm.ai/docs/reasoning_content"
                 style={{ display: "inline", fontSize: "inherit" }}
@@ -2310,17 +2310,28 @@ const ApiOptions = ({
             </DropdownContainer>
 
             {((selectedProvider === "anthropic" &&
-              selectedModelId === "claude-3-7-sonnet-20250219") ||
+              [
+                "claude-opus-4-8",
+                "claude-sonnet-4-6",
+                "claude-haiku-4-5-20251001",
+              ].includes(selectedModelId)) ||
               (selectedProvider === "bedrock" &&
-                selectedModelId ===
-                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                [
+                  "anthropic.claude-opus-4-8",
+                  "anthropic.claude-sonnet-4-6",
+                  "anthropic.claude-haiku-4-5-20251001-v1:0",
+                ].includes(selectedModelId)) ||
               (selectedProvider === "vertex" &&
-                selectedModelId === "claude-3-7-sonnet@20250219")) && (
-                <ThinkingBudgetSlider
-                  apiConfiguration={apiConfiguration}
-                  setApiConfiguration={setApiConfiguration}
-                />
-              )}
+                [
+                  "claude-opus-4-8",
+                  "claude-sonnet-4-6",
+                  "claude-haiku-4-5@20251001",
+                ].includes(selectedModelId))) && (
+              <ThinkingBudgetSlider
+                apiConfiguration={apiConfiguration}
+                setApiConfiguration={setApiConfiguration}
+              />
+            )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (
@@ -2763,10 +2774,10 @@ export function normalizeApiConfiguration(
           supportsPromptCache: false,
           contextWindow:
             Number.isFinite(ollamaConfiguredContext) &&
-              ollamaConfiguredContext > 0
+            ollamaConfiguredContext > 0
               ? ollamaConfiguredContext
               : ollamaPreset?.contextWindow ||
-              openAiModelInfoSaneDefaults.contextWindow,
+                openAiModelInfoSaneDefaults.contextWindow,
         },
       };
     case "lmstudio":

@@ -40,19 +40,16 @@ export class VertexHandler implements ApiHandler {
     const model = this.getModel();
     const modelId = model.id;
 
-    if (modelId.includes("valoride")) {
+    if (modelId.startsWith("claude-")) {
       let budget_tokens = this.options.thinkingBudgetTokens || 0;
       const reasoningOn =
-        modelId.includes("3-7") && budget_tokens !== 0 ? true : false;
+        modelId.includes("4-") && budget_tokens !== 0 ? true : false;
 
       let stream;
       switch (modelId) {
-        case "claude-3-7-sonnet@20250219":
-        case "claude-3-5-sonnet-v2@20241022":
-        case "claude-3-5-sonnet@20240620":
-        case "claude-3-5-haiku@20241022":
-        case "claude-3-opus@20240229":
-        case "claude-3-haiku@20240307": {
+        case "claude-opus-4-8":
+        case "claude-sonnet-4-6":
+        case "claude-haiku-4-5@20251001": {
           // Find indices of user messages for cache control
           const userMsgIndices = messages.reduce(
             (acc, msg, index) => (msg.role === "user" ? [...acc, index] : acc),
