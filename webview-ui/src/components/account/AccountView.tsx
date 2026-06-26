@@ -18,7 +18,8 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
-import Form from "../Login/form";
+import LoginForm from "../Login/form";
+import SignupForm from "../Signup/form";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import ContextPagePanel from "./ContextPagePanel";
 import ReceiptTraceInspector from "./ReceiptTraceInspector";
@@ -71,6 +72,7 @@ import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
 type AccountTab =
   | "login"
+  | "signup"
   | "account"
   | "applications"
   | "appGeneration"
@@ -233,15 +235,23 @@ const AccountView = ({
   // Keep active tab in sync with authentication state
   useEffect(() => {
     if (authed) {
-      setActiveTab((tab) => (tab === "login" ? "account" : tab));
+      setActiveTab((tab) =>
+        tab === "login" || tab === "signup" ? "account" : tab,
+      );
     } else {
-      setActiveTab("login");
+      setActiveTab((tab) =>
+        tab === "login" || tab === "signup" ? tab : "login",
+      );
     }
   }, [authed]);
 
   useEffect(() => {
     if (!initialActiveTab) return;
-    if (!authed && initialActiveTab !== "login") {
+    if (
+      !authed &&
+      initialActiveTab !== "login" &&
+      initialActiveTab !== "signup"
+    ) {
       setActiveTab("login");
     } else {
       setActiveTab(initialActiveTab);
@@ -621,7 +631,7 @@ const AccountView = ({
             <Card>
               {/* Removed "Login to Access Your Account" header as requested */}
               <Card.Body>
-                <Form onSubmit={handleLogin} isLoggedIn={false} />
+                <LoginForm onSubmit={handleLogin} isLoggedIn={false} />
               </Card.Body>
               <Card.Footer>
                 <div
@@ -631,13 +641,19 @@ const AccountView = ({
                   }}
                 >
                   Don't have an account?{" "}
-                  <VSCodeLink
-                    href="https://valkyrlabs.com/sign-up"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("signup")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--vscode-textLink-foreground)",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
                   >
                     Signup Now
-                  </VSCodeLink>
+                  </button>
                   <br />
                   Forgot your username?{" "}
                   <VSCodeLink
@@ -652,6 +668,39 @@ const AccountView = ({
             </Card>
           )}
           {/* When authenticated, login view is hidden and tab list updates */}
+        </div>
+      ) : activeTab === "signup" ? (
+        <div className="flex justify-center">
+          {!authed && (
+            <Card>
+              <Card.Body>
+                <SignupForm />
+              </Card.Body>
+              <Card.Footer>
+                <div
+                  style={{
+                    fontSize: "0.85em",
+                    color: "var(--vscode-descriptionForeground)",
+                  }}
+                >
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("login")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--vscode-textLink-foreground)",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    Sign in
+                  </button>
+                </div>
+              </Card.Footer>
+            </Card>
+          )}
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">

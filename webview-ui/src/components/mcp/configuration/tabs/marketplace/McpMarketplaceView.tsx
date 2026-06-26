@@ -23,7 +23,7 @@ import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const MCP_MARKETPLACE_HELP_URL =
-  "https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation";
+  "https://valkyrlabs.comhttps://valkyrlabs.com/v1/Products/valoride/";
 
 const McpMarketplaceView = () => {
   const {

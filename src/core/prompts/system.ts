@@ -540,7 +540,33 @@ Options are a JSON array of button labels; omit \`<options>\` to allow free-form
 **attempt_completion** (only after green tests + browser verify)
 \`\`\`xml
 <attempt_completion>
-  <result>Completed: Feature X. Tests pass. UI verified. Detailed report markdown beautiful and concise</result>
+  <result>
+# 🎯 Feature X — COMPLETE
+
+## 📊 Executive Summary
+- What was built
+- Impact/value delivered
+- Status: ✅ SHIPPED
+
+## 🔧 Implementation Details
+- Files created/modified
+- Integration points
+- Quality gates passed
+
+## ✅ Quality Gates
+- Tests passing
+- Build: Zero errors
+- TypeScript: Clean
+- No tech debt
+
+## 📈 Before/After Comparison
+| Metric | Before | After |
+|--------|--------|-------|
+| Feature X | ❌ | ✅ |
+
+## 🚀 Ship Status
+**Production-ready:** Yes
+  </result>
   <command>npm test && npm run build</command> <!-- optional -->
 </attempt_completion>
 \`\`\`

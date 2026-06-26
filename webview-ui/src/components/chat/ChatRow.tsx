@@ -288,10 +288,6 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
   onOpenFileDiff,
   messageTs,
 }) => {
-  if (!summary || summary.totalFiles === 0) {
-    return null;
-  }
-
   const totalFilesLabel =
     summary.totalFiles === 1 ? "1 file" : `${summary.totalFiles} files`;
 
@@ -349,6 +345,10 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
       }
     }
   };
+
+  if (summary.totalFiles === 0) {
+    return null;
+  }
 
   return (
     <ChangesSummaryContainer>
@@ -676,6 +676,37 @@ const stripMarkdownHeadingPrefix = (value?: string) =>
     .replace(/^[^A-Za-z0-9]+/, "")
     .trim();
 
+const buildCompletionFallbackMarkdown = (
+  text?: string,
+  changesSummary?: ValorIDEChangesSummary,
+): string => {
+  const sections: string[] = [];
+  if (text?.trim()) {
+    sections.push(text.trim());
+  }
+  if (changesSummary) {
+    const { totalInsertions, totalDeletions, files = [] } = changesSummary;
+    const keyFiles = files
+      .slice(0, 3)
+      .map(
+        (f) =>
+          `- ${f.relativePath} (${(f.status ?? "modified").toUpperCase()})`,
+      )
+      .join("\n");
+    sections.push(
+      [
+        "## 🔧 Implementation Details",
+        `- Files created/modified: ${files.length}`,
+        `- Insertions/deletions: +${totalInsertions} / -${totalDeletions}`,
+        keyFiles ? `- Key files:\n${keyFiles}` : undefined,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+  }
+  return sections.filter(Boolean).join("\n\n");
+};
+
 export const CompletionSummaryCard = memo(
   ({
     markdown,
@@ -696,27 +727,11 @@ export const CompletionSummaryCard = memo(
         : `Completed ${date.toLocaleString()}`;
     }
 
-    // Avoid duplicating the task title in the rendered markdown. The card
-    // already shows the title in its header.
-    const stripTaskTitleHeading = (md?: string) => {
-      if (!md) return md;
-      return md.replace(/^# (?:Task: |🎯 ).*\n?/, "");
-    };
-
-    const bodyMarkdown = stripTaskTitleHeading(markdown);
-    const fallbackBody = stripTaskTitleHeading(fallbackMarkdown);
+    const bodyMarkdown = markdown;
+    const fallbackBody = fallbackMarkdown;
     const summarySection = bodyMarkdown?.trim() || fallbackBody?.trim() || "";
     const displayTitle = stripMarkdownHeadingPrefix(title);
-    const nextStepsSection = [
-      "### Next Steps",
-      "- Review the code changes in the diff viewer.",
-      "- Run relevant tests/linters before merging.",
-      "- Confirm any external configuration or deployment steps are updated.",
-    ].join("\n");
-    const narrativeMarkdown = [summarySection, nextStepsSection]
-      .filter(Boolean)
-      .join("\n\n")
-      .trim();
+    const narrativeMarkdown = summarySection.trim();
 
     if (!narrativeMarkdown) {
       return null;
@@ -748,7 +763,9 @@ export const CompletionSummaryCard = memo(
           <FaCheckCircle size={28} color="var(--vscode-charts-green)" />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 13 }}>
-              {displayTitle ? `Task Summary — ${displayTitle}` : "Task Summary"}
+              {displayTitle
+                ? `Completion Report — ${displayTitle}`
+                : "Completion Report"}
             </div>
             {completedLabel && (
               <div
@@ -2451,16 +2468,13 @@ export const ChatRowContent = ({
             ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
             : message.text;
           // Hide the message text if a generated summary exists and the text is
-          // just the initial task prompt. This prevents duplicate rendering of
-          // the prompt next to the built summary card while still showing rich
-          // completion details when provided.
+          // already represented by the completion report. This prevents
+          // duplicate rendering next to the built summary card.
           const initialPromptText = valorideMessages?.[0]?.text;
           const hasSummary = !!message.summaryMarkdown;
-          // Only hide text if there's a summary AND text matches the initial prompt
           const shouldHideText = Boolean(
-            hasSummary &&
-              initialPromptText &&
-              text?.trim() === initialPromptText.trim(),
+            hasSummary ||
+              (initialPromptText && text?.trim() === initialPromptText.trim()),
           );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
@@ -2498,37 +2512,10 @@ export const ChatRowContent = ({
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
-                  fallbackMarkdown={(() => {
-                    const sections: string[] = [];
-                    if (text && !shouldHideText) {
-                      sections.push(text.trim());
-                    }
-                    if (message.changesSummary) {
-                      const {
-                        totalInsertions,
-                        totalDeletions,
-                        files = [],
-                      } = message.changesSummary;
-                      const keyFiles = files
-                        .slice(0, 3)
-                        .map(
-                          (f) =>
-                            `- ${f.relativePath} (${f.status.toUpperCase()})`,
-                        )
-                        .join("\n");
-                      sections.push(
-                        [
-                          "### Changes",
-                          `- Files touched: ${files.length}`,
-                          `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
-                          keyFiles ? `Key files:\n${keyFiles}` : undefined,
-                        ]
-                          .filter(Boolean)
-                          .join("\n"),
-                      );
-                    }
-                    return sections.filter(Boolean).join("\n\n");
-                  })()}
+                  fallbackMarkdown={buildCompletionFallbackMarkdown(
+                    text,
+                    message.changesSummary,
+                  )}
                 />
                 {message.partial !== true &&
                   hasChanges &&
@@ -2594,7 +2581,7 @@ export const ChatRowContent = ({
                 PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
                 Select Default Profile").{" "}
                 <a
-                  href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
+                  href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started-new-coders/installing-essential-development-tools"
                   style={{
                     color: "inherit",
                     textDecoration: "underline",
@@ -2666,9 +2653,10 @@ export const ChatRowContent = ({
             const hasSummary = !!message.summaryMarkdown;
             const initialPromptText = valorideMessages?.[0]?.text;
             const shouldHideText = Boolean(
-              text &&
-                initialPromptText &&
-                text.trim() === initialPromptText.trim(),
+              hasSummary ||
+                (text &&
+                  initialPromptText &&
+                  text.trim() === initialPromptText.trim()),
             );
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
@@ -2706,37 +2694,10 @@ export const ChatRowContent = ({
                     markdown={message.summaryMarkdown}
                     title={message.summaryTitle}
                     completedAt={message.summaryCompletedAt}
-                    fallbackMarkdown={(() => {
-                      const sections: string[] = [];
-                      if (text && !shouldHideText) {
-                        sections.push(text.trim());
-                      }
-                      if (message.changesSummary) {
-                        const {
-                          totalInsertions,
-                          totalDeletions,
-                          files = [],
-                        } = message.changesSummary;
-                        const keyFiles = files
-                          .slice(0, 3)
-                          .map(
-                            (f) =>
-                              `- ${f.relativePath} (${f.status.toUpperCase()})`,
-                          )
-                          .join("\n");
-                        sections.push(
-                          [
-                            "### Changes",
-                            `- Files touched: ${files.length}`,
-                            `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
-                            keyFiles ? `Key files:\n${keyFiles}` : undefined,
-                          ]
-                            .filter(Boolean)
-                            .join("\n"),
-                        );
-                      }
-                      return sections.filter(Boolean).join("\n\n");
-                    })()}
+                    fallbackMarkdown={buildCompletionFallbackMarkdown(
+                      text,
+                      message.changesSummary,
+                    )}
                   />
                   {message.partial !== true &&
                     hasChanges &&
@@ -2766,11 +2727,9 @@ export const ChatRowContent = ({
           }
         }
         case "followup":
-          const {
-            question,
-            options,
-            selected,
-          } = normalizeAskQuestionMessage(message.text);
+          const { question, options, selected } = normalizeAskQuestionMessage(
+            message.text,
+          );
           const questionMarkdown =
             question ||
             (message.partial
@@ -2828,11 +2787,9 @@ export const ChatRowContent = ({
             </>
           );
         case "plan_mode_respond": {
-          const {
-            response,
-            options,
-            selected,
-          } = normalizePlanResponseMessage(message.text);
+          const { response, options, selected } = normalizePlanResponseMessage(
+            message.text,
+          );
           return (
             <div style={{}}>
               <Markdown markdown={response} />
@@ -2865,7 +2822,6 @@ function safeParseJSON<T = any>(text?: string, fallback?: T): T | undefined {
     return JSON.parse(text) as T;
   } catch (err) {
     // Avoid noisy errors in production UI but keep a debug line for devs
-    // eslint-disable-next-line no-console
     console.debug("safeParseJSON failed to parse text", text);
     return fallback;
   }

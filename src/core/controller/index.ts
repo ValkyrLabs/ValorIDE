@@ -2575,6 +2575,7 @@ export class Controller {
         await this.postMessageToWebview({
           type: "action",
           action: "accountButtonClicked",
+          accountTab: message.accountTab,
         });
         break;
       }

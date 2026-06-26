@@ -1236,7 +1236,6 @@ label {
 }
 
 .application-card {
-  border: 1px solid var(--vscode-editorWidget-border);
   border-radius: 8px;
   padding: 16px;
   background-color: var(--vscode-editor-background);
@@ -1318,7 +1317,6 @@ label {
 .application-item {
   margin-bottom: 12px;
   padding: 12px;
-  border: 1px solid var(--vscode-editorWidget-border);
   border-radius: 4px;
   display: flex;
   justify-content: space-between;

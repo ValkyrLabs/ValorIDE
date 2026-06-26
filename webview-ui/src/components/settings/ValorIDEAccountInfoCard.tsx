@@ -8,7 +8,10 @@ export const ValorIDEAccountInfoCard = () => {
   const user = authenticatedUser;
 
   const handleLogin = () => {
-    vscode.postMessage({ type: "accountLoginClicked" });
+    vscode.postMessage({
+      type: "showAccountViewClicked",
+      accountTab: "signup",
+    });
   };
 
   const handleLogout = () => {

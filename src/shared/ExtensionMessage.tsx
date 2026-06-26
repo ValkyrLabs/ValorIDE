@@ -192,6 +192,19 @@ export interface ExtensionMessage {
     error?: string;
   };
   tab?: McpViewTab;
+  accountTab?:
+    | "login"
+    | "signup"
+    | "account"
+    | "applications"
+    | "appGeneration"
+    | "contextPage"
+    | "generatedFiles"
+    | "receipts"
+    | "swarm"
+    | "agenticCommandCenter"
+    | "userPreferences"
+    | "serverConsole";
   grpc_response?: {
     message?: any; // JSON serialized protobuf message
     request_id: string; // Same ID as the request

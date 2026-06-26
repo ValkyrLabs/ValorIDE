@@ -42,7 +42,6 @@ vi.mock("@thorapi/context/ExtensionStateContext", () => {
     mcpServers: [],
     mcpMarketplaceCatalog: { items: [] },
   };
-  const React = require("react");
   const Context = React.createContext(mockExtensionState);
   const ProviderAny: React.FC<{
     children: any;
@@ -107,7 +106,9 @@ describe("ChatRow Content - completion_result summary handling", () => {
     expect(screen.queryByText(initialPrompt)).toBeNull();
 
     // The summary card title should be visible
-    expect(screen.getByText(`Task Summary — ${initialPrompt}`)).toBeTruthy();
+    expect(
+      screen.getByText(`Completion Report — ${initialPrompt}`),
+    ).toBeTruthy();
   });
 
   it("hides the initial task prompt for an ask/completion_result message when a summary exists", () => {
@@ -144,7 +145,7 @@ describe("ChatRow Content - completion_result summary handling", () => {
     expect(screen.queryByText(initialPrompt)).toBeNull();
   });
 
-  it("renders result text when it's not the initial prompt even if a summary exists", () => {
+  it("does not duplicate result text outside the report when a summary exists", () => {
     const initialPrompt = "Implement feature X";
     const resultText =
       "Implement feature X: Here is the resulting test code...";
@@ -172,21 +173,23 @@ describe("ChatRow Content - completion_result summary handling", () => {
       </ProviderAny>,
     );
 
-    // The result text should be visible
-    expect(screen.getByText(resultText)).toBeTruthy();
+    // The result text is represented by the summary markdown, not rendered twice.
+    expect(screen.queryByText(resultText)).toBeNull();
 
     // The summary card title should also be visible
-    expect(screen.getByText(`Task Summary — ${initialPrompt}`)).toBeTruthy();
+    expect(
+      screen.getByText(`Completion Report — ${initialPrompt}`),
+    ).toBeTruthy();
   });
 
-  it("still shows completion details even when they match the summary title (non-initial prompt)", () => {
+  it("renders completion details inside the report even when they match the summary title", () => {
     const text = "Refactor the database layer";
     const message = {
       type: "say",
       say: "completion_result",
       ts: Date.now(),
       text,
-      summaryMarkdown: `# Task: ${text}\n\n- Refactored models\n- Added tests`,
+      summaryMarkdown: `# Task: ${text}\n\n## 🔧 Implementation Details\n- Refactored models\n- Added tests`,
       summaryTitle: text,
       summaryCompletedAt: new Date().toISOString(),
     } as any;
@@ -204,8 +207,9 @@ describe("ChatRow Content - completion_result summary handling", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText(text)).toBeTruthy();
-    expect(screen.getByText(`Task Summary — ${text}`)).toBeTruthy();
+    expect(screen.getByText(/Refactored models/)).toBeTruthy();
+    expect(screen.getByText(/Implementation Details/)).toBeTruthy();
+    expect(screen.getByText(`Completion Report — ${text}`)).toBeTruthy();
   });
 });
 

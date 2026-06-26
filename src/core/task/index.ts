@@ -4803,18 +4803,8 @@ export class Task {
               "Task";
             const initialTitleLine =
               (rawSummaryTitle || "").split(/\r?\n/)[0]?.trim() || "Task";
-            const resultTitleLine =
-              (result || "")
-                .split(/\r?\n/)
-                .map((line) => line.trim())
-                .find((line) => line.length > 0) || undefined;
             const summaryTitle = (() => {
-              const candidate =
-                resultTitleLine &&
-                resultTitleLine.toLowerCase() !== initialTitleLine.toLowerCase()
-                  ? resultTitleLine
-                  : initialTitleLine;
-              const sanitizedCandidate = candidate
+              const sanitizedCandidate = initialTitleLine
                 .replace(/^#{1,6}\s+/, "")
                 .replace(/^[^A-Za-z0-9]+/, "")
                 .trim();

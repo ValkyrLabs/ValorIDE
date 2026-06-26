@@ -153,6 +153,7 @@ const AppContent = () => {
     (state: any) => state?.apiErrors?.creditIntent,
   );
   const [hasStoredAuth, setHasStoredAuth] = useState(false);
+  const [forceShowWelcome, setForceShowWelcome] = useState(false);
 
   // Check for stored credentials BEFORE rendering to prevent welcome flicker
   useLayoutEffect(() => {
@@ -184,6 +185,7 @@ const AppContent = () => {
     useState(false);
   const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
     | "login"
+    | "signup"
     | "account"
     | "applications"
     | "appGeneration"
@@ -245,6 +247,7 @@ const AppContent = () => {
       // Track different message types to mothership
       switch (message.type) {
         case "loginSuccess":
+          setForceShowWelcome(false);
           // After successful login, show the Account view and keep File Explorer visible
           setShowSettings(false);
           setShowHistory(false);
@@ -257,6 +260,24 @@ const AppContent = () => {
 
           // Track login success as a task start
           trackTaskStart("user-session", "User logged in successfully");
+          break;
+
+        case "clearClientAuthState":
+          setHasStoredAuth(false);
+          setForceShowWelcome(true);
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(false);
+          setShowGeneratedFiles(false);
+          setShowServerConsole(false);
+          setShowApplicationProgress(false);
+          setBuildModePayload(undefined);
+          setShowFileExplorer(false);
+          setAccountInitialActiveTab("login");
+          setAccountInitialSwarmCommandResponse(undefined);
+          setServerConsoleNeedsAttention(false);
+          setCreditIntent(undefined);
           break;
 
         case "action":
@@ -295,10 +316,14 @@ const AppContent = () => {
               setBuildModePayload(undefined);
               break;
             case "accountButtonClicked":
+              setForceShowWelcome(false);
               setShowSettings(false);
               setShowHistory(false);
               setShowMcp(false);
               setShowAccount(true);
+              if (message.accountTab) {
+                setAccountInitialActiveTab(message.accountTab);
+              }
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
@@ -618,10 +643,20 @@ const AppContent = () => {
     showGeneratedFiles ||
     !!buildModePayload ||
     false;
+  const shouldShowWelcomeView =
+    (showWelcome || forceShowWelcome) &&
+    !hasStoredAuth &&
+    !showSettings &&
+    !showHistory &&
+    !showMcp &&
+    !showAccount &&
+    !showGeneratedFiles &&
+    !showApplicationProgress &&
+    !buildModePayload;
 
   return (
     <>
-      {showWelcome && !hasStoredAuth ? (
+      {shouldShowWelcomeView ? (
         <WelcomeView />
       ) : (
         <>

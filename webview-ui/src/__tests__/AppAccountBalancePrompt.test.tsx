@@ -354,6 +354,29 @@ describe("App account balance prompt", () => {
     );
   });
 
+  it("shows the welcome screen after auth state is cleared", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    expect(screen.queryByText(/Get Started for Free/i)).not.toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "clearClientAuthState",
+          },
+        }),
+      );
+    });
+
+    await waitFor(() =>
+      expect(screen.getByText(/Get Started for Free/i)).toBeInTheDocument(),
+    );
+  });
+
   it("opens account receipts when a SWARM command response arrives", async () => {
     appTestHarness.apiErrors.showAccountBalance = false;
     const { default: App } = await import("../App");

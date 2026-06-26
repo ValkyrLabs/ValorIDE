@@ -10,6 +10,7 @@ describe("ValkyraiHandler", () => {
     jest.doMock("../../../services/ValkyraiLlmService", () => ({
       callValkyraiLlm: mockedCallValkyraiLlm,
     }));
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     ValkyraiHandler = require("../valkyrai").ValkyraiHandler;
   });
 

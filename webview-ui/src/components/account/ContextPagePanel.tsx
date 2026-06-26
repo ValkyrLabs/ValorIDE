@@ -45,7 +45,7 @@ type ContextPagePanelProps = {
 
 const DEFAULT_CONTEXT_TOKEN_BUDGET = 100;
 const CONTEXT_PAGE_HELP_URL =
-  "https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation";
+  "https://valkyrlabs.comhttps://valkyrlabs.com/v1/Products/valoride/";
 
 const getErrorText = (error: unknown): string => {
   if (!error) return "";

@@ -5,7 +5,6 @@ import { vi } from "vitest";
 import { CompletionSummaryCard } from "./ChatRow";
 
 vi.mock("@thorapi/context/ExtensionStateContext", () => {
-  const React = require("react");
   const mockState = { valorideMessages: [] as any };
   const Context = React.createContext(mockState);
   return {
@@ -16,7 +15,6 @@ vi.mock("@thorapi/context/ExtensionStateContext", () => {
   };
 });
 const MockExtensionStateProvider = ({ children }: { children: any }) => {
-  const React = require("react");
   const mockState = { valorideMessages: [] as any };
   const Context = React.createContext(mockState);
   return <Context.Provider value={mockState}>{children}</Context.Provider>;
@@ -28,7 +26,7 @@ vi.mock("../common/MarkdownBlock", () => ({
 }));
 
 describe("CompletionSummaryCard", () => {
-  it("strips the leading '# Task: ' heading from summary markdown", () => {
+  it("renders the full completion report markdown, including the leading heading", () => {
     const markdown = `# Task: Implement feature X\n\n## Result\nThe feature was implemented.`;
     render(
       <MockExtensionStateProvider>
@@ -38,15 +36,14 @@ describe("CompletionSummaryCard", () => {
         />
       </MockExtensionStateProvider>,
     );
-    // The first heading should be removed from the body markdown
     expect(
-      screen.queryByText("# Task: Implement feature X"),
-    ).not.toBeInTheDocument();
-    // The result content should still be rendered
+      screen.getByText(/Completion Report — Implement feature X/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/# Task: Implement feature X/)).toBeInTheDocument();
     expect(screen.getByText(/feature was implemented/i)).toBeInTheDocument();
   });
 
-  it("strips the rich task-complete heading from summary markdown", () => {
+  it("preserves the rich task-complete heading and report sections", () => {
     const markdown = `# 🎯 Implement feature X — COMPLETED\n\n## 📊 Executive Summary\n- Shipped.`;
     render(
       <MockExtensionStateProvider>
@@ -58,8 +55,23 @@ describe("CompletionSummaryCard", () => {
     );
 
     expect(
-      screen.queryByText(/🎯 Implement feature X — COMPLETED/),
-    ).not.toBeInTheDocument();
+      screen.getByText(/🎯 Implement feature X — COMPLETED/),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Executive Summary/)).toBeInTheDocument();
+  });
+
+  it("does not append generic next steps to the report", () => {
+    render(
+      <MockExtensionStateProvider>
+        <CompletionSummaryCard
+          markdown={
+            "# 🎯 Feature X — COMPLETE\n\n## 🚀 Ship Status\n**Production-ready:** Yes"
+          }
+          title={"Feature X"}
+        />
+      </MockExtensionStateProvider>,
+    );
+
+    expect(screen.queryByText(/Next Steps/)).not.toBeInTheDocument();
   });
 });

@@ -141,6 +141,19 @@ export interface WebviewMessage {
   mcpMarketplaceItem?: McpMarketplaceItem;
   timeout?: number;
   tab?: McpViewTab;
+  accountTab?:
+    | "login"
+    | "signup"
+    | "account"
+    | "applications"
+    | "appGeneration"
+    | "contextPage"
+    | "generatedFiles"
+    | "receipts"
+    | "swarm"
+    | "agenticCommandCenter"
+    | "userPreferences"
+    | "serverConsole";
   // For toggleToolAutoApprove
   serverName?: string;
   serverUrl?: string;
