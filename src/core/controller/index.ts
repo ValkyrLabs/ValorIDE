@@ -1670,7 +1670,7 @@ export class Controller {
       chatSettings,
       selectedLlmDetails,
     } = await getAllExtensionState(this.context);
-    const taskApiConfiguration = this.resolveLlmDetailsApiConfiguration(
+    const taskApiConfiguration = await this.resolveTaskApiConfiguration(
       apiConfiguration,
       selectedLlmDetails,
     );
@@ -1736,6 +1736,34 @@ export class Controller {
     }
 
     return apiConfiguration;
+  }
+
+  private async resolveTaskApiConfiguration(
+    apiConfiguration: ApiConfiguration,
+    selectedLlmDetails?: SelectedLlmDetails,
+  ): Promise<ApiConfiguration> {
+    const resolvedConfiguration = this.resolveLlmDetailsApiConfiguration(
+      apiConfiguration,
+      selectedLlmDetails,
+    );
+
+    if (
+      resolvedConfiguration.apiProvider !== "valkyrai" ||
+      resolvedConfiguration.valkyraiJwt ||
+      resolvedConfiguration.valkyraiSessionJwt
+    ) {
+      return resolvedConfiguration;
+    }
+
+    const sessionJwt = await this.readStoredJwtToken();
+    if (!sessionJwt) {
+      return resolvedConfiguration;
+    }
+
+    return {
+      ...resolvedConfiguration,
+      valkyraiSessionJwt: sessionJwt,
+    };
   }
 
   private isMissingLocalApiCredential(
@@ -2220,7 +2248,9 @@ export class Controller {
         if (message.apiConfiguration) {
           await updateApiConfiguration(this.context, message.apiConfiguration);
           if (this.task) {
-            this.task.api = buildApiHandler(message.apiConfiguration);
+            this.task.api = buildApiHandler(
+              await this.resolveTaskApiConfiguration(message.apiConfiguration),
+            );
           }
         }
         await this.postStateToWebview();
@@ -2809,7 +2839,9 @@ export class Controller {
         if (message.apiConfiguration) {
           await updateApiConfiguration(this.context, message.apiConfiguration);
           if (this.task) {
-            this.task.api = buildApiHandler(message.apiConfiguration);
+            this.task.api = buildApiHandler(
+              await this.resolveTaskApiConfiguration(message.apiConfiguration),
+            );
           }
         }
 
@@ -2853,7 +2885,9 @@ export class Controller {
           };
           await updateApiConfiguration(this.context, updatedApiConfiguration);
           if (this.task) {
-            this.task.api = buildApiHandler(updatedApiConfiguration);
+            this.task.api = buildApiHandler(
+              await this.resolveTaskApiConfiguration(updatedApiConfiguration),
+            );
           }
 
           const promptText = selected.initialPrompt?.trim();
@@ -4380,7 +4414,9 @@ export class Controller {
         if (this.task) {
           const { apiConfiguration: updatedApiConfiguration } =
             await getAllExtensionState(this.context);
-          this.task.api = buildApiHandler(updatedApiConfiguration);
+          this.task.api = buildApiHandler(
+            await this.resolveTaskApiConfiguration(updatedApiConfiguration),
+          );
         }
       }
     }
@@ -4561,7 +4597,9 @@ export class Controller {
       };
 
       if (this.task) {
-        this.task.api = buildApiHandler(updatedConfig);
+        this.task.api = buildApiHandler(
+          await this.resolveTaskApiConfiguration(updatedConfig),
+        );
       }
 
       await this.postStateToWebview();
@@ -5539,6 +5577,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       const endpoint = `${valkyraiUrl}/LlmDetails`;
 
       const headers: Record<string, string> = {
+        Accept: "application/json",
         "Content-Type": "application/json",
       };
 
@@ -5548,6 +5587,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         (await getSecret(this.context, "jwtToken"));
       if (authToken) {
         headers["Authorization"] = `Bearer ${authToken}`;
+        headers["jwtSession"] = authToken;
       }
 
       const response = await axios.get(endpoint, { headers });
@@ -5679,10 +5719,12 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       );
 
       const headers: Record<string, string> = {
+        Accept: "application/json",
         "Content-Type": "application/json",
       };
       if (jwtToken) {
         headers["Authorization"] = `Bearer ${jwtToken}`;
+        headers["jwtSession"] = jwtToken;
       }
 
       await axios.post(`${host}/swarm/sessions`, sessionMessage, {

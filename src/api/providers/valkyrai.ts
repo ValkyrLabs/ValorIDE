@@ -60,7 +60,7 @@ export class ValkyraiHandler implements ApiHandler {
     );
     const serviceId =
       this.options.valkyraiServiceId || this.options.apiModelId || "";
-    const jwt = this.options.valkyraiJwt;
+    const jwt = this.options.valkyraiJwt || this.options.valkyraiSessionJwt;
 
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
     const content = extractUserText(lastUser).trim();

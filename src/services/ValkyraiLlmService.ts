@@ -55,10 +55,12 @@ export async function callValkyraiLlm(
   // so we append the resource path without adding /v1 again.
   const url = `${host.replace(/\/$/, "")}/llm-details/${serviceId}/chat`;
   const headers: Record<string, string> = {
+    Accept: "application/json",
     "Content-Type": "application/json",
   };
   if (jwt) {
     headers["Authorization"] = `Bearer ${jwt}`;
+    headers["jwtSession"] = jwt;
   }
 
   const body = JSON.stringify({

@@ -101,6 +101,7 @@ export interface ApiHandlerOptions {
   // Valkyrai pass-through settings
   valkyraiHost?: string; // e.g. http://localhost:8080
   valkyraiJwt?: string; // optional bearer
+  valkyraiSessionJwt?: string; // active ValorIDE login bearer fallback, not persisted
   valkyraiServiceId?: string; // selected LlmDetails.id
 }
 

@@ -441,6 +441,7 @@ export function createExtensionHostLLMDetailsService(
         apiConfiguration.valkyraiJwt || (await getSecret(context, "jwtToken"));
       if (authToken) {
         headers.Authorization = `Bearer ${authToken}`;
+        headers.jwtSession = authToken;
       }
 
       const controller = new AbortController();
