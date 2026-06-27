@@ -27,6 +27,7 @@ export interface GrayMatterContextResult {
 interface MemoryEntryForPrompt {
   content: string;
   id: string;
+  invariant: boolean;
   scope: GrayMatterMemoryScope;
   tags: string[];
   title?: string;
@@ -37,6 +38,8 @@ type MemoryEntryLike = Record<string, unknown>;
 
 const DEFAULT_MAX_TOKENS = 2000;
 const DEFAULT_TIMEOUT_MS = 3000;
+const INVARIANT_QUERY_SUFFIX =
+  "invariant decision methodology security rbac acl ThorAPI AspectJ generated-code vaix vai testing GrayMatter ValorIDE ValkyrAI";
 const SCOPE_ORDER: GrayMatterMemoryScope[] = [
   "project",
   "organization",
@@ -67,19 +70,52 @@ export class GrayMatterContextProvider {
     const start = this.now();
 
     try {
-      const response = await withTimeout(
-        config.queryMemory({
-          limit: 24,
-          query,
-        }),
-        timeoutMs,
-      );
-      const entries = extractEntries(response)
+      const invariantQuery = `${query} ${INVARIANT_QUERY_SUFFIX}`.trim();
+      const [invariantResponse, contextResponse] = await Promise.allSettled([
+        withTimeout(
+          config.queryMemory({
+            limit: 12,
+            query: invariantQuery,
+          }),
+          timeoutMs,
+        ),
+        withTimeout(
+          config.queryMemory({
+            limit: 24,
+            query,
+          }),
+          timeoutMs,
+        ),
+      ]);
+
+      if (invariantResponse.status === "rejected") {
+        this.logger?.appendLine(
+          `[GrayMatterContextProvider] Invariant preflight degraded: ${formatReadError(invariantResponse.reason)}`,
+        );
+      }
+
+      if (
+        invariantResponse.status === "rejected" &&
+        contextResponse.status === "rejected"
+      ) {
+        throw contextResponse.reason;
+      }
+
+      const responses = [invariantResponse, contextResponse]
+        .filter(
+          (response): response is PromiseFulfilledResult<unknown> =>
+            response.status === "fulfilled",
+        )
+        .map((response) => response.value);
+
+      const entries = dedupeEntries(responses.flatMap(extractEntries))
         .map(normalizeEntry)
         .filter((entry): entry is MemoryEntryForPrompt => Boolean(entry))
         .filter((entry) => config.scopes.includes(entry.scope))
         .sort(
-          (a, b) => SCOPE_ORDER.indexOf(a.scope) - SCOPE_ORDER.indexOf(b.scope),
+          (a, b) =>
+            Number(b.invariant) - Number(a.invariant) ||
+            SCOPE_ORDER.indexOf(a.scope) - SCOPE_ORDER.indexOf(b.scope),
         );
 
       const selected = fitEntriesToBudget(entries, maxTokens);
@@ -178,6 +214,7 @@ const normalizeEntry = (
   return {
     content: redactSensitive(content),
     id,
+    invariant: isInvariantEntry(getString(entry, "type") ?? "context", tags, content),
     scope: getScope(tags),
     tags,
     title:
@@ -188,6 +225,19 @@ const normalizeEntry = (
   };
 };
 
+const dedupeEntries = (entries: MemoryEntryLike[]): MemoryEntryLike[] => {
+  const seen = new Set<string>();
+  return entries.filter((entry) => {
+    const id = getString(entry, "id") ?? getString(entry, "uid");
+    const key = id ?? JSON.stringify(entry);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
 const getScope = (tags: string[]): GrayMatterMemoryScope => {
   if (tags.some((tag) => tag === "scope:organization" || tag === "scope:org")) {
     return "organization";
@@ -196,6 +246,41 @@ const getScope = (tags: string[]): GrayMatterMemoryScope => {
     return "user";
   }
   return "project";
+};
+
+const isInvariantEntry = (
+  type: string,
+  tags: string[],
+  content: string,
+): boolean => {
+  if (type !== "decision") {
+    return false;
+  }
+
+  const normalizedTags = tags.map((tag) => tag.toLowerCase());
+  const normalizedContent = content.toLowerCase();
+  return (
+    [
+      "invariant",
+      "agent-policy",
+      "mandatory-preflight",
+      "fail-closed",
+      "security",
+      "rbac",
+      "acl",
+      "generated-code",
+      "aspectj",
+      "vaix",
+      "vai",
+      "testing",
+      "thorapi",
+      "valkyrai",
+      "valoride",
+      "graymatter",
+    ].some((tag) => normalizedTags.includes(tag)) ||
+    normalizedContent.includes("invariant") ||
+    content.startsWith("Rule:")
+  );
 };
 
 const fitEntriesToBudget = (

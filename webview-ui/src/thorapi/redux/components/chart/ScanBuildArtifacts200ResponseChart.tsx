@@ -19,35 +19,20 @@ Description: ScanBuildArtifacts200Response
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ScanBuildArtifacts200Response } from "@thorapi/model";
-import {
-  useGetScanBuildArtifacts200ResponsesQuery,
-  useAddScanBuildArtifacts200ResponseMutation,
-  useUpdateScanBuildArtifacts200ResponseMutation,
-} from "../../services/ScanBuildArtifacts200ResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ScanBuildArtifacts200Response } from '@thorapi/model';
+import { useGetScanBuildArtifacts200ResponsesQuery, useAddScanBuildArtifacts200ResponseMutation, useUpdateScanBuildArtifacts200ResponseMutation } from '../../services/ScanBuildArtifacts200ResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ScanBuildArtifacts200ResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetScanBuildArtifacts200ResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetScanBuildArtifacts200ResponsesQuery();
 
   const [data, setData] = useState<ScanBuildArtifacts200Response[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<ScanBuildArtifacts200Response>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<ScanBuildArtifacts200Response>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ScanBuildArtifacts200ResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ScanBuildArtifacts200ResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((scanbuildartifacts200response: DataObject) => [
-            scanbuildartifacts200response,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((scanbuildartifacts200response: DataObject) => [scanbuildartifacts200response])} />
+          )}
     </>
   );
 };

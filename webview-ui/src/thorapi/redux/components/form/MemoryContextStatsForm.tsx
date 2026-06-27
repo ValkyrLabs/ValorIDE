@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  MemoryContextStats,
+} from '@thorapi/model';
 
-import { MemoryContextStats } from "@thorapi/model";
-
-import { useAddMemoryContextStatsMutation } from "../../services/MemoryContextStatsService";
+import { useAddMemoryContextStatsMutation } from '../../services/MemoryContextStatsService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,23 +65,20 @@ Aggregated context window usage and relevance metrics.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  usedPct: asNumber(Yup.number().typeError("usedPct must be a number")),
-  relevantPct: asNumber(Yup.number().typeError("relevantPct must be a number")),
-  wastePct: asNumber(Yup.number().typeError("wastePct must be a number")),
-  trashed: Yup.boolean(),
+        usedPct: asNumber(Yup.number().typeError("usedPct must be a number")),
+        relevantPct: asNumber(Yup.number().typeError("relevantPct must be a number")),
+        wastePct: asNumber(Yup.number().typeError("wastePct must be a number")),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryContextStatsForm: React.FC = () => {
-  const [addMemoryContextStats, addMemoryContextStatsResult] =
-    useAddMemoryContextStatsMutation();
+  const [addMemoryContextStats, addMemoryContextStatsResult] = useAddMemoryContextStatsMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -97,18 +88,12 @@ const MemoryContextStatsForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -116,10 +101,10 @@ const MemoryContextStatsForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryContextStats> = {
-    usedPct: 0,
-    relevantPct: 0,
-    wastePct: 0,
-    trashed: false,
+          usedPct: 0,
+          relevantPct: 0,
+          wastePct: 0,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -134,14 +119,11 @@ const MemoryContextStatsForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new MemoryContextStats:", grants);
+    console.log('Permissions saved for new MemoryContextStats:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<MemoryContextStats>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryContextStats>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -152,7 +134,7 @@ const MemoryContextStatsForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryContextStats created successfully! Would you like to set permissions for this object?`,
+          `MemoryContextStats created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -160,8 +142,8 @@ const MemoryContextStatsForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create MemoryContextStats:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create MemoryContextStats:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -182,50 +164,53 @@ const MemoryContextStatsForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addMemoryContextStatsResult.isLoading;
+          const isSaving = isSubmitting || addMemoryContextStatsResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    MemoryContextStats
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryContextStats
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="usedPct" className="nice-form-control">
                       <b>
                         Used Pct:
-                        {touched.usedPct && !errors.usedPct && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.usedPct &&
+                         !errors.usedPct && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="usedPct"
-                        type="number"
-                        step="any"
-                        value={values.usedPct || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("usedPct", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "usedPct",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.usedPct
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="usedPct"
+                            type="number"
+                            step="any"
+                            value={values.usedPct || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('usedPct', true);
+                              const v = e.target.value;
+                              setFieldValue('usedPct', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.usedPct
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -237,33 +222,37 @@ const MemoryContextStatsForm: React.FC = () => {
                     <label htmlFor="relevantPct" className="nice-form-control">
                       <b>
                         Relevant Pct:
-                        {touched.relevantPct && !errors.relevantPct && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.relevantPct &&
+                         !errors.relevantPct && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="relevantPct"
-                        type="number"
-                        step="any"
-                        value={values.relevantPct || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("relevantPct", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "relevantPct",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.relevantPct
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="relevantPct"
+                            type="number"
+                            step="any"
+                            value={values.relevantPct || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('relevantPct', true);
+                              const v = e.target.value;
+                              setFieldValue('relevantPct', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.relevantPct
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -275,33 +264,37 @@ const MemoryContextStatsForm: React.FC = () => {
                     <label htmlFor="wastePct" className="nice-form-control">
                       <b>
                         Waste Pct:
-                        {touched.wastePct && !errors.wastePct && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.wastePct &&
+                         !errors.wastePct && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="wastePct"
-                        type="number"
-                        step="any"
-                        value={values.wastePct || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("wastePct", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "wastePct",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.wastePct
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="wastePct"
+                            type="number"
+                            step="any"
+                            value={values.wastePct || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('wastePct', true);
+                              const v = e.target.value;
+                              setFieldValue('wastePct', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.wastePct
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -313,25 +306,32 @@ const MemoryContextStatsForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -341,60 +341,45 @@ const MemoryContextStatsForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New MemoryContextStats
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New MemoryContextStats
+                  </CoolButton>
 
-                    {(addMemoryContextStatsResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addMemoryContextStatsResult as any).error
-                              ? (addMemoryContextStatsResult as any).error.data
-                              : (addMemoryContextStatsResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addMemoryContextStatsResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addMemoryContextStatsResult as any).error ? (addMemoryContextStatsResult as any).error.data : (addMemoryContextStatsResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addMemoryContextStatsResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addMemoryContextStatsResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addMemoryContextStatsResult:{" "}
-                    {JSON.stringify(addMemoryContextStatsResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addMemoryContextStatsResult: {JSON.stringify(addMemoryContextStatsResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -414,5 +399,8 @@ const MemoryContextStatsForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default MemoryContextStatsForm;
+

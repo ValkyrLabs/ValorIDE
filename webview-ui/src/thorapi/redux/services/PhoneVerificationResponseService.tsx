@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { PhoneVerificationResponse } from "@thorapi/model/PhoneVerificationResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { PhoneVerificationResponse } from '@thorapi/model/PhoneVerificationResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type PhoneVerificationResponseResponse = PhoneVerificationResponse[];
+type PhoneVerificationResponseResponse = PhoneVerificationResponse[]
+type PhoneVerificationResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<PhoneVerificationResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toPhoneVerificationResponseList = (
-  result: unknown,
-): PhoneVerificationResponseResponse => {
+type PhoneVerificationResponseListQueryArg = {
+  example?: Partial<PhoneVerificationResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toPhoneVerificationResponseList = (result: unknown): PhoneVerificationResponseResponse => {
   if (Array.isArray(result)) {
-    return result as PhoneVerificationResponseResponse;
+    return result as PhoneVerificationResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as PhoneVerificationResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as PhoneVerificationResponseResponse) : []
+}
 
 export const PhoneVerificationResponseService = createApi({
-  reducerPath: "PhoneVerificationResponse", // This should remain unique
+  reducerPath: 'PhoneVerificationResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["PhoneVerificationResponse"],
+  tagTypes: ['PhoneVerificationResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPhoneVerificationResponsesPaged: build.query<
-      PhoneVerificationResponseResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<PhoneVerificationResponse>;
-      }
-    >({
+    getPhoneVerificationResponsesPaged: build.query<PhoneVerificationResponseResponse, PhoneVerificationResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PhoneVerificationResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PhoneVerificationResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPhoneVerificationResponseList(result);
+        const rows = toPhoneVerificationResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "PhoneVerificationResponse" as const,
-              id,
-            })),
-          { type: "PhoneVerificationResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'PhoneVerificationResponse' as const, id })),
+          { type: 'PhoneVerificationResponse', id: `PAGE_${page}` },
+          { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPhoneVerificationResponses: build.query<
-      PhoneVerificationResponseResponse,
-      { example?: Partial<PhoneVerificationResponse> } | void
-    >({
+    getPhoneVerificationResponses: build.query<PhoneVerificationResponseResponse, PhoneVerificationResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,120 +82,86 @@ export const PhoneVerificationResponseService = createApi({
         return `PhoneVerificationResponse`;
       },
       providesTags: (result) => {
-        const rows = toPhoneVerificationResponseList(result);
+        const rows = toPhoneVerificationResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "PhoneVerificationResponse" as const,
-              id,
-            })),
-          { type: "PhoneVerificationResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'PhoneVerificationResponse' as const, id })),
+          { type: 'PhoneVerificationResponse', id: 'LIST' },
+          { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addPhoneVerificationResponse: build.mutation<
-      PhoneVerificationResponse,
-      Partial<PhoneVerificationResponse>
-    >({
+    addPhoneVerificationResponse: build.mutation<PhoneVerificationResponse, Partial<PhoneVerificationResponse>>({
       query: (body) => ({
         url: `PhoneVerificationResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "PhoneVerificationResponse", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getPhoneVerificationResponse: build.query<
-      PhoneVerificationResponse,
-      string
-    >({
-      query: (id) => `PhoneVerificationResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "PhoneVerificationResponse", id },
+      invalidatesTags: [
+        { type: 'PhoneVerificationResponse', id: 'LIST' },
+        { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getPhoneVerificationResponse: build.query<PhoneVerificationResponse, string>({
+      query: (id) => `PhoneVerificationResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: 'PhoneVerificationResponse', id }],
+    }),
+
     // 5) Update
-    updatePhoneVerificationResponse: build.mutation<
-      void,
-      Pick<PhoneVerificationResponse, "id"> & Partial<PhoneVerificationResponse>
-    >({
+    updatePhoneVerificationResponse: build.mutation<PhoneVerificationResponse, Pick<PhoneVerificationResponse, 'id'> & Partial<PhoneVerificationResponse>>({
       query: ({ id, ...patch }) => ({
         url: `PhoneVerificationResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            PhoneVerificationResponseService.util.updateQueryData(
-              "getPhoneVerificationResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<PhoneVerificationResponse, "id">,
-      ) => [
-        { type: "PhoneVerificationResponse", id },
-        { type: "PhoneVerificationResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<PhoneVerificationResponse, 'id'>) => [
+        { type: 'PhoneVerificationResponse', id },
+        { type: 'PhoneVerificationResponse', id: 'LIST' },
+        { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deletePhoneVerificationResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deletePhoneVerificationResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `PhoneVerificationResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "PhoneVerificationResponse", id },
+        { type: 'PhoneVerificationResponse', id },
+        { type: 'PhoneVerificationResponse', id: 'LIST' },
+        { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePhoneVerificationResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deletePhoneVerificationResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `PhoneVerificationResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "PhoneVerificationResponse", id },
-        { type: "PhoneVerificationResponse", id: "LIST" },
+        { type: 'PhoneVerificationResponse', id },
+        { type: 'PhoneVerificationResponse', id: 'LIST' },
+        { type: 'PhoneVerificationResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetPhoneVerificationResponsesPagedQuery`
 export const {
-  useGetPhoneVerificationResponsesPagedQuery, // immediate fetch
+  useGetPhoneVerificationResponsesPagedQuery,     // immediate fetch
   useLazyGetPhoneVerificationResponsesPagedQuery, // lazy fetch
   useGetPhoneVerificationResponseQuery,
   useGetPhoneVerificationResponsesQuery,
@@ -205,4 +169,4 @@ export const {
   useUpdatePhoneVerificationResponseMutation,
   useDeletePhoneVerificationResponseMutation,
   useDeletePhoneVerificationResponseCascadeMutation,
-} = PhoneVerificationResponseService;
+} = PhoneVerificationResponseService

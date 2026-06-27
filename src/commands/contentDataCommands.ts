@@ -137,7 +137,7 @@ export function registerContentDataCommands(
  * This would typically use the actual extension context and webview
  */
 export function createAccountServiceForCommands(
-  context: vscode.ExtensionContext,
+  _context: vscode.ExtensionContext,
   postMessageToWebview?: (message: ExtensionMessage) => Promise<void>,
 ): ValorIDEAccountService {
   // Default message handler if none provided
@@ -151,19 +151,5 @@ export function createAccountServiceForCommands(
     );
   };
 
-  // JWT token retrieval function
-  const getValorIDEApiKey = async (): Promise<string | undefined> => {
-    try {
-      // Get JWT token from extension secrets storage
-      return await context.secrets.get("jwtToken");
-    } catch (error) {
-      console.error("Failed to get ValorIDE API key:", error);
-      return undefined;
-    }
-  };
-
-  return new ValorIDEAccountService(
-    postMessageToWebview || defaultPostMessage,
-    getValorIDEApiKey,
-  );
+  return new ValorIDEAccountService(postMessageToWebview || defaultPostMessage);
 }

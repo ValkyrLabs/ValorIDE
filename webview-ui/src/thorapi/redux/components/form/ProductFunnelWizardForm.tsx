@@ -13,33 +13,25 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   ProductFunnelWizard,
@@ -47,9 +39,9 @@ import {
   ProductFunnelWizardDeliveryModeEnum,
   ProductFunnelWizardTemplateTypeEnum,
   ProductFunnelWizardWizardStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddProductFunnelWizardMutation } from "../../services/ProductFunnelWizardService";
+import { useAddProductFunnelWizardMutation } from '../../services/ProductFunnelWizardService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -73,70 +65,83 @@ Funnel generation wizard session entity tracking wizard state
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const PriceTierValidation = () => {
-  return ["FREE", "LOW", "MEDIUM", "HIGH", "PREMIUM"];
+  return [
+    'FREE',
+    'LOW',
+    'MEDIUM',
+    'HIGH',
+    'PREMIUM',
+  ];
 };
 const DeliveryModeValidation = () => {
-  return ["DIGITAL", "PHYSICAL", "HYBRID", "SERVICE"];
+  return [
+    'DIGITAL',
+    'PHYSICAL',
+    'HYBRID',
+    'SERVICE',
+  ];
 };
 const TemplateTypeValidation = () => {
-  return ["BASIC", "PREMIUM", "ENTERPRISE"];
+  return [
+    'BASIC',
+    'PREMIUM',
+    'ENTERPRISE',
+  ];
 };
 const WizardStatusValidation = () => {
-  return ["DRAFT", "GENERATING", "REVIEW", "PUBLISHED", "FAILED"];
+  return [
+    'DRAFT',
+    'GENERATING',
+    'REVIEW',
+    'PUBLISHED',
+    'FAILED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  productId: Yup.string(),
-  brand: Yup.string(),
-  targetAudience: Yup.string(),
-  priceTier: Yup.mixed().oneOf(
-    PriceTierValidation(),
-    "Invalid value for priceTier",
-  ),
-  priceAmount: asNumber(Yup.number().typeError("priceAmount must be a number")),
-  deliveryMode: Yup.mixed().oneOf(
-    DeliveryModeValidation(),
-    "Invalid value for deliveryMode",
-  ),
-  heroBenefit: Yup.string(),
-  templateType: Yup.mixed().oneOf(
-    TemplateTypeValidation(),
-    "Invalid value for templateType",
-  ),
-  customization: Yup.string(),
-  wizardStatus: Yup.mixed().oneOf(
-    WizardStatusValidation(),
-    "Invalid value for wizardStatus",
-  ),
-  workflowId: Yup.string(),
-  generatedContentDataId: Yup.string(),
-  generatedLandingPageId: Yup.string(),
-  completedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("completedAt must be a valid date"),
-  trashed: Yup.boolean(),
+        productId: Yup.string(),
+        brand: Yup.string(),
+        targetAudience: Yup.string(),
+      priceTier: Yup.mixed()
+        .oneOf(PriceTierValidation(), "Invalid value for priceTier")
+        ,
+        priceAmount: asNumber(Yup.number().typeError("priceAmount must be a number")),
+      deliveryMode: Yup.mixed()
+        .oneOf(DeliveryModeValidation(), "Invalid value for deliveryMode")
+        ,
+        heroBenefit: Yup.string(),
+      templateType: Yup.mixed()
+        .oneOf(TemplateTypeValidation(), "Invalid value for templateType")
+        ,
+        customization: Yup.string(),
+      wizardStatus: Yup.mixed()
+        .oneOf(WizardStatusValidation(), "Invalid value for wizardStatus")
+        ,
+        workflowId: Yup.string(),
+        generatedContentDataId: Yup.string(),
+        generatedLandingPageId: Yup.string(),
+        completedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("completedAt must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductFunnelWizardForm: React.FC = () => {
-  const [addProductFunnelWizard, addProductFunnelWizardResult] =
-    useAddProductFunnelWizardMutation();
+  const [addProductFunnelWizard, addProductFunnelWizardResult] = useAddProductFunnelWizardMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -146,18 +151,12 @@ const ProductFunnelWizardForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -165,21 +164,21 @@ const ProductFunnelWizardForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ProductFunnelWizard> = {
-    productId: "",
-    brand: "",
-    targetAudience: "",
-    priceTier: undefined,
-    priceAmount: 0,
-    deliveryMode: undefined,
-    heroBenefit: "",
-    templateType: undefined,
-    customization: "",
-    wizardStatus: undefined,
-    workflowId: "",
-    generatedContentDataId: "",
-    generatedLandingPageId: "",
-    completedAt: new Date(),
-    trashed: false,
+          productId: '',
+          brand: '',
+          targetAudience: '',
+        priceTier: undefined,
+          priceAmount: 0,
+        deliveryMode: undefined,
+          heroBenefit: '',
+        templateType: undefined,
+          customization: '',
+        wizardStatus: undefined,
+          workflowId: '',
+          generatedContentDataId: '',
+          generatedLandingPageId: '',
+          completedAt: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -194,14 +193,11 @@ const ProductFunnelWizardForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ProductFunnelWizard:", grants);
+    console.log('Permissions saved for new ProductFunnelWizard:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ProductFunnelWizard>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ProductFunnelWizard>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -212,7 +208,7 @@ const ProductFunnelWizardForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ProductFunnelWizard created successfully! Would you like to set permissions for this object?`,
+          `ProductFunnelWizard created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -220,8 +216,8 @@ const ProductFunnelWizardForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ProductFunnelWizard:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ProductFunnelWizard:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -242,38 +238,44 @@ const ProductFunnelWizardForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addProductFunnelWizardResult.isLoading;
+          const isSaving = isSubmitting || addProductFunnelWizardResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ProductFunnelWizard
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ProductFunnelWizard
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="productId" className="nice-form-control">
                       <b>
                         Product Id:
-                        {touched.productId && !errors.productId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.productId &&
+                         !errors.productId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="productId"
-                        value={values?.productId}
-                        placeholder="Product Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="productId"
+                            value={values?.productId}
+                            placeholder="Product Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -285,21 +287,28 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="brand" className="nice-form-control">
                       <b>
                         Brand:
-                        {touched.brand && !errors.brand && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.brand &&
+                         !errors.brand && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="brand"
-                        value={values?.brand}
-                        placeholder="Brand"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="brand"
+                            value={values?.brand}
+                            placeholder="Brand"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -308,27 +317,31 @@ const ProductFunnelWizardForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="targetAudience"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="targetAudience" className="nice-form-control">
                       <b>
                         Target Audience:
-                        {touched.targetAudience && !errors.targetAudience && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.targetAudience &&
+                         !errors.targetAudience && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="targetAudience"
-                        value={values?.targetAudience}
-                        placeholder="Target Audience"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="targetAudience"
+                            value={values?.targetAudience}
+                            placeholder="Target Audience"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -340,33 +353,30 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="priceTier" className="nice-form-control">
                       <b>
                         Price Tier:
-                        {touched.priceTier && !errors.priceTier && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.priceTier &&
+                         !errors.priceTier && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="priceTier"
-                        value={values.priceTier || ""}
-                        className={
-                          errors.priceTier
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("priceTier", true);
-                          setFieldValue(
-                            "priceTier",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Price Tier" />
-                        <PriceTierLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="priceTier"
+                          value={values.priceTier || ''}
+                          className={
+                            errors.priceTier
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('priceTier', true);
+                            setFieldValue('priceTier', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Price Tier" />
+                          <PriceTierLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -378,33 +388,37 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="priceAmount" className="nice-form-control">
                       <b>
                         Price Amount:
-                        {touched.priceAmount && !errors.priceAmount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.priceAmount &&
+                         !errors.priceAmount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="priceAmount"
-                        type="number"
-                        step="any"
-                        value={values.priceAmount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("priceAmount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "priceAmount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.priceAmount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="priceAmount"
+                            type="number"
+                            step="any"
+                            value={values.priceAmount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('priceAmount', true);
+                              const v = e.target.value;
+                              setFieldValue('priceAmount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.priceAmount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -416,33 +430,30 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="deliveryMode" className="nice-form-control">
                       <b>
                         Delivery Mode:
-                        {touched.deliveryMode && !errors.deliveryMode && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.deliveryMode &&
+                         !errors.deliveryMode && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="deliveryMode"
-                        value={values.deliveryMode || ""}
-                        className={
-                          errors.deliveryMode
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("deliveryMode", true);
-                          setFieldValue(
-                            "deliveryMode",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Delivery Mode" />
-                        <DeliveryModeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="deliveryMode"
+                          value={values.deliveryMode || ''}
+                          className={
+                            errors.deliveryMode
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('deliveryMode', true);
+                            setFieldValue('deliveryMode', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Delivery Mode" />
+                          <DeliveryModeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -454,21 +465,28 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="heroBenefit" className="nice-form-control">
                       <b>
                         Hero Benefit:
-                        {touched.heroBenefit && !errors.heroBenefit && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.heroBenefit &&
+                         !errors.heroBenefit && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="heroBenefit"
-                        value={values?.heroBenefit}
-                        placeholder="Hero Benefit"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="heroBenefit"
+                            value={values?.heroBenefit}
+                            placeholder="Hero Benefit"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -480,33 +498,30 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="templateType" className="nice-form-control">
                       <b>
                         Template Type:
-                        {touched.templateType && !errors.templateType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.templateType &&
+                         !errors.templateType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="templateType"
-                        value={values.templateType || ""}
-                        className={
-                          errors.templateType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("templateType", true);
-                          setFieldValue(
-                            "templateType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Template Type" />
-                        <TemplateTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="templateType"
+                          value={values.templateType || ''}
+                          className={
+                            errors.templateType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('templateType', true);
+                            setFieldValue('templateType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Template Type" />
+                          <TemplateTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -515,27 +530,31 @@ const ProductFunnelWizardForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="customization"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="customization" className="nice-form-control">
                       <b>
                         Customization:
-                        {touched.customization && !errors.customization && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.customization &&
+                         !errors.customization && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="customization"
-                        value={values?.customization}
-                        placeholder="Customization"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customization"
+                            value={values?.customization}
+                            placeholder="Customization"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -547,33 +566,30 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="wizardStatus" className="nice-form-control">
                       <b>
                         Wizard Status:
-                        {touched.wizardStatus && !errors.wizardStatus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.wizardStatus &&
+                         !errors.wizardStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="wizardStatus"
-                        value={values.wizardStatus || ""}
-                        className={
-                          errors.wizardStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("wizardStatus", true);
-                          setFieldValue(
-                            "wizardStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Wizard Status" />
-                        <WizardStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="wizardStatus"
+                          value={values.wizardStatus || ''}
+                          className={
+                            errors.wizardStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('wizardStatus', true);
+                            setFieldValue('wizardStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Wizard Status" />
+                          <WizardStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -585,21 +601,28 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="workflowId" className="nice-form-control">
                       <b>
                         Workflow Id:
-                        {touched.workflowId && !errors.workflowId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.workflowId &&
+                         !errors.workflowId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="workflowId"
-                        value={values?.workflowId}
-                        placeholder="Workflow Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="workflowId"
+                            value={values?.workflowId}
+                            placeholder="Workflow Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -608,28 +631,31 @@ const ProductFunnelWizardForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="generatedContentDataId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="generatedContentDataId" className="nice-form-control">
                       <b>
                         Generated Content Data Id:
                         {touched.generatedContentDataId &&
-                          !errors.generatedContentDataId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.generatedContentDataId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="generatedContentDataId"
-                        value={values?.generatedContentDataId}
-                        placeholder="Generated Content Data Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="generatedContentDataId"
+                            value={values?.generatedContentDataId}
+                            placeholder="Generated Content Data Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -638,28 +664,31 @@ const ProductFunnelWizardForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="generatedLandingPageId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="generatedLandingPageId" className="nice-form-control">
                       <b>
                         Generated Landing Page Id:
                         {touched.generatedLandingPageId &&
-                          !errors.generatedLandingPageId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.generatedLandingPageId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="generatedLandingPageId"
-                        value={values?.generatedLandingPageId}
-                        placeholder="Generated Landing Page Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="generatedLandingPageId"
+                            value={values?.generatedLandingPageId}
+                            placeholder="Generated Landing Page Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -671,38 +700,38 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="completedAt" className="nice-form-control">
                       <b>
                         Completed At:
-                        {touched.completedAt && !errors.completedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.completedAt &&
+                         !errors.completedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="completedAt"
-                        type="datetime-local"
-                        value={
-                          values.completedAt
-                            ? new Date(values.completedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("completedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "completedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.completedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="completedAt"
+                            type="datetime-local"
+                            value={values.completedAt ? 
+                              new Date(values.completedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('completedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('completedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.completedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -714,25 +743,32 @@ const ProductFunnelWizardForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -742,61 +778,45 @@ const ProductFunnelWizardForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New ProductFunnelWizard
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ProductFunnelWizard
+                  </CoolButton>
 
-                    {(addProductFunnelWizardResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addProductFunnelWizardResult as any).error
-                              ? (addProductFunnelWizardResult as any).error.data
-                              : (addProductFunnelWizardResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addProductFunnelWizardResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addProductFunnelWizardResult as any).error ? (addProductFunnelWizardResult as any).error.data : (addProductFunnelWizardResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addProductFunnelWizardResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addProductFunnelWizardResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addProductFunnelWizardResult:{" "}
-                    {JSON.stringify(addProductFunnelWizardResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addProductFunnelWizardResult: {JSON.stringify(addProductFunnelWizardResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -828,11 +848,11 @@ kebabcase price-tier-lookup
 const PriceTierLookup = () => {
   return (
     <>
-      <option value="FREE" label="Free" />
-      <option value="LOW" label="Low" />
-      <option value="MEDIUM" label="Medium" />
-      <option value="HIGH" label="High" />
-      <option value="PREMIUM" label="Premium" />
+      <option value='FREE' label="Free" />
+      <option value='LOW' label="Low" />
+      <option value='MEDIUM' label="Medium" />
+      <option value='HIGH' label="High" />
+      <option value='PREMIUM' label="Premium" />
     </>
   );
 };
@@ -849,10 +869,10 @@ kebabcase delivery-mode-lookup
 const DeliveryModeLookup = () => {
   return (
     <>
-      <option value="DIGITAL" label="Digital" />
-      <option value="PHYSICAL" label="Physical" />
-      <option value="HYBRID" label="Hybrid" />
-      <option value="SERVICE" label="Service" />
+      <option value='DIGITAL' label="Digital" />
+      <option value='PHYSICAL' label="Physical" />
+      <option value='HYBRID' label="Hybrid" />
+      <option value='SERVICE' label="Service" />
     </>
   );
 };
@@ -869,9 +889,9 @@ kebabcase template-type-lookup
 const TemplateTypeLookup = () => {
   return (
     <>
-      <option value="BASIC" label="Basic" />
-      <option value="PREMIUM" label="Premium" />
-      <option value="ENTERPRISE" label="Enterprise" />
+      <option value='BASIC' label="Basic" />
+      <option value='PREMIUM' label="Premium" />
+      <option value='ENTERPRISE' label="Enterprise" />
     </>
   );
 };
@@ -888,14 +908,17 @@ kebabcase wizard-status-lookup
 const WizardStatusLookup = () => {
   return (
     <>
-      <option value="DRAFT" label="Draft" />
-      <option value="GENERATING" label="Generating" />
-      <option value="REVIEW" label="Review" />
-      <option value="PUBLISHED" label="Published" />
-      <option value="FAILED" label="Failed" />
+      <option value='DRAFT' label="Draft" />
+      <option value='GENERATING' label="Generating" />
+      <option value='REVIEW' label="Review" />
+      <option value='PUBLISHED' label="Published" />
+      <option value='FAILED' label="Failed" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ProductFunnelWizardForm;
+

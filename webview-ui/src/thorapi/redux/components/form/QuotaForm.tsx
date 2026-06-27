@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Quota,
+  QuotaResourceTypeEnum,
+} from '@thorapi/model';
 
-import { Quota, QuotaResourceTypeEnum } from "@thorapi/model";
-
-import { useAddQuotaMutation } from "../../services/QuotaService";
+import { useAddQuotaMutation } from '../../services/QuotaService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -68,11 +63,11 @@ Per-principal quota limits for rate limiting and concurrency control
 -------------------------------------------------------- */
 const ResourceTypeValidation = () => {
   return [
-    "WORKFLOW_EXECUTION",
-    "API_CALL",
-    "LLM_REQUEST",
-    "EMAIL_SEND",
-    "FILE_UPLOAD",
+    'WORKFLOW_EXECUTION',
+    'API_CALL',
+    'LLM_REQUEST',
+    'EMAIL_SEND',
+    'FILE_UPLOAD',
   ];
 };
 
@@ -80,52 +75,35 @@ const ResourceTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  resourceType: Yup.mixed().oneOf(
-    ResourceTypeValidation(),
-    "Invalid value for resourceType",
-  ),
-  maxConcurrent: asNumber(
-    Yup.number().integer().typeError("maxConcurrent must be a number"),
-  ),
-  maxPerHour: asNumber(
-    Yup.number().integer().typeError("maxPerHour must be a number"),
-  ),
-  maxPerDay: asNumber(
-    Yup.number().integer().typeError("maxPerDay must be a number"),
-  ),
-  currentConcurrent: asNumber(
-    Yup.number().integer().typeError("currentConcurrent must be a number"),
-  ),
-  currentHourCount: asNumber(
-    Yup.number().integer().typeError("currentHourCount must be a number"),
-  ),
-  currentDayCount: asNumber(
-    Yup.number().integer().typeError("currentDayCount must be a number"),
-  ),
-  hourResetAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("hourResetAt must be a valid date"),
-  dayResetAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("dayResetAt must be a valid date"),
-  trashed: Yup.boolean(),
+      resourceType: Yup.mixed()
+        .oneOf(ResourceTypeValidation(), "Invalid value for resourceType")
+        ,
+        maxConcurrent: asNumber(Yup.number().integer().typeError("maxConcurrent must be a number")),
+        maxPerHour: asNumber(Yup.number().integer().typeError("maxPerHour must be a number")),
+        maxPerDay: asNumber(Yup.number().integer().typeError("maxPerDay must be a number")),
+        currentConcurrent: asNumber(Yup.number().integer().typeError("currentConcurrent must be a number")),
+        currentHourCount: asNumber(Yup.number().integer().typeError("currentHourCount must be a number")),
+        currentDayCount: asNumber(Yup.number().integer().typeError("currentDayCount must be a number")),
+        hourResetAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("hourResetAt must be a valid date"),
+        dayResetAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("dayResetAt must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -142,18 +120,12 @@ const QuotaForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -161,16 +133,16 @@ const QuotaForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Quota> = {
-    resourceType: undefined,
-    maxConcurrent: 0,
-    maxPerHour: 0,
-    maxPerDay: 0,
-    currentConcurrent: 0,
-    currentHourCount: 0,
-    currentDayCount: 0,
-    hourResetAt: new Date(),
-    dayResetAt: new Date(),
-    trashed: false,
+        resourceType: undefined,
+          maxConcurrent: 0,
+          maxPerHour: 0,
+          maxPerDay: 0,
+          currentConcurrent: 0,
+          currentHourCount: 0,
+          currentDayCount: 0,
+          hourResetAt: new Date(),
+          dayResetAt: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -185,14 +157,11 @@ const QuotaForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Quota:", grants);
+    console.log('Permissions saved for new Quota:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Quota>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Quota>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -203,7 +172,7 @@ const QuotaForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Quota created successfully! Would you like to set permissions for this object?`,
+          `Quota created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -211,8 +180,8 @@ const QuotaForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Quota:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Quota:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -233,48 +202,46 @@ const QuotaForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addQuotaResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Quota
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Quota
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="resourceType" className="nice-form-control">
                       <b>
                         Resource Type:
-                        {touched.resourceType && !errors.resourceType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.resourceType &&
+                         !errors.resourceType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="resourceType"
-                        value={values.resourceType || ""}
-                        className={
-                          errors.resourceType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("resourceType", true);
-                          setFieldValue(
-                            "resourceType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Resource Type" />
-                        <ResourceTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="resourceType"
+                          value={values.resourceType || ''}
+                          className={
+                            errors.resourceType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('resourceType', true);
+                            setFieldValue('resourceType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Resource Type" />
+                          <ResourceTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -283,38 +250,39 @@ const QuotaForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="maxConcurrent"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="maxConcurrent" className="nice-form-control">
                       <b>
                         Max Concurrent:
-                        {touched.maxConcurrent && !errors.maxConcurrent && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxConcurrent &&
+                         !errors.maxConcurrent && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxConcurrent"
-                        type="number"
-                        value={values.maxConcurrent || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxConcurrent", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxConcurrent",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxConcurrent
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxConcurrent"
+                            type="number"
+                            value={values.maxConcurrent || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxConcurrent', true);
+                              const v = e.target.value;
+                              setFieldValue('maxConcurrent', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxConcurrent
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -326,32 +294,36 @@ const QuotaForm: React.FC = () => {
                     <label htmlFor="maxPerHour" className="nice-form-control">
                       <b>
                         Max Per Hour:
-                        {touched.maxPerHour && !errors.maxPerHour && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxPerHour &&
+                         !errors.maxPerHour && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxPerHour"
-                        type="number"
-                        value={values.maxPerHour || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxPerHour", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxPerHour",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxPerHour
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxPerHour"
+                            type="number"
+                            value={values.maxPerHour || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxPerHour', true);
+                              const v = e.target.value;
+                              setFieldValue('maxPerHour', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxPerHour
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -363,32 +335,36 @@ const QuotaForm: React.FC = () => {
                     <label htmlFor="maxPerDay" className="nice-form-control">
                       <b>
                         Max Per Day:
-                        {touched.maxPerDay && !errors.maxPerDay && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxPerDay &&
+                         !errors.maxPerDay && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxPerDay"
-                        type="number"
-                        value={values.maxPerDay || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxPerDay", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxPerDay",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxPerDay
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxPerDay"
+                            type="number"
+                            value={values.maxPerDay || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxPerDay', true);
+                              const v = e.target.value;
+                              setFieldValue('maxPerDay', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxPerDay
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -397,120 +373,121 @@ const QuotaForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="currentConcurrent"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="currentConcurrent" className="nice-form-control">
                       <b>
                         Current Concurrent:
                         {touched.currentConcurrent &&
-                          !errors.currentConcurrent && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="currentConcurrent"
-                        type="number"
-                        value={values.currentConcurrent || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentConcurrent", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentConcurrent",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentConcurrent
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="currentConcurrent"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="currentHourCount"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Current Hour Count:
-                        {touched.currentHourCount &&
-                          !errors.currentHourCount && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="currentHourCount"
-                        type="number"
-                        value={values.currentHourCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentHourCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentHourCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentHourCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="currentHourCount"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="currentDayCount"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Current Day Count:
-                        {touched.currentDayCount && !errors.currentDayCount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                         !errors.currentConcurrent && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="currentDayCount"
-                        type="number"
-                        value={values.currentDayCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentDayCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentDayCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentDayCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="currentConcurrent"
+                            type="number"
+                            value={values.currentConcurrent || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentConcurrent', true);
+                              const v = e.target.value;
+                              setFieldValue('currentConcurrent', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentConcurrent
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="currentConcurrent"
+                        component="span"
                       />
+                    </label>
+                    <br />
+                    <label htmlFor="currentHourCount" className="nice-form-control">
+                      <b>
+                        Current Hour Count:
+                        {touched.currentHourCount &&
+                         !errors.currentHourCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="currentHourCount"
+                            type="number"
+                            value={values.currentHourCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentHourCount', true);
+                              const v = e.target.value;
+                              setFieldValue('currentHourCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentHourCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="currentHourCount"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="currentDayCount" className="nice-form-control">
+                      <b>
+                        Current Day Count:
+                        {touched.currentDayCount &&
+                         !errors.currentDayCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="currentDayCount"
+                            type="number"
+                            value={values.currentDayCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentDayCount', true);
+                              const v = e.target.value;
+                              setFieldValue('currentDayCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentDayCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -522,38 +499,38 @@ const QuotaForm: React.FC = () => {
                     <label htmlFor="hourResetAt" className="nice-form-control">
                       <b>
                         Hour Reset At:
-                        {touched.hourResetAt && !errors.hourResetAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.hourResetAt &&
+                         !errors.hourResetAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="hourResetAt"
-                        type="datetime-local"
-                        value={
-                          values.hourResetAt
-                            ? new Date(values.hourResetAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("hourResetAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "hourResetAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.hourResetAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="hourResetAt"
+                            type="datetime-local"
+                            value={values.hourResetAt ? 
+                              new Date(values.hourResetAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('hourResetAt', true);
+                              const v = e.target.value;
+                              setFieldValue('hourResetAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.hourResetAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -565,38 +542,38 @@ const QuotaForm: React.FC = () => {
                     <label htmlFor="dayResetAt" className="nice-form-control">
                       <b>
                         Day Reset At:
-                        {touched.dayResetAt && !errors.dayResetAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.dayResetAt &&
+                         !errors.dayResetAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="dayResetAt"
-                        type="datetime-local"
-                        value={
-                          values.dayResetAt
-                            ? new Date(values.dayResetAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("dayResetAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "dayResetAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.dayResetAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="dayResetAt"
+                            type="datetime-local"
+                            value={values.dayResetAt ? 
+                              new Date(values.dayResetAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('dayResetAt', true);
+                              const v = e.target.value;
+                              setFieldValue('dayResetAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.dayResetAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -608,25 +585,32 @@ const QuotaForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -636,58 +620,45 @@ const QuotaForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Quota
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Quota
+                  </CoolButton>
 
-                    {(addQuotaResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addQuotaResult as any).error
-                              ? (addQuotaResult as any).error.data
-                              : (addQuotaResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addQuotaResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addQuotaResult as any).error ? (addQuotaResult as any).error.data : (addQuotaResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addQuotaResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addQuotaResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addQuotaResult: {JSON.stringify(addQuotaResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addQuotaResult: {JSON.stringify(addQuotaResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -719,14 +690,17 @@ kebabcase resource-type-lookup
 const ResourceTypeLookup = () => {
   return (
     <>
-      <option value="WORKFLOW_EXECUTION" label="Workflow Execution" />
-      <option value="API_CALL" label="Api Call" />
-      <option value="LLM_REQUEST" label="Llm Request" />
-      <option value="EMAIL_SEND" label="Email Send" />
-      <option value="FILE_UPLOAD" label="File Upload" />
+      <option value='WORKFLOW_EXECUTION' label="Workflow Execution" />
+      <option value='API_CALL' label="Api Call" />
+      <option value='LLM_REQUEST' label="Llm Request" />
+      <option value='EMAIL_SEND' label="Email Send" />
+      <option value='FILE_UPLOAD' label="File Upload" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default QuotaForm;
+

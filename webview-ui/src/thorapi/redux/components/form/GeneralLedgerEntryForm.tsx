@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   GeneralLedgerEntry,
   GeneralLedgerEntryReferenceTypeEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddGeneralLedgerEntryMutation } from "../../services/GeneralLedgerEntryService";
+import { useAddGeneralLedgerEntryMutation } from '../../services/GeneralLedgerEntryService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,11 +63,11 @@ Core GL entry linking payments, usage, lineitems
 -------------------------------------------------------- */
 const ReferenceTypeValidation = () => {
   return [
-    "PaymentTransaction",
-    "UsageTransaction",
-    "SalesOrder",
-    "Invoice",
-    "Expense",
+    'PaymentTransaction',
+    'UsageTransaction',
+    'SalesOrder',
+    'Invoice',
+    'Expense',
   ];
 };
 
@@ -83,38 +75,33 @@ const ReferenceTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  entryDate: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("entryDate must be a valid date"),
-  debitAccount: Yup.string(),
-  creditAccount: Yup.string(),
-  amount: asNumber(Yup.number().typeError("amount must be a number")),
-  referenceType: Yup.mixed().oneOf(
-    ReferenceTypeValidation(),
-    "Invalid value for referenceType",
-  ),
-  referenceId: Yup.string(),
-  notes: Yup.string(),
-  trashed: Yup.boolean(),
+        entryDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("entryDate must be a valid date"),
+        debitAccount: Yup.string(),
+        creditAccount: Yup.string(),
+        amount: asNumber(Yup.number().typeError("amount must be a number")),
+      referenceType: Yup.mixed()
+        .oneOf(ReferenceTypeValidation(), "Invalid value for referenceType")
+        ,
+        referenceId: Yup.string(),
+        notes: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const GeneralLedgerEntryForm: React.FC = () => {
-  const [addGeneralLedgerEntry, addGeneralLedgerEntryResult] =
-    useAddGeneralLedgerEntryMutation();
+  const [addGeneralLedgerEntry, addGeneralLedgerEntryResult] = useAddGeneralLedgerEntryMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -124,18 +111,12 @@ const GeneralLedgerEntryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -143,14 +124,14 @@ const GeneralLedgerEntryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<GeneralLedgerEntry> = {
-    entryDate: new Date(),
-    debitAccount: "",
-    creditAccount: "",
-    amount: 0,
-    referenceType: undefined,
-    referenceId: "",
-    notes: "",
-    trashed: false,
+          entryDate: new Date(),
+          debitAccount: '',
+          creditAccount: '',
+          amount: 0,
+        referenceType: undefined,
+          referenceId: '',
+          notes: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -165,14 +146,11 @@ const GeneralLedgerEntryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new GeneralLedgerEntry:", grants);
+    console.log('Permissions saved for new GeneralLedgerEntry:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<GeneralLedgerEntry>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<GeneralLedgerEntry>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -183,7 +161,7 @@ const GeneralLedgerEntryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `GeneralLedgerEntry created successfully! Would you like to set permissions for this object?`,
+          `GeneralLedgerEntry created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -191,8 +169,8 @@ const GeneralLedgerEntryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create GeneralLedgerEntry:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create GeneralLedgerEntry:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -213,55 +191,54 @@ const GeneralLedgerEntryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addGeneralLedgerEntryResult.isLoading;
+          const isSaving = isSubmitting || addGeneralLedgerEntryResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    GeneralLedgerEntry
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New GeneralLedgerEntry
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="entryDate" className="nice-form-control">
                       <b>
                         Entry Date:
-                        {touched.entryDate && !errors.entryDate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.entryDate &&
+                         !errors.entryDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="entryDate"
-                        type="datetime-local"
-                        value={
-                          values.entryDate
-                            ? new Date(values.entryDate)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("entryDate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "entryDate",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.entryDate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="entryDate"
+                            type="datetime-local"
+                            value={values.entryDate ? 
+                              new Date(values.entryDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('entryDate', true);
+                              const v = e.target.value;
+                              setFieldValue('entryDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.entryDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -273,21 +250,28 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     <label htmlFor="debitAccount" className="nice-form-control">
                       <b>
                         Debit Account:
-                        {touched.debitAccount && !errors.debitAccount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.debitAccount &&
+                         !errors.debitAccount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="debitAccount"
-                        value={values?.debitAccount}
-                        placeholder="Debit Account"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="debitAccount"
+                            value={values?.debitAccount}
+                            placeholder="Debit Account"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -296,27 +280,31 @@ const GeneralLedgerEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="creditAccount"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="creditAccount" className="nice-form-control">
                       <b>
                         Credit Account:
-                        {touched.creditAccount && !errors.creditAccount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.creditAccount &&
+                         !errors.creditAccount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="creditAccount"
-                        value={values?.creditAccount}
-                        placeholder="Credit Account"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="creditAccount"
+                            value={values?.creditAccount}
+                            placeholder="Credit Account"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -328,33 +316,37 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     <label htmlFor="amount" className="nice-form-control">
                       <b>
                         Amount:
-                        {touched.amount && !errors.amount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.amount &&
+                         !errors.amount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="amount"
-                        type="number"
-                        step="any"
-                        value={values.amount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("amount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "amount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.amount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="amount"
+                            type="number"
+                            step="any"
+                            value={values.amount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('amount', true);
+                              const v = e.target.value;
+                              setFieldValue('amount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.amount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -363,39 +355,33 @@ const GeneralLedgerEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="referenceType"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="referenceType" className="nice-form-control">
                       <b>
                         Reference Type:
-                        {touched.referenceType && !errors.referenceType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.referenceType &&
+                         !errors.referenceType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="referenceType"
-                        value={values.referenceType || ""}
-                        className={
-                          errors.referenceType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("referenceType", true);
-                          setFieldValue(
-                            "referenceType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Reference Type" />
-                        <ReferenceTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="referenceType"
+                          value={values.referenceType || ''}
+                          className={
+                            errors.referenceType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('referenceType', true);
+                            setFieldValue('referenceType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Reference Type" />
+                          <ReferenceTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -407,21 +393,28 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     <label htmlFor="referenceId" className="nice-form-control">
                       <b>
                         Reference Id:
-                        {touched.referenceId && !errors.referenceId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.referenceId &&
+                         !errors.referenceId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="referenceId"
-                        value={values?.referenceId}
-                        placeholder="Reference Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="referenceId"
+                            value={values?.referenceId}
+                            placeholder="Reference Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -433,21 +426,28 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes && !errors.notes && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.notes &&
+                         !errors.notes && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="notes"
-                        value={values?.notes}
-                        placeholder="Notes"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="notes"
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -459,25 +459,32 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -487,60 +494,45 @@ const GeneralLedgerEntryForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New GeneralLedgerEntry
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New GeneralLedgerEntry
+                  </CoolButton>
 
-                    {(addGeneralLedgerEntryResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addGeneralLedgerEntryResult as any).error
-                              ? (addGeneralLedgerEntryResult as any).error.data
-                              : (addGeneralLedgerEntryResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addGeneralLedgerEntryResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addGeneralLedgerEntryResult as any).error ? (addGeneralLedgerEntryResult as any).error.data : (addGeneralLedgerEntryResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addGeneralLedgerEntryResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addGeneralLedgerEntryResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addGeneralLedgerEntryResult:{" "}
-                    {JSON.stringify(addGeneralLedgerEntryResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addGeneralLedgerEntryResult: {JSON.stringify(addGeneralLedgerEntryResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -572,14 +564,17 @@ kebabcase reference-type-lookup
 const ReferenceTypeLookup = () => {
   return (
     <>
-      <option value="PaymentTransaction" label="Payment Transaction" />
-      <option value="UsageTransaction" label="Usage Transaction" />
-      <option value="SalesOrder" label="Sales Order" />
-      <option value="Invoice" label="Invoice" />
-      <option value="Expense" label="Expense" />
+      <option value='PaymentTransaction' label="Payment Transaction" />
+      <option value='UsageTransaction' label="Usage Transaction" />
+      <option value='SalesOrder' label="Sales Order" />
+      <option value='Invoice' label="Invoice" />
+      <option value='Expense' label="Expense" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default GeneralLedgerEntryForm;
+

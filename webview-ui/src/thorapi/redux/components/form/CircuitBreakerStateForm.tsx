@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   CircuitBreakerState,
   CircuitBreakerStateStateEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddCircuitBreakerStateMutation } from "../../services/CircuitBreakerStateService";
+import { useAddCircuitBreakerStateMutation } from '../../services/CircuitBreakerStateService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,71 +62,66 @@ Circuit breaker state for external dependencies and rate limiting
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StateValidation = () => {
-  return ["CLOSED", "OPEN", "HALF_OPEN"];
+  return [
+    'CLOSED',
+    'OPEN',
+    'HALF_OPEN',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  target: Yup.string(),
-  state: Yup.mixed().oneOf(StateValidation(), "Invalid value for state"),
-  failureCount: asNumber(
-    Yup.number().integer().typeError("failureCount must be a number"),
-  ),
-  successCount: asNumber(
-    Yup.number().integer().typeError("successCount must be a number"),
-  ),
-  lastFailureAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("lastFailureAt must be a valid date"),
-  openedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("openedAt must be a valid date"),
-  nextRetryAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("nextRetryAt must be a valid date"),
-  windowStartAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("windowStartAt must be a valid date"),
-  trashed: Yup.boolean(),
+        target: Yup.string(),
+      state: Yup.mixed()
+        .oneOf(StateValidation(), "Invalid value for state")
+        ,
+        failureCount: asNumber(Yup.number().integer().typeError("failureCount must be a number")),
+        successCount: asNumber(Yup.number().integer().typeError("successCount must be a number")),
+        lastFailureAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastFailureAt must be a valid date"),
+        openedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("openedAt must be a valid date"),
+        nextRetryAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("nextRetryAt must be a valid date"),
+        windowStartAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("windowStartAt must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CircuitBreakerStateForm: React.FC = () => {
-  const [addCircuitBreakerState, addCircuitBreakerStateResult] =
-    useAddCircuitBreakerStateMutation();
+  const [addCircuitBreakerState, addCircuitBreakerStateResult] = useAddCircuitBreakerStateMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -144,18 +131,12 @@ const CircuitBreakerStateForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -163,15 +144,15 @@ const CircuitBreakerStateForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CircuitBreakerState> = {
-    target: "",
-    state: undefined,
-    failureCount: 0,
-    successCount: 0,
-    lastFailureAt: new Date(),
-    openedAt: new Date(),
-    nextRetryAt: new Date(),
-    windowStartAt: new Date(),
-    trashed: false,
+          target: '',
+        state: undefined,
+          failureCount: 0,
+          successCount: 0,
+          lastFailureAt: new Date(),
+          openedAt: new Date(),
+          nextRetryAt: new Date(),
+          windowStartAt: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -186,14 +167,11 @@ const CircuitBreakerStateForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new CircuitBreakerState:", grants);
+    console.log('Permissions saved for new CircuitBreakerState:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<CircuitBreakerState>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CircuitBreakerState>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -204,7 +182,7 @@ const CircuitBreakerStateForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CircuitBreakerState created successfully! Would you like to set permissions for this object?`,
+          `CircuitBreakerState created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -212,8 +190,8 @@ const CircuitBreakerStateForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create CircuitBreakerState:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create CircuitBreakerState:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -234,38 +212,44 @@ const CircuitBreakerStateForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addCircuitBreakerStateResult.isLoading;
+          const isSaving = isSubmitting || addCircuitBreakerStateResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    CircuitBreakerState
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New CircuitBreakerState
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="target" className="nice-form-control">
                       <b>
                         Target:
-                        {touched.target && !errors.target && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.target &&
+                         !errors.target && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="target"
-                        value={values?.target}
-                        placeholder="Target"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="target"
+                            value={values?.target}
+                            placeholder="Target"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -277,30 +261,30 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
-                        {touched.state && !errors.state && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.state &&
+                         !errors.state && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="state"
-                        value={values.state || ""}
-                        className={
-                          errors.state
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("state", true);
-                          setFieldValue("state", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select State" />
-                        <StateLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="state"
+                          value={values.state || ''}
+                          className={
+                            errors.state
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('state', true);
+                            setFieldValue('state', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select State" />
+                          <StateLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -312,32 +296,36 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="failureCount" className="nice-form-control">
                       <b>
                         Failure Count:
-                        {touched.failureCount && !errors.failureCount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.failureCount &&
+                         !errors.failureCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="failureCount"
-                        type="number"
-                        value={values.failureCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("failureCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "failureCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.failureCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="failureCount"
+                            type="number"
+                            value={values.failureCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('failureCount', true);
+                              const v = e.target.value;
+                              setFieldValue('failureCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.failureCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -349,32 +337,36 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="successCount" className="nice-form-control">
                       <b>
                         Success Count:
-                        {touched.successCount && !errors.successCount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.successCount &&
+                         !errors.successCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="successCount"
-                        type="number"
-                        value={values.successCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("successCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "successCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.successCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="successCount"
+                            type="number"
+                            value={values.successCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('successCount', true);
+                              const v = e.target.value;
+                              setFieldValue('successCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.successCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -383,44 +375,41 @@ const CircuitBreakerStateForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="lastFailureAt"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="lastFailureAt" className="nice-form-control">
                       <b>
                         Last Failure At:
-                        {touched.lastFailureAt && !errors.lastFailureAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.lastFailureAt &&
+                         !errors.lastFailureAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="lastFailureAt"
-                        type="datetime-local"
-                        value={
-                          values.lastFailureAt
-                            ? new Date(values.lastFailureAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("lastFailureAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "lastFailureAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.lastFailureAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastFailureAt"
+                            type="datetime-local"
+                            value={values.lastFailureAt ? 
+                              new Date(values.lastFailureAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastFailureAt', true);
+                              const v = e.target.value;
+                              setFieldValue('lastFailureAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastFailureAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -432,38 +421,38 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="openedAt" className="nice-form-control">
                       <b>
                         Opened At:
-                        {touched.openedAt && !errors.openedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.openedAt &&
+                         !errors.openedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="openedAt"
-                        type="datetime-local"
-                        value={
-                          values.openedAt
-                            ? new Date(values.openedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("openedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "openedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.openedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="openedAt"
+                            type="datetime-local"
+                            value={values.openedAt ? 
+                              new Date(values.openedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('openedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('openedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.openedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -475,38 +464,38 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="nextRetryAt" className="nice-form-control">
                       <b>
                         Next Retry At:
-                        {touched.nextRetryAt && !errors.nextRetryAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.nextRetryAt &&
+                         !errors.nextRetryAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="nextRetryAt"
-                        type="datetime-local"
-                        value={
-                          values.nextRetryAt
-                            ? new Date(values.nextRetryAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("nextRetryAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "nextRetryAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.nextRetryAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="nextRetryAt"
+                            type="datetime-local"
+                            value={values.nextRetryAt ? 
+                              new Date(values.nextRetryAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('nextRetryAt', true);
+                              const v = e.target.value;
+                              setFieldValue('nextRetryAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.nextRetryAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -515,44 +504,41 @@ const CircuitBreakerStateForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="windowStartAt"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="windowStartAt" className="nice-form-control">
                       <b>
                         Window Start At:
-                        {touched.windowStartAt && !errors.windowStartAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.windowStartAt &&
+                         !errors.windowStartAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="windowStartAt"
-                        type="datetime-local"
-                        value={
-                          values.windowStartAt
-                            ? new Date(values.windowStartAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("windowStartAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "windowStartAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.windowStartAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="windowStartAt"
+                            type="datetime-local"
+                            value={values.windowStartAt ? 
+                              new Date(values.windowStartAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('windowStartAt', true);
+                              const v = e.target.value;
+                              setFieldValue('windowStartAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.windowStartAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -564,25 +550,32 @@ const CircuitBreakerStateForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -592,61 +585,45 @@ const CircuitBreakerStateForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New CircuitBreakerState
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New CircuitBreakerState
+                  </CoolButton>
 
-                    {(addCircuitBreakerStateResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addCircuitBreakerStateResult as any).error
-                              ? (addCircuitBreakerStateResult as any).error.data
-                              : (addCircuitBreakerStateResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addCircuitBreakerStateResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addCircuitBreakerStateResult as any).error ? (addCircuitBreakerStateResult as any).error.data : (addCircuitBreakerStateResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addCircuitBreakerStateResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addCircuitBreakerStateResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addCircuitBreakerStateResult:{" "}
-                    {JSON.stringify(addCircuitBreakerStateResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCircuitBreakerStateResult: {JSON.stringify(addCircuitBreakerStateResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -678,12 +655,15 @@ kebabcase state-lookup
 const StateLookup = () => {
   return (
     <>
-      <option value="CLOSED" label="Closed" />
-      <option value="OPEN" label="Open" />
-      <option value="HALF_OPEN" label="Half Open" />
+      <option value='CLOSED' label="Closed" />
+      <option value='OPEN' label="Open" />
+      <option value='HALF_OPEN' label="Half Open" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default CircuitBreakerStateForm;
+

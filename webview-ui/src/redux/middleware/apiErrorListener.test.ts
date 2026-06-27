@@ -142,6 +142,35 @@ describe("apiErrorListener", () => {
     expect((state.lastError as ApiErrorPayload).status).toBe(500);
   });
 
+  it("suppresses non-blocking usage metering permission denials", async () => {
+    const store = makeStore();
+    sessionStorage.setItem("jwtToken", "valid-but-readonly");
+
+    store.dispatch({
+      type: "fake/rejected",
+      payload: {
+        status: 403,
+        data: {
+          message:
+            "Authenticated token cannot perform this action. Verify required write scopes or role permissions.",
+        },
+      },
+      meta: {
+        arg: { endpointName: "recordUsageTransaction" },
+        requestId: "r2b",
+        rejectedWithValue: true,
+        requestStatus: "rejected",
+      },
+      error: { message: "Rejected" },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const state = store.getState().apiErrors;
+    expect(state.lastError).toBeNull();
+    expect(state.showAccountBalance).toBe(false);
+  });
+
   it("clears stale auth when api-0 reports an expired or replaced session", async () => {
     const store = makeStore();
     sessionStorage.setItem("jwtToken", "stale");

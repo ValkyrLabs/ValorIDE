@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   TrustRuntimeEvent,
   TrustRuntimeEventEventTypeEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddTrustRuntimeEventMutation } from "../../services/TrustRuntimeEventService";
+import { useAddTrustRuntimeEventMutation } from '../../services/TrustRuntimeEventService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,20 +63,20 @@ Signed and hash-chained runtime event. Payloads are hashed or redacted before pe
 -------------------------------------------------------- */
 const EventTypeValidation = () => {
   return [
-    "EXECUTION_STARTED",
-    "RBAC_CHECK",
-    "ACL_CHECK",
-    "API_CALL",
-    "GRAYMATTER_READ",
-    "GRAYMATTER_WRITE",
-    "SECUREFIELD_ENCRYPT",
-    "SECUREFIELD_DECRYPT",
-    "KEY_LEASE",
-    "MODEL_CALL",
-    "TOOL_CALL",
-    "PROOF_GENERATED",
-    "EXECUTION_COMPLETED",
-    "EXECUTION_FAILED",
+    'EXECUTION_STARTED',
+    'RBAC_CHECK',
+    'ACL_CHECK',
+    'API_CALL',
+    'GRAYMATTER_READ',
+    'GRAYMATTER_WRITE',
+    'SECUREFIELD_ENCRYPT',
+    'SECUREFIELD_DECRYPT',
+    'KEY_LEASE',
+    'MODEL_CALL',
+    'TOOL_CALL',
+    'PROOF_GENERATED',
+    'EXECUTION_COMPLETED',
+    'EXECUTION_FAILED',
   ];
 };
 
@@ -92,33 +84,27 @@ const EventTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  sequenceNumber: asNumber(
-    Yup.number().integer().typeError("sequenceNumber must be a number"),
-  ),
-  eventType: Yup.mixed().oneOf(
-    EventTypeValidation(),
-    "Invalid value for eventType",
-  ),
-  previousEventHash: Yup.string(),
-  payloadHash: Yup.string(),
-  redactionPolicy: Yup.string(),
-  eventHash: Yup.string(),
-  signature: Yup.string(),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+        sequenceNumber: asNumber(Yup.number().integer().typeError("sequenceNumber must be a number")),
+      eventType: Yup.mixed()
+        .oneOf(EventTypeValidation(), "Invalid value for eventType")
+        ,
+        previousEventHash: Yup.string(),
+        payloadHash: Yup.string(),
+        redactionPolicy: Yup.string(),
+        eventHash: Yup.string(),
+        signature: Yup.string(),
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustRuntimeEventForm: React.FC = () => {
-  const [addTrustRuntimeEvent, addTrustRuntimeEventResult] =
-    useAddTrustRuntimeEventMutation();
+  const [addTrustRuntimeEvent, addTrustRuntimeEventResult] = useAddTrustRuntimeEventMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -128,18 +114,12 @@ const TrustRuntimeEventForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -147,15 +127,15 @@ const TrustRuntimeEventForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustRuntimeEvent> = {
-    sequenceNumber: 0,
-    eventType: undefined,
-    previousEventHash: "",
-    payloadHash: "",
-    redactionPolicy: "",
-    eventHash: "",
-    signature: "",
-    ownerId: "",
-    trashed: false,
+          sequenceNumber: 0,
+        eventType: undefined,
+          previousEventHash: '',
+          payloadHash: '',
+          redactionPolicy: '',
+          eventHash: '',
+          signature: '',
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -170,14 +150,11 @@ const TrustRuntimeEventForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new TrustRuntimeEvent:", grants);
+    console.log('Permissions saved for new TrustRuntimeEvent:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<TrustRuntimeEvent>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustRuntimeEvent>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -188,7 +165,7 @@ const TrustRuntimeEventForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustRuntimeEvent created successfully! Would you like to set permissions for this object?`,
+          `TrustRuntimeEvent created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -196,8 +173,8 @@ const TrustRuntimeEventForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create TrustRuntimeEvent:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create TrustRuntimeEvent:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -218,51 +195,52 @@ const TrustRuntimeEventForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addTrustRuntimeEventResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    TrustRuntimeEvent
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="sequenceNumber"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustRuntimeEvent
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="sequenceNumber" className="nice-form-control">
                       <b>
                         Sequence Number:
-                        {touched.sequenceNumber && !errors.sequenceNumber && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sequenceNumber &&
+                         !errors.sequenceNumber && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="sequenceNumber"
-                        type="number"
-                        value={values.sequenceNumber || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("sequenceNumber", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "sequenceNumber",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.sequenceNumber
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="sequenceNumber"
+                            type="number"
+                            value={values.sequenceNumber || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('sequenceNumber', true);
+                              const v = e.target.value;
+                              setFieldValue('sequenceNumber', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.sequenceNumber
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -274,33 +252,30 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="eventType" className="nice-form-control">
                       <b>
                         Event Type:
-                        {touched.eventType && !errors.eventType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.eventType &&
+                         !errors.eventType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="eventType"
-                        value={values.eventType || ""}
-                        className={
-                          errors.eventType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("eventType", true);
-                          setFieldValue(
-                            "eventType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Event Type" />
-                        <EventTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="eventType"
+                          value={values.eventType || ''}
+                          className={
+                            errors.eventType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('eventType', true);
+                            setFieldValue('eventType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Event Type" />
+                          <EventTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -309,28 +284,31 @@ const TrustRuntimeEventForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="previousEventHash"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="previousEventHash" className="nice-form-control">
                       <b>
                         Previous Event Hash:
                         {touched.previousEventHash &&
-                          !errors.previousEventHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.previousEventHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="previousEventHash"
-                        value={values?.previousEventHash}
-                        placeholder="Previous Event Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="previousEventHash"
+                            value={values?.previousEventHash}
+                            placeholder="Previous Event Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -342,21 +320,28 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="payloadHash" className="nice-form-control">
                       <b>
                         Payload Hash:
-                        {touched.payloadHash && !errors.payloadHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.payloadHash &&
+                         !errors.payloadHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="payloadHash"
-                        value={values?.payloadHash}
-                        placeholder="Payload Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="payloadHash"
+                            value={values?.payloadHash}
+                            placeholder="Payload Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -365,27 +350,31 @@ const TrustRuntimeEventForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="redactionPolicy"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="redactionPolicy" className="nice-form-control">
                       <b>
                         Redaction Policy:
-                        {touched.redactionPolicy && !errors.redactionPolicy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.redactionPolicy &&
+                         !errors.redactionPolicy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="redactionPolicy"
-                        value={values?.redactionPolicy}
-                        placeholder="Redaction Policy"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="redactionPolicy"
+                            value={values?.redactionPolicy}
+                            placeholder="Redaction Policy"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -397,21 +386,28 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="eventHash" className="nice-form-control">
                       <b>
                         Event Hash:
-                        {touched.eventHash && !errors.eventHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.eventHash &&
+                         !errors.eventHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="eventHash"
-                        value={values?.eventHash}
-                        placeholder="Event Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="eventHash"
+                            value={values?.eventHash}
+                            placeholder="Event Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -423,21 +419,28 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="signature" className="nice-form-control">
                       <b>
                         Signature:
-                        {touched.signature && !errors.signature && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.signature &&
+                         !errors.signature && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="signature"
-                        value={values?.signature}
-                        placeholder="Signature"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="signature"
+                            value={values?.signature}
+                            placeholder="Signature"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -449,21 +452,28 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -475,25 +485,32 @@ const TrustRuntimeEventForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -503,60 +520,45 @@ const TrustRuntimeEventForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New TrustRuntimeEvent
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New TrustRuntimeEvent
+                  </CoolButton>
 
-                    {(addTrustRuntimeEventResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addTrustRuntimeEventResult as any).error
-                              ? (addTrustRuntimeEventResult as any).error.data
-                              : (addTrustRuntimeEventResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustRuntimeEventResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustRuntimeEventResult as any).error ? (addTrustRuntimeEventResult as any).error.data : (addTrustRuntimeEventResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustRuntimeEventResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustRuntimeEventResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustRuntimeEventResult:{" "}
-                    {JSON.stringify(addTrustRuntimeEventResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustRuntimeEventResult: {JSON.stringify(addTrustRuntimeEventResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -588,23 +590,26 @@ kebabcase event-type-lookup
 const EventTypeLookup = () => {
   return (
     <>
-      <option value="EXECUTION_STARTED" label="Execution Started" />
-      <option value="RBAC_CHECK" label="Rbac Check" />
-      <option value="ACL_CHECK" label="Acl Check" />
-      <option value="API_CALL" label="Api Call" />
-      <option value="GRAYMATTER_READ" label="Graymatter Read" />
-      <option value="GRAYMATTER_WRITE" label="Graymatter Write" />
-      <option value="SECUREFIELD_ENCRYPT" label="Securefield Encrypt" />
-      <option value="SECUREFIELD_DECRYPT" label="Securefield Decrypt" />
-      <option value="KEY_LEASE" label="Key Lease" />
-      <option value="MODEL_CALL" label="Model Call" />
-      <option value="TOOL_CALL" label="Tool Call" />
-      <option value="PROOF_GENERATED" label="Proof Generated" />
-      <option value="EXECUTION_COMPLETED" label="Execution Completed" />
-      <option value="EXECUTION_FAILED" label="Execution Failed" />
+      <option value='EXECUTION_STARTED' label="Execution Started" />
+      <option value='RBAC_CHECK' label="Rbac Check" />
+      <option value='ACL_CHECK' label="Acl Check" />
+      <option value='API_CALL' label="Api Call" />
+      <option value='GRAYMATTER_READ' label="Graymatter Read" />
+      <option value='GRAYMATTER_WRITE' label="Graymatter Write" />
+      <option value='SECUREFIELD_ENCRYPT' label="Securefield Encrypt" />
+      <option value='SECUREFIELD_DECRYPT' label="Securefield Decrypt" />
+      <option value='KEY_LEASE' label="Key Lease" />
+      <option value='MODEL_CALL' label="Model Call" />
+      <option value='TOOL_CALL' label="Tool Call" />
+      <option value='PROOF_GENERATED' label="Proof Generated" />
+      <option value='EXECUTION_COMPLETED' label="Execution Completed" />
+      <option value='EXECUTION_FAILED' label="Execution Failed" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustRuntimeEventForm;
+

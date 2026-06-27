@@ -90,6 +90,11 @@ button > .nav-link:active:hover {
   ) !important;
   border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35)) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+  cursor: pointer;
+  margin: 12px 0 !important;
+  max-height: none;
+  overflow: hidden;
+  padding: 0 !important;
 }
 
 .history-preview-card::before {
@@ -102,10 +107,47 @@ button > .nav-link:active:hover {
     rgba(45, 45, 45, 0.7)
   ) !important;
   border-bottom: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.3)) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  padding: 8px 24px 6px !important;
 }
 
 .history-preview-card .card-body {
   background: transparent !important;
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.82em;
+  line-height: 1.35;
+  padding: 8px 24px 14px !important;
+}
+
+.history-preview-card .timestamp {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-preview-card .history-preview-token-row,
+.history-preview-card .history-preview-meta-row {
+  align-items: center;
+  color: var(--vscode-descriptionForeground);
+  display: flex;
+  font-family: var(--vscode-font-family);
+  font-size: 0.72em;
+  gap: 2px;
+  line-height: 1.25;
+  opacity: 0.9;
+}
+
+.history-preview-card .task-text {
+  color: var(--vscode-descriptionForeground);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .history-item-highlight {
@@ -1194,7 +1236,6 @@ label {
 }
 
 .application-card {
-  border: 1px solid var(--vscode-editorWidget-border);
   border-radius: 8px;
   padding: 16px;
   background-color: var(--vscode-editor-background);
@@ -1276,7 +1317,6 @@ label {
 .application-item {
   margin-bottom: 12px;
   padding: 12px;
-  border: 1px solid var(--vscode-editorWidget-border);
   border-radius: 4px;
   display: flex;
   justify-content: space-between;

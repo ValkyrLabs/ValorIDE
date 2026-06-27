@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Note,
+  NoteEntityTypeEnum,
+} from '@thorapi/model';
 
-import { Note, NoteEntityTypeEnum } from "@thorapi/model";
-
-import { useAddNoteMutation } from "../../services/NoteService";
+import { useAddNoteMutation } from '../../services/NoteService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,37 +62,38 @@ Represents a note added to a CRM entity.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const EntityTypeValidation = () => {
-  return ["customer", "opportunity", "contact", "sales-activity"];
+  return [
+    'customer',
+    'opportunity',
+    'contact',
+    'sales-activity',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  noteId: Yup.string(),
-  associatedEntityId: Yup.string(),
-  entityType: Yup.mixed().oneOf(
-    EntityTypeValidation(),
-    "Invalid value for entityType",
-  ),
-  name: Yup.string(),
-  content: Yup.string(),
-  createdDate: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("createdDate must be a valid date"),
-  createdBy: Yup.string(),
-  trashed: Yup.boolean(),
+        noteId: Yup.string(),
+        associatedEntityId: Yup.string(),
+      entityType: Yup.mixed()
+        .oneOf(EntityTypeValidation(), "Invalid value for entityType")
+        ,
+        name: Yup.string(),
+        content: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        createdBy: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -114,18 +110,12 @@ const NoteForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -133,14 +123,14 @@ const NoteForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Note> = {
-    noteId: "",
-    associatedEntityId: "",
-    entityType: undefined,
-    name: "",
-    content: "",
-    createdDate: new Date(),
-    createdBy: "",
-    trashed: false,
+          noteId: '',
+          associatedEntityId: '',
+        entityType: undefined,
+          name: '',
+          content: '',
+          createdDate: new Date(),
+          createdBy: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -155,14 +145,11 @@ const NoteForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Note:", grants);
+    console.log('Permissions saved for new Note:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Note>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Note>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -173,7 +160,7 @@ const NoteForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Note created successfully! Would you like to set permissions for this object?`,
+          `Note created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -181,8 +168,8 @@ const NoteForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Note:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Note:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -203,36 +190,44 @@ const NoteForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addNoteResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Note
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Note
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="noteId" className="nice-form-control">
                       <b>
                         Note Id:
-                        {touched.noteId && !errors.noteId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.noteId &&
+                         !errors.noteId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="noteId"
-                        value={values?.noteId}
-                        placeholder="Note Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="noteId"
+                            value={values?.noteId}
+                            placeholder="Note Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -241,28 +236,31 @@ const NoteForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="associatedEntityId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="associatedEntityId" className="nice-form-control">
                       <b>
                         Associated Entity Id:
                         {touched.associatedEntityId &&
-                          !errors.associatedEntityId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.associatedEntityId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="associatedEntityId"
-                        value={values?.associatedEntityId}
-                        placeholder="Associated Entity Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="associatedEntityId"
+                            value={values?.associatedEntityId}
+                            placeholder="Associated Entity Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -274,33 +272,30 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="entityType" className="nice-form-control">
                       <b>
                         Entity Type:
-                        {touched.entityType && !errors.entityType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.entityType &&
+                         !errors.entityType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="entityType"
-                        value={values.entityType || ""}
-                        className={
-                          errors.entityType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("entityType", true);
-                          setFieldValue(
-                            "entityType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Entity Type" />
-                        <EntityTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="entityType"
+                          value={values.entityType || ''}
+                          className={
+                            errors.entityType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('entityType', true);
+                            setFieldValue('entityType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Entity Type" />
+                          <EntityTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -312,21 +307,28 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -338,21 +340,28 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="content" className="nice-form-control">
                       <b>
                         Content:
-                        {touched.content && !errors.content && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.content &&
+                         !errors.content && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="content"
-                        value={values?.content}
-                        placeholder="Content"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="content"
+                            value={values?.content}
+                            placeholder="Content"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -364,38 +373,38 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
-                        {touched.createdDate && !errors.createdDate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="createdDate"
-                        type="datetime-local"
-                        value={
-                          values.createdDate
-                            ? new Date(values.createdDate)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("createdDate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "createdDate",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.createdDate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -407,21 +416,28 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="createdBy" className="nice-form-control">
                       <b>
                         Created By:
-                        {touched.createdBy && !errors.createdBy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.createdBy &&
+                         !errors.createdBy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="createdBy"
-                        value={values?.createdBy}
-                        placeholder="Created By"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="createdBy"
+                            value={values?.createdBy}
+                            placeholder="Created By"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -433,25 +449,32 @@ const NoteForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -461,58 +484,45 @@ const NoteForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Note
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Note
+                  </CoolButton>
 
-                    {(addNoteResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addNoteResult as any).error
-                              ? (addNoteResult as any).error.data
-                              : (addNoteResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addNoteResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addNoteResult as any).error ? (addNoteResult as any).error.data : (addNoteResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addNoteResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addNoteResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addNoteResult: {JSON.stringify(addNoteResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addNoteResult: {JSON.stringify(addNoteResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -544,13 +554,16 @@ kebabcase entity-type-lookup
 const EntityTypeLookup = () => {
   return (
     <>
-      <option value="customer" label="Customer" />
-      <option value="opportunity" label="Opportunity" />
-      <option value="contact" label="Contact" />
-      <option value="sales-activity" label="Sales Activity" />
+      <option value='customer' label="Customer" />
+      <option value='opportunity' label="Opportunity" />
+      <option value='contact' label="Contact" />
+      <option value='sales-activity' label="Sales Activity" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default NoteForm;
+

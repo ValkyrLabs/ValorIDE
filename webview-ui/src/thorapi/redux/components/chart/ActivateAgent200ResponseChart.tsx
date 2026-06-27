@@ -19,35 +19,20 @@ Description: ActivateAgent200Response
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ActivateAgent200Response } from "@thorapi/model";
-import {
-  useGetActivateAgent200ResponsesQuery,
-  useAddActivateAgent200ResponseMutation,
-  useUpdateActivateAgent200ResponseMutation,
-} from "../../services/ActivateAgent200ResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ActivateAgent200Response } from '@thorapi/model';
+import { useGetActivateAgent200ResponsesQuery, useAddActivateAgent200ResponseMutation, useUpdateActivateAgent200ResponseMutation } from '../../services/ActivateAgent200ResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ActivateAgent200ResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetActivateAgent200ResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetActivateAgent200ResponsesQuery();
 
   const [data, setData] = useState<ActivateAgent200Response[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ActivateAgent200Response>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<ActivateAgent200Response>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ActivateAgent200ResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ActivateAgent200ResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((activateagent200response: DataObject) => [
-            activateagent200response,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((activateagent200response: DataObject) => [activateagent200response])} />
+          )}
     </>
   );
 };

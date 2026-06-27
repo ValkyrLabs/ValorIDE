@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_ACCOUNTBALANCE_REQUEST,
-  FETCH_ACCOUNTBALANCE_REQUEST,
-  LIST_ACCOUNTBALANCE_REQUEST,
-  UPDATE_ACCOUNTBALANCE_REQUEST,
-  DELETE_ACCOUNTBALANCE_REQUEST,
-  addAccountBalanceFailure,
-  addAccountBalanceSuccess,
-  fetchAccountBalanceFailure,
-  fetchAccountBalanceSuccess,
-  listAccountBalanceFailure,
-  listAccountBalanceSuccess,
-  updateAccountBalanceFailure,
-  updateAccountBalanceSuccess,
-  deleteAccountBalanceFailure,
-  deleteAccountBalanceSuccess,
-} from "../actions/AccountBalanceApiAction";
+
+    ADD_ACCOUNTBALANCE_REQUEST,
+    FETCH_ACCOUNTBALANCE_REQUEST,
+    LIST_ACCOUNTBALANCE_REQUEST,
+    UPDATE_ACCOUNTBALANCE_REQUEST,
+    DELETE_ACCOUNTBALANCE_REQUEST,
+
+    addAccountBalanceFailure,
+    addAccountBalanceSuccess,
+
+    fetchAccountBalanceFailure,
+    fetchAccountBalanceSuccess,
+    
+    listAccountBalanceFailure,
+    listAccountBalanceSuccess,
+
+    updateAccountBalanceFailure,
+    updateAccountBalanceSuccess,
+    
+    deleteAccountBalanceFailure,
+    deleteAccountBalanceSuccess,
+    
+} from '../actions/AccountBalanceApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: AccountBalance
 */
 
-export const AccountBalanceMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("AccountBalance MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const AccountBalanceMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("AccountBalance MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

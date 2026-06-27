@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_USERPREFERENCE_REQUEST,
-  FETCH_USERPREFERENCE_REQUEST,
-  LIST_USERPREFERENCE_REQUEST,
-  UPDATE_USERPREFERENCE_REQUEST,
-  DELETE_USERPREFERENCE_REQUEST,
-  addUserPreferenceFailure,
-  addUserPreferenceSuccess,
-  fetchUserPreferenceFailure,
-  fetchUserPreferenceSuccess,
-  listUserPreferenceFailure,
-  listUserPreferenceSuccess,
-  updateUserPreferenceFailure,
-  updateUserPreferenceSuccess,
-  deleteUserPreferenceFailure,
-  deleteUserPreferenceSuccess,
-} from "../actions/UserPreferenceApiAction";
+
+    ADD_USERPREFERENCE_REQUEST,
+    FETCH_USERPREFERENCE_REQUEST,
+    LIST_USERPREFERENCE_REQUEST,
+    UPDATE_USERPREFERENCE_REQUEST,
+    DELETE_USERPREFERENCE_REQUEST,
+
+    addUserPreferenceFailure,
+    addUserPreferenceSuccess,
+
+    fetchUserPreferenceFailure,
+    fetchUserPreferenceSuccess,
+    
+    listUserPreferenceFailure,
+    listUserPreferenceSuccess,
+
+    updateUserPreferenceFailure,
+    updateUserPreferenceSuccess,
+    
+    deleteUserPreferenceFailure,
+    deleteUserPreferenceSuccess,
+    
+} from '../actions/UserPreferenceApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: UserPreference
 */
 
-export const UserPreferenceMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("UserPreference MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const UserPreferenceMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("UserPreference MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

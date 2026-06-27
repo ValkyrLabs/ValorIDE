@@ -8,23 +8,17 @@ import {
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import Tooltip from "@thorapi/components/common/Tooltip";
-import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
-import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
-import {
-  formatError,
-  getErrorTitle,
-  isRetryableError,
-  safeConvert,
-} from "@thorapi/utils/errorHandling";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { formatError } from "@thorapi/utils/errorHandling";
 import { FaServer, FaSync, FaCog } from "react-icons/fa";
 
 const ServersToggleModal: React.FC = () => {
   const {
-    data: mcpServers,
-    error,
-    isLoading,
-    refetch,
-  } = useGetMcpServersQuery();
+    mcpServers,
+    mcpServersError: error,
+    mcpServersLoading: isLoading,
+    refetchMcpData,
+  } = useExtensionState();
   const [isVisible, setIsVisible] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -51,8 +45,7 @@ const ServersToggleModal: React.FC = () => {
   }, [isVisible, viewportWidth, viewportHeight]);
 
   const handleRefresh = () => {
-    refetch();
-    vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
+    refetchMcpData();
   };
 
   useEffect(() => {
@@ -60,16 +53,6 @@ const ServersToggleModal: React.FC = () => {
       handleRefresh();
     }
   }, [isVisible]);
-
-  // Convert ThorAPI MCP servers to shared format with error handling
-  const sharedMcpServers = React.useMemo(() => {
-    return safeConvert(
-      mcpServers,
-      convertThorMcpServersToShared,
-      [],
-      "ServersToggleModal",
-    );
-  }, [mcpServers]);
 
   return (
     <div ref={modalRef}>
@@ -170,7 +153,7 @@ const ServersToggleModal: React.FC = () => {
           ) : (
             <div style={{ marginBottom: -10 }}>
               <ServersToggleList
-                servers={sharedMcpServers}
+                servers={mcpServers}
                 isExpandable={false}
                 hasTrashIcon={false}
                 listGap="small"

@@ -2,7 +2,7 @@
 
 ## Agentic Coder, Powered by ThorAPI ⚡ (Precision PSR Verified)
 
-[English Documentation](https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation)
+[English Documentation](https://valkyrlabs.comhttps://valkyrlabs.com/v1/Products/valoride/)
 
 ---
 

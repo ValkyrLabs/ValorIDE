@@ -19,35 +19,20 @@ Description: ExecModulePayloadConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ExecModulePayloadConfig } from "@thorapi/model";
-import {
-  useGetExecModulePayloadConfigsQuery,
-  useAddExecModulePayloadConfigMutation,
-  useUpdateExecModulePayloadConfigMutation,
-} from "../../services/ExecModulePayloadConfigService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ExecModulePayloadConfig } from '@thorapi/model';
+import { useGetExecModulePayloadConfigsQuery, useAddExecModulePayloadConfigMutation, useUpdateExecModulePayloadConfigMutation } from '../../services/ExecModulePayloadConfigService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ExecModulePayloadConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetExecModulePayloadConfigsQuery();
+  const { data: initialData = [], isLoading } = useGetExecModulePayloadConfigsQuery();
 
   const [data, setData] = useState<ExecModulePayloadConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ExecModulePayloadConfig>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<ExecModulePayloadConfig>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ExecModulePayloadConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ExecModulePayloadConfigChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((execmodulepayloadconfig: DataObject) => [
-            execmodulepayloadconfig,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((execmodulepayloadconfig: DataObject) => [execmodulepayloadconfig])} />
+          )}
     </>
   );
 };

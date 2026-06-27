@@ -19,35 +19,20 @@ Description: LeaseTrustSecretRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, LeaseTrustSecretRequest } from "@thorapi/model";
-import {
-  useGetLeaseTrustSecretRequestsQuery,
-  useAddLeaseTrustSecretRequestMutation,
-  useUpdateLeaseTrustSecretRequestMutation,
-} from "../../services/LeaseTrustSecretRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, LeaseTrustSecretRequest } from '@thorapi/model';
+import { useGetLeaseTrustSecretRequestsQuery, useAddLeaseTrustSecretRequestMutation, useUpdateLeaseTrustSecretRequestMutation } from '../../services/LeaseTrustSecretRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const LeaseTrustSecretRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetLeaseTrustSecretRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetLeaseTrustSecretRequestsQuery();
 
   const [data, setData] = useState<LeaseTrustSecretRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<LeaseTrustSecretRequest>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<LeaseTrustSecretRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const LeaseTrustSecretRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const LeaseTrustSecretRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((leasetrustsecretrequest: DataObject) => [
-            leasetrustsecretrequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((leasetrustsecretrequest: DataObject) => [leasetrustsecretrequest])} />
+          )}
     </>
   );
 };

@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   WizardStatusResponse,
   WizardStatusResponseStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddWizardStatusResponseMutation } from "../../services/WizardStatusResponseService";
+import { useAddWizardStatusResponseMutation } from '../../services/WizardStatusResponseService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,38 +62,40 @@ Current status of wizard execution
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return ["STARTED", "GENERATING", "COMPLETED", "FAILED"];
+  return [
+    'STARTED',
+    'GENERATING',
+    'COMPLETED',
+    'FAILED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  wizardId: Yup.string(),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  progress: asNumber(
-    Yup.number().integer().typeError("progress must be a number"),
-  ),
-  currentStep: Yup.string(),
-  errorMessage: Yup.string(),
-  generatedAssets: Yup.string(),
-  contentDataId: Yup.string(),
-  landingPageId: Yup.string(),
-  landingPageUrl: Yup.string(),
-  trashed: Yup.boolean(),
+        wizardId: Yup.string(),
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        progress: asNumber(Yup.number().integer().typeError("progress must be a number")),
+        currentStep: Yup.string(),
+        errorMessage: Yup.string(),
+        generatedAssets: Yup.string(),
+        contentDataId: Yup.string(),
+        landingPageId: Yup.string(),
+        landingPageUrl: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WizardStatusResponseForm: React.FC = () => {
-  const [addWizardStatusResponse, addWizardStatusResponseResult] =
-    useAddWizardStatusResponseMutation();
+  const [addWizardStatusResponse, addWizardStatusResponseResult] = useAddWizardStatusResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -111,18 +105,12 @@ const WizardStatusResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -130,16 +118,16 @@ const WizardStatusResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<WizardStatusResponse> = {
-    wizardId: "",
-    status: undefined,
-    progress: 0,
-    currentStep: "",
-    errorMessage: "",
-    generatedAssets: "",
-    contentDataId: "",
-    landingPageId: "",
-    landingPageUrl: "",
-    trashed: false,
+          wizardId: '',
+        status: undefined,
+          progress: 0,
+          currentStep: '',
+          errorMessage: '',
+          generatedAssets: '',
+          contentDataId: '',
+          landingPageId: '',
+          landingPageUrl: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -154,14 +142,11 @@ const WizardStatusResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new WizardStatusResponse:", grants);
+    console.log('Permissions saved for new WizardStatusResponse:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<WizardStatusResponse>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WizardStatusResponse>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -172,7 +157,7 @@ const WizardStatusResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `WizardStatusResponse created successfully! Would you like to set permissions for this object?`,
+          `WizardStatusResponse created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -180,8 +165,8 @@ const WizardStatusResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create WizardStatusResponse:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create WizardStatusResponse:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -202,38 +187,44 @@ const WizardStatusResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addWizardStatusResponseResult.isLoading;
+          const isSaving = isSubmitting || addWizardStatusResponseResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    WizardStatusResponse
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New WizardStatusResponse
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="wizardId" className="nice-form-control">
                       <b>
                         Wizard Id:
-                        {touched.wizardId && !errors.wizardId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.wizardId &&
+                         !errors.wizardId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="wizardId"
-                        value={values?.wizardId}
-                        placeholder="Wizard Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="wizardId"
+                            value={values?.wizardId}
+                            placeholder="Wizard Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -245,30 +236,30 @@ const WizardStatusResponseForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -280,32 +271,36 @@ const WizardStatusResponseForm: React.FC = () => {
                     <label htmlFor="progress" className="nice-form-control">
                       <b>
                         Progress:
-                        {touched.progress && !errors.progress && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.progress &&
+                         !errors.progress && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="progress"
-                        type="number"
-                        value={values.progress || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("progress", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "progress",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.progress
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="progress"
+                            type="number"
+                            value={values.progress || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('progress', true);
+                              const v = e.target.value;
+                              setFieldValue('progress', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.progress
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -317,21 +312,28 @@ const WizardStatusResponseForm: React.FC = () => {
                     <label htmlFor="currentStep" className="nice-form-control">
                       <b>
                         Current Step:
-                        {touched.currentStep && !errors.currentStep && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.currentStep &&
+                         !errors.currentStep && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="currentStep"
-                        value={values?.currentStep}
-                        placeholder="Current Step"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="currentStep"
+                            value={values?.currentStep}
+                            placeholder="Current Step"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -343,21 +345,28 @@ const WizardStatusResponseForm: React.FC = () => {
                     <label htmlFor="errorMessage" className="nice-form-control">
                       <b>
                         Error Message:
-                        {touched.errorMessage && !errors.errorMessage && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.errorMessage &&
+                         !errors.errorMessage && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="errorMessage"
-                        value={values?.errorMessage}
-                        placeholder="Error Message"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="errorMessage"
+                            value={values?.errorMessage}
+                            placeholder="Error Message"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -366,27 +375,31 @@ const WizardStatusResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="generatedAssets"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="generatedAssets" className="nice-form-control">
                       <b>
                         Generated Assets:
-                        {touched.generatedAssets && !errors.generatedAssets && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.generatedAssets &&
+                         !errors.generatedAssets && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="generatedAssets"
-                        value={values?.generatedAssets}
-                        placeholder="Generated Assets"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="generatedAssets"
+                            value={values?.generatedAssets}
+                            placeholder="Generated Assets"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -395,27 +408,31 @@ const WizardStatusResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="contentDataId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="contentDataId" className="nice-form-control">
                       <b>
                         Content Data Id:
-                        {touched.contentDataId && !errors.contentDataId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contentDataId &&
+                         !errors.contentDataId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="contentDataId"
-                        value={values?.contentDataId}
-                        placeholder="Content Data Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="contentDataId"
+                            value={values?.contentDataId}
+                            placeholder="Content Data Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -424,27 +441,31 @@ const WizardStatusResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="landingPageId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="landingPageId" className="nice-form-control">
                       <b>
                         Landing Page Id:
-                        {touched.landingPageId && !errors.landingPageId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.landingPageId &&
+                         !errors.landingPageId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="landingPageId"
-                        value={values?.landingPageId}
-                        placeholder="Landing Page Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="landingPageId"
+                            value={values?.landingPageId}
+                            placeholder="Landing Page Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -453,27 +474,31 @@ const WizardStatusResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="landingPageUrl"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="landingPageUrl" className="nice-form-control">
                       <b>
                         Landing Page Url:
-                        {touched.landingPageUrl && !errors.landingPageUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.landingPageUrl &&
+                         !errors.landingPageUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="landingPageUrl"
-                        value={values?.landingPageUrl}
-                        placeholder="Landing Page Url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="landingPageUrl"
+                            value={values?.landingPageUrl}
+                            placeholder="Landing Page Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -485,25 +510,32 @@ const WizardStatusResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -513,64 +545,45 @@ const WizardStatusResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      WizardStatusResponse
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New WizardStatusResponse
+                  </CoolButton>
 
-                    {(addWizardStatusResponseResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addWizardStatusResponseResult as any).error
-                              ? (addWizardStatusResponseResult as any).error
-                                  .data
-                              : (addWizardStatusResponseResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addWizardStatusResponseResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addWizardStatusResponseResult as any).error ? (addWizardStatusResponseResult as any).error.data : (addWizardStatusResponseResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addWizardStatusResponseResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addWizardStatusResponseResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addWizardStatusResponseResult:{" "}
-                    {JSON.stringify(addWizardStatusResponseResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addWizardStatusResponseResult: {JSON.stringify(addWizardStatusResponseResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -602,13 +615,16 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="STARTED" label="Started" />
-      <option value="GENERATING" label="Generating" />
-      <option value="COMPLETED" label="Completed" />
-      <option value="FAILED" label="Failed" />
+      <option value='STARTED' label="Started" />
+      <option value='GENERATING' label="Generating" />
+      <option value='COMPLETED' label="Completed" />
+      <option value='FAILED' label="Failed" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default WizardStatusResponseForm;
+

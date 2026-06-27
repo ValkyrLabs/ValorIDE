@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,185 +36,169 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface TrustKeyProvider
  */
-export type TrustKeyProvider = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  providerType?: TrustKeyProviderProviderTypeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  providerStatus?: TrustKeyProviderProviderStatusEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  endpointUri?: string;
-  /**
-   * Reference to an external credential. Never store provider credentials in this field. For backwards-compatible local builds, LOCAL_JAVA_KEYSTORE may omit this value and resolve system:THORAPI_SECRET_KEY until an explicit rotation migrates the key version to a real provider.
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  credentialRef?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  healthCheckPath?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  tenantId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  ownerId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  readonly id?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof TrustKeyProvider
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof TrustKeyProvider
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof TrustKeyProvider
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof TrustKeyProvider
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof TrustKeyProvider
-   */
-  trashed?: boolean;
-};
+export type TrustKeyProvider  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    providerType?: TrustKeyProviderProviderTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    providerStatus?: TrustKeyProviderProviderStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    endpointUri?: string;
+    /**
+     * Reference to an external credential. Never store provider credentials in this field. For backwards-compatible local builds, LOCAL_JAVA_KEYSTORE may omit this value and resolve system:THORAPI_SECRET_KEY until an explicit rotation migrates the key version to a real provider.
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    credentialRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    healthCheckPath?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    tenantId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    ownerId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    readonly id?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof TrustKeyProvider
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof TrustKeyProvider
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof TrustKeyProvider
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof TrustKeyProvider
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof TrustKeyProvider
+     */
+    trashed?: boolean;
+}
 
 export function TrustKeyProviderFromJSON(json: any): TrustKeyProvider {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    providerType: !exists(json, "providerType")
-      ? undefined
-      : json["providerType"],
-    providerStatus: !exists(json, "providerStatus")
-      ? undefined
-      : json["providerStatus"],
-    endpointUri: !exists(json, "endpointUri") ? undefined : json["endpointUri"],
-    credentialRef: !exists(json, "credentialRef")
-      ? undefined
-      : json["credentialRef"],
-    healthCheckPath: !exists(json, "healthCheckPath")
-      ? undefined
-      : json["healthCheckPath"],
-    tenantId: !exists(json, "tenantId") ? undefined : json["tenantId"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'providerType': !exists(json, 'providerType') ? undefined : json['providerType'],
+        'providerStatus': !exists(json, 'providerStatus') ? undefined : json['providerStatus'],
+        'endpointUri': !exists(json, 'endpointUri') ? undefined : json['endpointUri'],
+        'credentialRef': !exists(json, 'credentialRef') ? undefined : json['credentialRef'],
+        'healthCheckPath': !exists(json, 'healthCheckPath') ? undefined : json['healthCheckPath'],
+        'tenantId': !exists(json, 'tenantId') ? undefined : json['tenantId'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function TrustKeyProviderToJSON(value?: TrustKeyProvider): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    providerType: value.providerType,
-    providerStatus: value.providerStatus,
-    endpointUri: value.endpointUri,
-    credentialRef: value.credentialRef,
-    healthCheckPath: value.healthCheckPath,
-    tenantId: value.tenantId,
-    ownerId: value.ownerId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'providerType': value.providerType,
+        'providerStatus': value.providerStatus,
+        'endpointUri': value.endpointUri,
+        'credentialRef': value.credentialRef,
+        'healthCheckPath': value.healthCheckPath,
+        'tenantId': value.tenantId,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustKeyProviderProviderTypeEnum {
-  LOCALJAVAKEYSTORE = "local_java_keystore",
-  MACOSKEYCHAIN = "macos_keychain",
-  HASHICORPVAULT = "hashicorp_vault",
-  AWSKMS = "aws_kms",
-  AZUREKEYVAULT = "azure_key_vault",
-  GCPKMS = "gcp_kms",
-  HSM = "hsm",
-  PASSWORDSERVICE = "password_service",
-  TRUSTKMSMICROSERVICE = "trust_kms_microservice",
+    LOCALJAVAKEYSTORE = 'local_java_keystore',
+    MACOSKEYCHAIN = 'macos_keychain',
+    HASHICORPVAULT = 'hashicorp_vault',
+    AWSKMS = 'aws_kms',
+    AZUREKEYVAULT = 'azure_key_vault',
+    GCPKMS = 'gcp_kms',
+    HSM = 'hsm',
+    PASSWORDSERVICE = 'password_service',
+    TRUSTKMSMICROSERVICE = 'trust_kms_microservice'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustKeyProviderProviderStatusEnum {
-  ACTIVE = "active",
-  DISABLED = "disabled",
-  DEGRADED = "degraded",
-  RETIRED = "retired",
+    ACTIVE = 'active',
+    DISABLED = 'disabled',
+    DEGRADED = 'degraded',
+    RETIRED = 'retired'
 }
+
+

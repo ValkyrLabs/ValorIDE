@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { JobApplicationRequest } from "@thorapi/model/JobApplicationRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { JobApplicationRequest } from '@thorapi/model/JobApplicationRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type JobApplicationRequestResponse = JobApplicationRequest[];
+type JobApplicationRequestResponse = JobApplicationRequest[]
+type JobApplicationRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<JobApplicationRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toJobApplicationRequestList = (
-  result: unknown,
-): JobApplicationRequestResponse => {
+type JobApplicationRequestListQueryArg = {
+  example?: Partial<JobApplicationRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toJobApplicationRequestList = (result: unknown): JobApplicationRequestResponse => {
   if (Array.isArray(result)) {
-    return result as JobApplicationRequestResponse;
+    return result as JobApplicationRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as JobApplicationRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as JobApplicationRequestResponse) : []
+}
 
 export const JobApplicationRequestService = createApi({
-  reducerPath: "JobApplicationRequest", // This should remain unique
+  reducerPath: 'JobApplicationRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["JobApplicationRequest"],
+  tagTypes: ['JobApplicationRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getJobApplicationRequestsPaged: build.query<
-      JobApplicationRequestResponse,
-      { page: number; size?: number; example?: Partial<JobApplicationRequest> }
-    >({
+    getJobApplicationRequestsPaged: build.query<JobApplicationRequestResponse, JobApplicationRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `JobApplicationRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `JobApplicationRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toJobApplicationRequestList(result);
+        const rows = toJobApplicationRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "JobApplicationRequest" as const, id })),
-          { type: "JobApplicationRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'JobApplicationRequest' as const, id })),
+          { type: 'JobApplicationRequest', id: `PAGE_${page}` },
+          { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getJobApplicationRequests: build.query<
-      JobApplicationRequestResponse,
-      { example?: Partial<JobApplicationRequest> } | void
-    >({
+    getJobApplicationRequests: build.query<JobApplicationRequestResponse, JobApplicationRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const JobApplicationRequestService = createApi({
         return `JobApplicationRequest`;
       },
       providesTags: (result) => {
-        const rows = toJobApplicationRequestList(result);
+        const rows = toJobApplicationRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "JobApplicationRequest" as const, id })),
-          { type: "JobApplicationRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'JobApplicationRequest' as const, id })),
+          { type: 'JobApplicationRequest', id: 'LIST' },
+          { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addJobApplicationRequest: build.mutation<
-      JobApplicationRequest,
-      Partial<JobApplicationRequest>
-    >({
+    addJobApplicationRequest: build.mutation<JobApplicationRequest, Partial<JobApplicationRequest>>({
       query: (body) => ({
         url: `JobApplicationRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "JobApplicationRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'JobApplicationRequest', id: 'LIST' },
+        { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getJobApplicationRequest: build.query<JobApplicationRequest, string>({
       query: (id) => `JobApplicationRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "JobApplicationRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'JobApplicationRequest', id }],
     }),
 
     // 5) Update
-    updateJobApplicationRequest: build.mutation<
-      void,
-      Pick<JobApplicationRequest, "id"> & Partial<JobApplicationRequest>
-    >({
+    updateJobApplicationRequest: build.mutation<JobApplicationRequest, Pick<JobApplicationRequest, 'id'> & Partial<JobApplicationRequest>>({
       query: ({ id, ...patch }) => ({
         url: `JobApplicationRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            JobApplicationRequestService.util.updateQueryData(
-              "getJobApplicationRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<JobApplicationRequest, "id">,
-      ) => [
-        { type: "JobApplicationRequest", id },
-        { type: "JobApplicationRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<JobApplicationRequest, 'id'>) => [
+        { type: 'JobApplicationRequest', id },
+        { type: 'JobApplicationRequest', id: 'LIST' },
+        { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteJobApplicationRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteJobApplicationRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `JobApplicationRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "JobApplicationRequest", id },
+        { type: 'JobApplicationRequest', id },
+        { type: 'JobApplicationRequest', id: 'LIST' },
+        { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteJobApplicationRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteJobApplicationRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `JobApplicationRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "JobApplicationRequest", id },
-        { type: "JobApplicationRequest", id: "LIST" },
+        { type: 'JobApplicationRequest', id },
+        { type: 'JobApplicationRequest', id: 'LIST' },
+        { type: 'JobApplicationRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetJobApplicationRequestsPagedQuery`
 export const {
-  useGetJobApplicationRequestsPagedQuery, // immediate fetch
+  useGetJobApplicationRequestsPagedQuery,     // immediate fetch
   useLazyGetJobApplicationRequestsPagedQuery, // lazy fetch
   useGetJobApplicationRequestQuery,
   useGetJobApplicationRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateJobApplicationRequestMutation,
   useDeleteJobApplicationRequestMutation,
   useDeleteJobApplicationRequestCascadeMutation,
-} = JobApplicationRequestService;
+} = JobApplicationRequestService

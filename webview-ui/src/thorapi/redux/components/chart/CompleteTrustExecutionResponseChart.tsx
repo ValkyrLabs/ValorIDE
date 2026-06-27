@@ -19,35 +19,20 @@ Description: CompleteTrustExecutionResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, CompleteTrustExecutionResponse } from "@thorapi/model";
-import {
-  useGetCompleteTrustExecutionResponsesQuery,
-  useAddCompleteTrustExecutionResponseMutation,
-  useUpdateCompleteTrustExecutionResponseMutation,
-} from "../../services/CompleteTrustExecutionResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, CompleteTrustExecutionResponse } from '@thorapi/model';
+import { useGetCompleteTrustExecutionResponsesQuery, useAddCompleteTrustExecutionResponseMutation, useUpdateCompleteTrustExecutionResponseMutation } from '../../services/CompleteTrustExecutionResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const CompleteTrustExecutionResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetCompleteTrustExecutionResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetCompleteTrustExecutionResponsesQuery();
 
   const [data, setData] = useState<CompleteTrustExecutionResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<CompleteTrustExecutionResponse>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<CompleteTrustExecutionResponse>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const CompleteTrustExecutionResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const CompleteTrustExecutionResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((completetrustexecutionresponse: DataObject) => [
-            completetrustexecutionresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((completetrustexecutionresponse: DataObject) => [completetrustexecutionresponse])} />
+          )}
     </>
   );
 };

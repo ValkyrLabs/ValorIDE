@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../ValkyrAI",
+    },
+  ],
+  "settings": {
+    "java.compile.nullAnalysis.mode": "automatic",
+  },
+}

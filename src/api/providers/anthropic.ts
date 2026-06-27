@@ -61,18 +61,9 @@ export class AnthropicHandler implements ApiHandler {
         : false;
 
     switch (modelId) {
-      // 'latest' alias does not support cache_control
-      case "claude-sonnet-4-5-20250929":
-      case "claude-sonnet-4-20250514":
-      case "claude-3-7-sonnet-20250219":
-      case "claude-3-5-sonnet-20241022":
-      case "claude-haiku-4-5-20251001":
-      case "claude-3-5-haiku-20241022":
-      case "claude-opus-4-20250514":
-      case "claude-opus-4-1-20250805":
-      case "claude-opus-4-5-20251101":
-      case "claude-3-opus-20240229":
-      case "claude-3-haiku-20240307": {
+      case "claude-opus-4-8":
+      case "claude-sonnet-4-6":
+      case "claude-haiku-4-5-20251001": {
         /*
         The latest message will be the new user message, one before will be the assistant message from a previous request, and the user message before that will be a previously cached user message. So we need to mark the latest user message as ephemeral to cache it for the next request, and mark the second to last user message as ephemeral to let the server know the last message to retrieve from the cache for the current request..
         */
@@ -143,17 +134,9 @@ export class AnthropicHandler implements ApiHandler {
             // https://github.com/anthropics/anthropic-sdk-typescript?tab=readme-ov-file#default-headers
             // https://github.com/anthropics/anthropic-sdk-typescript/commit/c920b77fc67bd839bfeb6716ceab9d7c9bbe7393
             switch (modelId) {
-              case "claude-sonnet-4-5-20250929":
-              case "claude-sonnet-4-20250514":
-              case "claude-opus-4-20250514":
-              case "claude-opus-4-1-20250805":
-              case "claude-opus-4-5-20251101":
-              case "claude-3-7-sonnet-20250219":
-              case "claude-3-5-sonnet-20241022":
+              case "claude-opus-4-8":
+              case "claude-sonnet-4-6":
               case "claude-haiku-4-5-20251001":
-              case "claude-3-5-haiku-20241022":
-              case "claude-3-opus-20240229":
-              case "claude-3-haiku-20240307":
                 return {
                   headers: {
                     "anthropic-beta": "prompt-caching-2024-07-31",

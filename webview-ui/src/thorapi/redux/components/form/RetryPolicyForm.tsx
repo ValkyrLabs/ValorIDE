@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  RetryPolicy,
+  RetryPolicyBackoffStrategyEnum,
+} from '@thorapi/model';
 
-import { RetryPolicy, RetryPolicyBackoffStrategyEnum } from "@thorapi/model";
-
-import { useAddRetryPolicyMutation } from "../../services/RetryPolicyService";
+import { useAddRetryPolicyMutation } from '../../services/RetryPolicyService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,35 +62,30 @@ Configurable retry policy for task execution
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const BackoffStrategyValidation = () => {
-  return ["FIXED", "EXPONENTIAL", "LINEAR"];
+  return [
+    'FIXED',
+    'EXPONENTIAL',
+    'LINEAR',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  maxAttempts: asNumber(
-    Yup.number().integer().typeError("maxAttempts must be a number"),
-  ),
-  backoffStrategy: Yup.mixed().oneOf(
-    BackoffStrategyValidation(),
-    "Invalid value for backoffStrategy",
-  ),
-  initialDelayMs: asNumber(
-    Yup.number().integer().typeError("initialDelayMs must be a number"),
-  ),
-  maxDelayMs: asNumber(
-    Yup.number().integer().typeError("maxDelayMs must be a number"),
-  ),
-  multiplier: asNumber(Yup.number().typeError("multiplier must be a number")),
-  jitter: Yup.boolean(),
-  retryableErrors: Yup.string(),
-  trashed: Yup.boolean(),
+        maxAttempts: asNumber(Yup.number().integer().typeError("maxAttempts must be a number")),
+      backoffStrategy: Yup.mixed()
+        .oneOf(BackoffStrategyValidation(), "Invalid value for backoffStrategy")
+        ,
+        initialDelayMs: asNumber(Yup.number().integer().typeError("initialDelayMs must be a number")),
+        maxDelayMs: asNumber(Yup.number().integer().typeError("maxDelayMs must be a number")),
+        multiplier: asNumber(Yup.number().typeError("multiplier must be a number")),
+        jitter: Yup.boolean(),
+        retryableErrors: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -112,18 +102,12 @@ const RetryPolicyForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -131,14 +115,14 @@ const RetryPolicyForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<RetryPolicy> = {
-    maxAttempts: 0,
-    backoffStrategy: undefined,
-    initialDelayMs: 0,
-    maxDelayMs: 0,
-    multiplier: 0,
-    jitter: false,
-    retryableErrors: "",
-    trashed: false,
+          maxAttempts: 0,
+        backoffStrategy: undefined,
+          initialDelayMs: 0,
+          maxDelayMs: 0,
+          multiplier: 0,
+          jitter: false,
+          retryableErrors: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -153,14 +137,11 @@ const RetryPolicyForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new RetryPolicy:", grants);
+    console.log('Permissions saved for new RetryPolicy:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<RetryPolicy>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RetryPolicy>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -171,7 +152,7 @@ const RetryPolicyForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `RetryPolicy created successfully! Would you like to set permissions for this object?`,
+          `RetryPolicy created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -179,8 +160,8 @@ const RetryPolicyForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create RetryPolicy:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create RetryPolicy:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -201,47 +182,52 @@ const RetryPolicyForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addRetryPolicyResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New RetryPolicy
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New RetryPolicy
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="maxAttempts" className="nice-form-control">
                       <b>
                         Max Attempts:
-                        {touched.maxAttempts && !errors.maxAttempts && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxAttempts &&
+                         !errors.maxAttempts && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxAttempts"
-                        type="number"
-                        value={values.maxAttempts || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxAttempts", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxAttempts",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxAttempts
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxAttempts"
+                            type="number"
+                            value={values.maxAttempts || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxAttempts', true);
+                              const v = e.target.value;
+                              setFieldValue('maxAttempts', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxAttempts
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -250,39 +236,33 @@ const RetryPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="backoffStrategy"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="backoffStrategy" className="nice-form-control">
                       <b>
                         Backoff Strategy:
-                        {touched.backoffStrategy && !errors.backoffStrategy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.backoffStrategy &&
+                         !errors.backoffStrategy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="backoffStrategy"
-                        value={values.backoffStrategy || ""}
-                        className={
-                          errors.backoffStrategy
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("backoffStrategy", true);
-                          setFieldValue(
-                            "backoffStrategy",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Backoff Strategy" />
-                        <BackoffStrategyLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="backoffStrategy"
+                          value={values.backoffStrategy || ''}
+                          className={
+                            errors.backoffStrategy
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('backoffStrategy', true);
+                            setFieldValue('backoffStrategy', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Backoff Strategy" />
+                          <BackoffStrategyLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -291,38 +271,39 @@ const RetryPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="initialDelayMs"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="initialDelayMs" className="nice-form-control">
                       <b>
                         Initial Delay Ms:
-                        {touched.initialDelayMs && !errors.initialDelayMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.initialDelayMs &&
+                         !errors.initialDelayMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="initialDelayMs"
-                        type="number"
-                        value={values.initialDelayMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("initialDelayMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "initialDelayMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.initialDelayMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="initialDelayMs"
+                            type="number"
+                            value={values.initialDelayMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('initialDelayMs', true);
+                              const v = e.target.value;
+                              setFieldValue('initialDelayMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.initialDelayMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -334,32 +315,36 @@ const RetryPolicyForm: React.FC = () => {
                     <label htmlFor="maxDelayMs" className="nice-form-control">
                       <b>
                         Max Delay Ms:
-                        {touched.maxDelayMs && !errors.maxDelayMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxDelayMs &&
+                         !errors.maxDelayMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxDelayMs"
-                        type="number"
-                        value={values.maxDelayMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxDelayMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxDelayMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxDelayMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxDelayMs"
+                            type="number"
+                            value={values.maxDelayMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxDelayMs', true);
+                              const v = e.target.value;
+                              setFieldValue('maxDelayMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxDelayMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -371,33 +356,37 @@ const RetryPolicyForm: React.FC = () => {
                     <label htmlFor="multiplier" className="nice-form-control">
                       <b>
                         Multiplier:
-                        {touched.multiplier && !errors.multiplier && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.multiplier &&
+                         !errors.multiplier && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="multiplier"
-                        type="number"
-                        step="any"
-                        value={values.multiplier || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("multiplier", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "multiplier",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.multiplier
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="multiplier"
+                            type="number"
+                            step="any"
+                            value={values.multiplier || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('multiplier', true);
+                              const v = e.target.value;
+                              setFieldValue('multiplier', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.multiplier
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -409,25 +398,32 @@ const RetryPolicyForm: React.FC = () => {
                     <label htmlFor="jitter" className="nice-form-control">
                       <b>
                         Jitter:
-                        {touched.jitter && !errors.jitter && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.jitter &&
+                         !errors.jitter && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="jitter"
-                        name="jitter"
-                        checked={values.jitter || false}
-                        onChange={(e) => {
-                          setFieldTouched("jitter", true);
-                          setFieldValue("jitter", e.target.checked);
-                        }}
-                        isInvalid={!!errors.jitter}
-                        className={errors.jitter ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="jitter"
+                            name="jitter"
+                            checked={values.jitter || false}
+                            onChange={(e) => {
+                              setFieldTouched('jitter', true);
+                              setFieldValue('jitter', e.target.checked);
+                            }}
+                            isInvalid={!!errors.jitter}
+                            className={errors.jitter ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -436,27 +432,31 @@ const RetryPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="retryableErrors"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="retryableErrors" className="nice-form-control">
                       <b>
                         Retryable Errors:
-                        {touched.retryableErrors && !errors.retryableErrors && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.retryableErrors &&
+                         !errors.retryableErrors && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="retryableErrors"
-                        value={values?.retryableErrors}
-                        placeholder="Retryable Errors"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="retryableErrors"
+                            value={values?.retryableErrors}
+                            placeholder="Retryable Errors"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -468,25 +468,32 @@ const RetryPolicyForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -496,58 +503,45 @@ const RetryPolicyForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New RetryPolicy
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New RetryPolicy
+                  </CoolButton>
 
-                    {(addRetryPolicyResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addRetryPolicyResult as any).error
-                              ? (addRetryPolicyResult as any).error.data
-                              : (addRetryPolicyResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addRetryPolicyResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addRetryPolicyResult as any).error ? (addRetryPolicyResult as any).error.data : (addRetryPolicyResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addRetryPolicyResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addRetryPolicyResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addRetryPolicyResult: {JSON.stringify(addRetryPolicyResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addRetryPolicyResult: {JSON.stringify(addRetryPolicyResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -579,12 +573,15 @@ kebabcase backoff-strategy-lookup
 const BackoffStrategyLookup = () => {
   return (
     <>
-      <option value="FIXED" label="Fixed" />
-      <option value="EXPONENTIAL" label="Exponential" />
-      <option value="LINEAR" label="Linear" />
+      <option value='FIXED' label="Fixed" />
+      <option value='EXPONENTIAL' label="Exponential" />
+      <option value='LINEAR' label="Linear" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default RetryPolicyForm;
+

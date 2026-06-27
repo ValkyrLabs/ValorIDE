@@ -19,35 +19,20 @@ Description: SwarmUnregisterResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, SwarmUnregisterResponse } from "@thorapi/model";
-import {
-  useGetSwarmUnregisterResponsesQuery,
-  useAddSwarmUnregisterResponseMutation,
-  useUpdateSwarmUnregisterResponseMutation,
-} from "../../services/SwarmUnregisterResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, SwarmUnregisterResponse } from '@thorapi/model';
+import { useGetSwarmUnregisterResponsesQuery, useAddSwarmUnregisterResponseMutation, useUpdateSwarmUnregisterResponseMutation } from '../../services/SwarmUnregisterResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const SwarmUnregisterResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetSwarmUnregisterResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetSwarmUnregisterResponsesQuery();
 
   const [data, setData] = useState<SwarmUnregisterResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<SwarmUnregisterResponse>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<SwarmUnregisterResponse>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const SwarmUnregisterResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const SwarmUnregisterResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((swarmunregisterresponse: DataObject) => [
-            swarmunregisterresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((swarmunregisterresponse: DataObject) => [swarmunregisterresponse])} />
+          )}
     </>
   );
 };

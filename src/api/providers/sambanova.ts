@@ -21,7 +21,7 @@ export class SambanovaHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://api.sambanova.ai/v1",
-      apiKey: this.options.sambanovaApiKey,
+      apiKey: this.options.sambanovaApiKey || "noop",
     });
   }
 

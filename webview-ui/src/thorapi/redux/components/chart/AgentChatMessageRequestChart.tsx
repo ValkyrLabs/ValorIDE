@@ -19,35 +19,20 @@ Description: AgentChatMessageRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, AgentChatMessageRequest } from "@thorapi/model";
-import {
-  useGetAgentChatMessageRequestsQuery,
-  useAddAgentChatMessageRequestMutation,
-  useUpdateAgentChatMessageRequestMutation,
-} from "../../services/AgentChatMessageRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, AgentChatMessageRequest } from '@thorapi/model';
+import { useGetAgentChatMessageRequestsQuery, useAddAgentChatMessageRequestMutation, useUpdateAgentChatMessageRequestMutation } from '../../services/AgentChatMessageRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const AgentChatMessageRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetAgentChatMessageRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetAgentChatMessageRequestsQuery();
 
   const [data, setData] = useState<AgentChatMessageRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<AgentChatMessageRequest>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<AgentChatMessageRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const AgentChatMessageRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const AgentChatMessageRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((agentchatmessagerequest: DataObject) => [
-            agentchatmessagerequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((agentchatmessagerequest: DataObject) => [agentchatmessagerequest])} />
+          )}
     </>
   );
 };

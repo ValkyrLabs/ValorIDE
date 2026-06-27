@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmMessage } from "@thorapi/model/SwarmMessage";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmMessage } from '@thorapi/model/SwarmMessage'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmMessageResponse = SwarmMessage[];
+type SwarmMessageResponse = SwarmMessage[]
+type SwarmMessagePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmMessage>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SwarmMessageListQueryArg = {
+  example?: Partial<SwarmMessage>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSwarmMessageList = (result: unknown): SwarmMessageResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmMessageResponse;
+    return result as SwarmMessageResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SwarmMessageResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmMessageResponse) : []
+}
 
 export const SwarmMessageService = createApi({
-  reducerPath: "SwarmMessage", // This should remain unique
+  reducerPath: 'SwarmMessage', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmMessage"],
+  tagTypes: ['SwarmMessage'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmMessagesPaged: build.query<
-      SwarmMessageResponse,
-      { page: number; size?: number; example?: Partial<SwarmMessage> }
-    >({
+    getSwarmMessagesPaged: build.query<SwarmMessageResponse, SwarmMessagePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmMessage?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmMessage?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmMessageList(result);
+        const rows = toSwarmMessageList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmMessage" as const, id })),
-          { type: "SwarmMessage", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmMessage' as const, id })),
+          { type: 'SwarmMessage', id: `PAGE_${page}` },
+          { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmMessages: build.query<
-      SwarmMessageResponse,
-      { example?: Partial<SwarmMessage> } | void
-    >({
+    getSwarmMessages: build.query<SwarmMessageResponse, SwarmMessageListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SwarmMessageService = createApi({
         return `SwarmMessage`;
       },
       providesTags: (result) => {
-        const rows = toSwarmMessageList(result);
+        const rows = toSwarmMessageList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmMessage" as const, id })),
-          { type: "SwarmMessage", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmMessage' as const, id })),
+          { type: 'SwarmMessage', id: 'LIST' },
+          { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const SwarmMessageService = createApi({
     addSwarmMessage: build.mutation<SwarmMessage, Partial<SwarmMessage>>({
       query: (body) => ({
         url: `SwarmMessage`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmMessage", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmMessage', id: 'LIST' },
+        { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmMessage: build.query<SwarmMessage, string>({
       query: (id) => `SwarmMessage/${id}`,
-      providesTags: (result, error, id) => [{ type: "SwarmMessage", id }],
+      providesTags: (result, error, id) => [{ type: 'SwarmMessage', id }],
     }),
 
     // 5) Update
-    updateSwarmMessage: build.mutation<
-      void,
-      Pick<SwarmMessage, "id"> & Partial<SwarmMessage>
-    >({
+    updateSwarmMessage: build.mutation<SwarmMessage, Pick<SwarmMessage, 'id'> & Partial<SwarmMessage>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmMessage/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmMessageService.util.updateQueryData(
-              "getSwarmMessage",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SwarmMessage, "id">) => [
-        { type: "SwarmMessage", id },
-        { type: "SwarmMessage", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmMessage, 'id'>) => [
+        { type: 'SwarmMessage', id },
+        { type: 'SwarmMessage', id: 'LIST' },
+        { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmMessage: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmMessage: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmMessage/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SwarmMessage", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'SwarmMessage', id },
+        { type: 'SwarmMessage', id: 'LIST' },
+        { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmMessageCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmMessageCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmMessage/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmMessage", id },
-        { type: "SwarmMessage", id: "LIST" },
+        { type: 'SwarmMessage', id },
+        { type: 'SwarmMessage', id: 'LIST' },
+        { type: 'SwarmMessage', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmMessagesPagedQuery`
 export const {
-  useGetSwarmMessagesPagedQuery, // immediate fetch
+  useGetSwarmMessagesPagedQuery,     // immediate fetch
   useLazyGetSwarmMessagesPagedQuery, // lazy fetch
   useGetSwarmMessageQuery,
   useGetSwarmMessagesQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateSwarmMessageMutation,
   useDeleteSwarmMessageMutation,
   useDeleteSwarmMessageCascadeMutation,
-} = SwarmMessageService;
+} = SwarmMessageService

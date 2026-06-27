@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpDownloadResponseApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  McpDownloadResponse,
-  McpDownloadResponseFromJSON,
-  McpDownloadResponseToJSON,
-} from "../model";
+    McpDownloadResponse,
+    McpDownloadResponseFromJSON,
+    McpDownloadResponseToJSON,
+} from '../model';
 
 export interface DeleteMcpDownloadResponseApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetMcpDownloadResponseApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetMcpDownloadResponseListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchMcpDownloadResponseByIdApiRequest {
-  id: string;
-  mcpDownloadResponse: McpDownloadResponse;
+    id: string;
+    mcpDownloadResponse: McpDownloadResponse;
 }
 
 export interface PostMcpDownloadResponseApiRequest {
-  mcpDownloadResponse: McpDownloadResponse;
+    mcpDownloadResponse: McpDownloadResponse;
 }
 
 export interface UpdateMcpDownloadResponseApiRequest {
-  id: string;
-  mcpDownloadResponse: McpDownloadResponse;
+    id: string;
+    mcpDownloadResponse: McpDownloadResponse;
 }
+
 
 /**
  * Deletes a specific McpDownloadResponse.
  * Delete a McpDownloadResponse.
  */
-function deleteMcpDownloadResponseRaw<T>(
-  requestParameters: DeleteMcpDownloadResponseApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteMcpDownloadResponse.",
-    );
-  }
+function deleteMcpDownloadResponseRaw<T>(requestParameters: DeleteMcpDownloadResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMcpDownloadResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific McpDownloadResponse.
- * Delete a McpDownloadResponse.
- */
-export function deleteMcpDownloadResponse<T>(
-  requestParameters: DeleteMcpDownloadResponseApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteMcpDownloadResponseRaw(requestParameters, requestConfig);
+* Deletes a specific McpDownloadResponse.
+* Delete a McpDownloadResponse.
+*/
+export function deleteMcpDownloadResponse<T>(requestParameters: DeleteMcpDownloadResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteMcpDownloadResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single McpDownloadResponse for a specific uid.
  * Retrieve a single McpDownloadResponse
  */
-function getMcpDownloadResponseRaw<T>(
-  requestParameters: GetMcpDownloadResponseApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getMcpDownloadResponse.",
-    );
-  }
+function getMcpDownloadResponseRaw<T>(requestParameters: GetMcpDownloadResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMcpDownloadResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpDownloadResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpDownloadResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single McpDownloadResponse for a specific uid.
- * Retrieve a single McpDownloadResponse
- */
-export function getMcpDownloadResponse<T>(
-  requestParameters: GetMcpDownloadResponseApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>,
-): QueryConfig<T> {
-  return getMcpDownloadResponseRaw(requestParameters, requestConfig);
+* Retrieves a single McpDownloadResponse for a specific uid.
+* Retrieve a single McpDownloadResponse
+*/
+export function getMcpDownloadResponse<T>(requestParameters: GetMcpDownloadResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>): QueryConfig<T> {
+    return getMcpDownloadResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpDownloadResponses.
  * Retrieve a list of McpDownloadResponses
  */
-function getMcpDownloadResponseListRaw<T>(
-  requestParameters: GetMcpDownloadResponseListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<McpDownloadResponse>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getMcpDownloadResponseListRaw<T>(requestParameters: GetMcpDownloadResponseListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpDownloadResponse>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(McpDownloadResponseFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpDownloadResponseFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of McpDownloadResponses.
- * Retrieve a list of McpDownloadResponses
- */
-export function getMcpDownloadResponseList<T>(
-  requestParameters: GetMcpDownloadResponseListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<McpDownloadResponse>>,
-): QueryConfig<T> {
-  return getMcpDownloadResponseListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing McpDownloadResponse.
- * Partially update an existing McpDownloadResponse
- */
-function patchMcpDownloadResponseByIdRaw<T>(
-  requestParameters: PatchMcpDownloadResponseByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchMcpDownloadResponseById.",
-    );
-  }
-
-  if (
-    requestParameters.mcpDownloadResponse === null ||
-    requestParameters.mcpDownloadResponse === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "mcpDownloadResponse",
-      "Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling patchMcpDownloadResponseById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpDownloadResponseFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of McpDownloadResponses.
+* Retrieve a list of McpDownloadResponses
+*/
+export function getMcpDownloadResponseList<T>(requestParameters: GetMcpDownloadResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpDownloadResponse>>): QueryConfig<T> {
+    return getMcpDownloadResponseListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpDownloadResponse.
  * Partially update an existing McpDownloadResponse
  */
-export function patchMcpDownloadResponseById<T>(
-  requestParameters: PatchMcpDownloadResponseByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>,
-): QueryConfig<T> {
-  return patchMcpDownloadResponseByIdRaw(requestParameters, requestConfig);
+function patchMcpDownloadResponseByIdRaw<T>(requestParameters: PatchMcpDownloadResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMcpDownloadResponseById.');
+    }
+
+    if (requestParameters.mcpDownloadResponse === null || requestParameters.mcpDownloadResponse === undefined) {
+        throw new runtime.RequiredError('mcpDownloadResponse','Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling patchMcpDownloadResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpDownloadResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing McpDownloadResponse.
+* Partially update an existing McpDownloadResponse
+*/
+export function patchMcpDownloadResponseById<T>(requestParameters: PatchMcpDownloadResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>): QueryConfig<T> {
+    return patchMcpDownloadResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new McpDownloadResponse.
  * Create a new McpDownloadResponse
  */
-function postMcpDownloadResponseRaw<T>(
-  requestParameters: PostMcpDownloadResponseApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.mcpDownloadResponse === null ||
-    requestParameters.mcpDownloadResponse === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "mcpDownloadResponse",
-      "Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling postMcpDownloadResponse.",
-    );
-  }
+function postMcpDownloadResponseRaw<T>(requestParameters: PostMcpDownloadResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {}): QueryConfig<T> {
+    if (requestParameters.mcpDownloadResponse === null || requestParameters.mcpDownloadResponse === undefined) {
+        throw new runtime.RequiredError('mcpDownloadResponse','Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling postMcpDownloadResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpDownloadResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpDownloadResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new McpDownloadResponse.
- * Create a new McpDownloadResponse
- */
-export function postMcpDownloadResponse<T>(
-  requestParameters: PostMcpDownloadResponseApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>,
-): QueryConfig<T> {
-  return postMcpDownloadResponseRaw(requestParameters, requestConfig);
+* Creates a new McpDownloadResponse.
+* Create a new McpDownloadResponse
+*/
+export function postMcpDownloadResponse<T>(requestParameters: PostMcpDownloadResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>): QueryConfig<T> {
+    return postMcpDownloadResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpDownloadResponse.
  * Update an existing McpDownloadResponse
  */
-function updateMcpDownloadResponseRaw<T>(
-  requestParameters: UpdateMcpDownloadResponseApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateMcpDownloadResponse.",
-    );
-  }
+function updateMcpDownloadResponseRaw<T>(requestParameters: UpdateMcpDownloadResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpDownloadResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMcpDownloadResponse.');
+    }
 
-  if (
-    requestParameters.mcpDownloadResponse === null ||
-    requestParameters.mcpDownloadResponse === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "mcpDownloadResponse",
-      "Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling updateMcpDownloadResponse.",
-    );
-  }
+    if (requestParameters.mcpDownloadResponse === null || requestParameters.mcpDownloadResponse === undefined) {
+        throw new runtime.RequiredError('mcpDownloadResponse','Required parameter requestParameters.mcpDownloadResponse was null or undefined when calling updateMcpDownloadResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpDownloadResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpDownloadResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpDownloadResponseToJSON(requestParameters.mcpDownloadResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpDownloadResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing McpDownloadResponse.
- * Update an existing McpDownloadResponse
- */
-export function updateMcpDownloadResponse<T>(
-  requestParameters: UpdateMcpDownloadResponseApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>,
-): QueryConfig<T> {
-  return updateMcpDownloadResponseRaw(requestParameters, requestConfig);
+* Updates an existing McpDownloadResponse.
+* Update an existing McpDownloadResponse
+*/
+export function updateMcpDownloadResponse<T>(requestParameters: UpdateMcpDownloadResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpDownloadResponse>): QueryConfig<T> {
+    return updateMcpDownloadResponseRaw(requestParameters, requestConfig);
 }
+

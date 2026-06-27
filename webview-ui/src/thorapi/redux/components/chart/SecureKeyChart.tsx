@@ -19,32 +19,20 @@ Description: SecureKey
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, SecureKey } from "@thorapi/model";
-import {
-  useGetSecureKeysQuery,
-  useAddSecureKeyMutation,
-  useUpdateSecureKeyMutation,
-} from "../../services/SecureKeyService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, SecureKey } from '@thorapi/model';
+import { useGetSecureKeysQuery, useAddSecureKeyMutation, useUpdateSecureKeyMutation } from '../../services/SecureKeyService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const SecureKeyChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSecureKeysQuery();
 
   const [data, setData] = useState<SecureKey[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<SecureKey>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const SecureKeyChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const SecureKeyChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((securekey: DataObject) => [securekey])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((securekey: DataObject) => [securekey])} />
+          )}
     </>
   );
 };

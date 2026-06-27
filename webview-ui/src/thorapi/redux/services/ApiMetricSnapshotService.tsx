@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ApiMetricSnapshot } from "@thorapi/model/ApiMetricSnapshot";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ApiMetricSnapshot } from '@thorapi/model/ApiMetricSnapshot'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ApiMetricSnapshotResponse = ApiMetricSnapshot[];
+type ApiMetricSnapshotResponse = ApiMetricSnapshot[]
+type ApiMetricSnapshotPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ApiMetricSnapshot>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toApiMetricSnapshotList = (
-  result: unknown,
-): ApiMetricSnapshotResponse => {
+type ApiMetricSnapshotListQueryArg = {
+  example?: Partial<ApiMetricSnapshot>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toApiMetricSnapshotList = (result: unknown): ApiMetricSnapshotResponse => {
   if (Array.isArray(result)) {
-    return result as ApiMetricSnapshotResponse;
+    return result as ApiMetricSnapshotResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as ApiMetricSnapshotResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ApiMetricSnapshotResponse) : []
+}
 
 export const ApiMetricSnapshotService = createApi({
-  reducerPath: "ApiMetricSnapshot", // This should remain unique
+  reducerPath: 'ApiMetricSnapshot', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ApiMetricSnapshot"],
+  tagTypes: ['ApiMetricSnapshot'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getApiMetricSnapshotsPaged: build.query<
-      ApiMetricSnapshotResponse,
-      { page: number; size?: number; example?: Partial<ApiMetricSnapshot> }
-    >({
+    getApiMetricSnapshotsPaged: build.query<ApiMetricSnapshotResponse, ApiMetricSnapshotPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ApiMetricSnapshot?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ApiMetricSnapshot?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toApiMetricSnapshotList(result);
+        const rows = toApiMetricSnapshotList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ApiMetricSnapshot" as const, id })),
-          { type: "ApiMetricSnapshot", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ApiMetricSnapshot' as const, id })),
+          { type: 'ApiMetricSnapshot', id: `PAGE_${page}` },
+          { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getApiMetricSnapshots: build.query<
-      ApiMetricSnapshotResponse,
-      { example?: Partial<ApiMetricSnapshot> } | void
-    >({
+    getApiMetricSnapshots: build.query<ApiMetricSnapshotResponse, ApiMetricSnapshotListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const ApiMetricSnapshotService = createApi({
         return `ApiMetricSnapshot`;
       },
       providesTags: (result) => {
-        const rows = toApiMetricSnapshotList(result);
+        const rows = toApiMetricSnapshotList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ApiMetricSnapshot" as const, id })),
-          { type: "ApiMetricSnapshot", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ApiMetricSnapshot' as const, id })),
+          { type: 'ApiMetricSnapshot', id: 'LIST' },
+          { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addApiMetricSnapshot: build.mutation<
-      ApiMetricSnapshot,
-      Partial<ApiMetricSnapshot>
-    >({
+    addApiMetricSnapshot: build.mutation<ApiMetricSnapshot, Partial<ApiMetricSnapshot>>({
       query: (body) => ({
         url: `ApiMetricSnapshot`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ApiMetricSnapshot", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ApiMetricSnapshot', id: 'LIST' },
+        { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getApiMetricSnapshot: build.query<ApiMetricSnapshot, string>({
       query: (id) => `ApiMetricSnapshot/${id}`,
-      providesTags: (result, error, id) => [{ type: "ApiMetricSnapshot", id }],
+      providesTags: (result, error, id) => [{ type: 'ApiMetricSnapshot', id }],
     }),
 
     // 5) Update
-    updateApiMetricSnapshot: build.mutation<
-      void,
-      Pick<ApiMetricSnapshot, "id"> & Partial<ApiMetricSnapshot>
-    >({
+    updateApiMetricSnapshot: build.mutation<ApiMetricSnapshot, Pick<ApiMetricSnapshot, 'id'> & Partial<ApiMetricSnapshot>>({
       query: ({ id, ...patch }) => ({
         url: `ApiMetricSnapshot/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ApiMetricSnapshotService.util.updateQueryData(
-              "getApiMetricSnapshot",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<ApiMetricSnapshot, "id">,
-      ) => [
-        { type: "ApiMetricSnapshot", id },
-        { type: "ApiMetricSnapshot", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ApiMetricSnapshot, 'id'>) => [
+        { type: 'ApiMetricSnapshot', id },
+        { type: 'ApiMetricSnapshot', id: 'LIST' },
+        { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteApiMetricSnapshot: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteApiMetricSnapshot: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ApiMetricSnapshot/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "ApiMetricSnapshot", id },
+        { type: 'ApiMetricSnapshot', id },
+        { type: 'ApiMetricSnapshot', id: 'LIST' },
+        { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteApiMetricSnapshotCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteApiMetricSnapshotCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ApiMetricSnapshot/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ApiMetricSnapshot", id },
-        { type: "ApiMetricSnapshot", id: "LIST" },
+        { type: 'ApiMetricSnapshot', id },
+        { type: 'ApiMetricSnapshot', id: 'LIST' },
+        { type: 'ApiMetricSnapshot', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetApiMetricSnapshotsPagedQuery`
 export const {
-  useGetApiMetricSnapshotsPagedQuery, // immediate fetch
+  useGetApiMetricSnapshotsPagedQuery,     // immediate fetch
   useLazyGetApiMetricSnapshotsPagedQuery, // lazy fetch
   useGetApiMetricSnapshotQuery,
   useGetApiMetricSnapshotsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateApiMetricSnapshotMutation,
   useDeleteApiMetricSnapshotMutation,
   useDeleteApiMetricSnapshotCascadeMutation,
-} = ApiMetricSnapshotService;
+} = ApiMetricSnapshotService

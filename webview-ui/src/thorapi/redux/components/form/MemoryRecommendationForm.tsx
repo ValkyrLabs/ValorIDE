@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   MemoryRecommendation,
   MemoryRecommendationActionEnum,
   MemoryRecommendationPriorityEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddMemoryRecommendationMutation } from "../../services/MemoryRecommendationService";
+import { useAddMemoryRecommendationMutation } from '../../services/MemoryRecommendationService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,38 +63,45 @@ Suggested operator action inferred from memory telemetry.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ActionValidation = () => {
-  return ["compact", "reindex", "prune", "expand"];
+  return [
+    'compact',
+    'reindex',
+    'prune',
+    'expand',
+  ];
 };
 const PriorityValidation = () => {
-  return ["low", "medium", "high"];
+  return [
+    'low',
+    'medium',
+    'high',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  message: Yup.string(),
-  action: Yup.mixed().oneOf(ActionValidation(), "Invalid value for action"),
-  vibeLabel: Yup.string(),
-  creditCost: asNumber(Yup.number().typeError("creditCost must be a number")),
-  priority: Yup.mixed().oneOf(
-    PriorityValidation(),
-    "Invalid value for priority",
-  ),
-  trashed: Yup.boolean(),
+        message: Yup.string(),
+      action: Yup.mixed()
+        .oneOf(ActionValidation(), "Invalid value for action")
+        ,
+        vibeLabel: Yup.string(),
+        creditCost: asNumber(Yup.number().typeError("creditCost must be a number")),
+      priority: Yup.mixed()
+        .oneOf(PriorityValidation(), "Invalid value for priority")
+        ,
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryRecommendationForm: React.FC = () => {
-  const [addMemoryRecommendation, addMemoryRecommendationResult] =
-    useAddMemoryRecommendationMutation();
+  const [addMemoryRecommendation, addMemoryRecommendationResult] = useAddMemoryRecommendationMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -112,18 +111,12 @@ const MemoryRecommendationForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -131,12 +124,12 @@ const MemoryRecommendationForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryRecommendation> = {
-    message: "",
-    action: undefined,
-    vibeLabel: "",
-    creditCost: 0,
-    priority: undefined,
-    trashed: false,
+          message: '',
+        action: undefined,
+          vibeLabel: '',
+          creditCost: 0,
+        priority: undefined,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -151,14 +144,11 @@ const MemoryRecommendationForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new MemoryRecommendation:", grants);
+    console.log('Permissions saved for new MemoryRecommendation:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<MemoryRecommendation>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryRecommendation>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -169,7 +159,7 @@ const MemoryRecommendationForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryRecommendation created successfully! Would you like to set permissions for this object?`,
+          `MemoryRecommendation created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -177,8 +167,8 @@ const MemoryRecommendationForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create MemoryRecommendation:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create MemoryRecommendation:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -199,38 +189,44 @@ const MemoryRecommendationForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addMemoryRecommendationResult.isLoading;
+          const isSaving = isSubmitting || addMemoryRecommendationResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    MemoryRecommendation
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryRecommendation
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message && !errors.message && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.message &&
+                         !errors.message && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="message"
-                        value={values?.message}
-                        placeholder="Message"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="message"
+                            value={values?.message}
+                            placeholder="Message"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -242,30 +238,30 @@ const MemoryRecommendationForm: React.FC = () => {
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
-                        {touched.action && !errors.action && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.action &&
+                         !errors.action && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="action"
-                        value={values.action || ""}
-                        className={
-                          errors.action
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("action", true);
-                          setFieldValue("action", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Action" />
-                        <ActionLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="action"
+                          value={values.action || ''}
+                          className={
+                            errors.action
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('action', true);
+                            setFieldValue('action', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Action" />
+                          <ActionLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -277,21 +273,28 @@ const MemoryRecommendationForm: React.FC = () => {
                     <label htmlFor="vibeLabel" className="nice-form-control">
                       <b>
                         Vibe Label:
-                        {touched.vibeLabel && !errors.vibeLabel && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.vibeLabel &&
+                         !errors.vibeLabel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="vibeLabel"
-                        value={values?.vibeLabel}
-                        placeholder="Vibe Label"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="vibeLabel"
+                            value={values?.vibeLabel}
+                            placeholder="Vibe Label"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -303,33 +306,37 @@ const MemoryRecommendationForm: React.FC = () => {
                     <label htmlFor="creditCost" className="nice-form-control">
                       <b>
                         Credit Cost:
-                        {touched.creditCost && !errors.creditCost && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.creditCost &&
+                         !errors.creditCost && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="creditCost"
-                        type="number"
-                        step="any"
-                        value={values.creditCost || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("creditCost", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "creditCost",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.creditCost
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="creditCost"
+                            type="number"
+                            step="any"
+                            value={values.creditCost || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('creditCost', true);
+                              const v = e.target.value;
+                              setFieldValue('creditCost', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.creditCost
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -341,33 +348,30 @@ const MemoryRecommendationForm: React.FC = () => {
                     <label htmlFor="priority" className="nice-form-control">
                       <b>
                         Priority:
-                        {touched.priority && !errors.priority && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.priority &&
+                         !errors.priority && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="priority"
-                        value={values.priority || ""}
-                        className={
-                          errors.priority
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("priority", true);
-                          setFieldValue(
-                            "priority",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Priority" />
-                        <PriorityLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="priority"
+                          value={values.priority || ''}
+                          className={
+                            errors.priority
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('priority', true);
+                            setFieldValue('priority', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Priority" />
+                          <PriorityLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -379,25 +383,32 @@ const MemoryRecommendationForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -407,64 +418,45 @@ const MemoryRecommendationForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      MemoryRecommendation
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New MemoryRecommendation
+                  </CoolButton>
 
-                    {(addMemoryRecommendationResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addMemoryRecommendationResult as any).error
-                              ? (addMemoryRecommendationResult as any).error
-                                  .data
-                              : (addMemoryRecommendationResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addMemoryRecommendationResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addMemoryRecommendationResult as any).error ? (addMemoryRecommendationResult as any).error.data : (addMemoryRecommendationResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addMemoryRecommendationResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addMemoryRecommendationResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addMemoryRecommendationResult:{" "}
-                    {JSON.stringify(addMemoryRecommendationResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addMemoryRecommendationResult: {JSON.stringify(addMemoryRecommendationResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -496,10 +488,10 @@ kebabcase action-lookup
 const ActionLookup = () => {
   return (
     <>
-      <option value="compact" label="Compact" />
-      <option value="reindex" label="Reindex" />
-      <option value="prune" label="Prune" />
-      <option value="expand" label="Expand" />
+      <option value='compact' label="Compact" />
+      <option value='reindex' label="Reindex" />
+      <option value='prune' label="Prune" />
+      <option value='expand' label="Expand" />
     </>
   );
 };
@@ -516,12 +508,15 @@ kebabcase priority-lookup
 const PriorityLookup = () => {
   return (
     <>
-      <option value="low" label="Low" />
-      <option value="medium" label="Medium" />
-      <option value="high" label="High" />
+      <option value='low' label="Low" />
+      <option value='medium' label="Medium" />
+      <option value='high' label="High" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default MemoryRecommendationForm;
+

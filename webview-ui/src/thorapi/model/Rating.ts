@@ -26,165 +26,257 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- * TODO Rating CLASS DESCRIPTION
+ * General-purpose rating, feedback, or evaluation record for any Valkyr object, content item, workflow, agent output, or user experience.
  * @export
  * @interface Rating
  */
-export type Rating = DataObject & {
-  /**
-   * target object for the rating and comments
-   * @type {string}
-   * @memberof Rating
-   */
-  targetType?: RatingTargetTypeEnum;
-  /**
-   * The unique identifier for the content item
-   * @type {string}
-   * @memberof Rating
-   */
-  contentId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Rating
-   */
-  comments?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Rating
-   */
-  url?: string;
-  /**
-   * this is a 0-100 scale you can translate to binary (0/100) or fractional (1-5 / 0/20/40/60/80/100) etc.
-   * @type {number}
-   * @memberof Rating
-   */
-  rating?: number;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Rating
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Rating
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Rating
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Rating
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Rating
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Rating
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Rating
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Rating
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Rating
-   */
-  trashed?: boolean;
-};
+export type Rating  = DataObject & {
+    /**
+     * Type/category of the rated target object.
+     * @type {string}
+     * @memberof Rating
+     */
+    targetType?: RatingTargetTypeEnum;
+    /**
+     * UUID of the rated object/content/workflow/message when available.
+     * @type {string}
+     * @memberof Rating
+     */
+    contentId?: string;
+    /**
+     * Score on a 0-100 scale. 0 means complete failure, 100 means excellent.
+     * @type {number}
+     * @memberof Rating
+     */
+    rating?: number;
+    /**
+     * Human or agent explanation of the rating.
+     * @type {string}
+     * @memberof Rating
+     */
+    comments?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Rating
+     */
+    url?: string;
+    /**
+     * Who or what created the rating.
+     * @type {string}
+     * @memberof Rating
+     */
+    raterType?: RatingRaterTypeEnum;
+    /**
+     * Principal, agent, evaluator, or system actor that created the rating.
+     * @type {string}
+     * @memberof Rating
+     */
+    raterId?: string;
+    /**
+     * Session/chat/workflow context where the rated outcome occurred.
+     * @type {string}
+     * @memberof Rating
+     */
+    sessionId?: string;
+    /**
+     * Workflow run, agent run, command run, or execution trace associated with the rating.
+     * @type {string}
+     * @memberof Rating
+     */
+    runId?: string;
+    /**
+     * What kind of rating this is.
+     * @type {string}
+     * @memberof Rating
+     */
+    ratingType?: RatingRatingTypeEnum;
+    /**
+     * Processing lifecycle for downstream analysis and optimization.
+     * @type {string}
+     * @memberof Rating
+     */
+    status?: RatingStatusEnum;
+    /**
+     * Optional JSON metadata/evidence such as error codes, model, prompt version, task type, surface, validator output, or trace summary.
+     * @type {string}
+     * @memberof Rating
+     */
+    metadata?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Rating
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Rating
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Rating
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Rating
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Rating
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Rating
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Rating
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Rating
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Rating
+     */
+    trashed?: boolean;
+}
 
 export function RatingFromJSON(json: any): Rating {
-  return {
-    ...DataObjectFromJSON(json),
-    targetType: !exists(json, "targetType") ? undefined : json["targetType"],
-    contentId: !exists(json, "contentId") ? undefined : json["contentId"],
-    comments: !exists(json, "comments") ? undefined : json["comments"],
-    url: !exists(json, "url") ? undefined : json["url"],
-    rating: !exists(json, "rating") ? undefined : json["rating"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'targetType': !exists(json, 'targetType') ? undefined : json['targetType'],
+        'contentId': !exists(json, 'contentId') ? undefined : json['contentId'],
+        'rating': !exists(json, 'rating') ? undefined : json['rating'],
+        'comments': !exists(json, 'comments') ? undefined : json['comments'],
+        'url': !exists(json, 'url') ? undefined : json['url'],
+        'raterType': !exists(json, 'raterType') ? undefined : json['raterType'],
+        'raterId': !exists(json, 'raterId') ? undefined : json['raterId'],
+        'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
+        'runId': !exists(json, 'runId') ? undefined : json['runId'],
+        'ratingType': !exists(json, 'ratingType') ? undefined : json['ratingType'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function RatingToJSON(value?: Rating): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    targetType: value.targetType,
-    contentId: value.contentId,
-    comments: value.comments,
-    url: value.url,
-    rating: value.rating,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'targetType': value.targetType,
+        'contentId': value.contentId,
+        'rating': value.rating,
+        'comments': value.comments,
+        'url': value.url,
+        'raterType': value.raterType,
+        'raterId': value.raterId,
+        'sessionId': value.sessionId,
+        'runId': value.runId,
+        'ratingType': value.ratingType,
+        'status': value.status,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum RatingTargetTypeEnum {
-  HOMEPAGE = "homepage",
-  WEBPAGE = "webpage",
-  APPLICATION = "application",
-  FUNCTION = "function",
-  API = "api",
-  SERVICE = "service",
-  CONTENT = "content",
-  SCHEMA = "schema",
-  APPLICATION2 = "application",
-  FEATURE = "feature",
-  HELPFULNESS = "helpfulness",
-  SATISFACTION = "satisfaction",
-  PRODUCT = "product",
-  NONE = "none",
+    HOMEPAGE = 'homepage',
+    WEBPAGE = 'webpage',
+    APPLICATION = 'application',
+    FUNCTION = 'function',
+    API = 'api',
+    SERVICE = 'service',
+    CONTENT = 'content',
+    SCHEMA = 'schema',
+    FEATURE = 'feature',
+    HELPFULNESS = 'helpfulness',
+    SATISFACTION = 'satisfaction',
+    PRODUCT = 'product',
+    WORKFLOW = 'workflow',
+    WORKFLOWRUN = 'workflow_run',
+    CHATMESSAGE = 'chat_message',
+    AGENTTASK = 'agent_task',
+    GENERATEDCODE = 'generated_code',
+    SKILLARTIFACT = 'skill_artifact',
+    MEMORYENTRY = 'memory_entry',
+    NONE = 'none'
 }
+/**
+* @export
+* @enum {string}
+*/
+export enum RatingRaterTypeEnum {
+    USER = 'user',
+    AGENT = 'agent',
+    SYSTEM = 'system',
+    EVALUATOR = 'evaluator',
+    TEST = 'test',
+    NONE = 'none'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum RatingRatingTypeEnum {
+    USERFEEDBACK = 'user_feedback',
+    AGENTOBSERVATION = 'agent_observation',
+    ERRORREPORT = 'error_report',
+    VALIDATIONRESULT = 'validation_result',
+    QUALITYSCORE = 'quality_score',
+    SATISFACTIONSCORE = 'satisfaction_score',
+    HELPFULNESSSCORE = 'helpfulness_score',
+    NONE = 'none'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum RatingStatusEnum {
+    NEW = 'new',
+    ANALYZED = 'analyzed',
+    ACTIONPROPOSED = 'action_proposed',
+    ACTIONAPPLIED = 'action_applied',
+    IGNORED = 'ignored',
+    ARCHIVED = 'archived'
+}
+
+

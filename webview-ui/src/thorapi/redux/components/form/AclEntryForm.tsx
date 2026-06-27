@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  AclEntry,
+} from '@thorapi/model';
 
-import { AclEntry } from "@thorapi/model";
-
-import { useAddAclEntryMutation } from "../../services/AclEntryService";
+import { useAddAclEntryMutation } from '../../services/AclEntryService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,20 +65,16 @@ Individual permission assignment for a recipient (AclSid) on an object.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  aceOrder: asNumber(
-    Yup.number().integer().typeError("aceOrder must be a number"),
-  ),
-  mask: asNumber(Yup.number().integer().typeError("mask must be a number")),
-  granting: Yup.boolean(),
-  auditSuccess: Yup.boolean(),
-  auditFailure: Yup.boolean(),
-  sid: Yup.string(),
-  trashed: Yup.boolean(),
+        aceOrder: asNumber(Yup.number().integer().typeError("aceOrder must be a number")),
+        mask: asNumber(Yup.number().integer().typeError("mask must be a number")),
+        granting: Yup.boolean(),
+        auditSuccess: Yup.boolean(),
+        auditFailure: Yup.boolean(),
+        sid: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -101,18 +91,12 @@ const AclEntryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -120,13 +104,13 @@ const AclEntryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<AclEntry> = {
-    aceOrder: 0,
-    mask: 0,
-    granting: false,
-    auditSuccess: false,
-    auditFailure: false,
-    sid: "",
-    trashed: false,
+          aceOrder: 0,
+          mask: 0,
+          granting: false,
+          auditSuccess: false,
+          auditFailure: false,
+          sid: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -141,14 +125,11 @@ const AclEntryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new AclEntry:", grants);
+    console.log('Permissions saved for new AclEntry:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<AclEntry>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<AclEntry>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -159,7 +140,7 @@ const AclEntryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `AclEntry created successfully! Would you like to set permissions for this object?`,
+          `AclEntry created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -167,8 +148,8 @@ const AclEntryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create AclEntry:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create AclEntry:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -189,47 +170,52 @@ const AclEntryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addAclEntryResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New AclEntry
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New AclEntry
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="aceOrder" className="nice-form-control">
                       <b>
                         Ace Order:
-                        {touched.aceOrder && !errors.aceOrder && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.aceOrder &&
+                         !errors.aceOrder && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="aceOrder"
-                        type="number"
-                        value={values.aceOrder || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("aceOrder", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "aceOrder",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.aceOrder
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="aceOrder"
+                            type="number"
+                            value={values.aceOrder || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('aceOrder', true);
+                              const v = e.target.value;
+                              setFieldValue('aceOrder', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.aceOrder
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -241,32 +227,36 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="mask" className="nice-form-control">
                       <b>
                         Mask:
-                        {touched.mask && !errors.mask && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.mask &&
+                         !errors.mask && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="mask"
-                        type="number"
-                        value={values.mask || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("mask", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "mask",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.mask
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="mask"
+                            type="number"
+                            value={values.mask || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('mask', true);
+                              const v = e.target.value;
+                              setFieldValue('mask', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.mask
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -278,25 +268,32 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="granting" className="nice-form-control">
                       <b>
                         Granting:
-                        {touched.granting && !errors.granting && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.granting &&
+                         !errors.granting && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="granting"
-                        name="granting"
-                        checked={values.granting || false}
-                        onChange={(e) => {
-                          setFieldTouched("granting", true);
-                          setFieldValue("granting", e.target.checked);
-                        }}
-                        isInvalid={!!errors.granting}
-                        className={errors.granting ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="granting"
+                            name="granting"
+                            checked={values.granting || false}
+                            onChange={(e) => {
+                              setFieldTouched('granting', true);
+                              setFieldValue('granting', e.target.checked);
+                            }}
+                            isInvalid={!!errors.granting}
+                            className={errors.granting ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -308,25 +305,32 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="auditSuccess" className="nice-form-control">
                       <b>
                         Audit Success:
-                        {touched.auditSuccess && !errors.auditSuccess && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.auditSuccess &&
+                         !errors.auditSuccess && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="auditSuccess"
-                        name="auditSuccess"
-                        checked={values.auditSuccess || false}
-                        onChange={(e) => {
-                          setFieldTouched("auditSuccess", true);
-                          setFieldValue("auditSuccess", e.target.checked);
-                        }}
-                        isInvalid={!!errors.auditSuccess}
-                        className={errors.auditSuccess ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="auditSuccess"
+                            name="auditSuccess"
+                            checked={values.auditSuccess || false}
+                            onChange={(e) => {
+                              setFieldTouched('auditSuccess', true);
+                              setFieldValue('auditSuccess', e.target.checked);
+                            }}
+                            isInvalid={!!errors.auditSuccess}
+                            className={errors.auditSuccess ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -338,25 +342,32 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="auditFailure" className="nice-form-control">
                       <b>
                         Audit Failure:
-                        {touched.auditFailure && !errors.auditFailure && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.auditFailure &&
+                         !errors.auditFailure && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="auditFailure"
-                        name="auditFailure"
-                        checked={values.auditFailure || false}
-                        onChange={(e) => {
-                          setFieldTouched("auditFailure", true);
-                          setFieldValue("auditFailure", e.target.checked);
-                        }}
-                        isInvalid={!!errors.auditFailure}
-                        className={errors.auditFailure ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="auditFailure"
+                            name="auditFailure"
+                            checked={values.auditFailure || false}
+                            onChange={(e) => {
+                              setFieldTouched('auditFailure', true);
+                              setFieldValue('auditFailure', e.target.checked);
+                            }}
+                            isInvalid={!!errors.auditFailure}
+                            className={errors.auditFailure ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -368,21 +379,28 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="sid" className="nice-form-control">
                       <b>
                         Sid:
-                        {touched.sid && !errors.sid && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sid &&
+                         !errors.sid && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sid"
-                        value={values?.sid}
-                        placeholder="Sid"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sid"
+                            value={values?.sid}
+                            placeholder="Sid"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -394,25 +412,32 @@ const AclEntryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -422,58 +447,45 @@ const AclEntryForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New AclEntry
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New AclEntry
+                  </CoolButton>
 
-                    {(addAclEntryResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addAclEntryResult as any).error
-                              ? (addAclEntryResult as any).error.data
-                              : (addAclEntryResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addAclEntryResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addAclEntryResult as any).error ? (addAclEntryResult as any).error.data : (addAclEntryResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addAclEntryResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addAclEntryResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addAclEntryResult: {JSON.stringify(addAclEntryResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addAclEntryResult: {JSON.stringify(addAclEntryResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -493,5 +505,8 @@ const AclEntryForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default AclEntryForm;
+

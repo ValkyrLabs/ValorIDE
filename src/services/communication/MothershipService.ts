@@ -67,8 +67,7 @@ export class MothershipService extends EventEmitter {
       const baseUrl =
         this.normalizeWsUrl(this.options.baseUrl) ??
         this.getDefaultWebsocketUrl();
-      const wsUrl = new URL("/chat", baseUrl);
-      wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = this.buildEndpointUrl(baseUrl, "chat");
 
       // Add JWT token as query parameter for authentication
       wsUrl.searchParams.set("token", this.options.jwtToken);
@@ -191,6 +190,13 @@ export class MothershipService extends EventEmitter {
     } catch (error) {
       return undefined;
     }
+  }
+
+  private buildEndpointUrl(baseUrl: string, endpoint: string): URL {
+    const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+    const url = new URL(endpoint.replace(/^\/+/, ""), normalizedBase);
+    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    return url;
   }
 
   private scheduleReconnect(): void {

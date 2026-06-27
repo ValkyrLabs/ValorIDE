@@ -13,70 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SubmitTrustAttestationEvidenceRequest } from "@thorapi/model/SubmitTrustAttestationEvidenceRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SubmitTrustAttestationEvidenceRequest } from '@thorapi/model/SubmitTrustAttestationEvidenceRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SubmitTrustAttestationEvidenceRequestResponse =
-  SubmitTrustAttestationEvidenceRequest[];
+type SubmitTrustAttestationEvidenceRequestResponse = SubmitTrustAttestationEvidenceRequest[]
+type SubmitTrustAttestationEvidenceRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SubmitTrustAttestationEvidenceRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toSubmitTrustAttestationEvidenceRequestList = (
-  result: unknown,
-): SubmitTrustAttestationEvidenceRequestResponse => {
+type SubmitTrustAttestationEvidenceRequestListQueryArg = {
+  example?: Partial<SubmitTrustAttestationEvidenceRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toSubmitTrustAttestationEvidenceRequestList = (result: unknown): SubmitTrustAttestationEvidenceRequestResponse => {
   if (Array.isArray(result)) {
-    return result as SubmitTrustAttestationEvidenceRequestResponse;
+    return result as SubmitTrustAttestationEvidenceRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as SubmitTrustAttestationEvidenceRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SubmitTrustAttestationEvidenceRequestResponse) : []
+}
 
 export const SubmitTrustAttestationEvidenceRequestService = createApi({
-  reducerPath: "SubmitTrustAttestationEvidenceRequest", // This should remain unique
+  reducerPath: 'SubmitTrustAttestationEvidenceRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SubmitTrustAttestationEvidenceRequest"],
+  tagTypes: ['SubmitTrustAttestationEvidenceRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSubmitTrustAttestationEvidenceRequestsPaged: build.query<
-      SubmitTrustAttestationEvidenceRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<SubmitTrustAttestationEvidenceRequest>;
-      }
-    >({
+    getSubmitTrustAttestationEvidenceRequestsPaged: build.query<SubmitTrustAttestationEvidenceRequestResponse, SubmitTrustAttestationEvidenceRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SubmitTrustAttestationEvidenceRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SubmitTrustAttestationEvidenceRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSubmitTrustAttestationEvidenceRequestList(result);
+        const rows = toSubmitTrustAttestationEvidenceRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "SubmitTrustAttestationEvidenceRequest" as const,
-              id,
-            })),
-          { type: "SubmitTrustAttestationEvidenceRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SubmitTrustAttestationEvidenceRequest' as const, id })),
+          { type: 'SubmitTrustAttestationEvidenceRequest', id: `PAGE_${page}` },
+          { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSubmitTrustAttestationEvidenceRequests: build.query<
-      SubmitTrustAttestationEvidenceRequestResponse,
-      { example?: Partial<SubmitTrustAttestationEvidenceRequest> } | void
-    >({
+    getSubmitTrustAttestationEvidenceRequests: build.query<SubmitTrustAttestationEvidenceRequestResponse, SubmitTrustAttestationEvidenceRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -85,123 +82,86 @@ export const SubmitTrustAttestationEvidenceRequestService = createApi({
         return `SubmitTrustAttestationEvidenceRequest`;
       },
       providesTags: (result) => {
-        const rows = toSubmitTrustAttestationEvidenceRequestList(result);
+        const rows = toSubmitTrustAttestationEvidenceRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "SubmitTrustAttestationEvidenceRequest" as const,
-              id,
-            })),
-          { type: "SubmitTrustAttestationEvidenceRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SubmitTrustAttestationEvidenceRequest' as const, id })),
+          { type: 'SubmitTrustAttestationEvidenceRequest', id: 'LIST' },
+          { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addSubmitTrustAttestationEvidenceRequest: build.mutation<
-      SubmitTrustAttestationEvidenceRequest,
-      Partial<SubmitTrustAttestationEvidenceRequest>
-    >({
+    addSubmitTrustAttestationEvidenceRequest: build.mutation<SubmitTrustAttestationEvidenceRequest, Partial<SubmitTrustAttestationEvidenceRequest>>({
       query: (body) => ({
         url: `SubmitTrustAttestationEvidenceRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
       invalidatesTags: [
-        { type: "SubmitTrustAttestationEvidenceRequest", id: "LIST" },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'LIST' },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 4) Get single by ID
-    getSubmitTrustAttestationEvidenceRequest: build.query<
-      SubmitTrustAttestationEvidenceRequest,
-      string
-    >({
+    getSubmitTrustAttestationEvidenceRequest: build.query<SubmitTrustAttestationEvidenceRequest, string>({
       query: (id) => `SubmitTrustAttestationEvidenceRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "SubmitTrustAttestationEvidenceRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'SubmitTrustAttestationEvidenceRequest', id }],
     }),
 
     // 5) Update
-    updateSubmitTrustAttestationEvidenceRequest: build.mutation<
-      void,
-      Pick<SubmitTrustAttestationEvidenceRequest, "id"> &
-        Partial<SubmitTrustAttestationEvidenceRequest>
-    >({
+    updateSubmitTrustAttestationEvidenceRequest: build.mutation<SubmitTrustAttestationEvidenceRequest, Pick<SubmitTrustAttestationEvidenceRequest, 'id'> & Partial<SubmitTrustAttestationEvidenceRequest>>({
       query: ({ id, ...patch }) => ({
         url: `SubmitTrustAttestationEvidenceRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SubmitTrustAttestationEvidenceRequestService.util.updateQueryData(
-              "getSubmitTrustAttestationEvidenceRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<SubmitTrustAttestationEvidenceRequest, "id">,
-      ) => [
-        { type: "SubmitTrustAttestationEvidenceRequest", id },
-        { type: "SubmitTrustAttestationEvidenceRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SubmitTrustAttestationEvidenceRequest, 'id'>) => [
+        { type: 'SubmitTrustAttestationEvidenceRequest', id },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'LIST' },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSubmitTrustAttestationEvidenceRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSubmitTrustAttestationEvidenceRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SubmitTrustAttestationEvidenceRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "SubmitTrustAttestationEvidenceRequest", id },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'LIST' },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSubmitTrustAttestationEvidenceRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSubmitTrustAttestationEvidenceRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SubmitTrustAttestationEvidenceRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SubmitTrustAttestationEvidenceRequest", id },
-        { type: "SubmitTrustAttestationEvidenceRequest", id: "LIST" },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'LIST' },
+        { type: 'SubmitTrustAttestationEvidenceRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSubmitTrustAttestationEvidenceRequestsPagedQuery`
 export const {
-  useGetSubmitTrustAttestationEvidenceRequestsPagedQuery, // immediate fetch
+  useGetSubmitTrustAttestationEvidenceRequestsPagedQuery,     // immediate fetch
   useLazyGetSubmitTrustAttestationEvidenceRequestsPagedQuery, // lazy fetch
   useGetSubmitTrustAttestationEvidenceRequestQuery,
   useGetSubmitTrustAttestationEvidenceRequestsQuery,
@@ -209,4 +169,4 @@ export const {
   useUpdateSubmitTrustAttestationEvidenceRequestMutation,
   useDeleteSubmitTrustAttestationEvidenceRequestMutation,
   useDeleteSubmitTrustAttestationEvidenceRequestCascadeMutation,
-} = SubmitTrustAttestationEvidenceRequestService;
+} = SubmitTrustAttestationEvidenceRequestService

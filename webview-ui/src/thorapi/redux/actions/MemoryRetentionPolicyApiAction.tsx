@@ -17,123 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // MemoryRetentionPolicy
 
-export const FETCH_MEMORYRETENTIONPOLICY_REQUEST =
-  "FETCH_MEMORYRETENTIONPOLICY_REQUEST";
-export const FETCH_MEMORYRETENTIONPOLICY_SUCCESS =
-  "FETCH_MEMORYRETENTIONPOLICY_SUCCESS";
-export const FETCH_MEMORYRETENTIONPOLICY_FAILURE =
-  "FETCH_MEMORYRETENTIONPOLICY_FAILURE";
+export const FETCH_MEMORYRETENTIONPOLICY_REQUEST = 'FETCH_MEMORYRETENTIONPOLICY_REQUEST';
+export const FETCH_MEMORYRETENTIONPOLICY_SUCCESS = 'FETCH_MEMORYRETENTIONPOLICY_SUCCESS';
+export const FETCH_MEMORYRETENTIONPOLICY_FAILURE = 'FETCH_MEMORYRETENTIONPOLICY_FAILURE';
 
-export const ADD_MEMORYRETENTIONPOLICY_REQUEST =
-  "ADD_MEMORYRETENTIONPOLICY_REQUEST";
-export const ADD_MEMORYRETENTIONPOLICY_SUCCESS =
-  "ADD_MEMORYRETENTIONPOLICY_SUCCESS";
-export const ADD_MEMORYRETENTIONPOLICY_FAILURE =
-  "ADD_MEMORYRETENTIONPOLICY_FAILURE";
+export const ADD_MEMORYRETENTIONPOLICY_REQUEST = 'ADD_MEMORYRETENTIONPOLICY_REQUEST';
+export const ADD_MEMORYRETENTIONPOLICY_SUCCESS = 'ADD_MEMORYRETENTIONPOLICY_SUCCESS';
+export const ADD_MEMORYRETENTIONPOLICY_FAILURE = 'ADD_MEMORYRETENTIONPOLICY_FAILURE';
 
-export const UPDATE_MEMORYRETENTIONPOLICY_REQUEST =
-  "UPDATE_MEMORYRETENTIONPOLICY_REQUEST";
-export const UPDATE_MEMORYRETENTIONPOLICY_SUCCESS =
-  "UPDATE_MEMORYRETENTIONPOLICY_SUCCESS";
-export const UPDATE_MEMORYRETENTIONPOLICY_FAILURE =
-  "UPDATE_MEMORYRETENTIONPOLICY_FAILURE";
+export const UPDATE_MEMORYRETENTIONPOLICY_REQUEST = 'UPDATE_MEMORYRETENTIONPOLICY_REQUEST';
+export const UPDATE_MEMORYRETENTIONPOLICY_SUCCESS = 'UPDATE_MEMORYRETENTIONPOLICY_SUCCESS';
+export const UPDATE_MEMORYRETENTIONPOLICY_FAILURE = 'UPDATE_MEMORYRETENTIONPOLICY_FAILURE';
 
-export const DELETE_MEMORYRETENTIONPOLICY_REQUEST =
-  "DELETE_MEMORYRETENTIONPOLICY_REQUEST";
-export const DELETE_MEMORYRETENTIONPOLICY_SUCCESS =
-  "DELETE_MEMORYRETENTIONPOLICY_SUCCESS";
-export const DELETE_MEMORYRETENTIONPOLICY_FAILURE =
-  "DELETE_MEMORYRETENTIONPOLICY_FAILURE";
+export const DELETE_MEMORYRETENTIONPOLICY_REQUEST = 'DELETE_MEMORYRETENTIONPOLICY_REQUEST';
+export const DELETE_MEMORYRETENTIONPOLICY_SUCCESS = 'DELETE_MEMORYRETENTIONPOLICY_SUCCESS';
+export const DELETE_MEMORYRETENTIONPOLICY_FAILURE = 'DELETE_MEMORYRETENTIONPOLICY_FAILURE';
 
-export const LIST_MEMORYRETENTIONPOLICY_REQUEST =
-  "LIST_MEMORYRETENTIONPOLICY_REQUEST";
-export const LIST_MEMORYRETENTIONPOLICY_SUCCESS =
-  "LIST_MEMORYRETENTIONPOLICY_SUCCESS";
-export const LIST_MEMORYRETENTIONPOLICY_FAILURE =
-  "LIST_MEMORYRETENTIONPOLICY_FAILURE";
+export const LIST_MEMORYRETENTIONPOLICY_REQUEST = 'LIST_MEMORYRETENTIONPOLICY_REQUEST';
+export const LIST_MEMORYRETENTIONPOLICY_SUCCESS = 'LIST_MEMORYRETENTIONPOLICY_SUCCESS';
+export const LIST_MEMORYRETENTIONPOLICY_FAILURE = 'LIST_MEMORYRETENTIONPOLICY_FAILURE';
 
 export const addMemoryRetentionPolicyRequest = () => ({
-  type: ADD_MEMORYRETENTIONPOLICY_REQUEST,
+    type: ADD_MEMORYRETENTIONPOLICY_REQUEST,
 });
 
-export const addMemoryRetentionPolicySuccess = (
-  MemoryRetentionPolicys: any,
-) => ({
-  type: ADD_MEMORYRETENTIONPOLICY_SUCCESS,
-  payload: MemoryRetentionPolicys,
+export const addMemoryRetentionPolicySuccess = (MemoryRetentionPolicys: any) => ({
+    type: ADD_MEMORYRETENTIONPOLICY_SUCCESS,
+    payload: MemoryRetentionPolicys,
 });
 
 export const addMemoryRetentionPolicyFailure = (error: Error) => ({
-  type: ADD_MEMORYRETENTIONPOLICY_FAILURE,
-  payload: error,
+    type: ADD_MEMORYRETENTIONPOLICY_FAILURE,
+    payload: error,
 });
+
 
 export const fetchMemoryRetentionPolicyRequest = () => ({
-  type: FETCH_MEMORYRETENTIONPOLICY_REQUEST,
+    type: FETCH_MEMORYRETENTIONPOLICY_REQUEST,
 });
 
-export const fetchMemoryRetentionPolicySuccess = (
-  MemoryRetentionPolicys: any,
-) => ({
-  type: FETCH_MEMORYRETENTIONPOLICY_SUCCESS,
-  payload: MemoryRetentionPolicys,
+export const fetchMemoryRetentionPolicySuccess = (MemoryRetentionPolicys: any) => ({
+    type: FETCH_MEMORYRETENTIONPOLICY_SUCCESS,
+    payload: MemoryRetentionPolicys,
 });
 
 export const fetchMemoryRetentionPolicyFailure = (error: Error) => ({
-  type: FETCH_MEMORYRETENTIONPOLICY_FAILURE,
-  payload: error,
+    type: FETCH_MEMORYRETENTIONPOLICY_FAILURE,
+    payload: error,
 });
 
 export const listMemoryRetentionPolicyRequest = () => ({
-  type: LIST_MEMORYRETENTIONPOLICY_REQUEST,
+    type: LIST_MEMORYRETENTIONPOLICY_REQUEST,
 });
 
-export const listMemoryRetentionPolicySuccess = (
-  MemoryRetentionPolicys: any,
-) => ({
-  type: LIST_MEMORYRETENTIONPOLICY_SUCCESS,
-  payload: MemoryRetentionPolicys,
+export const listMemoryRetentionPolicySuccess = (MemoryRetentionPolicys: any) => ({
+    type: LIST_MEMORYRETENTIONPOLICY_SUCCESS,
+    payload: MemoryRetentionPolicys,
 });
 
 export const listMemoryRetentionPolicyFailure = (error: Error) => ({
-  type: LIST_MEMORYRETENTIONPOLICY_FAILURE,
-  payload: error,
+    type: LIST_MEMORYRETENTIONPOLICY_FAILURE,
+    payload: error,
 });
 
-export const updateMemoryRetentionPolicyRequest = (
-  MemoryRetentionPolicy: any,
-) => ({
-  type: UPDATE_MEMORYRETENTIONPOLICY_REQUEST,
-  payload: MemoryRetentionPolicy,
+export const updateMemoryRetentionPolicyRequest = (MemoryRetentionPolicy: any) => ({
+    type: UPDATE_MEMORYRETENTIONPOLICY_REQUEST,
+    payload: MemoryRetentionPolicy,
 });
 
-export const updateMemoryRetentionPolicySuccess = (
-  MemoryRetentionPolicy: any,
-) => ({
-  type: UPDATE_MEMORYRETENTIONPOLICY_SUCCESS,
-  payload: MemoryRetentionPolicy,
+export const updateMemoryRetentionPolicySuccess = (MemoryRetentionPolicy: any) => ({
+    type: UPDATE_MEMORYRETENTIONPOLICY_SUCCESS,
+    payload: MemoryRetentionPolicy,
 });
 
 export const updateMemoryRetentionPolicyFailure = (error: Error) => ({
-  type: UPDATE_MEMORYRETENTIONPOLICY_FAILURE,
-  payload: error,
+    type: UPDATE_MEMORYRETENTIONPOLICY_FAILURE,
+    payload: error,
 });
 
-export const deleteMemoryRetentionPolicyRequest = (
-  MemoryRetentionPolicy: any,
-) => ({
-  type: DELETE_MEMORYRETENTIONPOLICY_REQUEST,
-  payload: MemoryRetentionPolicy,
+export const deleteMemoryRetentionPolicyRequest = (MemoryRetentionPolicy: any) => ({
+    type: DELETE_MEMORYRETENTIONPOLICY_REQUEST,
+    payload: MemoryRetentionPolicy,
 });
 
-export const deleteMemoryRetentionPolicySuccess = (
-  MemoryRetentionPolicy: any,
-) => ({
-  type: DELETE_MEMORYRETENTIONPOLICY_SUCCESS,
-  payload: MemoryRetentionPolicy,
+export const deleteMemoryRetentionPolicySuccess = (MemoryRetentionPolicy: any) => ({
+    type: DELETE_MEMORYRETENTIONPOLICY_SUCCESS,
+    payload: MemoryRetentionPolicy,
 });
 
 export const deleteMemoryRetentionPolicyFailure = (error: Error) => ({
-  type: DELETE_MEMORYRETENTIONPOLICY_FAILURE,
-  payload: error,
+    type: DELETE_MEMORYRETENTIONPOLICY_FAILURE,
+    payload: error,
 });

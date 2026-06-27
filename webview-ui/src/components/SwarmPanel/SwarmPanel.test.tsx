@@ -25,12 +25,15 @@ function mockFetchWithBilling(status: any) {
 
 describe("SwarmPanel billing conversion flow", () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.stubGlobal("open", vi.fn());
+    (window as any).__valkyr_organizationId = "org-123";
+    (window as any).__valoride_workspaceId = "workspace-456";
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     vi.unstubAllGlobals();
+    delete (window as any).__valkyr_organizationId;
+    delete (window as any).__valoride_workspaceId;
   });
 
   it("opens upgrade flow from Upgrade Quota", async () => {
@@ -47,6 +50,36 @@ describe("SwarmPanel billing conversion flow", () => {
     expect(screen.getByText("Upgrade quota")).toBeInTheDocument();
   });
 
+  it("starts checkout with organization and workspace attribution", async () => {
+    mockFetchWithBilling({
+      ...activeBilling,
+      activeAgentCount: 10,
+      remainingQuota: 0,
+    });
+    render(<SwarmPanel />);
+
+    fireEvent.click(screen.getByText("💰 Billing"));
+    await waitFor(() => {
+      expect(screen.getByText("💳 Upgrade Quota")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("💳 Upgrade Quota"));
+    fireEvent.click(screen.getByText("Start checkout"));
+
+    expect(window.open).toHaveBeenCalledWith(
+      expect.stringContaining("source=valoride-swarm-quota"),
+      "_blank",
+    );
+    expect(window.open).toHaveBeenCalledWith(
+      expect.stringContaining("organizationId=org-123"),
+      "_blank",
+    );
+    expect(window.open).toHaveBeenCalledWith(
+      expect.stringContaining("workspaceId=workspace-456"),
+      "_blank",
+    );
+  });
+
   it("opens billing history from Billing History", async () => {
     mockFetchWithBilling(activeBilling);
     render(<SwarmPanel />);
@@ -61,7 +94,11 @@ describe("SwarmPanel billing conversion flow", () => {
   });
 
   it("shows suspended recovery copy in upgrade flow", async () => {
-    mockFetchWithBilling({ ...activeBilling, billingStatus: "SUSPENDED", remainingQuota: 0 });
+    mockFetchWithBilling({
+      ...activeBilling,
+      billingStatus: "SUSPENDED",
+      remainingQuota: 0,
+    });
     render(<SwarmPanel />);
 
     fireEvent.click(screen.getByText("💰 Billing"));
@@ -71,7 +108,42 @@ describe("SwarmPanel billing conversion flow", () => {
 
     fireEvent.click(screen.getByText("💳 Upgrade Quota"));
     expect(
-      screen.getByText(/Billing is suspended\. Update payment method/i),
+      screen.getByText(
+        /Billing is suspended\. Update payment method, buy credits/i,
+      ),
     ).toBeInTheDocument();
+    expect(screen.getByText("Update payment method")).toBeInTheDocument();
+    expect(screen.getByText("Buy credits")).toBeInTheDocument();
+    expect(screen.getByText("Contact admin")).toBeInTheDocument();
+    expect(screen.getByText("Contact support")).toBeInTheDocument();
+  });
+
+  it("tracks quota warning analytics once", async () => {
+    const analyticsSpy = vi.fn();
+    window.addEventListener("valoride-analytics", analyticsSpy);
+    mockFetchWithBilling({
+      ...activeBilling,
+      activeAgentCount: 8,
+      quotaAgents: 10,
+    });
+
+    render(<SwarmPanel />);
+    await waitFor(() => {
+      expect(analyticsSpy).toHaveBeenCalled();
+    });
+
+    const warningEvents = analyticsSpy.mock.calls.filter((call) => {
+      const event = call[0] as CustomEvent;
+      return event.detail.eventName === "valoride.quota_warning_seen";
+    });
+    expect(warningEvents).toHaveLength(1);
+    expect(warningEvents[0][0].detail).toEqual(
+      expect.objectContaining({
+        organizationId: "org-123",
+        workspaceId: "workspace-456",
+      }),
+    );
+
+    window.removeEventListener("valoride-analytics", analyticsSpy);
   });
 });

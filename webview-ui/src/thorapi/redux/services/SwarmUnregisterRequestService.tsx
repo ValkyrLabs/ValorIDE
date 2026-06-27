@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmUnregisterRequest } from "@thorapi/model/SwarmUnregisterRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmUnregisterRequest } from '@thorapi/model/SwarmUnregisterRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmUnregisterRequestResponse = SwarmUnregisterRequest[];
+type SwarmUnregisterRequestResponse = SwarmUnregisterRequest[]
+type SwarmUnregisterRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmUnregisterRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toSwarmUnregisterRequestList = (
-  result: unknown,
-): SwarmUnregisterRequestResponse => {
+type SwarmUnregisterRequestListQueryArg = {
+  example?: Partial<SwarmUnregisterRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toSwarmUnregisterRequestList = (result: unknown): SwarmUnregisterRequestResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmUnregisterRequestResponse;
+    return result as SwarmUnregisterRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as SwarmUnregisterRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmUnregisterRequestResponse) : []
+}
 
 export const SwarmUnregisterRequestService = createApi({
-  reducerPath: "SwarmUnregisterRequest", // This should remain unique
+  reducerPath: 'SwarmUnregisterRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmUnregisterRequest"],
+  tagTypes: ['SwarmUnregisterRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmUnregisterRequestsPaged: build.query<
-      SwarmUnregisterRequestResponse,
-      { page: number; size?: number; example?: Partial<SwarmUnregisterRequest> }
-    >({
+    getSwarmUnregisterRequestsPaged: build.query<SwarmUnregisterRequestResponse, SwarmUnregisterRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmUnregisterRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmUnregisterRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmUnregisterRequestList(result);
+        const rows = toSwarmUnregisterRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmUnregisterRequest" as const, id })),
-          { type: "SwarmUnregisterRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmUnregisterRequest' as const, id })),
+          { type: 'SwarmUnregisterRequest', id: `PAGE_${page}` },
+          { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmUnregisterRequests: build.query<
-      SwarmUnregisterRequestResponse,
-      { example?: Partial<SwarmUnregisterRequest> } | void
-    >({
+    getSwarmUnregisterRequests: build.query<SwarmUnregisterRequestResponse, SwarmUnregisterRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const SwarmUnregisterRequestService = createApi({
         return `SwarmUnregisterRequest`;
       },
       providesTags: (result) => {
-        const rows = toSwarmUnregisterRequestList(result);
+        const rows = toSwarmUnregisterRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmUnregisterRequest" as const, id })),
-          { type: "SwarmUnregisterRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmUnregisterRequest' as const, id })),
+          { type: 'SwarmUnregisterRequest', id: 'LIST' },
+          { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addSwarmUnregisterRequest: build.mutation<
-      SwarmUnregisterRequest,
-      Partial<SwarmUnregisterRequest>
-    >({
+    addSwarmUnregisterRequest: build.mutation<SwarmUnregisterRequest, Partial<SwarmUnregisterRequest>>({
       query: (body) => ({
         url: `SwarmUnregisterRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmUnregisterRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmUnregisterRequest', id: 'LIST' },
+        { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmUnregisterRequest: build.query<SwarmUnregisterRequest, string>({
       query: (id) => `SwarmUnregisterRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "SwarmUnregisterRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'SwarmUnregisterRequest', id }],
     }),
 
     // 5) Update
-    updateSwarmUnregisterRequest: build.mutation<
-      void,
-      Pick<SwarmUnregisterRequest, "id"> & Partial<SwarmUnregisterRequest>
-    >({
+    updateSwarmUnregisterRequest: build.mutation<SwarmUnregisterRequest, Pick<SwarmUnregisterRequest, 'id'> & Partial<SwarmUnregisterRequest>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmUnregisterRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmUnregisterRequestService.util.updateQueryData(
-              "getSwarmUnregisterRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<SwarmUnregisterRequest, "id">,
-      ) => [
-        { type: "SwarmUnregisterRequest", id },
-        { type: "SwarmUnregisterRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmUnregisterRequest, 'id'>) => [
+        { type: 'SwarmUnregisterRequest', id },
+        { type: 'SwarmUnregisterRequest', id: 'LIST' },
+        { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmUnregisterRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmUnregisterRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmUnregisterRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "SwarmUnregisterRequest", id },
+        { type: 'SwarmUnregisterRequest', id },
+        { type: 'SwarmUnregisterRequest', id: 'LIST' },
+        { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmUnregisterRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmUnregisterRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmUnregisterRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmUnregisterRequest", id },
-        { type: "SwarmUnregisterRequest", id: "LIST" },
+        { type: 'SwarmUnregisterRequest', id },
+        { type: 'SwarmUnregisterRequest', id: 'LIST' },
+        { type: 'SwarmUnregisterRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmUnregisterRequestsPagedQuery`
 export const {
-  useGetSwarmUnregisterRequestsPagedQuery, // immediate fetch
+  useGetSwarmUnregisterRequestsPagedQuery,     // immediate fetch
   useLazyGetSwarmUnregisterRequestsPagedQuery, // lazy fetch
   useGetSwarmUnregisterRequestQuery,
   useGetSwarmUnregisterRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateSwarmUnregisterRequestMutation,
   useDeleteSwarmUnregisterRequestMutation,
   useDeleteSwarmUnregisterRequestCascadeMutation,
-} = SwarmUnregisterRequestService;
+} = SwarmUnregisterRequestService

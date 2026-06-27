@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ArrayNumberItem } from "@thorapi/model/ArrayNumberItem";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ArrayNumberItem } from '@thorapi/model/ArrayNumberItem'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ArrayNumberItemResponse = ArrayNumberItem[];
+type ArrayNumberItemResponse = ArrayNumberItem[]
+type ArrayNumberItemPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ArrayNumberItem>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ArrayNumberItemListQueryArg = {
+  example?: Partial<ArrayNumberItem>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toArrayNumberItemList = (result: unknown): ArrayNumberItemResponse => {
   if (Array.isArray(result)) {
-    return result as ArrayNumberItemResponse;
+    return result as ArrayNumberItemResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ArrayNumberItemResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ArrayNumberItemResponse) : []
+}
 
 export const ArrayNumberItemService = createApi({
-  reducerPath: "ArrayNumberItem", // This should remain unique
+  reducerPath: 'ArrayNumberItem', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ArrayNumberItem"],
+  tagTypes: ['ArrayNumberItem'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getArrayNumberItemsPaged: build.query<
-      ArrayNumberItemResponse,
-      { page: number; size?: number; example?: Partial<ArrayNumberItem> }
-    >({
+    getArrayNumberItemsPaged: build.query<ArrayNumberItemResponse, ArrayNumberItemPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ArrayNumberItem?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ArrayNumberItem?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toArrayNumberItemList(result);
+        const rows = toArrayNumberItemList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ArrayNumberItem" as const, id })),
-          { type: "ArrayNumberItem", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ArrayNumberItem' as const, id })),
+          { type: 'ArrayNumberItem', id: `PAGE_${page}` },
+          { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getArrayNumberItems: build.query<
-      ArrayNumberItemResponse,
-      { example?: Partial<ArrayNumberItem> } | void
-    >({
+    getArrayNumberItems: build.query<ArrayNumberItemResponse, ArrayNumberItemListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const ArrayNumberItemService = createApi({
         return `ArrayNumberItem`;
       },
       providesTags: (result) => {
-        const rows = toArrayNumberItemList(result);
+        const rows = toArrayNumberItemList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ArrayNumberItem" as const, id })),
-          { type: "ArrayNumberItem", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ArrayNumberItem' as const, id })),
+          { type: 'ArrayNumberItem', id: 'LIST' },
+          { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addArrayNumberItem: build.mutation<
-      ArrayNumberItem,
-      Partial<ArrayNumberItem>
-    >({
+    addArrayNumberItem: build.mutation<ArrayNumberItem, Partial<ArrayNumberItem>>({
       query: (body) => ({
         url: `ArrayNumberItem`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ArrayNumberItem", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ArrayNumberItem', id: 'LIST' },
+        { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getArrayNumberItem: build.query<ArrayNumberItem, string>({
       query: (id) => `ArrayNumberItem/${id}`,
-      providesTags: (result, error, id) => [{ type: "ArrayNumberItem", id }],
+      providesTags: (result, error, id) => [{ type: 'ArrayNumberItem', id }],
     }),
 
     // 5) Update
-    updateArrayNumberItem: build.mutation<
-      void,
-      Pick<ArrayNumberItem, "id"> & Partial<ArrayNumberItem>
-    >({
+    updateArrayNumberItem: build.mutation<ArrayNumberItem, Pick<ArrayNumberItem, 'id'> & Partial<ArrayNumberItem>>({
       query: ({ id, ...patch }) => ({
         url: `ArrayNumberItem/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ArrayNumberItemService.util.updateQueryData(
-              "getArrayNumberItem",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ArrayNumberItem, "id">) => [
-        { type: "ArrayNumberItem", id },
-        { type: "ArrayNumberItem", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ArrayNumberItem, 'id'>) => [
+        { type: 'ArrayNumberItem', id },
+        { type: 'ArrayNumberItem', id: 'LIST' },
+        { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteArrayNumberItem: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteArrayNumberItem: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ArrayNumberItem/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "ArrayNumberItem", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'ArrayNumberItem', id },
+        { type: 'ArrayNumberItem', id: 'LIST' },
+        { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteArrayNumberItemCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteArrayNumberItemCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ArrayNumberItem/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ArrayNumberItem", id },
-        { type: "ArrayNumberItem", id: "LIST" },
+        { type: 'ArrayNumberItem', id },
+        { type: 'ArrayNumberItem', id: 'LIST' },
+        { type: 'ArrayNumberItem', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetArrayNumberItemsPagedQuery`
 export const {
-  useGetArrayNumberItemsPagedQuery, // immediate fetch
+  useGetArrayNumberItemsPagedQuery,     // immediate fetch
   useLazyGetArrayNumberItemsPagedQuery, // lazy fetch
   useGetArrayNumberItemQuery,
   useGetArrayNumberItemsQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateArrayNumberItemMutation,
   useDeleteArrayNumberItemMutation,
   useDeleteArrayNumberItemCascadeMutation,
-} = ArrayNumberItemService;
+} = ArrayNumberItemService

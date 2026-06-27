@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  VerifyTrustProofRequest,
+} from '@thorapi/model';
 
-import { VerifyTrustProofRequest } from "@thorapi/model";
-
-import { useAddVerifyTrustProofRequestMutation } from "../../services/VerifyTrustProofRequestService";
+import { useAddVerifyTrustProofRequestMutation } from '../../services/VerifyTrustProofRequestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,23 +65,20 @@ VerifyTrustProofRequest
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  proofBundleRef: Yup.string(),
-  proofHash: Yup.string(),
-  verifierId: Yup.string(),
-  trashed: Yup.boolean(),
+        proofBundleRef: Yup.string(),
+        proofHash: Yup.string(),
+        verifierId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const VerifyTrustProofRequestForm: React.FC = () => {
-  const [addVerifyTrustProofRequest, addVerifyTrustProofRequestResult] =
-    useAddVerifyTrustProofRequestMutation();
+  const [addVerifyTrustProofRequest, addVerifyTrustProofRequestResult] = useAddVerifyTrustProofRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -97,18 +88,12 @@ const VerifyTrustProofRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -116,10 +101,10 @@ const VerifyTrustProofRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<VerifyTrustProofRequest> = {
-    proofBundleRef: "",
-    proofHash: "",
-    verifierId: "",
-    trashed: false,
+          proofBundleRef: '',
+          proofHash: '',
+          verifierId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -134,14 +119,11 @@ const VerifyTrustProofRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new VerifyTrustProofRequest:", grants);
+    console.log('Permissions saved for new VerifyTrustProofRequest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<VerifyTrustProofRequest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<VerifyTrustProofRequest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -152,7 +134,7 @@ const VerifyTrustProofRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `VerifyTrustProofRequest created successfully! Would you like to set permissions for this object?`,
+          `VerifyTrustProofRequest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -160,8 +142,8 @@ const VerifyTrustProofRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create VerifyTrustProofRequest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create VerifyTrustProofRequest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -182,41 +164,44 @@ const VerifyTrustProofRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addVerifyTrustProofRequestResult.isLoading;
+          const isSaving = isSubmitting || addVerifyTrustProofRequestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    VerifyTrustProofRequest
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="proofBundleRef"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New VerifyTrustProofRequest
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="proofBundleRef" className="nice-form-control">
                       <b>
                         Proof Bundle Ref:
-                        {touched.proofBundleRef && !errors.proofBundleRef && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.proofBundleRef &&
+                         !errors.proofBundleRef && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="proofBundleRef"
-                        value={values?.proofBundleRef}
-                        placeholder="Proof Bundle Ref"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="proofBundleRef"
+                            value={values?.proofBundleRef}
+                            placeholder="Proof Bundle Ref"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -228,21 +213,28 @@ const VerifyTrustProofRequestForm: React.FC = () => {
                     <label htmlFor="proofHash" className="nice-form-control">
                       <b>
                         Proof Hash:
-                        {touched.proofHash && !errors.proofHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.proofHash &&
+                         !errors.proofHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="proofHash"
-                        value={values?.proofHash}
-                        placeholder="Proof Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="proofHash"
+                            value={values?.proofHash}
+                            placeholder="Proof Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -254,21 +246,28 @@ const VerifyTrustProofRequestForm: React.FC = () => {
                     <label htmlFor="verifierId" className="nice-form-control">
                       <b>
                         Verifier Id:
-                        {touched.verifierId && !errors.verifierId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.verifierId &&
+                         !errors.verifierId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="verifierId"
-                        value={values?.verifierId}
-                        placeholder="Verifier Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="verifierId"
+                            value={values?.verifierId}
+                            placeholder="Verifier Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -280,25 +279,32 @@ const VerifyTrustProofRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -308,64 +314,45 @@ const VerifyTrustProofRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      VerifyTrustProofRequest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New VerifyTrustProofRequest
+                  </CoolButton>
 
-                    {(addVerifyTrustProofRequestResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addVerifyTrustProofRequestResult as any).error
-                              ? (addVerifyTrustProofRequestResult as any).error
-                                  .data
-                              : (addVerifyTrustProofRequestResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addVerifyTrustProofRequestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addVerifyTrustProofRequestResult as any).error ? (addVerifyTrustProofRequestResult as any).error.data : (addVerifyTrustProofRequestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addVerifyTrustProofRequestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addVerifyTrustProofRequestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addVerifyTrustProofRequestResult:{" "}
-                    {JSON.stringify(addVerifyTrustProofRequestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addVerifyTrustProofRequestResult: {JSON.stringify(addVerifyTrustProofRequestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -385,5 +372,8 @@ const VerifyTrustProofRequestForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default VerifyTrustProofRequestForm;
+

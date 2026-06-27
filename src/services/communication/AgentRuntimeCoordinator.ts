@@ -78,7 +78,7 @@ type CapabilityEnvelope = {
   commands: string[];
   swarm: CapabilityAnnouncement;
   languages: string[];
-  features: Record<string, boolean>;
+  features: Record<string, boolean | string>;
 };
 
 const INSTANCE_ID_KEY = "valorideSwarmInstanceId" as const;
@@ -104,6 +104,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private principalId: string | undefined;
   private swarmNode: SwarmNodeService | null = null;
   private swarmTransport: MothershipSwarmTransport | null = null;
+  private mothershipBaseUrl: string | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private agenticState: AgenticCapabilityCommandCenterState =
     createAgenticCommandCenterState({
@@ -149,8 +150,10 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     };
 
     await this.ensureMothership(options);
-    await this.setupGitTelemetry();
-    this.registerCommands();
+    if (!this.isInitialized) {
+      await this.setupGitTelemetry();
+      this.registerCommands();
+    }
     this.isInitialized = true;
   }
 
@@ -161,6 +164,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   public dispose(): void {
     this.gitDisposables.forEach((d) => d.dispose());
     this.gitDisposables = [];
+    this.disposeMothershipConnection();
+    this.isInitialized = false;
+  }
+
+  private disposeMothershipConnection(): void {
     if (this.mothership) {
       try {
         this.swarmTransport?.dispose();
@@ -174,17 +182,34 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.mothership = null;
     this.swarmNode = null;
     this.swarmTransport = null;
+    this.mothershipBaseUrl = null;
   }
 
   private async ensureMothership(
     options: MothershipConnectionOptions,
   ): Promise<void> {
+    const nextBaseUrl = (options.baseUrl ?? "").replace(/\/+$/, "");
     if (this.mothership) {
-      this.mothership.updateJwtToken(options.jwtToken);
-      return;
+      if (this.mothershipBaseUrl !== nextBaseUrl) {
+        Logger.log(
+          `Reconnecting mothership for ValkyrAI host change: ${this.mothershipBaseUrl || "unset"} -> ${nextBaseUrl || "default"}`,
+        );
+        this.disposeMothershipConnection();
+      } else {
+        this.mothership.updateJwtToken(options.jwtToken);
+        if (!this.mothership.isConnected()) {
+          try {
+            await this.mothership.connect();
+          } catch (error) {
+            Logger.log(`Failed to reconnect to mothership: ${String(error)}`);
+          }
+        }
+        return;
+      }
     }
 
     this.mothership = new MothershipService(options);
+    this.mothershipBaseUrl = nextBaseUrl;
     this.swarmTransport = new MothershipSwarmTransport(this.mothership);
     this.mothership.on("connected", () => {
       Logger.log("Mothership connected");
@@ -260,6 +285,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const languages = await vscode.languages.getLanguages();
     const version = this.context.extension.packageJSON?.version ?? "0.0.0";
     const workspaceFolders = this.getWorkspaceFolders();
+    const { apiConfiguration, grayMatterSession, selectedLlmDetails } =
+      await getAllExtensionState(this.context);
+    const grayMatterReady =
+      grayMatterSession?.status === "ready" &&
+      grayMatterSession.capabilities.memoryQuery;
 
     const envelope: CapabilityEnvelope = {
       instanceId: this.instanceId ?? "unknown",
@@ -273,11 +303,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       languages: languages.slice(0, 40),
       swarm: this.capabilityRegistry.toSwarmAnnouncement({
         instanceId: this.instanceId ?? "unknown",
+        selectedModelId: this.resolveSelectedModelId(apiConfiguration),
+        selectedPromptId: selectedLlmDetails?.id,
+        selectedPromptName: selectedLlmDetails?.name,
         version,
         workspaceFolders,
       }),
       features: {
-        grayMatterMemory: true,
+        grayMatterMemory: grayMatterReady,
+        grayMatterStatus: grayMatterSession?.status ?? "unavailable",
+        llmPromptSelected: Boolean(selectedLlmDetails?.id),
         mcpMarketplace: !!(await this.context.globalState.get<boolean>(
           "valoride.mcpMarketplace.enabled",
         )),
@@ -867,5 +902,24 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.context.subscriptions.push(completeTaskCmd, refreshCapabilitiesCmd);
   }
 }
+
+let sharedAgentRuntimeCoordinator: AgentRuntimeCoordinator | null = null;
+
+export const initializeAgentRuntimeCoordinator = async (
+  context: vscode.ExtensionContext,
+  jwtToken: string,
+  principal?: { id?: string },
+): Promise<AgentRuntimeCoordinator> => {
+  if (!sharedAgentRuntimeCoordinator) {
+    sharedAgentRuntimeCoordinator = new AgentRuntimeCoordinator(context);
+  }
+  await sharedAgentRuntimeCoordinator.initialize(jwtToken, principal);
+  return sharedAgentRuntimeCoordinator;
+};
+
+export const disposeAgentRuntimeCoordinator = (): void => {
+  sharedAgentRuntimeCoordinator?.dispose();
+  sharedAgentRuntimeCoordinator = null;
+};
 
 export default AgentRuntimeCoordinator;

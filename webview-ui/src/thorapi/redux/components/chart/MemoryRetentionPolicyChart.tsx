@@ -19,35 +19,20 @@ Description: MemoryRetentionPolicy
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, MemoryRetentionPolicy } from "@thorapi/model";
-import {
-  useGetMemoryRetentionPolicysQuery,
-  useAddMemoryRetentionPolicyMutation,
-  useUpdateMemoryRetentionPolicyMutation,
-} from "../../services/MemoryRetentionPolicyService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, MemoryRetentionPolicy } from '@thorapi/model';
+import { useGetMemoryRetentionPolicysQuery, useAddMemoryRetentionPolicyMutation, useUpdateMemoryRetentionPolicyMutation } from '../../services/MemoryRetentionPolicyService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const MemoryRetentionPolicyChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMemoryRetentionPolicysQuery();
+  const { data: initialData = [], isLoading } = useGetMemoryRetentionPolicysQuery();
 
   const [data, setData] = useState<MemoryRetentionPolicy[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<MemoryRetentionPolicy>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<MemoryRetentionPolicy>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const MemoryRetentionPolicyChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const MemoryRetentionPolicyChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((memoryretentionpolicy: DataObject) => [
-            memoryretentionpolicy,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((memoryretentionpolicy: DataObject) => [memoryretentionpolicy])} />
+          )}
     </>
   );
 };

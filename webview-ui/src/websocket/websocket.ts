@@ -22,20 +22,44 @@ const sanitizeWsBase = (value?: string): string | undefined => {
   return candidate || undefined;
 };
 
+const withDefaultBrokerEndpoint = (value?: string): string | undefined => {
+  const candidate = sanitizeWsBase(value);
+  if (!candidate) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(candidate);
+    const pathname = url.pathname.replace(/\/+$/, "");
+    if (/\/(?:chat|ws|websocket)$/i.test(pathname)) {
+      return url.toString().replace(/\/+$/, "");
+    }
+    url.pathname = `${pathname && pathname !== "/" ? pathname : ""}/chat`;
+    return url.toString().replace(/\/+$/, "");
+  } catch {
+    return candidate;
+  }
+};
+
 let websocketBaseUrl =
-  sanitizeWsBase(resolveEnvWebsocketUrl()) || getValkyraiWsBase();
+  sanitizeWsBase(resolveEnvWebsocketUrl()) ||
+  withDefaultBrokerEndpoint(getValkyraiWsBase()) ||
+  getValkyraiWsBase();
 
 subscribeToValkyraiHost((host) => {
   const derived = deriveWsUrlFromHost(host);
   if (derived) {
-    websocketBaseUrl = derived;
+    websocketBaseUrl = withDefaultBrokerEndpoint(derived) || derived;
   }
 });
 
 export const setWebsocketBaseUrl = (value?: string) => {
   const normalized = sanitizeWsBase(value);
   websocketBaseUrl =
-    normalized || deriveWsUrlFromHost(getValkyraiHost()) || getValkyraiWsBase();
+    normalized ||
+    withDefaultBrokerEndpoint(deriveWsUrlFromHost(getValkyraiHost())) ||
+    withDefaultBrokerEndpoint(getValkyraiWsBase()) ||
+    getValkyraiWsBase();
   return websocketBaseUrl;
 };
 

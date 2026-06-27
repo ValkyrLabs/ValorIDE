@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  UsageTransaction,
+} from '@thorapi/model';
 
-import { UsageTransaction } from "@thorapi/model";
-
-import { useAddUsageTransactionMutation } from "../../services/UsageTransactionService";
+import { useAddUsageTransactionMutation } from '../../services/UsageTransactionService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,44 +65,34 @@ A record of credits spent on a model invocation
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  customerId: Yup.string(),
-  spentAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("spentAt must be a valid date"),
-  usageType: Yup.string(),
-  meteredUnits: asNumber(
-    Yup.number().typeError("meteredUnits must be a number"),
-  ),
-  meterName: Yup.string(),
-  modelProvider: Yup.string(),
-  model: Yup.string(),
-  promptTokens: asNumber(
-    Yup.number().integer().typeError("promptTokens must be a number"),
-  ),
-  completionTokens: asNumber(
-    Yup.number().integer().typeError("completionTokens must be a number"),
-  ),
-  idempotencyKey: Yup.string(),
-  trashed: Yup.boolean(),
+        customerId: Yup.string(),
+        spentAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("spentAt must be a valid date"),
+        usageType: Yup.string(),
+        meteredUnits: asNumber(Yup.number().typeError("meteredUnits must be a number")),
+        meterName: Yup.string(),
+        modelProvider: Yup.string(),
+        model: Yup.string(),
+        promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")),
+        completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")),
+        idempotencyKey: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const UsageTransactionForm: React.FC = () => {
-  const [addUsageTransaction, addUsageTransactionResult] =
-    useAddUsageTransactionMutation();
+  const [addUsageTransaction, addUsageTransactionResult] = useAddUsageTransactionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -118,18 +102,12 @@ const UsageTransactionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -137,17 +115,17 @@ const UsageTransactionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<UsageTransaction> = {
-    customerId: "",
-    spentAt: new Date(),
-    usageType: "",
-    meteredUnits: 0,
-    meterName: "",
-    modelProvider: "",
-    model: "",
-    promptTokens: 0,
-    completionTokens: 0,
-    idempotencyKey: "",
-    trashed: false,
+          customerId: '',
+          spentAt: new Date(),
+          usageType: '',
+          meteredUnits: 0,
+          meterName: '',
+          modelProvider: '',
+          model: '',
+          promptTokens: 0,
+          completionTokens: 0,
+          idempotencyKey: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -162,14 +140,11 @@ const UsageTransactionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new UsageTransaction:", grants);
+    console.log('Permissions saved for new UsageTransaction:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<UsageTransaction>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<UsageTransaction>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -180,7 +155,7 @@ const UsageTransactionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `UsageTransaction created successfully! Would you like to set permissions for this object?`,
+          `UsageTransaction created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -188,8 +163,8 @@ const UsageTransactionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create UsageTransaction:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create UsageTransaction:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -210,37 +185,44 @@ const UsageTransactionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addUsageTransactionResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    UsageTransaction
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New UsageTransaction
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="customerId" className="nice-form-control">
                       <b>
                         Customer Id:
-                        {touched.customerId && !errors.customerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="customerId"
-                        value={values?.customerId}
-                        placeholder="Customer Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -252,38 +234,38 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="spentAt" className="nice-form-control">
                       <b>
                         Spent At:
-                        {touched.spentAt && !errors.spentAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.spentAt &&
+                         !errors.spentAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="spentAt"
-                        type="datetime-local"
-                        value={
-                          values.spentAt
-                            ? new Date(values.spentAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("spentAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "spentAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.spentAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="spentAt"
+                            type="datetime-local"
+                            value={values.spentAt ? 
+                              new Date(values.spentAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('spentAt', true);
+                              const v = e.target.value;
+                              setFieldValue('spentAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.spentAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -295,12 +277,20 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="credits" className="nice-form-control">
                       <b>
                         Credits:
-                        {touched.credits && !errors.credits && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.credits &&
+                         !errors.credits && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
+
+
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -312,21 +302,28 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="usageType" className="nice-form-control">
                       <b>
                         Usage Type:
-                        {touched.usageType && !errors.usageType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.usageType &&
+                         !errors.usageType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="usageType"
-                        value={values?.usageType}
-                        placeholder="Usage Type"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="usageType"
+                            value={values?.usageType}
+                            placeholder="Usage Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -338,33 +335,37 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="meteredUnits" className="nice-form-control">
                       <b>
                         Metered Units:
-                        {touched.meteredUnits && !errors.meteredUnits && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.meteredUnits &&
+                         !errors.meteredUnits && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="meteredUnits"
-                        type="number"
-                        step="any"
-                        value={values.meteredUnits || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("meteredUnits", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "meteredUnits",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.meteredUnits
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="meteredUnits"
+                            type="number"
+                            step="any"
+                            value={values.meteredUnits || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('meteredUnits', true);
+                              const v = e.target.value;
+                              setFieldValue('meteredUnits', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.meteredUnits
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -376,21 +377,28 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="meterName" className="nice-form-control">
                       <b>
                         Meter Name:
-                        {touched.meterName && !errors.meterName && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.meterName &&
+                         !errors.meterName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="meterName"
-                        value={values?.meterName}
-                        placeholder="Meter Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="meterName"
+                            value={values?.meterName}
+                            placeholder="Meter Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -399,27 +407,31 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="modelProvider"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="modelProvider" className="nice-form-control">
                       <b>
                         Model Provider:
-                        {touched.modelProvider && !errors.modelProvider && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.modelProvider &&
+                         !errors.modelProvider && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="modelProvider"
-                        value={values?.modelProvider}
-                        placeholder="Model Provider"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="modelProvider"
+                            value={values?.modelProvider}
+                            placeholder="Model Provider"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -431,21 +443,28 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="model" className="nice-form-control">
                       <b>
                         Model:
-                        {touched.model && !errors.model && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.model &&
+                         !errors.model && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="model"
-                        value={values?.model}
-                        placeholder="Model"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="model"
+                            value={values?.model}
+                            placeholder="Model"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -457,32 +476,36 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="promptTokens" className="nice-form-control">
                       <b>
                         Prompt Tokens:
-                        {touched.promptTokens && !errors.promptTokens && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.promptTokens &&
+                         !errors.promptTokens && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="promptTokens"
-                        type="number"
-                        value={values.promptTokens || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("promptTokens", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "promptTokens",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.promptTokens
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="promptTokens"
+                            type="number"
+                            value={values.promptTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('promptTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('promptTokens', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.promptTokens
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -491,39 +514,39 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="completionTokens"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="completionTokens" className="nice-form-control">
                       <b>
                         Completion Tokens:
                         {touched.completionTokens &&
-                          !errors.completionTokens && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.completionTokens && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="completionTokens"
-                        type="number"
-                        value={values.completionTokens || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("completionTokens", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "completionTokens",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.completionTokens
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="completionTokens"
+                            type="number"
+                            value={values.completionTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('completionTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('completionTokens', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.completionTokens
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -532,27 +555,31 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="idempotencyKey"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="idempotencyKey" className="nice-form-control">
                       <b>
                         Idempotency Key:
-                        {touched.idempotencyKey && !errors.idempotencyKey && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.idempotencyKey &&
+                         !errors.idempotencyKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="idempotencyKey"
-                        value={values?.idempotencyKey}
-                        placeholder="Idempotency Key"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="idempotencyKey"
+                            value={values?.idempotencyKey}
+                            placeholder="Idempotency Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -564,25 +591,32 @@ const UsageTransactionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -592,60 +626,45 @@ const UsageTransactionForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New UsageTransaction
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New UsageTransaction
+                  </CoolButton>
 
-                    {(addUsageTransactionResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addUsageTransactionResult as any).error
-                              ? (addUsageTransactionResult as any).error.data
-                              : (addUsageTransactionResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addUsageTransactionResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addUsageTransactionResult as any).error ? (addUsageTransactionResult as any).error.data : (addUsageTransactionResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addUsageTransactionResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addUsageTransactionResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addUsageTransactionResult:{" "}
-                    {JSON.stringify(addUsageTransactionResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addUsageTransactionResult: {JSON.stringify(addUsageTransactionResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -665,5 +684,8 @@ const UsageTransactionForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default UsageTransactionForm;
+

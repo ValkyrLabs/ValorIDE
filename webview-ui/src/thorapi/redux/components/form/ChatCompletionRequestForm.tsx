@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ChatCompletionRequest,
+} from '@thorapi/model';
 
-import { ChatCompletionRequest } from "@thorapi/model";
-
-import { useAddChatCompletionRequestMutation } from "../../services/ChatCompletionRequestService";
+import { useAddChatCompletionRequestMutation } from '../../services/ChatCompletionRequestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,24 +65,21 @@ ChatCompletionRequest
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  model: Yup.string(),
-  prompt: Yup.string(),
-  temperature: asNumber(Yup.number().typeError("temperature must be a number")),
-  stream: Yup.boolean(),
-  trashed: Yup.boolean(),
+        model: Yup.string(),
+        prompt: Yup.string(),
+        temperature: asNumber(Yup.number().typeError("temperature must be a number")),
+        stream: Yup.boolean(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ChatCompletionRequestForm: React.FC = () => {
-  const [addChatCompletionRequest, addChatCompletionRequestResult] =
-    useAddChatCompletionRequestMutation();
+  const [addChatCompletionRequest, addChatCompletionRequestResult] = useAddChatCompletionRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,18 +89,12 @@ const ChatCompletionRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -117,11 +102,11 @@ const ChatCompletionRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ChatCompletionRequest> = {
-    model: "",
-    prompt: "",
-    temperature: 0,
-    stream: false,
-    trashed: false,
+          model: '',
+          prompt: '',
+          temperature: 0,
+          stream: false,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,14 +121,11 @@ const ChatCompletionRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ChatCompletionRequest:", grants);
+    console.log('Permissions saved for new ChatCompletionRequest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ChatCompletionRequest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ChatCompletionRequest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -154,7 +136,7 @@ const ChatCompletionRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ChatCompletionRequest created successfully! Would you like to set permissions for this object?`,
+          `ChatCompletionRequest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -162,8 +144,8 @@ const ChatCompletionRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ChatCompletionRequest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ChatCompletionRequest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -184,38 +166,44 @@ const ChatCompletionRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addChatCompletionRequestResult.isLoading;
+          const isSaving = isSubmitting || addChatCompletionRequestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ChatCompletionRequest
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ChatCompletionRequest
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="model" className="nice-form-control">
                       <b>
                         Model:
-                        {touched.model && !errors.model && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.model &&
+                         !errors.model && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="model"
-                        value={values?.model}
-                        placeholder="Model"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="model"
+                            value={values?.model}
+                            placeholder="Model"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -227,21 +215,28 @@ const ChatCompletionRequestForm: React.FC = () => {
                     <label htmlFor="prompt" className="nice-form-control">
                       <b>
                         Prompt:
-                        {touched.prompt && !errors.prompt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.prompt &&
+                         !errors.prompt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="prompt"
-                        value={values?.prompt}
-                        placeholder="Prompt"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="prompt"
+                            value={values?.prompt}
+                            placeholder="Prompt"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -253,33 +248,37 @@ const ChatCompletionRequestForm: React.FC = () => {
                     <label htmlFor="temperature" className="nice-form-control">
                       <b>
                         Temperature:
-                        {touched.temperature && !errors.temperature && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.temperature &&
+                         !errors.temperature && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* FLOAT FIELD */}
-                      <Field
-                        name="temperature"
-                        type="number"
-                        step="any"
-                        value={values.temperature || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("temperature", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "temperature",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.temperature
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+                          {/* FLOAT FIELD */}
+                          <Field
+                            name="temperature"
+                            type="number"
+                            step="any"
+                            value={values.temperature || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('temperature', true);
+                              const v = e.target.value;
+                              setFieldValue('temperature', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.temperature
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -291,25 +290,32 @@ const ChatCompletionRequestForm: React.FC = () => {
                     <label htmlFor="stream" className="nice-form-control">
                       <b>
                         Stream:
-                        {touched.stream && !errors.stream && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.stream &&
+                         !errors.stream && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="stream"
-                        name="stream"
-                        checked={values.stream || false}
-                        onChange={(e) => {
-                          setFieldTouched("stream", true);
-                          setFieldValue("stream", e.target.checked);
-                        }}
-                        isInvalid={!!errors.stream}
-                        className={errors.stream ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="stream"
+                            name="stream"
+                            checked={values.stream || false}
+                            onChange={(e) => {
+                              setFieldTouched('stream', true);
+                              setFieldValue('stream', e.target.checked);
+                            }}
+                            isInvalid={!!errors.stream}
+                            className={errors.stream ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -321,25 +327,32 @@ const ChatCompletionRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -349,64 +362,45 @@ const ChatCompletionRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ChatCompletionRequest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ChatCompletionRequest
+                  </CoolButton>
 
-                    {(addChatCompletionRequestResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addChatCompletionRequestResult as any).error
-                              ? (addChatCompletionRequestResult as any).error
-                                  .data
-                              : (addChatCompletionRequestResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addChatCompletionRequestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addChatCompletionRequestResult as any).error ? (addChatCompletionRequestResult as any).error.data : (addChatCompletionRequestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addChatCompletionRequestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addChatCompletionRequestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addChatCompletionRequestResult:{" "}
-                    {JSON.stringify(addChatCompletionRequestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addChatCompletionRequestResult: {JSON.stringify(addChatCompletionRequestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -426,5 +420,8 @@ const ChatCompletionRequestForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ChatCompletionRequestForm;
+

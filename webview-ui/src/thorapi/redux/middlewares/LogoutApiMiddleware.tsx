@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_LOGOUT_REQUEST,
-  FETCH_LOGOUT_REQUEST,
-  LIST_LOGOUT_REQUEST,
-  UPDATE_LOGOUT_REQUEST,
-  DELETE_LOGOUT_REQUEST,
-  addLogoutFailure,
-  addLogoutSuccess,
-  fetchLogoutFailure,
-  fetchLogoutSuccess,
-  listLogoutFailure,
-  listLogoutSuccess,
-  updateLogoutFailure,
-  updateLogoutSuccess,
-  deleteLogoutFailure,
-  deleteLogoutSuccess,
-} from "../actions/LogoutApiAction";
+
+    ADD_LOGOUT_REQUEST,
+    FETCH_LOGOUT_REQUEST,
+    LIST_LOGOUT_REQUEST,
+    UPDATE_LOGOUT_REQUEST,
+    DELETE_LOGOUT_REQUEST,
+
+    addLogoutFailure,
+    addLogoutSuccess,
+
+    fetchLogoutFailure,
+    fetchLogoutSuccess,
+    
+    listLogoutFailure,
+    listLogoutSuccess,
+
+    updateLogoutFailure,
+    updateLogoutSuccess,
+    
+    deleteLogoutFailure,
+    deleteLogoutSuccess,
+    
+} from '../actions/LogoutApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Logout
 */
 
-export const LogoutMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Logout MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const LogoutMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Logout MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

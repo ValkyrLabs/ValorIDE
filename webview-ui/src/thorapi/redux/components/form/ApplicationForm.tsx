@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   Application,
   ApplicationTypeEnum,
   ApplicationStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddApplicationMutation } from "../../services/ApplicationService";
+import { useAddApplicationMutation } from '../../services/ApplicationService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,36 +64,44 @@ Application represents a logical system
 -------------------------------------------------------- */
 const TypeValidation = () => {
   return [
-    "full-stack",
-    "automation",
-    "agent",
-    "service",
-    "front-end",
-    "mobile",
-    "ci-cd",
-    "lambda",
+    'full-stack',
+    'automation',
+    'agent',
+    'service',
+    'front-end',
+    'mobile',
+    'ci-cd',
+    'lambda',
   ];
 };
 const StatusValidation = () => {
-  return ["ready", "deployed", "staging", "error", "disabled"];
+  return [
+    'ready',
+    'deployed',
+    'staging',
+    'error',
+    'disabled',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  description: Yup.string(),
-  isTemplate: Yup.boolean(),
-  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  entrypointUrl: Yup.string(),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+        description: Yup.string(),
+        isTemplate: Yup.boolean(),
+      type: Yup.mixed()
+        .oneOf(TypeValidation(), "Invalid value for type")
+        ,
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        entrypointUrl: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -118,18 +118,12 @@ const ApplicationForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -137,13 +131,13 @@ const ApplicationForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Application> = {
-    name: "",
-    description: "",
-    isTemplate: false,
-    type: undefined,
-    status: undefined,
-    entrypointUrl: "",
-    trashed: false,
+          name: '',
+          description: '',
+          isTemplate: false,
+        type: undefined,
+        status: undefined,
+          entrypointUrl: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -158,14 +152,11 @@ const ApplicationForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Application:", grants);
+    console.log('Permissions saved for new Application:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Application>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Application>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -176,7 +167,7 @@ const ApplicationForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Application created successfully! Would you like to set permissions for this object?`,
+          `Application created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -184,8 +175,8 @@ const ApplicationForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Application:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Application:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -206,36 +197,44 @@ const ApplicationForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addApplicationResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Application
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Application
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -247,21 +246,28 @@ const ApplicationForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description && !errors.description && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="description"
-                        value={values?.description}
-                        placeholder="Description"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -273,25 +279,32 @@ const ApplicationForm: React.FC = () => {
                     <label htmlFor="isTemplate" className="nice-form-control">
                       <b>
                         Is Template:
-                        {touched.isTemplate && !errors.isTemplate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.isTemplate &&
+                         !errors.isTemplate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="isTemplate"
-                        name="isTemplate"
-                        checked={values.isTemplate || false}
-                        onChange={(e) => {
-                          setFieldTouched("isTemplate", true);
-                          setFieldValue("isTemplate", e.target.checked);
-                        }}
-                        isInvalid={!!errors.isTemplate}
-                        className={errors.isTemplate ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="isTemplate"
+                            name="isTemplate"
+                            checked={values.isTemplate || false}
+                            onChange={(e) => {
+                              setFieldTouched('isTemplate', true);
+                              setFieldValue('isTemplate', e.target.checked);
+                            }}
+                            isInvalid={!!errors.isTemplate}
+                            className={errors.isTemplate ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -303,30 +316,30 @@ const ApplicationForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type && !errors.type && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.type &&
+                         !errors.type && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="type"
-                        value={values.type || ""}
-                        className={
-                          errors.type
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("type", true);
-                          setFieldValue("type", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Type" />
-                        <TypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="type"
+                          value={values.type || ''}
+                          className={
+                            errors.type
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('type', true);
+                            setFieldValue('type', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Type" />
+                          <TypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -338,30 +351,30 @@ const ApplicationForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -370,27 +383,31 @@ const ApplicationForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="entrypointUrl"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="entrypointUrl" className="nice-form-control">
                       <b>
                         Entrypoint Url:
-                        {touched.entrypointUrl && !errors.entrypointUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.entrypointUrl &&
+                         !errors.entrypointUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="entrypointUrl"
-                        value={values?.entrypointUrl}
-                        placeholder="Entrypoint Url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="entrypointUrl"
+                            value={values?.entrypointUrl}
+                            placeholder="Entrypoint Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -402,25 +419,32 @@ const ApplicationForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -430,58 +454,45 @@ const ApplicationForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Application
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Application
+                  </CoolButton>
 
-                    {(addApplicationResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addApplicationResult as any).error
-                              ? (addApplicationResult as any).error.data
-                              : (addApplicationResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addApplicationResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addApplicationResult as any).error ? (addApplicationResult as any).error.data : (addApplicationResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addApplicationResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addApplicationResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addApplicationResult: {JSON.stringify(addApplicationResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addApplicationResult: {JSON.stringify(addApplicationResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -513,14 +524,14 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value="full-stack" label="Full Stack" />
-      <option value="automation" label="Automation" />
-      <option value="agent" label="Agent" />
-      <option value="service" label="Service" />
-      <option value="front-end" label="Front End" />
-      <option value="mobile" label="Mobile" />
-      <option value="ci-cd" label="Ci Cd" />
-      <option value="lambda" label="Lambda" />
+      <option value='full-stack' label="Full Stack" />
+      <option value='automation' label="Automation" />
+      <option value='agent' label="Agent" />
+      <option value='service' label="Service" />
+      <option value='front-end' label="Front End" />
+      <option value='mobile' label="Mobile" />
+      <option value='ci-cd' label="Ci Cd" />
+      <option value='lambda' label="Lambda" />
     </>
   );
 };
@@ -537,14 +548,17 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="ready" label="Ready" />
-      <option value="deployed" label="Deployed" />
-      <option value="staging" label="Staging" />
-      <option value="error" label="Error" />
-      <option value="disabled" label="Disabled" />
+      <option value='ready' label="Ready" />
+      <option value='deployed' label="Deployed" />
+      <option value='staging' label="Staging" />
+      <option value='error' label="Error" />
+      <option value='disabled' label="Disabled" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ApplicationForm;
+

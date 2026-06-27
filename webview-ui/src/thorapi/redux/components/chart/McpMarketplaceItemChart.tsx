@@ -19,33 +19,20 @@ Description: McpMarketplaceItem
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, McpMarketplaceItem } from "@thorapi/model";
-import {
-  useGetMcpMarketplaceItemsQuery,
-  useAddMcpMarketplaceItemMutation,
-  useUpdateMcpMarketplaceItemMutation,
-} from "../../services/McpMarketplaceItemService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, McpMarketplaceItem } from '@thorapi/model';
+import { useGetMcpMarketplaceItemsQuery, useAddMcpMarketplaceItemMutation, useUpdateMcpMarketplaceItemMutation } from '../../services/McpMarketplaceItemService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const McpMarketplaceItemChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMcpMarketplaceItemsQuery();
+  const { data: initialData = [], isLoading } = useGetMcpMarketplaceItemsQuery();
 
   const [data, setData] = useState<McpMarketplaceItem[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpMarketplaceItem>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const McpMarketplaceItemChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const McpMarketplaceItemChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((mcpmarketplaceitem: DataObject) => [
-            mcpmarketplaceitem,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((mcpmarketplaceitem: DataObject) => [mcpmarketplaceitem])} />
+          )}
     </>
   );
 };

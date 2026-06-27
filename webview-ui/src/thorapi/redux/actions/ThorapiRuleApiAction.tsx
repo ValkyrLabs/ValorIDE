@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // ThorapiRule
 
-export const FETCH_THORAPIRULE_REQUEST = "FETCH_THORAPIRULE_REQUEST";
-export const FETCH_THORAPIRULE_SUCCESS = "FETCH_THORAPIRULE_SUCCESS";
-export const FETCH_THORAPIRULE_FAILURE = "FETCH_THORAPIRULE_FAILURE";
+export const FETCH_THORAPIRULE_REQUEST = 'FETCH_THORAPIRULE_REQUEST';
+export const FETCH_THORAPIRULE_SUCCESS = 'FETCH_THORAPIRULE_SUCCESS';
+export const FETCH_THORAPIRULE_FAILURE = 'FETCH_THORAPIRULE_FAILURE';
 
-export const ADD_THORAPIRULE_REQUEST = "ADD_THORAPIRULE_REQUEST";
-export const ADD_THORAPIRULE_SUCCESS = "ADD_THORAPIRULE_SUCCESS";
-export const ADD_THORAPIRULE_FAILURE = "ADD_THORAPIRULE_FAILURE";
+export const ADD_THORAPIRULE_REQUEST = 'ADD_THORAPIRULE_REQUEST';
+export const ADD_THORAPIRULE_SUCCESS = 'ADD_THORAPIRULE_SUCCESS';
+export const ADD_THORAPIRULE_FAILURE = 'ADD_THORAPIRULE_FAILURE';
 
-export const UPDATE_THORAPIRULE_REQUEST = "UPDATE_THORAPIRULE_REQUEST";
-export const UPDATE_THORAPIRULE_SUCCESS = "UPDATE_THORAPIRULE_SUCCESS";
-export const UPDATE_THORAPIRULE_FAILURE = "UPDATE_THORAPIRULE_FAILURE";
+export const UPDATE_THORAPIRULE_REQUEST = 'UPDATE_THORAPIRULE_REQUEST';
+export const UPDATE_THORAPIRULE_SUCCESS = 'UPDATE_THORAPIRULE_SUCCESS';
+export const UPDATE_THORAPIRULE_FAILURE = 'UPDATE_THORAPIRULE_FAILURE';
 
-export const DELETE_THORAPIRULE_REQUEST = "DELETE_THORAPIRULE_REQUEST";
-export const DELETE_THORAPIRULE_SUCCESS = "DELETE_THORAPIRULE_SUCCESS";
-export const DELETE_THORAPIRULE_FAILURE = "DELETE_THORAPIRULE_FAILURE";
+export const DELETE_THORAPIRULE_REQUEST = 'DELETE_THORAPIRULE_REQUEST';
+export const DELETE_THORAPIRULE_SUCCESS = 'DELETE_THORAPIRULE_SUCCESS';
+export const DELETE_THORAPIRULE_FAILURE = 'DELETE_THORAPIRULE_FAILURE';
 
-export const LIST_THORAPIRULE_REQUEST = "LIST_THORAPIRULE_REQUEST";
-export const LIST_THORAPIRULE_SUCCESS = "LIST_THORAPIRULE_SUCCESS";
-export const LIST_THORAPIRULE_FAILURE = "LIST_THORAPIRULE_FAILURE";
+export const LIST_THORAPIRULE_REQUEST = 'LIST_THORAPIRULE_REQUEST';
+export const LIST_THORAPIRULE_SUCCESS = 'LIST_THORAPIRULE_SUCCESS';
+export const LIST_THORAPIRULE_FAILURE = 'LIST_THORAPIRULE_FAILURE';
 
 export const addThorapiRuleRequest = () => ({
-  type: ADD_THORAPIRULE_REQUEST,
+    type: ADD_THORAPIRULE_REQUEST,
 });
 
 export const addThorapiRuleSuccess = (ThorapiRules: any) => ({
-  type: ADD_THORAPIRULE_SUCCESS,
-  payload: ThorapiRules,
+    type: ADD_THORAPIRULE_SUCCESS,
+    payload: ThorapiRules,
 });
 
 export const addThorapiRuleFailure = (error: Error) => ({
-  type: ADD_THORAPIRULE_FAILURE,
-  payload: error,
+    type: ADD_THORAPIRULE_FAILURE,
+    payload: error,
 });
 
+
 export const fetchThorapiRuleRequest = () => ({
-  type: FETCH_THORAPIRULE_REQUEST,
+    type: FETCH_THORAPIRULE_REQUEST,
 });
 
 export const fetchThorapiRuleSuccess = (ThorapiRules: any) => ({
-  type: FETCH_THORAPIRULE_SUCCESS,
-  payload: ThorapiRules,
+    type: FETCH_THORAPIRULE_SUCCESS,
+    payload: ThorapiRules,
 });
 
 export const fetchThorapiRuleFailure = (error: Error) => ({
-  type: FETCH_THORAPIRULE_FAILURE,
-  payload: error,
+    type: FETCH_THORAPIRULE_FAILURE,
+    payload: error,
 });
 
 export const listThorapiRuleRequest = () => ({
-  type: LIST_THORAPIRULE_REQUEST,
+    type: LIST_THORAPIRULE_REQUEST,
 });
 
 export const listThorapiRuleSuccess = (ThorapiRules: any) => ({
-  type: LIST_THORAPIRULE_SUCCESS,
-  payload: ThorapiRules,
+    type: LIST_THORAPIRULE_SUCCESS,
+    payload: ThorapiRules,
 });
 
 export const listThorapiRuleFailure = (error: Error) => ({
-  type: LIST_THORAPIRULE_FAILURE,
-  payload: error,
+    type: LIST_THORAPIRULE_FAILURE,
+    payload: error,
 });
 
 export const updateThorapiRuleRequest = (ThorapiRule: any) => ({
-  type: UPDATE_THORAPIRULE_REQUEST,
-  payload: ThorapiRule,
+    type: UPDATE_THORAPIRULE_REQUEST,
+    payload: ThorapiRule,
 });
 
 export const updateThorapiRuleSuccess = (ThorapiRule: any) => ({
-  type: UPDATE_THORAPIRULE_SUCCESS,
-  payload: ThorapiRule,
+    type: UPDATE_THORAPIRULE_SUCCESS,
+    payload: ThorapiRule,
 });
 
 export const updateThorapiRuleFailure = (error: Error) => ({
-  type: UPDATE_THORAPIRULE_FAILURE,
-  payload: error,
+    type: UPDATE_THORAPIRULE_FAILURE,
+    payload: error,
 });
 
 export const deleteThorapiRuleRequest = (ThorapiRule: any) => ({
-  type: DELETE_THORAPIRULE_REQUEST,
-  payload: ThorapiRule,
+    type: DELETE_THORAPIRULE_REQUEST,
+    payload: ThorapiRule,
 });
 
 export const deleteThorapiRuleSuccess = (ThorapiRule: any) => ({
-  type: DELETE_THORAPIRULE_SUCCESS,
-  payload: ThorapiRule,
+    type: DELETE_THORAPIRULE_SUCCESS,
+    payload: ThorapiRule,
 });
 
 export const deleteThorapiRuleFailure = (error: Error) => ({
-  type: DELETE_THORAPIRULE_FAILURE,
-  payload: error,
+    type: DELETE_THORAPIRULE_FAILURE,
+    payload: error,
 });

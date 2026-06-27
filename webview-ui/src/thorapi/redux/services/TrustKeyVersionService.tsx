@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustKeyVersion } from "@thorapi/model/TrustKeyVersion";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustKeyVersion } from '@thorapi/model/TrustKeyVersion'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustKeyVersionResponse = TrustKeyVersion[];
+type TrustKeyVersionResponse = TrustKeyVersion[]
+type TrustKeyVersionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustKeyVersion>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type TrustKeyVersionListQueryArg = {
+  example?: Partial<TrustKeyVersion>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toTrustKeyVersionList = (result: unknown): TrustKeyVersionResponse => {
   if (Array.isArray(result)) {
-    return result as TrustKeyVersionResponse;
+    return result as TrustKeyVersionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as TrustKeyVersionResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustKeyVersionResponse) : []
+}
 
 export const TrustKeyVersionService = createApi({
-  reducerPath: "TrustKeyVersion", // This should remain unique
+  reducerPath: 'TrustKeyVersion', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustKeyVersion"],
+  tagTypes: ['TrustKeyVersion'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustKeyVersionsPaged: build.query<
-      TrustKeyVersionResponse,
-      { page: number; size?: number; example?: Partial<TrustKeyVersion> }
-    >({
+    getTrustKeyVersionsPaged: build.query<TrustKeyVersionResponse, TrustKeyVersionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustKeyVersion?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustKeyVersion?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustKeyVersionList(result);
+        const rows = toTrustKeyVersionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustKeyVersion" as const, id })),
-          { type: "TrustKeyVersion", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustKeyVersion' as const, id })),
+          { type: 'TrustKeyVersion', id: `PAGE_${page}` },
+          { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustKeyVersions: build.query<
-      TrustKeyVersionResponse,
-      { example?: Partial<TrustKeyVersion> } | void
-    >({
+    getTrustKeyVersions: build.query<TrustKeyVersionResponse, TrustKeyVersionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const TrustKeyVersionService = createApi({
         return `TrustKeyVersion`;
       },
       providesTags: (result) => {
-        const rows = toTrustKeyVersionList(result);
+        const rows = toTrustKeyVersionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustKeyVersion" as const, id })),
-          { type: "TrustKeyVersion", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustKeyVersion' as const, id })),
+          { type: 'TrustKeyVersion', id: 'LIST' },
+          { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustKeyVersion: build.mutation<
-      TrustKeyVersion,
-      Partial<TrustKeyVersion>
-    >({
+    addTrustKeyVersion: build.mutation<TrustKeyVersion, Partial<TrustKeyVersion>>({
       query: (body) => ({
         url: `TrustKeyVersion`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustKeyVersion", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustKeyVersion', id: 'LIST' },
+        { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustKeyVersion: build.query<TrustKeyVersion, string>({
       query: (id) => `TrustKeyVersion/${id}`,
-      providesTags: (result, error, id) => [{ type: "TrustKeyVersion", id }],
+      providesTags: (result, error, id) => [{ type: 'TrustKeyVersion', id }],
     }),
 
     // 5) Update
-    updateTrustKeyVersion: build.mutation<
-      void,
-      Pick<TrustKeyVersion, "id"> & Partial<TrustKeyVersion>
-    >({
+    updateTrustKeyVersion: build.mutation<TrustKeyVersion, Pick<TrustKeyVersion, 'id'> & Partial<TrustKeyVersion>>({
       query: ({ id, ...patch }) => ({
         url: `TrustKeyVersion/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustKeyVersionService.util.updateQueryData(
-              "getTrustKeyVersion",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<TrustKeyVersion, "id">) => [
-        { type: "TrustKeyVersion", id },
-        { type: "TrustKeyVersion", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustKeyVersion, 'id'>) => [
+        { type: 'TrustKeyVersion', id },
+        { type: 'TrustKeyVersion', id: 'LIST' },
+        { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustKeyVersion: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustKeyVersion: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustKeyVersion/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "TrustKeyVersion", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'TrustKeyVersion', id },
+        { type: 'TrustKeyVersion', id: 'LIST' },
+        { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustKeyVersionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustKeyVersionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustKeyVersion/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustKeyVersion", id },
-        { type: "TrustKeyVersion", id: "LIST" },
+        { type: 'TrustKeyVersion', id },
+        { type: 'TrustKeyVersion', id: 'LIST' },
+        { type: 'TrustKeyVersion', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustKeyVersionsPagedQuery`
 export const {
-  useGetTrustKeyVersionsPagedQuery, // immediate fetch
+  useGetTrustKeyVersionsPagedQuery,     // immediate fetch
   useLazyGetTrustKeyVersionsPagedQuery, // lazy fetch
   useGetTrustKeyVersionQuery,
   useGetTrustKeyVersionsQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateTrustKeyVersionMutation,
   useDeleteTrustKeyVersionMutation,
   useDeleteTrustKeyVersionCascadeMutation,
-} = TrustKeyVersionService;
+} = TrustKeyVersionService

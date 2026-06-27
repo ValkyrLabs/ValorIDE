@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,114 +36,102 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface SwarmUnregisterResponse
  */
-export type SwarmUnregisterResponse = DataObject & {
-  /**
-   * Unregistration outcome message.
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  status?: string;
-  /**
-   * Identifier of the agent removed from the registry.
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  instanceId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof SwarmUnregisterResponse
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof SwarmUnregisterResponse
-   */
-  trashed?: boolean;
-};
-
-export function SwarmUnregisterResponseFromJSON(
-  json: any,
-): SwarmUnregisterResponse {
-  return {
-    ...DataObjectFromJSON(json),
-    status: !exists(json, "status") ? undefined : json["status"],
-    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type SwarmUnregisterResponse  = DataObject & {
+    /**
+     * Unregistration outcome message.
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    status?: string;
+    /**
+     * Identifier of the agent removed from the registry.
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    instanceId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof SwarmUnregisterResponse
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof SwarmUnregisterResponse
+     */
+    trashed?: boolean;
 }
 
-export function SwarmUnregisterResponseToJSON(
-  value?: SwarmUnregisterResponse,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    status: value.status,
-    instanceId: value.instanceId,
-    trashed: value.trashed,
-  };
+export function SwarmUnregisterResponseFromJSON(json: any): SwarmUnregisterResponse {
+    return {
+        ...DataObjectFromJSON(json),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function SwarmUnregisterResponseToJSON(value?: SwarmUnregisterResponse): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'status': value.status,
+        'instanceId': value.instanceId,
+        'trashed': value.trashed,
+    };
+}
+
+

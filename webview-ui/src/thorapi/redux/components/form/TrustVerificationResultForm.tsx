@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   TrustVerificationResult,
   TrustVerificationResultVerificationStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddTrustVerificationResultMutation } from "../../services/TrustVerificationResultService";
+import { useAddTrustVerificationResultMutation } from '../../services/TrustVerificationResultService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,44 +62,44 @@ Verification result for an internal or external proof check.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const VerificationStatusValidation = () => {
-  return ["VALID", "INVALID", "INCONCLUSIVE", "UNAUTHORIZED"];
+  return [
+    'VALID',
+    'INVALID',
+    'INCONCLUSIVE',
+    'UNAUTHORIZED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  verifierId: Yup.string(),
-  verificationStatus: Yup.mixed().oneOf(
-    VerificationStatusValidation(),
-    "Invalid value for verificationStatus",
-  ),
-  checkedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("checkedAt must be a valid date"),
-  failureReason: Yup.string(),
-  verificationHash: Yup.string(),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+        verifierId: Yup.string(),
+      verificationStatus: Yup.mixed()
+        .oneOf(VerificationStatusValidation(), "Invalid value for verificationStatus")
+        ,
+        checkedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("checkedAt must be a valid date"),
+        failureReason: Yup.string(),
+        verificationHash: Yup.string(),
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustVerificationResultForm: React.FC = () => {
-  const [addTrustVerificationResult, addTrustVerificationResultResult] =
-    useAddTrustVerificationResultMutation();
+  const [addTrustVerificationResult, addTrustVerificationResultResult] = useAddTrustVerificationResultMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -117,18 +109,12 @@ const TrustVerificationResultForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -136,13 +122,13 @@ const TrustVerificationResultForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustVerificationResult> = {
-    verifierId: "",
-    verificationStatus: undefined,
-    checkedAt: new Date(),
-    failureReason: "",
-    verificationHash: "",
-    ownerId: "",
-    trashed: false,
+          verifierId: '',
+        verificationStatus: undefined,
+          checkedAt: new Date(),
+          failureReason: '',
+          verificationHash: '',
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -157,14 +143,11 @@ const TrustVerificationResultForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new TrustVerificationResult:", grants);
+    console.log('Permissions saved for new TrustVerificationResult:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<TrustVerificationResult>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustVerificationResult>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -175,7 +158,7 @@ const TrustVerificationResultForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustVerificationResult created successfully! Would you like to set permissions for this object?`,
+          `TrustVerificationResult created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -183,8 +166,8 @@ const TrustVerificationResultForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create TrustVerificationResult:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create TrustVerificationResult:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -205,38 +188,44 @@ const TrustVerificationResultForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addTrustVerificationResultResult.isLoading;
+          const isSaving = isSubmitting || addTrustVerificationResultResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    TrustVerificationResult
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustVerificationResult
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="verifierId" className="nice-form-control">
                       <b>
                         Verifier Id:
-                        {touched.verifierId && !errors.verifierId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.verifierId &&
+                         !errors.verifierId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="verifierId"
-                        value={values?.verifierId}
-                        placeholder="Verifier Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="verifierId"
+                            value={values?.verifierId}
+                            placeholder="Verifier Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -245,40 +234,33 @@ const TrustVerificationResultForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="verificationStatus"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="verificationStatus" className="nice-form-control">
                       <b>
                         Verification Status:
                         {touched.verificationStatus &&
-                          !errors.verificationStatus && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.verificationStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="verificationStatus"
-                        value={values.verificationStatus || ""}
-                        className={
-                          errors.verificationStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("verificationStatus", true);
-                          setFieldValue(
-                            "verificationStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Verification Status" />
-                        <VerificationStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="verificationStatus"
+                          value={values.verificationStatus || ''}
+                          className={
+                            errors.verificationStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('verificationStatus', true);
+                            setFieldValue('verificationStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Verification Status" />
+                          <VerificationStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -290,38 +272,38 @@ const TrustVerificationResultForm: React.FC = () => {
                     <label htmlFor="checkedAt" className="nice-form-control">
                       <b>
                         Checked At:
-                        {touched.checkedAt && !errors.checkedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.checkedAt &&
+                         !errors.checkedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="checkedAt"
-                        type="datetime-local"
-                        value={
-                          values.checkedAt
-                            ? new Date(values.checkedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("checkedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "checkedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.checkedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="checkedAt"
+                            type="datetime-local"
+                            value={values.checkedAt ? 
+                              new Date(values.checkedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('checkedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('checkedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.checkedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -330,27 +312,31 @@ const TrustVerificationResultForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="failureReason"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="failureReason" className="nice-form-control">
                       <b>
                         Failure Reason:
-                        {touched.failureReason && !errors.failureReason && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.failureReason &&
+                         !errors.failureReason && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="failureReason"
-                        value={values?.failureReason}
-                        placeholder="Failure Reason"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="failureReason"
+                            value={values?.failureReason}
+                            placeholder="Failure Reason"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -359,28 +345,31 @@ const TrustVerificationResultForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="verificationHash"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="verificationHash" className="nice-form-control">
                       <b>
                         Verification Hash:
                         {touched.verificationHash &&
-                          !errors.verificationHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.verificationHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="verificationHash"
-                        value={values?.verificationHash}
-                        placeholder="Verification Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="verificationHash"
+                            value={values?.verificationHash}
+                            placeholder="Verification Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -392,21 +381,28 @@ const TrustVerificationResultForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -418,25 +414,32 @@ const TrustVerificationResultForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -446,64 +449,45 @@ const TrustVerificationResultForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      TrustVerificationResult
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New TrustVerificationResult
+                  </CoolButton>
 
-                    {(addTrustVerificationResultResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addTrustVerificationResultResult as any).error
-                              ? (addTrustVerificationResultResult as any).error
-                                  .data
-                              : (addTrustVerificationResultResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustVerificationResultResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustVerificationResultResult as any).error ? (addTrustVerificationResultResult as any).error.data : (addTrustVerificationResultResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustVerificationResultResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustVerificationResultResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustVerificationResultResult:{" "}
-                    {JSON.stringify(addTrustVerificationResultResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustVerificationResultResult: {JSON.stringify(addTrustVerificationResultResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -535,13 +519,16 @@ kebabcase verification-status-lookup
 const VerificationStatusLookup = () => {
   return (
     <>
-      <option value="VALID" label="Valid" />
-      <option value="INVALID" label="Invalid" />
-      <option value="INCONCLUSIVE" label="Inconclusive" />
-      <option value="UNAUTHORIZED" label="Unauthorized" />
+      <option value='VALID' label="Valid" />
+      <option value='INVALID' label="Invalid" />
+      <option value='INCONCLUSIVE' label="Inconclusive" />
+      <option value='UNAUTHORIZED' label="Unauthorized" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustVerificationResultForm;
+

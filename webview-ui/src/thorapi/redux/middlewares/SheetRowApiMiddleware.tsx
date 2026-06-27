@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SHEETROW_REQUEST,
-  FETCH_SHEETROW_REQUEST,
-  LIST_SHEETROW_REQUEST,
-  UPDATE_SHEETROW_REQUEST,
-  DELETE_SHEETROW_REQUEST,
-  addSheetRowFailure,
-  addSheetRowSuccess,
-  fetchSheetRowFailure,
-  fetchSheetRowSuccess,
-  listSheetRowFailure,
-  listSheetRowSuccess,
-  updateSheetRowFailure,
-  updateSheetRowSuccess,
-  deleteSheetRowFailure,
-  deleteSheetRowSuccess,
-} from "../actions/SheetRowApiAction";
+
+    ADD_SHEETROW_REQUEST,
+    FETCH_SHEETROW_REQUEST,
+    LIST_SHEETROW_REQUEST,
+    UPDATE_SHEETROW_REQUEST,
+    DELETE_SHEETROW_REQUEST,
+
+    addSheetRowFailure,
+    addSheetRowSuccess,
+
+    fetchSheetRowFailure,
+    fetchSheetRowSuccess,
+    
+    listSheetRowFailure,
+    listSheetRowSuccess,
+
+    updateSheetRowFailure,
+    updateSheetRowSuccess,
+    
+    deleteSheetRowFailure,
+    deleteSheetRowSuccess,
+    
+} from '../actions/SheetRowApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SheetRow
 */
 
-export const SheetRowMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SheetRow MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SheetRowMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SheetRow MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

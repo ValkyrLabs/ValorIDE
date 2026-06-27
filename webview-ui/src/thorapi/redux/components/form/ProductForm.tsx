@@ -13,37 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Product,
+  ProductTypeEnum,
+  ProductStatusEnum,
+} from '@thorapi/model';
 
-import { Product, ProductTypeEnum, ProductStatusEnum } from "@thorapi/model";
-
-import { useAddProductMutation } from "../../services/ProductService";
+import { useAddProductMutation } from '../../services/ProductService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -68,28 +64,28 @@ Represents a product or service in the CRM.
 -------------------------------------------------------- */
 const TypeValidation = () => {
   return [
-    "physical",
-    "subscription",
-    "credits",
-    "bespoke",
-    "consulting",
-    "support",
-    "cloud",
-    "download",
-    "service",
-    "media",
-    "performance",
-    "other",
+    'physical',
+    'subscription',
+    'credits',
+    'bespoke',
+    'consulting',
+    'support',
+    'cloud',
+    'download',
+    'service',
+    'media',
+    'performance',
+    'other',
   ];
 };
 const StatusValidation = () => {
   return [
-    "pending",
-    "sale",
-    "clearance",
-    "available",
-    "discontinued",
-    "out_of_stock",
+    'pending',
+    'sale',
+    'clearance',
+    'available',
+    'discontinued',
+    'out_of_stock',
   ];
 };
 
@@ -97,22 +93,24 @@ const StatusValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  description: Yup.string(),
-  price: asNumber(Yup.number().typeError("price must be a number")),
-  salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
-  taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
-  duration: asNumber(Yup.number().typeError("duration must be a number")),
-  sku: Yup.string(),
-  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  countryOfOrigin: Yup.string(),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+        description: Yup.string(),
+        price: asNumber(Yup.number().typeError("price must be a number")),
+        salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
+        taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
+        duration: asNumber(Yup.number().typeError("duration must be a number")),
+        sku: Yup.string(),
+      type: Yup.mixed()
+        .oneOf(TypeValidation(), "Invalid value for type")
+        ,
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        countryOfOrigin: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -129,18 +127,12 @@ const ProductForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -148,17 +140,17 @@ const ProductForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Product> = {
-    name: "",
-    description: "",
-    price: 0,
-    salePrice: 0,
-    taxRate: 0,
-    duration: 0,
-    sku: "",
-    type: undefined,
-    status: undefined,
-    countryOfOrigin: "",
-    trashed: false,
+          name: '',
+          description: '',
+          price: 0,
+          salePrice: 0,
+          taxRate: 0,
+          duration: 0,
+          sku: '',
+        type: undefined,
+        status: undefined,
+          countryOfOrigin: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -173,14 +165,11 @@ const ProductForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Product:", grants);
+    console.log('Permissions saved for new Product:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Product>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Product>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -191,7 +180,7 @@ const ProductForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Product created successfully! Would you like to set permissions for this object?`,
+          `Product created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -199,8 +188,8 @@ const ProductForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Product:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Product:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -221,36 +210,44 @@ const ProductForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addProductResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Product
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Product
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -262,21 +259,28 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description && !errors.description && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="description"
-                        value={values?.description}
-                        placeholder="Description"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -288,33 +292,37 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="price" className="nice-form-control">
                       <b>
                         Price:
-                        {touched.price && !errors.price && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.price &&
+                         !errors.price && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="price"
-                        type="number"
-                        step="any"
-                        value={values.price || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("price", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "price",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.price
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="price"
+                            type="number"
+                            step="any"
+                            value={values.price || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('price', true);
+                              const v = e.target.value;
+                              setFieldValue('price', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.price
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -326,33 +334,37 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="salePrice" className="nice-form-control">
                       <b>
                         Sale Price:
-                        {touched.salePrice && !errors.salePrice && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.salePrice &&
+                         !errors.salePrice && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="salePrice"
-                        type="number"
-                        step="any"
-                        value={values.salePrice || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("salePrice", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "salePrice",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.salePrice
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="salePrice"
+                            type="number"
+                            step="any"
+                            value={values.salePrice || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('salePrice', true);
+                              const v = e.target.value;
+                              setFieldValue('salePrice', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.salePrice
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -364,33 +376,37 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="taxRate" className="nice-form-control">
                       <b>
                         Tax Rate:
-                        {touched.taxRate && !errors.taxRate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.taxRate &&
+                         !errors.taxRate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="taxRate"
-                        type="number"
-                        step="any"
-                        value={values.taxRate || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("taxRate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "taxRate",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.taxRate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="taxRate"
+                            type="number"
+                            step="any"
+                            value={values.taxRate || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('taxRate', true);
+                              const v = e.target.value;
+                              setFieldValue('taxRate', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.taxRate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -402,33 +418,37 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="duration" className="nice-form-control">
                       <b>
                         Duration:
-                        {touched.duration && !errors.duration && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.duration &&
+                         !errors.duration && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="duration"
-                        type="number"
-                        step="any"
-                        value={values.duration || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("duration", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "duration",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.duration
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="duration"
+                            type="number"
+                            step="any"
+                            value={values.duration || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('duration', true);
+                              const v = e.target.value;
+                              setFieldValue('duration', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.duration
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -440,21 +460,28 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="sku" className="nice-form-control">
                       <b>
                         Sku:
-                        {touched.sku && !errors.sku && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sku &&
+                         !errors.sku && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sku"
-                        value={values?.sku}
-                        placeholder="Sku"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sku"
+                            value={values?.sku}
+                            placeholder="Sku"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -466,30 +493,30 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type && !errors.type && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.type &&
+                         !errors.type && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="type"
-                        value={values.type || ""}
-                        className={
-                          errors.type
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("type", true);
-                          setFieldValue("type", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Type" />
-                        <TypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="type"
+                          value={values.type || ''}
+                          className={
+                            errors.type
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('type', true);
+                            setFieldValue('type', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Type" />
+                          <TypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -501,30 +528,30 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -533,27 +560,31 @@ const ProductForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="countryOfOrigin"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="countryOfOrigin" className="nice-form-control">
                       <b>
                         Country Of Origin:
-                        {touched.countryOfOrigin && !errors.countryOfOrigin && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.countryOfOrigin &&
+                         !errors.countryOfOrigin && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="countryOfOrigin"
-                        value={values?.countryOfOrigin}
-                        placeholder="Country Of Origin"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="countryOfOrigin"
+                            value={values?.countryOfOrigin}
+                            placeholder="Country Of Origin"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -565,25 +596,32 @@ const ProductForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -593,58 +631,45 @@ const ProductForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Product
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Product
+                  </CoolButton>
 
-                    {(addProductResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addProductResult as any).error
-                              ? (addProductResult as any).error.data
-                              : (addProductResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addProductResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addProductResult as any).error ? (addProductResult as any).error.data : (addProductResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addProductResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addProductResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addProductResult: {JSON.stringify(addProductResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addProductResult: {JSON.stringify(addProductResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -676,18 +701,18 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value="physical" label="Physical" />
-      <option value="subscription" label="Subscription" />
-      <option value="credits" label="Credits" />
-      <option value="bespoke" label="Bespoke" />
-      <option value="consulting" label="Consulting" />
-      <option value="support" label="Support" />
-      <option value="cloud" label="Cloud" />
-      <option value="download" label="Download" />
-      <option value="service" label="Service" />
-      <option value="media" label="Media" />
-      <option value="performance" label="Performance" />
-      <option value="other" label="Other" />
+      <option value='physical' label="Physical" />
+      <option value='subscription' label="Subscription" />
+      <option value='credits' label="Credits" />
+      <option value='bespoke' label="Bespoke" />
+      <option value='consulting' label="Consulting" />
+      <option value='support' label="Support" />
+      <option value='cloud' label="Cloud" />
+      <option value='download' label="Download" />
+      <option value='service' label="Service" />
+      <option value='media' label="Media" />
+      <option value='performance' label="Performance" />
+      <option value='other' label="Other" />
     </>
   );
 };
@@ -704,15 +729,18 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="pending" label="Pending" />
-      <option value="sale" label="Sale" />
-      <option value="clearance" label="Clearance" />
-      <option value="available" label="Available" />
-      <option value="discontinued" label="Discontinued" />
-      <option value="out_of_stock" label="Out Of Stock" />
+      <option value='pending' label="Pending" />
+      <option value='sale' label="Sale" />
+      <option value='clearance' label="Clearance" />
+      <option value='available' label="Available" />
+      <option value='discontinued' label="Discontinued" />
+      <option value='out_of_stock' label="Out Of Stock" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ProductForm;
+

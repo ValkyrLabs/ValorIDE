@@ -132,7 +132,7 @@ export class RemoteCodingSessionRegistry {
 
   expireTimedOutSessions(now: number = Date.now()): RemoteCodingSession[] {
     const timedOut: RemoteCodingSession[] = [];
-    for (const s of this.sessions.values()) {
+    for (const s of Array.from(this.sessions.values())) {
       if (!this.isActive(s)) {
         continue;
       }

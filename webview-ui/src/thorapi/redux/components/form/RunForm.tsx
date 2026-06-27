@@ -13,37 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Run,
+  RunStateEnum,
+  RunErrorTypeEnum,
+} from '@thorapi/model';
 
-import { Run, RunStateEnum, RunErrorTypeEnum } from "@thorapi/model";
-
-import { useAddRunMutation } from "../../services/RunService";
+import { useAddRunMutation } from '../../services/RunService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -68,96 +64,91 @@ A single attempt to execute a Task within a WorkflowExecution with idempotency a
 -------------------------------------------------------- */
 const StateValidation = () => {
   return [
-    "PENDING",
-    "LEASED",
-    "RUNNING",
-    "SUCCESS",
-    "FAILED",
-    "DLQ",
-    "CANCELLED",
+    'PENDING',
+    'LEASED',
+    'RUNNING',
+    'SUCCESS',
+    'FAILED',
+    'DLQ',
+    'CANCELLED',
   ];
 };
 const ErrorTypeValidation = () => {
-  return ["TRANSIENT", "PERMANENT", "TIMEOUT", "CIRCUIT_OPEN"];
+  return [
+    'TRANSIENT',
+    'PERMANENT',
+    'TIMEOUT',
+    'CIRCUIT_OPEN',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  executionId: Yup.string(),
-  taskId: Yup.string(),
-  execModuleId: Yup.string(),
-  attempt: asNumber(
-    Yup.number().integer().typeError("attempt must be a number"),
-  ),
-  state: Yup.mixed().oneOf(StateValidation(), "Invalid value for state"),
-  leaseUntil: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("leaseUntil must be a valid date"),
-  leasedBy: Yup.string(),
-  runnerId: Yup.string(),
-  idempotencyKey: Yup.string(),
-  inputsHash: Yup.string(),
-  configHash: Yup.string(),
-  startedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("startedAt must be a valid date"),
-  finishedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("finishedAt must be a valid date"),
-  heartbeatAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("heartbeatAt must be a valid date"),
-  outputs: Yup.string(),
-  error: Yup.string(),
-  errorType: Yup.mixed().oneOf(
-    ErrorTypeValidation(),
-    "Invalid value for errorType",
-  ),
-  retryReadyAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("retryReadyAt must be a valid date"),
-  durationMs: asNumber(
-    Yup.number().integer().typeError("durationMs must be a number"),
-  ),
-  costTokens: asNumber(Yup.number().typeError("costTokens must be a number")),
-  trashed: Yup.boolean(),
+        executionId: Yup.string(),
+        taskId: Yup.string(),
+        execModuleId: Yup.string(),
+        attempt: asNumber(Yup.number().integer().typeError("attempt must be a number")),
+      state: Yup.mixed()
+        .oneOf(StateValidation(), "Invalid value for state")
+        ,
+        leaseUntil: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("leaseUntil must be a valid date"),
+        leasedBy: Yup.string(),
+        runnerId: Yup.string(),
+        idempotencyKey: Yup.string(),
+        inputsHash: Yup.string(),
+        configHash: Yup.string(),
+        startedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("startedAt must be a valid date"),
+        finishedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("finishedAt must be a valid date"),
+        heartbeatAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("heartbeatAt must be a valid date"),
+        outputs: Yup.string(),
+        error: Yup.string(),
+      errorType: Yup.mixed()
+        .oneOf(ErrorTypeValidation(), "Invalid value for errorType")
+        ,
+        retryReadyAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("retryReadyAt must be a valid date"),
+        durationMs: asNumber(Yup.number().integer().typeError("durationMs must be a number")),
+        costTokens: asNumber(Yup.number().typeError("costTokens must be a number")),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -174,18 +165,12 @@ const RunForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -193,27 +178,27 @@ const RunForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Run> = {
-    executionId: "",
-    taskId: "",
-    execModuleId: "",
-    attempt: 0,
-    state: undefined,
-    leaseUntil: new Date(),
-    leasedBy: "",
-    runnerId: "",
-    idempotencyKey: "",
-    inputsHash: "",
-    configHash: "",
-    startedAt: new Date(),
-    finishedAt: new Date(),
-    heartbeatAt: new Date(),
-    outputs: "",
-    error: "",
-    errorType: undefined,
-    retryReadyAt: new Date(),
-    durationMs: 0,
-    costTokens: 0,
-    trashed: false,
+          executionId: '',
+          taskId: '',
+          execModuleId: '',
+          attempt: 0,
+        state: undefined,
+          leaseUntil: new Date(),
+          leasedBy: '',
+          runnerId: '',
+          idempotencyKey: '',
+          inputsHash: '',
+          configHash: '',
+          startedAt: new Date(),
+          finishedAt: new Date(),
+          heartbeatAt: new Date(),
+          outputs: '',
+          error: '',
+        errorType: undefined,
+          retryReadyAt: new Date(),
+          durationMs: 0,
+          costTokens: 0,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -228,14 +213,11 @@ const RunForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Run:", grants);
+    console.log('Permissions saved for new Run:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Run>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Run>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -246,7 +228,7 @@ const RunForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Run created successfully! Would you like to set permissions for this object?`,
+          `Run created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -254,8 +236,8 @@ const RunForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Run:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Run:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -276,36 +258,44 @@ const RunForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addRunResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Run
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Run
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="executionId" className="nice-form-control">
                       <b>
                         Execution Id:
-                        {touched.executionId && !errors.executionId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.executionId &&
+                         !errors.executionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="executionId"
-                        value={values?.executionId}
-                        placeholder="Execution Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="executionId"
+                            value={values?.executionId}
+                            placeholder="Execution Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -317,21 +307,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="taskId" className="nice-form-control">
                       <b>
                         Task Id:
-                        {touched.taskId && !errors.taskId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.taskId &&
+                         !errors.taskId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="taskId"
-                        value={values?.taskId}
-                        placeholder="Task Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="taskId"
+                            value={values?.taskId}
+                            placeholder="Task Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -343,21 +340,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
-                        {touched.execModuleId && !errors.execModuleId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.execModuleId &&
+                         !errors.execModuleId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="execModuleId"
-                        value={values?.execModuleId}
-                        placeholder="Exec Module Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="execModuleId"
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -369,32 +373,36 @@ const RunForm: React.FC = () => {
                     <label htmlFor="attempt" className="nice-form-control">
                       <b>
                         Attempt:
-                        {touched.attempt && !errors.attempt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.attempt &&
+                         !errors.attempt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="attempt"
-                        type="number"
-                        value={values.attempt || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("attempt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "attempt",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.attempt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="attempt"
+                            type="number"
+                            value={values.attempt || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('attempt', true);
+                              const v = e.target.value;
+                              setFieldValue('attempt', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.attempt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -406,30 +414,30 @@ const RunForm: React.FC = () => {
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
-                        {touched.state && !errors.state && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.state &&
+                         !errors.state && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="state"
-                        value={values.state || ""}
-                        className={
-                          errors.state
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("state", true);
-                          setFieldValue("state", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select State" />
-                        <StateLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="state"
+                          value={values.state || ''}
+                          className={
+                            errors.state
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('state', true);
+                            setFieldValue('state', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select State" />
+                          <StateLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -441,38 +449,38 @@ const RunForm: React.FC = () => {
                     <label htmlFor="leaseUntil" className="nice-form-control">
                       <b>
                         Lease Until:
-                        {touched.leaseUntil && !errors.leaseUntil && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.leaseUntil &&
+                         !errors.leaseUntil && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="leaseUntil"
-                        type="datetime-local"
-                        value={
-                          values.leaseUntil
-                            ? new Date(values.leaseUntil)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("leaseUntil", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "leaseUntil",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.leaseUntil
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="leaseUntil"
+                            type="datetime-local"
+                            value={values.leaseUntil ? 
+                              new Date(values.leaseUntil).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('leaseUntil', true);
+                              const v = e.target.value;
+                              setFieldValue('leaseUntil', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.leaseUntil
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -484,21 +492,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="leasedBy" className="nice-form-control">
                       <b>
                         Leased By:
-                        {touched.leasedBy && !errors.leasedBy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.leasedBy &&
+                         !errors.leasedBy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="leasedBy"
-                        value={values?.leasedBy}
-                        placeholder="Leased By"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="leasedBy"
+                            value={values?.leasedBy}
+                            placeholder="Leased By"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -510,21 +525,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="runnerId" className="nice-form-control">
                       <b>
                         Runner Id:
-                        {touched.runnerId && !errors.runnerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.runnerId &&
+                         !errors.runnerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="runnerId"
-                        value={values?.runnerId}
-                        placeholder="Runner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="runnerId"
+                            value={values?.runnerId}
+                            placeholder="Runner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -533,27 +555,31 @@ const RunForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="idempotencyKey"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="idempotencyKey" className="nice-form-control">
                       <b>
                         Idempotency Key:
-                        {touched.idempotencyKey && !errors.idempotencyKey && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.idempotencyKey &&
+                         !errors.idempotencyKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="idempotencyKey"
-                        value={values?.idempotencyKey}
-                        placeholder="Idempotency Key"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="idempotencyKey"
+                            value={values?.idempotencyKey}
+                            placeholder="Idempotency Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -565,21 +591,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="inputsHash" className="nice-form-control">
                       <b>
                         Inputs Hash:
-                        {touched.inputsHash && !errors.inputsHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.inputsHash &&
+                         !errors.inputsHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="inputsHash"
-                        value={values?.inputsHash}
-                        placeholder="Inputs Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="inputsHash"
+                            value={values?.inputsHash}
+                            placeholder="Inputs Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -591,21 +624,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="configHash" className="nice-form-control">
                       <b>
                         Config Hash:
-                        {touched.configHash && !errors.configHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.configHash &&
+                         !errors.configHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="configHash"
-                        value={values?.configHash}
-                        placeholder="Config Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="configHash"
+                            value={values?.configHash}
+                            placeholder="Config Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -617,38 +657,38 @@ const RunForm: React.FC = () => {
                     <label htmlFor="startedAt" className="nice-form-control">
                       <b>
                         Started At:
-                        {touched.startedAt && !errors.startedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.startedAt &&
+                         !errors.startedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="startedAt"
-                        type="datetime-local"
-                        value={
-                          values.startedAt
-                            ? new Date(values.startedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("startedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "startedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.startedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="startedAt"
+                            type="datetime-local"
+                            value={values.startedAt ? 
+                              new Date(values.startedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('startedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('startedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.startedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -660,38 +700,38 @@ const RunForm: React.FC = () => {
                     <label htmlFor="finishedAt" className="nice-form-control">
                       <b>
                         Finished At:
-                        {touched.finishedAt && !errors.finishedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.finishedAt &&
+                         !errors.finishedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="finishedAt"
-                        type="datetime-local"
-                        value={
-                          values.finishedAt
-                            ? new Date(values.finishedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("finishedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "finishedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.finishedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="finishedAt"
+                            type="datetime-local"
+                            value={values.finishedAt ? 
+                              new Date(values.finishedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('finishedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('finishedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.finishedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -703,38 +743,38 @@ const RunForm: React.FC = () => {
                     <label htmlFor="heartbeatAt" className="nice-form-control">
                       <b>
                         Heartbeat At:
-                        {touched.heartbeatAt && !errors.heartbeatAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.heartbeatAt &&
+                         !errors.heartbeatAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="heartbeatAt"
-                        type="datetime-local"
-                        value={
-                          values.heartbeatAt
-                            ? new Date(values.heartbeatAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("heartbeatAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "heartbeatAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.heartbeatAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="heartbeatAt"
+                            type="datetime-local"
+                            value={values.heartbeatAt ? 
+                              new Date(values.heartbeatAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('heartbeatAt', true);
+                              const v = e.target.value;
+                              setFieldValue('heartbeatAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.heartbeatAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -746,21 +786,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="outputs" className="nice-form-control">
                       <b>
                         Outputs:
-                        {touched.outputs && !errors.outputs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.outputs &&
+                         !errors.outputs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="outputs"
-                        value={values?.outputs}
-                        placeholder="Outputs"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="outputs"
+                            value={values?.outputs}
+                            placeholder="Outputs"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -772,21 +819,28 @@ const RunForm: React.FC = () => {
                     <label htmlFor="error" className="nice-form-control">
                       <b>
                         Error:
-                        {touched.error && !errors.error && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.error &&
+                         !errors.error && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="error"
-                        value={values?.error}
-                        placeholder="Error"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="error"
+                            value={values?.error}
+                            placeholder="Error"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -798,33 +852,30 @@ const RunForm: React.FC = () => {
                     <label htmlFor="errorType" className="nice-form-control">
                       <b>
                         Error Type:
-                        {touched.errorType && !errors.errorType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.errorType &&
+                         !errors.errorType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="errorType"
-                        value={values.errorType || ""}
-                        className={
-                          errors.errorType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("errorType", true);
-                          setFieldValue(
-                            "errorType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Error Type" />
-                        <ErrorTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="errorType"
+                          value={values.errorType || ''}
+                          className={
+                            errors.errorType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('errorType', true);
+                            setFieldValue('errorType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Error Type" />
+                          <ErrorTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -836,38 +887,38 @@ const RunForm: React.FC = () => {
                     <label htmlFor="retryReadyAt" className="nice-form-control">
                       <b>
                         Retry Ready At:
-                        {touched.retryReadyAt && !errors.retryReadyAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.retryReadyAt &&
+                         !errors.retryReadyAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="retryReadyAt"
-                        type="datetime-local"
-                        value={
-                          values.retryReadyAt
-                            ? new Date(values.retryReadyAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("retryReadyAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "retryReadyAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.retryReadyAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="retryReadyAt"
+                            type="datetime-local"
+                            value={values.retryReadyAt ? 
+                              new Date(values.retryReadyAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('retryReadyAt', true);
+                              const v = e.target.value;
+                              setFieldValue('retryReadyAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.retryReadyAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -879,32 +930,36 @@ const RunForm: React.FC = () => {
                     <label htmlFor="durationMs" className="nice-form-control">
                       <b>
                         Duration Ms:
-                        {touched.durationMs && !errors.durationMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.durationMs &&
+                         !errors.durationMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="durationMs"
-                        type="number"
-                        value={values.durationMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("durationMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "durationMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.durationMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="durationMs"
+                            type="number"
+                            value={values.durationMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('durationMs', true);
+                              const v = e.target.value;
+                              setFieldValue('durationMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.durationMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -916,33 +971,37 @@ const RunForm: React.FC = () => {
                     <label htmlFor="costTokens" className="nice-form-control">
                       <b>
                         Cost Tokens:
-                        {touched.costTokens && !errors.costTokens && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.costTokens &&
+                         !errors.costTokens && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="costTokens"
-                        type="number"
-                        step="any"
-                        value={values.costTokens || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("costTokens", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "costTokens",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.costTokens
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="costTokens"
+                            type="number"
+                            step="any"
+                            value={values.costTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('costTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('costTokens', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.costTokens
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -954,25 +1013,32 @@ const RunForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -982,58 +1048,45 @@ const RunForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Run
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Run
+                  </CoolButton>
 
-                    {(addRunResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addRunResult as any).error
-                              ? (addRunResult as any).error.data
-                              : (addRunResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addRunResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addRunResult as any).error ? (addRunResult as any).error.data : (addRunResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addRunResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addRunResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addRunResult: {JSON.stringify(addRunResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addRunResult: {JSON.stringify(addRunResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -1065,13 +1118,13 @@ kebabcase state-lookup
 const StateLookup = () => {
   return (
     <>
-      <option value="PENDING" label="Pending" />
-      <option value="LEASED" label="Leased" />
-      <option value="RUNNING" label="Running" />
-      <option value="SUCCESS" label="Success" />
-      <option value="FAILED" label="Failed" />
-      <option value="DLQ" label="Dlq" />
-      <option value="CANCELLED" label="Cancelled" />
+      <option value='PENDING' label="Pending" />
+      <option value='LEASED' label="Leased" />
+      <option value='RUNNING' label="Running" />
+      <option value='SUCCESS' label="Success" />
+      <option value='FAILED' label="Failed" />
+      <option value='DLQ' label="Dlq" />
+      <option value='CANCELLED' label="Cancelled" />
     </>
   );
 };
@@ -1088,13 +1141,16 @@ kebabcase error-type-lookup
 const ErrorTypeLookup = () => {
   return (
     <>
-      <option value="TRANSIENT" label="Transient" />
-      <option value="PERMANENT" label="Permanent" />
-      <option value="TIMEOUT" label="Timeout" />
-      <option value="CIRCUIT_OPEN" label="Circuit Open" />
+      <option value='TRANSIENT' label="Transient" />
+      <option value='PERMANENT' label="Permanent" />
+      <option value='TIMEOUT' label="Timeout" />
+      <option value='CIRCUIT_OPEN' label="Circuit Open" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default RunForm;
+

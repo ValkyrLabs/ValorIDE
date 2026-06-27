@@ -4,7 +4,6 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { validateApiConfiguration } from "@thorapi/utils/validate";
 import { vscode } from "@thorapi/utils/vscode";
 import ApiOptions from "@thorapi/components/settings/ApiOptions";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import {
   readStoredPrincipal,
   hydrateStoredCredentials,
@@ -51,8 +50,15 @@ const WelcomeView = memo(() => {
 
   const disableLetsGoButton = apiErrorMessage != null;
 
+  const handleSignup = () => {
+    vscode.postMessage({
+      type: "showAccountViewClicked",
+      accountTab: "signup",
+    });
+  };
+
   const handleLogin = () => {
-    vscode.postMessage({ type: "showAccountViewClicked" });
+    vscode.postMessage({ type: "showAccountViewClicked", accountTab: "login" });
   };
 
   const handleSubmit = () => {
@@ -70,7 +76,6 @@ const WelcomeView = memo(() => {
 
   return (
     <>
-      <SystemAlerts />
       <div
         className="fixed inset-0 flex flex-col overflow-auto"
         style={{ background: "var(--vscode-editor-background)" }}
@@ -212,7 +217,7 @@ const WelcomeView = memo(() => {
             </p>
             <VSCodeButton
               appearance="primary"
-              onClick={handleLogin}
+              onClick={handleSignup}
               style={{ width: "100%" }}
             >
               Get Started for Free
@@ -226,12 +231,20 @@ const WelcomeView = memo(() => {
               }}
             >
               Already have an account?{" "}
-              <VSCodeLink
-                href="https://valkyrlabs.com/sign-in"
-                style={{ fontSize: 11 }}
+              <button
+                type="button"
+                onClick={handleLogin}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "var(--vscode-textLink-foreground)",
+                  cursor: "pointer",
+                  fontSize: 11,
+                  padding: 0,
+                }}
               >
                 Sign in
-              </VSCodeLink>
+              </button>
             </div>
           </div>
 

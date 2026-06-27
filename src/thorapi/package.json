@@ -1,8 +1,0 @@
-{
-  "name": "",
-  "version": "",
-  "private": true,
-  "dependencies": {
-    "@valkyr/component-library": "1.0.0"
-  }
-}

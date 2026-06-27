@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ProductFeature } from "@thorapi/model/ProductFeature";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ProductFeature } from '@thorapi/model/ProductFeature'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ProductFeatureResponse = ProductFeature[];
+type ProductFeatureResponse = ProductFeature[]
+type ProductFeaturePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ProductFeature>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ProductFeatureListQueryArg = {
+  example?: Partial<ProductFeature>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toProductFeatureList = (result: unknown): ProductFeatureResponse => {
   if (Array.isArray(result)) {
-    return result as ProductFeatureResponse;
+    return result as ProductFeatureResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ProductFeatureResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ProductFeatureResponse) : []
+}
 
 export const ProductFeatureService = createApi({
-  reducerPath: "ProductFeature", // This should remain unique
+  reducerPath: 'ProductFeature', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ProductFeature"],
+  tagTypes: ['ProductFeature'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getProductFeaturesPaged: build.query<
-      ProductFeatureResponse,
-      { page: number; size?: number; example?: Partial<ProductFeature> }
-    >({
+    getProductFeaturesPaged: build.query<ProductFeatureResponse, ProductFeaturePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ProductFeature?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ProductFeature?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toProductFeatureList(result);
+        const rows = toProductFeatureList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ProductFeature" as const, id })),
-          { type: "ProductFeature", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ProductFeature' as const, id })),
+          { type: 'ProductFeature', id: `PAGE_${page}` },
+          { type: 'ProductFeature', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getProductFeatures: build.query<
-      ProductFeatureResponse,
-      { example?: Partial<ProductFeature> } | void
-    >({
+    getProductFeatures: build.query<ProductFeatureResponse, ProductFeatureListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const ProductFeatureService = createApi({
         return `ProductFeature`;
       },
       providesTags: (result) => {
-        const rows = toProductFeatureList(result);
+        const rows = toProductFeatureList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ProductFeature" as const, id })),
-          { type: "ProductFeature", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ProductFeature' as const, id })),
+          { type: 'ProductFeature', id: 'LIST' },
+          { type: 'ProductFeature', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const ProductFeatureService = createApi({
     addProductFeature: build.mutation<ProductFeature, Partial<ProductFeature>>({
       query: (body) => ({
         url: `ProductFeature`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ProductFeature", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ProductFeature', id: 'LIST' },
+        { type: 'ProductFeature', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getProductFeature: build.query<ProductFeature, string>({
       query: (id) => `ProductFeature/${id}`,
-      providesTags: (result, error, id) => [{ type: "ProductFeature", id }],
+      providesTags: (result, error, id) => [{ type: 'ProductFeature', id }],
     }),
 
     // 5) Update
-    updateProductFeature: build.mutation<
-      void,
-      Pick<ProductFeature, "id"> & Partial<ProductFeature>
-    >({
+    updateProductFeature: build.mutation<ProductFeature, Pick<ProductFeature, 'id'> & Partial<ProductFeature>>({
       query: ({ id, ...patch }) => ({
         url: `ProductFeature/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ProductFeatureService.util.updateQueryData(
-              "getProductFeature",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ProductFeature, "id">) => [
-        { type: "ProductFeature", id },
-        { type: "ProductFeature", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ProductFeature, 'id'>) => [
+        { type: 'ProductFeature', id },
+        { type: 'ProductFeature', id: 'LIST' },
+        { type: 'ProductFeature', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteProductFeature: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteProductFeature: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ProductFeature/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "ProductFeature", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'ProductFeature', id },
+        { type: 'ProductFeature', id: 'LIST' },
+        { type: 'ProductFeature', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteProductFeatureCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteProductFeatureCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ProductFeature/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ProductFeature", id },
-        { type: "ProductFeature", id: "LIST" },
+        { type: 'ProductFeature', id },
+        { type: 'ProductFeature', id: 'LIST' },
+        { type: 'ProductFeature', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetProductFeaturesPagedQuery`
 export const {
-  useGetProductFeaturesPagedQuery, // immediate fetch
+  useGetProductFeaturesPagedQuery,     // immediate fetch
   useLazyGetProductFeaturesPagedQuery, // lazy fetch
   useGetProductFeatureQuery,
   useGetProductFeaturesQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateProductFeatureMutation,
   useDeleteProductFeatureMutation,
   useDeleteProductFeatureCascadeMutation,
-} = ProductFeatureService;
+} = ProductFeatureService

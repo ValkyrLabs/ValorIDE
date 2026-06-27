@@ -19,35 +19,20 @@ Description: PhoneVerificationRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, PhoneVerificationRequest } from "@thorapi/model";
-import {
-  useGetPhoneVerificationRequestsQuery,
-  useAddPhoneVerificationRequestMutation,
-  useUpdatePhoneVerificationRequestMutation,
-} from "../../services/PhoneVerificationRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, PhoneVerificationRequest } from '@thorapi/model';
+import { useGetPhoneVerificationRequestsQuery, useAddPhoneVerificationRequestMutation, useUpdatePhoneVerificationRequestMutation } from '../../services/PhoneVerificationRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const PhoneVerificationRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetPhoneVerificationRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetPhoneVerificationRequestsQuery();
 
   const [data, setData] = useState<PhoneVerificationRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<PhoneVerificationRequest>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<PhoneVerificationRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const PhoneVerificationRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const PhoneVerificationRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((phoneverificationrequest: DataObject) => [
-            phoneverificationrequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((phoneverificationrequest: DataObject) => [phoneverificationrequest])} />
+          )}
     </>
   );
 };

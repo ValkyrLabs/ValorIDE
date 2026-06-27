@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,125 +44,111 @@ import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
  * @export
  * @interface InitiateTwoFactorRequest
  */
-export type InitiateTwoFactorRequest = DataObject & {
-  /**
-   *
-   * @type {Principal}
-   * @memberof InitiateTwoFactorRequest
-   */
-  principal?: Principal;
-  /**
-   * 2FA method (TOTP or SMS)
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  method?: InitiateTwoFactorRequestMethodEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof InitiateTwoFactorRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof InitiateTwoFactorRequest
-   */
-  trashed?: boolean;
-};
-
-export function InitiateTwoFactorRequestFromJSON(
-  json: any,
-): InitiateTwoFactorRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    principal: !exists(json, "principal")
-      ? undefined
-      : PrincipalFromJSON(json["principal"]),
-    method: !exists(json, "method") ? undefined : json["method"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type InitiateTwoFactorRequest  = DataObject & {
+    /**
+     * 
+     * @type {Principal}
+     * @memberof InitiateTwoFactorRequest
+     */
+    principal?: Principal;
+    /**
+     * 2FA method (TOTP or SMS)
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    method?: InitiateTwoFactorRequestMethodEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof InitiateTwoFactorRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof InitiateTwoFactorRequest
+     */
+    trashed?: boolean;
 }
 
-export function InitiateTwoFactorRequestToJSON(
-  value?: InitiateTwoFactorRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    principal: PrincipalToJSON(value.principal),
-    method: value.method,
-    trashed: value.trashed,
-  };
+export function InitiateTwoFactorRequestFromJSON(json: any): InitiateTwoFactorRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'method': !exists(json, 'method') ? undefined : json['method'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
+}
+
+export function InitiateTwoFactorRequestToJSON(value?: InitiateTwoFactorRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'principal': PrincipalToJSON(value.principal),
+        'method': value.method,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum InitiateTwoFactorRequestMethodEnum {
-  TOTP = "totp",
-  SMS = "sms",
+    TOTP = 'totp',
+    SMS = 'sms'
 }
+
+

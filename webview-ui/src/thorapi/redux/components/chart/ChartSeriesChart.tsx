@@ -19,32 +19,20 @@ Description: ChartSeries
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ChartSeries } from "@thorapi/model";
-import {
-  useGetChartSeriessQuery,
-  useAddChartSeriesMutation,
-  useUpdateChartSeriesMutation,
-} from "../../services/ChartSeriesService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ChartSeries } from '@thorapi/model';
+import { useGetChartSeriessQuery, useAddChartSeriesMutation, useUpdateChartSeriesMutation } from '../../services/ChartSeriesService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ChartSeriesChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetChartSeriessQuery();
 
   const [data, setData] = useState<ChartSeries[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ChartSeries>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ChartSeriesChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const ChartSeriesChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((chartseries: DataObject) => [chartseries])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((chartseries: DataObject) => [chartseries])} />
+          )}
     </>
   );
 };

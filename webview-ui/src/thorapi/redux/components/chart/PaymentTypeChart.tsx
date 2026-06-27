@@ -19,32 +19,20 @@ Description: PaymentType
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, PaymentType } from "@thorapi/model";
-import {
-  useGetPaymentTypesQuery,
-  useAddPaymentTypeMutation,
-  useUpdatePaymentTypeMutation,
-} from "../../services/PaymentTypeService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, PaymentType } from '@thorapi/model';
+import { useGetPaymentTypesQuery, useAddPaymentTypeMutation, useUpdatePaymentTypeMutation } from '../../services/PaymentTypeService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const PaymentTypeChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPaymentTypesQuery();
 
   const [data, setData] = useState<PaymentType[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<PaymentType>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const PaymentTypeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const PaymentTypeChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((paymenttype: DataObject) => [paymenttype])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((paymenttype: DataObject) => [paymenttype])} />
+          )}
     </>
   );
 };

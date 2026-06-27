@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Trust,
+  TrustTrustStatusEnum,
+} from '@thorapi/model';
 
-import { Trust, TrustTrustStatusEnum } from "@thorapi/model";
-
-import { useAddTrustMutation } from "../../services/TrustService";
+import { useAddTrustMutation } from '../../services/TrustService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,27 +62,29 @@ Aggregate Trust Fabric control-plane object used as the ThorAPI non-CRUD command
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TrustStatusValidation = () => {
-  return ["VERIFIED", "DEGRADED", "CRITICAL", "UNCONFIGURED"];
+  return [
+    'VERIFIED',
+    'DEGRADED',
+    'CRITICAL',
+    'UNCONFIGURED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  trustStatus: Yup.mixed().oneOf(
-    TrustStatusValidation(),
-    "Invalid value for trustStatus",
-  ),
-  apiSpecHash: Yup.string(),
-  generatedSourceHash: Yup.string(),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+      trustStatus: Yup.mixed()
+        .oneOf(TrustStatusValidation(), "Invalid value for trustStatus")
+        ,
+        apiSpecHash: Yup.string(),
+        generatedSourceHash: Yup.string(),
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -104,18 +101,12 @@ const TrustForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -123,12 +114,12 @@ const TrustForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Trust> = {
-    name: "",
-    trustStatus: undefined,
-    apiSpecHash: "",
-    generatedSourceHash: "",
-    ownerId: "",
-    trashed: false,
+          name: '',
+        trustStatus: undefined,
+          apiSpecHash: '',
+          generatedSourceHash: '',
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -143,14 +134,11 @@ const TrustForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Trust:", grants);
+    console.log('Permissions saved for new Trust:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Trust>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Trust>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -161,7 +149,7 @@ const TrustForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Trust created successfully! Would you like to set permissions for this object?`,
+          `Trust created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -169,8 +157,8 @@ const TrustForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Trust:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Trust:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -191,36 +179,44 @@ const TrustForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addTrustResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Trust
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Trust
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -232,33 +228,30 @@ const TrustForm: React.FC = () => {
                     <label htmlFor="trustStatus" className="nice-form-control">
                       <b>
                         Trust Status:
-                        {touched.trustStatus && !errors.trustStatus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trustStatus &&
+                         !errors.trustStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="trustStatus"
-                        value={values.trustStatus || ""}
-                        className={
-                          errors.trustStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("trustStatus", true);
-                          setFieldValue(
-                            "trustStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Trust Status" />
-                        <TrustStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="trustStatus"
+                          value={values.trustStatus || ''}
+                          className={
+                            errors.trustStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('trustStatus', true);
+                            setFieldValue('trustStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Trust Status" />
+                          <TrustStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -270,21 +263,28 @@ const TrustForm: React.FC = () => {
                     <label htmlFor="apiSpecHash" className="nice-form-control">
                       <b>
                         Api Spec Hash:
-                        {touched.apiSpecHash && !errors.apiSpecHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.apiSpecHash &&
+                         !errors.apiSpecHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="apiSpecHash"
-                        value={values?.apiSpecHash}
-                        placeholder="Api Spec Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="apiSpecHash"
+                            value={values?.apiSpecHash}
+                            placeholder="Api Spec Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -293,28 +293,31 @@ const TrustForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="generatedSourceHash"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="generatedSourceHash" className="nice-form-control">
                       <b>
                         Generated Source Hash:
                         {touched.generatedSourceHash &&
-                          !errors.generatedSourceHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.generatedSourceHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="generatedSourceHash"
-                        value={values?.generatedSourceHash}
-                        placeholder="Generated Source Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="generatedSourceHash"
+                            value={values?.generatedSourceHash}
+                            placeholder="Generated Source Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -326,21 +329,28 @@ const TrustForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -352,25 +362,32 @@ const TrustForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -380,58 +397,45 @@ const TrustForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Trust
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Trust
+                  </CoolButton>
 
-                    {(addTrustResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addTrustResult as any).error
-                              ? (addTrustResult as any).error.data
-                              : (addTrustResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustResult as any).error ? (addTrustResult as any).error.data : (addTrustResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustResult: {JSON.stringify(addTrustResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustResult: {JSON.stringify(addTrustResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -463,13 +467,16 @@ kebabcase trust-status-lookup
 const TrustStatusLookup = () => {
   return (
     <>
-      <option value="VERIFIED" label="Verified" />
-      <option value="DEGRADED" label="Degraded" />
-      <option value="CRITICAL" label="Critical" />
-      <option value="UNCONFIGURED" label="Unconfigured" />
+      <option value='VERIFIED' label="Verified" />
+      <option value='DEGRADED' label="Degraded" />
+      <option value='CRITICAL' label="Critical" />
+      <option value='UNCONFIGURED' label="Unconfigured" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustForm;
+

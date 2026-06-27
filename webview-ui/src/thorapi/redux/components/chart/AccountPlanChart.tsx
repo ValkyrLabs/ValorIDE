@@ -19,32 +19,20 @@ Description: AccountPlan
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, AccountPlan } from "@thorapi/model";
-import {
-  useGetAccountPlansQuery,
-  useAddAccountPlanMutation,
-  useUpdateAccountPlanMutation,
-} from "../../services/AccountPlanService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, AccountPlan } from '@thorapi/model';
+import { useGetAccountPlansQuery, useAddAccountPlanMutation, useUpdateAccountPlanMutation } from '../../services/AccountPlanService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const AccountPlanChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetAccountPlansQuery();
 
   const [data, setData] = useState<AccountPlan[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<AccountPlan>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const AccountPlanChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const AccountPlanChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((accountplan: DataObject) => [accountplan])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((accountplan: DataObject) => [accountplan])} />
+          )}
     </>
   );
 };

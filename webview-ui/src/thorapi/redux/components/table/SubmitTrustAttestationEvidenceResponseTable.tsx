@@ -13,35 +13,23 @@ Template file: typescript-redux-query/modelTable.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import React, { useState, useEffect, useRef } from "react";
-import { Form as BSForm, ButtonGroup, Modal, Container } from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { BASE_PATH } from "@thorapi/src";
-import { getStoredJwtToken } from "../../../../utils/authTokenStorage";
+import React, { useState, useEffect, useRef } from 'react';
+import { Form as BSForm, ButtonGroup, Modal , Container} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { BASE_PATH } from '@thorapi/src';
+import { getStoredJwtToken } from '../../../../utils/authTokenStorage';
 import {
-  FaArrowDown,
-  FaFilter,
-  FaSync,
-  FaEye,
-  FaChevronRight,
-  FaChevronLeft,
-  FaChevronDown,
-  FaPlus,
-  FaTrash,
-  FaCopy,
-  FaPaste,
-  FaUserShield,
-  FaFileExport,
-  FaFileImport,
-} from "react-icons/fa";
+  FaArrowDown, FaFilter, FaSync, FaEye, FaChevronRight, FaChevronLeft, FaChevronDown,
+  FaPlus, FaTrash, FaCopy, FaPaste, FaUserShield, FaFileExport, FaFileImport
+} from 'react-icons/fa';
 const ICON_SIZE = 18;
 const IMPORT_MAX_FILE_BYTES = 5 * 1024 * 1024;
 const IMPORT_MAX_ROWS = 500;
 const EXPORT_MAX_ROWS = 1000;
-import { SubmitTrustAttestationEvidenceResponse } from "@thorapi/model";
-import SubmitTrustAttestationEvidenceResponseForm from "@thorapi/redux/components/form/SubmitTrustAttestationEvidenceResponseForm";
+import { SubmitTrustAttestationEvidenceResponse } from '@thorapi/model';
+import SubmitTrustAttestationEvidenceResponseForm from '@thorapi/redux/components/form/SubmitTrustAttestationEvidenceResponseForm';
 
-import CoolButton from "@valkyr/component-library/CoolButton";
+import CoolButton from '@valkyr/component-library/CoolButton';
 // Removed SplitPane usage; using floating toolbar for edit form
 
 // ** Import the LAZY paged hook only **
@@ -50,99 +38,104 @@ import {
   useAddSubmitTrustAttestationEvidenceResponseMutation,
   useUpdateSubmitTrustAttestationEvidenceResponseMutation,
   useDeleteSubmitTrustAttestationEvidenceResponseMutation,
-  useDeleteSubmitTrustAttestationEvidenceResponseCascadeMutation,
-} from "@thorapi/redux/services/SubmitTrustAttestationEvidenceResponseService";
+  useDeleteSubmitTrustAttestationEvidenceResponseCascadeMutation
+} from '@thorapi/redux/services/SubmitTrustAttestationEvidenceResponseService';
 
-import ObjectTreeView from "@valkyr/component-library/ObjectTreeView";
-import { RBGrid } from "@valkyr/component-library/BootstrapGrid";
-import QBEPicker from "@valkyr/component-library/QBEPicker";
-import MarkdownEditorModal from "@valkyr/component-library/MarkdownEditorModal";
-import type { ColumnSchema } from "@valkyr/component-library/BootstrapGrid";
+import ObjectTreeView from '@valkyr/component-library/ObjectTreeView';
+import { RBGrid } from '@valkyr/component-library/BootstrapGrid';
+import QBEPicker from '@valkyr/component-library/QBEPicker';
+import MarkdownEditorModal from '@valkyr/component-library/MarkdownEditorModal';
+import type { ColumnSchema } from '@valkyr/component-library/BootstrapGrid';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionAssignment,
-  PermissionDialogProps,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
-import FloatingControlPanel from "@valkyr/component-library/OpenAPIViz/FloatingControlPanel";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionAssignment, PermissionDialogProps, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+import FloatingControlPanel from '@valkyr/component-library/OpenAPIViz/FloatingControlPanel';
+
 
 // Fields to hide by default
 const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-  "trashed",
+  'password', 'apiKey', 'accountId', 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById', 'trashed'
 ];
+
+const MODEL_FIELDS = [
+  'evidence',
+  'accepted',
+  'id',
+  'ownerId',
+  'createdDate',
+  'keyHash',
+  'lastAccessedById',
+  'lastAccessedDate',
+  'lastModifiedById',
+  'lastModifiedDate',
+  'trashed',
+];
+
+const SENSITIVE_FIELD_PATTERN = /password|secret|api.?key|credential|token|accountId/i;
 
 // Column schema hard-coded from model metadata (enums, dates, booleans)
 const columnSchema: Record<string, ColumnSchema> = {
-  accepted: { type: "boolean" },
-  createdDate: { type: "datetime" },
-  lastAccessedDate: { type: "datetime" },
-  lastModifiedDate: { type: "datetime" },
-  trashed: { type: "boolean" },
+  'accepted': { type: 'boolean' },
+  'createdDate': { type: 'datetime' },
+  'lastAccessedDate': { type: 'datetime' },
+  'lastModifiedDate': { type: 'datetime' },
+  'trashed': { type: 'boolean' },
 };
 
 const stringFieldCandidates = [
-  "id",
-  "ownerId",
-  "keyHash",
-  "lastAccessedById",
-  "lastModifiedById",
+  'id',
+  'ownerId',
+  'keyHash',
+  'lastAccessedById',
+  'lastModifiedById',
 ];
 
 const refTypeOverrides: Record<string, string> = {
-  apiKeyIntegrationAccount: "IntegrationAccount",
+  apiKeyIntegrationAccount: 'IntegrationAccount',
 };
 
 const computeRefType = (field: string): string | null => {
   if (!field) return null;
   if (refTypeOverrides[field]) return refTypeOverrides[field];
   if (/^id$/i.test(field)) return null;
-
+  
   // Handle fields ending in 'Id' (including compound names like apiKeyIntegrationAccountId)
   if (/id$/i.test(field)) {
-    const base = field.replace(/id$/i, "");
+    const base = field.replace(/id$/i, '');
     // Only treat as FK if base is at least 2 chars (avoid "sid" → "S", "bid" → "B", etc)
     if (!base || base.length < 2) return null;
-
+    
     // Convert camelCase to PascalCase
     // For "apiKeyIntegrationAccount" → "ApiKeyIntegrationAccount"
     // For "integrationAccount" → "IntegrationAccount"
     // For "user" → "User"
     return base.charAt(0).toUpperCase() + base.slice(1);
   }
-
+  
   if (/uuid$/i.test(field)) {
-    const base = field.replace(/uuid$/i, "");
+    const base = field.replace(/uuid$/i, '');
     // Same 2-char minimum for uuid suffix
     if (!base || base.length < 2) return null;
     return base.charAt(0).toUpperCase() + base.slice(1);
   }
-
+  
   return null;
 };
 
 const asReadableScalar = (input: any): string | null => {
   if (input == null) return null;
-  if (typeof input === "string") {
+  if (typeof input === 'string') {
     const trimmed = input.trim();
     return trimmed.length ? trimmed : null;
   }
-  if (typeof input === "number" || typeof input === "boolean") {
+  if (typeof input === 'number' || typeof input === 'boolean') {
     return String(input);
   }
   return null;
 };
 
 const firstReadable = (value: any, fields: string[]): string | null => {
-  if (!value || typeof value !== "object") return null;
+  if (!value || typeof value !== 'object') return null;
   for (const field of fields) {
     const scalar = asReadableScalar((value as any)[field]);
     if (scalar) return scalar;
@@ -151,51 +144,41 @@ const firstReadable = (value: any, fields: string[]): string | null => {
 };
 
 const refLabelFromRecord = (value: any) => {
-  if (!value) return "";
+  if (!value) return '';
   const primary = firstReadable(value, [
-    "label",
-    "name",
-    "accountName",
-    "displayName",
-    "title",
-    "username",
-    "email",
+    'label',
+    'name',
+    'accountName',
+    'displayName',
+    'title',
+    'username',
+    'email',
   ]);
-  const description = firstReadable(value, ["description"]);
-  if (primary && description && description !== primary)
-    return `${primary} — ${description}`;
+  const description = firstReadable(value, ['description']);
+  if (primary && description && description !== primary) return `${primary} — ${description}`;
   if (primary) return primary;
   if (description) return description;
-  const identity = firstReadable(value, ["id", "keyHash", "uuid"]);
+  const identity = firstReadable(value, ['id', 'keyHash', 'uuid']);
   if (identity) return identity;
 
   // Last-resort fallback: first scalar field found on object
-  if (typeof value === "object") {
+  if (typeof value === 'object') {
     for (const candidate of Object.values(value)) {
       const scalar = asReadableScalar(candidate);
       if (scalar) return scalar;
     }
   }
-  return "";
+  return '';
 };
 
 const normalizeRefValue = (value: any) => {
   if (!value) return null;
   const source =
-    value &&
-    typeof value === "object" &&
-    value.raw &&
-    typeof value.raw === "object"
+    value && typeof value === 'object' && value.raw && typeof value.raw === 'object'
       ? value.raw
       : value;
   return {
-    id:
-      source.id ??
-      source.keyHash ??
-      source.uuid ??
-      value.id ??
-      value.value ??
-      null,
+    id: source.id ?? source.keyHash ?? source.uuid ?? value.id ?? value.value ?? null,
     label: refLabelFromRecord(source),
     raw: source,
   };
@@ -209,19 +192,11 @@ const shouldStoreReferenceObject = (fieldKey: string) => {
 const resolveReferenceFieldValue = (fieldKey: string, picked: any) => {
   if (!picked) return null;
   const source =
-    picked &&
-    typeof picked === "object" &&
-    picked.raw &&
-    typeof picked.raw === "object"
+    picked && typeof picked === 'object' && picked.raw && typeof picked.raw === 'object'
       ? picked.raw
       : picked;
   const resolvedId =
-    picked?.id ??
-    source?.id ??
-    source?.keyHash ??
-    source?.uuid ??
-    source?.value ??
-    null;
+    picked?.id ?? source?.id ?? source?.keyHash ?? source?.uuid ?? source?.value ?? null;
   const resolvedLabel =
     picked?.label ??
     refLabelFromRecord(source) ??
@@ -241,17 +216,17 @@ const resolveReferenceFieldValue = (fieldKey: string, picked: any) => {
   return resolvedId;
 };
 
-const buildAuthHeaders = (contentType: string = "application/json") => {
+const buildAuthHeaders = (contentType: string = 'application/json') => {
   const token = getStoredJwtToken();
   const fallbackToken =
-    typeof globalThis !== "undefined"
+    typeof globalThis !== 'undefined'
       ? (globalThis as any).__VALKYR_AUTH_TOKEN__
       : undefined;
   const authToken = token || fallbackToken;
   return {
-    "Content-Type": contentType,
+    'Content-Type': contentType,
     ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-    ...(token ? { jwtSession: token } : {}),
+    ...(token ? { 'jwtSession': token } : {}),
   };
 };
 
@@ -261,24 +236,43 @@ const mergeUpdatedRow = (rows: any[], rowId: string, replacement: any) =>
     return currentId === rowId ? replacement : row;
   });
 
-const buildResourcePath = (rowId: string) =>
-  `${BASE_PATH}/SubmitTrustAttestationEvidenceResponse/${rowId}`;
+const reconcileSavedRow = (
+  updatedItem: any,
+  saved: any,
+  reloaded: any,
+  successField?: string,
+) => {
+  const candidate = reloaded ?? saved ?? updatedItem;
+  if (!successField) return candidate;
+
+  if (candidate && Object.prototype.hasOwnProperty.call(candidate, successField)) {
+    return candidate;
+  }
+
+  throw new Error(
+    `SubmitTrustAttestationEvidenceResponse update did not return persisted value for ${successField}; refusing to show an unverified edit.`,
+  );
+};
+
+const buildResourcePath = (rowId: string) => `${BASE_PATH}/SubmitTrustAttestationEvidenceResponse/${rowId}`;
 
 const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // -------------------------------------------------------------------
   // 1) "Lazy" RTK Query Hook: We manually trigger page fetches
   // -------------------------------------------------------------------
-  // destructure: [triggerFn, { data, isFetching, isError }]
-  const [triggerGetPage, { data: fetchedPageData = [], isFetching, isError }] =
+  // destructure: [triggerFn, { isFetching, isError }]
+  const [triggerGetPage, { isFetching, isError }] =
     useLazyGetSubmitTrustAttestationEvidenceResponsesPagedQuery();
 
-  // We track the current page number in state
-  const [page, setPage] = useState(1);
+  // We track the current zero-based page number in state.
+  const [page, setPage] = useState(0);
+  const pageRef = useRef(0);
+  const loadingPageRef = useRef<number | null>(null);
+  const loadedPagesRef = useRef<Set<number>>(new Set());
+  const pageRequestVersionRef = useRef(0);
 
-  // A local array accumulating all results from pages 1..N
-  const [allData, setAllData] = useState<
-    SubmitTrustAttestationEvidenceResponse[]
-  >([]);
+  // A local array accumulating all results from pages 0..N
+  const [allData, setAllData] = useState<SubmitTrustAttestationEvidenceResponse[]>([]);
 
   // Keep track if there's more data to load
   const [hasMore, setHasMore] = useState(true);
@@ -288,101 +282,126 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // -------------------------------------------------------------------
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  const handleLoadData = () => {
-    setPage(1);
-    setAllData([]);
-    setHasMore(true);
-    const arg: any = { page: 1 };
-    if (qbeExample) arg.example = qbeExample;
-    triggerGetPage(arg);
-    setDataLoaded(true);
+  const normalizePageRows = (result: unknown): SubmitTrustAttestationEvidenceResponse[] => {
+    if (Array.isArray(result)) return result as SubmitTrustAttestationEvidenceResponse[];
+
+    const candidate =
+      (result as any)?.content ??
+      (result as any)?.items ??
+      (result as any)?.results ??
+      (result as any)?.data;
+
+    return Array.isArray(candidate) ? (candidate as SubmitTrustAttestationEvidenceResponse[]) : [];
   };
 
-  // Whenever `fetchedPageData` changes, merge into `allData` by id (replace in place)
-  useEffect(() => {
-    if (fetchedPageData.length === 0 && page > 1) {
-      // We tried to load a subsequent page but got no items => end
+  const mergeFetchedRows = (incomingRows: SubmitTrustAttestationEvidenceResponse[], requestedPage: number) => {
+    if (incomingRows.length === 0) {
       setHasMore(false);
       return;
     }
-    if (fetchedPageData.length > 0) {
-      // Merge newly fetched data: replace existing rows by id; append new ones
-      setAllData((prev) => {
-        const updated = [...prev];
-        for (const item of fetchedPageData as any[]) {
-          const id = (item as any).id ?? (item as any).keyHash;
-          if (id === null) continue;
-          const idx = updated.findIndex((r: any) => (r.id ?? r.keyHash) === id);
-          if (idx >= 0) updated[idx] = item as any;
-          else updated.push(item as any);
+
+    // Merge the rows returned by this request only: replace by id/keyHash, append new rows.
+    setAllData((prev) => {
+      const updated = [...prev];
+      for (const item of incomingRows as any[]) {
+        const id = (item as any).id ?? (item as any).keyHash;
+        if (id == null) {
+          updated.push(item as any);
+          continue;
         }
-        return updated;
-      });
-      // Update loaded timestamp (HH:MM)
-      try {
-        const t = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        setLastLoadedAt(t);
-      } catch (e) {
-        setLastLoadedAt(new Date().toISOString());
+        const idx = updated.findIndex((r: any) => ((r as any).id ?? (r as any).keyHash) === id);
+        if (idx >= 0) updated[idx] = item as any;
+        else updated.push(item as any);
+      }
+      return updated;
+    });
+
+    try {
+      const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setLastLoadedAt(t);
+    } catch (e) {
+      setLastLoadedAt(new Date().toISOString());
+    }
+  };
+
+  const loadPage = async (requestedPage: number, reset = false, example = qbeExample) => {
+    if (!reset && loadingPageRef.current != null) {
+      return;
+    }
+    if (!reset && loadedPagesRef.current.has(requestedPage)) {
+      return;
+    }
+
+    const requestVersion = reset
+      ? pageRequestVersionRef.current + 1
+      : pageRequestVersionRef.current;
+    if (reset) {
+      pageRequestVersionRef.current = requestVersion;
+      loadedPagesRef.current = new Set();
+      loadingPageRef.current = null;
+      setAllData([]);
+      setHasMore(true);
+    }
+
+    loadingPageRef.current = requestedPage;
+    pageRef.current = requestedPage;
+    setPage(requestedPage);
+    setDataLoaded(true);
+
+    const arg: any = { page: requestedPage };
+    if (example) arg.example = example;
+
+    try {
+      const result = await triggerGetPage(arg).unwrap();
+      if (requestVersion !== pageRequestVersionRef.current) {
+        return;
+      }
+      const rows = normalizePageRows(result);
+      mergeFetchedRows(rows, requestedPage);
+      if (rows.length > 0) {
+        loadedPagesRef.current.add(requestedPage);
+      }
+    } finally {
+      if (loadingPageRef.current === requestedPage) {
+        loadingPageRef.current = null;
       }
     }
-  }, [fetchedPageData, page]);
+  };
+
+  const handleLoadData = () => {
+    void loadPage(0, true);
+  };
 
   // -------------------------------------------------------------------
   // Mutations (Add, Update, etc.)
   // -------------------------------------------------------------------
-  const [addSubmitTrustAttestationEvidenceResponse] =
-    useAddSubmitTrustAttestationEvidenceResponseMutation();
-  const [updateSubmitTrustAttestationEvidenceResponse] =
-    useUpdateSubmitTrustAttestationEvidenceResponseMutation();
-  const [deleteSubmitTrustAttestationEvidenceResponse] =
-    useDeleteSubmitTrustAttestationEvidenceResponseMutation();
-  const [deleteSubmitTrustAttestationEvidenceResponseCascade] =
-    useDeleteSubmitTrustAttestationEvidenceResponseCascadeMutation();
+  const [addSubmitTrustAttestationEvidenceResponse] = useAddSubmitTrustAttestationEvidenceResponseMutation();
+  const [updateSubmitTrustAttestationEvidenceResponse] = useUpdateSubmitTrustAttestationEvidenceResponseMutation();
+  const [deleteSubmitTrustAttestationEvidenceResponse] = useDeleteSubmitTrustAttestationEvidenceResponseMutation();
+  const [deleteSubmitTrustAttestationEvidenceResponseCascade] = useDeleteSubmitTrustAttestationEvidenceResponseCascadeMutation();
 
   // -------------------------------------------------------------------
   // UI states (editing, modals, etc.)
   // -------------------------------------------------------------------
   const [editRowId, setEditRowId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<
-    Partial<SubmitTrustAttestationEvidenceResponse>
-  >({});
+  const [formData, setFormData] = useState<Partial<SubmitTrustAttestationEvidenceResponse>>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalData, setModalData] = useState<{
-    id?: string;
-    key?: string;
-    value?: any;
-  }>({});
-  const [richModal, setRichModal] = useState<{
-    show: boolean;
-    content: string;
-    title?: string;
-    rowId?: string;
-    field?: string;
-  }>({ show: false, content: "" });
+  const [modalData, setModalData] = useState<{ id?: string; key?: string; value?: any }>({});
+  const [richModal, setRichModal] = useState<{ show: boolean; content: string; title?: string; rowId?: string; field?: string }>({ show: false, content: '' });
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showQbeModal, setShowQbeModal] = useState(false);
-  const [qbeText, setQbeText] = useState("");
+  const [qbeText, setQbeText] = useState('');
   const [qbeExample, setQbeExample] = useState<any | null>(null);
-  const [copiedRow, setCopiedRow] =
-    useState<SubmitTrustAttestationEvidenceResponse | null>(null);
+  const [copiedRow, setCopiedRow] = useState<SubmitTrustAttestationEvidenceResponse | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [showAllFields, setShowAllFields] = useState(false);
   const [lastLoadedAt, setLastLoadedAt] = useState<string | null>(null);
   // QBE reference picker state
-  const [qbePicker, setQbePicker] = useState<{
-    show: boolean;
-    refType?: string;
-    resolve?: (v: any | null) => void;
-    allowCreate?: boolean;
-  }>({ show: false });
+  const [qbePicker, setQbePicker] = useState<{ show: boolean; refType?: string; resolve?: (v: any|null)=>void; allowCreate?: boolean }>( { show: false } );
 
   // Sorting state
   const [sortColumn, setSortColumn] = useState<string | undefined>();
@@ -404,15 +423,10 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   }, [panelRef.current]);
 
   // For object expansions
-  const [expandedObjects, setExpandedObjects] = useState<
-    Record<string, boolean>
-  >({});
+  const [expandedObjects, setExpandedObjects] = useState<Record<string, boolean>>({});
 
   // For keyboard navigation
-  const [activeCell, setActiveCell] = useState<{
-    rowIndex: number;
-    colIndex: number;
-  } | null>(null);
+  const [activeCell, setActiveCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
 
   // Track whether the initial load already ran
   const autoLoadRef = useRef<boolean>(false);
@@ -421,32 +435,25 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // Permission Management State
   // -------------------------------------------------------------------
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-  const [selectedObjectForPermissions, setSelectedObjectForPermissions] =
-    useState<{
-      objectType: string;
-      objectId: string;
-    } | null>(null);
+  const [selectedObjectForPermissions, setSelectedObjectForPermissions] = useState<{
+    objectType: string;
+    objectId: string;
+  } | null>(null);
 
-  const reloadRowById = async (
-    rowId: string,
-  ): Promise<SubmitTrustAttestationEvidenceResponse | null> => {
+  const reloadRowById = async (rowId: string): Promise<SubmitTrustAttestationEvidenceResponse | null> => {
     if (!rowId) return null;
     try {
       const response = await fetch(buildResourcePath(rowId), {
-        method: "GET",
+        method: 'GET',
         headers: buildAuthHeaders(),
-        credentials: "include",
+        credentials: 'include',
       });
       if (!response.ok) {
         return null;
       }
       return (await response.json()) as SubmitTrustAttestationEvidenceResponse;
     } catch (err) {
-      console.warn(
-        "Could not reload SubmitTrustAttestationEvidenceResponse row",
-        rowId,
-        err,
-      );
+      console.warn('Could not reload SubmitTrustAttestationEvidenceResponse row', rowId, err);
       return null;
     }
   };
@@ -457,45 +464,32 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     successField?: string,
   ) => {
     try {
-      const saved = await updateSubmitTrustAttestationEvidenceResponse(
-        updatedItem as any,
-      ).unwrap();
+      const saved = await updateSubmitTrustAttestationEvidenceResponse(updatedItem as any).unwrap();
       const persistedId = String((saved as any)?.id ?? rowId);
-      const hydrated =
-        (await reloadRowById(persistedId)) ?? (saved as any) ?? updatedItem;
-      setAllData(
-        (prev) =>
-          mergeUpdatedRow(
-            prev as any[],
-            rowId,
-            hydrated as any,
-          ) as SubmitTrustAttestationEvidenceResponse[],
-      );
+      const reloaded = await reloadRowById(persistedId);
+      const hydrated = reconcileSavedRow(updatedItem, saved as any, reloaded, successField);
+      setAllData((prev) => mergeUpdatedRow(prev as any[], rowId, hydrated as any) as SubmitTrustAttestationEvidenceResponse[]);
       if (successField) {
         setSaveSuccess(`${successField} saved successfully`);
         setTimeout(() => setSaveSuccess(null), 3000);
       }
       return hydrated;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error
-          ? error.message
-          : "Failed to update SubmitTrustAttestationEvidenceResponse";
-      console.error(
-        "Failed to update SubmitTrustAttestationEvidenceResponse:",
-        error,
-      );
+      const errorMsg = error instanceof Error ? error.message : 'Failed to update SubmitTrustAttestationEvidenceResponse';
+      console.error('Failed to update SubmitTrustAttestationEvidenceResponse:', error);
       setSaveError(errorMsg);
       setTimeout(() => setSaveError(null), 5000);
       throw error;
     }
   };
 
+
   // Auth principal is runtime-injected in memory only; do not persist/read from web storage.
   const currentUser =
     typeof globalThis !== "undefined"
-      ? ((globalThis as any).__VALKYR_AUTH_PRINCIPAL__ ?? null)
+      ? (globalThis as any).__VALKYR_AUTH_PRINCIPAL__ ?? null
       : null;
+
 
   // -------------------------------------------------------------------
   // Ensure grid rows always have a required `id: string`
@@ -513,11 +507,19 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // -------------------------------------------------------------------
   const columns = React.useMemo(() => {
     if (!tableData.length) return [];
-
-    // Collect all unique keys from all rows in order of first appearance
+    
+    // Start with generated model fields so null/omitted secure and audit
+    // fields still have visible columns when hidden fields are toggled on.
     const allKeys: string[] = [];
     const seen = new Set<string>();
 
+    for (const key of MODEL_FIELDS) {
+      if (!seen.has(key)) {
+        allKeys.push(key);
+        seen.add(key);
+      }
+    }
+    
     for (const row of tableData) {
       for (const key of Object.keys(row)) {
         if (!seen.has(key)) {
@@ -526,10 +528,10 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
         }
       }
     }
-
+    
     // Filter skiplist
     return allKeys.filter(
-      (key) => showAllFields || !fieldSkipList.includes(key),
+      (key) => showAllFields || !fieldSkipList.includes(key)
     );
   }, [tableData, showAllFields]);
 
@@ -538,9 +540,13 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
 
     stringFieldCandidates.forEach((field) => {
       const refType = computeRefType(field);
-      if (refType) {
-        schema[field] = { ...(schema[field] ?? {}), refType };
-      }
+      const existing = schema[field] ?? {};
+      schema[field] = {
+        type: existing.type ?? 'string',
+        ...existing,
+        ...(refType ? { refType } : {}),
+        ...(SENSITIVE_FIELD_PATTERN.test(field) ? { secure: true } : {}),
+      };
     });
 
     // Scan ALL data rows and ALL fields to detect reference patterns
@@ -548,32 +554,25 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       const rowObj = row as any;
       for (const key of Object.keys(rowObj)) {
         if (schema[key]) continue; // Already processed
-
+        
         const value = rowObj[key];
-
+        
         // Try FK pattern first (ending in Id/Uuid)
         const fkRefType = computeRefType(key);
         if (fkRefType) {
           schema[key] = { ...(schema[key] ?? {}), refType: fkRefType };
           continue;
         }
-
+        
         // Try reference object pattern (field name suggests it's a reference)
         // Matches: Account, User, Principal, Role, etc. at end of field name
-        const refPatternMatch = key.match(
-          /([A-Z][a-z]+Account|Account|User|Principal|Role|Group|Owner|Creator|Assignee|Reviewer|Approver|Manager|Workspace|Project|Team|Organization|Department|Application)$/,
-        );
-        if (
-          refPatternMatch &&
-          value &&
-          typeof value === "object" &&
-          !Array.isArray(value)
-        ) {
+        const refPatternMatch = key.match(/([A-Z][a-z]+Account|Account|User|Principal|Role|Group|Owner|Creator|Assignee|Reviewer|Approver|Manager|Workspace|Project|Team|Organization|Department|Application)$/);
+        if (refPatternMatch && value && typeof value === 'object' && !Array.isArray(value)) {
           const inferredRefType = refPatternMatch[1];
           schema[key] = { ...(schema[key] ?? {}), refType: inferredRefType };
           continue;
         }
-
+        
         // Even if value is null, check field name pattern
         if (refPatternMatch) {
           const inferredRefType = refPatternMatch[1];
@@ -586,11 +585,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   }, [tableData]);
 
   // Reference picker bridge used by RBGrid
-  const onReferencePick = async (
-    rowId: string,
-    columnKey: string,
-    refType?: string,
-  ) => {
+  const onReferencePick = async (rowId: string, columnKey: string, refType?: string) => {
     return new Promise<any | null>((resolve) => {
       setQbePicker({ show: true, refType, resolve, allowCreate: true });
     });
@@ -618,7 +613,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
 
   const handleDelete = () => {
     if (!selectedRows.size) {
-      alert("Select at least one row to delete.");
+      alert('Select at least one row to delete.');
       return;
     }
     setShowDeleteModal(true);
@@ -634,22 +629,16 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       await Promise.all(
         ids.map(async (id) => {
           try {
-            await deleteSubmitTrustAttestationEvidenceResponseCascade({
-              id,
-              cascade: true,
-              trash: true,
-            } as any).unwrap();
+            await deleteSubmitTrustAttestationEvidenceResponseCascade({ id, cascade: true, trash: true } as any).unwrap();
           } catch (e) {
-            console.error("Failed to cascade delete id", id, e);
+            console.error('Failed to cascade delete id', id, e);
             try {
-              await deleteSubmitTrustAttestationEvidenceResponse(
-                id as any,
-              ).unwrap();
+              await deleteSubmitTrustAttestationEvidenceResponse(id as any).unwrap();
             } catch (inner) {
-              console.error("Fallback delete also failed for id", id, inner);
+              console.error('Fallback delete also failed for id', id, inner);
             }
           }
-        }),
+        })
       );
       setAllData((prev) => prev.filter((item) => !selectedRows.has(item.id)));
     } finally {
@@ -658,40 +647,33 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     }
   };
 
-  // AddressToJSON(value?: Address)
+
+
+// AddressToJSON(value?: Address)
 
   // -------------------------------------------------------------------
   // Add, Copy, Paste
   // -------------------------------------------------------------------
-
+  
   const handleAddRow = async () => {
     try {
       if (selectedRows.size !== 1) {
-        alert("Select exactly one row to duplicate.");
+        alert('Select exactly one row to duplicate.');
         return;
       }
       const rowId = Array.from(selectedRows)[0];
       const source = allData.find((item) => item.id === rowId);
       if (!source) {
-        alert("Could not find selected row.");
+        alert('Could not find selected row.');
         return;
       }
-      const payload: Partial<SubmitTrustAttestationEvidenceResponse> = {
-        ...source,
-      };
+      const payload: Partial<SubmitTrustAttestationEvidenceResponse> = { ...source };
       delete (payload as any).id;
-      const created =
-        await addSubmitTrustAttestationEvidenceResponse(payload).unwrap();
-      setAllData((prev) => [
-        created as SubmitTrustAttestationEvidenceResponse,
-        ...prev,
-      ]);
+      const created = await addSubmitTrustAttestationEvidenceResponse(payload).unwrap();
+      setAllData((prev) => [created as SubmitTrustAttestationEvidenceResponse, ...prev]);
     } catch (error) {
-      console.error(
-        "Failed to add SubmitTrustAttestationEvidenceResponse:",
-        error,
-      );
-      alert("Failed to add. See console for details.");
+      console.error('Failed to add SubmitTrustAttestationEvidenceResponse:', error);
+      alert('Failed to add. See console for details.');
     }
   };
 
@@ -701,38 +683,29 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       const rowToCopy = allData.find((item) => item.id === rowId) || null;
       setCopiedRow(rowToCopy);
     } else {
-      alert("Select exactly one row to copy.");
+      alert('Select exactly one row to copy.');
     }
   };
 
   const handlePasteRow = async () => {
     if (!copiedRow) {
-      alert("No row copied. Please copy a row first.");
+      alert('No row copied. Please copy a row first.');
       return;
     }
     try {
-      const payload: Partial<SubmitTrustAttestationEvidenceResponse> = {
-        ...copiedRow,
-      };
+      const payload: Partial<SubmitTrustAttestationEvidenceResponse> = { ...copiedRow };
       delete (payload as any).id;
-      const created =
-        await addSubmitTrustAttestationEvidenceResponse(payload).unwrap();
-      setAllData((prev) => [
-        created as SubmitTrustAttestationEvidenceResponse,
-        ...prev,
-      ]);
+      const created = await addSubmitTrustAttestationEvidenceResponse(payload).unwrap();
+      setAllData((prev) => [created as SubmitTrustAttestationEvidenceResponse, ...prev]);
     } catch (error) {
-      console.error(
-        "Failed to paste (create) SubmitTrustAttestationEvidenceResponse:",
-        error,
-      );
-      alert("Failed to paste. See console for details.");
+      console.error('Failed to paste (create) SubmitTrustAttestationEvidenceResponse:', error);
+      alert('Failed to paste. See console for details.');
     }
   };
 
   const handleExportSelected = async () => {
     if (selectedRows.size === 0) {
-      alert("Select at least one row to export.");
+      alert('Select at least one row to export.');
       return;
     }
 
@@ -750,9 +723,9 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       for (const id of ids) {
         try {
           const response = await fetch(buildResourcePath(id), {
-            method: "GET",
+            method: 'GET',
             headers: buildAuthHeaders(),
-            credentials: "include",
+            credentials: 'include',
           });
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -760,21 +733,21 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
           exportedRows.push(await response.json());
         } catch (err) {
           failedIds.push(id);
-          console.error("Failed to export row", id, err);
+          console.error('Failed to export row', id, err);
         }
       }
 
       if (!exportedRows.length) {
-        alert("No rows could be exported from the API.");
+        alert('No rows could be exported from the API.');
         return;
       }
 
-      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
       const blob = new Blob([JSON.stringify(exportedRows, null, 2)], {
-        type: "application/json;charset=utf-8",
+        type: 'application/json;charset=utf-8',
       });
       const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
+      const anchor = document.createElement('a');
       anchor.href = url;
       anchor.download = `SubmitTrustAttestationEvidenceResponse-export-${stamp}.json`;
       document.body.appendChild(anchor);
@@ -783,9 +756,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       URL.revokeObjectURL(url);
 
       if (failedIds.length) {
-        alert(
-          `Exported ${exportedRows.length} row(s). Failed to export ${failedIds.length} row(s).`,
-        );
+        alert(`Exported ${exportedRows.length} row(s). Failed to export ${failedIds.length} row(s).`);
       }
     } finally {
       setIsExporting(false);
@@ -801,20 +772,16 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
 
   const resetImportInput = () => {
     if (inputRef.current) {
-      inputRef.current.value = "";
+      inputRef.current.value = '';
     }
   };
 
-  const handleImportFile = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     if (file.size > IMPORT_MAX_FILE_BYTES) {
-      alert(
-        `Import file is too large. Maximum size is ${Math.round(IMPORT_MAX_FILE_BYTES / (1024 * 1024))}MB.`,
-      );
+      alert(`Import file is too large. Maximum size is ${Math.round(IMPORT_MAX_FILE_BYTES / (1024 * 1024))}MB.`);
       resetImportInput();
       return;
     }
@@ -826,22 +793,18 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       try {
         parsed = JSON.parse(text);
       } catch (err) {
-        alert("Invalid JSON file. Please provide a JSON array of records.");
+        alert('Invalid JSON file. Please provide a JSON array of records.');
         return;
       }
 
-      const records = parseImportPayload(parsed).filter(
-        (r) => r && typeof r === "object" && !Array.isArray(r),
-      );
+      const records = parseImportPayload(parsed).filter((r) => r && typeof r === 'object' && !Array.isArray(r));
       if (!records.length) {
-        alert("No valid records found in import file.");
+        alert('No valid records found in import file.');
         return;
       }
 
       if (records.length > IMPORT_MAX_ROWS) {
-        alert(
-          `Import contains ${records.length} rows. Maximum allowed is ${IMPORT_MAX_ROWS} rows per import.`,
-        );
+        alert(`Import contains ${records.length} rows. Maximum allowed is ${IMPORT_MAX_ROWS} rows per import.`);
         return;
       }
 
@@ -853,14 +816,14 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
         const payload: any = { ...record };
         const incomingId = payload.id ?? null;
 
-        if (incomingId == null || incomingId === "") {
+        if (incomingId == null || incomingId === '') {
           delete payload.id;
           try {
             await addSubmitTrustAttestationEvidenceResponse(payload).unwrap();
             created += 1;
           } catch (err) {
             failed += 1;
-            console.error("Import create failed for new record", err);
+            console.error('Import create failed for new record', err);
           }
           continue;
         }
@@ -871,24 +834,17 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
           created += 1;
         } catch (addErr) {
           try {
-            await updateSubmitTrustAttestationEvidenceResponse(
-              payload,
-            ).unwrap();
+            await updateSubmitTrustAttestationEvidenceResponse(payload).unwrap();
             updated += 1;
           } catch (updateErr) {
             failed += 1;
-            console.error("Import upsert failed for id", payload.id, {
-              addErr,
-              updateErr,
-            });
+            console.error('Import upsert failed for id', payload.id, { addErr, updateErr });
           }
         }
       }
 
       handleLoadData();
-      alert(
-        `Import complete. Created: ${created}, Updated: ${updated}, Failed: ${failed}`,
-      );
+      alert(`Import complete. Created: ${created}, Updated: ${updated}, Failed: ${failed}`);
     } finally {
       setIsImporting(false);
       resetImportInput();
@@ -902,12 +858,12 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     // Check if this is a reference field
     const schema = resolvedColumnSchema?.[key];
     const refType = schema?.refType;
-
+    
     // If it's a reference field, open the picker
     if (refType) {
-      setQbePicker({
-        show: true,
-        refType,
+      setQbePicker({ 
+        show: true, 
+        refType, 
         resolve: async (picked) => {
           if (picked) {
             const idToUpdate = id;
@@ -920,37 +876,34 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
             }
 
             const updated = { ...row, [keyToUpdate]: newValue };
-            await persistRowUpdate(idToUpdate, updated, keyToUpdate);
-            setEditRowId(null);
-            setFormData({});
+            setAllData((prev) => mergeUpdatedRow(prev as any[], idToUpdate, updated as any) as SubmitTrustAttestationEvidenceResponse[]);
+            try {
+              await persistRowUpdate(idToUpdate, updated, keyToUpdate);
+              setEditRowId(null);
+              setFormData({});
+            } catch (error) {
+              setAllData((prev) => mergeUpdatedRow(prev as any[], idToUpdate, row as any) as SubmitTrustAttestationEvidenceResponse[]);
+            }
           }
-        },
-        allowCreate: true,
+        }, 
+        allowCreate: true 
       });
       return;
     }
-
-    let val = value ?? "";
-    if (typeof val === "string") {
+    
+    let val = value ?? '';
+    if (typeof val === 'string') {
       // Long text -> optionally open markdown rich view
       if (val.length > 1000) {
         try {
-          const askPref = localStorage.getItem("UX:AskRichText") ?? "ask";
-          if (askPref === "ask") {
-            const open = window.confirm(
-              "Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.",
-            );
+          const askPref = localStorage.getItem('UX:AskRichText') ?? 'ask';
+          if (askPref === 'ask') {
+            const open = window.confirm('Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.');
             if (open) {
-              setRichModal({
-                show: true,
-                content: val,
-                title: key,
-                rowId: id,
-                field: key,
-              });
+              setRichModal({ show: true, content: val, title: key, rowId: id, field: key });
               return;
             } else {
-              localStorage.setItem("UX:AskRichText", "never");
+              localStorage.setItem('UX:AskRichText','never');
             }
           }
         } catch {}
@@ -965,7 +918,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
         setModalData({ id, key, value: val });
         setModalVisible(true);
       }
-    } else if (typeof val === "object") {
+    } else if (typeof val === 'object') {
       // expand/collapse
       const objKey = `${id}~${key}`;
       setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
@@ -987,8 +940,8 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     setSavingCellId(editKey);
     setSaveError(null);
     setSaveSuccess(null);
-
-    const [id, key] = editKey.split("~");
+    
+    const [id, key] = editKey.split('~');
     const row = allData.find((item) => item.id === id);
     if (!row) {
       setSavingCellId(null);
@@ -1017,8 +970,8 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   };
 
   const handleKeyDownEdit = (e: React.KeyboardEvent, editKey: string) => {
-    if (e.key === "Enter") handleSave(editKey);
-    else if (e.key === "Escape") handleCancel();
+    if (e.key === 'Enter') handleSave(editKey);
+    else if (e.key === 'Escape') handleCancel();
   };
 
   const handleBlur = () => {
@@ -1032,16 +985,24 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   };
 
   // Apply object field change to local state (RBGrid expanded panel)
-  const handleObjectFieldChange = (
-    rowId: string,
-    key: string,
-    updatedObj: any,
-  ) => {
-    setAllData((prev) =>
-      prev.map((d) =>
-        d.id === rowId ? ({ ...d, [key]: updatedObj } as any) : d,
-      ),
-    );
+  const handleObjectFieldChange = (rowId: string, key: string, updatedObj: any) => {
+    setAllData((prev) => prev.map((d) => (d.id === rowId ? { ...d, [key]: updatedObj } as any : d)));
+  };
+
+  const handleBooleanCellToggle = async (rowId: string, key: string, nextValue: boolean) => {
+    const row = allData.find((item) => item.id === rowId);
+    if (!row) {
+      return;
+    }
+    const updatedItem = { ...row, [key]: nextValue };
+    setAllData((prev) => mergeUpdatedRow(prev as any[], rowId, updatedItem as any) as SubmitTrustAttestationEvidenceResponse[]);
+    try {
+      await persistRowUpdate(rowId, updatedItem, key);
+      setEditRowId(null);
+      setFormData({});
+    } catch (error) {
+      setAllData((prev) => mergeUpdatedRow(prev as any[], rowId, row as any) as SubmitTrustAttestationEvidenceResponse[]);
+    }
   };
 
   // Select/Deselect all visible rows
@@ -1066,34 +1027,28 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     colIndex: number,
     itemId: string,
     columnKey: string,
-    cellValue: any,
+    cellValue: any
   ) => {
     if (editRowId) return;
 
     switch (e.key) {
-      case "ArrowRight":
+      case 'ArrowRight':
         e.preventDefault();
-        setActiveCell({
-          rowIndex,
-          colIndex: Math.min(colIndex + 1, columns.length - 1),
-        });
+        setActiveCell({ rowIndex, colIndex: Math.min(colIndex + 1, columns.length - 1) });
         break;
-      case "ArrowLeft":
+      case 'ArrowLeft':
         e.preventDefault();
         setActiveCell({ rowIndex, colIndex: Math.max(colIndex - 1, 0) });
         break;
-      case "ArrowDown":
+      case 'ArrowDown':
         e.preventDefault();
-        setActiveCell({
-          rowIndex: Math.min(rowIndex + 1, allData.length - 1),
-          colIndex,
-        });
+        setActiveCell({ rowIndex: Math.min(rowIndex + 1, allData.length - 1), colIndex });
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         e.preventDefault();
         setActiveCell({ rowIndex: Math.max(rowIndex - 1, 0), colIndex });
         break;
-      case "Enter":
+      case 'Enter':
         e.preventDefault();
         handleDoubleClick(itemId, columnKey, cellValue);
         break;
@@ -1106,15 +1061,12 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // Render helpers
   // -------------------------------------------------------------------
   const renderValue = (value: any, itemId: string, key: string) => {
-    if (value == null) return "";
-    if (typeof value === "object") {
+    if (value == null) return '';
+    if (typeof value === 'object') {
       const objKey = `${itemId}~${key}`;
       const isExpanded = expandedObjects[objKey] || false;
       return (
-        <CoolButton
-          variant="info"
-          onClick={() => handleDoubleClick(itemId, key, value)}
-        >
+        <CoolButton variant="info" onClick={() => handleDoubleClick(itemId, key, value)}>
           {isExpanded ? <FaChevronDown /> : <FaChevronRight />} {key}
         </CoolButton>
       );
@@ -1126,7 +1078,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     setSavingModalId(true);
     setSaveError(null);
     setSaveSuccess(null);
-
+    
     const { id, key, value } = modalData;
     if (!id || !key) {
       setSavingModalId(false);
@@ -1161,20 +1113,19 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
     if (selectedRows.size === 1) {
       const rowId = Array.from(selectedRows)[0];
       setSelectedObjectForPermissions({
-        objectType:
-          "com.valkyrlabs.model.SubmitTrustAttestationEvidenceResponse",
+        objectType: 'com.valkyrlabs.model.SubmitTrustAttestationEvidenceResponse',
         objectId: rowId,
       });
       setShowPermissionDialog(true);
     } else {
-      alert("Select exactly one row to manage permissions.");
+      alert('Select exactly one row to manage permissions.');
     }
   };
 
   // Handle permissions for a specific row (direct click)
   const handleRowPermissions = (itemId: string) => {
     setSelectedObjectForPermissions({
-      objectType: "com.valkyrlabs.model.SubmitTrustAttestationEvidenceResponse",
+      objectType: 'com.valkyrlabs.model.SubmitTrustAttestationEvidenceResponse',
       objectId: itemId,
     });
     setShowPermissionDialog(true);
@@ -1186,27 +1137,25 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved:", grants);
+    console.log('Permissions saved:', grants);
     // Optionally refresh data or show success message
   };
 
   const createReferenceRecord = async (refType: string) => {
     const name = window.prompt(`Enter name for new ${refType}`);
     if (!name) return null;
-    const description =
-      window.prompt(`Optional description for new ${refType}`) || undefined;
+    const description = window.prompt(`Optional description for new ${refType}`) || undefined;
     const payload: any = { name };
-    if (description && description.trim())
-      payload.description = description.trim();
+    if (description && description.trim()) payload.description = description.trim();
 
     const res = await fetch(`${BASE_PATH}/${refType}`, {
-      method: "POST",
+      method: 'POST',
       headers: buildAuthHeaders(),
-      credentials: "include",
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
-      const text = await res.text().catch(() => "");
+      const text = await res.text().catch(() => '');
       throw new Error(`Failed to create ${refType}: ${res.status} ${text}`);
     }
     const created = await res.json();
@@ -1219,7 +1168,7 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
       return await createReferenceRecord(refType);
     } catch (err) {
       console.error(err);
-      alert((err as Error).message || "Failed to create reference record");
+      alert((err as Error).message || 'Failed to create reference record');
       return null;
     }
   };
@@ -1229,418 +1178,313 @@ const SubmitTrustAttestationEvidenceResponseTable: React.FC = () => {
   // -------------------------------------------------------------------
   return (
     <>
-      <RBGrid
-        data={tableData}
-        columns={columns}
-        columnSchema={resolvedColumnSchema}
-        selectedRows={selectedRows}
-        onToggleRow={handleRowSelect}
-        onToggleAll={handleToggleAll}
-        onRowPermissions={handleRowPermissions}
-        editCellId={editRowId}
-        formData={formData}
-        onInputChange={handleInputChange}
-        onKeyDownEdit={handleKeyDownEdit}
-        onBlurEdit={handleBlur}
-        onCellDoubleClick={handleDoubleClick}
-        activeCell={activeCell}
-        onCellFocus={handleCellFocus}
-        onCellKeyDownNav={handleCellKeyDownNav}
-        expandedObjects={expandedObjects}
-        onToggleExpandObject={handleToggleExpandObject}
-        onObjectFieldChange={handleObjectFieldChange}
-        showAllFields={showAllFields}
-        onToggleShowAllFields={() => setShowAllFields(!showAllFields)}
-        storageKey="SubmitTrustAttestationEvidenceResponseTable"
-        onReferencePick={onReferencePick}
-        onRequestMoreRows={(dir) => {
-          if (dir === "down" && hasMore && !isFetching && dataLoaded) {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            const arg: any = { page: nextPage };
-            if (qbeExample) arg.example = qbeExample;
-            triggerGetPage(arg);
-          }
-        }}
-      />
-      {/* Show spinner if fetching any page */}
-      {isFetching && <LoadingSpinner style={{ margin: "2em" }} />}
+        
 
-      {/* Floating Toolbar for grid actions */}
-      {/* Floating toolbar: vertically centered, peeking 100px when hidden */}
-      <div
-        ref={panelRef}
-        style={{
-          position: "fixed",
-          top: "50%",
-          transform: "translateY(-50%)",
-          right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
-          zIndex: 9999,
-          pointerEvents: "auto",
-        }}
-      >
-        <FloatingControlPanel
-          description="SubmitTrustAttestationEvidenceResponse Actions"
-          className="grid-toolbar"
-          style={{
-            pointerEvents: "auto",
-            width: 360,
-            maxWidth: 420,
-            boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
-          }}
-        >
-          {/* Handle to toggle in/out */}
+          
+            <RBGrid
+              data={tableData}
+              columns={columns}
+              columnSchema={resolvedColumnSchema}
+              selectedRows={selectedRows}
+              onToggleRow={handleRowSelect}
+              onToggleAll={handleToggleAll}
+              onRowPermissions={handleRowPermissions}
+              editCellId={editRowId}
+              formData={formData}
+              onInputChange={handleInputChange}
+              onKeyDownEdit={handleKeyDownEdit}
+              onBlurEdit={handleBlur}
+              onCellDoubleClick={handleDoubleClick}
+              activeCell={activeCell}
+              onCellFocus={handleCellFocus}
+              onCellKeyDownNav={handleCellKeyDownNav}
+              expandedObjects={expandedObjects}
+              onToggleExpandObject={handleToggleExpandObject}
+              onObjectFieldChange={handleObjectFieldChange}
+              onBooleanCellToggle={handleBooleanCellToggle}
+              showAllFields={showAllFields}
+              onToggleShowAllFields={() => setShowAllFields(!showAllFields)}
+              storageKey="SubmitTrustAttestationEvidenceResponseTable"
+              onReferencePick={onReferencePick}
+              onReferenceCreate={(rowId, columnKey, refType) => handleReferenceCreate(refType)}
+              onRequestMoreRows={(dir) => {
+                if (dir === 'down' && hasMore && loadingPageRef.current == null && !isFetching && dataLoaded) {
+                  const nextPage = pageRef.current + 1;
+                  void loadPage(nextPage);
+                }
+              }}
+            />
+            {/* Show spinner if fetching any page */}
+          {isFetching && <LoadingSpinner style={ { margin: "2em" }} />}
+          
+          
+          
+
+          {/* Floating Toolbar for grid actions */}
+          {/* Floating toolbar: vertically centered, peeking 100px when hidden */}
           <div
-            role="button"
-            aria-label={toolbarOpen ? "Hide actions" : "Show actions"}
-            onClick={() => setToolbarOpen(!toolbarOpen)}
-            style={{
-              position: "absolute",
-              left: -0,
-              top: "50%",
-              transform: "translate(-100%, -50%)",
-              width: 48,
-              height: 64,
-              borderRadius: "8px 0 0 8px",
-              background: "rgba(0,0,0,0.6)",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
-            }}
+            ref={panelRef}
+            style={ {
+              position: 'fixed',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
+              zIndex: 9999,
+              pointerEvents: 'auto',
+            } }
           >
-            {toolbarOpen ? (
-              <FaChevronRight size={ICON_SIZE} />
-            ) : (
-              <FaChevronLeft size={ICON_SIZE} />
-            )}
-          </div>
 
-          <div>
-            <ButtonGroup>
-              <CoolButton
-                variant="secondary"
-                onClick={handleLoadData}
-                className="py-2 px-2"
-              >
-                <FaSync size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="primary"
-                onClick={() => setShowCreateModal(true)}
-                className="py-2 px-2"
-              >
-                <FaPlus size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                disabled={selectedRows.size !== 1}
-                variant="secondary"
-                onClick={handleCopyRow}
-                className="py-2 px-2"
-              >
-                <FaCopy size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="secondary"
-                onClick={handlePasteRow}
-                className="py-2 px-2"
-              >
-                <FaPaste size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="secondary"
-                onClick={handleExportSelected}
-                disabled={selectedRows.size === 0 || isExporting || isImporting}
-                className="py-2 px-2"
-                title="Export selected rows"
-              >
-                <FaFileExport size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="secondary"
-                onClick={() => inputRef.current?.click()}
-                disabled={isImporting || isExporting}
-                className="py-2 px-2"
-                title="Import JSON rows"
-              >
-                <FaFileImport size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="secondary"
-                onClick={() => setShowQbeModal(true)}
-                className="py-2 px-2"
-              >
-                <FaFilter size={ICON_SIZE} /> Filter (QBE)
-              </CoolButton>
-              <CoolButton
-                variant="warning"
-                onClick={handleDelete}
-                disabled={selectedRows.size === 0}
-                className="py-2 px-2"
-              >
-                <FaTrash size={ICON_SIZE} />
-              </CoolButton>
-              <CoolButton
-                variant="info"
-                onClick={handleManagePermissions}
-                disabled={selectedRows.size !== 1}
-                className="py-2 px-2"
-              >
-                <FaUserShield size={ICON_SIZE} />
-              </CoolButton>
-            </ButtonGroup>
-            <input
-              ref={inputRef}
-              type="file"
-              accept="application/json,.json"
-              onChange={handleImportFile}
-              style={{ display: "none" }}
-            />
+            <FloatingControlPanel
+              description="SubmitTrustAttestationEvidenceResponse Actions"
+              className="grid-toolbar"
+              style={ {
+                pointerEvents: 'auto',
+                width: 360,
+                maxWidth: 420,
+                boxShadow: '0 6px 20px rgba(0,0,0,0.3)'
+              } }
+            >
+                        {/* Handle to toggle in/out */}
+            <div
+              role="button"
+              aria-label={toolbarOpen ? 'Hide actions' : 'Show actions'}
+              onClick={() => setToolbarOpen(!toolbarOpen)}
+              style={ {
+                position: 'absolute',
+                left: -0,
+                top: '50%',
+                transform: 'translate(-100%, -50%)',
+                width: 48,
+                height: 64,
+                borderRadius: '8px 0 0 8px',
+                background: 'rgba(0,0,0,0.6)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.35)'
+              } }
+            >
+              {toolbarOpen ? <FaChevronRight size={ICON_SIZE} /> : <FaChevronLeft size={ICON_SIZE} />}
+            </div>
+
+              <div>
+                <ButtonGroup>
+                  <CoolButton 
+                   variant="secondary" onClick={handleLoadData} className="py-2 px-2">
+                    <FaSync size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton 
+                    variant="primary" onClick={() => setShowCreateModal(true)} className="py-2 px-2">
+                    <FaPlus size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton 
+                    disabled={selectedRows.size !== 1}
+                    variant="secondary" onClick={handleCopyRow} className="py-2 px-2">
+                    <FaCopy size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton 
+                    variant="secondary" onClick={handlePasteRow} className="py-2 px-2">
+                    <FaPaste size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton
+                    variant="secondary"
+                    onClick={handleExportSelected}
+                    disabled={selectedRows.size === 0 || isExporting || isImporting}
+                    className="py-2 px-2"
+                    title="Export selected rows"
+                  >
+                    <FaFileExport size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton
+                    variant="secondary"
+                    onClick={() => inputRef.current?.click()}
+                    disabled={isImporting || isExporting}
+                    className="py-2 px-2"
+                    title="Import JSON rows"
+                  >
+                    <FaFileImport size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton 
+                  variant="secondary" onClick={() => setShowQbeModal(true)} className="py-2 px-2">
+                    <FaFilter size={ICON_SIZE} /> Filter (QBE)
+                  </CoolButton>
+                  <CoolButton 
+                  variant="warning" onClick={handleDelete} 
+                   disabled={selectedRows.size === 0}
+                   className="py-2 px-2"
+                  >
+                    <FaTrash size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton
+                    variant="info"
+                    onClick={handleManagePermissions}
+                    disabled={selectedRows.size !== 1}
+                    className="py-2 px-2"
+                  >
+                    <FaUserShield size={ICON_SIZE} />
+                  </CoolButton>
+                </ButtonGroup>
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleImportFile}
+                  style={ { display: 'none' } }
+                />
+              </div>
+            </FloatingControlPanel>
           </div>
-        </FloatingControlPanel>
-      </div>
-      {/* New/Edit Modal */}
-      <Modal
-        show={showCreateModal}
-        onHide={() => setShowCreateModal(false)}
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Create SubmitTrustAttestationEvidenceResponse
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <SubmitTrustAttestationEvidenceResponseForm />
-        </Modal.Body>
-      </Modal>
-      {/* QBE Modal */}
-      <Modal
-        show={showQbeModal}
-        onHide={() => setShowQbeModal(false)}
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Filter SubmitTrustAttestationEvidenceResponse (Query By Example)
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            Enter a JSON example. Non-null fields will be matched. Strings use
-            case-insensitive contains; exact match for non-strings.
-          </p>
-          <BSForm.Control
-            as="textarea"
-            rows={10}
-            value={qbeText}
-            onChange={(e) => setQbeText(e.target.value)}
-            placeholder='{"name":"acme","status":"active"}'
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <CoolButton
-            variant="secondary"
-            onClick={() => {
-              setQbeText("");
-              setQbeExample(null);
-              setShowQbeModal(false);
-            }}
-          >
-            Clear
-          </CoolButton>
-          <CoolButton
-            variant="primary"
-            onClick={() => {
+          {/* New/Edit Modal */}
+          <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} centered size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Create SubmitTrustAttestationEvidenceResponse</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <SubmitTrustAttestationEvidenceResponseForm />
+            </Modal.Body>
+          </Modal>
+          {/* QBE Modal */}
+          <Modal show={showQbeModal} onHide={() => setShowQbeModal(false)} centered size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Filter SubmitTrustAttestationEvidenceResponse (Query By Example)</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>Enter a JSON example. Non-null fields will be matched. Strings use case-insensitive contains; exact match for non-strings.</p>
+              <BSForm.Control as="textarea" rows={10} value={qbeText} onChange={(e) => setQbeText(e.target.value)} placeholder='{"name":"acme","status":"active"}' />
+            </Modal.Body>
+            <Modal.Footer>
+              <CoolButton variant="secondary" onClick={() => { setQbeText(''); setQbeExample(null); setShowQbeModal(false); }}>Clear</CoolButton>
+              <CoolButton variant="primary" onClick={() => {
+                try {
+                  const obj = qbeText ? JSON.parse(qbeText) : null;
+                  setQbeExample(obj);
+                  setShowQbeModal(false);
+                  void loadPage(1, true, obj);
+                } catch (err) {
+                  alert('Invalid JSON');
+                }
+              }}>Apply</CoolButton>
+            </Modal.Footer>
+          </Modal>
+          {/* Confirm Delete */}
+
+          <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              This will cascade-delete (soft/trashed) all selected rows and related children. Proceed?
+            </Modal.Body>
+            <Modal.Footer>
+              <CoolButton variant="secondary" onClick={() => setShowDeleteModal(false)} >
+                Cancel
+              </CoolButton>
+              <CoolButton variant="danger" onClick={confirmDelete}>
+                Delete
+              </CoolButton>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Large text modal */}
+          <Modal show={modalVisible} onHide={() => setModalVisible(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Editing SubmitTrustAttestationEvidenceResponse</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {modalData.value && typeof modalData.value === 'string' ? (
+                <BSForm.Control
+                  as="textarea"
+                  rows={10}
+                  value={modalData.value}
+                  onChange={(e) => handleModalChange(e.target.value)}
+                />
+              ) : (
+                <div>No large text data available or unsupported type.</div>
+              )}
+              {saveSuccess && (
+                <div style={ { color: 'green', marginTop: 12, padding: 8, backgroundColor: 'rgba(0,255,0,0.1)', borderRadius: 4 } }>
+                  ✓ {saveSuccess}
+                </div>
+              )}
+              {saveError && (
+                <div style={ { color: 'red', marginTop: 12, padding: 8, backgroundColor: 'rgba(255,0,0,0.1)', borderRadius: 4 } }>
+                  ✗ {saveError}
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <CoolButton variant="secondary" onClick={() => setModalVisible(false)} disabled={savingModalId}>
+                Cancel
+              </CoolButton>
+              <CoolButton variant="primary" onClick={handleModalSave} disabled={savingModalId}>
+                {savingModalId && (<span style={ { float: 'left', minHeight: 0, marginRight: 6 } }><LoadingSpinner label="" size={16} /></span>)}
+                Save
+              </CoolButton>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Rich Markdown modal (editable with preview) */}
+          <MarkdownEditorModal
+            show={richModal.show}
+            title={`Rich Text: ${richModal.title || ''}`}
+            initialValue={richModal.content}
+            onCancel={() => setRichModal({ show: false, content: '' })}
+            onSave={async (updatedText) => {
               try {
-                const obj = qbeText ? JSON.parse(qbeText) : null;
-                setQbeExample(obj);
-                setShowQbeModal(false);
-                setPage(1);
-                setAllData([]);
-                setHasMore(true);
-                const arg: any = { page: 1 };
-                if (obj) arg.example = obj;
-                triggerGetPage(arg);
-                setDataLoaded(true);
-              } catch (err) {
-                alert("Invalid JSON");
+                const rid = richModal.rowId;
+                const field = richModal.field as keyof SubmitTrustAttestationEvidenceResponse;
+                if (!rid || !field) { setRichModal({ show: false, content: '' }); return; }
+                const row = allData.find(r => r.id === rid);
+                if (!row) { setRichModal({ show: false, content: '' }); return; }
+                const updated = { ...row, [field]: updatedText } as any;
+                await updateSubmitTrustAttestationEvidenceResponse(updated).unwrap();
+                setAllData(prev => prev.map(r => r.id === rid ? updated : r));
+              } catch (e) {
+                const errorMsg = e instanceof Error ? e.message : String(e);
+                console.error('Failed to save markdown field:', { error: e, field: richModal.field, rowId: richModal.rowId, message: errorMsg });
+                alert(`Failed to save field: ${errorMsg}`);
               }
+              setRichModal({ show: false, content: '' });
             }}
-          >
-            Apply
-          </CoolButton>
-        </Modal.Footer>
-      </Modal>
-      {/* Confirm Delete */}
+          />
 
-      <Modal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          This will cascade-delete (soft/trashed) all selected rows and related
-          children. Proceed?
-        </Modal.Body>
-        <Modal.Footer>
-          <CoolButton
-            variant="secondary"
-            onClick={() => setShowDeleteModal(false)}
-          >
-            Cancel
-          </CoolButton>
-          <CoolButton variant="danger" onClick={confirmDelete}>
-            Delete
-          </CoolButton>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Large text modal */}
-      <Modal show={modalVisible} onHide={() => setModalVisible(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Editing SubmitTrustAttestationEvidenceResponse
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {modalData.value && typeof modalData.value === "string" ? (
-            <BSForm.Control
-              as="textarea"
-              rows={10}
-              value={modalData.value}
-              onChange={(e) => handleModalChange(e.target.value)}
+          {/* Permission Management Dialog */}
+          {selectedObjectForPermissions && (
+            <PermissionDialog
+              objectType={selectedObjectForPermissions.objectType}
+              objectId={selectedObjectForPermissions.objectId}
+              isVisible={showPermissionDialog}
+              onClose={handlePermissionDialogClose}
+              onSave={handlePermissionsSave}
+              currentUser={currentUser}
             />
-          ) : (
-            <div>No large text data available or unsupported type.</div>
           )}
-          {saveSuccess && (
-            <div
-              style={{
-                color: "green",
-                marginTop: 12,
-                padding: 8,
-                backgroundColor: "rgba(0,255,0,0.1)",
-                borderRadius: 4,
-              }}
-            >
-              ✓ {saveSuccess}
+
+          {/* Error if the first page or a subsequent fetch fails */}
+          {isError && (
+            <div style={ { color: 'red', marginTop: 12 }}>
+              Error fetching page {page} of SubmitTrustAttestationEvidenceResponses.
             </div>
           )}
-          {saveError && (
-            <div
-              style={{
-                color: "red",
-                marginTop: 12,
-                padding: 8,
-                backgroundColor: "rgba(255,0,0,0.1)",
-                borderRadius: 4,
-              }}
-            >
-              ✗ {saveError}
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <CoolButton
-            variant="secondary"
-            onClick={() => setModalVisible(false)}
-            disabled={savingModalId}
-          >
-            Cancel
-          </CoolButton>
-          <CoolButton
-            variant="primary"
-            onClick={handleModalSave}
-            disabled={savingModalId}
-          >
-            {savingModalId && (
-              <span style={{ float: "left", minHeight: 0, marginRight: 6 }}>
-                <LoadingSpinner label="" size={16} />
-              </span>
-            )}
-            Save
-          </CoolButton>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Rich Markdown modal (editable with preview) */}
-      <MarkdownEditorModal
-        show={richModal.show}
-        title={`Rich Text: ${richModal.title || ""}`}
-        initialValue={richModal.content}
-        onCancel={() => setRichModal({ show: false, content: "" })}
-        onSave={async (updatedText) => {
-          try {
-            const rid = richModal.rowId;
-            const field =
-              richModal.field as keyof SubmitTrustAttestationEvidenceResponse;
-            if (!rid || !field) {
-              setRichModal({ show: false, content: "" });
-              return;
-            }
-            const row = allData.find((r) => r.id === rid);
-            if (!row) {
-              setRichModal({ show: false, content: "" });
-              return;
-            }
-            const updated = { ...row, [field]: updatedText } as any;
-            await updateSubmitTrustAttestationEvidenceResponse(
-              updated,
-            ).unwrap();
-            setAllData((prev) => prev.map((r) => (r.id === rid ? updated : r)));
-          } catch (e) {
-            console.error("Failed to save markdown field", e);
-          }
-          setRichModal({ show: false, content: "" });
-        }}
-      />
-
-      {/* Permission Management Dialog */}
-      {selectedObjectForPermissions && (
-        <PermissionDialog
-          objectType={selectedObjectForPermissions.objectType}
-          objectId={selectedObjectForPermissions.objectId}
-          isVisible={showPermissionDialog}
-          onClose={handlePermissionDialogClose}
-          onSave={handlePermissionsSave}
-          currentUser={currentUser}
+        
+        {/* Generic QBE Picker */}
+        <QBEPicker
+          show={qbePicker.show}
+          refType={qbePicker.refType || 'SubmitTrustAttestationEvidenceResponse'}
+          allowCreate={qbePicker.allowCreate}
+          onCancel={() => setQbePicker({ show: false })}
+          onPick={(val) => {
+            const r = qbePicker.resolve; 
+            setQbePicker({ show: false }); 
+            r && r(normalizeRefValue(val));
+          }}
+          onCreate={qbePicker.refType ? () => handleReferenceCreate(qbePicker.refType) : undefined}
         />
-      )}
-
-      {/* Error if page=1 fails or subsequent fetch fails */}
-      {isError && (
-        <div style={{ color: "red", marginTop: 12 }}>
-          Error fetching page {page} of SubmitTrustAttestationEvidenceResponses.
-        </div>
-      )}
-
-      {/* Generic QBE Picker */}
-      <QBEPicker
-        show={qbePicker.show}
-        refType={qbePicker.refType || "SubmitTrustAttestationEvidenceResponse"}
-        allowCreate={qbePicker.allowCreate}
-        onCancel={() => setQbePicker({ show: false })}
-        onPick={(val) => {
-          const r = qbePicker.resolve;
-          setQbePicker({ show: false });
-          r && r(normalizeRefValue(val));
-        }}
-        onCreate={
-          qbePicker.refType
-            ? () => handleReferenceCreate(qbePicker.refType)
-            : undefined
-        }
-      />
     </>
   );
 };
 
 export default SubmitTrustAttestationEvidenceResponseTable;
+

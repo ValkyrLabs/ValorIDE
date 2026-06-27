@@ -37,6 +37,10 @@ class VSCodeAPIWrapper {
     }
   }
 
+  public isAvailable() {
+    return Boolean(this.vsCodeApi);
+  }
+
   /**
    * Get the persistent state stored for this webview.
    *

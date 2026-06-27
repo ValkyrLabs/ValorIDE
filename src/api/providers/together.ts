@@ -19,7 +19,7 @@ export class TogetherHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://api.together.xyz/v1",
-      apiKey: this.options.togetherApiKey,
+      apiKey: this.options.togetherApiKey || "noop",
     });
   }
 

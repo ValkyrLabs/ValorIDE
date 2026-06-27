@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  StartTrustExecutionRequest,
+} from '@thorapi/model';
 
-import { StartTrustExecutionRequest } from "@thorapi/model";
-
-import { useAddStartTrustExecutionRequestMutation } from "../../services/StartTrustExecutionRequestService";
+import { useAddStartTrustExecutionRequestMutation } from '../../services/StartTrustExecutionRequestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,24 +65,21 @@ StartTrustExecutionRequest
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  policyManifestId: Yup.string(),
-  boundObjectType: Yup.string(),
-  boundObjectId: Yup.string(),
-  actorId: Yup.string(),
-  trashed: Yup.boolean(),
+        policyManifestId: Yup.string(),
+        boundObjectType: Yup.string(),
+        boundObjectId: Yup.string(),
+        actorId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const StartTrustExecutionRequestForm: React.FC = () => {
-  const [addStartTrustExecutionRequest, addStartTrustExecutionRequestResult] =
-    useAddStartTrustExecutionRequestMutation();
+  const [addStartTrustExecutionRequest, addStartTrustExecutionRequestResult] = useAddStartTrustExecutionRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,18 +89,12 @@ const StartTrustExecutionRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -117,11 +102,11 @@ const StartTrustExecutionRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<StartTrustExecutionRequest> = {
-    policyManifestId: "",
-    boundObjectType: "",
-    boundObjectId: "",
-    actorId: "",
-    trashed: false,
+          policyManifestId: '',
+          boundObjectType: '',
+          boundObjectId: '',
+          actorId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,30 +121,22 @@ const StartTrustExecutionRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log(
-      "Permissions saved for new StartTrustExecutionRequest:",
-      grants,
-    );
+    console.log('Permissions saved for new StartTrustExecutionRequest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<StartTrustExecutionRequest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<StartTrustExecutionRequest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("StartTrustExecutionRequest form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addStartTrustExecutionRequest(
-        values as any,
-      ).unwrap();
+      const result = await addStartTrustExecutionRequest(values as any).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `StartTrustExecutionRequest created successfully! Would you like to set permissions for this object?`,
+          `StartTrustExecutionRequest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -167,8 +144,8 @@ const StartTrustExecutionRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create StartTrustExecutionRequest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create StartTrustExecutionRequest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -189,42 +166,44 @@ const StartTrustExecutionRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addStartTrustExecutionRequestResult.isLoading;
+          const isSaving = isSubmitting || addStartTrustExecutionRequestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    StartTrustExecutionRequest
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="policyManifestId"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New StartTrustExecutionRequest
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="policyManifestId" className="nice-form-control">
                       <b>
                         Policy Manifest Id:
                         {touched.policyManifestId &&
-                          !errors.policyManifestId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.policyManifestId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="policyManifestId"
-                        value={values?.policyManifestId}
-                        placeholder="Policy Manifest Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="policyManifestId"
+                            value={values?.policyManifestId}
+                            placeholder="Policy Manifest Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -233,27 +212,31 @@ const StartTrustExecutionRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="boundObjectType"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="boundObjectType" className="nice-form-control">
                       <b>
                         Bound Object Type:
-                        {touched.boundObjectType && !errors.boundObjectType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.boundObjectType &&
+                         !errors.boundObjectType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="boundObjectType"
-                        value={values?.boundObjectType}
-                        placeholder="Bound Object Type"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="boundObjectType"
+                            value={values?.boundObjectType}
+                            placeholder="Bound Object Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -262,27 +245,31 @@ const StartTrustExecutionRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="boundObjectId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="boundObjectId" className="nice-form-control">
                       <b>
                         Bound Object Id:
-                        {touched.boundObjectId && !errors.boundObjectId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.boundObjectId &&
+                         !errors.boundObjectId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="boundObjectId"
-                        value={values?.boundObjectId}
-                        placeholder="Bound Object Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="boundObjectId"
+                            value={values?.boundObjectId}
+                            placeholder="Bound Object Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -294,21 +281,28 @@ const StartTrustExecutionRequestForm: React.FC = () => {
                     <label htmlFor="actorId" className="nice-form-control">
                       <b>
                         Actor Id:
-                        {touched.actorId && !errors.actorId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.actorId &&
+                         !errors.actorId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="actorId"
-                        value={values?.actorId}
-                        placeholder="Actor Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="actorId"
+                            value={values?.actorId}
+                            placeholder="Actor Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -320,25 +314,32 @@ const StartTrustExecutionRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -348,65 +349,45 @@ const StartTrustExecutionRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      StartTrustExecutionRequest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New StartTrustExecutionRequest
+                  </CoolButton>
 
-                    {(addStartTrustExecutionRequestResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addStartTrustExecutionRequestResult as any).error
-                              ? (addStartTrustExecutionRequestResult as any)
-                                  .error.data
-                              : (addStartTrustExecutionRequestResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addStartTrustExecutionRequestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addStartTrustExecutionRequestResult as any).error ? (addStartTrustExecutionRequestResult as any).error.data : (addStartTrustExecutionRequestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addStartTrustExecutionRequestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addStartTrustExecutionRequestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addStartTrustExecutionRequestResult:{" "}
-                    {JSON.stringify(addStartTrustExecutionRequestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addStartTrustExecutionRequestResult: {JSON.stringify(addStartTrustExecutionRequestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -426,5 +407,8 @@ const StartTrustExecutionRequestForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default StartTrustExecutionRequestForm;
+

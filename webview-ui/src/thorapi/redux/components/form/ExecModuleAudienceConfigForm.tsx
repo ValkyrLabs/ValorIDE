@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ExecModuleAudienceConfig,
+} from '@thorapi/model';
 
-import { ExecModuleAudienceConfig } from "@thorapi/model";
-
-import { useAddExecModuleAudienceConfigMutation } from "../../services/ExecModuleAudienceConfigService";
+import { useAddExecModuleAudienceConfigMutation } from '../../services/ExecModuleAudienceConfigService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,76 +65,63 @@ ExecModuleAudienceConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  basePath: Yup.string(),
-  bcc: Yup.string(),
-  body: Yup.string(),
-  cc: Yup.string(),
-  channel: Yup.string(),
-  channelAccountId: Yup.string(),
-  channelId: Yup.string(),
-  condition: Yup.string(),
-  createContact: Yup.boolean(),
-  defaultCampaignId: Yup.string(),
-  falsePath: Yup.string(),
-  forecastHorizon: asNumber(
-    Yup.number().integer().typeError("forecastHorizon must be a number"),
-  ),
-  fromPhone: Yup.string(),
-  imageUrl: Yup.string(),
-  includeRevenue: Yup.boolean(),
-  inviteeEmail: Yup.string(),
-  link: Yup.string(),
-  listId: Yup.string(),
-  llmServiceId: Yup.string(),
-  maxBatchSize: asNumber(
-    Yup.number().integer().typeError("maxBatchSize must be a number"),
-  ),
-  maxResults: asNumber(
-    Yup.number().integer().typeError("maxResults must be a number"),
-  ),
-  meetingId: Yup.string(),
-  mergeStrategy: Yup.string(),
-  model: Yup.string(),
-  numCandidates: asNumber(
-    Yup.number().integer().typeError("numCandidates must be a number"),
-  ),
-  openAiModel: Yup.string(),
-  openapiUrl: Yup.string(),
-  orderId: Yup.string(),
-  pageId: Yup.string(),
-  photoUrl: Yup.string(),
-  principalUsername: Yup.string(),
-  quoteTweetId: Yup.string(),
-  replayTargetModule: Yup.string(),
-  replyTo: Yup.string(),
-  replyToTweetId: Yup.string(),
-  s3Bucket: Yup.string(),
-  s3KeyPrefix: Yup.string(),
-  s3Region: Yup.string(),
-  saveSnapshot: Yup.boolean(),
-  scoreModelId: Yup.string(),
-  target: Yup.string(),
-  toPhone: Yup.string(),
-  trackLinks: Yup.boolean(),
-  truePath: Yup.string(),
-  updateFrequency: asNumber(
-    Yup.number().integer().typeError("updateFrequency must be a number"),
-  ),
-  websocketTopic: Yup.string(),
-  trashed: Yup.boolean(),
+        basePath: Yup.string(),
+        bcc: Yup.string(),
+        body: Yup.string(),
+        cc: Yup.string(),
+        channel: Yup.string(),
+        channelAccountId: Yup.string(),
+        channelId: Yup.string(),
+        condition: Yup.string(),
+        createContact: Yup.boolean(),
+        defaultCampaignId: Yup.string(),
+        falsePath: Yup.string(),
+        forecastHorizon: asNumber(Yup.number().integer().typeError("forecastHorizon must be a number")),
+        fromPhone: Yup.string(),
+        imageUrl: Yup.string(),
+        includeRevenue: Yup.boolean(),
+        inviteeEmail: Yup.string(),
+        link: Yup.string(),
+        listId: Yup.string(),
+        llmServiceId: Yup.string(),
+        maxBatchSize: asNumber(Yup.number().integer().typeError("maxBatchSize must be a number")),
+        maxResults: asNumber(Yup.number().integer().typeError("maxResults must be a number")),
+        meetingId: Yup.string(),
+        mergeStrategy: Yup.string(),
+        model: Yup.string(),
+        numCandidates: asNumber(Yup.number().integer().typeError("numCandidates must be a number")),
+        openAiModel: Yup.string(),
+        openapiUrl: Yup.string(),
+        orderId: Yup.string(),
+        pageId: Yup.string(),
+        photoUrl: Yup.string(),
+        principalUsername: Yup.string(),
+        quoteTweetId: Yup.string(),
+        replayTargetModule: Yup.string(),
+        replyTo: Yup.string(),
+        replyToTweetId: Yup.string(),
+        s3Bucket: Yup.string(),
+        s3KeyPrefix: Yup.string(),
+        s3Region: Yup.string(),
+        saveSnapshot: Yup.boolean(),
+        scoreModelId: Yup.string(),
+        target: Yup.string(),
+        toPhone: Yup.string(),
+        trackLinks: Yup.boolean(),
+        truePath: Yup.string(),
+        updateFrequency: asNumber(Yup.number().integer().typeError("updateFrequency must be a number")),
+        websocketTopic: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleAudienceConfigForm: React.FC = () => {
-  const [addExecModuleAudienceConfig, addExecModuleAudienceConfigResult] =
-    useAddExecModuleAudienceConfigMutation();
+  const [addExecModuleAudienceConfig, addExecModuleAudienceConfigResult] = useAddExecModuleAudienceConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -150,18 +131,12 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -169,53 +144,53 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleAudienceConfig> = {
-    basePath: "",
-    bcc: "",
-    body: "",
-    cc: "",
-    channel: "",
-    channelAccountId: "",
-    channelId: "",
-    condition: "",
-    createContact: false,
-    defaultCampaignId: "",
-    falsePath: "",
-    forecastHorizon: 0,
-    fromPhone: "",
-    imageUrl: "",
-    includeRevenue: false,
-    inviteeEmail: "",
-    link: "",
-    listId: "",
-    llmServiceId: "",
-    maxBatchSize: 0,
-    maxResults: 0,
-    meetingId: "",
-    mergeStrategy: "",
-    model: "",
-    numCandidates: 0,
-    openAiModel: "",
-    openapiUrl: "",
-    orderId: "",
-    pageId: "",
-    photoUrl: "",
-    principalUsername: "",
-    quoteTweetId: "",
-    replayTargetModule: "",
-    replyTo: "",
-    replyToTweetId: "",
-    s3Bucket: "",
-    s3KeyPrefix: "",
-    s3Region: "",
-    saveSnapshot: false,
-    scoreModelId: "",
-    target: "",
-    toPhone: "",
-    trackLinks: false,
-    truePath: "",
-    updateFrequency: 0,
-    websocketTopic: "",
-    trashed: false,
+          basePath: '',
+          bcc: '',
+          body: '',
+          cc: '',
+          channel: '',
+          channelAccountId: '',
+          channelId: '',
+          condition: '',
+          createContact: false,
+          defaultCampaignId: '',
+          falsePath: '',
+          forecastHorizon: 0,
+          fromPhone: '',
+          imageUrl: '',
+          includeRevenue: false,
+          inviteeEmail: '',
+          link: '',
+          listId: '',
+          llmServiceId: '',
+          maxBatchSize: 0,
+          maxResults: 0,
+          meetingId: '',
+          mergeStrategy: '',
+          model: '',
+          numCandidates: 0,
+          openAiModel: '',
+          openapiUrl: '',
+          orderId: '',
+          pageId: '',
+          photoUrl: '',
+          principalUsername: '',
+          quoteTweetId: '',
+          replayTargetModule: '',
+          replyTo: '',
+          replyToTweetId: '',
+          s3Bucket: '',
+          s3KeyPrefix: '',
+          s3Region: '',
+          saveSnapshot: false,
+          scoreModelId: '',
+          target: '',
+          toPhone: '',
+          trackLinks: false,
+          truePath: '',
+          updateFrequency: 0,
+          websocketTopic: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -230,14 +205,11 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ExecModuleAudienceConfig:", grants);
+    console.log('Permissions saved for new ExecModuleAudienceConfig:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ExecModuleAudienceConfig>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleAudienceConfig>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -248,7 +220,7 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleAudienceConfig created successfully! Would you like to set permissions for this object?`,
+          `ExecModuleAudienceConfig created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -256,8 +228,8 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ExecModuleAudienceConfig:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ExecModuleAudienceConfig:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -278,38 +250,44 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addExecModuleAudienceConfigResult.isLoading;
+          const isSaving = isSubmitting || addExecModuleAudienceConfigResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ExecModuleAudienceConfig
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleAudienceConfig
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="basePath" className="nice-form-control">
                       <b>
                         Base Path:
-                        {touched.basePath && !errors.basePath && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.basePath &&
+                         !errors.basePath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="basePath"
-                        value={values?.basePath}
-                        placeholder="Base Path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="basePath"
+                            value={values?.basePath}
+                            placeholder="Base Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -321,21 +299,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="bcc" className="nice-form-control">
                       <b>
                         Bcc:
-                        {touched.bcc && !errors.bcc && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.bcc &&
+                         !errors.bcc && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="bcc"
-                        value={values?.bcc}
-                        placeholder="Bcc"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="bcc"
+                            value={values?.bcc}
+                            placeholder="Bcc"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -347,21 +332,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="body" className="nice-form-control">
                       <b>
                         Body:
-                        {touched.body && !errors.body && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.body &&
+                         !errors.body && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="body"
-                        value={values?.body}
-                        placeholder="Body"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="body"
+                            value={values?.body}
+                            placeholder="Body"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -373,21 +365,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="cc" className="nice-form-control">
                       <b>
                         Cc:
-                        {touched.cc && !errors.cc && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.cc &&
+                         !errors.cc && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="cc"
-                        value={values?.cc}
-                        placeholder="Cc"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="cc"
+                            value={values?.cc}
+                            placeholder="Cc"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -399,21 +398,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="channel" className="nice-form-control">
                       <b>
                         Channel:
-                        {touched.channel && !errors.channel && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.channel &&
+                         !errors.channel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="channel"
-                        value={values?.channel}
-                        placeholder="Channel"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channel"
+                            value={values?.channel}
+                            placeholder="Channel"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -422,28 +428,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="channelAccountId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="channelAccountId" className="nice-form-control">
                       <b>
                         Channel Account Id:
                         {touched.channelAccountId &&
-                          !errors.channelAccountId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.channelAccountId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="channelAccountId"
-                        value={values?.channelAccountId}
-                        placeholder="Channel Account Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channelAccountId"
+                            value={values?.channelAccountId}
+                            placeholder="Channel Account Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -454,22 +463,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="channelId" className="nice-form-control">
                       <b>
-                        Channel _ id:
-                        {touched.channelId && !errors.channelId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Channel Id:
+                        {touched.channelId &&
+                         !errors.channelId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="channelId"
-                        value={values?.channelId}
-                        placeholder="Channel _ id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channelId"
+                            value={values?.channelId}
+                            placeholder="Channel Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -481,21 +497,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="condition" className="nice-form-control">
                       <b>
                         Condition:
-                        {touched.condition && !errors.condition && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.condition &&
+                         !errors.condition && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="condition"
-                        value={values?.condition}
-                        placeholder="Condition"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="condition"
+                            value={values?.condition}
+                            placeholder="Condition"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -504,31 +527,35 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="createContact"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="createContact" className="nice-form-control">
                       <b>
                         Create Contact:
-                        {touched.createContact && !errors.createContact && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.createContact &&
+                         !errors.createContact && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="createContact"
-                        name="createContact"
-                        checked={values.createContact || false}
-                        onChange={(e) => {
-                          setFieldTouched("createContact", true);
-                          setFieldValue("createContact", e.target.checked);
-                        }}
-                        isInvalid={!!errors.createContact}
-                        className={errors.createContact ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="createContact"
+                            name="createContact"
+                            checked={values.createContact || false}
+                            onChange={(e) => {
+                              setFieldTouched('createContact', true);
+                              setFieldValue('createContact', e.target.checked);
+                            }}
+                            isInvalid={!!errors.createContact}
+                            className={errors.createContact ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -537,28 +564,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="defaultCampaignId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="defaultCampaignId" className="nice-form-control">
                       <b>
                         Default Campaign Id:
                         {touched.defaultCampaignId &&
-                          !errors.defaultCampaignId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.defaultCampaignId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="defaultCampaignId"
-                        value={values?.defaultCampaignId}
-                        placeholder="Default Campaign Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="defaultCampaignId"
+                            value={values?.defaultCampaignId}
+                            placeholder="Default Campaign Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -569,22 +599,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="falsePath" className="nice-form-control">
                       <b>
-                        False _ path:
-                        {touched.falsePath && !errors.falsePath && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        False Path:
+                        {touched.falsePath &&
+                         !errors.falsePath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="falsePath"
-                        value={values?.falsePath}
-                        placeholder="False _ path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="falsePath"
+                            value={values?.falsePath}
+                            placeholder="False Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -593,38 +630,39 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="forecastHorizon"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="forecastHorizon" className="nice-form-control">
                       <b>
                         Forecast Horizon:
-                        {touched.forecastHorizon && !errors.forecastHorizon && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.forecastHorizon &&
+                         !errors.forecastHorizon && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="forecastHorizon"
-                        type="number"
-                        value={values.forecastHorizon || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("forecastHorizon", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "forecastHorizon",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.forecastHorizon
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="forecastHorizon"
+                            type="number"
+                            value={values.forecastHorizon || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('forecastHorizon', true);
+                              const v = e.target.value;
+                              setFieldValue('forecastHorizon', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.forecastHorizon
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -636,21 +674,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="fromPhone" className="nice-form-control">
                       <b>
                         From Phone:
-                        {touched.fromPhone && !errors.fromPhone && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.fromPhone &&
+                         !errors.fromPhone && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="fromPhone"
-                        value={values?.fromPhone}
-                        placeholder="From Phone"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="fromPhone"
+                            value={values?.fromPhone}
+                            placeholder="From Phone"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -661,22 +706,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="imageUrl" className="nice-form-control">
                       <b>
-                        Image _ url:
-                        {touched.imageUrl && !errors.imageUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Image Url:
+                        {touched.imageUrl &&
+                         !errors.imageUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="imageUrl"
-                        value={values?.imageUrl}
-                        placeholder="Image _ url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="imageUrl"
+                            value={values?.imageUrl}
+                            placeholder="Image Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -685,31 +737,35 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="includeRevenue"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="includeRevenue" className="nice-form-control">
                       <b>
                         Include Revenue:
-                        {touched.includeRevenue && !errors.includeRevenue && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.includeRevenue &&
+                         !errors.includeRevenue && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="includeRevenue"
-                        name="includeRevenue"
-                        checked={values.includeRevenue || false}
-                        onChange={(e) => {
-                          setFieldTouched("includeRevenue", true);
-                          setFieldValue("includeRevenue", e.target.checked);
-                        }}
-                        isInvalid={!!errors.includeRevenue}
-                        className={errors.includeRevenue ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="includeRevenue"
+                            name="includeRevenue"
+                            checked={values.includeRevenue || false}
+                            onChange={(e) => {
+                              setFieldTouched('includeRevenue', true);
+                              setFieldValue('includeRevenue', e.target.checked);
+                            }}
+                            isInvalid={!!errors.includeRevenue}
+                            className={errors.includeRevenue ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -720,22 +776,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="inviteeEmail" className="nice-form-control">
                       <b>
-                        Invitee _ email:
-                        {touched.inviteeEmail && !errors.inviteeEmail && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Invitee Email:
+                        {touched.inviteeEmail &&
+                         !errors.inviteeEmail && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="inviteeEmail"
-                        value={values?.inviteeEmail}
-                        placeholder="Invitee _ email"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="inviteeEmail"
+                            value={values?.inviteeEmail}
+                            placeholder="Invitee Email"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -747,12 +810,20 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="iterations" className="nice-form-control">
                       <b>
                         Iterations:
-                        {touched.iterations && !errors.iterations && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.iterations &&
+                         !errors.iterations && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
+
+
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -764,21 +835,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="link" className="nice-form-control">
                       <b>
                         Link:
-                        {touched.link && !errors.link && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.link &&
+                         !errors.link && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="link"
-                        value={values?.link}
-                        placeholder="Link"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="link"
+                            value={values?.link}
+                            placeholder="Link"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -790,21 +868,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="listId" className="nice-form-control">
                       <b>
                         List Id:
-                        {touched.listId && !errors.listId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.listId &&
+                         !errors.listId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="listId"
-                        value={values?.listId}
-                        placeholder="List Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="listId"
+                            value={values?.listId}
+                            placeholder="List Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -816,21 +901,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="llmServiceId" className="nice-form-control">
                       <b>
                         Llm Service Id:
-                        {touched.llmServiceId && !errors.llmServiceId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.llmServiceId &&
+                         !errors.llmServiceId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="llmServiceId"
-                        value={values?.llmServiceId}
-                        placeholder="Llm Service Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="llmServiceId"
+                            value={values?.llmServiceId}
+                            placeholder="Llm Service Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -842,32 +934,36 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="maxBatchSize" className="nice-form-control">
                       <b>
                         Max Batch Size:
-                        {touched.maxBatchSize && !errors.maxBatchSize && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxBatchSize &&
+                         !errors.maxBatchSize && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxBatchSize"
-                        type="number"
-                        value={values.maxBatchSize || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxBatchSize", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxBatchSize",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxBatchSize
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxBatchSize"
+                            type="number"
+                            value={values.maxBatchSize || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxBatchSize', true);
+                              const v = e.target.value;
+                              setFieldValue('maxBatchSize', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxBatchSize
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -879,12 +975,20 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="maxMessages" className="nice-form-control">
                       <b>
                         Max Messages:
-                        {touched.maxMessages && !errors.maxMessages && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxMessages &&
+                         !errors.maxMessages && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
+
+
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -896,32 +1000,36 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="maxResults" className="nice-form-control">
                       <b>
                         Max Results:
-                        {touched.maxResults && !errors.maxResults && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxResults &&
+                         !errors.maxResults && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxResults"
-                        type="number"
-                        value={values.maxResults || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxResults", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxResults",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxResults
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxResults"
+                            type="number"
+                            value={values.maxResults || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxResults', true);
+                              const v = e.target.value;
+                              setFieldValue('maxResults', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxResults
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -933,21 +1041,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="meetingId" className="nice-form-control">
                       <b>
                         Meeting Id:
-                        {touched.meetingId && !errors.meetingId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.meetingId &&
+                         !errors.meetingId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="meetingId"
-                        value={values?.meetingId}
-                        placeholder="Meeting Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="meetingId"
+                            value={values?.meetingId}
+                            placeholder="Meeting Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -956,27 +1071,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="mergeStrategy"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="mergeStrategy" className="nice-form-control">
                       <b>
                         Merge Strategy:
-                        {touched.mergeStrategy && !errors.mergeStrategy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.mergeStrategy &&
+                         !errors.mergeStrategy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="mergeStrategy"
-                        value={values?.mergeStrategy}
-                        placeholder="Merge Strategy"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="mergeStrategy"
+                            value={values?.mergeStrategy}
+                            placeholder="Merge Strategy"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -988,21 +1107,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="model" className="nice-form-control">
                       <b>
                         Model:
-                        {touched.model && !errors.model && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.model &&
+                         !errors.model && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="model"
-                        value={values?.model}
-                        placeholder="Model"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="model"
+                            value={values?.model}
+                            placeholder="Model"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1011,38 +1137,39 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="numCandidates"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="numCandidates" className="nice-form-control">
                       <b>
                         Num Candidates:
-                        {touched.numCandidates && !errors.numCandidates && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.numCandidates &&
+                         !errors.numCandidates && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="numCandidates"
-                        type="number"
-                        value={values.numCandidates || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("numCandidates", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "numCandidates",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.numCandidates
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="numCandidates"
+                            type="number"
+                            value={values.numCandidates || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('numCandidates', true);
+                              const v = e.target.value;
+                              setFieldValue('numCandidates', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.numCandidates
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1054,21 +1181,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="openAiModel" className="nice-form-control">
                       <b>
                         Open Ai Model:
-                        {touched.openAiModel && !errors.openAiModel && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.openAiModel &&
+                         !errors.openAiModel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="openAiModel"
-                        value={values?.openAiModel}
-                        placeholder="Open Ai Model"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="openAiModel"
+                            value={values?.openAiModel}
+                            placeholder="Open Ai Model"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1079,22 +1213,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="openapiUrl" className="nice-form-control">
                       <b>
-                        Openapi _ url:
-                        {touched.openapiUrl && !errors.openapiUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Openapi Url:
+                        {touched.openapiUrl &&
+                         !errors.openapiUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="openapiUrl"
-                        value={values?.openapiUrl}
-                        placeholder="Openapi _ url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="openapiUrl"
+                            value={values?.openapiUrl}
+                            placeholder="Openapi Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1106,21 +1247,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="orderId" className="nice-form-control">
                       <b>
                         Order Id:
-                        {touched.orderId && !errors.orderId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.orderId &&
+                         !errors.orderId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="orderId"
-                        value={values?.orderId}
-                        placeholder="Order Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="orderId"
+                            value={values?.orderId}
+                            placeholder="Order Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1131,22 +1279,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="pageId" className="nice-form-control">
                       <b>
-                        Page _ id:
-                        {touched.pageId && !errors.pageId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Page Id:
+                        {touched.pageId &&
+                         !errors.pageId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="pageId"
-                        value={values?.pageId}
-                        placeholder="Page _ id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="pageId"
+                            value={values?.pageId}
+                            placeholder="Page Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1157,22 +1312,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="photoUrl" className="nice-form-control">
                       <b>
-                        Photo _ url:
-                        {touched.photoUrl && !errors.photoUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Photo Url:
+                        {touched.photoUrl &&
+                         !errors.photoUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="photoUrl"
-                        value={values?.photoUrl}
-                        placeholder="Photo _ url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="photoUrl"
+                            value={values?.photoUrl}
+                            placeholder="Photo Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1181,28 +1343,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="principalUsername"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="principalUsername" className="nice-form-control">
                       <b>
                         Principal Username:
                         {touched.principalUsername &&
-                          !errors.principalUsername && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.principalUsername && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="principalUsername"
-                        value={values?.principalUsername}
-                        placeholder="Principal Username"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="principalUsername"
+                            value={values?.principalUsername}
+                            placeholder="Principal Username"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1213,22 +1378,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="quoteTweetId" className="nice-form-control">
                       <b>
-                        Quote _ tweet _ id:
-                        {touched.quoteTweetId && !errors.quoteTweetId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Quote Tweet Id:
+                        {touched.quoteTweetId &&
+                         !errors.quoteTweetId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="quoteTweetId"
-                        value={values?.quoteTweetId}
-                        placeholder="Quote _ tweet _ id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="quoteTweetId"
+                            value={values?.quoteTweetId}
+                            placeholder="Quote Tweet Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1237,28 +1409,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="replayTargetModule"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="replayTargetModule" className="nice-form-control">
                       <b>
-                        Replay _ target _ module:
+                        Replay Target Module:
                         {touched.replayTargetModule &&
-                          !errors.replayTargetModule && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.replayTargetModule && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="replayTargetModule"
-                        value={values?.replayTargetModule}
-                        placeholder="Replay _ target _ module"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="replayTargetModule"
+                            value={values?.replayTargetModule}
+                            placeholder="Replay Target Module"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1270,21 +1445,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="replyTo" className="nice-form-control">
                       <b>
                         Reply To:
-                        {touched.replyTo && !errors.replyTo && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.replyTo &&
+                         !errors.replyTo && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="replyTo"
-                        value={values?.replyTo}
-                        placeholder="Reply To"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="replyTo"
+                            value={values?.replyTo}
+                            placeholder="Reply To"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1293,27 +1475,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="replyToTweetId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="replyToTweetId" className="nice-form-control">
                       <b>
                         Reply To Tweet Id:
-                        {touched.replyToTweetId && !errors.replyToTweetId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.replyToTweetId &&
+                         !errors.replyToTweetId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="replyToTweetId"
-                        value={values?.replyToTweetId}
-                        placeholder="Reply To Tweet Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="replyToTweetId"
+                            value={values?.replyToTweetId}
+                            placeholder="Reply To Tweet Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1325,21 +1511,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="s3Bucket" className="nice-form-control">
                       <b>
                         S 3 Bucket:
-                        {touched.s3Bucket && !errors.s3Bucket && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.s3Bucket &&
+                         !errors.s3Bucket && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="s3Bucket"
-                        value={values?.s3Bucket}
-                        placeholder="S 3 Bucket"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="s3Bucket"
+                            value={values?.s3Bucket}
+                            placeholder="S 3 Bucket"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1351,21 +1544,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="s3KeyPrefix" className="nice-form-control">
                       <b>
                         S 3 Key Prefix:
-                        {touched.s3KeyPrefix && !errors.s3KeyPrefix && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.s3KeyPrefix &&
+                         !errors.s3KeyPrefix && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="s3KeyPrefix"
-                        value={values?.s3KeyPrefix}
-                        placeholder="S 3 Key Prefix"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="s3KeyPrefix"
+                            value={values?.s3KeyPrefix}
+                            placeholder="S 3 Key Prefix"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1377,21 +1577,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="s3Region" className="nice-form-control">
                       <b>
                         S 3 Region:
-                        {touched.s3Region && !errors.s3Region && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.s3Region &&
+                         !errors.s3Region && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="s3Region"
-                        value={values?.s3Region}
-                        placeholder="S 3 Region"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="s3Region"
+                            value={values?.s3Region}
+                            placeholder="S 3 Region"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1403,25 +1610,32 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="saveSnapshot" className="nice-form-control">
                       <b>
                         Save Snapshot:
-                        {touched.saveSnapshot && !errors.saveSnapshot && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.saveSnapshot &&
+                         !errors.saveSnapshot && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="saveSnapshot"
-                        name="saveSnapshot"
-                        checked={values.saveSnapshot || false}
-                        onChange={(e) => {
-                          setFieldTouched("saveSnapshot", true);
-                          setFieldValue("saveSnapshot", e.target.checked);
-                        }}
-                        isInvalid={!!errors.saveSnapshot}
-                        className={errors.saveSnapshot ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="saveSnapshot"
+                            name="saveSnapshot"
+                            checked={values.saveSnapshot || false}
+                            onChange={(e) => {
+                              setFieldTouched('saveSnapshot', true);
+                              setFieldValue('saveSnapshot', e.target.checked);
+                            }}
+                            isInvalid={!!errors.saveSnapshot}
+                            className={errors.saveSnapshot ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1433,21 +1647,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="scoreModelId" className="nice-form-control">
                       <b>
                         Score Model Id:
-                        {touched.scoreModelId && !errors.scoreModelId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.scoreModelId &&
+                         !errors.scoreModelId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="scoreModelId"
-                        value={values?.scoreModelId}
-                        placeholder="Score Model Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="scoreModelId"
+                            value={values?.scoreModelId}
+                            placeholder="Score Model Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1459,21 +1680,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="target" className="nice-form-control">
                       <b>
                         Target:
-                        {touched.target && !errors.target && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.target &&
+                         !errors.target && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="target"
-                        value={values?.target}
-                        placeholder="Target"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="target"
+                            value={values?.target}
+                            placeholder="Target"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1485,21 +1713,28 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="toPhone" className="nice-form-control">
                       <b>
                         To Phone:
-                        {touched.toPhone && !errors.toPhone && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.toPhone &&
+                         !errors.toPhone && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="toPhone"
-                        value={values?.toPhone}
-                        placeholder="To Phone"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="toPhone"
+                            value={values?.toPhone}
+                            placeholder="To Phone"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1511,25 +1746,32 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="trackLinks" className="nice-form-control">
                       <b>
                         Track Links:
-                        {touched.trackLinks && !errors.trackLinks && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trackLinks &&
+                         !errors.trackLinks && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trackLinks"
-                        name="trackLinks"
-                        checked={values.trackLinks || false}
-                        onChange={(e) => {
-                          setFieldTouched("trackLinks", true);
-                          setFieldValue("trackLinks", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trackLinks}
-                        className={errors.trackLinks ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trackLinks"
+                            name="trackLinks"
+                            checked={values.trackLinks || false}
+                            onChange={(e) => {
+                              setFieldTouched('trackLinks', true);
+                              setFieldValue('trackLinks', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trackLinks}
+                            className={errors.trackLinks ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1540,22 +1782,29 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="truePath" className="nice-form-control">
                       <b>
-                        True _ path:
-                        {touched.truePath && !errors.truePath && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        True Path:
+                        {touched.truePath &&
+                         !errors.truePath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="truePath"
-                        value={values?.truePath}
-                        placeholder="True _ path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="truePath"
+                            value={values?.truePath}
+                            placeholder="True Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1564,38 +1813,39 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="updateFrequency"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="updateFrequency" className="nice-form-control">
                       <b>
                         Update Frequency:
-                        {touched.updateFrequency && !errors.updateFrequency && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.updateFrequency &&
+                         !errors.updateFrequency && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="updateFrequency"
-                        type="number"
-                        value={values.updateFrequency || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("updateFrequency", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "updateFrequency",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.updateFrequency
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="updateFrequency"
+                            type="number"
+                            value={values.updateFrequency || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('updateFrequency', true);
+                              const v = e.target.value;
+                              setFieldValue('updateFrequency', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.updateFrequency
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1604,27 +1854,31 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="websocketTopic"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="websocketTopic" className="nice-form-control">
                       <b>
                         Websocket Topic:
-                        {touched.websocketTopic && !errors.websocketTopic && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.websocketTopic &&
+                         !errors.websocketTopic && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="websocketTopic"
-                        value={values?.websocketTopic}
-                        placeholder="Websocket Topic"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="websocketTopic"
+                            value={values?.websocketTopic}
+                            placeholder="Websocket Topic"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1636,25 +1890,32 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -1664,65 +1925,45 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ExecModuleAudienceConfig
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ExecModuleAudienceConfig
+                  </CoolButton>
 
-                    {(addExecModuleAudienceConfigResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addExecModuleAudienceConfigResult as any).error
-                              ? (addExecModuleAudienceConfigResult as any).error
-                                  .data
-                              : (addExecModuleAudienceConfigResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addExecModuleAudienceConfigResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addExecModuleAudienceConfigResult as any).error ? (addExecModuleAudienceConfigResult as any).error.data : (addExecModuleAudienceConfigResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addExecModuleAudienceConfigResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addExecModuleAudienceConfigResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addExecModuleAudienceConfigResult:{" "}
-                    {JSON.stringify(addExecModuleAudienceConfigResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addExecModuleAudienceConfigResult: {JSON.stringify(addExecModuleAudienceConfigResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -1742,5 +1983,8 @@ const ExecModuleAudienceConfigForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ExecModuleAudienceConfigForm;
+

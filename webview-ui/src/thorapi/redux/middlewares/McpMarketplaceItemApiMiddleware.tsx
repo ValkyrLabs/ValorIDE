@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MCPMARKETPLACEITEM_REQUEST,
-  FETCH_MCPMARKETPLACEITEM_REQUEST,
-  LIST_MCPMARKETPLACEITEM_REQUEST,
-  UPDATE_MCPMARKETPLACEITEM_REQUEST,
-  DELETE_MCPMARKETPLACEITEM_REQUEST,
-  addMcpMarketplaceItemFailure,
-  addMcpMarketplaceItemSuccess,
-  fetchMcpMarketplaceItemFailure,
-  fetchMcpMarketplaceItemSuccess,
-  listMcpMarketplaceItemFailure,
-  listMcpMarketplaceItemSuccess,
-  updateMcpMarketplaceItemFailure,
-  updateMcpMarketplaceItemSuccess,
-  deleteMcpMarketplaceItemFailure,
-  deleteMcpMarketplaceItemSuccess,
-} from "../actions/McpMarketplaceItemApiAction";
+
+    ADD_MCPMARKETPLACEITEM_REQUEST,
+    FETCH_MCPMARKETPLACEITEM_REQUEST,
+    LIST_MCPMARKETPLACEITEM_REQUEST,
+    UPDATE_MCPMARKETPLACEITEM_REQUEST,
+    DELETE_MCPMARKETPLACEITEM_REQUEST,
+
+    addMcpMarketplaceItemFailure,
+    addMcpMarketplaceItemSuccess,
+
+    fetchMcpMarketplaceItemFailure,
+    fetchMcpMarketplaceItemSuccess,
+    
+    listMcpMarketplaceItemFailure,
+    listMcpMarketplaceItemSuccess,
+
+    updateMcpMarketplaceItemFailure,
+    updateMcpMarketplaceItemSuccess,
+    
+    deleteMcpMarketplaceItemFailure,
+    deleteMcpMarketplaceItemSuccess,
+    
+} from '../actions/McpMarketplaceItemApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceItem
 */
 
-export const McpMarketplaceItemMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const McpMarketplaceItemMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

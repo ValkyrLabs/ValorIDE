@@ -1,0 +1,19 @@
+//! @ts-check
+/**
+ * ChatSettings defines the operational parameters for the ValorIDE agentic chat experience.
+ */
+
+export interface ChatSettings {
+  mode: "plan" | "act";|mode: "plan" | "act";
+  stubbornMode?: boolean; // When enabled, auto-asks for thoroughness after completion
+  // Optional per-session safeguards and pacing
+  llmSource: 'cloud' | 'local'; // Source of the LLM (Cloud or Local)
+  llmBaseUrl?: string; // Base URL for local LLM service (e.g., http://localhost:11434)
+  llmLongTimeoutMs?: number; // Extended timeout for complex local LLM reasoning (milliseconds)
+}
+
+export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
+  mode: "act",
+  // Default timeout for the first chunk of response is 6 minutes. This gives ample time for complex reasoning tasks to start streaming.
+  apiFirstChunkTimeoutMs: 1_360_000, // 1,360 seconds
+};

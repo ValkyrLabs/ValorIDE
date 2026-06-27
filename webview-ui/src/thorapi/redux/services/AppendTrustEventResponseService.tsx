@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AppendTrustEventResponse } from "@thorapi/model/AppendTrustEventResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AppendTrustEventResponse } from '@thorapi/model/AppendTrustEventResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AppendTrustEventResponseResponse = AppendTrustEventResponse[];
+type AppendTrustEventResponseResponse = AppendTrustEventResponse[]
+type AppendTrustEventResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AppendTrustEventResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toAppendTrustEventResponseList = (
-  result: unknown,
-): AppendTrustEventResponseResponse => {
+type AppendTrustEventResponseListQueryArg = {
+  example?: Partial<AppendTrustEventResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toAppendTrustEventResponseList = (result: unknown): AppendTrustEventResponseResponse => {
   if (Array.isArray(result)) {
-    return result as AppendTrustEventResponseResponse;
+    return result as AppendTrustEventResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as AppendTrustEventResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AppendTrustEventResponseResponse) : []
+}
 
 export const AppendTrustEventResponseService = createApi({
-  reducerPath: "AppendTrustEventResponse", // This should remain unique
+  reducerPath: 'AppendTrustEventResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AppendTrustEventResponse"],
+  tagTypes: ['AppendTrustEventResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAppendTrustEventResponsesPaged: build.query<
-      AppendTrustEventResponseResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<AppendTrustEventResponse>;
-      }
-    >({
+    getAppendTrustEventResponsesPaged: build.query<AppendTrustEventResponseResponse, AppendTrustEventResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AppendTrustEventResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AppendTrustEventResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAppendTrustEventResponseList(result);
+        const rows = toAppendTrustEventResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "AppendTrustEventResponse" as const,
-              id,
-            })),
-          { type: "AppendTrustEventResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AppendTrustEventResponse' as const, id })),
+          { type: 'AppendTrustEventResponse', id: `PAGE_${page}` },
+          { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAppendTrustEventResponses: build.query<
-      AppendTrustEventResponseResponse,
-      { example?: Partial<AppendTrustEventResponse> } | void
-    >({
+    getAppendTrustEventResponses: build.query<AppendTrustEventResponseResponse, AppendTrustEventResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,117 +82,86 @@ export const AppendTrustEventResponseService = createApi({
         return `AppendTrustEventResponse`;
       },
       providesTags: (result) => {
-        const rows = toAppendTrustEventResponseList(result);
+        const rows = toAppendTrustEventResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "AppendTrustEventResponse" as const,
-              id,
-            })),
-          { type: "AppendTrustEventResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AppendTrustEventResponse' as const, id })),
+          { type: 'AppendTrustEventResponse', id: 'LIST' },
+          { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addAppendTrustEventResponse: build.mutation<
-      AppendTrustEventResponse,
-      Partial<AppendTrustEventResponse>
-    >({
+    addAppendTrustEventResponse: build.mutation<AppendTrustEventResponse, Partial<AppendTrustEventResponse>>({
       query: (body) => ({
         url: `AppendTrustEventResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AppendTrustEventResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AppendTrustEventResponse', id: 'LIST' },
+        { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAppendTrustEventResponse: build.query<AppendTrustEventResponse, string>({
       query: (id) => `AppendTrustEventResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "AppendTrustEventResponse", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'AppendTrustEventResponse', id }],
     }),
 
     // 5) Update
-    updateAppendTrustEventResponse: build.mutation<
-      void,
-      Pick<AppendTrustEventResponse, "id"> & Partial<AppendTrustEventResponse>
-    >({
+    updateAppendTrustEventResponse: build.mutation<AppendTrustEventResponse, Pick<AppendTrustEventResponse, 'id'> & Partial<AppendTrustEventResponse>>({
       query: ({ id, ...patch }) => ({
         url: `AppendTrustEventResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AppendTrustEventResponseService.util.updateQueryData(
-              "getAppendTrustEventResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<AppendTrustEventResponse, "id">,
-      ) => [
-        { type: "AppendTrustEventResponse", id },
-        { type: "AppendTrustEventResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AppendTrustEventResponse, 'id'>) => [
+        { type: 'AppendTrustEventResponse', id },
+        { type: 'AppendTrustEventResponse', id: 'LIST' },
+        { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAppendTrustEventResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteAppendTrustEventResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `AppendTrustEventResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "AppendTrustEventResponse", id },
+        { type: 'AppendTrustEventResponse', id },
+        { type: 'AppendTrustEventResponse', id: 'LIST' },
+        { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAppendTrustEventResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAppendTrustEventResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AppendTrustEventResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AppendTrustEventResponse", id },
-        { type: "AppendTrustEventResponse", id: "LIST" },
+        { type: 'AppendTrustEventResponse', id },
+        { type: 'AppendTrustEventResponse', id: 'LIST' },
+        { type: 'AppendTrustEventResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAppendTrustEventResponsesPagedQuery`
 export const {
-  useGetAppendTrustEventResponsesPagedQuery, // immediate fetch
+  useGetAppendTrustEventResponsesPagedQuery,     // immediate fetch
   useLazyGetAppendTrustEventResponsesPagedQuery, // lazy fetch
   useGetAppendTrustEventResponseQuery,
   useGetAppendTrustEventResponsesQuery,
@@ -202,4 +169,4 @@ export const {
   useUpdateAppendTrustEventResponseMutation,
   useDeleteAppendTrustEventResponseMutation,
   useDeleteAppendTrustEventResponseCascadeMutation,
-} = AppendTrustEventResponseService;
+} = AppendTrustEventResponseService

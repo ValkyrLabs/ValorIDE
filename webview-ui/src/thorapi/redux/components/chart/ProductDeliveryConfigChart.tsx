@@ -19,35 +19,20 @@ Description: ProductDeliveryConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ProductDeliveryConfig } from "@thorapi/model";
-import {
-  useGetProductDeliveryConfigsQuery,
-  useAddProductDeliveryConfigMutation,
-  useUpdateProductDeliveryConfigMutation,
-} from "../../services/ProductDeliveryConfigService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ProductDeliveryConfig } from '@thorapi/model';
+import { useGetProductDeliveryConfigsQuery, useAddProductDeliveryConfigMutation, useUpdateProductDeliveryConfigMutation } from '../../services/ProductDeliveryConfigService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ProductDeliveryConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetProductDeliveryConfigsQuery();
+  const { data: initialData = [], isLoading } = useGetProductDeliveryConfigsQuery();
 
   const [data, setData] = useState<ProductDeliveryConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ProductDeliveryConfig>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<ProductDeliveryConfig>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ProductDeliveryConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ProductDeliveryConfigChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((productdeliveryconfig: DataObject) => [
-            productdeliveryconfig,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((productdeliveryconfig: DataObject) => [productdeliveryconfig])} />
+          )}
     </>
   );
 };

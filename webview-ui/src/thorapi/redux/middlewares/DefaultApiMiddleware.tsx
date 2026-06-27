@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_DEFAULT_REQUEST,
-  FETCH_DEFAULT_REQUEST,
-  LIST_DEFAULT_REQUEST,
-  UPDATE_DEFAULT_REQUEST,
-  DELETE_DEFAULT_REQUEST,
-  addDefaultFailure,
-  addDefaultSuccess,
-  fetchDefaultFailure,
-  fetchDefaultSuccess,
-  listDefaultFailure,
-  listDefaultSuccess,
-  updateDefaultFailure,
-  updateDefaultSuccess,
-  deleteDefaultFailure,
-  deleteDefaultSuccess,
-} from "../actions/DefaultApiAction";
+
+    ADD_DEFAULT_REQUEST,
+    FETCH_DEFAULT_REQUEST,
+    LIST_DEFAULT_REQUEST,
+    UPDATE_DEFAULT_REQUEST,
+    DELETE_DEFAULT_REQUEST,
+
+    addDefaultFailure,
+    addDefaultSuccess,
+
+    fetchDefaultFailure,
+    fetchDefaultSuccess,
+    
+    listDefaultFailure,
+    listDefaultSuccess,
+
+    updateDefaultFailure,
+    updateDefaultSuccess,
+    
+    deleteDefaultFailure,
+    deleteDefaultSuccess,
+    
+} from '../actions/DefaultApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Default
 */
 
-export const DefaultMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Default MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const DefaultMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Default MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

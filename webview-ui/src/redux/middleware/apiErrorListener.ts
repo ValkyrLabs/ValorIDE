@@ -138,6 +138,22 @@ const isExpiredSessionPayload = (status: number, data: any): boolean => {
   );
 };
 
+const isNonBlockingMeteringPermissionError = (
+  status: number,
+  data: any,
+  endpointName?: string,
+): boolean => {
+  if (status !== 403 || endpointName !== "recordUsageTransaction") {
+    return false;
+  }
+  const message = buildMessage(status, data).toLowerCase();
+  return (
+    message.includes("cannot perform this action") ||
+    message.includes("write scopes") ||
+    message.includes("role permissions")
+  );
+};
+
 export const apiErrorListener = createListenerMiddleware();
 
 apiErrorListener.startListening({
@@ -166,6 +182,10 @@ apiErrorListener.startListening({
     if (isExpiredSessionPayload(status, data)) {
       clearStoredAuthSession("api-error-listener");
       listenerApi.dispatch(clearLastError());
+      return;
+    }
+
+    if (isNonBlockingMeteringPermissionError(status, data, endpointName)) {
       return;
     }
 

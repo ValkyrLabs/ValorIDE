@@ -19,35 +19,20 @@ Description: GenerateTrustProofResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, GenerateTrustProofResponse } from "@thorapi/model";
-import {
-  useGetGenerateTrustProofResponsesQuery,
-  useAddGenerateTrustProofResponseMutation,
-  useUpdateGenerateTrustProofResponseMutation,
-} from "../../services/GenerateTrustProofResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, GenerateTrustProofResponse } from '@thorapi/model';
+import { useGetGenerateTrustProofResponsesQuery, useAddGenerateTrustProofResponseMutation, useUpdateGenerateTrustProofResponseMutation } from '../../services/GenerateTrustProofResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const GenerateTrustProofResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetGenerateTrustProofResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetGenerateTrustProofResponsesQuery();
 
   const [data, setData] = useState<GenerateTrustProofResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<GenerateTrustProofResponse>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<GenerateTrustProofResponse>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const GenerateTrustProofResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const GenerateTrustProofResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((generatetrustproofresponse: DataObject) => [
-            generatetrustproofresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((generatetrustproofresponse: DataObject) => [generatetrustproofresponse])} />
+          )}
     </>
   );
 };

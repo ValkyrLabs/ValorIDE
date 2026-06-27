@@ -19,32 +19,20 @@ Description: Reaction
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, Reaction } from "@thorapi/model";
-import {
-  useGetReactionsQuery,
-  useAddReactionMutation,
-  useUpdateReactionMutation,
-} from "../../services/ReactionService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, Reaction } from '@thorapi/model';
+import { useGetReactionsQuery, useAddReactionMutation, useUpdateReactionMutation } from '../../services/ReactionService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ReactionChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetReactionsQuery();
 
   const [data, setData] = useState<Reaction[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Reaction>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ReactionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const ReactionChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((reaction: DataObject) => [reaction])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((reaction: DataObject) => [reaction])} />
+          )}
     </>
   );
 };

@@ -19,32 +19,20 @@ Description: BuildOutput
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, BuildOutput } from "@thorapi/model";
-import {
-  useGetBuildOutputsQuery,
-  useAddBuildOutputMutation,
-  useUpdateBuildOutputMutation,
-} from "../../services/BuildOutputService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, BuildOutput } from '@thorapi/model';
+import { useGetBuildOutputsQuery, useAddBuildOutputMutation, useUpdateBuildOutputMutation } from '../../services/BuildOutputService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const BuildOutputChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetBuildOutputsQuery();
 
   const [data, setData] = useState<BuildOutput[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<BuildOutput>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const BuildOutputChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const BuildOutputChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((buildoutput: DataObject) => [buildoutput])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((buildoutput: DataObject) => [buildoutput])} />
+          )}
     </>
   );
 };

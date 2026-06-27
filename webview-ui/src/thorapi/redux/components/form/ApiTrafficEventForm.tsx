@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ApiTrafficEvent,
+} from '@thorapi/model';
 
-import { ApiTrafficEvent } from "@thorapi/model";
-
-import { useAddApiTrafficEventMutation } from "../../services/ApiTrafficEventService";
+import { useAddApiTrafficEventMutation } from '../../services/ApiTrafficEventService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,37 +65,31 @@ Inline event representing a single REST request trace.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  method: Yup.string(),
-  path: Yup.string(),
-  status: asNumber(Yup.number().integer().typeError("status must be a number")),
-  durationMs: asNumber(
-    Yup.number().integer().typeError("durationMs must be a number"),
-  ),
-  customerId: Yup.string(),
-  organizationId: Yup.string(),
-  timestamp: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("timestamp must be a valid date"),
-  trashed: Yup.boolean(),
+        method: Yup.string(),
+        path: Yup.string(),
+        status: asNumber(Yup.number().integer().typeError("status must be a number")),
+        durationMs: asNumber(Yup.number().integer().typeError("durationMs must be a number")),
+        customerId: Yup.string(),
+        organizationId: Yup.string(),
+        timestamp: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("timestamp must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ApiTrafficEventForm: React.FC = () => {
-  const [addApiTrafficEvent, addApiTrafficEventResult] =
-    useAddApiTrafficEventMutation();
+  const [addApiTrafficEvent, addApiTrafficEventResult] = useAddApiTrafficEventMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -111,18 +99,12 @@ const ApiTrafficEventForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -130,14 +112,14 @@ const ApiTrafficEventForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ApiTrafficEvent> = {
-    method: "",
-    path: "",
-    status: 0,
-    durationMs: 0,
-    customerId: "",
-    organizationId: "",
-    timestamp: new Date(),
-    trashed: false,
+          method: '',
+          path: '',
+          status: 0,
+          durationMs: 0,
+          customerId: '',
+          organizationId: '',
+          timestamp: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -152,14 +134,11 @@ const ApiTrafficEventForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ApiTrafficEvent:", grants);
+    console.log('Permissions saved for new ApiTrafficEvent:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ApiTrafficEvent>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ApiTrafficEvent>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -170,7 +149,7 @@ const ApiTrafficEventForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ApiTrafficEvent created successfully! Would you like to set permissions for this object?`,
+          `ApiTrafficEvent created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -178,8 +157,8 @@ const ApiTrafficEventForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ApiTrafficEvent:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ApiTrafficEvent:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -200,36 +179,44 @@ const ApiTrafficEventForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addApiTrafficEventResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New ApiTrafficEvent
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ApiTrafficEvent
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="method" className="nice-form-control">
                       <b>
                         Method:
-                        {touched.method && !errors.method && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.method &&
+                         !errors.method && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="method"
-                        value={values?.method}
-                        placeholder="Method"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="method"
+                            value={values?.method}
+                            placeholder="Method"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -241,21 +228,28 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="path" className="nice-form-control">
                       <b>
                         Path:
-                        {touched.path && !errors.path && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.path &&
+                         !errors.path && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="path"
-                        value={values?.path}
-                        placeholder="Path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="path"
+                            value={values?.path}
+                            placeholder="Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -267,32 +261,36 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="status"
-                        type="number"
-                        value={values.status || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("status", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "status",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="status"
+                            type="number"
+                            value={values.status || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('status', true);
+                              const v = e.target.value;
+                              setFieldValue('status', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.status
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -304,32 +302,36 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="durationMs" className="nice-form-control">
                       <b>
                         Duration Ms:
-                        {touched.durationMs && !errors.durationMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.durationMs &&
+                         !errors.durationMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="durationMs"
-                        type="number"
-                        value={values.durationMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("durationMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "durationMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.durationMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="durationMs"
+                            type="number"
+                            value={values.durationMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('durationMs', true);
+                              const v = e.target.value;
+                              setFieldValue('durationMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.durationMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -341,21 +343,28 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="customerId" className="nice-form-control">
                       <b>
                         Customer Id:
-                        {touched.customerId && !errors.customerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="customerId"
-                        value={values?.customerId}
-                        placeholder="Customer Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -364,27 +373,31 @@ const ApiTrafficEventForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="organizationId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="organizationId" className="nice-form-control">
                       <b>
                         Organization Id:
-                        {touched.organizationId && !errors.organizationId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.organizationId &&
+                         !errors.organizationId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="organizationId"
-                        value={values?.organizationId}
-                        placeholder="Organization Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="organizationId"
+                            value={values?.organizationId}
+                            placeholder="Organization Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -396,38 +409,38 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="timestamp" className="nice-form-control">
                       <b>
                         Timestamp:
-                        {touched.timestamp && !errors.timestamp && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.timestamp &&
+                         !errors.timestamp && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="timestamp"
-                        type="datetime-local"
-                        value={
-                          values.timestamp
-                            ? new Date(values.timestamp)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("timestamp", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "timestamp",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.timestamp
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="timestamp"
+                            type="datetime-local"
+                            value={values.timestamp ? 
+                              new Date(values.timestamp).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('timestamp', true);
+                              const v = e.target.value;
+                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.timestamp
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -439,25 +452,32 @@ const ApiTrafficEventForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -467,59 +487,45 @@ const ApiTrafficEventForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New ApiTrafficEvent
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ApiTrafficEvent
+                  </CoolButton>
 
-                    {(addApiTrafficEventResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addApiTrafficEventResult as any).error
-                              ? (addApiTrafficEventResult as any).error.data
-                              : (addApiTrafficEventResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addApiTrafficEventResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addApiTrafficEventResult as any).error ? (addApiTrafficEventResult as any).error.data : (addApiTrafficEventResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addApiTrafficEventResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addApiTrafficEventResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addApiTrafficEventResult:{" "}
-                    {JSON.stringify(addApiTrafficEventResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addApiTrafficEventResult: {JSON.stringify(addApiTrafficEventResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -539,5 +545,8 @@ const ApiTrafficEventForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ApiTrafficEventForm;
+

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_RUN_REQUEST,
-  FETCH_RUN_REQUEST,
-  LIST_RUN_REQUEST,
-  UPDATE_RUN_REQUEST,
-  DELETE_RUN_REQUEST,
-  addRunFailure,
-  addRunSuccess,
-  fetchRunFailure,
-  fetchRunSuccess,
-  listRunFailure,
-  listRunSuccess,
-  updateRunFailure,
-  updateRunSuccess,
-  deleteRunFailure,
-  deleteRunSuccess,
-} from "../actions/RunApiAction";
+
+    ADD_RUN_REQUEST,
+    FETCH_RUN_REQUEST,
+    LIST_RUN_REQUEST,
+    UPDATE_RUN_REQUEST,
+    DELETE_RUN_REQUEST,
+
+    addRunFailure,
+    addRunSuccess,
+
+    fetchRunFailure,
+    fetchRunSuccess,
+    
+    listRunFailure,
+    listRunSuccess,
+
+    updateRunFailure,
+    updateRunSuccess,
+    
+    deleteRunFailure,
+    deleteRunSuccess,
+    
+} from '../actions/RunApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Run
 */
 
-export const RunMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Run MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const RunMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Run MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

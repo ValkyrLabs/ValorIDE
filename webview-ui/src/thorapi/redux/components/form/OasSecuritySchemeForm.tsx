@@ -13,37 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  OasSecurityScheme,
+  OasSecuritySchemeTypeEnum,
+  OasSecuritySchemeInEnum,
+} from '@thorapi/model';
 
-import { OasSecurityScheme } from "@thorapi/model";
-
-import { useAddOasSecuritySchemeMutation } from "../../services/OasSecuritySchemeService";
+import { useAddOasSecuritySchemeMutation } from '../../services/OasSecuritySchemeService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -60,33 +56,57 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-a security scheme to access the api
+OpenAPI security scheme metadata used by API Studio and ThorAPI schema modeling.
 */
 
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
+const TypeValidation = () => {
+  return [
+    'apiKey',
+    'http',
+    'mutualTLS',
+    'oauth2',
+    'openIdConnect',
+  ];
+};
+const InValidation = () => {
+  return [
+    'query',
+    'header',
+    'cookie',
+  ];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  oasComponentId: Yup.string(),
-  name: Yup.string(),
-  trashed: Yup.boolean(),
+        oasComponentId: Yup.string(),
+        key: Yup.string(),
+      type: Yup.mixed()
+        .oneOf(TypeValidation(), "Invalid value for type")
+        ,
+        description: Yup.string(),
+        name: Yup.string(),
+      _in: Yup.mixed()
+        .oneOf(InValidation(), "Invalid value for _in")
+        ,
+        scheme: Yup.string(),
+        bearerFormat: Yup.string(),
+        openIdConnectUrl: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const OasSecuritySchemeForm: React.FC = () => {
-  const [addOasSecurityScheme, addOasSecuritySchemeResult] =
-    useAddOasSecuritySchemeMutation();
+  const [addOasSecurityScheme, addOasSecuritySchemeResult] = useAddOasSecuritySchemeMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -96,18 +116,12 @@ const OasSecuritySchemeForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -115,9 +129,16 @@ const OasSecuritySchemeForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<OasSecurityScheme> = {
-    oasComponentId: "",
-    name: "",
-    trashed: false,
+          oasComponentId: '',
+          key: '',
+        type: undefined,
+          description: '',
+          name: '',
+        _in: undefined,
+          scheme: '',
+          bearerFormat: '',
+          openIdConnectUrl: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -132,14 +153,11 @@ const OasSecuritySchemeForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new OasSecurityScheme:", grants);
+    console.log('Permissions saved for new OasSecurityScheme:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<OasSecurityScheme>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<OasSecurityScheme>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -150,7 +168,7 @@ const OasSecuritySchemeForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `OasSecurityScheme created successfully! Would you like to set permissions for this object?`,
+          `OasSecurityScheme created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -158,8 +176,8 @@ const OasSecuritySchemeForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create OasSecurityScheme:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create OasSecurityScheme:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -180,44 +198,149 @@ const OasSecuritySchemeForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addOasSecuritySchemeResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    OasSecurityScheme
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="oasComponentId"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New OasSecurityScheme
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="oasComponentId" className="nice-form-control">
                       <b>
                         Oas Component Id:
-                        {touched.oasComponentId && !errors.oasComponentId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.oasComponentId &&
+                         !errors.oasComponentId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="oasComponentId"
-                        value={values?.oasComponentId}
-                        placeholder="Oas Component Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="oasComponentId"
+                            value={values?.oasComponentId}
+                            placeholder="Oas Component Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
                         name="oasComponentId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="key" className="nice-form-control">
+                      <b>
+                        Key:
+                        {touched.key &&
+                         !errors.key && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="key"
+                            value={values?.key}
+                            placeholder="Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="key"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="type" className="nice-form-control">
+                      <b>
+                        Type:
+                        {touched.type &&
+                         !errors.type && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="type"
+                          value={values.type || ''}
+                          className={
+                            errors.type
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('type', true);
+                            setFieldValue('type', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Type" />
+                          <TypeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="type"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="description" className="nice-form-control">
+                      <b>
+                        Description:
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="description"
                         component="span"
                       />
                     </label>
@@ -225,25 +348,166 @@ const OasSecuritySchemeForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
                         name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="_in" className="nice-form-control">
+                      <b>
+                        In:
+                        {touched._in &&
+                         !errors._in && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="_in"
+                          value={values._in || ''}
+                          className={
+                            errors._in
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('_in', true);
+                            setFieldValue('_in', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select In" />
+                          <InLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="_in"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="scheme" className="nice-form-control">
+                      <b>
+                        Scheme:
+                        {touched.scheme &&
+                         !errors.scheme && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="scheme"
+                            value={values?.scheme}
+                            placeholder="Scheme"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="scheme"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="bearerFormat" className="nice-form-control">
+                      <b>
+                        Bearer Format:
+                        {touched.bearerFormat &&
+                         !errors.bearerFormat && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="bearerFormat"
+                            value={values?.bearerFormat}
+                            placeholder="Bearer Format"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="bearerFormat"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="openIdConnectUrl" className="nice-form-control">
+                      <b>
+                        Open Id Connect Url:
+                        {touched.openIdConnectUrl &&
+                         !errors.openIdConnectUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="openIdConnectUrl"
+                            value={values?.openIdConnectUrl}
+                            placeholder="Open Id Connect Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="openIdConnectUrl"
                         component="span"
                       />
                     </label>
@@ -251,25 +515,32 @@ const OasSecuritySchemeForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -279,60 +550,45 @@ const OasSecuritySchemeForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New OasSecurityScheme
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New OasSecurityScheme
+                  </CoolButton>
 
-                    {(addOasSecuritySchemeResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addOasSecuritySchemeResult as any).error
-                              ? (addOasSecuritySchemeResult as any).error.data
-                              : (addOasSecuritySchemeResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addOasSecuritySchemeResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addOasSecuritySchemeResult as any).error ? (addOasSecuritySchemeResult as any).error.data : (addOasSecuritySchemeResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addOasSecuritySchemeResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addOasSecuritySchemeResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addOasSecuritySchemeResult:{" "}
-                    {JSON.stringify(addOasSecuritySchemeResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addOasSecuritySchemeResult: {JSON.stringify(addOasSecuritySchemeResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -352,5 +608,48 @@ const OasSecuritySchemeForm: React.FC = () => {
   );
 };
 
+/*
+lowercase typelookup
+uppercase TYPELOOKUP
+snakecase type_lookup
+pascalcase TypeLookup
+camelcase typeLookup
+kebabcase type-lookup
+*/
+
+const TypeLookup = () => {
+  return (
+    <>
+      <option value='apiKey' label="Api Key" />
+      <option value='http' label="Http" />
+      <option value='mutualTLS' label="Mutual Tls" />
+      <option value='oauth2' label="Oauth 2" />
+      <option value='openIdConnect' label="Open Id Connect" />
+    </>
+  );
+};
+
+/*
+lowercase inlookup
+uppercase INLOOKUP
+snakecase in_lookup
+pascalcase InLookup
+camelcase inLookup
+kebabcase in-lookup
+*/
+
+const InLookup = () => {
+  return (
+    <>
+      <option value='query' label="Query" />
+      <option value='header' label="Header" />
+      <option value='cookie' label="Cookie" />
+    </>
+  );
+};
+
+
+
 /* Export the generated form */
 export default OasSecuritySchemeForm;
+

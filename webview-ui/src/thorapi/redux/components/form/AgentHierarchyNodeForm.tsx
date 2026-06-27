@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  AgentHierarchyNode,
+} from '@thorapi/model';
 
-import { AgentHierarchyNode } from "@thorapi/model";
-
-import { useAddAgentHierarchyNodeMutation } from "../../services/AgentHierarchyNodeService";
+import { useAddAgentHierarchyNodeMutation } from '../../services/AgentHierarchyNodeService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,24 +65,21 @@ Node in the hierarchical tree structure of agents.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  agentId: Yup.string(),
-  parentAgentId: Yup.string(),
-  depth: asNumber(Yup.number().integer().typeError("depth must be a number")),
-  status: Yup.string(),
-  trashed: Yup.boolean(),
+        agentId: Yup.string(),
+        parentAgentId: Yup.string(),
+        depth: asNumber(Yup.number().integer().typeError("depth must be a number")),
+        status: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const AgentHierarchyNodeForm: React.FC = () => {
-  const [addAgentHierarchyNode, addAgentHierarchyNodeResult] =
-    useAddAgentHierarchyNodeMutation();
+  const [addAgentHierarchyNode, addAgentHierarchyNodeResult] = useAddAgentHierarchyNodeMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,18 +89,12 @@ const AgentHierarchyNodeForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -117,11 +102,11 @@ const AgentHierarchyNodeForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<AgentHierarchyNode> = {
-    agentId: "",
-    parentAgentId: "",
-    depth: 0,
-    status: "",
-    trashed: false,
+          agentId: '',
+          parentAgentId: '',
+          depth: 0,
+          status: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,14 +121,11 @@ const AgentHierarchyNodeForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new AgentHierarchyNode:", grants);
+    console.log('Permissions saved for new AgentHierarchyNode:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<AgentHierarchyNode>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<AgentHierarchyNode>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -154,7 +136,7 @@ const AgentHierarchyNodeForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `AgentHierarchyNode created successfully! Would you like to set permissions for this object?`,
+          `AgentHierarchyNode created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -162,8 +144,8 @@ const AgentHierarchyNodeForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create AgentHierarchyNode:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create AgentHierarchyNode:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -184,38 +166,44 @@ const AgentHierarchyNodeForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addAgentHierarchyNodeResult.isLoading;
+          const isSaving = isSubmitting || addAgentHierarchyNodeResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    AgentHierarchyNode
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New AgentHierarchyNode
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="agentId" className="nice-form-control">
                       <b>
                         Agent Id:
-                        {touched.agentId && !errors.agentId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.agentId &&
+                         !errors.agentId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="agentId"
-                        value={values?.agentId}
-                        placeholder="Agent Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="agentId"
+                            value={values?.agentId}
+                            placeholder="Agent Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -224,27 +212,31 @@ const AgentHierarchyNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="parentAgentId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="parentAgentId" className="nice-form-control">
                       <b>
                         Parent Agent Id:
-                        {touched.parentAgentId && !errors.parentAgentId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.parentAgentId &&
+                         !errors.parentAgentId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="parentAgentId"
-                        value={values?.parentAgentId}
-                        placeholder="Parent Agent Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="parentAgentId"
+                            value={values?.parentAgentId}
+                            placeholder="Parent Agent Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -256,32 +248,36 @@ const AgentHierarchyNodeForm: React.FC = () => {
                     <label htmlFor="depth" className="nice-form-control">
                       <b>
                         Depth:
-                        {touched.depth && !errors.depth && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.depth &&
+                         !errors.depth && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="depth"
-                        type="number"
-                        value={values.depth || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("depth", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "depth",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.depth
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="depth"
+                            type="number"
+                            value={values.depth || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('depth', true);
+                              const v = e.target.value;
+                              setFieldValue('depth', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.depth
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -293,21 +289,28 @@ const AgentHierarchyNodeForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="status"
-                        value={values?.status}
-                        placeholder="Status"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="status"
+                            value={values?.status}
+                            placeholder="Status"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -319,25 +322,32 @@ const AgentHierarchyNodeForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -347,60 +357,45 @@ const AgentHierarchyNodeForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New AgentHierarchyNode
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New AgentHierarchyNode
+                  </CoolButton>
 
-                    {(addAgentHierarchyNodeResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addAgentHierarchyNodeResult as any).error
-                              ? (addAgentHierarchyNodeResult as any).error.data
-                              : (addAgentHierarchyNodeResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addAgentHierarchyNodeResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addAgentHierarchyNodeResult as any).error ? (addAgentHierarchyNodeResult as any).error.data : (addAgentHierarchyNodeResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addAgentHierarchyNodeResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addAgentHierarchyNodeResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addAgentHierarchyNodeResult:{" "}
-                    {JSON.stringify(addAgentHierarchyNodeResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addAgentHierarchyNodeResult: {JSON.stringify(addAgentHierarchyNodeResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -420,5 +415,8 @@ const AgentHierarchyNodeForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default AgentHierarchyNodeForm;
+

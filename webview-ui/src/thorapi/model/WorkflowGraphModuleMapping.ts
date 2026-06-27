@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,114 +36,102 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface WorkflowGraphModuleMapping
  */
-export type WorkflowGraphModuleMapping = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  nodeId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  moduleId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof WorkflowGraphModuleMapping
-   */
-  trashed?: boolean;
-};
-
-export function WorkflowGraphModuleMappingFromJSON(
-  json: any,
-): WorkflowGraphModuleMapping {
-  return {
-    ...DataObjectFromJSON(json),
-    nodeId: !exists(json, "nodeId") ? undefined : json["nodeId"],
-    moduleId: !exists(json, "moduleId") ? undefined : json["moduleId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type WorkflowGraphModuleMapping  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    nodeId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    moduleId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof WorkflowGraphModuleMapping
+     */
+    trashed?: boolean;
 }
 
-export function WorkflowGraphModuleMappingToJSON(
-  value?: WorkflowGraphModuleMapping,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    nodeId: value.nodeId,
-    moduleId: value.moduleId,
-    trashed: value.trashed,
-  };
+export function WorkflowGraphModuleMappingFromJSON(json: any): WorkflowGraphModuleMapping {
+    return {
+        ...DataObjectFromJSON(json),
+        'nodeId': !exists(json, 'nodeId') ? undefined : json['nodeId'],
+        'moduleId': !exists(json, 'moduleId') ? undefined : json['moduleId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function WorkflowGraphModuleMappingToJSON(value?: WorkflowGraphModuleMapping): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'nodeId': value.nodeId,
+        'moduleId': value.moduleId,
+        'trashed': value.trashed,
+    };
+}
+
+

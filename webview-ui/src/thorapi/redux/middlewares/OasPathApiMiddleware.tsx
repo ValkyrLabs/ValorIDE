@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OASPATH_REQUEST,
-  FETCH_OASPATH_REQUEST,
-  LIST_OASPATH_REQUEST,
-  UPDATE_OASPATH_REQUEST,
-  DELETE_OASPATH_REQUEST,
-  addOasPathFailure,
-  addOasPathSuccess,
-  fetchOasPathFailure,
-  fetchOasPathSuccess,
-  listOasPathFailure,
-  listOasPathSuccess,
-  updateOasPathFailure,
-  updateOasPathSuccess,
-  deleteOasPathFailure,
-  deleteOasPathSuccess,
-} from "../actions/OasPathApiAction";
+
+    ADD_OASPATH_REQUEST,
+    FETCH_OASPATH_REQUEST,
+    LIST_OASPATH_REQUEST,
+    UPDATE_OASPATH_REQUEST,
+    DELETE_OASPATH_REQUEST,
+
+    addOasPathFailure,
+    addOasPathSuccess,
+
+    fetchOasPathFailure,
+    fetchOasPathSuccess,
+    
+    listOasPathFailure,
+    listOasPathSuccess,
+
+    updateOasPathFailure,
+    updateOasPathSuccess,
+    
+    deleteOasPathFailure,
+    deleteOasPathSuccess,
+    
+} from '../actions/OasPathApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasPath
 */
 
-export const OasPathMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasPath MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OasPathMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasPath MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

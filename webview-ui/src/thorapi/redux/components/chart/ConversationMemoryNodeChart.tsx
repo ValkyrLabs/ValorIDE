@@ -19,35 +19,20 @@ Description: ConversationMemoryNode
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ConversationMemoryNode } from "@thorapi/model";
-import {
-  useGetConversationMemoryNodesQuery,
-  useAddConversationMemoryNodeMutation,
-  useUpdateConversationMemoryNodeMutation,
-} from "../../services/ConversationMemoryNodeService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ConversationMemoryNode } from '@thorapi/model';
+import { useGetConversationMemoryNodesQuery, useAddConversationMemoryNodeMutation, useUpdateConversationMemoryNodeMutation } from '../../services/ConversationMemoryNodeService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ConversationMemoryNodeChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetConversationMemoryNodesQuery();
+  const { data: initialData = [], isLoading } = useGetConversationMemoryNodesQuery();
 
   const [data, setData] = useState<ConversationMemoryNode[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ConversationMemoryNode>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<ConversationMemoryNode>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ConversationMemoryNodeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ConversationMemoryNodeChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((conversationmemorynode: DataObject) => [
-            conversationmemorynode,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((conversationmemorynode: DataObject) => [conversationmemorynode])} />
+          )}
     </>
   );
 };

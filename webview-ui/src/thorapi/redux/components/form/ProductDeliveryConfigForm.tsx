@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   ProductDeliveryConfig,
   ProductDeliveryConfigDeliveryTypeEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddProductDeliveryConfigMutation } from "../../services/ProductDeliveryConfigService";
+import { useAddProductDeliveryConfigMutation } from '../../services/ProductDeliveryConfigService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,11 +63,11 @@ Per-Product configuration for digital or physical fulfillment automation. Direct
 -------------------------------------------------------- */
 const DeliveryTypeValidation = () => {
   return [
-    "instant_digital",
-    "scheduled_digital",
-    "manual_review",
-    "physical_shipment",
-    "hybrid",
+    'instant_digital',
+    'scheduled_digital',
+    'manual_review',
+    'physical_shipment',
+    'hybrid',
   ];
 };
 
@@ -83,31 +75,24 @@ const DeliveryTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  deliveryType: Yup.mixed()
-    .oneOf(DeliveryTypeValidation(), "Invalid value for deliveryType")
-    .required("deliveryType is required."),
-  autoFulfill: Yup.boolean(),
-  notificationTemplate: Yup.string(),
-  maxConcurrentFulfillments: asNumber(
-    Yup.number()
-      .integer()
-      .typeError("maxConcurrentFulfillments must be a number"),
-  ),
-  retryPolicy: Yup.string(),
-  trashed: Yup.boolean(),
+      deliveryType: Yup.mixed()
+        .oneOf(DeliveryTypeValidation(), "Invalid value for deliveryType")
+        .required("deliveryType is required."),
+        autoFulfill: Yup.boolean(),
+        notificationTemplate: Yup.string(),
+        maxConcurrentFulfillments: asNumber(Yup.number().integer().typeError("maxConcurrentFulfillments must be a number")),
+        retryPolicy: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductDeliveryConfigForm: React.FC = () => {
-  const [addProductDeliveryConfig, addProductDeliveryConfigResult] =
-    useAddProductDeliveryConfigMutation();
+  const [addProductDeliveryConfig, addProductDeliveryConfigResult] = useAddProductDeliveryConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -117,18 +102,12 @@ const ProductDeliveryConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -136,12 +115,12 @@ const ProductDeliveryConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ProductDeliveryConfig> = {
-    deliveryType: undefined,
-    autoFulfill: false,
-    notificationTemplate: "",
-    maxConcurrentFulfillments: 0,
-    retryPolicy: "",
-    trashed: false,
+        deliveryType: undefined,
+          autoFulfill: false,
+          notificationTemplate: '',
+          maxConcurrentFulfillments: 0,
+          retryPolicy: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -156,14 +135,11 @@ const ProductDeliveryConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ProductDeliveryConfig:", grants);
+    console.log('Permissions saved for new ProductDeliveryConfig:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ProductDeliveryConfig>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ProductDeliveryConfig>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -174,7 +150,7 @@ const ProductDeliveryConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ProductDeliveryConfig created successfully! Would you like to set permissions for this object?`,
+          `ProductDeliveryConfig created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -182,8 +158,8 @@ const ProductDeliveryConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ProductDeliveryConfig:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ProductDeliveryConfig:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -204,50 +180,46 @@ const ProductDeliveryConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addProductDeliveryConfigResult.isLoading;
+          const isSaving = isSubmitting || addProductDeliveryConfigResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ProductDeliveryConfig
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ProductDeliveryConfig
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="deliveryType" className="nice-form-control">
                       <b>
                         Delivery Type:
-                        {touched.deliveryType && !errors.deliveryType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.deliveryType &&
+                         !errors.deliveryType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="deliveryType"
-                        value={values.deliveryType || ""}
-                        className={
-                          errors.deliveryType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("deliveryType", true);
-                          setFieldValue(
-                            "deliveryType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Delivery Type" />
-                        <DeliveryTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="deliveryType"
+                          value={values.deliveryType || ''}
+                          className={
+                            errors.deliveryType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('deliveryType', true);
+                            setFieldValue('deliveryType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Delivery Type" />
+                          <DeliveryTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -259,25 +231,32 @@ const ProductDeliveryConfigForm: React.FC = () => {
                     <label htmlFor="autoFulfill" className="nice-form-control">
                       <b>
                         Auto Fulfill:
-                        {touched.autoFulfill && !errors.autoFulfill && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.autoFulfill &&
+                         !errors.autoFulfill && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="autoFulfill"
-                        name="autoFulfill"
-                        checked={values.autoFulfill || false}
-                        onChange={(e) => {
-                          setFieldTouched("autoFulfill", true);
-                          setFieldValue("autoFulfill", e.target.checked);
-                        }}
-                        isInvalid={!!errors.autoFulfill}
-                        className={errors.autoFulfill ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="autoFulfill"
+                            name="autoFulfill"
+                            checked={values.autoFulfill || false}
+                            onChange={(e) => {
+                              setFieldTouched('autoFulfill', true);
+                              setFieldValue('autoFulfill', e.target.checked);
+                            }}
+                            isInvalid={!!errors.autoFulfill}
+                            className={errors.autoFulfill ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -286,28 +265,31 @@ const ProductDeliveryConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="notificationTemplate"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="notificationTemplate" className="nice-form-control">
                       <b>
                         Notification Template:
                         {touched.notificationTemplate &&
-                          !errors.notificationTemplate && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.notificationTemplate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="notificationTemplate"
-                        value={values?.notificationTemplate}
-                        placeholder="Notification Template"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="notificationTemplate"
+                            value={values?.notificationTemplate}
+                            placeholder="Notification Template"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -316,39 +298,39 @@ const ProductDeliveryConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="maxConcurrentFulfillments"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="maxConcurrentFulfillments" className="nice-form-control">
                       <b>
                         Max Concurrent Fulfillments:
                         {touched.maxConcurrentFulfillments &&
-                          !errors.maxConcurrentFulfillments && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.maxConcurrentFulfillments && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxConcurrentFulfillments"
-                        type="number"
-                        value={values.maxConcurrentFulfillments || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxConcurrentFulfillments", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxConcurrentFulfillments",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxConcurrentFulfillments
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxConcurrentFulfillments"
+                            type="number"
+                            value={values.maxConcurrentFulfillments || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxConcurrentFulfillments', true);
+                              const v = e.target.value;
+                              setFieldValue('maxConcurrentFulfillments', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxConcurrentFulfillments
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -360,21 +342,28 @@ const ProductDeliveryConfigForm: React.FC = () => {
                     <label htmlFor="retryPolicy" className="nice-form-control">
                       <b>
                         Retry Policy:
-                        {touched.retryPolicy && !errors.retryPolicy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.retryPolicy &&
+                         !errors.retryPolicy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="retryPolicy"
-                        value={values?.retryPolicy}
-                        placeholder="Retry Policy"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="retryPolicy"
+                            value={values?.retryPolicy}
+                            placeholder="Retry Policy"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -386,25 +375,32 @@ const ProductDeliveryConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -414,64 +410,45 @@ const ProductDeliveryConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ProductDeliveryConfig
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ProductDeliveryConfig
+                  </CoolButton>
 
-                    {(addProductDeliveryConfigResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addProductDeliveryConfigResult as any).error
-                              ? (addProductDeliveryConfigResult as any).error
-                                  .data
-                              : (addProductDeliveryConfigResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addProductDeliveryConfigResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addProductDeliveryConfigResult as any).error ? (addProductDeliveryConfigResult as any).error.data : (addProductDeliveryConfigResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addProductDeliveryConfigResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addProductDeliveryConfigResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addProductDeliveryConfigResult:{" "}
-                    {JSON.stringify(addProductDeliveryConfigResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addProductDeliveryConfigResult: {JSON.stringify(addProductDeliveryConfigResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -503,14 +480,17 @@ kebabcase delivery-type-lookup
 const DeliveryTypeLookup = () => {
   return (
     <>
-      <option value="instant_digital" label="Instant Digital" />
-      <option value="scheduled_digital" label="Scheduled Digital" />
-      <option value="manual_review" label="Manual Review" />
-      <option value="physical_shipment" label="Physical Shipment" />
-      <option value="hybrid" label="Hybrid" />
+      <option value='instant_digital' label="Instant Digital" />
+      <option value='scheduled_digital' label="Scheduled Digital" />
+      <option value='manual_review' label="Manual Review" />
+      <option value='physical_shipment' label="Physical Shipment" />
+      <option value='hybrid' label="Hybrid" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ProductDeliveryConfigForm;
+

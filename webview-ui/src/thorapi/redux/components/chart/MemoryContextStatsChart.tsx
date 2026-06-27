@@ -19,33 +19,20 @@ Description: MemoryContextStats
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, MemoryContextStats } from "@thorapi/model";
-import {
-  useGetMemoryContextStatssQuery,
-  useAddMemoryContextStatsMutation,
-  useUpdateMemoryContextStatsMutation,
-} from "../../services/MemoryContextStatsService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, MemoryContextStats } from '@thorapi/model';
+import { useGetMemoryContextStatssQuery, useAddMemoryContextStatsMutation, useUpdateMemoryContextStatsMutation } from '../../services/MemoryContextStatsService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const MemoryContextStatsChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMemoryContextStatssQuery();
+  const { data: initialData = [], isLoading } = useGetMemoryContextStatssQuery();
 
   const [data, setData] = useState<MemoryContextStats[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<MemoryContextStats>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const MemoryContextStatsChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const MemoryContextStatsChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((memorycontextstats: DataObject) => [
-            memorycontextstats,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((memorycontextstats: DataObject) => [memorycontextstats])} />
+          )}
     </>
   );
 };

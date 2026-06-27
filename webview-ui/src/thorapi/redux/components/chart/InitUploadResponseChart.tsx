@@ -19,33 +19,20 @@ Description: InitUploadResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, InitUploadResponse } from "@thorapi/model";
-import {
-  useGetInitUploadResponsesQuery,
-  useAddInitUploadResponseMutation,
-  useUpdateInitUploadResponseMutation,
-} from "../../services/InitUploadResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, InitUploadResponse } from '@thorapi/model';
+import { useGetInitUploadResponsesQuery, useAddInitUploadResponseMutation, useUpdateInitUploadResponseMutation } from '../../services/InitUploadResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const InitUploadResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetInitUploadResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetInitUploadResponsesQuery();
 
   const [data, setData] = useState<InitUploadResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<InitUploadResponse>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const InitUploadResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const InitUploadResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((inituploadresponse: DataObject) => [
-            inituploadresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((inituploadresponse: DataObject) => [inituploadresponse])} />
+          )}
     </>
   );
 };

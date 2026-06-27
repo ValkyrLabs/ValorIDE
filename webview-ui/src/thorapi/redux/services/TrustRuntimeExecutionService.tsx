@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustRuntimeExecution } from "@thorapi/model/TrustRuntimeExecution";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustRuntimeExecution } from '@thorapi/model/TrustRuntimeExecution'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustRuntimeExecutionResponse = TrustRuntimeExecution[];
+type TrustRuntimeExecutionResponse = TrustRuntimeExecution[]
+type TrustRuntimeExecutionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustRuntimeExecution>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toTrustRuntimeExecutionList = (
-  result: unknown,
-): TrustRuntimeExecutionResponse => {
+type TrustRuntimeExecutionListQueryArg = {
+  example?: Partial<TrustRuntimeExecution>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toTrustRuntimeExecutionList = (result: unknown): TrustRuntimeExecutionResponse => {
   if (Array.isArray(result)) {
-    return result as TrustRuntimeExecutionResponse;
+    return result as TrustRuntimeExecutionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustRuntimeExecutionResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustRuntimeExecutionResponse) : []
+}
 
 export const TrustRuntimeExecutionService = createApi({
-  reducerPath: "TrustRuntimeExecution", // This should remain unique
+  reducerPath: 'TrustRuntimeExecution', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustRuntimeExecution"],
+  tagTypes: ['TrustRuntimeExecution'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustRuntimeExecutionsPaged: build.query<
-      TrustRuntimeExecutionResponse,
-      { page: number; size?: number; example?: Partial<TrustRuntimeExecution> }
-    >({
+    getTrustRuntimeExecutionsPaged: build.query<TrustRuntimeExecutionResponse, TrustRuntimeExecutionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustRuntimeExecution?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustRuntimeExecution?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustRuntimeExecutionList(result);
+        const rows = toTrustRuntimeExecutionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustRuntimeExecution" as const, id })),
-          { type: "TrustRuntimeExecution", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustRuntimeExecution' as const, id })),
+          { type: 'TrustRuntimeExecution', id: `PAGE_${page}` },
+          { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustRuntimeExecutions: build.query<
-      TrustRuntimeExecutionResponse,
-      { example?: Partial<TrustRuntimeExecution> } | void
-    >({
+    getTrustRuntimeExecutions: build.query<TrustRuntimeExecutionResponse, TrustRuntimeExecutionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const TrustRuntimeExecutionService = createApi({
         return `TrustRuntimeExecution`;
       },
       providesTags: (result) => {
-        const rows = toTrustRuntimeExecutionList(result);
+        const rows = toTrustRuntimeExecutionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustRuntimeExecution" as const, id })),
-          { type: "TrustRuntimeExecution", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustRuntimeExecution' as const, id })),
+          { type: 'TrustRuntimeExecution', id: 'LIST' },
+          { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustRuntimeExecution: build.mutation<
-      TrustRuntimeExecution,
-      Partial<TrustRuntimeExecution>
-    >({
+    addTrustRuntimeExecution: build.mutation<TrustRuntimeExecution, Partial<TrustRuntimeExecution>>({
       query: (body) => ({
         url: `TrustRuntimeExecution`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustRuntimeExecution", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustRuntimeExecution', id: 'LIST' },
+        { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustRuntimeExecution: build.query<TrustRuntimeExecution, string>({
       query: (id) => `TrustRuntimeExecution/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "TrustRuntimeExecution", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'TrustRuntimeExecution', id }],
     }),
 
     // 5) Update
-    updateTrustRuntimeExecution: build.mutation<
-      void,
-      Pick<TrustRuntimeExecution, "id"> & Partial<TrustRuntimeExecution>
-    >({
+    updateTrustRuntimeExecution: build.mutation<TrustRuntimeExecution, Pick<TrustRuntimeExecution, 'id'> & Partial<TrustRuntimeExecution>>({
       query: ({ id, ...patch }) => ({
         url: `TrustRuntimeExecution/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustRuntimeExecutionService.util.updateQueryData(
-              "getTrustRuntimeExecution",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustRuntimeExecution, "id">,
-      ) => [
-        { type: "TrustRuntimeExecution", id },
-        { type: "TrustRuntimeExecution", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustRuntimeExecution, 'id'>) => [
+        { type: 'TrustRuntimeExecution', id },
+        { type: 'TrustRuntimeExecution', id: 'LIST' },
+        { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustRuntimeExecution: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustRuntimeExecution: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustRuntimeExecution/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustRuntimeExecution", id },
+        { type: 'TrustRuntimeExecution', id },
+        { type: 'TrustRuntimeExecution', id: 'LIST' },
+        { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustRuntimeExecutionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustRuntimeExecutionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustRuntimeExecution/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustRuntimeExecution", id },
-        { type: "TrustRuntimeExecution", id: "LIST" },
+        { type: 'TrustRuntimeExecution', id },
+        { type: 'TrustRuntimeExecution', id: 'LIST' },
+        { type: 'TrustRuntimeExecution', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustRuntimeExecutionsPagedQuery`
 export const {
-  useGetTrustRuntimeExecutionsPagedQuery, // immediate fetch
+  useGetTrustRuntimeExecutionsPagedQuery,     // immediate fetch
   useLazyGetTrustRuntimeExecutionsPagedQuery, // lazy fetch
   useGetTrustRuntimeExecutionQuery,
   useGetTrustRuntimeExecutionsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateTrustRuntimeExecutionMutation,
   useDeleteTrustRuntimeExecutionMutation,
   useDeleteTrustRuntimeExecutionCascadeMutation,
-} = TrustRuntimeExecutionService;
+} = TrustRuntimeExecutionService

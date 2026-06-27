@@ -1,12 +1,15 @@
-import { memo, useState, useCallback, useEffect, useMemo } from "react";
-
-import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
-import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
-  useAddUsageTransactionMutation,
-  useGetUsageTransactionsQuery,
-} from "@thorapi/redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
+  memo,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
+import "./AccountView.css";
+
+import { useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
@@ -15,8 +18,12 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
-import Form from "../Login/form";
+import LoginForm from "../Login/form";
+import SignupForm from "../Signup/form";
 import FileExplorer from "../FileExplorer/FileExplorer";
+import ContextPagePanel from "./ContextPagePanel";
+import ReceiptTraceInspector from "./ReceiptTraceInspector";
+import TenantAppGenerationPanel from "./TenantAppGenerationPanel";
 
 import {
   VSCodeButton,
@@ -27,7 +34,12 @@ import { vscode } from "@thorapi/utils/vscode";
 import {
   FaAppStore,
   FaBackward,
+  FaBrain,
   FaFileArchive,
+  FaHammer,
+  FaNetworkWired,
+  FaCreditCard,
+  FaReceipt,
   FaRecycle,
   FaUserEdit,
   FaServer,
@@ -51,25 +63,114 @@ import {
   writeStoredPrincipal,
   readStoredPrincipal,
 } from "@thorapi/utils/accessControl";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import { CreditIntent } from "@thorapi/types/creditIntent";
 import { buildAccountLoginSuccessMessage } from "./accountAuthBridge";
+import { loginThroughExtensionHost } from "./extensionLogin";
+import CapabilityCommandCenter from "../agentic/CapabilityCommandCenter";
+import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
+
+type AccountTab =
+  | "login"
+  | "signup"
+  | "account"
+  | "applications"
+  | "appGeneration"
+  | "contextPage"
+  | "generatedFiles"
+  | "receipts"
+  | "swarm"
+  | "agenticCommandCenter"
+  | "userPreferences"
+  | "serverConsole";
 
 type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
-  initialActiveTab?:
-  | "login"
-  | "account"
-  | "applications"
-  | "generatedFiles"
-  | "userPreferences"
-  | "serverConsole";
+  initialActiveTab?: AccountTab;
   onConsumeInitialActiveTab?: () => void;
+  initialSwarmCommandResponse?: Record<string, unknown>;
+  onConsumeInitialSwarmCommandResponse?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
   creditIntent?: CreditIntent;
   onClearCreditIntent?: () => void;
 };
 
+const firstFiniteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+  return undefined;
+};
+
+const formatCreditCount = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  }).format(Math.max(0, Math.round(value)));
+
+const firstNonEmptyString = (...values: unknown[]): string | undefined => {
+  for (const value of values) {
+    if (value === undefined || value === null) {
+      continue;
+    }
+    const stringValue = String(value).trim();
+    if (stringValue) {
+      return stringValue;
+    }
+  }
+  return undefined;
+};
+
+const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
+  const explicitAccountId = firstNonEmptyString(
+    principal?.customerId,
+    principal?.creditAccountId,
+    principal?.billingAccountId,
+    principal?.accountId,
+    principal?.customer?.id,
+    principal?.account?.id,
+  );
+  if (explicitAccountId) {
+    return explicitAccountId;
+  }
+
+  const fallbackId = firstNonEmptyString(
+    principal?.id,
+    principal?.principalId,
+    principal?.ownerId,
+  );
+  const username = firstNonEmptyString(principal?.username);
+  const email = firstNonEmptyString(principal?.email);
+  return fallbackId && fallbackId !== username && fallbackId !== email
+    ? fallbackId
+    : undefined;
+};
+
+const hasUnmeteredAccountAccess = (
+  principal?: Record<string, any> | null,
+  balance?: Record<string, any> | null,
+) => {
+  const plan = firstNonEmptyString(
+    balance?.plan,
+    balance?.billingPlan,
+    principal?.plan,
+    principal?.billingPlan,
+  )?.toLowerCase();
+  return (
+    balance?.unmetered === true ||
+    principal?.unmetered === true ||
+    plan === "unmetered"
+  );
+};
 
 const AccountView = ({
   onDone,
@@ -77,11 +178,19 @@ const AccountView = ({
   onClearServerConsoleNeedsAttention,
   initialActiveTab,
   onConsumeInitialActiveTab,
+  initialSwarmCommandResponse,
+  onConsumeInitialSwarmCommandResponse,
   creditIntent,
   onClearCreditIntent,
 }: AccountViewProps) => {
-  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
-    useExtensionState();
+  const {
+    userInfo,
+    authenticatedUser,
+    isLoggedIn,
+    jwtToken,
+    advancedSettings,
+    agenticState,
+  } = useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
   // Compute API metrics from messages once using useMemo
@@ -90,52 +199,59 @@ const AccountView = ({
     [valorideMessages],
   );
 
-  // Determine authenticated status
-  const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedUser || userInfo || jwtToken,
-  );
-
-  // Also consider presence of a stored JWT to avoid timing gaps
-  const hasStoredJwt = useMemo(() => {
-    try {
-      const storedPrincipal = readStoredPrincipal();
-      const storedToken =
-        sessionStorage.getItem("jwtToken") ||
-        localStorage.getItem("jwtToken") ||
-        localStorage.getItem("authToken");
-      // Both principal AND token must exist for auth to be valid
-      return Boolean(storedPrincipal && storedToken);
-    } catch {
-      return false;
-    }
-  }, [jwtToken]);
-
   // Local immediate login flag to reveal tabs before context updates
   const [didLogin, setDidLogin] = useState(false);
-  const authed = isAuthenticated || didLogin || hasStoredJwt;
+
+  // Also consider stored credentials to avoid auth hydration timing gaps.
+  const storedAuth = useMemo(() => {
+    try {
+      const storedPrincipal = readStoredPrincipal();
+      const storedToken = getStoredJwtToken();
+      return {
+        hasStoredJwt: Boolean(storedPrincipal && storedToken),
+        storedToken,
+        storedPrincipal,
+      };
+    } catch {
+      return { hasStoredJwt: false, storedToken: null, storedPrincipal: null };
+    }
+  }, [jwtToken, didLogin]);
+
+  const { hasStoredJwt, storedPrincipal, storedToken } = storedAuth;
+  const hasAuthIdentity = Boolean(
+    authenticatedUser || userInfo || hasStoredJwt,
+  );
+  const hasBackendAuth = Boolean(jwtToken || didLogin || hasStoredJwt);
+  const authed = hasAuthIdentity && hasBackendAuth;
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<
-    | "login"
-    | "account"
-    | "applications"
-    | "generatedFiles"
-    | "userPreferences"
-    | "serverConsole"
-  >(authed ? "account" : "login");
+  const [activeTab, setActiveTab] = useState<AccountTab>(
+    authed ? "account" : "login",
+  );
+  const tabRefs = useRef<Partial<Record<AccountTab, HTMLButtonElement | null>>>(
+    {},
+  );
 
   // Keep active tab in sync with authentication state
   useEffect(() => {
     if (authed) {
-      setActiveTab((tab) => (tab === "login" ? "account" : tab));
+      setActiveTab((tab) =>
+        tab === "login" || tab === "signup" ? "account" : tab,
+      );
     } else {
-      setActiveTab("login");
+      setActiveTab((tab) =>
+        tab === "login" || tab === "signup" ? tab : "login",
+      );
     }
   }, [authed]);
 
   useEffect(() => {
     if (!initialActiveTab) return;
-    if (!authed && initialActiveTab !== "login") {
+    if (
+      !authed &&
+      initialActiveTab !== "login" &&
+      initialActiveTab !== "signup"
+    ) {
       setActiveTab("login");
     } else {
       setActiveTab(initialActiveTab);
@@ -143,59 +259,92 @@ const AccountView = ({
     onConsumeInitialActiveTab?.();
   }, [authed, initialActiveTab, onConsumeInitialActiveTab]);
 
+  useEffect(() => {
+    if (!initialSwarmCommandResponse) return;
+    setActiveTab(authed ? "receipts" : "login");
+  }, [authed, initialSwarmCommandResponse]);
+
+  useEffect(() => {
+    const activeTabElement = tabRefs.current[activeTab];
+    if (!activeTabElement?.scrollIntoView) {
+      return;
+    }
+    activeTabElement.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [activeTab]);
+
   const { principal: resolvedPrincipal } = useAccessControl(
-    authenticatedUser || userInfo,
+    authenticatedUser || userInfo || storedPrincipal,
   );
-  const principalId = resolvedPrincipal?.id;
   const accountId =
-    typeof principalId === "string"
-      ? principalId
-      : principalId !== undefined && principalId !== null
-        ? String(principalId)
-        : "";
-
+    resolveCreditAccountKey(resolvedPrincipal as Record<string, any>) ||
+    (hasBackendAuth ? "me" : "");
+  const balanceAccountId = accountId || (hasBackendAuth ? "me" : "");
   const {
-    data: balanceData,
-    isLoading: isBalanceLoading,
-    isFetching: isBalanceFetching,
-    refetch: refetchBalance,
-  } = useGetAccountBalanceQuery(accountId, {
-    skip: !accountId,
+    data: creditBalanceData,
+    isLoading: isCreditBalanceLoading,
+    isFetching: isCreditBalanceFetching,
+    error: creditBalanceError,
+    refetch: refetchCreditBalance,
+  } = useGetCreditAccountBalanceQuery(balanceAccountId, {
+    skip: !balanceAccountId || !hasBackendAuth,
   });
 
-  const {
-    data: usageData,
-    isLoading: isUsageLoading,
-    refetch: refetchUsage,
-  } = useGetUsageTransactionsQuery(undefined, {
-    // Use broader auth signal so queries mount as soon as a token exists
-    skip: !authed,
-  });
-  const {
-    data: paymentsData,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentTransactionsQuery(undefined, {
-    // Use broader auth signal so queries mount as soon as a token exists
-    skip: !authed,
-  });
+  const lastBalanceRefreshKeyRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!balanceAccountId || !hasBackendAuth) {
+      lastBalanceRefreshKeyRef.current = undefined;
+      return;
+    }
+
+    const refreshKey = `${balanceAccountId}:${jwtToken || storedToken || "session"}`;
+    if (lastBalanceRefreshKeyRef.current === refreshKey) {
+      return;
+    }
+    lastBalanceRefreshKeyRef.current = refreshKey;
+    void refetchCreditBalance();
+  }, [
+    balanceAccountId,
+    hasBackendAuth,
+    jwtToken,
+    refetchCreditBalance,
+    storedToken,
+  ]);
 
   // Combined loading state
-  const loading =
-    isBalanceLoading ||
-    isBalanceFetching ||
-    isUsageLoading ||
-    isPaymentsLoading;
+  const loading = isCreditBalanceLoading || isCreditBalanceFetching;
+  const usageData = creditBalanceData?.usageTransactions || [];
+  const paymentsData = creditBalanceData?.payments || [];
+  const hasUnmeteredAccess = hasUnmeteredAccountAccess(
+    resolvedPrincipal as Record<string, any>,
+    creditBalanceData as Record<string, any>,
+  );
+
+  const effectiveBalance = useMemo(() => {
+    const rawBalance =
+      firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
+    return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+  }, [apiMetrics.totalCost, creditBalanceData?.currentBalance]);
+  const criticalBalanceThreshold =
+    advancedSettings?.budgetAlerts?.criticalThreshold;
+  const shouldShowBuyCredits =
+    !hasUnmeteredAccess &&
+    (creditIntent ||
+      criticalBalanceThreshold === undefined ||
+      effectiveBalance <= Number(criticalBalanceThreshold));
 
   const [loginUser] = useLoginUserMutation();
-  const [addUsageTransaction] = useAddUsageTransactionMutation();
-
   const handleLogin = async (
     values: Login,
     { setSubmitting }: FormikHelpers<Login>,
   ) => {
     try {
-      const result = await loginUser(values).unwrap();
+      const result = vscode.isAvailable()
+        ? await loginThroughExtensionHost(values)
+        : await loginUser(values).unwrap();
       if (result.token) {
         storeJwtToken(result.token, "account-login");
       }
@@ -244,20 +393,6 @@ const AccountView = ({
 
       setDidLogin(true);
       setActiveTab("account");
-
-      try {
-        const debit = {
-          spentAt: new Date(),
-          credits: 0.01,
-          modelProvider: "valoride",
-          model: "login-connect",
-          promptTokens: 0,
-          completionTokens: 0,
-        } as any;
-        await addUsageTransaction(debit).unwrap();
-      } catch (e) {
-        console.warn("Usage debit failed post-login:", e);
-      }
     } catch (error) {
       console.error("Login failed:", error);
       try {
@@ -275,6 +410,7 @@ const AccountView = ({
       } catch {
         // ignore transport issues
       }
+      throw error;
     } finally {
       setSubmitting(false);
     }
@@ -328,6 +464,99 @@ const AccountView = ({
         ? "Connecting..."
         : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
+  const typedAgenticState = agenticState as
+    | AgenticCapabilityCommandCenterState
+    | undefined;
+  const swarmStatus = typedAgenticState?.swarm?.status ?? "offline";
+  const swarmKind =
+    swarmStatus === "online" || swarmStatus === "busy"
+      ? "ok"
+      : swarmStatus === "error" || swarmStatus === "rejected"
+        ? "error"
+        : "warn";
+  const swarmLabel = swarmStatus
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+  const swarmDetail =
+    typedAgenticState?.swarm?.instanceId ||
+    typedAgenticState?.swarm?.lastError ||
+    "No SWARM registration ACK yet.";
+  const accountTabs = useMemo<
+    Array<{
+      key: Exclude<AccountTab, "login">;
+      label: string;
+      title: string;
+      icon: ReactNode;
+      needsAttention?: boolean;
+    }>
+  >(
+    () => [
+      {
+        key: "account",
+        label: "Account",
+        title: "Account",
+        icon: <FaUserEdit />,
+      },
+      {
+        key: "applications",
+        label: "Apps",
+        title: "Applications",
+        icon: <FaAppStore />,
+      },
+      {
+        key: "appGeneration",
+        label: "Build",
+        title: "App Generation",
+        icon: <FaHammer />,
+      },
+      {
+        key: "contextPage",
+        label: "Context",
+        title: "Context Pages",
+        icon: <FaBrain />,
+      },
+      {
+        key: "generatedFiles",
+        label: "Files",
+        title: "Generated Files",
+        icon: <FaFileArchive />,
+      },
+      {
+        key: "receipts",
+        label: "Receipts",
+        title: "Receipts",
+        icon: <FaReceipt />,
+      },
+      {
+        key: "swarm",
+        label: "SWARM",
+        title: "SWARM",
+        icon: <FaNetworkWired />,
+      },
+      {
+        key: "agenticCommandCenter",
+        label: "Command",
+        title: "Agentic Command Center",
+        icon: <FaBrain />,
+      },
+      {
+        key: "serverConsole",
+        label: "Console",
+        title: "Server Console",
+        icon: <FaServer />,
+        needsAttention: serverConsoleNeedsAttention,
+      },
+      {
+        key: "userPreferences",
+        label: "Prefs",
+        title: "User Preferences",
+        icon: <FaUserEdit />,
+      },
+    ],
+    [serverConsoleNeedsAttention],
+  );
 
   return (
     <div
@@ -365,51 +594,35 @@ const AccountView = ({
       )}
 
       {/* Tab navigation */}
-      <div className="scroll-tabs-container">
-        <div className="nav-tabs scroll-tabs">
-          {/* Removed Login tab button as requested */}
-          {authed && (
-            <>
-              <div
-                className={`nav-link ${activeTab === "account" ? "active" : ""}`}
-                onClick={() => setActiveTab("account")}
-                style={{ cursor: "pointer" }}
+      {authed && (
+        <nav className="lcars-account-tab-container" aria-label="Account tabs">
+          <div className="lcars-account-tabs lcars-variant-cyan" role="tablist">
+            {accountTabs.map((tab) => (
+              <button
+                key={tab.key}
+                ref={(element) => {
+                  tabRefs.current[tab.key] = element;
+                }}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                className={`lcars-account-tab-link ${activeTab === tab.key ? "active" : ""} ${tab.needsAttention ? "needs-attention" : ""}`}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  if (tab.key === "serverConsole") {
+                    onClearServerConsoleNeedsAttention();
+                  }
+                }}
+                title={tab.title}
+                aria-label={tab.title}
               >
-                <FaUserEdit />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
-                onClick={() => setActiveTab("applications")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaAppStore />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
-                onClick={() => setActiveTab("generatedFiles")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaFileArchive />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""}`}
-                onClick={() => setActiveTab("serverConsole")}
-                style={{ cursor: "pointer" }}
-                title="Server Console"
-              >
-                <FaServer />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
-                onClick={() => setActiveTab("userPreferences")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaUserEdit />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+                {tab.icon}
+                <span className="account-tab-label">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {/* Tab content */}
       {activeTab === "login" ? (
@@ -418,7 +631,7 @@ const AccountView = ({
             <Card>
               {/* Removed "Login to Access Your Account" header as requested */}
               <Card.Body>
-                <Form onSubmit={handleLogin} isLoggedIn={false} />
+                <LoginForm onSubmit={handleLogin} isLoggedIn={false} />
               </Card.Body>
               <Card.Footer>
                 <div
@@ -428,13 +641,19 @@ const AccountView = ({
                   }}
                 >
                   Don't have an account?{" "}
-                  <VSCodeLink
-                    href="https://valkyrlabs.com/sign-up"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("signup")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--vscode-textLink-foreground)",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
                   >
                     Signup Now
-                  </VSCodeLink>
+                  </button>
                   <br />
                   Forgot your username?{" "}
                   <VSCodeLink
@@ -450,6 +669,39 @@ const AccountView = ({
           )}
           {/* When authenticated, login view is hidden and tab list updates */}
         </div>
+      ) : activeTab === "signup" ? (
+        <div className="flex justify-center">
+          {!authed && (
+            <Card>
+              <Card.Body>
+                <SignupForm />
+              </Card.Body>
+              <Card.Footer>
+                <div
+                  style={{
+                    fontSize: "0.85em",
+                    color: "var(--vscode-descriptionForeground)",
+                  }}
+                >
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("login")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--vscode-textLink-foreground)",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    Sign in
+                  </button>
+                </div>
+              </Card.Footer>
+            </Card>
+          )}
+        </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {loading && (
@@ -464,11 +716,23 @@ const AccountView = ({
               <LoadingSpinner label="Loading applications..." size={32} />
             </div>
           )}
-          {/* Applications List */}
           <div style={{ marginBottom: "1em" }}>
-            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+            <OpenAPIFilePicker
+              onFileSelected={handleOpenAPIFileSelected}
+              onOpenEditor={() =>
+                vscode.postMessage({ type: "openOpenAPIEditor" })
+              }
+            />
             <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
+        </div>
+      ) : activeTab === "appGeneration" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <TenantAppGenerationPanel accountId={accountId} />
+        </div>
+      ) : activeTab === "contextPage" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ContextPagePanel accountId={accountId} />
         </div>
       ) : activeTab === "generatedFiles" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
@@ -480,6 +744,71 @@ const AccountView = ({
               autoRefresh={true}
               refreshInterval={5000}
             />
+          </div>
+        </div>
+      ) : activeTab === "receipts" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ReceiptTraceInspector
+            accountId={accountId}
+            initialSwarmCommandResponse={initialSwarmCommandResponse}
+            onConsumeInitialSwarmCommandResponse={
+              onConsumeInitialSwarmCommandResponse
+            }
+          />
+        </div>
+      ) : activeTab === "swarm" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <div className="grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>SWARM</h3>
+            <div
+              style={{
+                border: "1px solid var(--vscode-panel-border)",
+                borderRadius: 6,
+                padding: 12,
+                background: "var(--vscode-panel-background)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  flexWrap: "wrap",
+                  marginBottom: 8,
+                }}
+              >
+                <strong>Local Agent Registration</strong>
+                <StatusBadge
+                  label="Status"
+                  value={swarmLabel || "Offline"}
+                  kind={swarmKind as any}
+                  title={swarmDetail}
+                />
+              </div>
+              <p
+                style={{
+                  color: "var(--vscode-descriptionForeground)",
+                  fontSize: 12,
+                  marginBottom: 12,
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {swarmDetail}
+              </p>
+              <VSCodeButton
+                appearance="secondary"
+                onClick={() => vscode.postMessage({ type: "webviewDidLaunch" })}
+              >
+                Retry SWARM
+              </VSCodeButton>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === "agenticCommandCenter" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <div className="grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>Agentic Command Center</h3>
+            <CapabilityCommandCenter />
           </div>
         </div>
       ) : activeTab === "userPreferences" ? (
@@ -525,37 +854,35 @@ const AccountView = ({
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
-                    {(() => {
-                      const rawBalance = balanceData?.currentBalance ?? 0;
-                      const effectiveBalance = Math.max(
-                        0,
-                        rawBalance - (apiMetrics.totalCost || 0),
-                      );
-                      return (
-                        <>
-                          <span>$</span>
-                          <CountUp
-                            end={effectiveBalance}
-                            duration={0.66}
-                            decimals={2}
-                          />
-                        </>
-                      );
-                    })()}
-                    <VSCodeButton
-                      appearance="icon"
-                      className="mt-1"
-                      disabled={!accountId}
-                      onClick={async () => {
-                        await refetchBalance();
-                        if (authed) {
-                          refetchUsage();
-                          refetchPayments();
-                        }
-                      }}
-                    >
-                      <FaRecycle />
-                    </VSCodeButton>
+                    <FaCreditCard aria-hidden="true" />
+                    {creditBalanceError ? (
+                      <span style={{ fontSize: "0.45em" }}>
+                        Unable to load
+                      </span>
+                    ) : hasUnmeteredAccess ? (
+                      <span data-testid="unmetered-balance">Unlimited</span>
+                    ) : (
+                      <CountUp
+                        end={effectiveBalance}
+                        duration={0.66}
+                        decimals={0}
+                        separator=","
+                      />
+                    )}
+                    {!hasUnmeteredAccess && (
+                      <VSCodeButton
+                        appearance="icon"
+                        className="mt-1"
+                        disabled={!balanceAccountId && !authed}
+                        onClick={async () => {
+                          if (balanceAccountId) {
+                            await refetchCreditBalance();
+                          }
+                        }}
+                      >
+                        <FaRecycle />
+                      </VSCodeButton>
+                    )}
                   </>
                 )}
               </div>
@@ -575,7 +902,12 @@ const AccountView = ({
                       Finish this action: {creditIntent.actionName}
                     </div>
                     <div style={{ fontSize: "12px", marginBottom: "8px" }}>
-                      Balance ${creditIntent.currentBalance.toFixed(2)} · Need ${creditIntent.requiredCredits.toFixed(2)} · Suggested top-up ${Math.max(5, Math.ceil(creditIntent.requiredCredits)).toFixed(0)}
+                      Balance {formatCreditCount(creditIntent.currentBalance)} ·
+                      Need {formatCreditCount(creditIntent.requiredCredits)} ·
+                      Suggested top-up{" "}
+                      {formatCreditCount(
+                        Math.max(5, Math.ceil(creditIntent.requiredCredits)),
+                      )}
                     </div>
                     {(creditIntent.resumeUrl || creditIntent.originView) && (
                       <VSCodeButton
@@ -596,19 +928,21 @@ const AccountView = ({
                     )}
                   </div>
                 )}
-                <VSCodeButton
-                  appearance="primary"
-                  className="w-full mt-2"
-                  onClick={() => {
-                    vscode.postMessage({
-                      type: "openInBrowser",
-                      url: "https://valkyrlabs.com/buy-credits",
-                    });
-                  }}
-                  data-testid="buy-credits-btn"
-                >
-                  Buy Credits
-                </VSCodeButton>
+                {shouldShowBuyCredits && (
+                  <VSCodeButton
+                    appearance="primary"
+                    className="w-full mt-2"
+                    onClick={() => {
+                      vscode.postMessage({
+                        type: "openInBrowser",
+                        url: "https://valkyrlabs.com/buy-credits",
+                      });
+                    }}
+                    data-testid="buy-credits-btn"
+                  >
+                    Buy Credits
+                  </VSCodeButton>
+                )}
               </div>
             </div>
 
@@ -617,6 +951,7 @@ const AccountView = ({
             <div className="grow flex flex-col min-h-0 pb-0">
               <CreditsHistoryTable
                 isLoading={loading}
+                error={creditBalanceError}
                 usageData={usageData || []}
                 paymentsData={paymentsData || []}
               />

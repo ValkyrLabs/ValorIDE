@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ScanBuildArtifactsRequest } from "@thorapi/model/ScanBuildArtifactsRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ScanBuildArtifactsRequest } from '@thorapi/model/ScanBuildArtifactsRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ScanBuildArtifactsRequestResponse = ScanBuildArtifactsRequest[];
+type ScanBuildArtifactsRequestResponse = ScanBuildArtifactsRequest[]
+type ScanBuildArtifactsRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ScanBuildArtifactsRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toScanBuildArtifactsRequestList = (
-  result: unknown,
-): ScanBuildArtifactsRequestResponse => {
+type ScanBuildArtifactsRequestListQueryArg = {
+  example?: Partial<ScanBuildArtifactsRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toScanBuildArtifactsRequestList = (result: unknown): ScanBuildArtifactsRequestResponse => {
   if (Array.isArray(result)) {
-    return result as ScanBuildArtifactsRequestResponse;
+    return result as ScanBuildArtifactsRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as ScanBuildArtifactsRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ScanBuildArtifactsRequestResponse) : []
+}
 
 export const ScanBuildArtifactsRequestService = createApi({
-  reducerPath: "ScanBuildArtifactsRequest", // This should remain unique
+  reducerPath: 'ScanBuildArtifactsRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ScanBuildArtifactsRequest"],
+  tagTypes: ['ScanBuildArtifactsRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getScanBuildArtifactsRequestsPaged: build.query<
-      ScanBuildArtifactsRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<ScanBuildArtifactsRequest>;
-      }
-    >({
+    getScanBuildArtifactsRequestsPaged: build.query<ScanBuildArtifactsRequestResponse, ScanBuildArtifactsRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ScanBuildArtifactsRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ScanBuildArtifactsRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toScanBuildArtifactsRequestList(result);
+        const rows = toScanBuildArtifactsRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ScanBuildArtifactsRequest" as const,
-              id,
-            })),
-          { type: "ScanBuildArtifactsRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ScanBuildArtifactsRequest' as const, id })),
+          { type: 'ScanBuildArtifactsRequest', id: `PAGE_${page}` },
+          { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getScanBuildArtifactsRequests: build.query<
-      ScanBuildArtifactsRequestResponse,
-      { example?: Partial<ScanBuildArtifactsRequest> } | void
-    >({
+    getScanBuildArtifactsRequests: build.query<ScanBuildArtifactsRequestResponse, ScanBuildArtifactsRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,120 +82,86 @@ export const ScanBuildArtifactsRequestService = createApi({
         return `ScanBuildArtifactsRequest`;
       },
       providesTags: (result) => {
-        const rows = toScanBuildArtifactsRequestList(result);
+        const rows = toScanBuildArtifactsRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ScanBuildArtifactsRequest" as const,
-              id,
-            })),
-          { type: "ScanBuildArtifactsRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ScanBuildArtifactsRequest' as const, id })),
+          { type: 'ScanBuildArtifactsRequest', id: 'LIST' },
+          { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addScanBuildArtifactsRequest: build.mutation<
-      ScanBuildArtifactsRequest,
-      Partial<ScanBuildArtifactsRequest>
-    >({
+    addScanBuildArtifactsRequest: build.mutation<ScanBuildArtifactsRequest, Partial<ScanBuildArtifactsRequest>>({
       query: (body) => ({
         url: `ScanBuildArtifactsRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ScanBuildArtifactsRequest", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getScanBuildArtifactsRequest: build.query<
-      ScanBuildArtifactsRequest,
-      string
-    >({
-      query: (id) => `ScanBuildArtifactsRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "ScanBuildArtifactsRequest", id },
+      invalidatesTags: [
+        { type: 'ScanBuildArtifactsRequest', id: 'LIST' },
+        { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getScanBuildArtifactsRequest: build.query<ScanBuildArtifactsRequest, string>({
+      query: (id) => `ScanBuildArtifactsRequest/${id}`,
+      providesTags: (result, error, id) => [{ type: 'ScanBuildArtifactsRequest', id }],
+    }),
+
     // 5) Update
-    updateScanBuildArtifactsRequest: build.mutation<
-      void,
-      Pick<ScanBuildArtifactsRequest, "id"> & Partial<ScanBuildArtifactsRequest>
-    >({
+    updateScanBuildArtifactsRequest: build.mutation<ScanBuildArtifactsRequest, Pick<ScanBuildArtifactsRequest, 'id'> & Partial<ScanBuildArtifactsRequest>>({
       query: ({ id, ...patch }) => ({
         url: `ScanBuildArtifactsRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ScanBuildArtifactsRequestService.util.updateQueryData(
-              "getScanBuildArtifactsRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<ScanBuildArtifactsRequest, "id">,
-      ) => [
-        { type: "ScanBuildArtifactsRequest", id },
-        { type: "ScanBuildArtifactsRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ScanBuildArtifactsRequest, 'id'>) => [
+        { type: 'ScanBuildArtifactsRequest', id },
+        { type: 'ScanBuildArtifactsRequest', id: 'LIST' },
+        { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteScanBuildArtifactsRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteScanBuildArtifactsRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ScanBuildArtifactsRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "ScanBuildArtifactsRequest", id },
+        { type: 'ScanBuildArtifactsRequest', id },
+        { type: 'ScanBuildArtifactsRequest', id: 'LIST' },
+        { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteScanBuildArtifactsRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteScanBuildArtifactsRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ScanBuildArtifactsRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ScanBuildArtifactsRequest", id },
-        { type: "ScanBuildArtifactsRequest", id: "LIST" },
+        { type: 'ScanBuildArtifactsRequest', id },
+        { type: 'ScanBuildArtifactsRequest', id: 'LIST' },
+        { type: 'ScanBuildArtifactsRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetScanBuildArtifactsRequestsPagedQuery`
 export const {
-  useGetScanBuildArtifactsRequestsPagedQuery, // immediate fetch
+  useGetScanBuildArtifactsRequestsPagedQuery,     // immediate fetch
   useLazyGetScanBuildArtifactsRequestsPagedQuery, // lazy fetch
   useGetScanBuildArtifactsRequestQuery,
   useGetScanBuildArtifactsRequestsQuery,
@@ -205,4 +169,4 @@ export const {
   useUpdateScanBuildArtifactsRequestMutation,
   useDeleteScanBuildArtifactsRequestMutation,
   useDeleteScanBuildArtifactsRequestCascadeMutation,
-} = ScanBuildArtifactsRequestService;
+} = ScanBuildArtifactsRequestService

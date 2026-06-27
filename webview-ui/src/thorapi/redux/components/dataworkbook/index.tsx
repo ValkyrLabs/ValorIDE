@@ -13,2909 +13,3474 @@ Template file: typescript-redux-query/modelDataWorkbook.index.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 
-import { Button, Container, Form } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { FaRegObjectGroup } from "react-icons/fa";
+import { FaUserShield } from "react-icons/fa";
+import { PermissionDialog } from "../../../../components/PermissionDialog";
+import { useAccessControl } from "../../../../utils/accessControl";
 
-import AccountBalanceTable from "../table/AccountBalanceTable";
+import AccountBalanceTable from '../table/AccountBalanceTable';
 
-import AccountPlanTable from "../table/AccountPlanTable";
+import AccountPlanTable from '../table/AccountPlanTable';
 
-import AclClassTable from "../table/AclClassTable";
+import AclClassTable from '../table/AclClassTable';
 
-import AclEntryTable from "../table/AclEntryTable";
+import AclEntryTable from '../table/AclEntryTable';
 
-import AclObjectIdentityTable from "../table/AclObjectIdentityTable";
+import AclObjectIdentityTable from '../table/AclObjectIdentityTable';
 
-import AclSidTable from "../table/AclSidTable";
+import AclSidTable from '../table/AclSidTable';
 
-import ActivateAgent200ResponseTable from "../table/ActivateAgent200ResponseTable";
+import ActivateAgent200ResponseTable from '../table/ActivateAgent200ResponseTable';
 
-import AddressTable from "../table/AddressTable";
+import AddressTable from '../table/AddressTable';
 
-import AgentTable from "../table/AgentTable";
+import AgentTable from '../table/AgentTable';
 
-import AgentBillingTable from "../table/AgentBillingTable";
+import AgentBillingTable from '../table/AgentBillingTable';
 
-import AgentBillingChargeTable from "../table/AgentBillingChargeTable";
+import AgentBillingChargeTable from '../table/AgentBillingChargeTable';
 
-import AgentChatMessageTable from "../table/AgentChatMessageTable";
+import AgentChatMessageTable from '../table/AgentChatMessageTable';
 
-import AgentChatMessageRequestTable from "../table/AgentChatMessageRequestTable";
+import AgentChatMessageRequestTable from '../table/AgentChatMessageRequestTable';
 
-import AgentChatMessageResponseTable from "../table/AgentChatMessageResponseTable";
+import AgentChatMessageResponseTable from '../table/AgentChatMessageResponseTable';
 
-import AgentDiscoveryItemTable from "../table/AgentDiscoveryItemTable";
+import AgentDiscoveryItemTable from '../table/AgentDiscoveryItemTable';
 
-import AgentEventTriggerTable from "../table/AgentEventTriggerTable";
+import AgentEventTriggerTable from '../table/AgentEventTriggerTable';
 
-import AgentHierarchyTable from "../table/AgentHierarchyTable";
+import AgentHierarchyTable from '../table/AgentHierarchyTable';
 
-import AgentHierarchyNodeTable from "../table/AgentHierarchyNodeTable";
+import AgentHierarchyNodeTable from '../table/AgentHierarchyNodeTable';
 
-import ApiIdentityKpiSnapshotTable from "../table/ApiIdentityKpiSnapshotTable";
+import ApiIdentityKpiSnapshotTable from '../table/ApiIdentityKpiSnapshotTable';
 
-import ApiMetricSnapshotTable from "../table/ApiMetricSnapshotTable";
+import ApiMetricSnapshotTable from '../table/ApiMetricSnapshotTable';
 
-import ApiMetricsResponseTable from "../table/ApiMetricsResponseTable";
+import ApiMetricsResponseTable from '../table/ApiMetricsResponseTable';
 
-import ApiSpineKpiSnapshotTable from "../table/ApiSpineKpiSnapshotTable";
+import ApiSpineKpiSnapshotTable from '../table/ApiSpineKpiSnapshotTable';
 
-import ApiTrafficEventTable from "../table/ApiTrafficEventTable";
+import ApiTrafficEventTable from '../table/ApiTrafficEventTable';
 
-import AppendTrustEventRequestTable from "../table/AppendTrustEventRequestTable";
+import AppGenerationRequestTable from '../table/AppGenerationRequestTable';
 
-import AppendTrustEventResponseTable from "../table/AppendTrustEventResponseTable";
+import AppGenerationTraceResponseTable from '../table/AppGenerationTraceResponseTable';
 
-import ApplicationTable from "../table/ApplicationTable";
+import AppObjectModelTable from '../table/AppObjectModelTable';
 
-import ArrayIntegerItemTable from "../table/ArrayIntegerItemTable";
+import AppSpecDraftTable from '../table/AppSpecDraftTable';
 
-import ArrayNumberItemTable from "../table/ArrayNumberItemTable";
+import AppendTrustEventRequestTable from '../table/AppendTrustEventRequestTable';
 
-import ArrayStringItemTable from "../table/ArrayStringItemTable";
+import AppendTrustEventResponseTable from '../table/AppendTrustEventResponseTable';
 
-import AuthorityTable from "../table/AuthorityTable";
+import ApplicationTable from '../table/ApplicationTable';
 
-import BackupConfigTable from "../table/BackupConfigTable";
+import ArrayIntegerItemTable from '../table/ArrayIntegerItemTable';
 
-import BalanceResponseTable from "../table/BalanceResponseTable";
+import ArrayNumberItemTable from '../table/ArrayNumberItemTable';
 
-import BlankRangeTable from "../table/BlankRangeTable";
+import ArrayStringItemTable from '../table/ArrayStringItemTable';
 
-import BorderTable from "../table/BorderTable";
+import AuthorityTable from '../table/AuthorityTable';
 
-import BudgetTable from "../table/BudgetTable";
+import BackupConfigTable from '../table/BackupConfigTable';
 
-import BuildTable from "../table/BuildTable";
+import BalanceResponseTable from '../table/BalanceResponseTable';
 
-import BuildArtifactTable from "../table/BuildArtifactTable";
+import BlankRangeTable from '../table/BlankRangeTable';
 
-import BuildOutputTable from "../table/BuildOutputTable";
+import BorderTable from '../table/BorderTable';
 
-import CampaignTable from "../table/CampaignTable";
+import BudgetTable from '../table/BudgetTable';
 
-import CareerOpportunityTable from "../table/CareerOpportunityTable";
+import BuildTable from '../table/BuildTable';
 
-import CellTable from "../table/CellTable";
+import BuildArtifactTable from '../table/BuildArtifactTable';
 
-import ChannelSubscriptionTable from "../table/ChannelSubscriptionTable";
+import BuildOutputTable from '../table/BuildOutputTable';
 
-import ChartTable from "../table/ChartTable";
+import CampaignTable from '../table/CampaignTable';
 
-import ChartSeriesTable from "../table/ChartSeriesTable";
+import CareerOpportunityTable from '../table/CareerOpportunityTable';
 
-import ChatCompletionRequestTable from "../table/ChatCompletionRequestTable";
+import CellTable from '../table/CellTable';
 
-import ChatCompletionResponseTable from "../table/ChatCompletionResponseTable";
+import ChannelSubscriptionTable from '../table/ChannelSubscriptionTable';
 
-import ChatMessageTable from "../table/ChatMessageTable";
+import ChartTable from '../table/ChartTable';
 
-import ChatResponseTable from "../table/ChatResponseTable";
+import ChartSeriesTable from '../table/ChartSeriesTable';
 
-import CircuitBreakerConfigTable from "../table/CircuitBreakerConfigTable";
+import ChatCompletionRequestTable from '../table/ChatCompletionRequestTable';
 
-import CircuitBreakerStateTable from "../table/CircuitBreakerStateTable";
+import ChatCompletionResponseTable from '../table/ChatCompletionResponseTable';
 
-import CloudProviderTable from "../table/CloudProviderTable";
+import ChatMessageTable from '../table/ChatMessageTable';
 
-import CompleteTrustExecutionRequestTable from "../table/CompleteTrustExecutionRequestTable";
+import ChatResponseTable from '../table/ChatResponseTable';
 
-import CompleteTrustExecutionResponseTable from "../table/CompleteTrustExecutionResponseTable";
+import CircuitBreakerConfigTable from '../table/CircuitBreakerConfigTable';
 
-import CompleteUploadRequestTable from "../table/CompleteUploadRequestTable";
+import CircuitBreakerStateTable from '../table/CircuitBreakerStateTable';
 
-import CompleteUploadRequestPartsInnerTable from "../table/CompleteUploadRequestPartsInnerTable";
+import CloudProviderTable from '../table/CloudProviderTable';
 
-import ConfirmPasswordResetRequestTable from "../table/ConfirmPasswordResetRequestTable";
+import CompleteTrustExecutionRequestTable from '../table/CompleteTrustExecutionRequestTable';
 
-import ConfirmPasswordResetResponseTable from "../table/ConfirmPasswordResetResponseTable";
+import CompleteTrustExecutionResponseTable from '../table/CompleteTrustExecutionResponseTable';
 
-import ConsultingProfileTable from "../table/ConsultingProfileTable";
+import CompleteUploadRequestTable from '../table/CompleteUploadRequestTable';
 
-import ContentDataTable from "../table/ContentDataTable";
+import CompleteUploadRequestPartsInnerTable from '../table/CompleteUploadRequestPartsInnerTable';
 
-import ContentMediaLinkTable from "../table/ContentMediaLinkTable";
+import ConfirmPasswordResetRequestTable from '../table/ConfirmPasswordResetRequestTable';
 
-import ConversationBranchTable from "../table/ConversationBranchTable";
+import ConfirmPasswordResetResponseTable from '../table/ConfirmPasswordResetResponseTable';
 
-import ConversationMemoryNodeTable from "../table/ConversationMemoryNodeTable";
+import ConsultingProfileTable from '../table/ConsultingProfileTable';
 
-import CreatorEarningsTable from "../table/CreatorEarningsTable";
+import ContentDataTable from '../table/ContentDataTable';
 
-import CreditAccountTable from "../table/CreditAccountTable";
+import ContentMediaLinkTable from '../table/ContentMediaLinkTable';
 
-import CreditBalanceSummaryTable from "../table/CreditBalanceSummaryTable";
+import ContextCompressionReceiptTable from '../table/ContextCompressionReceiptTable';
 
-import CustomerTable from "../table/CustomerTable";
+import ContextPageTable from '../table/ContextPageTable';
 
-import DeadLetterQueueTable from "../table/DeadLetterQueueTable";
+import ContextPageCompileRequestTable from '../table/ContextPageCompileRequestTable';
 
-import DefaultResponseTable from "../table/DefaultResponseTable";
+import ContextPageHydrateRequestTable from '../table/ContextPageHydrateRequestTable';
 
-import DependTable from "../table/DependTable";
+import ContextPageItemTable from '../table/ContextPageItemTable';
 
-import DeploymentTable from "../table/DeploymentTable";
+import ContextPageRecompressRequestTable from '../table/ContextPageRecompressRequestTable';
 
-import DeploymentSpecTable from "../table/DeploymentSpecTable";
+import ContextPageResponseTable from '../table/ContextPageResponseTable';
 
-import DeploymentTemplateTable from "../table/DeploymentTemplateTable";
+import ContextPageTraverseRequestTable from '../table/ContextPageTraverseRequestTable';
 
-import DigitalAssetTable from "../table/DigitalAssetTable";
+import ContextTraversalEventTable from '../table/ContextTraversalEventTable';
 
-import DiscardDeadLetterEntryRequestTable from "../table/DiscardDeadLetterEntryRequestTable";
+import ConversationBranchTable from '../table/ConversationBranchTable';
 
-import DiscardDeadLetterEntryResponseTable from "../table/DiscardDeadLetterEntryResponseTable";
+import ConversationMemoryNodeTable from '../table/ConversationMemoryNodeTable';
 
-import DiscountTable from "../table/DiscountTable";
+import CreatorEarningsTable from '../table/CreatorEarningsTable';
 
-import DownloadAccessTable from "../table/DownloadAccessTable";
+import CreditAccountTable from '../table/CreditAccountTable';
 
-import EventLogTable from "../table/EventLogTable";
+import CreditBalanceSummaryTable from '../table/CreditBalanceSummaryTable';
 
-import ExecModuleTable from "../table/ExecModuleTable";
+import CreditDebitReceiptTable from '../table/CreditDebitReceiptTable';
 
-import ExecModuleAudienceConfigTable from "../table/ExecModuleAudienceConfigTable";
+import CreditPricingMatrixTable from '../table/CreditPricingMatrixTable';
 
-import ExecModuleAuthConfigTable from "../table/ExecModuleAuthConfigTable";
+import CreditReservationTable from '../table/CreditReservationTable';
 
-import ExecModuleConfigTable from "../table/ExecModuleConfigTable";
+import CustomerTable from '../table/CustomerTable';
 
-import ExecModuleExecutionConfigTable from "../table/ExecModuleExecutionConfigTable";
+import DeadLetterQueueTable from '../table/DeadLetterQueueTable';
 
-import ExecModuleIOConfigTable from "../table/ExecModuleIOConfigTable";
+import DefaultResponseTable from '../table/DefaultResponseTable';
 
-import ExecModuleObservabilityConfigTable from "../table/ExecModuleObservabilityConfigTable";
+import DependTable from '../table/DependTable';
 
-import ExecModulePayloadConfigTable from "../table/ExecModulePayloadConfigTable";
+import DeploymentTable from '../table/DeploymentTable';
 
-import ExecModuleRateLimitConfigTable from "../table/ExecModuleRateLimitConfigTable";
+import DeploymentSpecTable from '../table/DeploymentSpecTable';
 
-import ExecModuleResourceConfigTable from "../table/ExecModuleResourceConfigTable";
+import DeploymentTemplateTable from '../table/DeploymentTemplateTable';
 
-import ExecModuleTransportConfigTable from "../table/ExecModuleTransportConfigTable";
+import DigitalAssetTable from '../table/DigitalAssetTable';
 
-import ExecuteModuleRequestTable from "../table/ExecuteModuleRequestTable";
+import DiscardDeadLetterEntryRequestTable from '../table/DiscardDeadLetterEntryRequestTable';
 
-import ExpenseTable from "../table/ExpenseTable";
+import DiscardDeadLetterEntryResponseTable from '../table/DiscardDeadLetterEntryResponseTable';
 
-import FileAuditLogTable from "../table/FileAuditLogTable";
+import DiscountTable from '../table/DiscountTable';
 
-import FileDownloadTokenTable from "../table/FileDownloadTokenTable";
+import DownloadAccessTable from '../table/DownloadAccessTable';
 
-import FileMetadataTable from "../table/FileMetadataTable";
+import EventLogTable from '../table/EventLogTable';
 
-import FileProcessingJobTable from "../table/FileProcessingJobTable";
+import ExecModuleTable from '../table/ExecModuleTable';
 
-import FileRecordTable from "../table/FileRecordTable";
+import ExecModuleAudienceConfigTable from '../table/ExecModuleAudienceConfigTable';
 
-import FileUploadSessionTable from "../table/FileUploadSessionTable";
+import ExecModuleAuthConfigTable from '../table/ExecModuleAuthConfigTable';
 
-import FileVersionTable from "../table/FileVersionTable";
+import ExecModuleConfigTable from '../table/ExecModuleConfigTable';
 
-import FormatTable from "../table/FormatTable";
+import ExecModuleExecutionConfigTable from '../table/ExecModuleExecutionConfigTable';
 
-import FormulaTable from "../table/FormulaTable";
+import ExecModuleIOConfigTable from '../table/ExecModuleIOConfigTable';
 
-import GeneralLedgerEntryTable from "../table/GeneralLedgerEntryTable";
+import ExecModuleObservabilityConfigTable from '../table/ExecModuleObservabilityConfigTable';
 
-import GenerateTrustKeyRequestTable from "../table/GenerateTrustKeyRequestTable";
+import ExecModulePayloadConfigTable from '../table/ExecModulePayloadConfigTable';
 
-import GenerateTrustKeyResponseTable from "../table/GenerateTrustKeyResponseTable";
+import ExecModuleRateLimitConfigTable from '../table/ExecModuleRateLimitConfigTable';
 
-import GenerateTrustProofRequestTable from "../table/GenerateTrustProofRequestTable";
+import ExecModuleResourceConfigTable from '../table/ExecModuleResourceConfigTable';
 
-import GenerateTrustProofResponseTable from "../table/GenerateTrustProofResponseTable";
+import ExecModuleTransportConfigTable from '../table/ExecModuleTransportConfigTable';
 
-import GoalTable from "../table/GoalTable";
+import ExecuteModuleRequestTable from '../table/ExecuteModuleRequestTable';
 
-import GoalDependencyTable from "../table/GoalDependencyTable";
+import ExpenseTable from '../table/ExpenseTable';
 
-import GrantPermissionRequestTable from "../table/GrantPermissionRequestTable";
+import FileAuditLogTable from '../table/FileAuditLogTable';
 
-import GraphLinkTable from "../table/GraphLinkTable";
+import FileDownloadTokenTable from '../table/FileDownloadTokenTable';
 
-import GrayMatterTable from "../table/GrayMatterTable";
+import FileListResponseTable from '../table/FileListResponseTable';
 
-import HostInstanceTable from "../table/HostInstanceTable";
+import FileMetadataTable from '../table/FileMetadataTable';
 
-import IdempotencyKeyTable from "../table/IdempotencyKeyTable";
+import FileProcessingJobTable from '../table/FileProcessingJobTable';
 
-import InitUploadRequestTable from "../table/InitUploadRequestTable";
+import FileRecordTable from '../table/FileRecordTable';
 
-import InitUploadResponseTable from "../table/InitUploadResponseTable";
+import FileUploadSessionTable from '../table/FileUploadSessionTable';
 
-import InitiateTwoFactorRequestTable from "../table/InitiateTwoFactorRequestTable";
+import FileVersionTable from '../table/FileVersionTable';
 
-import InitiateTwoFactorResponseTable from "../table/InitiateTwoFactorResponseTable";
+import FormatTable from '../table/FormatTable';
 
-import IntegrationAccountTable from "../table/IntegrationAccountTable";
+import FormulaTable from '../table/FormulaTable';
 
-import InvoiceTable from "../table/InvoiceTable";
+import GeneralLedgerEntryTable from '../table/GeneralLedgerEntryTable';
 
-import InvokeMcpToolRequestTable from "../table/InvokeMcpToolRequestTable";
+import GenerateTrustKeyRequestTable from '../table/GenerateTrustKeyRequestTable';
 
-import JobApplicationTable from "../table/JobApplicationTable";
+import GenerateTrustKeyResponseTable from '../table/GenerateTrustKeyResponseTable';
 
-import JobApplicationRequestTable from "../table/JobApplicationRequestTable";
+import GenerateTrustProofRequestTable from '../table/GenerateTrustProofRequestTable';
 
-import JobApplicationResponseTable from "../table/JobApplicationResponseTable";
+import GenerateTrustProofResponseTable from '../table/GenerateTrustProofResponseTable';
 
-import JobMetadataTable from "../table/JobMetadataTable";
+import GeneratedArtifactTable from '../table/GeneratedArtifactTable';
 
-import JobSeekerTable from "../table/JobSeekerTable";
+import GeneratedArtifactSetTable from '../table/GeneratedArtifactSetTable';
 
-import KeyMetricTable from "../table/KeyMetricTable";
+import GenerationReceiptTable from '../table/GenerationReceiptTable';
 
-import LeaseTrustSecretRequestTable from "../table/LeaseTrustSecretRequestTable";
+import GoalTable from '../table/GoalTable';
 
-import LeaseTrustSecretResponseTable from "../table/LeaseTrustSecretResponseTable";
+import GoalDependencyTable from '../table/GoalDependencyTable';
 
-import LineItemTable from "../table/LineItemTable";
+import GrantPermissionRequestTable from '../table/GrantPermissionRequestTable';
 
-import ListDeployableApplications200ResponseInnerTable from "../table/ListDeployableApplications200ResponseInnerTable";
+import GraphLinkTable from '../table/GraphLinkTable';
 
-import LlmDetailsTable from "../table/LlmDetailsTable";
+import GrayMatterTable from '../table/GrayMatterTable';
 
-import LlmRoutingPolicyTable from "../table/LlmRoutingPolicyTable";
+import HostInstanceTable from '../table/HostInstanceTable';
 
-import LoginTable from "../table/LoginTable";
+import HydrationPointerTable from '../table/HydrationPointerTable';
 
-import LoginAuditTable from "../table/LoginAuditTable";
+import IdempotencyKeyTable from '../table/IdempotencyKeyTable';
 
-import LoginRequestTable from "../table/LoginRequestTable";
+import InitUploadRequestTable from '../table/InitUploadRequestTable';
 
-import LoginResponseTable from "../table/LoginResponseTable";
+import InitUploadResponseTable from '../table/InitUploadResponseTable';
 
-import LogoutTable from "../table/LogoutTable";
+import InitiateTwoFactorRequestTable from '../table/InitiateTwoFactorRequestTable';
 
-import ManagedMcpServiceTable from "../table/ManagedMcpServiceTable";
+import InitiateTwoFactorResponseTable from '../table/InitiateTwoFactorResponseTable';
 
-import McpTable from "../table/McpTable";
+import IntegrationAccountTable from '../table/IntegrationAccountTable';
 
-import McpContentTable from "../table/McpContentTable";
+import InvoiceTable from '../table/InvoiceTable';
 
-import McpDownloadResponseTable from "../table/McpDownloadResponseTable";
+import InvokeMcpToolRequestTable from '../table/InvokeMcpToolRequestTable';
 
-import McpMarketplaceCatalogTable from "../table/McpMarketplaceCatalogTable";
+import JobApplicationTable from '../table/JobApplicationTable';
 
-import McpMarketplaceItemTable from "../table/McpMarketplaceItemTable";
+import JobApplicationRequestTable from '../table/JobApplicationRequestTable';
 
-import McpMarketplaceItemTagTable from "../table/McpMarketplaceItemTagTable";
+import JobApplicationResponseTable from '../table/JobApplicationResponseTable';
 
-import McpResourceTable from "../table/McpResourceTable";
+import JobMetadataTable from '../table/JobMetadataTable';
 
-import McpResourceResponseTable from "../table/McpResourceResponseTable";
+import JobSeekerTable from '../table/JobSeekerTable';
 
-import McpResourceTemplateTable from "../table/McpResourceTemplateTable";
+import KeyMetricTable from '../table/KeyMetricTable';
 
-import McpServerTable from "../table/McpServerTable";
+import LeaseTrustSecretRequestTable from '../table/LeaseTrustSecretRequestTable';
 
-import McpServiceRegistryTable from "../table/McpServiceRegistryTable";
+import LeaseTrustSecretResponseTable from '../table/LeaseTrustSecretResponseTable';
 
-import McpServiceResponseTable from "../table/McpServiceResponseTable";
+import LineItemTable from '../table/LineItemTable';
 
-import McpToolTable from "../table/McpToolTable";
+import ListDeployableApplications200ResponseInnerTable from '../table/ListDeployableApplications200ResponseInnerTable';
 
-import McpToolCallResponseTable from "../table/McpToolCallResponseTable";
+import LlmCommandTable from '../table/LlmCommandTable';
 
-import McpToolPresetTable from "../table/McpToolPresetTable";
+import LlmCommandResultTable from '../table/LlmCommandResultTable';
 
-import McpTransportConfigTable from "../table/McpTransportConfigTable";
+import LlmDetailsTable from '../table/LlmDetailsTable';
 
-import MediaObjectTable from "../table/MediaObjectTable";
+import LlmRoutingPolicyTable from '../table/LlmRoutingPolicyTable';
 
-import MemoryActionRequestTable from "../table/MemoryActionRequestTable";
+import LoginTable from '../table/LoginTable';
 
-import MemoryActionResponseTable from "../table/MemoryActionResponseTable";
+import LoginAuditTable from '../table/LoginAuditTable';
 
-import MemoryContextStatsTable from "../table/MemoryContextStatsTable";
+import LoginRequestTable from '../table/LoginRequestTable';
 
-import MemoryCostStatsTable from "../table/MemoryCostStatsTable";
+import LoginResponseTable from '../table/LoginResponseTable';
 
-import MemoryEntryTable from "../table/MemoryEntryTable";
+import LogoutTable from '../table/LogoutTable';
 
-import MemoryHitStatsTable from "../table/MemoryHitStatsTable";
+import ManagedMcpServiceTable from '../table/ManagedMcpServiceTable';
 
-import MemoryRecommendationTable from "../table/MemoryRecommendationTable";
+import McpTable from '../table/McpTable';
 
-import MemoryRetentionPolicyTable from "../table/MemoryRetentionPolicyTable";
+import McpDownloadResponseTable from '../table/McpDownloadResponseTable';
 
-import MemoryRunRecordTable from "../table/MemoryRunRecordTable";
+import McpMarketplaceCatalogTable from '../table/McpMarketplaceCatalogTable';
 
-import MemoryStatsTable from "../table/MemoryStatsTable";
+import McpMarketplaceItemTable from '../table/McpMarketplaceItemTable';
 
-import MergeRangeTable from "../table/MergeRangeTable";
+import McpMarketplaceItemTagTable from '../table/McpMarketplaceItemTagTable';
 
-import MetricsTable from "../table/MetricsTable";
+import McpResourceTable from '../table/McpResourceTable';
 
-import NamedRangeTable from "../table/NamedRangeTable";
+import McpResourceResponseTable from '../table/McpResourceResponseTable';
 
-import NoteTable from "../table/NoteTable";
+import McpResourceTemplateTable from '../table/McpResourceTemplateTable';
 
-import OasComponentTable from "../table/OasComponentTable";
+import McpResponsePartTable from '../table/McpResponsePartTable';
 
-import OasEnumTable from "../table/OasEnumTable";
+import McpServerTable from '../table/McpServerTable';
 
-import OasInfoTable from "../table/OasInfoTable";
+import McpServiceContractsResponseTable from '../table/McpServiceContractsResponseTable';
 
-import OasObjectSchemaTable from "../table/OasObjectSchemaTable";
+import McpServiceRegistryTable from '../table/McpServiceRegistryTable';
 
-import OasOpenAPISpecTable from "../table/OasOpenAPISpecTable";
+import McpServiceResponseTable from '../table/McpServiceResponseTable';
 
-import OasOperationTable from "../table/OasOperationTable";
+import McpToolTable from '../table/McpToolTable';
 
-import OasParameterTable from "../table/OasParameterTable";
+import McpToolCallResponseTable from '../table/McpToolCallResponseTable';
 
-import OasPathTable from "../table/OasPathTable";
+import McpToolPresetTable from '../table/McpToolPresetTable';
 
-import OasRequiredTable from "../table/OasRequiredTable";
+import McpTransportConfigTable from '../table/McpTransportConfigTable';
 
-import OasResponseTable from "../table/OasResponseTable";
+import MediaObjectTable from '../table/MediaObjectTable';
 
-import OasSecuritySchemeTable from "../table/OasSecuritySchemeTable";
+import MemoryActionRequestTable from '../table/MemoryActionRequestTable';
 
-import OasServerTable from "../table/OasServerTable";
+import MemoryActionResponseTable from '../table/MemoryActionResponseTable';
 
-import OpportunityTable from "../table/OpportunityTable";
+import MemoryContextStatsTable from '../table/MemoryContextStatsTable';
 
-import OrderFulfillmentTaskTable from "../table/OrderFulfillmentTaskTable";
+import MemoryCostStatsTable from '../table/MemoryCostStatsTable';
 
-import OrganizationTable from "../table/OrganizationTable";
+import MemoryEntryTable from '../table/MemoryEntryTable';
 
-import OrganizationAddonSubscriptionTable from "../table/OrganizationAddonSubscriptionTable";
+import MemoryHitStatsTable from '../table/MemoryHitStatsTable';
 
-import PasswordResetTokenTable from "../table/PasswordResetTokenTable";
+import MemoryRecommendationTable from '../table/MemoryRecommendationTable';
 
-import PaymentTransactionTable from "../table/PaymentTransactionTable";
+import MemoryRetentionPolicyTable from '../table/MemoryRetentionPolicyTable';
 
-import PaymentTypeTable from "../table/PaymentTypeTable";
+import MemoryRunRecordTable from '../table/MemoryRunRecordTable';
 
-import PersistentLoginTable from "../table/PersistentLoginTable";
+import MemoryStatsTable from '../table/MemoryStatsTable';
 
-import PhoneVerificationTable from "../table/PhoneVerificationTable";
+import MergeRangeTable from '../table/MergeRangeTable';
 
-import PhoneVerificationRequestTable from "../table/PhoneVerificationRequestTable";
+import MetricsTable from '../table/MetricsTable';
 
-import PhoneVerificationResponseTable from "../table/PhoneVerificationResponseTable";
+import NamedRangeTable from '../table/NamedRangeTable';
 
-import PivotTableTable from "../table/PivotTableTable";
+import NoteTable from '../table/NoteTable';
 
-import PresignRequestTable from "../table/PresignRequestTable";
+import OasComponentTable from '../table/OasComponentTable';
 
-import PresignResponseTable from "../table/PresignResponseTable";
+import OasEnumTable from '../table/OasEnumTable';
 
-import PrincipalTable from "../table/PrincipalTable";
+import OasInfoTable from '../table/OasInfoTable';
 
-import ProductTable from "../table/ProductTable";
+import OasObjectSchemaTable from '../table/OasObjectSchemaTable';
 
-import ProductDeliveryConfigTable from "../table/ProductDeliveryConfigTable";
+import OasOpenAPISpecTable from '../table/OasOpenAPISpecTable';
 
-import ProductFeatureTable from "../table/ProductFeatureTable";
+import OasOperationTable from '../table/OasOperationTable';
 
-import ProductFunnelWizardTable from "../table/ProductFunnelWizardTable";
+import OasParameterTable from '../table/OasParameterTable';
 
-import ProductLandingPageTable from "../table/ProductLandingPageTable";
+import OasPathTable from '../table/OasPathTable';
 
-import PtgTable from "../table/PtgTable";
+import OasRequiredTable from '../table/OasRequiredTable';
 
-import PtgRefTable from "../table/PtgRefTable";
+import OasResponseTable from '../table/OasResponseTable';
 
-import PublishFunnel200ResponseTable from "../table/PublishFunnel200ResponseTable";
+import OasSecuritySchemeTable from '../table/OasSecuritySchemeTable';
 
-import PublishRestEndpointRequestTable from "../table/PublishRestEndpointRequestTable";
+import OasServerTable from '../table/OasServerTable';
 
-import PublishWorkflowRequestTable from "../table/PublishWorkflowRequestTable";
+import OpenClawLightsailLaunchEstimateTable from '../table/OpenClawLightsailLaunchEstimateTable';
 
-import QuotaTable from "../table/QuotaTable";
+import OpenClawLightsailLaunchRequestTable from '../table/OpenClawLightsailLaunchRequestTable';
 
-import RatingTable from "../table/RatingTable";
+import OpenClawLightsailLaunchResponseTable from '../table/OpenClawLightsailLaunchResponseTable';
 
-import ReactionTable from "../table/ReactionTable";
+import OpenClawLightsailProvisioningEventTable from '../table/OpenClawLightsailProvisioningEventTable';
 
-import ReferralLinkTable from "../table/ReferralLinkTable";
+import OpportunityTable from '../table/OpportunityTable';
 
-import RegisterTrustPolicyRequestTable from "../table/RegisterTrustPolicyRequestTable";
+import OrderFulfillmentTaskTable from '../table/OrderFulfillmentTaskTable';
 
-import RegisterTrustPolicyResponseTable from "../table/RegisterTrustPolicyResponseTable";
+import OrganizationTable from '../table/OrganizationTable';
 
-import RequestPasswordResetRequestTable from "../table/RequestPasswordResetRequestTable";
+import OrganizationAddonSubscriptionTable from '../table/OrganizationAddonSubscriptionTable';
 
-import RequestPasswordResetResponseTable from "../table/RequestPasswordResetResponseTable";
+import PasswordResetTokenTable from '../table/PasswordResetTokenTable';
 
-import RequeueDeadLetterEntryRequestTable from "../table/RequeueDeadLetterEntryRequestTable";
+import PaymentTransactionTable from '../table/PaymentTransactionTable';
 
-import RequeueDeadLetterEntryResponseTable from "../table/RequeueDeadLetterEntryResponseTable";
+import PaymentTypeTable from '../table/PaymentTypeTable';
 
-import RetryPolicyTable from "../table/RetryPolicyTable";
+import PersistentLoginTable from '../table/PersistentLoginTable';
 
-import RewrapTrustKeyRequestTable from "../table/RewrapTrustKeyRequestTable";
+import PhoneVerificationTable from '../table/PhoneVerificationTable';
 
-import RewrapTrustKeyResponseTable from "../table/RewrapTrustKeyResponseTable";
+import PhoneVerificationRequestTable from '../table/PhoneVerificationRequestTable';
 
-import RoleTable from "../table/RoleTable";
+import PhoneVerificationResponseTable from '../table/PhoneVerificationResponseTable';
 
-import RotateTrustKeyRequestTable from "../table/RotateTrustKeyRequestTable";
+import PivotTableTable from '../table/PivotTableTable';
 
-import RotateTrustKeyResponseTable from "../table/RotateTrustKeyResponseTable";
+import PresignRequestTable from '../table/PresignRequestTable';
 
-import RunTable from "../table/RunTable";
+import PresignResponseTable from '../table/PresignResponseTable';
 
-import SalesActivityTable from "../table/SalesActivityTable";
+import PrincipalTable from '../table/PrincipalTable';
 
-import SalesOrderTable from "../table/SalesOrderTable";
+import ProcedureTable from '../table/ProcedureTable';
 
-import SalesPipelineTable from "../table/SalesPipelineTable";
+import ProductTable from '../table/ProductTable';
 
-import ScanBuildArtifacts200ResponseTable from "../table/ScanBuildArtifacts200ResponseTable";
+import ProductDeliveryConfigTable from '../table/ProductDeliveryConfigTable';
 
-import ScanBuildArtifactsRequestTable from "../table/ScanBuildArtifactsRequestTable";
+import ProductFeatureTable from '../table/ProductFeatureTable';
 
-import SecureKeyTable from "../table/SecureKeyTable";
+import ProductFunnelWizardTable from '../table/ProductFunnelWizardTable';
 
-import SemanticIndexEntryTable from "../table/SemanticIndexEntryTable";
+import ProductLandingPageTable from '../table/ProductLandingPageTable';
 
-import ServiceInvocationEventTable from "../table/ServiceInvocationEventTable";
+import ProjectTable from '../table/ProjectTable';
 
-import ServiceSubscriptionTable from "../table/ServiceSubscriptionTable";
+import ProjectObjectLinkTable from '../table/ProjectObjectLinkTable';
 
-import SheetTable from "../table/SheetTable";
+import PtgTable from '../table/PtgTable';
 
-import SheetColumnTable from "../table/SheetColumnTable";
+import PtgRefTable from '../table/PtgRefTable';
 
-import SheetRowTable from "../table/SheetRowTable";
+import PublishFunnel200ResponseTable from '../table/PublishFunnel200ResponseTable';
 
-import SkillProfileTable from "../table/SkillProfileTable";
+import PublishMcpToolRequestTable from '../table/PublishMcpToolRequestTable';
 
-import SolutionTable from "../table/SolutionTable";
+import PublishMcpToolResponseTable from '../table/PublishMcpToolResponseTable';
 
-import SpaceTable from "../table/SpaceTable";
+import PublishRestEndpointRequestTable from '../table/PublishRestEndpointRequestTable';
 
-import SpaceFileTable from "../table/SpaceFileTable";
+import PublishWorkflowRequestTable from '../table/PublishWorkflowRequestTable';
 
-import SpaceMemberTable from "../table/SpaceMemberTable";
+import QuotaTable from '../table/QuotaTable';
 
-import StackTable from "../table/StackTable";
+import RatingTable from '../table/RatingTable';
 
-import StartTrustExecutionRequestTable from "../table/StartTrustExecutionRequestTable";
+import ReactionTable from '../table/ReactionTable';
 
-import StartTrustExecutionResponseTable from "../table/StartTrustExecutionResponseTable";
+import ReferralLinkTable from '../table/ReferralLinkTable';
 
-import StrategicPriorityTable from "../table/StrategicPriorityTable";
+import RefundRecordTable from '../table/RefundRecordTable';
 
-import SubmitTrustAttestationEvidenceRequestTable from "../table/SubmitTrustAttestationEvidenceRequestTable";
+import RegisterTrustPolicyRequestTable from '../table/RegisterTrustPolicyRequestTable';
 
-import SubmitTrustAttestationEvidenceResponseTable from "../table/SubmitTrustAttestationEvidenceResponseTable";
+import RegisterTrustPolicyResponseTable from '../table/RegisterTrustPolicyResponseTable';
 
-import SubscriberListTable from "../table/SubscriberListTable";
+import RequestPasswordResetRequestTable from '../table/RequestPasswordResetRequestTable';
 
-import SubscriptionPlanTable from "../table/SubscriptionPlanTable";
+import RequestPasswordResetResponseTable from '../table/RequestPasswordResetResponseTable';
 
-import SwarmTable from "../table/SwarmTable";
+import RequeueDeadLetterEntryRequestTable from '../table/RequeueDeadLetterEntryRequestTable';
 
-import SwarmAgentSummaryTable from "../table/SwarmAgentSummaryTable";
+import RequeueDeadLetterEntryResponseTable from '../table/RequeueDeadLetterEntryResponseTable';
 
-import SwarmCommandRequestTable from "../table/SwarmCommandRequestTable";
+import RetrievalCoverageTable from '../table/RetrievalCoverageTable';
 
-import SwarmCommandResponseTable from "../table/SwarmCommandResponseTable";
+import RetrievalEvaluatorResultTable from '../table/RetrievalEvaluatorResultTable';
 
-import SwarmGraphEdgeTable from "../table/SwarmGraphEdgeTable";
+import RetrievalPolicyDecisionTable from '../table/RetrievalPolicyDecisionTable';
 
-import SwarmGraphNodeTable from "../table/SwarmGraphNodeTable";
+import RetrievalProvenanceTable from '../table/RetrievalProvenanceTable';
 
-import SwarmGraphSnapshotTable from "../table/SwarmGraphSnapshotTable";
+import RetrievalQualityScoreTable from '../table/RetrievalQualityScoreTable';
 
-import SwarmMessageTable from "../table/SwarmMessageTable";
+import RetrievalReceiptTable from '../table/RetrievalReceiptTable';
 
-import SwarmPayloadTable from "../table/SwarmPayloadTable";
+import RetrievalReceiptItemTable from '../table/RetrievalReceiptItemTable';
 
-import SwarmRegisterRequestTable from "../table/SwarmRegisterRequestTable";
+import RetrievalReceiptRequestTable from '../table/RetrievalReceiptRequestTable';
 
-import SwarmRegisterResponseTable from "../table/SwarmRegisterResponseTable";
+import RetrievalReceiptResponseTable from '../table/RetrievalReceiptResponseTable';
 
-import SwarmSecurityTable from "../table/SwarmSecurityTable";
+import RetrievalRetryRequestTable from '../table/RetrievalRetryRequestTable';
 
-import SwarmUnregisterRequestTable from "../table/SwarmUnregisterRequestTable";
+import RetryPolicyTable from '../table/RetryPolicyTable';
 
-import SwarmUnregisterResponseTable from "../table/SwarmUnregisterResponseTable";
+import RewrapTrustKeyRequestTable from '../table/RewrapTrustKeyRequestTable';
 
-import TagTable from "../table/TagTable";
+import RewrapTrustKeyResponseTable from '../table/RewrapTrustKeyResponseTable';
 
-import TaskTable from "../table/TaskTable";
+import RoleTable from '../table/RoleTable';
 
-import ThorapiRuleTable from "../table/ThorapiRuleTable";
+import RotateTrustKeyRequestTable from '../table/RotateTrustKeyRequestTable';
 
-import TrustTable from "../table/TrustTable";
+import RotateTrustKeyResponseTable from '../table/RotateTrustKeyResponseTable';
 
-import TrustAttestationEvidenceTable from "../table/TrustAttestationEvidenceTable";
+import RunTable from '../table/RunTable';
 
-import TrustKeyTable from "../table/TrustKeyTable";
+import SalesActivityTable from '../table/SalesActivityTable';
 
-import TrustKeyProviderTable from "../table/TrustKeyProviderTable";
+import SalesOrderTable from '../table/SalesOrderTable';
 
-import TrustKeyRotationTable from "../table/TrustKeyRotationTable";
+import SalesPipelineTable from '../table/SalesPipelineTable';
 
-import TrustKeyVersionTable from "../table/TrustKeyVersionTable";
+import ScanBuildArtifacts200ResponseTable from '../table/ScanBuildArtifacts200ResponseTable';
 
-import TrustMerkleBatchTable from "../table/TrustMerkleBatchTable";
+import ScanBuildArtifactsRequestTable from '../table/ScanBuildArtifactsRequestTable';
 
-import TrustObjectKeyEnvelopeTable from "../table/TrustObjectKeyEnvelopeTable";
+import SecureKeyTable from '../table/SecureKeyTable';
 
-import TrustPolicyBindingTable from "../table/TrustPolicyBindingTable";
+import SemanticIndexEntryTable from '../table/SemanticIndexEntryTable';
 
-import TrustPolicyManifestTable from "../table/TrustPolicyManifestTable";
+import ServiceInvocationEventTable from '../table/ServiceInvocationEventTable';
 
-import TrustProofTable from "../table/TrustProofTable";
+import ServiceSubscriptionTable from '../table/ServiceSubscriptionTable';
 
-import TrustRuntimeEventTable from "../table/TrustRuntimeEventTable";
+import SheetTable from '../table/SheetTable';
 
-import TrustRuntimeExecutionTable from "../table/TrustRuntimeExecutionTable";
+import SheetColumnTable from '../table/SheetColumnTable';
 
-import TrustSecretAccessEventTable from "../table/TrustSecretAccessEventTable";
+import SheetRowTable from '../table/SheetRowTable';
 
-import TrustSecretLeaseTable from "../table/TrustSecretLeaseTable";
+import SkillOptRouteOutcomeRequestTable from '../table/SkillOptRouteOutcomeRequestTable';
 
-import TrustVerificationResultTable from "../table/TrustVerificationResultTable";
+import SkillOptRouteReceiptTable from '../table/SkillOptRouteReceiptTable';
 
-import TwoFactorSecretTable from "../table/TwoFactorSecretTable";
+import SkillOptRouteRequestTable from '../table/SkillOptRouteRequestTable';
 
-import UpdateFileRequestTable from "../table/UpdateFileRequestTable";
+import SkillOptRouteResponseTable from '../table/SkillOptRouteResponseTable';
 
-import UsageTransactionTable from "../table/UsageTransactionTable";
+import SkillProfileTable from '../table/SkillProfileTable';
 
-import UserPreferenceTable from "../table/UserPreferenceTable";
+import SkillSignalTable from '../table/SkillSignalTable';
 
-import ValidateDeploymentSpec200ResponseTable from "../table/ValidateDeploymentSpec200ResponseTable";
+import SolutionTable from '../table/SolutionTable';
 
-import ValkyrJobTable from "../table/ValkyrJobTable";
+import SpaceTable from '../table/SpaceTable';
 
-import VerifyPhoneOTPRequestTable from "../table/VerifyPhoneOTPRequestTable";
+import SpaceFileTable from '../table/SpaceFileTable';
 
-import VerifyTrustProofRequestTable from "../table/VerifyTrustProofRequestTable";
+import SpaceMemberTable from '../table/SpaceMemberTable';
 
-import VerifyTrustProofResponseTable from "../table/VerifyTrustProofResponseTable";
+import StackTable from '../table/StackTable';
 
-import VerifyTwoFactorRequestTable from "../table/VerifyTwoFactorRequestTable";
+import StartTrustExecutionRequestTable from '../table/StartTrustExecutionRequestTable';
 
-import VerifyTwoFactorResponseTable from "../table/VerifyTwoFactorResponseTable";
+import StartTrustExecutionResponseTable from '../table/StartTrustExecutionResponseTable';
 
-import WebsocketMessageTable from "../table/WebsocketMessageTable";
+import StrategicPriorityTable from '../table/StrategicPriorityTable';
 
-import WebsocketSessionTable from "../table/WebsocketSessionTable";
+import StripeCheckoutSessionTable from '../table/StripeCheckoutSessionTable';
 
-import WizardStartResponseTable from "../table/WizardStartResponseTable";
+import StripeCustomerLinkTable from '../table/StripeCustomerLinkTable';
 
-import WizardStatusResponseTable from "../table/WizardStatusResponseTable";
+import StripeSubscriptionTable from '../table/StripeSubscriptionTable';
 
-import WorkbookTable from "../table/WorkbookTable";
+import StripeWebhookEventTable from '../table/StripeWebhookEventTable';
 
-import WorkflowTable from "../table/WorkflowTable";
+import SubmitTrustAttestationEvidenceRequestTable from '../table/SubmitTrustAttestationEvidenceRequestTable';
 
-import WorkflowExecutionTable from "../table/WorkflowExecutionTable";
+import SubmitTrustAttestationEvidenceResponseTable from '../table/SubmitTrustAttestationEvidenceResponseTable';
 
-import WorkflowGraphEdgeTable from "../table/WorkflowGraphEdgeTable";
+import SubscriberListTable from '../table/SubscriberListTable';
 
-import WorkflowGraphEdgeConfigTable from "../table/WorkflowGraphEdgeConfigTable";
+import SubscriptionPlanTable from '../table/SubscriptionPlanTable';
 
-import WorkflowGraphEdgeConnectionMappingTable from "../table/WorkflowGraphEdgeConnectionMappingTable";
+import SupportTicketTable from '../table/SupportTicketTable';
 
-import WorkflowGraphModuleTable from "../table/WorkflowGraphModuleTable";
+import SwarmTable from '../table/SwarmTable';
 
-import WorkflowGraphModuleMappingTable from "../table/WorkflowGraphModuleMappingTable";
+import SwarmAgentSummaryTable from '../table/SwarmAgentSummaryTable';
 
-import WorkflowGraphNodeTable from "../table/WorkflowGraphNodeTable";
+import SwarmCommandRequestTable from '../table/SwarmCommandRequestTable';
 
-import WorkflowGraphNodeTaskMappingTable from "../table/WorkflowGraphNodeTaskMappingTable";
+import SwarmCommandResponseTable from '../table/SwarmCommandResponseTable';
 
-import WorkflowGraphRequestTable from "../table/WorkflowGraphRequestTable";
+import SwarmGraphEdgeTable from '../table/SwarmGraphEdgeTable';
 
-import WorkflowGraphResponseTable from "../table/WorkflowGraphResponseTable";
+import SwarmGraphNodeTable from '../table/SwarmGraphNodeTable';
 
-import WorkflowGraphValidationErrorTable from "../table/WorkflowGraphValidationErrorTable";
+import SwarmGraphSnapshotTable from '../table/SwarmGraphSnapshotTable';
 
-import WorkflowGraphWorkflowDataTable from "../table/WorkflowGraphWorkflowDataTable";
+import SwarmMessageTable from '../table/SwarmMessageTable';
 
-import WorkflowStateTable from "../table/WorkflowStateTable";
+import SwarmPayloadTable from '../table/SwarmPayloadTable';
+
+import SwarmRegisterRequestTable from '../table/SwarmRegisterRequestTable';
+
+import SwarmRegisterResponseTable from '../table/SwarmRegisterResponseTable';
+
+import SwarmSecurityTable from '../table/SwarmSecurityTable';
+
+import SwarmUnregisterRequestTable from '../table/SwarmUnregisterRequestTable';
+
+import SwarmUnregisterResponseTable from '../table/SwarmUnregisterResponseTable';
+
+import TagTable from '../table/TagTable';
+
+import TaskTable from '../table/TaskTable';
+
+import ThorApiGenerationRunTable from '../table/ThorApiGenerationRunTable';
+
+import ThorApiSpecRevisionTable from '../table/ThorApiSpecRevisionTable';
+
+import ThorapiRuleTable from '../table/ThorapiRuleTable';
+
+import TicketCommentTable from '../table/TicketCommentTable';
+
+import TrustTable from '../table/TrustTable';
+
+import TrustAttestationEvidenceTable from '../table/TrustAttestationEvidenceTable';
+
+import TrustKeyTable from '../table/TrustKeyTable';
+
+import TrustKeyProviderTable from '../table/TrustKeyProviderTable';
+
+import TrustKeyRotationTable from '../table/TrustKeyRotationTable';
+
+import TrustKeyVersionTable from '../table/TrustKeyVersionTable';
+
+import TrustMerkleBatchTable from '../table/TrustMerkleBatchTable';
+
+import TrustObjectKeyEnvelopeTable from '../table/TrustObjectKeyEnvelopeTable';
+
+import TrustPolicyBindingTable from '../table/TrustPolicyBindingTable';
+
+import TrustPolicyManifestTable from '../table/TrustPolicyManifestTable';
+
+import TrustProofTable from '../table/TrustProofTable';
+
+import TrustRuntimeEventTable from '../table/TrustRuntimeEventTable';
+
+import TrustRuntimeExecutionTable from '../table/TrustRuntimeExecutionTable';
+
+import TrustSecretAccessEventTable from '../table/TrustSecretAccessEventTable';
+
+import TrustSecretLeaseTable from '../table/TrustSecretLeaseTable';
+
+import TrustVerificationResultTable from '../table/TrustVerificationResultTable';
+
+import TwoFactorSecretTable from '../table/TwoFactorSecretTable';
+
+import UpdateFileRequestTable from '../table/UpdateFileRequestTable';
+
+import UsageTransactionTable from '../table/UsageTransactionTable';
+
+import UserPreferenceTable from '../table/UserPreferenceTable';
+
+import ValidateDeploymentSpec200ResponseTable from '../table/ValidateDeploymentSpec200ResponseTable';
+
+import VerifyPhoneOTPRequestTable from '../table/VerifyPhoneOTPRequestTable';
+
+import VerifyTrustProofRequestTable from '../table/VerifyTrustProofRequestTable';
+
+import VerifyTrustProofResponseTable from '../table/VerifyTrustProofResponseTable';
+
+import VerifyTwoFactorRequestTable from '../table/VerifyTwoFactorRequestTable';
+
+import VerifyTwoFactorResponseTable from '../table/VerifyTwoFactorResponseTable';
+
+import WebsocketMessageTable from '../table/WebsocketMessageTable';
+
+import WebsocketSessionTable from '../table/WebsocketSessionTable';
+
+import WizardStartResponseTable from '../table/WizardStartResponseTable';
+
+import WizardStatusResponseTable from '../table/WizardStatusResponseTable';
+
+import WorkbookTable from '../table/WorkbookTable';
+
+import WorkflowTable from '../table/WorkflowTable';
+
+import WorkflowExecutionTable from '../table/WorkflowExecutionTable';
+
+import WorkflowGraphEdgeTable from '../table/WorkflowGraphEdgeTable';
+
+import WorkflowGraphEdgeConfigTable from '../table/WorkflowGraphEdgeConfigTable';
+
+import WorkflowGraphEdgeConnectionMappingTable from '../table/WorkflowGraphEdgeConnectionMappingTable';
+
+import WorkflowGraphModuleTable from '../table/WorkflowGraphModuleTable';
+
+import WorkflowGraphModuleMappingTable from '../table/WorkflowGraphModuleMappingTable';
+
+import WorkflowGraphNodeTable from '../table/WorkflowGraphNodeTable';
+
+import WorkflowGraphNodeTaskMappingTable from '../table/WorkflowGraphNodeTaskMappingTable';
+
+import WorkflowGraphRequestTable from '../table/WorkflowGraphRequestTable';
+
+import WorkflowGraphResponseTable from '../table/WorkflowGraphResponseTable';
+
+import WorkflowGraphValidationErrorTable from '../table/WorkflowGraphValidationErrorTable';
+
+import WorkflowGraphWorkflowDataTable from '../table/WorkflowGraphWorkflowDataTable';
+
+import WorkflowStateTable from '../table/WorkflowStateTable';
+
+import WorkforceSkillTable from '../table/WorkforceSkillTable';
+
+import WorkforceTransitionRecordTable from '../table/WorkforceTransitionRecordTable';
+
 
 // Generated list of available sections for filtering and quick nav
 const SECTIONS: string[] = [
-  "AccountBalance",
-  "AccountPlan",
-  "AclClass",
-  "AclEntry",
-  "AclObjectIdentity",
-  "AclSid",
-  "ActivateAgent200Response",
-  "Address",
-  "Agent",
-  "AgentBilling",
-  "AgentBillingCharge",
-  "AgentChatMessage",
-  "AgentChatMessageRequest",
-  "AgentChatMessageResponse",
-  "AgentDiscoveryItem",
-  "AgentEventTrigger",
-  "AgentHierarchy",
-  "AgentHierarchyNode",
-  "ApiIdentityKpiSnapshot",
-  "ApiMetricSnapshot",
-  "ApiMetricsResponse",
-  "ApiSpineKpiSnapshot",
-  "ApiTrafficEvent",
-  "AppendTrustEventRequest",
-  "AppendTrustEventResponse",
-  "Application",
-  "ArrayIntegerItem",
-  "ArrayNumberItem",
-  "ArrayStringItem",
-  "Authority",
-  "BackupConfig",
-  "BalanceResponse",
-  "BlankRange",
-  "Border",
-  "Budget",
-  "Build",
-  "BuildArtifact",
-  "BuildOutput",
-  "Campaign",
-  "CareerOpportunity",
-  "Cell",
-  "ChannelSubscription",
-  "Chart",
-  "ChartSeries",
-  "ChatCompletionRequest",
-  "ChatCompletionResponse",
-  "ChatMessage",
-  "ChatResponse",
-  "CircuitBreakerConfig",
-  "CircuitBreakerState",
-  "CloudProvider",
-  "CompleteTrustExecutionRequest",
-  "CompleteTrustExecutionResponse",
-  "CompleteUploadRequest",
-  "CompleteUploadRequestPartsInner",
-  "ConfirmPasswordResetRequest",
-  "ConfirmPasswordResetResponse",
-  "ConsultingProfile",
-  "ContentData",
-  "ContentMediaLink",
-  "ConversationBranch",
-  "ConversationMemoryNode",
-  "CreatorEarnings",
-  "CreditAccount",
-  "CreditBalanceSummary",
-  "Customer",
-  "DeadLetterQueue",
-  "DefaultResponse",
-  "Depend",
-  "Deployment",
-  "DeploymentSpec",
-  "DeploymentTemplate",
-  "DigitalAsset",
-  "DiscardDeadLetterEntryRequest",
-  "DiscardDeadLetterEntryResponse",
-  "Discount",
-  "DownloadAccess",
-  "EventLog",
-  "ExecModule",
-  "ExecModuleAudienceConfig",
-  "ExecModuleAuthConfig",
-  "ExecModuleConfig",
-  "ExecModuleExecutionConfig",
-  "ExecModuleIOConfig",
-  "ExecModuleObservabilityConfig",
-  "ExecModulePayloadConfig",
-  "ExecModuleRateLimitConfig",
-  "ExecModuleResourceConfig",
-  "ExecModuleTransportConfig",
-  "ExecuteModuleRequest",
-  "Expense",
-  "FileAuditLog",
-  "FileDownloadToken",
-  "FileMetadata",
-  "FileProcessingJob",
-  "FileRecord",
-  "FileUploadSession",
-  "FileVersion",
-  "Format",
-  "Formula",
-  "GeneralLedgerEntry",
-  "GenerateTrustKeyRequest",
-  "GenerateTrustKeyResponse",
-  "GenerateTrustProofRequest",
-  "GenerateTrustProofResponse",
-  "Goal",
-  "GoalDependency",
-  "GrantPermissionRequest",
-  "GraphLink",
-  "GrayMatter",
-  "HostInstance",
-  "IdempotencyKey",
-  "InitUploadRequest",
-  "InitUploadResponse",
-  "InitiateTwoFactorRequest",
-  "InitiateTwoFactorResponse",
-  "IntegrationAccount",
-  "Invoice",
-  "InvokeMcpToolRequest",
-  "JobApplication",
-  "JobApplicationRequest",
-  "JobApplicationResponse",
-  "JobMetadata",
-  "JobSeeker",
-  "KeyMetric",
-  "LeaseTrustSecretRequest",
-  "LeaseTrustSecretResponse",
-  "LineItem",
-  "ListDeployableApplications200ResponseInner",
-  "LlmDetails",
-  "LlmRoutingPolicy",
-  "Login",
-  "LoginAudit",
-  "LoginRequest",
-  "LoginResponse",
-  "Logout",
-  "ManagedMcpService",
-  "Mcp",
-  "McpContent",
-  "McpDownloadResponse",
-  "McpMarketplaceCatalog",
-  "McpMarketplaceItem",
-  "McpMarketplaceItemTag",
-  "McpResource",
-  "McpResourceResponse",
-  "McpResourceTemplate",
-  "McpServer",
-  "McpServiceRegistry",
-  "McpServiceResponse",
-  "McpTool",
-  "McpToolCallResponse",
-  "McpToolPreset",
-  "McpTransportConfig",
-  "MediaObject",
-  "MemoryActionRequest",
-  "MemoryActionResponse",
-  "MemoryContextStats",
-  "MemoryCostStats",
-  "MemoryEntry",
-  "MemoryHitStats",
-  "MemoryRecommendation",
-  "MemoryRetentionPolicy",
-  "MemoryRunRecord",
-  "MemoryStats",
-  "MergeRange",
-  "Metrics",
-  "NamedRange",
-  "Note",
-  "OasComponent",
-  "OasEnum",
-  "OasInfo",
-  "OasObjectSchema",
-  "OasOpenAPISpec",
-  "OasOperation",
-  "OasParameter",
-  "OasPath",
-  "OasRequired",
-  "OasResponse",
-  "OasSecurityScheme",
-  "OasServer",
-  "Opportunity",
-  "OrderFulfillmentTask",
-  "Organization",
-  "OrganizationAddonSubscription",
-  "PasswordResetToken",
-  "PaymentTransaction",
-  "PaymentType",
-  "PersistentLogin",
-  "PhoneVerification",
-  "PhoneVerificationRequest",
-  "PhoneVerificationResponse",
-  "PivotTable",
-  "PresignRequest",
-  "PresignResponse",
-  "Principal",
-  "Product",
-  "ProductDeliveryConfig",
-  "ProductFeature",
-  "ProductFunnelWizard",
-  "ProductLandingPage",
-  "Ptg",
-  "PtgRef",
-  "PublishFunnel200Response",
-  "PublishRestEndpointRequest",
-  "PublishWorkflowRequest",
-  "Quota",
-  "Rating",
-  "Reaction",
-  "ReferralLink",
-  "RegisterTrustPolicyRequest",
-  "RegisterTrustPolicyResponse",
-  "RequestPasswordResetRequest",
-  "RequestPasswordResetResponse",
-  "RequeueDeadLetterEntryRequest",
-  "RequeueDeadLetterEntryResponse",
-  "RetryPolicy",
-  "RewrapTrustKeyRequest",
-  "RewrapTrustKeyResponse",
-  "Role",
-  "RotateTrustKeyRequest",
-  "RotateTrustKeyResponse",
-  "Run",
-  "SalesActivity",
-  "SalesOrder",
-  "SalesPipeline",
-  "ScanBuildArtifacts200Response",
-  "ScanBuildArtifactsRequest",
-  "SecureKey",
-  "SemanticIndexEntry",
-  "ServiceInvocationEvent",
-  "ServiceSubscription",
-  "Sheet",
-  "SheetColumn",
-  "SheetRow",
-  "SkillProfile",
-  "Solution",
-  "Space",
-  "SpaceFile",
-  "SpaceMember",
-  "Stack",
-  "StartTrustExecutionRequest",
-  "StartTrustExecutionResponse",
-  "StrategicPriority",
-  "SubmitTrustAttestationEvidenceRequest",
-  "SubmitTrustAttestationEvidenceResponse",
-  "SubscriberList",
-  "SubscriptionPlan",
-  "Swarm",
-  "SwarmAgentSummary",
-  "SwarmCommandRequest",
-  "SwarmCommandResponse",
-  "SwarmGraphEdge",
-  "SwarmGraphNode",
-  "SwarmGraphSnapshot",
-  "SwarmMessage",
-  "SwarmPayload",
-  "SwarmRegisterRequest",
-  "SwarmRegisterResponse",
-  "SwarmSecurity",
-  "SwarmUnregisterRequest",
-  "SwarmUnregisterResponse",
-  "Tag",
-  "Task",
-  "ThorapiRule",
-  "Trust",
-  "TrustAttestationEvidence",
-  "TrustKey",
-  "TrustKeyProvider",
-  "TrustKeyRotation",
-  "TrustKeyVersion",
-  "TrustMerkleBatch",
-  "TrustObjectKeyEnvelope",
-  "TrustPolicyBinding",
-  "TrustPolicyManifest",
-  "TrustProof",
-  "TrustRuntimeEvent",
-  "TrustRuntimeExecution",
-  "TrustSecretAccessEvent",
-  "TrustSecretLease",
-  "TrustVerificationResult",
-  "TwoFactorSecret",
-  "UpdateFileRequest",
-  "UsageTransaction",
-  "UserPreference",
-  "ValidateDeploymentSpec200Response",
-  "ValkyrJob",
-  "VerifyPhoneOTPRequest",
-  "VerifyTrustProofRequest",
-  "VerifyTrustProofResponse",
-  "VerifyTwoFactorRequest",
-  "VerifyTwoFactorResponse",
-  "WebsocketMessage",
-  "WebsocketSession",
-  "WizardStartResponse",
-  "WizardStatusResponse",
-  "Workbook",
-  "Workflow",
-  "WorkflowExecution",
-  "WorkflowGraphEdge",
-  "WorkflowGraphEdgeConfig",
-  "WorkflowGraphEdgeConnectionMapping",
-  "WorkflowGraphModule",
-  "WorkflowGraphModuleMapping",
-  "WorkflowGraphNode",
-  "WorkflowGraphNodeTaskMapping",
-  "WorkflowGraphRequest",
-  "WorkflowGraphResponse",
-  "WorkflowGraphValidationError",
-  "WorkflowGraphWorkflowData",
-  "WorkflowState",
+  'AccountBalance',
+  'AccountPlan',
+  'AclClass',
+  'AclEntry',
+  'AclObjectIdentity',
+  'AclSid',
+  'ActivateAgent200Response',
+  'Address',
+  'Agent',
+  'AgentBilling',
+  'AgentBillingCharge',
+  'AgentChatMessage',
+  'AgentChatMessageRequest',
+  'AgentChatMessageResponse',
+  'AgentDiscoveryItem',
+  'AgentEventTrigger',
+  'AgentHierarchy',
+  'AgentHierarchyNode',
+  'ApiIdentityKpiSnapshot',
+  'ApiMetricSnapshot',
+  'ApiMetricsResponse',
+  'ApiSpineKpiSnapshot',
+  'ApiTrafficEvent',
+  'AppGenerationRequest',
+  'AppGenerationTraceResponse',
+  'AppObjectModel',
+  'AppSpecDraft',
+  'AppendTrustEventRequest',
+  'AppendTrustEventResponse',
+  'Application',
+  'ArrayIntegerItem',
+  'ArrayNumberItem',
+  'ArrayStringItem',
+  'Authority',
+  'BackupConfig',
+  'BalanceResponse',
+  'BlankRange',
+  'Border',
+  'Budget',
+  'Build',
+  'BuildArtifact',
+  'BuildOutput',
+  'Campaign',
+  'CareerOpportunity',
+  'Cell',
+  'ChannelSubscription',
+  'Chart',
+  'ChartSeries',
+  'ChatCompletionRequest',
+  'ChatCompletionResponse',
+  'ChatMessage',
+  'ChatResponse',
+  'CircuitBreakerConfig',
+  'CircuitBreakerState',
+  'CloudProvider',
+  'CompleteTrustExecutionRequest',
+  'CompleteTrustExecutionResponse',
+  'CompleteUploadRequest',
+  'CompleteUploadRequestPartsInner',
+  'ConfirmPasswordResetRequest',
+  'ConfirmPasswordResetResponse',
+  'ConsultingProfile',
+  'ContentData',
+  'ContentMediaLink',
+  'ContextCompressionReceipt',
+  'ContextPage',
+  'ContextPageCompileRequest',
+  'ContextPageHydrateRequest',
+  'ContextPageItem',
+  'ContextPageRecompressRequest',
+  'ContextPageResponse',
+  'ContextPageTraverseRequest',
+  'ContextTraversalEvent',
+  'ConversationBranch',
+  'ConversationMemoryNode',
+  'CreatorEarnings',
+  'CreditAccount',
+  'CreditBalanceSummary',
+  'CreditDebitReceipt',
+  'CreditPricingMatrix',
+  'CreditReservation',
+  'Customer',
+  'DeadLetterQueue',
+  'DefaultResponse',
+  'Depend',
+  'Deployment',
+  'DeploymentSpec',
+  'DeploymentTemplate',
+  'DigitalAsset',
+  'DiscardDeadLetterEntryRequest',
+  'DiscardDeadLetterEntryResponse',
+  'Discount',
+  'DownloadAccess',
+  'EventLog',
+  'ExecModule',
+  'ExecModuleAudienceConfig',
+  'ExecModuleAuthConfig',
+  'ExecModuleConfig',
+  'ExecModuleExecutionConfig',
+  'ExecModuleIOConfig',
+  'ExecModuleObservabilityConfig',
+  'ExecModulePayloadConfig',
+  'ExecModuleRateLimitConfig',
+  'ExecModuleResourceConfig',
+  'ExecModuleTransportConfig',
+  'ExecuteModuleRequest',
+  'Expense',
+  'FileAuditLog',
+  'FileDownloadToken',
+  'FileListResponse',
+  'FileMetadata',
+  'FileProcessingJob',
+  'FileRecord',
+  'FileUploadSession',
+  'FileVersion',
+  'Format',
+  'Formula',
+  'GeneralLedgerEntry',
+  'GenerateTrustKeyRequest',
+  'GenerateTrustKeyResponse',
+  'GenerateTrustProofRequest',
+  'GenerateTrustProofResponse',
+  'GeneratedArtifact',
+  'GeneratedArtifactSet',
+  'GenerationReceipt',
+  'Goal',
+  'GoalDependency',
+  'GrantPermissionRequest',
+  'GraphLink',
+  'GrayMatter',
+  'HostInstance',
+  'HydrationPointer',
+  'IdempotencyKey',
+  'InitUploadRequest',
+  'InitUploadResponse',
+  'InitiateTwoFactorRequest',
+  'InitiateTwoFactorResponse',
+  'IntegrationAccount',
+  'Invoice',
+  'InvokeMcpToolRequest',
+  'JobApplication',
+  'JobApplicationRequest',
+  'JobApplicationResponse',
+  'JobMetadata',
+  'JobSeeker',
+  'KeyMetric',
+  'LeaseTrustSecretRequest',
+  'LeaseTrustSecretResponse',
+  'LineItem',
+  'ListDeployableApplications200ResponseInner',
+  'LlmCommand',
+  'LlmCommandResult',
+  'LlmDetails',
+  'LlmRoutingPolicy',
+  'Login',
+  'LoginAudit',
+  'LoginRequest',
+  'LoginResponse',
+  'Logout',
+  'ManagedMcpService',
+  'Mcp',
+  'McpDownloadResponse',
+  'McpMarketplaceCatalog',
+  'McpMarketplaceItem',
+  'McpMarketplaceItemTag',
+  'McpResource',
+  'McpResourceResponse',
+  'McpResourceTemplate',
+  'McpResponsePart',
+  'McpServer',
+  'McpServiceContractsResponse',
+  'McpServiceRegistry',
+  'McpServiceResponse',
+  'McpTool',
+  'McpToolCallResponse',
+  'McpToolPreset',
+  'McpTransportConfig',
+  'MediaObject',
+  'MemoryActionRequest',
+  'MemoryActionResponse',
+  'MemoryContextStats',
+  'MemoryCostStats',
+  'MemoryEntry',
+  'MemoryHitStats',
+  'MemoryRecommendation',
+  'MemoryRetentionPolicy',
+  'MemoryRunRecord',
+  'MemoryStats',
+  'MergeRange',
+  'Metrics',
+  'NamedRange',
+  'Note',
+  'OasComponent',
+  'OasEnum',
+  'OasInfo',
+  'OasObjectSchema',
+  'OasOpenAPISpec',
+  'OasOperation',
+  'OasParameter',
+  'OasPath',
+  'OasRequired',
+  'OasResponse',
+  'OasSecurityScheme',
+  'OasServer',
+  'OpenClawLightsailLaunchEstimate',
+  'OpenClawLightsailLaunchRequest',
+  'OpenClawLightsailLaunchResponse',
+  'OpenClawLightsailProvisioningEvent',
+  'Opportunity',
+  'OrderFulfillmentTask',
+  'Organization',
+  'OrganizationAddonSubscription',
+  'PasswordResetToken',
+  'PaymentTransaction',
+  'PaymentType',
+  'PersistentLogin',
+  'PhoneVerification',
+  'PhoneVerificationRequest',
+  'PhoneVerificationResponse',
+  'PivotTable',
+  'PresignRequest',
+  'PresignResponse',
+  'Principal',
+  'Procedure',
+  'Product',
+  'ProductDeliveryConfig',
+  'ProductFeature',
+  'ProductFunnelWizard',
+  'ProductLandingPage',
+  'Project',
+  'ProjectObjectLink',
+  'Ptg',
+  'PtgRef',
+  'PublishFunnel200Response',
+  'PublishMcpToolRequest',
+  'PublishMcpToolResponse',
+  'PublishRestEndpointRequest',
+  'PublishWorkflowRequest',
+  'Quota',
+  'Rating',
+  'Reaction',
+  'ReferralLink',
+  'RefundRecord',
+  'RegisterTrustPolicyRequest',
+  'RegisterTrustPolicyResponse',
+  'RequestPasswordResetRequest',
+  'RequestPasswordResetResponse',
+  'RequeueDeadLetterEntryRequest',
+  'RequeueDeadLetterEntryResponse',
+  'RetrievalCoverage',
+  'RetrievalEvaluatorResult',
+  'RetrievalPolicyDecision',
+  'RetrievalProvenance',
+  'RetrievalQualityScore',
+  'RetrievalReceipt',
+  'RetrievalReceiptItem',
+  'RetrievalReceiptRequest',
+  'RetrievalReceiptResponse',
+  'RetrievalRetryRequest',
+  'RetryPolicy',
+  'RewrapTrustKeyRequest',
+  'RewrapTrustKeyResponse',
+  'Role',
+  'RotateTrustKeyRequest',
+  'RotateTrustKeyResponse',
+  'Run',
+  'SalesActivity',
+  'SalesOrder',
+  'SalesPipeline',
+  'ScanBuildArtifacts200Response',
+  'ScanBuildArtifactsRequest',
+  'SecureKey',
+  'SemanticIndexEntry',
+  'ServiceInvocationEvent',
+  'ServiceSubscription',
+  'Sheet',
+  'SheetColumn',
+  'SheetRow',
+  'SkillOptRouteOutcomeRequest',
+  'SkillOptRouteReceipt',
+  'SkillOptRouteRequest',
+  'SkillOptRouteResponse',
+  'SkillProfile',
+  'SkillSignal',
+  'Solution',
+  'Space',
+  'SpaceFile',
+  'SpaceMember',
+  'Stack',
+  'StartTrustExecutionRequest',
+  'StartTrustExecutionResponse',
+  'StrategicPriority',
+  'StripeCheckoutSession',
+  'StripeCustomerLink',
+  'StripeSubscription',
+  'StripeWebhookEvent',
+  'SubmitTrustAttestationEvidenceRequest',
+  'SubmitTrustAttestationEvidenceResponse',
+  'SubscriberList',
+  'SubscriptionPlan',
+  'SupportTicket',
+  'Swarm',
+  'SwarmAgentSummary',
+  'SwarmCommandRequest',
+  'SwarmCommandResponse',
+  'SwarmGraphEdge',
+  'SwarmGraphNode',
+  'SwarmGraphSnapshot',
+  'SwarmMessage',
+  'SwarmPayload',
+  'SwarmRegisterRequest',
+  'SwarmRegisterResponse',
+  'SwarmSecurity',
+  'SwarmUnregisterRequest',
+  'SwarmUnregisterResponse',
+  'Tag',
+  'Task',
+  'ThorApiGenerationRun',
+  'ThorApiSpecRevision',
+  'ThorapiRule',
+  'TicketComment',
+  'Trust',
+  'TrustAttestationEvidence',
+  'TrustKey',
+  'TrustKeyProvider',
+  'TrustKeyRotation',
+  'TrustKeyVersion',
+  'TrustMerkleBatch',
+  'TrustObjectKeyEnvelope',
+  'TrustPolicyBinding',
+  'TrustPolicyManifest',
+  'TrustProof',
+  'TrustRuntimeEvent',
+  'TrustRuntimeExecution',
+  'TrustSecretAccessEvent',
+  'TrustSecretLease',
+  'TrustVerificationResult',
+  'TwoFactorSecret',
+  'UpdateFileRequest',
+  'UsageTransaction',
+  'UserPreference',
+  'ValidateDeploymentSpec200Response',
+  'VerifyPhoneOTPRequest',
+  'VerifyTrustProofRequest',
+  'VerifyTrustProofResponse',
+  'VerifyTwoFactorRequest',
+  'VerifyTwoFactorResponse',
+  'WebsocketMessage',
+  'WebsocketSession',
+  'WizardStartResponse',
+  'WizardStatusResponse',
+  'Workbook',
+  'Workflow',
+  'WorkflowExecution',
+  'WorkflowGraphEdge',
+  'WorkflowGraphEdgeConfig',
+  'WorkflowGraphEdgeConnectionMapping',
+  'WorkflowGraphModule',
+  'WorkflowGraphModuleMapping',
+  'WorkflowGraphNode',
+  'WorkflowGraphNodeTaskMapping',
+  'WorkflowGraphRequest',
+  'WorkflowGraphResponse',
+  'WorkflowGraphValidationError',
+  'WorkflowGraphWorkflowData',
+  'WorkflowState',
+  'WorkforceSkill',
+  'WorkforceTransitionRecord',
 ];
 
 const DataWorkbook = () => {
-  const [activeSection, setActiveSection] = useState<string>("");
-  const [query, setQuery] = useState<string>("");
-  const resolveExact = (val: string) => {
-    const t = (val || "").trim().toLowerCase();
-    return SECTIONS.find((n) => n.toLowerCase() === t);
-  };
-  const suggestions = useMemo(
-    () => SECTIONS.filter((n) => n.toLowerCase().includes(query.toLowerCase())),
-    [query],
-  );
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const [activeSection, setActiveSection] = useState<string>('');
+    const [query, setQuery] = useState<string>('');
+    const [showTypePermissions, setShowTypePermissions] = useState(false);
+    const accessControl = useAccessControl();
+    const currentPermissionUser = useMemo(() => ({
+      username: String((accessControl.principal as any)?.username || (accessControl.principal as any)?.name || 'current-user'),
+      permissions: {
+        isOwner: false,
+        isAdmin: accessControl.isAdmin,
+        canGrantPermissions: accessControl.isAdmin,
+        permissions: [],
+      },
+    }), [accessControl.isAdmin, accessControl.principal]);
+    const resolveExact = (val: string) => {
+      const t = (val || '').trim().toLowerCase();
+      return SECTIONS.find((n) => n.toLowerCase() === t);
+    };
+    const suggestions = useMemo(
+      () => SECTIONS.filter((n) => n.toLowerCase().includes(query.toLowerCase())),
+      [query]
+    );
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+      const onScroll = () => setScrolled(window.scrollY > 0);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+  
+    return (
+                <Container fluid className="p-3">
 
-  return (
-    <Container fluid className="p-3">
-      {/* Persistent sticky breadcrumb/header with shadow on scroll */}
-      <div
-        style={{
-          position: "sticky",
-          left: 0,
-          float: "left",
-          top: 0,
-          zIndex: 5,
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          padding: "0.5rem 0.25rem",
-          marginBottom: "0.75rem",
-          background: "var(--bs-body-bg)",
-          borderBottom: "1px solid var(--bs-border-color)",
-          boxShadow: scrolled ? "0 2px 6px rgba(0,0,0,0.12)" : "none",
-        }}
-      >
-        <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem" }}>
-          {/* Type-ahead search input with datalist suggestions */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Form.Control
-              size="sm"
-              type="text"
-              placeholder="Search or choose a model…"
-              list="dw-models"
-              value={query}
-              onChange={(e) => {
-                const val = (e.target as HTMLInputElement).value;
-                setQuery(val);
-                const match = resolveExact(val);
-                if (match) setActiveSection(match);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  const match = resolveExact(query);
-                  if (match) setActiveSection(match);
-                  else if (suggestions[0]) setActiveSection(suggestions[0]);
-                }
-              }}
-              style={{ width: "260px" }}
-            />
-            <datalist id="dw-models">
-              {SECTIONS.map((name) => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
-            <CoolButton
-              size="sm"
-              variant="outline-primary"
-              onClick={() => {
-                const match = resolveExact(query);
-                if (match) setActiveSection(match);
-                else if (suggestions[0]) setActiveSection(suggestions[0]);
-              }}
+            {/* Persistent sticky breadcrumb/header with shadow on scroll */}
+            <div
+              style={ {
+                position: 'sticky',
+                left: 0,
+                float: 'left',
+                top: 0,
+                zIndex: 5,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 0.25rem',
+                marginBottom: '0.75rem',
+                background: 'var(--bs-body-bg)',
+                borderBottom: '1px solid var(--bs-border-color)',
+                boxShadow: scrolled ? '0 2px 6px rgba(0,0,0,0.12)' : 'none'
+              } }
             >
-              Open
-            </CoolButton>
-          </div>
-          {activeSection && (
-            <CoolButton
-              size="sm"
-              variant="outline-secondary"
-              onClick={() => {
-                setActiveSection("");
-                setQuery("");
-              }}
-            >
-              Clear
-            </CoolButton>
-          )}
-        </div>
-      </div>
+              <div style={ { marginLeft: 'auto', display: 'flex', gap: '0.5rem' } }>
+                {/* Type-ahead search input with datalist suggestions */}
+                <div style={ { display: 'flex', alignItems: 'center', gap: '0.5rem' } }>
+                  <Form.Control
+                    size="sm"
+                    type="text"
+                    placeholder="Search or choose a model…"
+                    list="dw-models"
+                    value={query}
+                    onChange={(e) => {
+                      const val = (e.target as HTMLInputElement).value;
+                      setQuery(val);
+                      const match = resolveExact(val);
+                      if (match) {
+                        setActiveSection(match);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const match = resolveExact(query);
+                        if (match) {
+                          setActiveSection(match);
+                        } else if (suggestions[0]) {
+                          setActiveSection(suggestions[0]);
+                        }
+                      }
+                    }}
+                    style={ { width: '260px' } }
+                  />
+                  <datalist id="dw-models">
+                    {SECTIONS.map((name) => (
+                      <option key={name} value={name} />
+                    ))}
+                  </datalist>
+                  <CoolButton
+                    size="sm"
+                    variant="outline-primary"
+                    onClick={() => {
+                      const match = resolveExact(query);
+                      if (match) {
+                        setActiveSection(match);
+                      } else if (suggestions[0]) {
+                        setActiveSection(suggestions[0]);
+                      }
+                    }}
+                  >
+                    Open
+                  </CoolButton>
+                </div>
+                {activeSection && (
+                  <>
+                    <CoolButton
+                      size="sm"
+                      variant="outline-secondary"
+                      title={`Manage permissions for all ${activeSection} records`}
+                      aria-label={`Manage ${activeSection} category permissions`}
+                      onClick={() => setShowTypePermissions(true)}
+                    >
+                      <FaUserShield aria-hidden="true" />
+                    </CoolButton>
+                    <CoolButton size="sm" variant="outline-secondary" onClick={() => { setActiveSection(''); setQuery(''); setShowTypePermissions(false); }}>
+                      Clear
+                    </CoolButton>
+                  </>
+                )}
+              </div>
+            </div>
 
-      {/* Show only the active section (like tabs) */}
-      {activeSection === "AccountBalance" && (
-        <>
-          <h1>AccountBalance</h1>
-          <AccountBalanceTable />
-        </>
-      )}
-      {activeSection === "AccountPlan" && (
-        <>
-          <h1>AccountPlan</h1>
-          <AccountPlanTable />
-        </>
-      )}
-      {activeSection === "AclClass" && (
-        <>
-          <h1>AclClass</h1>
-          <AclClassTable />
-        </>
-      )}
-      {activeSection === "AclEntry" && (
-        <>
-          <h1>AclEntry</h1>
-          <AclEntryTable />
-        </>
-      )}
-      {activeSection === "AclObjectIdentity" && (
-        <>
-          <h1>AclObjectIdentity</h1>
-          <AclObjectIdentityTable />
-        </>
-      )}
-      {activeSection === "AclSid" && (
-        <>
-          <h1>AclSid</h1>
-          <AclSidTable />
-        </>
-      )}
-      {activeSection === "ActivateAgent200Response" && (
-        <>
-          <h1>ActivateAgent200Response</h1>
-          <ActivateAgent200ResponseTable />
-        </>
-      )}
-      {activeSection === "Address" && (
-        <>
-          <h1>Address</h1>
-          <AddressTable />
-        </>
-      )}
-      {activeSection === "Agent" && (
-        <>
-          <h1>Agent</h1>
-          <AgentTable />
-        </>
-      )}
-      {activeSection === "AgentBilling" && (
-        <>
-          <h1>AgentBilling</h1>
-          <AgentBillingTable />
-        </>
-      )}
-      {activeSection === "AgentBillingCharge" && (
-        <>
-          <h1>AgentBillingCharge</h1>
-          <AgentBillingChargeTable />
-        </>
-      )}
-      {activeSection === "AgentChatMessage" && (
-        <>
-          <h1>AgentChatMessage</h1>
-          <AgentChatMessageTable />
-        </>
-      )}
-      {activeSection === "AgentChatMessageRequest" && (
-        <>
-          <h1>AgentChatMessageRequest</h1>
-          <AgentChatMessageRequestTable />
-        </>
-      )}
-      {activeSection === "AgentChatMessageResponse" && (
-        <>
-          <h1>AgentChatMessageResponse</h1>
-          <AgentChatMessageResponseTable />
-        </>
-      )}
-      {activeSection === "AgentDiscoveryItem" && (
-        <>
-          <h1>AgentDiscoveryItem</h1>
-          <AgentDiscoveryItemTable />
-        </>
-      )}
-      {activeSection === "AgentEventTrigger" && (
-        <>
-          <h1>AgentEventTrigger</h1>
-          <AgentEventTriggerTable />
-        </>
-      )}
-      {activeSection === "AgentHierarchy" && (
-        <>
-          <h1>AgentHierarchy</h1>
-          <AgentHierarchyTable />
-        </>
-      )}
-      {activeSection === "AgentHierarchyNode" && (
-        <>
-          <h1>AgentHierarchyNode</h1>
-          <AgentHierarchyNodeTable />
-        </>
-      )}
-      {activeSection === "ApiIdentityKpiSnapshot" && (
-        <>
-          <h1>ApiIdentityKpiSnapshot</h1>
-          <ApiIdentityKpiSnapshotTable />
-        </>
-      )}
-      {activeSection === "ApiMetricSnapshot" && (
-        <>
-          <h1>ApiMetricSnapshot</h1>
-          <ApiMetricSnapshotTable />
-        </>
-      )}
-      {activeSection === "ApiMetricsResponse" && (
-        <>
-          <h1>ApiMetricsResponse</h1>
-          <ApiMetricsResponseTable />
-        </>
-      )}
-      {activeSection === "ApiSpineKpiSnapshot" && (
-        <>
-          <h1>ApiSpineKpiSnapshot</h1>
-          <ApiSpineKpiSnapshotTable />
-        </>
-      )}
-      {activeSection === "ApiTrafficEvent" && (
-        <>
-          <h1>ApiTrafficEvent</h1>
-          <ApiTrafficEventTable />
-        </>
-      )}
-      {activeSection === "AppendTrustEventRequest" && (
-        <>
-          <h1>AppendTrustEventRequest</h1>
-          <AppendTrustEventRequestTable />
-        </>
-      )}
-      {activeSection === "AppendTrustEventResponse" && (
-        <>
-          <h1>AppendTrustEventResponse</h1>
-          <AppendTrustEventResponseTable />
-        </>
-      )}
-      {activeSection === "Application" && (
-        <>
-          <h1>Application</h1>
-          <ApplicationTable />
-        </>
-      )}
-      {activeSection === "ArrayIntegerItem" && (
-        <>
-          <h1>ArrayIntegerItem</h1>
-          <ArrayIntegerItemTable />
-        </>
-      )}
-      {activeSection === "ArrayNumberItem" && (
-        <>
-          <h1>ArrayNumberItem</h1>
-          <ArrayNumberItemTable />
-        </>
-      )}
-      {activeSection === "ArrayStringItem" && (
-        <>
-          <h1>ArrayStringItem</h1>
-          <ArrayStringItemTable />
-        </>
-      )}
-      {activeSection === "Authority" && (
-        <>
-          <h1>Authority</h1>
-          <AuthorityTable />
-        </>
-      )}
-      {activeSection === "BackupConfig" && (
-        <>
-          <h1>BackupConfig</h1>
-          <BackupConfigTable />
-        </>
-      )}
-      {activeSection === "BalanceResponse" && (
-        <>
-          <h1>BalanceResponse</h1>
-          <BalanceResponseTable />
-        </>
-      )}
-      {activeSection === "BlankRange" && (
-        <>
-          <h1>BlankRange</h1>
-          <BlankRangeTable />
-        </>
-      )}
-      {activeSection === "Border" && (
-        <>
-          <h1>Border</h1>
-          <BorderTable />
-        </>
-      )}
-      {activeSection === "Budget" && (
-        <>
-          <h1>Budget</h1>
-          <BudgetTable />
-        </>
-      )}
-      {activeSection === "Build" && (
-        <>
-          <h1>Build</h1>
-          <BuildTable />
-        </>
-      )}
-      {activeSection === "BuildArtifact" && (
-        <>
-          <h1>BuildArtifact</h1>
-          <BuildArtifactTable />
-        </>
-      )}
-      {activeSection === "BuildOutput" && (
-        <>
-          <h1>BuildOutput</h1>
-          <BuildOutputTable />
-        </>
-      )}
-      {activeSection === "Campaign" && (
-        <>
-          <h1>Campaign</h1>
-          <CampaignTable />
-        </>
-      )}
-      {activeSection === "CareerOpportunity" && (
-        <>
-          <h1>CareerOpportunity</h1>
-          <CareerOpportunityTable />
-        </>
-      )}
-      {activeSection === "Cell" && (
-        <>
-          <h1>Cell</h1>
-          <CellTable />
-        </>
-      )}
-      {activeSection === "ChannelSubscription" && (
-        <>
-          <h1>ChannelSubscription</h1>
-          <ChannelSubscriptionTable />
-        </>
-      )}
-      {activeSection === "Chart" && (
-        <>
-          <h1>Chart</h1>
-          <ChartTable />
-        </>
-      )}
-      {activeSection === "ChartSeries" && (
-        <>
-          <h1>ChartSeries</h1>
-          <ChartSeriesTable />
-        </>
-      )}
-      {activeSection === "ChatCompletionRequest" && (
-        <>
-          <h1>ChatCompletionRequest</h1>
-          <ChatCompletionRequestTable />
-        </>
-      )}
-      {activeSection === "ChatCompletionResponse" && (
-        <>
-          <h1>ChatCompletionResponse</h1>
-          <ChatCompletionResponseTable />
-        </>
-      )}
-      {activeSection === "ChatMessage" && (
-        <>
-          <h1>ChatMessage</h1>
-          <ChatMessageTable />
-        </>
-      )}
-      {activeSection === "ChatResponse" && (
-        <>
-          <h1>ChatResponse</h1>
-          <ChatResponseTable />
-        </>
-      )}
-      {activeSection === "CircuitBreakerConfig" && (
-        <>
-          <h1>CircuitBreakerConfig</h1>
-          <CircuitBreakerConfigTable />
-        </>
-      )}
-      {activeSection === "CircuitBreakerState" && (
-        <>
-          <h1>CircuitBreakerState</h1>
-          <CircuitBreakerStateTable />
-        </>
-      )}
-      {activeSection === "CloudProvider" && (
-        <>
-          <h1>CloudProvider</h1>
-          <CloudProviderTable />
-        </>
-      )}
-      {activeSection === "CompleteTrustExecutionRequest" && (
-        <>
-          <h1>CompleteTrustExecutionRequest</h1>
-          <CompleteTrustExecutionRequestTable />
-        </>
-      )}
-      {activeSection === "CompleteTrustExecutionResponse" && (
-        <>
-          <h1>CompleteTrustExecutionResponse</h1>
-          <CompleteTrustExecutionResponseTable />
-        </>
-      )}
-      {activeSection === "CompleteUploadRequest" && (
-        <>
-          <h1>CompleteUploadRequest</h1>
-          <CompleteUploadRequestTable />
-        </>
-      )}
-      {activeSection === "CompleteUploadRequestPartsInner" && (
-        <>
-          <h1>CompleteUploadRequestPartsInner</h1>
-          <CompleteUploadRequestPartsInnerTable />
-        </>
-      )}
-      {activeSection === "ConfirmPasswordResetRequest" && (
-        <>
-          <h1>ConfirmPasswordResetRequest</h1>
-          <ConfirmPasswordResetRequestTable />
-        </>
-      )}
-      {activeSection === "ConfirmPasswordResetResponse" && (
-        <>
-          <h1>ConfirmPasswordResetResponse</h1>
-          <ConfirmPasswordResetResponseTable />
-        </>
-      )}
-      {activeSection === "ConsultingProfile" && (
-        <>
-          <h1>ConsultingProfile</h1>
-          <ConsultingProfileTable />
-        </>
-      )}
-      {activeSection === "ContentData" && (
-        <>
-          <h1>ContentData</h1>
-          <ContentDataTable />
-        </>
-      )}
-      {activeSection === "ContentMediaLink" && (
-        <>
-          <h1>ContentMediaLink</h1>
-          <ContentMediaLinkTable />
-        </>
-      )}
-      {activeSection === "ConversationBranch" && (
-        <>
-          <h1>ConversationBranch</h1>
-          <ConversationBranchTable />
-        </>
-      )}
-      {activeSection === "ConversationMemoryNode" && (
-        <>
-          <h1>ConversationMemoryNode</h1>
-          <ConversationMemoryNodeTable />
-        </>
-      )}
-      {activeSection === "CreatorEarnings" && (
-        <>
-          <h1>CreatorEarnings</h1>
-          <CreatorEarningsTable />
-        </>
-      )}
-      {activeSection === "CreditAccount" && (
-        <>
-          <h1>CreditAccount</h1>
-          <CreditAccountTable />
-        </>
-      )}
-      {activeSection === "CreditBalanceSummary" && (
-        <>
-          <h1>CreditBalanceSummary</h1>
-          <CreditBalanceSummaryTable />
-        </>
-      )}
-      {activeSection === "Customer" && (
-        <>
-          <h1>Customer</h1>
-          <CustomerTable />
-        </>
-      )}
-      {activeSection === "DeadLetterQueue" && (
-        <>
-          <h1>DeadLetterQueue</h1>
-          <DeadLetterQueueTable />
-        </>
-      )}
-      {activeSection === "DefaultResponse" && (
-        <>
-          <h1>DefaultResponse</h1>
-          <DefaultResponseTable />
-        </>
-      )}
-      {activeSection === "Depend" && (
-        <>
-          <h1>Depend</h1>
-          <DependTable />
-        </>
-      )}
-      {activeSection === "Deployment" && (
-        <>
-          <h1>Deployment</h1>
-          <DeploymentTable />
-        </>
-      )}
-      {activeSection === "DeploymentSpec" && (
-        <>
-          <h1>DeploymentSpec</h1>
-          <DeploymentSpecTable />
-        </>
-      )}
-      {activeSection === "DeploymentTemplate" && (
-        <>
-          <h1>DeploymentTemplate</h1>
-          <DeploymentTemplateTable />
-        </>
-      )}
-      {activeSection === "DigitalAsset" && (
-        <>
-          <h1>DigitalAsset</h1>
-          <DigitalAssetTable />
-        </>
-      )}
-      {activeSection === "DiscardDeadLetterEntryRequest" && (
-        <>
-          <h1>DiscardDeadLetterEntryRequest</h1>
-          <DiscardDeadLetterEntryRequestTable />
-        </>
-      )}
-      {activeSection === "DiscardDeadLetterEntryResponse" && (
-        <>
-          <h1>DiscardDeadLetterEntryResponse</h1>
-          <DiscardDeadLetterEntryResponseTable />
-        </>
-      )}
-      {activeSection === "Discount" && (
-        <>
-          <h1>Discount</h1>
-          <DiscountTable />
-        </>
-      )}
-      {activeSection === "DownloadAccess" && (
-        <>
-          <h1>DownloadAccess</h1>
-          <DownloadAccessTable />
-        </>
-      )}
-      {activeSection === "EventLog" && (
-        <>
-          <h1>EventLog</h1>
-          <EventLogTable />
-        </>
-      )}
-      {activeSection === "ExecModule" && (
-        <>
-          <h1>ExecModule</h1>
-          <ExecModuleTable />
-        </>
-      )}
-      {activeSection === "ExecModuleAudienceConfig" && (
-        <>
-          <h1>ExecModuleAudienceConfig</h1>
-          <ExecModuleAudienceConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleAuthConfig" && (
-        <>
-          <h1>ExecModuleAuthConfig</h1>
-          <ExecModuleAuthConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleConfig" && (
-        <>
-          <h1>ExecModuleConfig</h1>
-          <ExecModuleConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleExecutionConfig" && (
-        <>
-          <h1>ExecModuleExecutionConfig</h1>
-          <ExecModuleExecutionConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleIOConfig" && (
-        <>
-          <h1>ExecModuleIOConfig</h1>
-          <ExecModuleIOConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleObservabilityConfig" && (
-        <>
-          <h1>ExecModuleObservabilityConfig</h1>
-          <ExecModuleObservabilityConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModulePayloadConfig" && (
-        <>
-          <h1>ExecModulePayloadConfig</h1>
-          <ExecModulePayloadConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleRateLimitConfig" && (
-        <>
-          <h1>ExecModuleRateLimitConfig</h1>
-          <ExecModuleRateLimitConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleResourceConfig" && (
-        <>
-          <h1>ExecModuleResourceConfig</h1>
-          <ExecModuleResourceConfigTable />
-        </>
-      )}
-      {activeSection === "ExecModuleTransportConfig" && (
-        <>
-          <h1>ExecModuleTransportConfig</h1>
-          <ExecModuleTransportConfigTable />
-        </>
-      )}
-      {activeSection === "ExecuteModuleRequest" && (
-        <>
-          <h1>ExecuteModuleRequest</h1>
-          <ExecuteModuleRequestTable />
-        </>
-      )}
-      {activeSection === "Expense" && (
-        <>
-          <h1>Expense</h1>
-          <ExpenseTable />
-        </>
-      )}
-      {activeSection === "FileAuditLog" && (
-        <>
-          <h1>FileAuditLog</h1>
-          <FileAuditLogTable />
-        </>
-      )}
-      {activeSection === "FileDownloadToken" && (
-        <>
-          <h1>FileDownloadToken</h1>
-          <FileDownloadTokenTable />
-        </>
-      )}
-      {activeSection === "FileMetadata" && (
-        <>
-          <h1>FileMetadata</h1>
-          <FileMetadataTable />
-        </>
-      )}
-      {activeSection === "FileProcessingJob" && (
-        <>
-          <h1>FileProcessingJob</h1>
-          <FileProcessingJobTable />
-        </>
-      )}
-      {activeSection === "FileRecord" && (
-        <>
-          <h1>FileRecord</h1>
-          <FileRecordTable />
-        </>
-      )}
-      {activeSection === "FileUploadSession" && (
-        <>
-          <h1>FileUploadSession</h1>
-          <FileUploadSessionTable />
-        </>
-      )}
-      {activeSection === "FileVersion" && (
-        <>
-          <h1>FileVersion</h1>
-          <FileVersionTable />
-        </>
-      )}
-      {activeSection === "Format" && (
-        <>
-          <h1>Format</h1>
-          <FormatTable />
-        </>
-      )}
-      {activeSection === "Formula" && (
-        <>
-          <h1>Formula</h1>
-          <FormulaTable />
-        </>
-      )}
-      {activeSection === "GeneralLedgerEntry" && (
-        <>
-          <h1>GeneralLedgerEntry</h1>
-          <GeneralLedgerEntryTable />
-        </>
-      )}
-      {activeSection === "GenerateTrustKeyRequest" && (
-        <>
-          <h1>GenerateTrustKeyRequest</h1>
-          <GenerateTrustKeyRequestTable />
-        </>
-      )}
-      {activeSection === "GenerateTrustKeyResponse" && (
-        <>
-          <h1>GenerateTrustKeyResponse</h1>
-          <GenerateTrustKeyResponseTable />
-        </>
-      )}
-      {activeSection === "GenerateTrustProofRequest" && (
-        <>
-          <h1>GenerateTrustProofRequest</h1>
-          <GenerateTrustProofRequestTable />
-        </>
-      )}
-      {activeSection === "GenerateTrustProofResponse" && (
-        <>
-          <h1>GenerateTrustProofResponse</h1>
-          <GenerateTrustProofResponseTable />
-        </>
-      )}
-      {activeSection === "Goal" && (
-        <>
-          <h1>Goal</h1>
-          <GoalTable />
-        </>
-      )}
-      {activeSection === "GoalDependency" && (
-        <>
-          <h1>GoalDependency</h1>
-          <GoalDependencyTable />
-        </>
-      )}
-      {activeSection === "GrantPermissionRequest" && (
-        <>
-          <h1>GrantPermissionRequest</h1>
-          <GrantPermissionRequestTable />
-        </>
-      )}
-      {activeSection === "GraphLink" && (
-        <>
-          <h1>GraphLink</h1>
-          <GraphLinkTable />
-        </>
-      )}
-      {activeSection === "GrayMatter" && (
-        <>
-          <h1>GrayMatter</h1>
-          <GrayMatterTable />
-        </>
-      )}
-      {activeSection === "HostInstance" && (
-        <>
-          <h1>HostInstance</h1>
-          <HostInstanceTable />
-        </>
-      )}
-      {activeSection === "IdempotencyKey" && (
-        <>
-          <h1>IdempotencyKey</h1>
-          <IdempotencyKeyTable />
-        </>
-      )}
-      {activeSection === "InitUploadRequest" && (
-        <>
-          <h1>InitUploadRequest</h1>
-          <InitUploadRequestTable />
-        </>
-      )}
-      {activeSection === "InitUploadResponse" && (
-        <>
-          <h1>InitUploadResponse</h1>
-          <InitUploadResponseTable />
-        </>
-      )}
-      {activeSection === "InitiateTwoFactorRequest" && (
-        <>
-          <h1>InitiateTwoFactorRequest</h1>
-          <InitiateTwoFactorRequestTable />
-        </>
-      )}
-      {activeSection === "InitiateTwoFactorResponse" && (
-        <>
-          <h1>InitiateTwoFactorResponse</h1>
-          <InitiateTwoFactorResponseTable />
-        </>
-      )}
-      {activeSection === "IntegrationAccount" && (
-        <>
-          <h1>IntegrationAccount</h1>
-          <IntegrationAccountTable />
-        </>
-      )}
-      {activeSection === "Invoice" && (
-        <>
-          <h1>Invoice</h1>
-          <InvoiceTable />
-        </>
-      )}
-      {activeSection === "InvokeMcpToolRequest" && (
-        <>
-          <h1>InvokeMcpToolRequest</h1>
-          <InvokeMcpToolRequestTable />
-        </>
-      )}
-      {activeSection === "JobApplication" && (
-        <>
-          <h1>JobApplication</h1>
-          <JobApplicationTable />
-        </>
-      )}
-      {activeSection === "JobApplicationRequest" && (
-        <>
-          <h1>JobApplicationRequest</h1>
-          <JobApplicationRequestTable />
-        </>
-      )}
-      {activeSection === "JobApplicationResponse" && (
-        <>
-          <h1>JobApplicationResponse</h1>
-          <JobApplicationResponseTable />
-        </>
-      )}
-      {activeSection === "JobMetadata" && (
-        <>
-          <h1>JobMetadata</h1>
-          <JobMetadataTable />
-        </>
-      )}
-      {activeSection === "JobSeeker" && (
-        <>
-          <h1>JobSeeker</h1>
-          <JobSeekerTable />
-        </>
-      )}
-      {activeSection === "KeyMetric" && (
-        <>
-          <h1>KeyMetric</h1>
-          <KeyMetricTable />
-        </>
-      )}
-      {activeSection === "LeaseTrustSecretRequest" && (
-        <>
-          <h1>LeaseTrustSecretRequest</h1>
-          <LeaseTrustSecretRequestTable />
-        </>
-      )}
-      {activeSection === "LeaseTrustSecretResponse" && (
-        <>
-          <h1>LeaseTrustSecretResponse</h1>
-          <LeaseTrustSecretResponseTable />
-        </>
-      )}
-      {activeSection === "LineItem" && (
-        <>
-          <h1>LineItem</h1>
-          <LineItemTable />
-        </>
-      )}
-      {activeSection === "ListDeployableApplications200ResponseInner" && (
-        <>
-          <h1>ListDeployableApplications200ResponseInner</h1>
-          <ListDeployableApplications200ResponseInnerTable />
-        </>
-      )}
-      {activeSection === "LlmDetails" && (
-        <>
-          <h1>LlmDetails</h1>
-          <LlmDetailsTable />
-        </>
-      )}
-      {activeSection === "LlmRoutingPolicy" && (
-        <>
-          <h1>LlmRoutingPolicy</h1>
-          <LlmRoutingPolicyTable />
-        </>
-      )}
-      {activeSection === "Login" && (
-        <>
-          <h1>Login</h1>
-          <LoginTable />
-        </>
-      )}
-      {activeSection === "LoginAudit" && (
-        <>
-          <h1>LoginAudit</h1>
-          <LoginAuditTable />
-        </>
-      )}
-      {activeSection === "LoginRequest" && (
-        <>
-          <h1>LoginRequest</h1>
-          <LoginRequestTable />
-        </>
-      )}
-      {activeSection === "LoginResponse" && (
-        <>
-          <h1>LoginResponse</h1>
-          <LoginResponseTable />
-        </>
-      )}
-      {activeSection === "Logout" && (
-        <>
-          <h1>Logout</h1>
-          <LogoutTable />
-        </>
-      )}
-      {activeSection === "ManagedMcpService" && (
-        <>
-          <h1>ManagedMcpService</h1>
-          <ManagedMcpServiceTable />
-        </>
-      )}
-      {activeSection === "Mcp" && (
-        <>
-          <h1>Mcp</h1>
-          <McpTable />
-        </>
-      )}
-      {activeSection === "McpContent" && (
-        <>
-          <h1>McpContent</h1>
-          <McpContentTable />
-        </>
-      )}
-      {activeSection === "McpDownloadResponse" && (
-        <>
-          <h1>McpDownloadResponse</h1>
-          <McpDownloadResponseTable />
-        </>
-      )}
-      {activeSection === "McpMarketplaceCatalog" && (
-        <>
-          <h1>McpMarketplaceCatalog</h1>
-          <McpMarketplaceCatalogTable />
-        </>
-      )}
-      {activeSection === "McpMarketplaceItem" && (
-        <>
-          <h1>McpMarketplaceItem</h1>
-          <McpMarketplaceItemTable />
-        </>
-      )}
-      {activeSection === "McpMarketplaceItemTag" && (
-        <>
-          <h1>McpMarketplaceItemTag</h1>
-          <McpMarketplaceItemTagTable />
-        </>
-      )}
-      {activeSection === "McpResource" && (
-        <>
-          <h1>McpResource</h1>
-          <McpResourceTable />
-        </>
-      )}
-      {activeSection === "McpResourceResponse" && (
-        <>
-          <h1>McpResourceResponse</h1>
-          <McpResourceResponseTable />
-        </>
-      )}
-      {activeSection === "McpResourceTemplate" && (
-        <>
-          <h1>McpResourceTemplate</h1>
-          <McpResourceTemplateTable />
-        </>
-      )}
-      {activeSection === "McpServer" && (
-        <>
-          <h1>McpServer</h1>
-          <McpServerTable />
-        </>
-      )}
-      {activeSection === "McpServiceRegistry" && (
-        <>
-          <h1>McpServiceRegistry</h1>
-          <McpServiceRegistryTable />
-        </>
-      )}
-      {activeSection === "McpServiceResponse" && (
-        <>
-          <h1>McpServiceResponse</h1>
-          <McpServiceResponseTable />
-        </>
-      )}
-      {activeSection === "McpTool" && (
-        <>
-          <h1>McpTool</h1>
-          <McpToolTable />
-        </>
-      )}
-      {activeSection === "McpToolCallResponse" && (
-        <>
-          <h1>McpToolCallResponse</h1>
-          <McpToolCallResponseTable />
-        </>
-      )}
-      {activeSection === "McpToolPreset" && (
-        <>
-          <h1>McpToolPreset</h1>
-          <McpToolPresetTable />
-        </>
-      )}
-      {activeSection === "McpTransportConfig" && (
-        <>
-          <h1>McpTransportConfig</h1>
-          <McpTransportConfigTable />
-        </>
-      )}
-      {activeSection === "MediaObject" && (
-        <>
-          <h1>MediaObject</h1>
-          <MediaObjectTable />
-        </>
-      )}
-      {activeSection === "MemoryActionRequest" && (
-        <>
-          <h1>MemoryActionRequest</h1>
-          <MemoryActionRequestTable />
-        </>
-      )}
-      {activeSection === "MemoryActionResponse" && (
-        <>
-          <h1>MemoryActionResponse</h1>
-          <MemoryActionResponseTable />
-        </>
-      )}
-      {activeSection === "MemoryContextStats" && (
-        <>
-          <h1>MemoryContextStats</h1>
-          <MemoryContextStatsTable />
-        </>
-      )}
-      {activeSection === "MemoryCostStats" && (
-        <>
-          <h1>MemoryCostStats</h1>
-          <MemoryCostStatsTable />
-        </>
-      )}
-      {activeSection === "MemoryEntry" && (
-        <>
-          <h1>MemoryEntry</h1>
-          <MemoryEntryTable />
-        </>
-      )}
-      {activeSection === "MemoryHitStats" && (
-        <>
-          <h1>MemoryHitStats</h1>
-          <MemoryHitStatsTable />
-        </>
-      )}
-      {activeSection === "MemoryRecommendation" && (
-        <>
-          <h1>MemoryRecommendation</h1>
-          <MemoryRecommendationTable />
-        </>
-      )}
-      {activeSection === "MemoryRetentionPolicy" && (
-        <>
-          <h1>MemoryRetentionPolicy</h1>
-          <MemoryRetentionPolicyTable />
-        </>
-      )}
-      {activeSection === "MemoryRunRecord" && (
-        <>
-          <h1>MemoryRunRecord</h1>
-          <MemoryRunRecordTable />
-        </>
-      )}
-      {activeSection === "MemoryStats" && (
-        <>
-          <h1>MemoryStats</h1>
-          <MemoryStatsTable />
-        </>
-      )}
-      {activeSection === "MergeRange" && (
-        <>
-          <h1>MergeRange</h1>
-          <MergeRangeTable />
-        </>
-      )}
-      {activeSection === "Metrics" && (
-        <>
-          <h1>Metrics</h1>
-          <MetricsTable />
-        </>
-      )}
-      {activeSection === "NamedRange" && (
-        <>
-          <h1>NamedRange</h1>
-          <NamedRangeTable />
-        </>
-      )}
-      {activeSection === "Note" && (
-        <>
-          <h1>Note</h1>
-          <NoteTable />
-        </>
-      )}
-      {activeSection === "OasComponent" && (
-        <>
-          <h1>OasComponent</h1>
-          <OasComponentTable />
-        </>
-      )}
-      {activeSection === "OasEnum" && (
-        <>
-          <h1>OasEnum</h1>
-          <OasEnumTable />
-        </>
-      )}
-      {activeSection === "OasInfo" && (
-        <>
-          <h1>OasInfo</h1>
-          <OasInfoTable />
-        </>
-      )}
-      {activeSection === "OasObjectSchema" && (
-        <>
-          <h1>OasObjectSchema</h1>
-          <OasObjectSchemaTable />
-        </>
-      )}
-      {activeSection === "OasOpenAPISpec" && (
-        <>
-          <h1>OasOpenAPISpec</h1>
-          <OasOpenAPISpecTable />
-        </>
-      )}
-      {activeSection === "OasOperation" && (
-        <>
-          <h1>OasOperation</h1>
-          <OasOperationTable />
-        </>
-      )}
-      {activeSection === "OasParameter" && (
-        <>
-          <h1>OasParameter</h1>
-          <OasParameterTable />
-        </>
-      )}
-      {activeSection === "OasPath" && (
-        <>
-          <h1>OasPath</h1>
-          <OasPathTable />
-        </>
-      )}
-      {activeSection === "OasRequired" && (
-        <>
-          <h1>OasRequired</h1>
-          <OasRequiredTable />
-        </>
-      )}
-      {activeSection === "OasResponse" && (
-        <>
-          <h1>OasResponse</h1>
-          <OasResponseTable />
-        </>
-      )}
-      {activeSection === "OasSecurityScheme" && (
-        <>
-          <h1>OasSecurityScheme</h1>
-          <OasSecuritySchemeTable />
-        </>
-      )}
-      {activeSection === "OasServer" && (
-        <>
-          <h1>OasServer</h1>
-          <OasServerTable />
-        </>
-      )}
-      {activeSection === "Opportunity" && (
-        <>
-          <h1>Opportunity</h1>
-          <OpportunityTable />
-        </>
-      )}
-      {activeSection === "OrderFulfillmentTask" && (
-        <>
-          <h1>OrderFulfillmentTask</h1>
-          <OrderFulfillmentTaskTable />
-        </>
-      )}
-      {activeSection === "Organization" && (
-        <>
-          <h1>Organization</h1>
-          <OrganizationTable />
-        </>
-      )}
-      {activeSection === "OrganizationAddonSubscription" && (
-        <>
-          <h1>OrganizationAddonSubscription</h1>
-          <OrganizationAddonSubscriptionTable />
-        </>
-      )}
-      {activeSection === "PasswordResetToken" && (
-        <>
-          <h1>PasswordResetToken</h1>
-          <PasswordResetTokenTable />
-        </>
-      )}
-      {activeSection === "PaymentTransaction" && (
-        <>
-          <h1>PaymentTransaction</h1>
-          <PaymentTransactionTable />
-        </>
-      )}
-      {activeSection === "PaymentType" && (
-        <>
-          <h1>PaymentType</h1>
-          <PaymentTypeTable />
-        </>
-      )}
-      {activeSection === "PersistentLogin" && (
-        <>
-          <h1>PersistentLogin</h1>
-          <PersistentLoginTable />
-        </>
-      )}
-      {activeSection === "PhoneVerification" && (
-        <>
-          <h1>PhoneVerification</h1>
-          <PhoneVerificationTable />
-        </>
-      )}
-      {activeSection === "PhoneVerificationRequest" && (
-        <>
-          <h1>PhoneVerificationRequest</h1>
-          <PhoneVerificationRequestTable />
-        </>
-      )}
-      {activeSection === "PhoneVerificationResponse" && (
-        <>
-          <h1>PhoneVerificationResponse</h1>
-          <PhoneVerificationResponseTable />
-        </>
-      )}
-      {activeSection === "PivotTable" && (
-        <>
-          <h1>PivotTable</h1>
-          <PivotTableTable />
-        </>
-      )}
-      {activeSection === "PresignRequest" && (
-        <>
-          <h1>PresignRequest</h1>
-          <PresignRequestTable />
-        </>
-      )}
-      {activeSection === "PresignResponse" && (
-        <>
-          <h1>PresignResponse</h1>
-          <PresignResponseTable />
-        </>
-      )}
-      {activeSection === "Principal" && (
-        <>
-          <h1>Principal</h1>
-          <PrincipalTable />
-        </>
-      )}
-      {activeSection === "Product" && (
-        <>
-          <h1>Product</h1>
-          <ProductTable />
-        </>
-      )}
-      {activeSection === "ProductDeliveryConfig" && (
-        <>
-          <h1>ProductDeliveryConfig</h1>
-          <ProductDeliveryConfigTable />
-        </>
-      )}
-      {activeSection === "ProductFeature" && (
-        <>
-          <h1>ProductFeature</h1>
-          <ProductFeatureTable />
-        </>
-      )}
-      {activeSection === "ProductFunnelWizard" && (
-        <>
-          <h1>ProductFunnelWizard</h1>
-          <ProductFunnelWizardTable />
-        </>
-      )}
-      {activeSection === "ProductLandingPage" && (
-        <>
-          <h1>ProductLandingPage</h1>
-          <ProductLandingPageTable />
-        </>
-      )}
-      {activeSection === "Ptg" && (
-        <>
-          <h1>Ptg</h1>
-          <PtgTable />
-        </>
-      )}
-      {activeSection === "PtgRef" && (
-        <>
-          <h1>PtgRef</h1>
-          <PtgRefTable />
-        </>
-      )}
-      {activeSection === "PublishFunnel200Response" && (
-        <>
-          <h1>PublishFunnel200Response</h1>
-          <PublishFunnel200ResponseTable />
-        </>
-      )}
-      {activeSection === "PublishRestEndpointRequest" && (
-        <>
-          <h1>PublishRestEndpointRequest</h1>
-          <PublishRestEndpointRequestTable />
-        </>
-      )}
-      {activeSection === "PublishWorkflowRequest" && (
-        <>
-          <h1>PublishWorkflowRequest</h1>
-          <PublishWorkflowRequestTable />
-        </>
-      )}
-      {activeSection === "Quota" && (
-        <>
-          <h1>Quota</h1>
-          <QuotaTable />
-        </>
-      )}
-      {activeSection === "Rating" && (
-        <>
-          <h1>Rating</h1>
-          <RatingTable />
-        </>
-      )}
-      {activeSection === "Reaction" && (
-        <>
-          <h1>Reaction</h1>
-          <ReactionTable />
-        </>
-      )}
-      {activeSection === "ReferralLink" && (
-        <>
-          <h1>ReferralLink</h1>
-          <ReferralLinkTable />
-        </>
-      )}
-      {activeSection === "RegisterTrustPolicyRequest" && (
-        <>
-          <h1>RegisterTrustPolicyRequest</h1>
-          <RegisterTrustPolicyRequestTable />
-        </>
-      )}
-      {activeSection === "RegisterTrustPolicyResponse" && (
-        <>
-          <h1>RegisterTrustPolicyResponse</h1>
-          <RegisterTrustPolicyResponseTable />
-        </>
-      )}
-      {activeSection === "RequestPasswordResetRequest" && (
-        <>
-          <h1>RequestPasswordResetRequest</h1>
-          <RequestPasswordResetRequestTable />
-        </>
-      )}
-      {activeSection === "RequestPasswordResetResponse" && (
-        <>
-          <h1>RequestPasswordResetResponse</h1>
-          <RequestPasswordResetResponseTable />
-        </>
-      )}
-      {activeSection === "RequeueDeadLetterEntryRequest" && (
-        <>
-          <h1>RequeueDeadLetterEntryRequest</h1>
-          <RequeueDeadLetterEntryRequestTable />
-        </>
-      )}
-      {activeSection === "RequeueDeadLetterEntryResponse" && (
-        <>
-          <h1>RequeueDeadLetterEntryResponse</h1>
-          <RequeueDeadLetterEntryResponseTable />
-        </>
-      )}
-      {activeSection === "RetryPolicy" && (
-        <>
-          <h1>RetryPolicy</h1>
-          <RetryPolicyTable />
-        </>
-      )}
-      {activeSection === "RewrapTrustKeyRequest" && (
-        <>
-          <h1>RewrapTrustKeyRequest</h1>
-          <RewrapTrustKeyRequestTable />
-        </>
-      )}
-      {activeSection === "RewrapTrustKeyResponse" && (
-        <>
-          <h1>RewrapTrustKeyResponse</h1>
-          <RewrapTrustKeyResponseTable />
-        </>
-      )}
-      {activeSection === "Role" && (
-        <>
-          <h1>Role</h1>
-          <RoleTable />
-        </>
-      )}
-      {activeSection === "RotateTrustKeyRequest" && (
-        <>
-          <h1>RotateTrustKeyRequest</h1>
-          <RotateTrustKeyRequestTable />
-        </>
-      )}
-      {activeSection === "RotateTrustKeyResponse" && (
-        <>
-          <h1>RotateTrustKeyResponse</h1>
-          <RotateTrustKeyResponseTable />
-        </>
-      )}
-      {activeSection === "Run" && (
-        <>
-          <h1>Run</h1>
-          <RunTable />
-        </>
-      )}
-      {activeSection === "SalesActivity" && (
-        <>
-          <h1>SalesActivity</h1>
-          <SalesActivityTable />
-        </>
-      )}
-      {activeSection === "SalesOrder" && (
-        <>
-          <h1>SalesOrder</h1>
-          <SalesOrderTable />
-        </>
-      )}
-      {activeSection === "SalesPipeline" && (
-        <>
-          <h1>SalesPipeline</h1>
-          <SalesPipelineTable />
-        </>
-      )}
-      {activeSection === "ScanBuildArtifacts200Response" && (
-        <>
-          <h1>ScanBuildArtifacts200Response</h1>
-          <ScanBuildArtifacts200ResponseTable />
-        </>
-      )}
-      {activeSection === "ScanBuildArtifactsRequest" && (
-        <>
-          <h1>ScanBuildArtifactsRequest</h1>
-          <ScanBuildArtifactsRequestTable />
-        </>
-      )}
-      {activeSection === "SecureKey" && (
-        <>
-          <h1>SecureKey</h1>
-          <SecureKeyTable />
-        </>
-      )}
-      {activeSection === "SemanticIndexEntry" && (
-        <>
-          <h1>SemanticIndexEntry</h1>
-          <SemanticIndexEntryTable />
-        </>
-      )}
-      {activeSection === "ServiceInvocationEvent" && (
-        <>
-          <h1>ServiceInvocationEvent</h1>
-          <ServiceInvocationEventTable />
-        </>
-      )}
-      {activeSection === "ServiceSubscription" && (
-        <>
-          <h1>ServiceSubscription</h1>
-          <ServiceSubscriptionTable />
-        </>
-      )}
-      {activeSection === "Sheet" && (
-        <>
-          <h1>Sheet</h1>
-          <SheetTable />
-        </>
-      )}
-      {activeSection === "SheetColumn" && (
-        <>
-          <h1>SheetColumn</h1>
-          <SheetColumnTable />
-        </>
-      )}
-      {activeSection === "SheetRow" && (
-        <>
-          <h1>SheetRow</h1>
-          <SheetRowTable />
-        </>
-      )}
-      {activeSection === "SkillProfile" && (
-        <>
-          <h1>SkillProfile</h1>
-          <SkillProfileTable />
-        </>
-      )}
-      {activeSection === "Solution" && (
-        <>
-          <h1>Solution</h1>
-          <SolutionTable />
-        </>
-      )}
-      {activeSection === "Space" && (
-        <>
-          <h1>Space</h1>
-          <SpaceTable />
-        </>
-      )}
-      {activeSection === "SpaceFile" && (
-        <>
-          <h1>SpaceFile</h1>
-          <SpaceFileTable />
-        </>
-      )}
-      {activeSection === "SpaceMember" && (
-        <>
-          <h1>SpaceMember</h1>
-          <SpaceMemberTable />
-        </>
-      )}
-      {activeSection === "Stack" && (
-        <>
-          <h1>Stack</h1>
-          <StackTable />
-        </>
-      )}
-      {activeSection === "StartTrustExecutionRequest" && (
-        <>
-          <h1>StartTrustExecutionRequest</h1>
-          <StartTrustExecutionRequestTable />
-        </>
-      )}
-      {activeSection === "StartTrustExecutionResponse" && (
-        <>
-          <h1>StartTrustExecutionResponse</h1>
-          <StartTrustExecutionResponseTable />
-        </>
-      )}
-      {activeSection === "StrategicPriority" && (
-        <>
-          <h1>StrategicPriority</h1>
-          <StrategicPriorityTable />
-        </>
-      )}
-      {activeSection === "SubmitTrustAttestationEvidenceRequest" && (
-        <>
-          <h1>SubmitTrustAttestationEvidenceRequest</h1>
-          <SubmitTrustAttestationEvidenceRequestTable />
-        </>
-      )}
-      {activeSection === "SubmitTrustAttestationEvidenceResponse" && (
-        <>
-          <h1>SubmitTrustAttestationEvidenceResponse</h1>
-          <SubmitTrustAttestationEvidenceResponseTable />
-        </>
-      )}
-      {activeSection === "SubscriberList" && (
-        <>
-          <h1>SubscriberList</h1>
-          <SubscriberListTable />
-        </>
-      )}
-      {activeSection === "SubscriptionPlan" && (
-        <>
-          <h1>SubscriptionPlan</h1>
-          <SubscriptionPlanTable />
-        </>
-      )}
-      {activeSection === "Swarm" && (
-        <>
-          <h1>Swarm</h1>
-          <SwarmTable />
-        </>
-      )}
-      {activeSection === "SwarmAgentSummary" && (
-        <>
-          <h1>SwarmAgentSummary</h1>
-          <SwarmAgentSummaryTable />
-        </>
-      )}
-      {activeSection === "SwarmCommandRequest" && (
-        <>
-          <h1>SwarmCommandRequest</h1>
-          <SwarmCommandRequestTable />
-        </>
-      )}
-      {activeSection === "SwarmCommandResponse" && (
-        <>
-          <h1>SwarmCommandResponse</h1>
-          <SwarmCommandResponseTable />
-        </>
-      )}
-      {activeSection === "SwarmGraphEdge" && (
-        <>
-          <h1>SwarmGraphEdge</h1>
-          <SwarmGraphEdgeTable />
-        </>
-      )}
-      {activeSection === "SwarmGraphNode" && (
-        <>
-          <h1>SwarmGraphNode</h1>
-          <SwarmGraphNodeTable />
-        </>
-      )}
-      {activeSection === "SwarmGraphSnapshot" && (
-        <>
-          <h1>SwarmGraphSnapshot</h1>
-          <SwarmGraphSnapshotTable />
-        </>
-      )}
-      {activeSection === "SwarmMessage" && (
-        <>
-          <h1>SwarmMessage</h1>
-          <SwarmMessageTable />
-        </>
-      )}
-      {activeSection === "SwarmPayload" && (
-        <>
-          <h1>SwarmPayload</h1>
-          <SwarmPayloadTable />
-        </>
-      )}
-      {activeSection === "SwarmRegisterRequest" && (
-        <>
-          <h1>SwarmRegisterRequest</h1>
-          <SwarmRegisterRequestTable />
-        </>
-      )}
-      {activeSection === "SwarmRegisterResponse" && (
-        <>
-          <h1>SwarmRegisterResponse</h1>
-          <SwarmRegisterResponseTable />
-        </>
-      )}
-      {activeSection === "SwarmSecurity" && (
-        <>
-          <h1>SwarmSecurity</h1>
-          <SwarmSecurityTable />
-        </>
-      )}
-      {activeSection === "SwarmUnregisterRequest" && (
-        <>
-          <h1>SwarmUnregisterRequest</h1>
-          <SwarmUnregisterRequestTable />
-        </>
-      )}
-      {activeSection === "SwarmUnregisterResponse" && (
-        <>
-          <h1>SwarmUnregisterResponse</h1>
-          <SwarmUnregisterResponseTable />
-        </>
-      )}
-      {activeSection === "Tag" && (
-        <>
-          <h1>Tag</h1>
-          <TagTable />
-        </>
-      )}
-      {activeSection === "Task" && (
-        <>
-          <h1>Task</h1>
-          <TaskTable />
-        </>
-      )}
-      {activeSection === "ThorapiRule" && (
-        <>
-          <h1>ThorapiRule</h1>
-          <ThorapiRuleTable />
-        </>
-      )}
-      {activeSection === "Trust" && (
-        <>
-          <h1>Trust</h1>
-          <TrustTable />
-        </>
-      )}
-      {activeSection === "TrustAttestationEvidence" && (
-        <>
-          <h1>TrustAttestationEvidence</h1>
-          <TrustAttestationEvidenceTable />
-        </>
-      )}
-      {activeSection === "TrustKey" && (
-        <>
-          <h1>TrustKey</h1>
-          <TrustKeyTable />
-        </>
-      )}
-      {activeSection === "TrustKeyProvider" && (
-        <>
-          <h1>TrustKeyProvider</h1>
-          <TrustKeyProviderTable />
-        </>
-      )}
-      {activeSection === "TrustKeyRotation" && (
-        <>
-          <h1>TrustKeyRotation</h1>
-          <TrustKeyRotationTable />
-        </>
-      )}
-      {activeSection === "TrustKeyVersion" && (
-        <>
-          <h1>TrustKeyVersion</h1>
-          <TrustKeyVersionTable />
-        </>
-      )}
-      {activeSection === "TrustMerkleBatch" && (
-        <>
-          <h1>TrustMerkleBatch</h1>
-          <TrustMerkleBatchTable />
-        </>
-      )}
-      {activeSection === "TrustObjectKeyEnvelope" && (
-        <>
-          <h1>TrustObjectKeyEnvelope</h1>
-          <TrustObjectKeyEnvelopeTable />
-        </>
-      )}
-      {activeSection === "TrustPolicyBinding" && (
-        <>
-          <h1>TrustPolicyBinding</h1>
-          <TrustPolicyBindingTable />
-        </>
-      )}
-      {activeSection === "TrustPolicyManifest" && (
-        <>
-          <h1>TrustPolicyManifest</h1>
-          <TrustPolicyManifestTable />
-        </>
-      )}
-      {activeSection === "TrustProof" && (
-        <>
-          <h1>TrustProof</h1>
-          <TrustProofTable />
-        </>
-      )}
-      {activeSection === "TrustRuntimeEvent" && (
-        <>
-          <h1>TrustRuntimeEvent</h1>
-          <TrustRuntimeEventTable />
-        </>
-      )}
-      {activeSection === "TrustRuntimeExecution" && (
-        <>
-          <h1>TrustRuntimeExecution</h1>
-          <TrustRuntimeExecutionTable />
-        </>
-      )}
-      {activeSection === "TrustSecretAccessEvent" && (
-        <>
-          <h1>TrustSecretAccessEvent</h1>
-          <TrustSecretAccessEventTable />
-        </>
-      )}
-      {activeSection === "TrustSecretLease" && (
-        <>
-          <h1>TrustSecretLease</h1>
-          <TrustSecretLeaseTable />
-        </>
-      )}
-      {activeSection === "TrustVerificationResult" && (
-        <>
-          <h1>TrustVerificationResult</h1>
-          <TrustVerificationResultTable />
-        </>
-      )}
-      {activeSection === "TwoFactorSecret" && (
-        <>
-          <h1>TwoFactorSecret</h1>
-          <TwoFactorSecretTable />
-        </>
-      )}
-      {activeSection === "UpdateFileRequest" && (
-        <>
-          <h1>UpdateFileRequest</h1>
-          <UpdateFileRequestTable />
-        </>
-      )}
-      {activeSection === "UsageTransaction" && (
-        <>
-          <h1>UsageTransaction</h1>
-          <UsageTransactionTable />
-        </>
-      )}
-      {activeSection === "UserPreference" && (
-        <>
-          <h1>UserPreference</h1>
-          <UserPreferenceTable />
-        </>
-      )}
-      {activeSection === "ValidateDeploymentSpec200Response" && (
-        <>
-          <h1>ValidateDeploymentSpec200Response</h1>
-          <ValidateDeploymentSpec200ResponseTable />
-        </>
-      )}
-      {activeSection === "ValkyrJob" && (
-        <>
-          <h1>ValkyrJob</h1>
-          <ValkyrJobTable />
-        </>
-      )}
-      {activeSection === "VerifyPhoneOTPRequest" && (
-        <>
-          <h1>VerifyPhoneOTPRequest</h1>
-          <VerifyPhoneOTPRequestTable />
-        </>
-      )}
-      {activeSection === "VerifyTrustProofRequest" && (
-        <>
-          <h1>VerifyTrustProofRequest</h1>
-          <VerifyTrustProofRequestTable />
-        </>
-      )}
-      {activeSection === "VerifyTrustProofResponse" && (
-        <>
-          <h1>VerifyTrustProofResponse</h1>
-          <VerifyTrustProofResponseTable />
-        </>
-      )}
-      {activeSection === "VerifyTwoFactorRequest" && (
-        <>
-          <h1>VerifyTwoFactorRequest</h1>
-          <VerifyTwoFactorRequestTable />
-        </>
-      )}
-      {activeSection === "VerifyTwoFactorResponse" && (
-        <>
-          <h1>VerifyTwoFactorResponse</h1>
-          <VerifyTwoFactorResponseTable />
-        </>
-      )}
-      {activeSection === "WebsocketMessage" && (
-        <>
-          <h1>WebsocketMessage</h1>
-          <WebsocketMessageTable />
-        </>
-      )}
-      {activeSection === "WebsocketSession" && (
-        <>
-          <h1>WebsocketSession</h1>
-          <WebsocketSessionTable />
-        </>
-      )}
-      {activeSection === "WizardStartResponse" && (
-        <>
-          <h1>WizardStartResponse</h1>
-          <WizardStartResponseTable />
-        </>
-      )}
-      {activeSection === "WizardStatusResponse" && (
-        <>
-          <h1>WizardStatusResponse</h1>
-          <WizardStatusResponseTable />
-        </>
-      )}
-      {activeSection === "Workbook" && (
-        <>
-          <h1>Workbook</h1>
-          <WorkbookTable />
-        </>
-      )}
-      {activeSection === "Workflow" && (
-        <>
-          <h1>Workflow</h1>
-          <WorkflowTable />
-        </>
-      )}
-      {activeSection === "WorkflowExecution" && (
-        <>
-          <h1>WorkflowExecution</h1>
-          <WorkflowExecutionTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphEdge" && (
-        <>
-          <h1>WorkflowGraphEdge</h1>
-          <WorkflowGraphEdgeTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphEdgeConfig" && (
-        <>
-          <h1>WorkflowGraphEdgeConfig</h1>
-          <WorkflowGraphEdgeConfigTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphEdgeConnectionMapping" && (
-        <>
-          <h1>WorkflowGraphEdgeConnectionMapping</h1>
-          <WorkflowGraphEdgeConnectionMappingTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphModule" && (
-        <>
-          <h1>WorkflowGraphModule</h1>
-          <WorkflowGraphModuleTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphModuleMapping" && (
-        <>
-          <h1>WorkflowGraphModuleMapping</h1>
-          <WorkflowGraphModuleMappingTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphNode" && (
-        <>
-          <h1>WorkflowGraphNode</h1>
-          <WorkflowGraphNodeTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphNodeTaskMapping" && (
-        <>
-          <h1>WorkflowGraphNodeTaskMapping</h1>
-          <WorkflowGraphNodeTaskMappingTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphRequest" && (
-        <>
-          <h1>WorkflowGraphRequest</h1>
-          <WorkflowGraphRequestTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphResponse" && (
-        <>
-          <h1>WorkflowGraphResponse</h1>
-          <WorkflowGraphResponseTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphValidationError" && (
-        <>
-          <h1>WorkflowGraphValidationError</h1>
-          <WorkflowGraphValidationErrorTable />
-        </>
-      )}
-      {activeSection === "WorkflowGraphWorkflowData" && (
-        <>
-          <h1>WorkflowGraphWorkflowData</h1>
-          <WorkflowGraphWorkflowDataTable />
-        </>
-      )}
-      {activeSection === "WorkflowState" && (
-        <>
-          <h1>WorkflowState</h1>
-          <WorkflowStateTable />
-        </>
-      )}
+            {activeSection && (
+              <PermissionDialog
+                objectType={activeSection}
+                objectId="TYPE"
+                isVisible={showTypePermissions}
+                onClose={() => setShowTypePermissions(false)}
+                onSave={() => setShowTypePermissions(false)}
+                currentUser={currentPermissionUser}
+              />
+            )}
 
-      {!activeSection && (
-        <div style={{ opacity: 0.8, fontStyle: "italic", padding: "1rem" }}>
-          Choose a model from the dropdown to display its table.
-        </div>
-      )}
-    </Container>
-  );
+            {/* Show only the active section (like tabs) */}
+            {activeSection === 'AccountBalance' && (
+            <>
+              <h1>AccountBalance</h1>
+                     <AccountBalanceTable />
+            </>
+            )}
+            {activeSection === 'AccountPlan' && (
+            <>
+              <h1>AccountPlan</h1>
+                     <AccountPlanTable />
+            </>
+            )}
+            {activeSection === 'AclClass' && (
+            <>
+              <h1>AclClass</h1>
+                     <AclClassTable />
+            </>
+            )}
+            {activeSection === 'AclEntry' && (
+            <>
+              <h1>AclEntry</h1>
+                     <AclEntryTable />
+            </>
+            )}
+            {activeSection === 'AclObjectIdentity' && (
+            <>
+              <h1>AclObjectIdentity</h1>
+                     <AclObjectIdentityTable />
+            </>
+            )}
+            {activeSection === 'AclSid' && (
+            <>
+              <h1>AclSid</h1>
+                     <AclSidTable />
+            </>
+            )}
+            {activeSection === 'ActivateAgent200Response' && (
+            <>
+              <h1>ActivateAgent200Response</h1>
+                     <ActivateAgent200ResponseTable />
+            </>
+            )}
+            {activeSection === 'Address' && (
+            <>
+              <h1>Address</h1>
+                     <AddressTable />
+            </>
+            )}
+            {activeSection === 'Agent' && (
+            <>
+              <h1>Agent</h1>
+                     <AgentTable />
+            </>
+            )}
+            {activeSection === 'AgentBilling' && (
+            <>
+              <h1>AgentBilling</h1>
+                     <AgentBillingTable />
+            </>
+            )}
+            {activeSection === 'AgentBillingCharge' && (
+            <>
+              <h1>AgentBillingCharge</h1>
+                     <AgentBillingChargeTable />
+            </>
+            )}
+            {activeSection === 'AgentChatMessage' && (
+            <>
+              <h1>AgentChatMessage</h1>
+                     <AgentChatMessageTable />
+            </>
+            )}
+            {activeSection === 'AgentChatMessageRequest' && (
+            <>
+              <h1>AgentChatMessageRequest</h1>
+                     <AgentChatMessageRequestTable />
+            </>
+            )}
+            {activeSection === 'AgentChatMessageResponse' && (
+            <>
+              <h1>AgentChatMessageResponse</h1>
+                     <AgentChatMessageResponseTable />
+            </>
+            )}
+            {activeSection === 'AgentDiscoveryItem' && (
+            <>
+              <h1>AgentDiscoveryItem</h1>
+                     <AgentDiscoveryItemTable />
+            </>
+            )}
+            {activeSection === 'AgentEventTrigger' && (
+            <>
+              <h1>AgentEventTrigger</h1>
+                     <AgentEventTriggerTable />
+            </>
+            )}
+            {activeSection === 'AgentHierarchy' && (
+            <>
+              <h1>AgentHierarchy</h1>
+                     <AgentHierarchyTable />
+            </>
+            )}
+            {activeSection === 'AgentHierarchyNode' && (
+            <>
+              <h1>AgentHierarchyNode</h1>
+                     <AgentHierarchyNodeTable />
+            </>
+            )}
+            {activeSection === 'ApiIdentityKpiSnapshot' && (
+            <>
+              <h1>ApiIdentityKpiSnapshot</h1>
+                     <ApiIdentityKpiSnapshotTable />
+            </>
+            )}
+            {activeSection === 'ApiMetricSnapshot' && (
+            <>
+              <h1>ApiMetricSnapshot</h1>
+                     <ApiMetricSnapshotTable />
+            </>
+            )}
+            {activeSection === 'ApiMetricsResponse' && (
+            <>
+              <h1>ApiMetricsResponse</h1>
+                     <ApiMetricsResponseTable />
+            </>
+            )}
+            {activeSection === 'ApiSpineKpiSnapshot' && (
+            <>
+              <h1>ApiSpineKpiSnapshot</h1>
+                     <ApiSpineKpiSnapshotTable />
+            </>
+            )}
+            {activeSection === 'ApiTrafficEvent' && (
+            <>
+              <h1>ApiTrafficEvent</h1>
+                     <ApiTrafficEventTable />
+            </>
+            )}
+            {activeSection === 'AppGenerationRequest' && (
+            <>
+              <h1>AppGenerationRequest</h1>
+                     <AppGenerationRequestTable />
+            </>
+            )}
+            {activeSection === 'AppGenerationTraceResponse' && (
+            <>
+              <h1>AppGenerationTraceResponse</h1>
+                     <AppGenerationTraceResponseTable />
+            </>
+            )}
+            {activeSection === 'AppObjectModel' && (
+            <>
+              <h1>AppObjectModel</h1>
+                     <AppObjectModelTable />
+            </>
+            )}
+            {activeSection === 'AppSpecDraft' && (
+            <>
+              <h1>AppSpecDraft</h1>
+                     <AppSpecDraftTable />
+            </>
+            )}
+            {activeSection === 'AppendTrustEventRequest' && (
+            <>
+              <h1>AppendTrustEventRequest</h1>
+                     <AppendTrustEventRequestTable />
+            </>
+            )}
+            {activeSection === 'AppendTrustEventResponse' && (
+            <>
+              <h1>AppendTrustEventResponse</h1>
+                     <AppendTrustEventResponseTable />
+            </>
+            )}
+            {activeSection === 'Application' && (
+            <>
+              <h1>Application</h1>
+                     <ApplicationTable />
+            </>
+            )}
+            {activeSection === 'ArrayIntegerItem' && (
+            <>
+              <h1>ArrayIntegerItem</h1>
+                     <ArrayIntegerItemTable />
+            </>
+            )}
+            {activeSection === 'ArrayNumberItem' && (
+            <>
+              <h1>ArrayNumberItem</h1>
+                     <ArrayNumberItemTable />
+            </>
+            )}
+            {activeSection === 'ArrayStringItem' && (
+            <>
+              <h1>ArrayStringItem</h1>
+                     <ArrayStringItemTable />
+            </>
+            )}
+            {activeSection === 'Authority' && (
+            <>
+              <h1>Authority</h1>
+                     <AuthorityTable />
+            </>
+            )}
+            {activeSection === 'BackupConfig' && (
+            <>
+              <h1>BackupConfig</h1>
+                     <BackupConfigTable />
+            </>
+            )}
+            {activeSection === 'BalanceResponse' && (
+            <>
+              <h1>BalanceResponse</h1>
+                     <BalanceResponseTable />
+            </>
+            )}
+            {activeSection === 'BlankRange' && (
+            <>
+              <h1>BlankRange</h1>
+                     <BlankRangeTable />
+            </>
+            )}
+            {activeSection === 'Border' && (
+            <>
+              <h1>Border</h1>
+                     <BorderTable />
+            </>
+            )}
+            {activeSection === 'Budget' && (
+            <>
+              <h1>Budget</h1>
+                     <BudgetTable />
+            </>
+            )}
+            {activeSection === 'Build' && (
+            <>
+              <h1>Build</h1>
+                     <BuildTable />
+            </>
+            )}
+            {activeSection === 'BuildArtifact' && (
+            <>
+              <h1>BuildArtifact</h1>
+                     <BuildArtifactTable />
+            </>
+            )}
+            {activeSection === 'BuildOutput' && (
+            <>
+              <h1>BuildOutput</h1>
+                     <BuildOutputTable />
+            </>
+            )}
+            {activeSection === 'Campaign' && (
+            <>
+              <h1>Campaign</h1>
+                     <CampaignTable />
+            </>
+            )}
+            {activeSection === 'CareerOpportunity' && (
+            <>
+              <h1>CareerOpportunity</h1>
+                     <CareerOpportunityTable />
+            </>
+            )}
+            {activeSection === 'Cell' && (
+            <>
+              <h1>Cell</h1>
+                     <CellTable />
+            </>
+            )}
+            {activeSection === 'ChannelSubscription' && (
+            <>
+              <h1>ChannelSubscription</h1>
+                     <ChannelSubscriptionTable />
+            </>
+            )}
+            {activeSection === 'Chart' && (
+            <>
+              <h1>Chart</h1>
+                     <ChartTable />
+            </>
+            )}
+            {activeSection === 'ChartSeries' && (
+            <>
+              <h1>ChartSeries</h1>
+                     <ChartSeriesTable />
+            </>
+            )}
+            {activeSection === 'ChatCompletionRequest' && (
+            <>
+              <h1>ChatCompletionRequest</h1>
+                     <ChatCompletionRequestTable />
+            </>
+            )}
+            {activeSection === 'ChatCompletionResponse' && (
+            <>
+              <h1>ChatCompletionResponse</h1>
+                     <ChatCompletionResponseTable />
+            </>
+            )}
+            {activeSection === 'ChatMessage' && (
+            <>
+              <h1>ChatMessage</h1>
+                     <ChatMessageTable />
+            </>
+            )}
+            {activeSection === 'ChatResponse' && (
+            <>
+              <h1>ChatResponse</h1>
+                     <ChatResponseTable />
+            </>
+            )}
+            {activeSection === 'CircuitBreakerConfig' && (
+            <>
+              <h1>CircuitBreakerConfig</h1>
+                     <CircuitBreakerConfigTable />
+            </>
+            )}
+            {activeSection === 'CircuitBreakerState' && (
+            <>
+              <h1>CircuitBreakerState</h1>
+                     <CircuitBreakerStateTable />
+            </>
+            )}
+            {activeSection === 'CloudProvider' && (
+            <>
+              <h1>CloudProvider</h1>
+                     <CloudProviderTable />
+            </>
+            )}
+            {activeSection === 'CompleteTrustExecutionRequest' && (
+            <>
+              <h1>CompleteTrustExecutionRequest</h1>
+                     <CompleteTrustExecutionRequestTable />
+            </>
+            )}
+            {activeSection === 'CompleteTrustExecutionResponse' && (
+            <>
+              <h1>CompleteTrustExecutionResponse</h1>
+                     <CompleteTrustExecutionResponseTable />
+            </>
+            )}
+            {activeSection === 'CompleteUploadRequest' && (
+            <>
+              <h1>CompleteUploadRequest</h1>
+                     <CompleteUploadRequestTable />
+            </>
+            )}
+            {activeSection === 'CompleteUploadRequestPartsInner' && (
+            <>
+              <h1>CompleteUploadRequestPartsInner</h1>
+                     <CompleteUploadRequestPartsInnerTable />
+            </>
+            )}
+            {activeSection === 'ConfirmPasswordResetRequest' && (
+            <>
+              <h1>ConfirmPasswordResetRequest</h1>
+                     <ConfirmPasswordResetRequestTable />
+            </>
+            )}
+            {activeSection === 'ConfirmPasswordResetResponse' && (
+            <>
+              <h1>ConfirmPasswordResetResponse</h1>
+                     <ConfirmPasswordResetResponseTable />
+            </>
+            )}
+            {activeSection === 'ConsultingProfile' && (
+            <>
+              <h1>ConsultingProfile</h1>
+                     <ConsultingProfileTable />
+            </>
+            )}
+            {activeSection === 'ContentData' && (
+            <>
+              <h1>ContentData</h1>
+                     <ContentDataTable />
+            </>
+            )}
+            {activeSection === 'ContentMediaLink' && (
+            <>
+              <h1>ContentMediaLink</h1>
+                     <ContentMediaLinkTable />
+            </>
+            )}
+            {activeSection === 'ContextCompressionReceipt' && (
+            <>
+              <h1>ContextCompressionReceipt</h1>
+                     <ContextCompressionReceiptTable />
+            </>
+            )}
+            {activeSection === 'ContextPage' && (
+            <>
+              <h1>ContextPage</h1>
+                     <ContextPageTable />
+            </>
+            )}
+            {activeSection === 'ContextPageCompileRequest' && (
+            <>
+              <h1>ContextPageCompileRequest</h1>
+                     <ContextPageCompileRequestTable />
+            </>
+            )}
+            {activeSection === 'ContextPageHydrateRequest' && (
+            <>
+              <h1>ContextPageHydrateRequest</h1>
+                     <ContextPageHydrateRequestTable />
+            </>
+            )}
+            {activeSection === 'ContextPageItem' && (
+            <>
+              <h1>ContextPageItem</h1>
+                     <ContextPageItemTable />
+            </>
+            )}
+            {activeSection === 'ContextPageRecompressRequest' && (
+            <>
+              <h1>ContextPageRecompressRequest</h1>
+                     <ContextPageRecompressRequestTable />
+            </>
+            )}
+            {activeSection === 'ContextPageResponse' && (
+            <>
+              <h1>ContextPageResponse</h1>
+                     <ContextPageResponseTable />
+            </>
+            )}
+            {activeSection === 'ContextPageTraverseRequest' && (
+            <>
+              <h1>ContextPageTraverseRequest</h1>
+                     <ContextPageTraverseRequestTable />
+            </>
+            )}
+            {activeSection === 'ContextTraversalEvent' && (
+            <>
+              <h1>ContextTraversalEvent</h1>
+                     <ContextTraversalEventTable />
+            </>
+            )}
+            {activeSection === 'ConversationBranch' && (
+            <>
+              <h1>ConversationBranch</h1>
+                     <ConversationBranchTable />
+            </>
+            )}
+            {activeSection === 'ConversationMemoryNode' && (
+            <>
+              <h1>ConversationMemoryNode</h1>
+                     <ConversationMemoryNodeTable />
+            </>
+            )}
+            {activeSection === 'CreatorEarnings' && (
+            <>
+              <h1>CreatorEarnings</h1>
+                     <CreatorEarningsTable />
+            </>
+            )}
+            {activeSection === 'CreditAccount' && (
+            <>
+              <h1>CreditAccount</h1>
+                     <CreditAccountTable />
+            </>
+            )}
+            {activeSection === 'CreditBalanceSummary' && (
+            <>
+              <h1>CreditBalanceSummary</h1>
+                     <CreditBalanceSummaryTable />
+            </>
+            )}
+            {activeSection === 'CreditDebitReceipt' && (
+            <>
+              <h1>CreditDebitReceipt</h1>
+                     <CreditDebitReceiptTable />
+            </>
+            )}
+            {activeSection === 'CreditPricingMatrix' && (
+            <>
+              <h1>CreditPricingMatrix</h1>
+                     <CreditPricingMatrixTable />
+            </>
+            )}
+            {activeSection === 'CreditReservation' && (
+            <>
+              <h1>CreditReservation</h1>
+                     <CreditReservationTable />
+            </>
+            )}
+            {activeSection === 'Customer' && (
+            <>
+              <h1>Customer</h1>
+                     <CustomerTable />
+            </>
+            )}
+            {activeSection === 'DeadLetterQueue' && (
+            <>
+              <h1>DeadLetterQueue</h1>
+                     <DeadLetterQueueTable />
+            </>
+            )}
+            {activeSection === 'DefaultResponse' && (
+            <>
+              <h1>DefaultResponse</h1>
+                     <DefaultResponseTable />
+            </>
+            )}
+            {activeSection === 'Depend' && (
+            <>
+              <h1>Depend</h1>
+                     <DependTable />
+            </>
+            )}
+            {activeSection === 'Deployment' && (
+            <>
+              <h1>Deployment</h1>
+                     <DeploymentTable />
+            </>
+            )}
+            {activeSection === 'DeploymentSpec' && (
+            <>
+              <h1>DeploymentSpec</h1>
+                     <DeploymentSpecTable />
+            </>
+            )}
+            {activeSection === 'DeploymentTemplate' && (
+            <>
+              <h1>DeploymentTemplate</h1>
+                     <DeploymentTemplateTable />
+            </>
+            )}
+            {activeSection === 'DigitalAsset' && (
+            <>
+              <h1>DigitalAsset</h1>
+                     <DigitalAssetTable />
+            </>
+            )}
+            {activeSection === 'DiscardDeadLetterEntryRequest' && (
+            <>
+              <h1>DiscardDeadLetterEntryRequest</h1>
+                     <DiscardDeadLetterEntryRequestTable />
+            </>
+            )}
+            {activeSection === 'DiscardDeadLetterEntryResponse' && (
+            <>
+              <h1>DiscardDeadLetterEntryResponse</h1>
+                     <DiscardDeadLetterEntryResponseTable />
+            </>
+            )}
+            {activeSection === 'Discount' && (
+            <>
+              <h1>Discount</h1>
+                     <DiscountTable />
+            </>
+            )}
+            {activeSection === 'DownloadAccess' && (
+            <>
+              <h1>DownloadAccess</h1>
+                     <DownloadAccessTable />
+            </>
+            )}
+            {activeSection === 'EventLog' && (
+            <>
+              <h1>EventLog</h1>
+                     <EventLogTable />
+            </>
+            )}
+            {activeSection === 'ExecModule' && (
+            <>
+              <h1>ExecModule</h1>
+                     <ExecModuleTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleAudienceConfig' && (
+            <>
+              <h1>ExecModuleAudienceConfig</h1>
+                     <ExecModuleAudienceConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleAuthConfig' && (
+            <>
+              <h1>ExecModuleAuthConfig</h1>
+                     <ExecModuleAuthConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleConfig' && (
+            <>
+              <h1>ExecModuleConfig</h1>
+                     <ExecModuleConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleExecutionConfig' && (
+            <>
+              <h1>ExecModuleExecutionConfig</h1>
+                     <ExecModuleExecutionConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleIOConfig' && (
+            <>
+              <h1>ExecModuleIOConfig</h1>
+                     <ExecModuleIOConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleObservabilityConfig' && (
+            <>
+              <h1>ExecModuleObservabilityConfig</h1>
+                     <ExecModuleObservabilityConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModulePayloadConfig' && (
+            <>
+              <h1>ExecModulePayloadConfig</h1>
+                     <ExecModulePayloadConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleRateLimitConfig' && (
+            <>
+              <h1>ExecModuleRateLimitConfig</h1>
+                     <ExecModuleRateLimitConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleResourceConfig' && (
+            <>
+              <h1>ExecModuleResourceConfig</h1>
+                     <ExecModuleResourceConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecModuleTransportConfig' && (
+            <>
+              <h1>ExecModuleTransportConfig</h1>
+                     <ExecModuleTransportConfigTable />
+            </>
+            )}
+            {activeSection === 'ExecuteModuleRequest' && (
+            <>
+              <h1>ExecuteModuleRequest</h1>
+                     <ExecuteModuleRequestTable />
+            </>
+            )}
+            {activeSection === 'Expense' && (
+            <>
+              <h1>Expense</h1>
+                     <ExpenseTable />
+            </>
+            )}
+            {activeSection === 'FileAuditLog' && (
+            <>
+              <h1>FileAuditLog</h1>
+                     <FileAuditLogTable />
+            </>
+            )}
+            {activeSection === 'FileDownloadToken' && (
+            <>
+              <h1>FileDownloadToken</h1>
+                     <FileDownloadTokenTable />
+            </>
+            )}
+            {activeSection === 'FileListResponse' && (
+            <>
+              <h1>FileListResponse</h1>
+                     <FileListResponseTable />
+            </>
+            )}
+            {activeSection === 'FileMetadata' && (
+            <>
+              <h1>FileMetadata</h1>
+                     <FileMetadataTable />
+            </>
+            )}
+            {activeSection === 'FileProcessingJob' && (
+            <>
+              <h1>FileProcessingJob</h1>
+                     <FileProcessingJobTable />
+            </>
+            )}
+            {activeSection === 'FileRecord' && (
+            <>
+              <h1>FileRecord</h1>
+                     <FileRecordTable />
+            </>
+            )}
+            {activeSection === 'FileUploadSession' && (
+            <>
+              <h1>FileUploadSession</h1>
+                     <FileUploadSessionTable />
+            </>
+            )}
+            {activeSection === 'FileVersion' && (
+            <>
+              <h1>FileVersion</h1>
+                     <FileVersionTable />
+            </>
+            )}
+            {activeSection === 'Format' && (
+            <>
+              <h1>Format</h1>
+                     <FormatTable />
+            </>
+            )}
+            {activeSection === 'Formula' && (
+            <>
+              <h1>Formula</h1>
+                     <FormulaTable />
+            </>
+            )}
+            {activeSection === 'GeneralLedgerEntry' && (
+            <>
+              <h1>GeneralLedgerEntry</h1>
+                     <GeneralLedgerEntryTable />
+            </>
+            )}
+            {activeSection === 'GenerateTrustKeyRequest' && (
+            <>
+              <h1>GenerateTrustKeyRequest</h1>
+                     <GenerateTrustKeyRequestTable />
+            </>
+            )}
+            {activeSection === 'GenerateTrustKeyResponse' && (
+            <>
+              <h1>GenerateTrustKeyResponse</h1>
+                     <GenerateTrustKeyResponseTable />
+            </>
+            )}
+            {activeSection === 'GenerateTrustProofRequest' && (
+            <>
+              <h1>GenerateTrustProofRequest</h1>
+                     <GenerateTrustProofRequestTable />
+            </>
+            )}
+            {activeSection === 'GenerateTrustProofResponse' && (
+            <>
+              <h1>GenerateTrustProofResponse</h1>
+                     <GenerateTrustProofResponseTable />
+            </>
+            )}
+            {activeSection === 'GeneratedArtifact' && (
+            <>
+              <h1>GeneratedArtifact</h1>
+                     <GeneratedArtifactTable />
+            </>
+            )}
+            {activeSection === 'GeneratedArtifactSet' && (
+            <>
+              <h1>GeneratedArtifactSet</h1>
+                     <GeneratedArtifactSetTable />
+            </>
+            )}
+            {activeSection === 'GenerationReceipt' && (
+            <>
+              <h1>GenerationReceipt</h1>
+                     <GenerationReceiptTable />
+            </>
+            )}
+            {activeSection === 'Goal' && (
+            <>
+              <h1>Goal</h1>
+                     <GoalTable />
+            </>
+            )}
+            {activeSection === 'GoalDependency' && (
+            <>
+              <h1>GoalDependency</h1>
+                     <GoalDependencyTable />
+            </>
+            )}
+            {activeSection === 'GrantPermissionRequest' && (
+            <>
+              <h1>GrantPermissionRequest</h1>
+                     <GrantPermissionRequestTable />
+            </>
+            )}
+            {activeSection === 'GraphLink' && (
+            <>
+              <h1>GraphLink</h1>
+                     <GraphLinkTable />
+            </>
+            )}
+            {activeSection === 'GrayMatter' && (
+            <>
+              <h1>GrayMatter</h1>
+                     <GrayMatterTable />
+            </>
+            )}
+            {activeSection === 'HostInstance' && (
+            <>
+              <h1>HostInstance</h1>
+                     <HostInstanceTable />
+            </>
+            )}
+            {activeSection === 'HydrationPointer' && (
+            <>
+              <h1>HydrationPointer</h1>
+                     <HydrationPointerTable />
+            </>
+            )}
+            {activeSection === 'IdempotencyKey' && (
+            <>
+              <h1>IdempotencyKey</h1>
+                     <IdempotencyKeyTable />
+            </>
+            )}
+            {activeSection === 'InitUploadRequest' && (
+            <>
+              <h1>InitUploadRequest</h1>
+                     <InitUploadRequestTable />
+            </>
+            )}
+            {activeSection === 'InitUploadResponse' && (
+            <>
+              <h1>InitUploadResponse</h1>
+                     <InitUploadResponseTable />
+            </>
+            )}
+            {activeSection === 'InitiateTwoFactorRequest' && (
+            <>
+              <h1>InitiateTwoFactorRequest</h1>
+                     <InitiateTwoFactorRequestTable />
+            </>
+            )}
+            {activeSection === 'InitiateTwoFactorResponse' && (
+            <>
+              <h1>InitiateTwoFactorResponse</h1>
+                     <InitiateTwoFactorResponseTable />
+            </>
+            )}
+            {activeSection === 'IntegrationAccount' && (
+            <>
+              <h1>IntegrationAccount</h1>
+                     <IntegrationAccountTable />
+            </>
+            )}
+            {activeSection === 'Invoice' && (
+            <>
+              <h1>Invoice</h1>
+                     <InvoiceTable />
+            </>
+            )}
+            {activeSection === 'InvokeMcpToolRequest' && (
+            <>
+              <h1>InvokeMcpToolRequest</h1>
+                     <InvokeMcpToolRequestTable />
+            </>
+            )}
+            {activeSection === 'JobApplication' && (
+            <>
+              <h1>JobApplication</h1>
+                     <JobApplicationTable />
+            </>
+            )}
+            {activeSection === 'JobApplicationRequest' && (
+            <>
+              <h1>JobApplicationRequest</h1>
+                     <JobApplicationRequestTable />
+            </>
+            )}
+            {activeSection === 'JobApplicationResponse' && (
+            <>
+              <h1>JobApplicationResponse</h1>
+                     <JobApplicationResponseTable />
+            </>
+            )}
+            {activeSection === 'JobMetadata' && (
+            <>
+              <h1>JobMetadata</h1>
+                     <JobMetadataTable />
+            </>
+            )}
+            {activeSection === 'JobSeeker' && (
+            <>
+              <h1>JobSeeker</h1>
+                     <JobSeekerTable />
+            </>
+            )}
+            {activeSection === 'KeyMetric' && (
+            <>
+              <h1>KeyMetric</h1>
+                     <KeyMetricTable />
+            </>
+            )}
+            {activeSection === 'LeaseTrustSecretRequest' && (
+            <>
+              <h1>LeaseTrustSecretRequest</h1>
+                     <LeaseTrustSecretRequestTable />
+            </>
+            )}
+            {activeSection === 'LeaseTrustSecretResponse' && (
+            <>
+              <h1>LeaseTrustSecretResponse</h1>
+                     <LeaseTrustSecretResponseTable />
+            </>
+            )}
+            {activeSection === 'LineItem' && (
+            <>
+              <h1>LineItem</h1>
+                     <LineItemTable />
+            </>
+            )}
+            {activeSection === 'ListDeployableApplications200ResponseInner' && (
+            <>
+              <h1>ListDeployableApplications200ResponseInner</h1>
+                     <ListDeployableApplications200ResponseInnerTable />
+            </>
+            )}
+            {activeSection === 'LlmCommand' && (
+            <>
+              <h1>LlmCommand</h1>
+                     <LlmCommandTable />
+            </>
+            )}
+            {activeSection === 'LlmCommandResult' && (
+            <>
+              <h1>LlmCommandResult</h1>
+                     <LlmCommandResultTable />
+            </>
+            )}
+            {activeSection === 'LlmDetails' && (
+            <>
+              <h1>LlmDetails</h1>
+                     <LlmDetailsTable />
+            </>
+            )}
+            {activeSection === 'LlmRoutingPolicy' && (
+            <>
+              <h1>LlmRoutingPolicy</h1>
+                     <LlmRoutingPolicyTable />
+            </>
+            )}
+            {activeSection === 'Login' && (
+            <>
+              <h1>Login</h1>
+                     <LoginTable />
+            </>
+            )}
+            {activeSection === 'LoginAudit' && (
+            <>
+              <h1>LoginAudit</h1>
+                     <LoginAuditTable />
+            </>
+            )}
+            {activeSection === 'LoginRequest' && (
+            <>
+              <h1>LoginRequest</h1>
+                     <LoginRequestTable />
+            </>
+            )}
+            {activeSection === 'LoginResponse' && (
+            <>
+              <h1>LoginResponse</h1>
+                     <LoginResponseTable />
+            </>
+            )}
+            {activeSection === 'Logout' && (
+            <>
+              <h1>Logout</h1>
+                     <LogoutTable />
+            </>
+            )}
+            {activeSection === 'ManagedMcpService' && (
+            <>
+              <h1>ManagedMcpService</h1>
+                     <ManagedMcpServiceTable />
+            </>
+            )}
+            {activeSection === 'Mcp' && (
+            <>
+              <h1>Mcp</h1>
+                     <McpTable />
+            </>
+            )}
+            {activeSection === 'McpDownloadResponse' && (
+            <>
+              <h1>McpDownloadResponse</h1>
+                     <McpDownloadResponseTable />
+            </>
+            )}
+            {activeSection === 'McpMarketplaceCatalog' && (
+            <>
+              <h1>McpMarketplaceCatalog</h1>
+                     <McpMarketplaceCatalogTable />
+            </>
+            )}
+            {activeSection === 'McpMarketplaceItem' && (
+            <>
+              <h1>McpMarketplaceItem</h1>
+                     <McpMarketplaceItemTable />
+            </>
+            )}
+            {activeSection === 'McpMarketplaceItemTag' && (
+            <>
+              <h1>McpMarketplaceItemTag</h1>
+                     <McpMarketplaceItemTagTable />
+            </>
+            )}
+            {activeSection === 'McpResource' && (
+            <>
+              <h1>McpResource</h1>
+                     <McpResourceTable />
+            </>
+            )}
+            {activeSection === 'McpResourceResponse' && (
+            <>
+              <h1>McpResourceResponse</h1>
+                     <McpResourceResponseTable />
+            </>
+            )}
+            {activeSection === 'McpResourceTemplate' && (
+            <>
+              <h1>McpResourceTemplate</h1>
+                     <McpResourceTemplateTable />
+            </>
+            )}
+            {activeSection === 'McpResponsePart' && (
+            <>
+              <h1>McpResponsePart</h1>
+                     <McpResponsePartTable />
+            </>
+            )}
+            {activeSection === 'McpServer' && (
+            <>
+              <h1>McpServer</h1>
+                     <McpServerTable />
+            </>
+            )}
+            {activeSection === 'McpServiceContractsResponse' && (
+            <>
+              <h1>McpServiceContractsResponse</h1>
+                     <McpServiceContractsResponseTable />
+            </>
+            )}
+            {activeSection === 'McpServiceRegistry' && (
+            <>
+              <h1>McpServiceRegistry</h1>
+                     <McpServiceRegistryTable />
+            </>
+            )}
+            {activeSection === 'McpServiceResponse' && (
+            <>
+              <h1>McpServiceResponse</h1>
+                     <McpServiceResponseTable />
+            </>
+            )}
+            {activeSection === 'McpTool' && (
+            <>
+              <h1>McpTool</h1>
+                     <McpToolTable />
+            </>
+            )}
+            {activeSection === 'McpToolCallResponse' && (
+            <>
+              <h1>McpToolCallResponse</h1>
+                     <McpToolCallResponseTable />
+            </>
+            )}
+            {activeSection === 'McpToolPreset' && (
+            <>
+              <h1>McpToolPreset</h1>
+                     <McpToolPresetTable />
+            </>
+            )}
+            {activeSection === 'McpTransportConfig' && (
+            <>
+              <h1>McpTransportConfig</h1>
+                     <McpTransportConfigTable />
+            </>
+            )}
+            {activeSection === 'MediaObject' && (
+            <>
+              <h1>MediaObject</h1>
+                     <MediaObjectTable />
+            </>
+            )}
+            {activeSection === 'MemoryActionRequest' && (
+            <>
+              <h1>MemoryActionRequest</h1>
+                     <MemoryActionRequestTable />
+            </>
+            )}
+            {activeSection === 'MemoryActionResponse' && (
+            <>
+              <h1>MemoryActionResponse</h1>
+                     <MemoryActionResponseTable />
+            </>
+            )}
+            {activeSection === 'MemoryContextStats' && (
+            <>
+              <h1>MemoryContextStats</h1>
+                     <MemoryContextStatsTable />
+            </>
+            )}
+            {activeSection === 'MemoryCostStats' && (
+            <>
+              <h1>MemoryCostStats</h1>
+                     <MemoryCostStatsTable />
+            </>
+            )}
+            {activeSection === 'MemoryEntry' && (
+            <>
+              <h1>MemoryEntry</h1>
+                     <MemoryEntryTable />
+            </>
+            )}
+            {activeSection === 'MemoryHitStats' && (
+            <>
+              <h1>MemoryHitStats</h1>
+                     <MemoryHitStatsTable />
+            </>
+            )}
+            {activeSection === 'MemoryRecommendation' && (
+            <>
+              <h1>MemoryRecommendation</h1>
+                     <MemoryRecommendationTable />
+            </>
+            )}
+            {activeSection === 'MemoryRetentionPolicy' && (
+            <>
+              <h1>MemoryRetentionPolicy</h1>
+                     <MemoryRetentionPolicyTable />
+            </>
+            )}
+            {activeSection === 'MemoryRunRecord' && (
+            <>
+              <h1>MemoryRunRecord</h1>
+                     <MemoryRunRecordTable />
+            </>
+            )}
+            {activeSection === 'MemoryStats' && (
+            <>
+              <h1>MemoryStats</h1>
+                     <MemoryStatsTable />
+            </>
+            )}
+            {activeSection === 'MergeRange' && (
+            <>
+              <h1>MergeRange</h1>
+                     <MergeRangeTable />
+            </>
+            )}
+            {activeSection === 'Metrics' && (
+            <>
+              <h1>Metrics</h1>
+                     <MetricsTable />
+            </>
+            )}
+            {activeSection === 'NamedRange' && (
+            <>
+              <h1>NamedRange</h1>
+                     <NamedRangeTable />
+            </>
+            )}
+            {activeSection === 'Note' && (
+            <>
+              <h1>Note</h1>
+                     <NoteTable />
+            </>
+            )}
+            {activeSection === 'OasComponent' && (
+            <>
+              <h1>OasComponent</h1>
+                     <OasComponentTable />
+            </>
+            )}
+            {activeSection === 'OasEnum' && (
+            <>
+              <h1>OasEnum</h1>
+                     <OasEnumTable />
+            </>
+            )}
+            {activeSection === 'OasInfo' && (
+            <>
+              <h1>OasInfo</h1>
+                     <OasInfoTable />
+            </>
+            )}
+            {activeSection === 'OasObjectSchema' && (
+            <>
+              <h1>OasObjectSchema</h1>
+                     <OasObjectSchemaTable />
+            </>
+            )}
+            {activeSection === 'OasOpenAPISpec' && (
+            <>
+              <h1>OasOpenAPISpec</h1>
+                     <OasOpenAPISpecTable />
+            </>
+            )}
+            {activeSection === 'OasOperation' && (
+            <>
+              <h1>OasOperation</h1>
+                     <OasOperationTable />
+            </>
+            )}
+            {activeSection === 'OasParameter' && (
+            <>
+              <h1>OasParameter</h1>
+                     <OasParameterTable />
+            </>
+            )}
+            {activeSection === 'OasPath' && (
+            <>
+              <h1>OasPath</h1>
+                     <OasPathTable />
+            </>
+            )}
+            {activeSection === 'OasRequired' && (
+            <>
+              <h1>OasRequired</h1>
+                     <OasRequiredTable />
+            </>
+            )}
+            {activeSection === 'OasResponse' && (
+            <>
+              <h1>OasResponse</h1>
+                     <OasResponseTable />
+            </>
+            )}
+            {activeSection === 'OasSecurityScheme' && (
+            <>
+              <h1>OasSecurityScheme</h1>
+                     <OasSecuritySchemeTable />
+            </>
+            )}
+            {activeSection === 'OasServer' && (
+            <>
+              <h1>OasServer</h1>
+                     <OasServerTable />
+            </>
+            )}
+            {activeSection === 'OpenClawLightsailLaunchEstimate' && (
+            <>
+              <h1>OpenClawLightsailLaunchEstimate</h1>
+                     <OpenClawLightsailLaunchEstimateTable />
+            </>
+            )}
+            {activeSection === 'OpenClawLightsailLaunchRequest' && (
+            <>
+              <h1>OpenClawLightsailLaunchRequest</h1>
+                     <OpenClawLightsailLaunchRequestTable />
+            </>
+            )}
+            {activeSection === 'OpenClawLightsailLaunchResponse' && (
+            <>
+              <h1>OpenClawLightsailLaunchResponse</h1>
+                     <OpenClawLightsailLaunchResponseTable />
+            </>
+            )}
+            {activeSection === 'OpenClawLightsailProvisioningEvent' && (
+            <>
+              <h1>OpenClawLightsailProvisioningEvent</h1>
+                     <OpenClawLightsailProvisioningEventTable />
+            </>
+            )}
+            {activeSection === 'Opportunity' && (
+            <>
+              <h1>Opportunity</h1>
+                     <OpportunityTable />
+            </>
+            )}
+            {activeSection === 'OrderFulfillmentTask' && (
+            <>
+              <h1>OrderFulfillmentTask</h1>
+                     <OrderFulfillmentTaskTable />
+            </>
+            )}
+            {activeSection === 'Organization' && (
+            <>
+              <h1>Organization</h1>
+                     <OrganizationTable />
+            </>
+            )}
+            {activeSection === 'OrganizationAddonSubscription' && (
+            <>
+              <h1>OrganizationAddonSubscription</h1>
+                     <OrganizationAddonSubscriptionTable />
+            </>
+            )}
+            {activeSection === 'PasswordResetToken' && (
+            <>
+              <h1>PasswordResetToken</h1>
+                     <PasswordResetTokenTable />
+            </>
+            )}
+            {activeSection === 'PaymentTransaction' && (
+            <>
+              <h1>PaymentTransaction</h1>
+                     <PaymentTransactionTable />
+            </>
+            )}
+            {activeSection === 'PaymentType' && (
+            <>
+              <h1>PaymentType</h1>
+                     <PaymentTypeTable />
+            </>
+            )}
+            {activeSection === 'PersistentLogin' && (
+            <>
+              <h1>PersistentLogin</h1>
+                     <PersistentLoginTable />
+            </>
+            )}
+            {activeSection === 'PhoneVerification' && (
+            <>
+              <h1>PhoneVerification</h1>
+                     <PhoneVerificationTable />
+            </>
+            )}
+            {activeSection === 'PhoneVerificationRequest' && (
+            <>
+              <h1>PhoneVerificationRequest</h1>
+                     <PhoneVerificationRequestTable />
+            </>
+            )}
+            {activeSection === 'PhoneVerificationResponse' && (
+            <>
+              <h1>PhoneVerificationResponse</h1>
+                     <PhoneVerificationResponseTable />
+            </>
+            )}
+            {activeSection === 'PivotTable' && (
+            <>
+              <h1>PivotTable</h1>
+                     <PivotTableTable />
+            </>
+            )}
+            {activeSection === 'PresignRequest' && (
+            <>
+              <h1>PresignRequest</h1>
+                     <PresignRequestTable />
+            </>
+            )}
+            {activeSection === 'PresignResponse' && (
+            <>
+              <h1>PresignResponse</h1>
+                     <PresignResponseTable />
+            </>
+            )}
+            {activeSection === 'Principal' && (
+            <>
+              <h1>Principal</h1>
+                     <PrincipalTable />
+            </>
+            )}
+            {activeSection === 'Procedure' && (
+            <>
+              <h1>Procedure</h1>
+                     <ProcedureTable />
+            </>
+            )}
+            {activeSection === 'Product' && (
+            <>
+              <h1>Product</h1>
+                     <ProductTable />
+            </>
+            )}
+            {activeSection === 'ProductDeliveryConfig' && (
+            <>
+              <h1>ProductDeliveryConfig</h1>
+                     <ProductDeliveryConfigTable />
+            </>
+            )}
+            {activeSection === 'ProductFeature' && (
+            <>
+              <h1>ProductFeature</h1>
+                     <ProductFeatureTable />
+            </>
+            )}
+            {activeSection === 'ProductFunnelWizard' && (
+            <>
+              <h1>ProductFunnelWizard</h1>
+                     <ProductFunnelWizardTable />
+            </>
+            )}
+            {activeSection === 'ProductLandingPage' && (
+            <>
+              <h1>ProductLandingPage</h1>
+                     <ProductLandingPageTable />
+            </>
+            )}
+            {activeSection === 'Project' && (
+            <>
+              <h1>Project</h1>
+                     <ProjectTable />
+            </>
+            )}
+            {activeSection === 'ProjectObjectLink' && (
+            <>
+              <h1>ProjectObjectLink</h1>
+                     <ProjectObjectLinkTable />
+            </>
+            )}
+            {activeSection === 'Ptg' && (
+            <>
+              <h1>Ptg</h1>
+                     <PtgTable />
+            </>
+            )}
+            {activeSection === 'PtgRef' && (
+            <>
+              <h1>PtgRef</h1>
+                     <PtgRefTable />
+            </>
+            )}
+            {activeSection === 'PublishFunnel200Response' && (
+            <>
+              <h1>PublishFunnel200Response</h1>
+                     <PublishFunnel200ResponseTable />
+            </>
+            )}
+            {activeSection === 'PublishMcpToolRequest' && (
+            <>
+              <h1>PublishMcpToolRequest</h1>
+                     <PublishMcpToolRequestTable />
+            </>
+            )}
+            {activeSection === 'PublishMcpToolResponse' && (
+            <>
+              <h1>PublishMcpToolResponse</h1>
+                     <PublishMcpToolResponseTable />
+            </>
+            )}
+            {activeSection === 'PublishRestEndpointRequest' && (
+            <>
+              <h1>PublishRestEndpointRequest</h1>
+                     <PublishRestEndpointRequestTable />
+            </>
+            )}
+            {activeSection === 'PublishWorkflowRequest' && (
+            <>
+              <h1>PublishWorkflowRequest</h1>
+                     <PublishWorkflowRequestTable />
+            </>
+            )}
+            {activeSection === 'Quota' && (
+            <>
+              <h1>Quota</h1>
+                     <QuotaTable />
+            </>
+            )}
+            {activeSection === 'Rating' && (
+            <>
+              <h1>Rating</h1>
+                     <RatingTable />
+            </>
+            )}
+            {activeSection === 'Reaction' && (
+            <>
+              <h1>Reaction</h1>
+                     <ReactionTable />
+            </>
+            )}
+            {activeSection === 'ReferralLink' && (
+            <>
+              <h1>ReferralLink</h1>
+                     <ReferralLinkTable />
+            </>
+            )}
+            {activeSection === 'RefundRecord' && (
+            <>
+              <h1>RefundRecord</h1>
+                     <RefundRecordTable />
+            </>
+            )}
+            {activeSection === 'RegisterTrustPolicyRequest' && (
+            <>
+              <h1>RegisterTrustPolicyRequest</h1>
+                     <RegisterTrustPolicyRequestTable />
+            </>
+            )}
+            {activeSection === 'RegisterTrustPolicyResponse' && (
+            <>
+              <h1>RegisterTrustPolicyResponse</h1>
+                     <RegisterTrustPolicyResponseTable />
+            </>
+            )}
+            {activeSection === 'RequestPasswordResetRequest' && (
+            <>
+              <h1>RequestPasswordResetRequest</h1>
+                     <RequestPasswordResetRequestTable />
+            </>
+            )}
+            {activeSection === 'RequestPasswordResetResponse' && (
+            <>
+              <h1>RequestPasswordResetResponse</h1>
+                     <RequestPasswordResetResponseTable />
+            </>
+            )}
+            {activeSection === 'RequeueDeadLetterEntryRequest' && (
+            <>
+              <h1>RequeueDeadLetterEntryRequest</h1>
+                     <RequeueDeadLetterEntryRequestTable />
+            </>
+            )}
+            {activeSection === 'RequeueDeadLetterEntryResponse' && (
+            <>
+              <h1>RequeueDeadLetterEntryResponse</h1>
+                     <RequeueDeadLetterEntryResponseTable />
+            </>
+            )}
+            {activeSection === 'RetrievalCoverage' && (
+            <>
+              <h1>RetrievalCoverage</h1>
+                     <RetrievalCoverageTable />
+            </>
+            )}
+            {activeSection === 'RetrievalEvaluatorResult' && (
+            <>
+              <h1>RetrievalEvaluatorResult</h1>
+                     <RetrievalEvaluatorResultTable />
+            </>
+            )}
+            {activeSection === 'RetrievalPolicyDecision' && (
+            <>
+              <h1>RetrievalPolicyDecision</h1>
+                     <RetrievalPolicyDecisionTable />
+            </>
+            )}
+            {activeSection === 'RetrievalProvenance' && (
+            <>
+              <h1>RetrievalProvenance</h1>
+                     <RetrievalProvenanceTable />
+            </>
+            )}
+            {activeSection === 'RetrievalQualityScore' && (
+            <>
+              <h1>RetrievalQualityScore</h1>
+                     <RetrievalQualityScoreTable />
+            </>
+            )}
+            {activeSection === 'RetrievalReceipt' && (
+            <>
+              <h1>RetrievalReceipt</h1>
+                     <RetrievalReceiptTable />
+            </>
+            )}
+            {activeSection === 'RetrievalReceiptItem' && (
+            <>
+              <h1>RetrievalReceiptItem</h1>
+                     <RetrievalReceiptItemTable />
+            </>
+            )}
+            {activeSection === 'RetrievalReceiptRequest' && (
+            <>
+              <h1>RetrievalReceiptRequest</h1>
+                     <RetrievalReceiptRequestTable />
+            </>
+            )}
+            {activeSection === 'RetrievalReceiptResponse' && (
+            <>
+              <h1>RetrievalReceiptResponse</h1>
+                     <RetrievalReceiptResponseTable />
+            </>
+            )}
+            {activeSection === 'RetrievalRetryRequest' && (
+            <>
+              <h1>RetrievalRetryRequest</h1>
+                     <RetrievalRetryRequestTable />
+            </>
+            )}
+            {activeSection === 'RetryPolicy' && (
+            <>
+              <h1>RetryPolicy</h1>
+                     <RetryPolicyTable />
+            </>
+            )}
+            {activeSection === 'RewrapTrustKeyRequest' && (
+            <>
+              <h1>RewrapTrustKeyRequest</h1>
+                     <RewrapTrustKeyRequestTable />
+            </>
+            )}
+            {activeSection === 'RewrapTrustKeyResponse' && (
+            <>
+              <h1>RewrapTrustKeyResponse</h1>
+                     <RewrapTrustKeyResponseTable />
+            </>
+            )}
+            {activeSection === 'Role' && (
+            <>
+              <h1>Role</h1>
+                     <RoleTable />
+            </>
+            )}
+            {activeSection === 'RotateTrustKeyRequest' && (
+            <>
+              <h1>RotateTrustKeyRequest</h1>
+                     <RotateTrustKeyRequestTable />
+            </>
+            )}
+            {activeSection === 'RotateTrustKeyResponse' && (
+            <>
+              <h1>RotateTrustKeyResponse</h1>
+                     <RotateTrustKeyResponseTable />
+            </>
+            )}
+            {activeSection === 'Run' && (
+            <>
+              <h1>Run</h1>
+                     <RunTable />
+            </>
+            )}
+            {activeSection === 'SalesActivity' && (
+            <>
+              <h1>SalesActivity</h1>
+                     <SalesActivityTable />
+            </>
+            )}
+            {activeSection === 'SalesOrder' && (
+            <>
+              <h1>SalesOrder</h1>
+                     <SalesOrderTable />
+            </>
+            )}
+            {activeSection === 'SalesPipeline' && (
+            <>
+              <h1>SalesPipeline</h1>
+                     <SalesPipelineTable />
+            </>
+            )}
+            {activeSection === 'ScanBuildArtifacts200Response' && (
+            <>
+              <h1>ScanBuildArtifacts200Response</h1>
+                     <ScanBuildArtifacts200ResponseTable />
+            </>
+            )}
+            {activeSection === 'ScanBuildArtifactsRequest' && (
+            <>
+              <h1>ScanBuildArtifactsRequest</h1>
+                     <ScanBuildArtifactsRequestTable />
+            </>
+            )}
+            {activeSection === 'SecureKey' && (
+            <>
+              <h1>SecureKey</h1>
+                     <SecureKeyTable />
+            </>
+            )}
+            {activeSection === 'SemanticIndexEntry' && (
+            <>
+              <h1>SemanticIndexEntry</h1>
+                     <SemanticIndexEntryTable />
+            </>
+            )}
+            {activeSection === 'ServiceInvocationEvent' && (
+            <>
+              <h1>ServiceInvocationEvent</h1>
+                     <ServiceInvocationEventTable />
+            </>
+            )}
+            {activeSection === 'ServiceSubscription' && (
+            <>
+              <h1>ServiceSubscription</h1>
+                     <ServiceSubscriptionTable />
+            </>
+            )}
+            {activeSection === 'Sheet' && (
+            <>
+              <h1>Sheet</h1>
+                     <SheetTable />
+            </>
+            )}
+            {activeSection === 'SheetColumn' && (
+            <>
+              <h1>SheetColumn</h1>
+                     <SheetColumnTable />
+            </>
+            )}
+            {activeSection === 'SheetRow' && (
+            <>
+              <h1>SheetRow</h1>
+                     <SheetRowTable />
+            </>
+            )}
+            {activeSection === 'SkillOptRouteOutcomeRequest' && (
+            <>
+              <h1>SkillOptRouteOutcomeRequest</h1>
+                     <SkillOptRouteOutcomeRequestTable />
+            </>
+            )}
+            {activeSection === 'SkillOptRouteReceipt' && (
+            <>
+              <h1>SkillOptRouteReceipt</h1>
+                     <SkillOptRouteReceiptTable />
+            </>
+            )}
+            {activeSection === 'SkillOptRouteRequest' && (
+            <>
+              <h1>SkillOptRouteRequest</h1>
+                     <SkillOptRouteRequestTable />
+            </>
+            )}
+            {activeSection === 'SkillOptRouteResponse' && (
+            <>
+              <h1>SkillOptRouteResponse</h1>
+                     <SkillOptRouteResponseTable />
+            </>
+            )}
+            {activeSection === 'SkillProfile' && (
+            <>
+              <h1>SkillProfile</h1>
+                     <SkillProfileTable />
+            </>
+            )}
+            {activeSection === 'SkillSignal' && (
+            <>
+              <h1>SkillSignal</h1>
+                     <SkillSignalTable />
+            </>
+            )}
+            {activeSection === 'Solution' && (
+            <>
+              <h1>Solution</h1>
+                     <SolutionTable />
+            </>
+            )}
+            {activeSection === 'Space' && (
+            <>
+              <h1>Space</h1>
+                     <SpaceTable />
+            </>
+            )}
+            {activeSection === 'SpaceFile' && (
+            <>
+              <h1>SpaceFile</h1>
+                     <SpaceFileTable />
+            </>
+            )}
+            {activeSection === 'SpaceMember' && (
+            <>
+              <h1>SpaceMember</h1>
+                     <SpaceMemberTable />
+            </>
+            )}
+            {activeSection === 'Stack' && (
+            <>
+              <h1>Stack</h1>
+                     <StackTable />
+            </>
+            )}
+            {activeSection === 'StartTrustExecutionRequest' && (
+            <>
+              <h1>StartTrustExecutionRequest</h1>
+                     <StartTrustExecutionRequestTable />
+            </>
+            )}
+            {activeSection === 'StartTrustExecutionResponse' && (
+            <>
+              <h1>StartTrustExecutionResponse</h1>
+                     <StartTrustExecutionResponseTable />
+            </>
+            )}
+            {activeSection === 'StrategicPriority' && (
+            <>
+              <h1>StrategicPriority</h1>
+                     <StrategicPriorityTable />
+            </>
+            )}
+            {activeSection === 'StripeCheckoutSession' && (
+            <>
+              <h1>StripeCheckoutSession</h1>
+                     <StripeCheckoutSessionTable />
+            </>
+            )}
+            {activeSection === 'StripeCustomerLink' && (
+            <>
+              <h1>StripeCustomerLink</h1>
+                     <StripeCustomerLinkTable />
+            </>
+            )}
+            {activeSection === 'StripeSubscription' && (
+            <>
+              <h1>StripeSubscription</h1>
+                     <StripeSubscriptionTable />
+            </>
+            )}
+            {activeSection === 'StripeWebhookEvent' && (
+            <>
+              <h1>StripeWebhookEvent</h1>
+                     <StripeWebhookEventTable />
+            </>
+            )}
+            {activeSection === 'SubmitTrustAttestationEvidenceRequest' && (
+            <>
+              <h1>SubmitTrustAttestationEvidenceRequest</h1>
+                     <SubmitTrustAttestationEvidenceRequestTable />
+            </>
+            )}
+            {activeSection === 'SubmitTrustAttestationEvidenceResponse' && (
+            <>
+              <h1>SubmitTrustAttestationEvidenceResponse</h1>
+                     <SubmitTrustAttestationEvidenceResponseTable />
+            </>
+            )}
+            {activeSection === 'SubscriberList' && (
+            <>
+              <h1>SubscriberList</h1>
+                     <SubscriberListTable />
+            </>
+            )}
+            {activeSection === 'SubscriptionPlan' && (
+            <>
+              <h1>SubscriptionPlan</h1>
+                     <SubscriptionPlanTable />
+            </>
+            )}
+            {activeSection === 'SupportTicket' && (
+            <>
+              <h1>SupportTicket</h1>
+                     <SupportTicketTable />
+            </>
+            )}
+            {activeSection === 'Swarm' && (
+            <>
+              <h1>Swarm</h1>
+                     <SwarmTable />
+            </>
+            )}
+            {activeSection === 'SwarmAgentSummary' && (
+            <>
+              <h1>SwarmAgentSummary</h1>
+                     <SwarmAgentSummaryTable />
+            </>
+            )}
+            {activeSection === 'SwarmCommandRequest' && (
+            <>
+              <h1>SwarmCommandRequest</h1>
+                     <SwarmCommandRequestTable />
+            </>
+            )}
+            {activeSection === 'SwarmCommandResponse' && (
+            <>
+              <h1>SwarmCommandResponse</h1>
+                     <SwarmCommandResponseTable />
+            </>
+            )}
+            {activeSection === 'SwarmGraphEdge' && (
+            <>
+              <h1>SwarmGraphEdge</h1>
+                     <SwarmGraphEdgeTable />
+            </>
+            )}
+            {activeSection === 'SwarmGraphNode' && (
+            <>
+              <h1>SwarmGraphNode</h1>
+                     <SwarmGraphNodeTable />
+            </>
+            )}
+            {activeSection === 'SwarmGraphSnapshot' && (
+            <>
+              <h1>SwarmGraphSnapshot</h1>
+                     <SwarmGraphSnapshotTable />
+            </>
+            )}
+            {activeSection === 'SwarmMessage' && (
+            <>
+              <h1>SwarmMessage</h1>
+                     <SwarmMessageTable />
+            </>
+            )}
+            {activeSection === 'SwarmPayload' && (
+            <>
+              <h1>SwarmPayload</h1>
+                     <SwarmPayloadTable />
+            </>
+            )}
+            {activeSection === 'SwarmRegisterRequest' && (
+            <>
+              <h1>SwarmRegisterRequest</h1>
+                     <SwarmRegisterRequestTable />
+            </>
+            )}
+            {activeSection === 'SwarmRegisterResponse' && (
+            <>
+              <h1>SwarmRegisterResponse</h1>
+                     <SwarmRegisterResponseTable />
+            </>
+            )}
+            {activeSection === 'SwarmSecurity' && (
+            <>
+              <h1>SwarmSecurity</h1>
+                     <SwarmSecurityTable />
+            </>
+            )}
+            {activeSection === 'SwarmUnregisterRequest' && (
+            <>
+              <h1>SwarmUnregisterRequest</h1>
+                     <SwarmUnregisterRequestTable />
+            </>
+            )}
+            {activeSection === 'SwarmUnregisterResponse' && (
+            <>
+              <h1>SwarmUnregisterResponse</h1>
+                     <SwarmUnregisterResponseTable />
+            </>
+            )}
+            {activeSection === 'Tag' && (
+            <>
+              <h1>Tag</h1>
+                     <TagTable />
+            </>
+            )}
+            {activeSection === 'Task' && (
+            <>
+              <h1>Task</h1>
+                     <TaskTable />
+            </>
+            )}
+            {activeSection === 'ThorApiGenerationRun' && (
+            <>
+              <h1>ThorApiGenerationRun</h1>
+                     <ThorApiGenerationRunTable />
+            </>
+            )}
+            {activeSection === 'ThorApiSpecRevision' && (
+            <>
+              <h1>ThorApiSpecRevision</h1>
+                     <ThorApiSpecRevisionTable />
+            </>
+            )}
+            {activeSection === 'ThorapiRule' && (
+            <>
+              <h1>ThorapiRule</h1>
+                     <ThorapiRuleTable />
+            </>
+            )}
+            {activeSection === 'TicketComment' && (
+            <>
+              <h1>TicketComment</h1>
+                     <TicketCommentTable />
+            </>
+            )}
+            {activeSection === 'Trust' && (
+            <>
+              <h1>Trust</h1>
+                     <TrustTable />
+            </>
+            )}
+            {activeSection === 'TrustAttestationEvidence' && (
+            <>
+              <h1>TrustAttestationEvidence</h1>
+                     <TrustAttestationEvidenceTable />
+            </>
+            )}
+            {activeSection === 'TrustKey' && (
+            <>
+              <h1>TrustKey</h1>
+                     <TrustKeyTable />
+            </>
+            )}
+            {activeSection === 'TrustKeyProvider' && (
+            <>
+              <h1>TrustKeyProvider</h1>
+                     <TrustKeyProviderTable />
+            </>
+            )}
+            {activeSection === 'TrustKeyRotation' && (
+            <>
+              <h1>TrustKeyRotation</h1>
+                     <TrustKeyRotationTable />
+            </>
+            )}
+            {activeSection === 'TrustKeyVersion' && (
+            <>
+              <h1>TrustKeyVersion</h1>
+                     <TrustKeyVersionTable />
+            </>
+            )}
+            {activeSection === 'TrustMerkleBatch' && (
+            <>
+              <h1>TrustMerkleBatch</h1>
+                     <TrustMerkleBatchTable />
+            </>
+            )}
+            {activeSection === 'TrustObjectKeyEnvelope' && (
+            <>
+              <h1>TrustObjectKeyEnvelope</h1>
+                     <TrustObjectKeyEnvelopeTable />
+            </>
+            )}
+            {activeSection === 'TrustPolicyBinding' && (
+            <>
+              <h1>TrustPolicyBinding</h1>
+                     <TrustPolicyBindingTable />
+            </>
+            )}
+            {activeSection === 'TrustPolicyManifest' && (
+            <>
+              <h1>TrustPolicyManifest</h1>
+                     <TrustPolicyManifestTable />
+            </>
+            )}
+            {activeSection === 'TrustProof' && (
+            <>
+              <h1>TrustProof</h1>
+                     <TrustProofTable />
+            </>
+            )}
+            {activeSection === 'TrustRuntimeEvent' && (
+            <>
+              <h1>TrustRuntimeEvent</h1>
+                     <TrustRuntimeEventTable />
+            </>
+            )}
+            {activeSection === 'TrustRuntimeExecution' && (
+            <>
+              <h1>TrustRuntimeExecution</h1>
+                     <TrustRuntimeExecutionTable />
+            </>
+            )}
+            {activeSection === 'TrustSecretAccessEvent' && (
+            <>
+              <h1>TrustSecretAccessEvent</h1>
+                     <TrustSecretAccessEventTable />
+            </>
+            )}
+            {activeSection === 'TrustSecretLease' && (
+            <>
+              <h1>TrustSecretLease</h1>
+                     <TrustSecretLeaseTable />
+            </>
+            )}
+            {activeSection === 'TrustVerificationResult' && (
+            <>
+              <h1>TrustVerificationResult</h1>
+                     <TrustVerificationResultTable />
+            </>
+            )}
+            {activeSection === 'TwoFactorSecret' && (
+            <>
+              <h1>TwoFactorSecret</h1>
+                     <TwoFactorSecretTable />
+            </>
+            )}
+            {activeSection === 'UpdateFileRequest' && (
+            <>
+              <h1>UpdateFileRequest</h1>
+                     <UpdateFileRequestTable />
+            </>
+            )}
+            {activeSection === 'UsageTransaction' && (
+            <>
+              <h1>UsageTransaction</h1>
+                     <UsageTransactionTable />
+            </>
+            )}
+            {activeSection === 'UserPreference' && (
+            <>
+              <h1>UserPreference</h1>
+                     <UserPreferenceTable />
+            </>
+            )}
+            {activeSection === 'ValidateDeploymentSpec200Response' && (
+            <>
+              <h1>ValidateDeploymentSpec200Response</h1>
+                     <ValidateDeploymentSpec200ResponseTable />
+            </>
+            )}
+            {activeSection === 'VerifyPhoneOTPRequest' && (
+            <>
+              <h1>VerifyPhoneOTPRequest</h1>
+                     <VerifyPhoneOTPRequestTable />
+            </>
+            )}
+            {activeSection === 'VerifyTrustProofRequest' && (
+            <>
+              <h1>VerifyTrustProofRequest</h1>
+                     <VerifyTrustProofRequestTable />
+            </>
+            )}
+            {activeSection === 'VerifyTrustProofResponse' && (
+            <>
+              <h1>VerifyTrustProofResponse</h1>
+                     <VerifyTrustProofResponseTable />
+            </>
+            )}
+            {activeSection === 'VerifyTwoFactorRequest' && (
+            <>
+              <h1>VerifyTwoFactorRequest</h1>
+                     <VerifyTwoFactorRequestTable />
+            </>
+            )}
+            {activeSection === 'VerifyTwoFactorResponse' && (
+            <>
+              <h1>VerifyTwoFactorResponse</h1>
+                     <VerifyTwoFactorResponseTable />
+            </>
+            )}
+            {activeSection === 'WebsocketMessage' && (
+            <>
+              <h1>WebsocketMessage</h1>
+                     <WebsocketMessageTable />
+            </>
+            )}
+            {activeSection === 'WebsocketSession' && (
+            <>
+              <h1>WebsocketSession</h1>
+                     <WebsocketSessionTable />
+            </>
+            )}
+            {activeSection === 'WizardStartResponse' && (
+            <>
+              <h1>WizardStartResponse</h1>
+                     <WizardStartResponseTable />
+            </>
+            )}
+            {activeSection === 'WizardStatusResponse' && (
+            <>
+              <h1>WizardStatusResponse</h1>
+                     <WizardStatusResponseTable />
+            </>
+            )}
+            {activeSection === 'Workbook' && (
+            <>
+              <h1>Workbook</h1>
+                     <WorkbookTable />
+            </>
+            )}
+            {activeSection === 'Workflow' && (
+            <>
+              <h1>Workflow</h1>
+                     <WorkflowTable />
+            </>
+            )}
+            {activeSection === 'WorkflowExecution' && (
+            <>
+              <h1>WorkflowExecution</h1>
+                     <WorkflowExecutionTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphEdge' && (
+            <>
+              <h1>WorkflowGraphEdge</h1>
+                     <WorkflowGraphEdgeTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphEdgeConfig' && (
+            <>
+              <h1>WorkflowGraphEdgeConfig</h1>
+                     <WorkflowGraphEdgeConfigTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphEdgeConnectionMapping' && (
+            <>
+              <h1>WorkflowGraphEdgeConnectionMapping</h1>
+                     <WorkflowGraphEdgeConnectionMappingTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphModule' && (
+            <>
+              <h1>WorkflowGraphModule</h1>
+                     <WorkflowGraphModuleTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphModuleMapping' && (
+            <>
+              <h1>WorkflowGraphModuleMapping</h1>
+                     <WorkflowGraphModuleMappingTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphNode' && (
+            <>
+              <h1>WorkflowGraphNode</h1>
+                     <WorkflowGraphNodeTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphNodeTaskMapping' && (
+            <>
+              <h1>WorkflowGraphNodeTaskMapping</h1>
+                     <WorkflowGraphNodeTaskMappingTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphRequest' && (
+            <>
+              <h1>WorkflowGraphRequest</h1>
+                     <WorkflowGraphRequestTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphResponse' && (
+            <>
+              <h1>WorkflowGraphResponse</h1>
+                     <WorkflowGraphResponseTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphValidationError' && (
+            <>
+              <h1>WorkflowGraphValidationError</h1>
+                     <WorkflowGraphValidationErrorTable />
+            </>
+            )}
+            {activeSection === 'WorkflowGraphWorkflowData' && (
+            <>
+              <h1>WorkflowGraphWorkflowData</h1>
+                     <WorkflowGraphWorkflowDataTable />
+            </>
+            )}
+            {activeSection === 'WorkflowState' && (
+            <>
+              <h1>WorkflowState</h1>
+                     <WorkflowStateTable />
+            </>
+            )}
+            {activeSection === 'WorkforceSkill' && (
+            <>
+              <h1>WorkforceSkill</h1>
+                     <WorkforceSkillTable />
+            </>
+            )}
+            {activeSection === 'WorkforceTransitionRecord' && (
+            <>
+              <h1>WorkforceTransitionRecord</h1>
+                     <WorkforceTransitionRecordTable />
+            </>
+            )}
+
+            {!activeSection && (
+              <div style={ { opacity: 0.8, fontStyle: 'italic', padding: '1rem' } }>
+                Choose a model from the dropdown to display its table.
+              </div>
+            )}
+
+
+    
+
+
+        </Container>
+    );
 };
 
 export default DataWorkbook;

@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   CareerOpportunity,
   CareerOpportunityOpportunityTypeEnum,
   CareerOpportunityCommitmentEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddCareerOpportunityMutation } from "../../services/CareerOpportunityService";
+import { useAddCareerOpportunityMutation } from '../../services/CareerOpportunityService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,71 +64,65 @@ Job opportunity or consulting engagement at Valkyr Labs
 -------------------------------------------------------- */
 const OpportunityTypeValidation = () => {
   return [
-    "DIRECT_HIRE",
-    "CONSULTING_ENGAGEMENT",
-    "RESELLER_PARTNER",
-    "OPEN_SOURCE_CONTRIBUTOR",
+    'DIRECT_HIRE',
+    'CONSULTING_ENGAGEMENT',
+    'RESELLER_PARTNER',
+    'OPEN_SOURCE_CONTRIBUTOR',
   ];
 };
 const CommitmentValidation = () => {
-  return ["FULL_TIME", "PART_TIME", "CONTRACT", "HOURLY"];
+  return [
+    'FULL_TIME',
+    'PART_TIME',
+    'CONTRACT',
+    'HOURLY',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string(),
-  opportunityType: Yup.mixed().oneOf(
-    OpportunityTypeValidation(),
-    "Invalid value for opportunityType",
-  ),
-  description: Yup.string(),
-  requiredSkills: Yup.string(),
-  preferredSkills: Yup.string(),
-  experienceYearsMin: asNumber(
-    Yup.number().integer().typeError("experienceYearsMin must be a number"),
-  ),
-  experienceYearsMax: asNumber(
-    Yup.number().integer().typeError("experienceYearsMax must be a number"),
-  ),
-  commitment: Yup.mixed().oneOf(
-    CommitmentValidation(),
-    "Invalid value for commitment",
-  ),
-  isActive: Yup.boolean(),
-  createdDate: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("createdDate must be a valid date"),
-  updatedDate: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("updatedDate must be a valid date"),
-  trashed: Yup.boolean(),
+        title: Yup.string(),
+      opportunityType: Yup.mixed()
+        .oneOf(OpportunityTypeValidation(), "Invalid value for opportunityType")
+        ,
+        description: Yup.string(),
+        requiredSkills: Yup.string(),
+        preferredSkills: Yup.string(),
+        experienceYearsMin: asNumber(Yup.number().integer().typeError("experienceYearsMin must be a number")),
+        experienceYearsMax: asNumber(Yup.number().integer().typeError("experienceYearsMax must be a number")),
+      commitment: Yup.mixed()
+        .oneOf(CommitmentValidation(), "Invalid value for commitment")
+        ,
+        isActive: Yup.boolean(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        updatedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("updatedDate must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CareerOpportunityForm: React.FC = () => {
-  const [addCareerOpportunity, addCareerOpportunityResult] =
-    useAddCareerOpportunityMutation();
+  const [addCareerOpportunity, addCareerOpportunityResult] = useAddCareerOpportunityMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -146,18 +132,12 @@ const CareerOpportunityForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -165,18 +145,18 @@ const CareerOpportunityForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CareerOpportunity> = {
-    title: "",
-    opportunityType: undefined,
-    description: "",
-    requiredSkills: "",
-    preferredSkills: "",
-    experienceYearsMin: 0,
-    experienceYearsMax: 0,
-    commitment: undefined,
-    isActive: false,
-    createdDate: new Date(),
-    updatedDate: new Date(),
-    trashed: false,
+          title: '',
+        opportunityType: undefined,
+          description: '',
+          requiredSkills: '',
+          preferredSkills: '',
+          experienceYearsMin: 0,
+          experienceYearsMax: 0,
+        commitment: undefined,
+          isActive: false,
+          createdDate: new Date(),
+          updatedDate: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -191,14 +171,11 @@ const CareerOpportunityForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new CareerOpportunity:", grants);
+    console.log('Permissions saved for new CareerOpportunity:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<CareerOpportunity>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CareerOpportunity>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -209,7 +186,7 @@ const CareerOpportunityForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CareerOpportunity created successfully! Would you like to set permissions for this object?`,
+          `CareerOpportunity created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -217,8 +194,8 @@ const CareerOpportunityForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create CareerOpportunity:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create CareerOpportunity:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -239,37 +216,44 @@ const CareerOpportunityForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addCareerOpportunityResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    CareerOpportunity
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New CareerOpportunity
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="title" className="nice-form-control">
                       <b>
                         Title:
-                        {touched.title && !errors.title && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.title &&
+                         !errors.title && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="title"
-                        value={values?.title}
-                        placeholder="Title"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="title"
+                            value={values?.title}
+                            placeholder="Title"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -278,39 +262,33 @@ const CareerOpportunityForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="opportunityType"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="opportunityType" className="nice-form-control">
                       <b>
                         Opportunity Type:
-                        {touched.opportunityType && !errors.opportunityType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.opportunityType &&
+                         !errors.opportunityType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="opportunityType"
-                        value={values.opportunityType || ""}
-                        className={
-                          errors.opportunityType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("opportunityType", true);
-                          setFieldValue(
-                            "opportunityType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Opportunity Type" />
-                        <OpportunityTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="opportunityType"
+                          value={values.opportunityType || ''}
+                          className={
+                            errors.opportunityType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('opportunityType', true);
+                            setFieldValue('opportunityType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Opportunity Type" />
+                          <OpportunityTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -322,21 +300,28 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description && !errors.description && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="description"
-                        value={values?.description}
-                        placeholder="Description"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -345,27 +330,31 @@ const CareerOpportunityForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="requiredSkills"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="requiredSkills" className="nice-form-control">
                       <b>
                         Required Skills:
-                        {touched.requiredSkills && !errors.requiredSkills && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.requiredSkills &&
+                         !errors.requiredSkills && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="requiredSkills"
-                        value={values?.requiredSkills}
-                        placeholder="Required Skills"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="requiredSkills"
+                            value={values?.requiredSkills}
+                            placeholder="Required Skills"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -374,27 +363,31 @@ const CareerOpportunityForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="preferredSkills"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="preferredSkills" className="nice-form-control">
                       <b>
                         Preferred Skills:
-                        {touched.preferredSkills && !errors.preferredSkills && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.preferredSkills &&
+                         !errors.preferredSkills && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="preferredSkills"
-                        value={values?.preferredSkills}
-                        placeholder="Preferred Skills"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="preferredSkills"
+                            value={values?.preferredSkills}
+                            placeholder="Preferred Skills"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -403,39 +396,39 @@ const CareerOpportunityForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="experienceYearsMin"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="experienceYearsMin" className="nice-form-control">
                       <b>
                         Experience Years Min:
                         {touched.experienceYearsMin &&
-                          !errors.experienceYearsMin && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.experienceYearsMin && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="experienceYearsMin"
-                        type="number"
-                        value={values.experienceYearsMin || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("experienceYearsMin", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "experienceYearsMin",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.experienceYearsMin
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="experienceYearsMin"
+                            type="number"
+                            value={values.experienceYearsMin || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('experienceYearsMin', true);
+                              const v = e.target.value;
+                              setFieldValue('experienceYearsMin', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.experienceYearsMin
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -444,39 +437,39 @@ const CareerOpportunityForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="experienceYearsMax"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="experienceYearsMax" className="nice-form-control">
                       <b>
                         Experience Years Max:
                         {touched.experienceYearsMax &&
-                          !errors.experienceYearsMax && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.experienceYearsMax && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="experienceYearsMax"
-                        type="number"
-                        value={values.experienceYearsMax || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("experienceYearsMax", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "experienceYearsMax",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.experienceYearsMax
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="experienceYearsMax"
+                            type="number"
+                            value={values.experienceYearsMax || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('experienceYearsMax', true);
+                              const v = e.target.value;
+                              setFieldValue('experienceYearsMax', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.experienceYearsMax
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -488,33 +481,30 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="commitment" className="nice-form-control">
                       <b>
                         Commitment:
-                        {touched.commitment && !errors.commitment && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.commitment &&
+                         !errors.commitment && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="commitment"
-                        value={values.commitment || ""}
-                        className={
-                          errors.commitment
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("commitment", true);
-                          setFieldValue(
-                            "commitment",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Commitment" />
-                        <CommitmentLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="commitment"
+                          value={values.commitment || ''}
+                          className={
+                            errors.commitment
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('commitment', true);
+                            setFieldValue('commitment', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Commitment" />
+                          <CommitmentLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -526,25 +516,32 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="isActive" className="nice-form-control">
                       <b>
                         Is Active:
-                        {touched.isActive && !errors.isActive && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.isActive &&
+                         !errors.isActive && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="isActive"
-                        name="isActive"
-                        checked={values.isActive || false}
-                        onChange={(e) => {
-                          setFieldTouched("isActive", true);
-                          setFieldValue("isActive", e.target.checked);
-                        }}
-                        isInvalid={!!errors.isActive}
-                        className={errors.isActive ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="isActive"
+                            name="isActive"
+                            checked={values.isActive || false}
+                            onChange={(e) => {
+                              setFieldTouched('isActive', true);
+                              setFieldValue('isActive', e.target.checked);
+                            }}
+                            isInvalid={!!errors.isActive}
+                            className={errors.isActive ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -556,38 +553,38 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
-                        {touched.createdDate && !errors.createdDate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="createdDate"
-                        type="datetime-local"
-                        value={
-                          values.createdDate
-                            ? new Date(values.createdDate)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("createdDate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "createdDate",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.createdDate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -599,38 +596,38 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="updatedDate" className="nice-form-control">
                       <b>
                         Updated Date:
-                        {touched.updatedDate && !errors.updatedDate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.updatedDate &&
+                         !errors.updatedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="updatedDate"
-                        type="datetime-local"
-                        value={
-                          values.updatedDate
-                            ? new Date(values.updatedDate)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("updatedDate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "updatedDate",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.updatedDate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="updatedDate"
+                            type="datetime-local"
+                            value={values.updatedDate ? 
+                              new Date(values.updatedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('updatedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('updatedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.updatedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -642,25 +639,32 @@ const CareerOpportunityForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -670,60 +674,45 @@ const CareerOpportunityForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New CareerOpportunity
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New CareerOpportunity
+                  </CoolButton>
 
-                    {(addCareerOpportunityResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addCareerOpportunityResult as any).error
-                              ? (addCareerOpportunityResult as any).error.data
-                              : (addCareerOpportunityResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addCareerOpportunityResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addCareerOpportunityResult as any).error ? (addCareerOpportunityResult as any).error.data : (addCareerOpportunityResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addCareerOpportunityResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addCareerOpportunityResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addCareerOpportunityResult:{" "}
-                    {JSON.stringify(addCareerOpportunityResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCareerOpportunityResult: {JSON.stringify(addCareerOpportunityResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -755,13 +744,10 @@ kebabcase opportunity-type-lookup
 const OpportunityTypeLookup = () => {
   return (
     <>
-      <option value="DIRECT_HIRE" label="DIRECT _ HIRE" />
-      <option value="CONSULTING_ENGAGEMENT" label="CONSULTING _ ENGAGEMENT" />
-      <option value="RESELLER_PARTNER" label="RESELLER _ PARTNER" />
-      <option
-        value="OPEN_SOURCE_CONTRIBUTOR"
-        label="OPEN _ SOURCE _ CONTRIBUTOR"
-      />
+      <option value='DIRECT_HIRE' label="DIRECT _ HIRE" />
+      <option value='CONSULTING_ENGAGEMENT' label="CONSULTING _ ENGAGEMENT" />
+      <option value='RESELLER_PARTNER' label="RESELLER _ PARTNER" />
+      <option value='OPEN_SOURCE_CONTRIBUTOR' label="OPEN _ SOURCE _ CONTRIBUTOR" />
     </>
   );
 };
@@ -778,13 +764,16 @@ kebabcase commitment-lookup
 const CommitmentLookup = () => {
   return (
     <>
-      <option value="FULL_TIME" label="FULL _ TIME" />
-      <option value="PART_TIME" label="PART _ TIME" />
-      <option value="CONTRACT" label="CONTRACT" />
-      <option value="HOURLY" label="HOURLY" />
+      <option value='FULL_TIME' label="FULL _ TIME" />
+      <option value='PART_TIME' label="PART _ TIME" />
+      <option value='CONTRACT' label="CONTRACT" />
+      <option value='HOURLY' label="HOURLY" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default CareerOpportunityForm;
+

@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,116 +36,102 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface WorkflowGraphEdgeConnectionMapping
  */
-export type WorkflowGraphEdgeConnectionMapping = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  edgeId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  connectionId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof WorkflowGraphEdgeConnectionMapping
-   */
-  trashed?: boolean;
-};
-
-export function WorkflowGraphEdgeConnectionMappingFromJSON(
-  json: any,
-): WorkflowGraphEdgeConnectionMapping {
-  return {
-    ...DataObjectFromJSON(json),
-    edgeId: !exists(json, "edgeId") ? undefined : json["edgeId"],
-    connectionId: !exists(json, "connectionId")
-      ? undefined
-      : json["connectionId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type WorkflowGraphEdgeConnectionMapping  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    edgeId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    connectionId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof WorkflowGraphEdgeConnectionMapping
+     */
+    trashed?: boolean;
 }
 
-export function WorkflowGraphEdgeConnectionMappingToJSON(
-  value?: WorkflowGraphEdgeConnectionMapping,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    edgeId: value.edgeId,
-    connectionId: value.connectionId,
-    trashed: value.trashed,
-  };
+export function WorkflowGraphEdgeConnectionMappingFromJSON(json: any): WorkflowGraphEdgeConnectionMapping {
+    return {
+        ...DataObjectFromJSON(json),
+        'edgeId': !exists(json, 'edgeId') ? undefined : json['edgeId'],
+        'connectionId': !exists(json, 'connectionId') ? undefined : json['connectionId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function WorkflowGraphEdgeConnectionMappingToJSON(value?: WorkflowGraphEdgeConnectionMapping): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'edgeId': value.edgeId,
+        'connectionId': value.connectionId,
+        'trashed': value.trashed,
+    };
+}
+
+

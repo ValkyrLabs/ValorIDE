@@ -19,32 +19,20 @@ Description: AgentHierarchy
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, AgentHierarchy } from "@thorapi/model";
-import {
-  useGetAgentHierarchysQuery,
-  useAddAgentHierarchyMutation,
-  useUpdateAgentHierarchyMutation,
-} from "../../services/AgentHierarchyService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, AgentHierarchy } from '@thorapi/model';
+import { useGetAgentHierarchysQuery, useAddAgentHierarchyMutation, useUpdateAgentHierarchyMutation } from '../../services/AgentHierarchyService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const AgentHierarchyChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetAgentHierarchysQuery();
 
   const [data, setData] = useState<AgentHierarchy[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<AgentHierarchy>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const AgentHierarchyChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const AgentHierarchyChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((agenthierarchy: DataObject) => [agenthierarchy])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((agenthierarchy: DataObject) => [agenthierarchy])} />
+          )}
     </>
   );
 };

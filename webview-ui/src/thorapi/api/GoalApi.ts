@@ -18,412 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: GoalApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Goal, GoalFromJSON, GoalToJSON } from "../model";
+    Goal,
+    GoalFromJSON,
+    GoalToJSON,
+} from '../model';
 
 export interface DeleteGoalApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetGoalApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetGoalListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchGoalByIdApiRequest {
-  id: string;
-  goal: Goal;
+    id: string;
+    goal: Goal;
 }
 
 export interface PostGoalApiRequest {
-  goal: Goal;
+    goal: Goal;
 }
 
 export interface UpdateGoalApiRequest {
-  id: string;
-  goal: Goal;
+    id: string;
+    goal: Goal;
 }
+
 
 /**
  * Deletes a specific Goal.
  * Delete a Goal.
  */
-function deleteGoalRaw<T>(
-  requestParameters: DeleteGoalApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteGoal.",
-    );
-  }
+function deleteGoalRaw<T>(requestParameters: DeleteGoalApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteGoal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Goal.
- * Delete a Goal.
- */
-export function deleteGoal<T>(
-  requestParameters: DeleteGoalApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteGoalRaw(requestParameters, requestConfig);
+* Deletes a specific Goal.
+* Delete a Goal.
+*/
+export function deleteGoal<T>(requestParameters: DeleteGoalApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteGoalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Goal for a specific uid.
  * Retrieve a single Goal
  */
-function getGoalRaw<T>(
-  requestParameters: GetGoalApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Goal> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getGoal.",
-    );
-  }
+function getGoalRaw<T>(requestParameters: GetGoalApiRequest, requestConfig: runtime.TypedQueryConfig<T, Goal> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getGoal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(GoalFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Goal for a specific uid.
- * Retrieve a single Goal
- */
-export function getGoal<T>(
-  requestParameters: GetGoalApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Goal>,
-): QueryConfig<T> {
-  return getGoalRaw(requestParameters, requestConfig);
+* Retrieves a single Goal for a specific uid.
+* Retrieve a single Goal
+*/
+export function getGoal<T>(requestParameters: GetGoalApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Goal>): QueryConfig<T> {
+    return getGoalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Goals.
  * Retrieve a list of Goals
  */
-function getGoalListRaw<T>(
-  requestParameters: GetGoalListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<Goal>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getGoalListRaw<T>(requestParameters: GetGoalListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Goal>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(GoalFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(GoalFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Goals.
- * Retrieve a list of Goals
- */
-export function getGoalList<T>(
-  requestParameters: GetGoalListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Goal>>,
-): QueryConfig<T> {
-  return getGoalListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing Goal.
- * Partially update an existing Goal
- */
-function patchGoalByIdRaw<T>(
-  requestParameters: PatchGoalByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Goal> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchGoalById.",
-    );
-  }
-
-  if (requestParameters.goal === null || requestParameters.goal === undefined) {
-    throw new runtime.RequiredError(
-      "goal",
-      "Required parameter requestParameters.goal was null or undefined when calling patchGoalById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || GoalToJSON(requestParameters.goal),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(GoalFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Goals.
+* Retrieve a list of Goals
+*/
+export function getGoalList<T>(requestParameters: GetGoalListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Goal>>): QueryConfig<T> {
+    return getGoalListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Goal.
  * Partially update an existing Goal
  */
-export function patchGoalById<T>(
-  requestParameters: PatchGoalByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Goal>,
-): QueryConfig<T> {
-  return patchGoalByIdRaw(requestParameters, requestConfig);
+function patchGoalByIdRaw<T>(requestParameters: PatchGoalByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Goal> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchGoalById.');
+    }
+
+    if (requestParameters.goal === null || requestParameters.goal === undefined) {
+        throw new runtime.RequiredError('goal','Required parameter requestParameters.goal was null or undefined when calling patchGoalById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || GoalToJSON(requestParameters.goal),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Goal.
+* Partially update an existing Goal
+*/
+export function patchGoalById<T>(requestParameters: PatchGoalByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Goal>): QueryConfig<T> {
+    return patchGoalByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Goal.
  * Create a new Goal
  */
-function postGoalRaw<T>(
-  requestParameters: PostGoalApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Goal> = {},
-): QueryConfig<T> {
-  if (requestParameters.goal === null || requestParameters.goal === undefined) {
-    throw new runtime.RequiredError(
-      "goal",
-      "Required parameter requestParameters.goal was null or undefined when calling postGoal.",
-    );
-  }
+function postGoalRaw<T>(requestParameters: PostGoalApiRequest, requestConfig: runtime.TypedQueryConfig<T, Goal> = {}): QueryConfig<T> {
+    if (requestParameters.goal === null || requestParameters.goal === undefined) {
+        throw new runtime.RequiredError('goal','Required parameter requestParameters.goal was null or undefined when calling postGoal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || GoalToJSON(requestParameters.goal),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(GoalFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || GoalToJSON(requestParameters.goal),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new Goal.
- * Create a new Goal
- */
-export function postGoal<T>(
-  requestParameters: PostGoalApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Goal>,
-): QueryConfig<T> {
-  return postGoalRaw(requestParameters, requestConfig);
+* Creates a new Goal.
+* Create a new Goal
+*/
+export function postGoal<T>(requestParameters: PostGoalApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Goal>): QueryConfig<T> {
+    return postGoalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Goal.
  * Update an existing Goal
  */
-function updateGoalRaw<T>(
-  requestParameters: UpdateGoalApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Goal> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateGoal.",
-    );
-  }
+function updateGoalRaw<T>(requestParameters: UpdateGoalApiRequest, requestConfig: runtime.TypedQueryConfig<T, Goal> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateGoal.');
+    }
 
-  if (requestParameters.goal === null || requestParameters.goal === undefined) {
-    throw new runtime.RequiredError(
-      "goal",
-      "Required parameter requestParameters.goal was null or undefined when calling updateGoal.",
-    );
-  }
+    if (requestParameters.goal === null || requestParameters.goal === undefined) {
+        throw new runtime.RequiredError('goal','Required parameter requestParameters.goal was null or undefined when calling updateGoal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || GoalToJSON(requestParameters.goal),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(GoalFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Goal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || GoalToJSON(requestParameters.goal),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Goal.
- * Update an existing Goal
- */
-export function updateGoal<T>(
-  requestParameters: UpdateGoalApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Goal>,
-): QueryConfig<T> {
-  return updateGoalRaw(requestParameters, requestConfig);
+* Updates an existing Goal.
+* Update an existing Goal
+*/
+export function updateGoal<T>(requestParameters: UpdateGoalApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Goal>): QueryConfig<T> {
+    return updateGoalRaw(requestParameters, requestConfig);
 }
+

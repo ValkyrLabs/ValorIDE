@@ -19,35 +19,20 @@ Description: InitiateTwoFactorRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, InitiateTwoFactorRequest } from "@thorapi/model";
-import {
-  useGetInitiateTwoFactorRequestsQuery,
-  useAddInitiateTwoFactorRequestMutation,
-  useUpdateInitiateTwoFactorRequestMutation,
-} from "../../services/InitiateTwoFactorRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, InitiateTwoFactorRequest } from '@thorapi/model';
+import { useGetInitiateTwoFactorRequestsQuery, useAddInitiateTwoFactorRequestMutation, useUpdateInitiateTwoFactorRequestMutation } from '../../services/InitiateTwoFactorRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const InitiateTwoFactorRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetInitiateTwoFactorRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetInitiateTwoFactorRequestsQuery();
 
   const [data, setData] = useState<InitiateTwoFactorRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<InitiateTwoFactorRequest>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<InitiateTwoFactorRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const InitiateTwoFactorRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const InitiateTwoFactorRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((initiatetwofactorrequest: DataObject) => [
-            initiatetwofactorrequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((initiatetwofactorrequest: DataObject) => [initiatetwofactorrequest])} />
+          )}
     </>
   );
 };

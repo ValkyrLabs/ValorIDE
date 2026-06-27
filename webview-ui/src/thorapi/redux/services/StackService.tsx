@@ -13,55 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Stack } from "@thorapi/model/Stack";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Stack } from '@thorapi/model/Stack'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type StackResponse = Stack[];
+type StackResponse = Stack[]
+type StackPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Stack>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type StackListQueryArg = {
+  example?: Partial<Stack>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toStackList = (result: unknown): StackResponse => {
   if (Array.isArray(result)) {
-    return result as StackResponse;
+    return result as StackResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as StackResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as StackResponse) : []
+}
 
 export const StackService = createApi({
-  reducerPath: "Stack", // This should remain unique
+  reducerPath: 'Stack', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Stack"],
+  tagTypes: ['Stack'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getStacksPaged: build.query<
-      StackResponse,
-      { page: number; size?: number; example?: Partial<Stack> }
-    >({
+    getStacksPaged: build.query<StackResponse, StackPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Stack?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Stack?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toStackList(result);
+        const rows = toStackList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Stack" as const, id })),
-          { type: "Stack", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Stack' as const, id })),
+          { type: 'Stack', id: `PAGE_${page}` },
+          { type: 'Stack', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getStacks: build.query<StackResponse, { example?: Partial<Stack> } | void>({
+    getStacks: build.query<StackResponse, StackListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -70,13 +82,14 @@ export const StackService = createApi({
         return `Stack`;
       },
       providesTags: (result) => {
-        const rows = toStackList(result);
+        const rows = toStackList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Stack" as const, id })),
-          { type: "Stack", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Stack' as const, id })),
+          { type: 'Stack', id: 'LIST' },
+          { type: 'Stack', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -84,42 +97,32 @@ export const StackService = createApi({
     addStack: build.mutation<Stack, Partial<Stack>>({
       query: (body) => ({
         url: `Stack`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Stack", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Stack', id: 'LIST' },
+        { type: 'Stack', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getStack: build.query<Stack, string>({
       query: (id) => `Stack/${id}`,
-      providesTags: (result, error, id) => [{ type: "Stack", id }],
+      providesTags: (result, error, id) => [{ type: 'Stack', id }],
     }),
 
     // 5) Update
-    updateStack: build.mutation<void, Pick<Stack, "id"> & Partial<Stack>>({
+    updateStack: build.mutation<Stack, Pick<Stack, 'id'> & Partial<Stack>>({
       query: ({ id, ...patch }) => ({
         url: `Stack/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            StackService.util.updateQueryData("getStack", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Stack, "id">) => [
-        { type: "Stack", id },
-        { type: "Stack", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Stack, 'id'>) => [
+        { type: 'Stack', id },
+        { type: 'Stack', id: 'LIST' },
+        { type: 'Stack', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -128,35 +131,37 @@ export const StackService = createApi({
       query(id) {
         return {
           url: `Stack/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Stack", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Stack', id },
+        { type: 'Stack', id: 'LIST' },
+        { type: 'Stack', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteStackCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteStackCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Stack/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Stack", id },
-        { type: "Stack", id: "LIST" },
+        { type: 'Stack', id },
+        { type: 'Stack', id: 'LIST' },
+        { type: 'Stack', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetStacksPagedQuery`
 export const {
-  useGetStacksPagedQuery, // immediate fetch
+  useGetStacksPagedQuery,     // immediate fetch
   useLazyGetStacksPagedQuery, // lazy fetch
   useGetStackQuery,
   useGetStacksQuery,
@@ -164,4 +169,4 @@ export const {
   useUpdateStackMutation,
   useDeleteStackMutation,
   useDeleteStackCascadeMutation,
-} = StackService;
+} = StackService

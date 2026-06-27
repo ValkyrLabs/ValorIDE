@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { Product, ProductFromJSON, ProductToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Product,
+    ProductFromJSON,
+    ProductToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,148 +44,136 @@ import { Product, ProductFromJSON, ProductToJSON } from "./";
  * @export
  * @interface Discount
  */
-export type Discount = DataObject & {
-  /**
-   * the discount code -- entered in shopping cart and referral links
-   * @type {string}
-   * @memberof Discount
-   */
-  code?: string;
-  /**
-   *
-   * @type {Product}
-   * @memberof Discount
-   */
-  lineItem?: Product;
-  /**
-   * whether this discount is applied to an entire order
-   * @type {boolean}
-   * @memberof Discount
-   */
-  orderDiscount?: boolean;
-  /**
-   *
-   * @type {string}
-   * @memberof Discount
-   */
-  type?: DiscountTypeEnum;
-  /**
-   * either a percentage or a fixed amount
-   * @type {number}
-   * @memberof Discount
-   */
-  amount?: number;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Discount
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Discount
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Discount
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Discount
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Discount
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Discount
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Discount
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Discount
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Discount
-   */
-  trashed?: boolean;
-};
+export type Discount  = DataObject & {
+    /**
+     * the discount code -- entered in shopping cart and referral links
+     * @type {string}
+     * @memberof Discount
+     */
+    code?: string;
+    /**
+     * 
+     * @type {Product}
+     * @memberof Discount
+     */
+    lineItem?: Product;
+    /**
+     * whether this discount is applied to an entire order
+     * @type {boolean}
+     * @memberof Discount
+     */
+    orderDiscount?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Discount
+     */
+    type?: DiscountTypeEnum;
+    /**
+     * either a percentage or a fixed amount
+     * @type {number}
+     * @memberof Discount
+     */
+    amount?: number;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Discount
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Discount
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Discount
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Discount
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Discount
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Discount
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Discount
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Discount
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Discount
+     */
+    trashed?: boolean;
+}
 
 export function DiscountFromJSON(json: any): Discount {
-  return {
-    ...DataObjectFromJSON(json),
-    code: !exists(json, "code") ? undefined : json["code"],
-    lineItem: !exists(json, "lineItem")
-      ? undefined
-      : ProductFromJSON(json["lineItem"]),
-    orderDiscount: !exists(json, "orderDiscount")
-      ? undefined
-      : json["orderDiscount"],
-    type: !exists(json, "type") ? undefined : json["type"],
-    amount: !exists(json, "amount") ? undefined : json["amount"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'code': !exists(json, 'code') ? undefined : json['code'],
+        'lineItem': !exists(json, 'lineItem') ? undefined : ProductFromJSON(json['lineItem']),
+        'orderDiscount': !exists(json, 'orderDiscount') ? undefined : json['orderDiscount'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function DiscountToJSON(value?: Discount): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    code: value.code,
-    lineItem: ProductToJSON(value.lineItem),
-    orderDiscount: value.orderDiscount,
-    type: value.type,
-    amount: value.amount,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'code': value.code,
+        'lineItem': ProductToJSON(value.lineItem),
+        'orderDiscount': value.orderDiscount,
+        'type': value.type,
+        'amount': value.amount,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum DiscountTypeEnum {
-  PERCENTAGE = "percentage",
-  FIXED = "fixed",
-  OTHER = "other",
+    PERCENTAGE = 'percentage',
+    FIXED = 'fixed',
+    OTHER = 'other'
 }
+
+

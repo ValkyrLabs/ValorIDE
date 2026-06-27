@@ -19,32 +19,20 @@ Description: AclClass
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, AclClass } from "@thorapi/model";
-import {
-  useGetAclClasssQuery,
-  useAddAclClassMutation,
-  useUpdateAclClassMutation,
-} from "../../services/AclClassService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, AclClass } from '@thorapi/model';
+import { useGetAclClasssQuery, useAddAclClassMutation, useUpdateAclClassMutation } from '../../services/AclClassService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const AclClassChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetAclClasssQuery();
 
   const [data, setData] = useState<AclClass[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<AclClass>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const AclClassChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const AclClassChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((aclclass: DataObject) => [aclclass])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((aclclass: DataObject) => [aclclass])} />
+          )}
     </>
   );
 };

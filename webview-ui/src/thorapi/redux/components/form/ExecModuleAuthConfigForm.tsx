@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ExecModuleAuthConfig,
+} from '@thorapi/model';
 
-import { ExecModuleAuthConfig } from "@thorapi/model";
-
-import { useAddExecModuleAuthConfigMutation } from "../../services/ExecModuleAuthConfigService";
+import { useAddExecModuleAuthConfigMutation } from '../../services/ExecModuleAuthConfigService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,30 +65,25 @@ ExecModuleAuthConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  authStrategy: asNumber(
-    Yup.number().integer().typeError("authStrategy must be a number"),
-  ).required("authStrategy is required."),
-  apiKey: Yup.string(),
-  auth: Yup.string(),
-  authAccount: Yup.string(),
-  emailAccount: Yup.string(),
-  openAiApiKey: Yup.string(),
-  signingSecret: Yup.string(),
-  storeEnrollment: Yup.boolean(),
-  trashed: Yup.boolean(),
+        authStrategy: asNumber(Yup.number().integer().typeError("authStrategy must be a number")).required("authStrategy is required."),
+        apiKey: Yup.string(),
+        auth: Yup.string(),
+        authAccount: Yup.string(),
+        emailAccount: Yup.string(),
+        openAiApiKey: Yup.string(),
+        signingSecret: Yup.string(),
+        storeEnrollment: Yup.boolean(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleAuthConfigForm: React.FC = () => {
-  const [addExecModuleAuthConfig, addExecModuleAuthConfigResult] =
-    useAddExecModuleAuthConfigMutation();
+  const [addExecModuleAuthConfig, addExecModuleAuthConfigResult] = useAddExecModuleAuthConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -104,18 +93,12 @@ const ExecModuleAuthConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -123,15 +106,15 @@ const ExecModuleAuthConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleAuthConfig> = {
-    authStrategy: 0,
-    apiKey: "",
-    auth: "",
-    authAccount: "",
-    emailAccount: "",
-    openAiApiKey: "",
-    signingSecret: "",
-    storeEnrollment: false,
-    trashed: false,
+          authStrategy: 0,
+          apiKey: '',
+          auth: '',
+          authAccount: '',
+          emailAccount: '',
+          openAiApiKey: '',
+          signingSecret: '',
+          storeEnrollment: false,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -146,14 +129,11 @@ const ExecModuleAuthConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ExecModuleAuthConfig:", grants);
+    console.log('Permissions saved for new ExecModuleAuthConfig:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ExecModuleAuthConfig>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleAuthConfig>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -164,7 +144,7 @@ const ExecModuleAuthConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleAuthConfig created successfully! Would you like to set permissions for this object?`,
+          `ExecModuleAuthConfig created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -172,8 +152,8 @@ const ExecModuleAuthConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ExecModuleAuthConfig:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ExecModuleAuthConfig:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -194,49 +174,52 @@ const ExecModuleAuthConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addExecModuleAuthConfigResult.isLoading;
+          const isSaving = isSubmitting || addExecModuleAuthConfigResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ExecModuleAuthConfig
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleAuthConfig
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="authStrategy" className="nice-form-control">
                       <b>
                         Auth Strategy:
-                        {touched.authStrategy && !errors.authStrategy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.authStrategy &&
+                         !errors.authStrategy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="authStrategy"
-                        type="number"
-                        value={values.authStrategy || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("authStrategy", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "authStrategy",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.authStrategy
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="authStrategy"
+                            type="number"
+                            value={values.authStrategy || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('authStrategy', true);
+                              const v = e.target.value;
+                              setFieldValue('authStrategy', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.authStrategy
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -248,21 +231,28 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="apiKey" className="nice-form-control">
                       <b>
                         Api Key:
-                        {touched.apiKey && !errors.apiKey && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.apiKey &&
+                         !errors.apiKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="apiKey"
-                        value={values?.apiKey}
-                        placeholder="Api Key"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="apiKey"
+                            value={values?.apiKey}
+                            placeholder="Api Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -274,21 +264,28 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="auth" className="nice-form-control">
                       <b>
                         Auth:
-                        {touched.auth && !errors.auth && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.auth &&
+                         !errors.auth && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="auth"
-                        value={values?.auth}
-                        placeholder="Auth"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="auth"
+                            value={values?.auth}
+                            placeholder="Auth"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -300,21 +297,28 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="authAccount" className="nice-form-control">
                       <b>
                         Auth Account:
-                        {touched.authAccount && !errors.authAccount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.authAccount &&
+                         !errors.authAccount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="authAccount"
-                        value={values?.authAccount}
-                        placeholder="Auth Account"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="authAccount"
+                            value={values?.authAccount}
+                            placeholder="Auth Account"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -326,21 +330,28 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="emailAccount" className="nice-form-control">
                       <b>
                         Email Account:
-                        {touched.emailAccount && !errors.emailAccount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.emailAccount &&
+                         !errors.emailAccount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="emailAccount"
-                        value={values?.emailAccount}
-                        placeholder="Email Account"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="emailAccount"
+                            value={values?.emailAccount}
+                            placeholder="Email Account"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -352,21 +363,28 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="openAiApiKey" className="nice-form-control">
                       <b>
                         Open Ai Api Key:
-                        {touched.openAiApiKey && !errors.openAiApiKey && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.openAiApiKey &&
+                         !errors.openAiApiKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="openAiApiKey"
-                        value={values?.openAiApiKey}
-                        placeholder="Open Ai Api Key"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="openAiApiKey"
+                            value={values?.openAiApiKey}
+                            placeholder="Open Ai Api Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -375,27 +393,31 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="signingSecret"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="signingSecret" className="nice-form-control">
                       <b>
-                        Signing _ secret:
-                        {touched.signingSecret && !errors.signingSecret && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Signing Secret:
+                        {touched.signingSecret &&
+                         !errors.signingSecret && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="signingSecret"
-                        value={values?.signingSecret}
-                        placeholder="Signing _ secret"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="signingSecret"
+                            value={values?.signingSecret}
+                            placeholder="Signing Secret"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -404,31 +426,35 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="storeEnrollment"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="storeEnrollment" className="nice-form-control">
                       <b>
-                        Store _ enrollment:
-                        {touched.storeEnrollment && !errors.storeEnrollment && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Store Enrollment:
+                        {touched.storeEnrollment &&
+                         !errors.storeEnrollment && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="storeEnrollment"
-                        name="storeEnrollment"
-                        checked={values.storeEnrollment || false}
-                        onChange={(e) => {
-                          setFieldTouched("storeEnrollment", true);
-                          setFieldValue("storeEnrollment", e.target.checked);
-                        }}
-                        isInvalid={!!errors.storeEnrollment}
-                        className={errors.storeEnrollment ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="storeEnrollment"
+                            name="storeEnrollment"
+                            checked={values.storeEnrollment || false}
+                            onChange={(e) => {
+                              setFieldTouched('storeEnrollment', true);
+                              setFieldValue('storeEnrollment', e.target.checked);
+                            }}
+                            isInvalid={!!errors.storeEnrollment}
+                            className={errors.storeEnrollment ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -440,25 +466,32 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -468,64 +501,45 @@ const ExecModuleAuthConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ExecModuleAuthConfig
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ExecModuleAuthConfig
+                  </CoolButton>
 
-                    {(addExecModuleAuthConfigResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addExecModuleAuthConfigResult as any).error
-                              ? (addExecModuleAuthConfigResult as any).error
-                                  .data
-                              : (addExecModuleAuthConfigResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addExecModuleAuthConfigResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addExecModuleAuthConfigResult as any).error ? (addExecModuleAuthConfigResult as any).error.data : (addExecModuleAuthConfigResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addExecModuleAuthConfigResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addExecModuleAuthConfigResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addExecModuleAuthConfigResult:{" "}
-                    {JSON.stringify(addExecModuleAuthConfigResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addExecModuleAuthConfigResult: {JSON.stringify(addExecModuleAuthConfigResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -545,5 +559,8 @@ const ExecModuleAuthConfigForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ExecModuleAuthConfigForm;
+

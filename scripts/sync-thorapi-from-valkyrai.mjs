@@ -63,7 +63,6 @@ const reportJsonPath = getOptionalPathArg(
 
 const thorapiTargets = [
   path.join(repoRoot, "webview-ui", "src", "thorapi"),
-  path.join(repoRoot, "src", "thorapi"),
 ];
 
 const requiredThorapiFolders = ["api", "model", "redux", "src"];
@@ -309,22 +308,40 @@ const patchAuthTokenStorage = async (targetDir) => {
 const patchRuntimeBasePath = async (thorapiRoot) => {
   const runtimePath = path.join(thorapiRoot, "src", "runtime.ts");
   const original = await fs.readFile(runtimePath, "utf8");
-  const viteBasePath = `// un-comment for Vite apps
-export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\\/+\$/, "");`;
-  if (!original.includes(viteBasePath)) {
+  const viteBasePathPatterns = [
+    `// un-comment for Vite apps
+export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\\/+\$/, "");`,
+    `// un-comment for Vite apps
+export let BASE_PATH = import.meta.env.VITE_basePath.replace(/\\/+\$/, "");`,
+  ];
+  const viteBasePath = viteBasePathPatterns.find((pattern) =>
+    original.includes(pattern),
+  );
+  if (!viteBasePath) {
     return false;
   }
 
   const patched = original
     .replace(
       viteBasePath,
-      `const sanitizeBasePath = (value?: string): string => {
+      `type ViteImportMeta = ImportMeta & {
+    env?: {
+        VITE_basePath?: string;
+    };
+};
+
+const getViteBasePath = (): string => {
+    const viteEnv = (import.meta as ViteImportMeta).env;
+    return typeof viteEnv?.VITE_basePath === "string" ? viteEnv.VITE_basePath : "";
+};
+
+const sanitizeBasePath = (value?: string): string => {
     const raw = (value ?? "").trim();
     return raw ? raw.replace(/\\/+\$/, "") : "";
 };
 
 // Mutable base path so it can be overridden by runtime settings.
-export let BASE_PATH = sanitizeBasePath(import.meta.env?.VITE_basePath ?? "");`,
+export let BASE_PATH = sanitizeBasePath(getViteBasePath());`,
     )
     .replace(
       `// export const BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\\/+\$/, "");`,
@@ -343,7 +360,7 @@ export let BASE_PATH = sanitizeBasePath(import.meta.env?.VITE_basePath ?? "");`,
 };
 
 export const setBasePath = (value?: string) => {
-    BASE_PATH = sanitizeBasePath(value ?? import.meta.env?.VITE_basePath ?? "");
+    BASE_PATH = sanitizeBasePath(value ?? getViteBasePath());
     Configuration.basePath = BASE_PATH;
     return BASE_PATH;
 };

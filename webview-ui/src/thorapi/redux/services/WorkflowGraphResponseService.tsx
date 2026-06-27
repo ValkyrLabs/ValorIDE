@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphResponse } from "@thorapi/model/WorkflowGraphResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphResponse } from '@thorapi/model/WorkflowGraphResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphResponseResponse = WorkflowGraphResponse[];
+type WorkflowGraphResponseResponse = WorkflowGraphResponse[]
+type WorkflowGraphResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphResponseList = (
-  result: unknown,
-): WorkflowGraphResponseResponse => {
+type WorkflowGraphResponseListQueryArg = {
+  example?: Partial<WorkflowGraphResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphResponseList = (result: unknown): WorkflowGraphResponseResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphResponseResponse;
+    return result as WorkflowGraphResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphResponseResponse) : []
+}
 
 export const WorkflowGraphResponseService = createApi({
-  reducerPath: "WorkflowGraphResponse", // This should remain unique
+  reducerPath: 'WorkflowGraphResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphResponse"],
+  tagTypes: ['WorkflowGraphResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphResponsesPaged: build.query<
-      WorkflowGraphResponseResponse,
-      { page: number; size?: number; example?: Partial<WorkflowGraphResponse> }
-    >({
+    getWorkflowGraphResponsesPaged: build.query<WorkflowGraphResponseResponse, WorkflowGraphResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphResponseList(result);
+        const rows = toWorkflowGraphResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphResponse" as const, id })),
-          { type: "WorkflowGraphResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphResponse' as const, id })),
+          { type: 'WorkflowGraphResponse', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphResponses: build.query<
-      WorkflowGraphResponseResponse,
-      { example?: Partial<WorkflowGraphResponse> } | void
-    >({
+    getWorkflowGraphResponses: build.query<WorkflowGraphResponseResponse, WorkflowGraphResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const WorkflowGraphResponseService = createApi({
         return `WorkflowGraphResponse`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphResponseList(result);
+        const rows = toWorkflowGraphResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphResponse" as const, id })),
-          { type: "WorkflowGraphResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphResponse' as const, id })),
+          { type: 'WorkflowGraphResponse', id: 'LIST' },
+          { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphResponse: build.mutation<
-      WorkflowGraphResponse,
-      Partial<WorkflowGraphResponse>
-    >({
+    addWorkflowGraphResponse: build.mutation<WorkflowGraphResponse, Partial<WorkflowGraphResponse>>({
       query: (body) => ({
         url: `WorkflowGraphResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WorkflowGraphResponse', id: 'LIST' },
+        { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWorkflowGraphResponse: build.query<WorkflowGraphResponse, string>({
       query: (id) => `WorkflowGraphResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "WorkflowGraphResponse", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphResponse', id }],
     }),
 
     // 5) Update
-    updateWorkflowGraphResponse: build.mutation<
-      void,
-      Pick<WorkflowGraphResponse, "id"> & Partial<WorkflowGraphResponse>
-    >({
+    updateWorkflowGraphResponse: build.mutation<WorkflowGraphResponse, Pick<WorkflowGraphResponse, 'id'> & Partial<WorkflowGraphResponse>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphResponseService.util.updateQueryData(
-              "getWorkflowGraphResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphResponse, "id">,
-      ) => [
-        { type: "WorkflowGraphResponse", id },
-        { type: "WorkflowGraphResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphResponse, 'id'>) => [
+        { type: 'WorkflowGraphResponse', id },
+        { type: 'WorkflowGraphResponse', id: 'LIST' },
+        { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphResponse", id },
+        { type: 'WorkflowGraphResponse', id },
+        { type: 'WorkflowGraphResponse', id: 'LIST' },
+        { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphResponse", id },
-        { type: "WorkflowGraphResponse", id: "LIST" },
+        { type: 'WorkflowGraphResponse', id },
+        { type: 'WorkflowGraphResponse', id: 'LIST' },
+        { type: 'WorkflowGraphResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphResponsesPagedQuery`
 export const {
-  useGetWorkflowGraphResponsesPagedQuery, // immediate fetch
+  useGetWorkflowGraphResponsesPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphResponsesPagedQuery, // lazy fetch
   useGetWorkflowGraphResponseQuery,
   useGetWorkflowGraphResponsesQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateWorkflowGraphResponseMutation,
   useDeleteWorkflowGraphResponseMutation,
   useDeleteWorkflowGraphResponseCascadeMutation,
-} = WorkflowGraphResponseService;
+} = WorkflowGraphResponseService

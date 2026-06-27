@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   ChatMessage,
   ChatMessageSourceTypeEnum,
   ChatMessageRoleEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddChatMessageMutation } from "../../services/ChatMessageService";
+import { useAddChatMessageMutation } from '../../services/ChatMessageService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,33 +63,40 @@ A chat message sent as part of a conversation.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const SourceTypeValidation = () => {
-  return ["api", "server_log", "p2p"];
+  return [
+    'api',
+    'server_log',
+    'p2p',
+  ];
 };
 const RoleValidation = () => {
-  return ["system", "user", "assistant"];
+  return [
+    'system',
+    'user',
+    'assistant',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  sessionId: Yup.string(),
-  chatCompletionRequestId: Yup.string(),
-  connected: Yup.boolean(),
-  json: Yup.string(),
-  sourceType: Yup.mixed().oneOf(
-    SourceTypeValidation(),
-    "Invalid value for sourceType",
-  ),
-  sourceOwner: Yup.string(),
-  role: Yup.mixed().oneOf(RoleValidation(), "Invalid value for role"),
-  content: Yup.string(),
-  trashed: Yup.boolean(),
+        sessionId: Yup.string(),
+        chatCompletionRequestId: Yup.string(),
+        connected: Yup.boolean(),
+        json: Yup.string(),
+      sourceType: Yup.mixed()
+        .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
+        ,
+        sourceOwner: Yup.string(),
+      role: Yup.mixed()
+        .oneOf(RoleValidation(), "Invalid value for role")
+        ,
+        content: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -114,18 +113,12 @@ const ChatMessageForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -133,15 +126,15 @@ const ChatMessageForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ChatMessage> = {
-    sessionId: "",
-    chatCompletionRequestId: "",
-    connected: false,
-    json: "",
-    sourceType: undefined,
-    sourceOwner: "",
-    role: undefined,
-    content: "",
-    trashed: false,
+          sessionId: '',
+          chatCompletionRequestId: '',
+          connected: false,
+          json: '',
+        sourceType: undefined,
+          sourceOwner: '',
+        role: undefined,
+          content: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -156,14 +149,11 @@ const ChatMessageForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ChatMessage:", grants);
+    console.log('Permissions saved for new ChatMessage:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ChatMessage>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ChatMessage>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -174,7 +164,7 @@ const ChatMessageForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ChatMessage created successfully! Would you like to set permissions for this object?`,
+          `ChatMessage created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -182,8 +172,8 @@ const ChatMessageForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ChatMessage:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ChatMessage:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -204,36 +194,44 @@ const ChatMessageForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addChatMessageResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New ChatMessage
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ChatMessage
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="sessionId" className="nice-form-control">
                       <b>
                         Session Id:
-                        {touched.sessionId && !errors.sessionId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sessionId &&
+                         !errors.sessionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sessionId"
-                        value={values?.sessionId}
-                        placeholder="Session Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sessionId"
+                            value={values?.sessionId}
+                            placeholder="Session Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -242,28 +240,31 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="chatCompletionRequestId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="chatCompletionRequestId" className="nice-form-control">
                       <b>
                         Chat Completion Request Id:
                         {touched.chatCompletionRequestId &&
-                          !errors.chatCompletionRequestId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.chatCompletionRequestId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="chatCompletionRequestId"
-                        value={values?.chatCompletionRequestId}
-                        placeholder="Chat Completion Request Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="chatCompletionRequestId"
+                            value={values?.chatCompletionRequestId}
+                            placeholder="Chat Completion Request Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -275,25 +276,32 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="connected" className="nice-form-control">
                       <b>
                         Connected:
-                        {touched.connected && !errors.connected && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.connected &&
+                         !errors.connected && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="connected"
-                        name="connected"
-                        checked={values.connected || false}
-                        onChange={(e) => {
-                          setFieldTouched("connected", true);
-                          setFieldValue("connected", e.target.checked);
-                        }}
-                        isInvalid={!!errors.connected}
-                        className={errors.connected ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="connected"
+                            name="connected"
+                            checked={values.connected || false}
+                            onChange={(e) => {
+                              setFieldTouched('connected', true);
+                              setFieldValue('connected', e.target.checked);
+                            }}
+                            isInvalid={!!errors.connected}
+                            className={errors.connected ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -305,21 +313,28 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="json" className="nice-form-control">
                       <b>
                         Json:
-                        {touched.json && !errors.json && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.json &&
+                         !errors.json && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="json"
-                        value={values?.json}
-                        placeholder="Json"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="json"
+                            value={values?.json}
+                            placeholder="Json"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -331,33 +346,30 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="sourceType" className="nice-form-control">
                       <b>
                         Source Type:
-                        {touched.sourceType && !errors.sourceType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sourceType &&
+                         !errors.sourceType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="sourceType"
-                        value={values.sourceType || ""}
-                        className={
-                          errors.sourceType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("sourceType", true);
-                          setFieldValue(
-                            "sourceType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Source Type" />
-                        <SourceTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="sourceType"
+                          value={values.sourceType || ''}
+                          className={
+                            errors.sourceType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('sourceType', true);
+                            setFieldValue('sourceType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Source Type" />
+                          <SourceTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -369,21 +381,28 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="sourceOwner" className="nice-form-control">
                       <b>
                         Source Owner:
-                        {touched.sourceOwner && !errors.sourceOwner && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sourceOwner &&
+                         !errors.sourceOwner && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sourceOwner"
-                        value={values?.sourceOwner}
-                        placeholder="Source Owner"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sourceOwner"
+                            value={values?.sourceOwner}
+                            placeholder="Source Owner"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -395,30 +414,30 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role && !errors.role && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.role &&
+                         !errors.role && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="role"
-                        value={values.role || ""}
-                        className={
-                          errors.role
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("role", true);
-                          setFieldValue("role", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Role" />
-                        <RoleLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="role"
+                          value={values.role || ''}
+                          className={
+                            errors.role
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('role', true);
+                            setFieldValue('role', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Role" />
+                          <RoleLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -430,21 +449,28 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="content" className="nice-form-control">
                       <b>
                         Content:
-                        {touched.content && !errors.content && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.content &&
+                         !errors.content && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="content"
-                        value={values?.content}
-                        placeholder="Content"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="content"
+                            value={values?.content}
+                            placeholder="Content"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -456,25 +482,32 @@ const ChatMessageForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -484,58 +517,45 @@ const ChatMessageForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New ChatMessage
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ChatMessage
+                  </CoolButton>
 
-                    {(addChatMessageResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addChatMessageResult as any).error
-                              ? (addChatMessageResult as any).error.data
-                              : (addChatMessageResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addChatMessageResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addChatMessageResult as any).error ? (addChatMessageResult as any).error.data : (addChatMessageResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addChatMessageResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addChatMessageResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addChatMessageResult: {JSON.stringify(addChatMessageResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addChatMessageResult: {JSON.stringify(addChatMessageResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -567,9 +587,9 @@ kebabcase source-type-lookup
 const SourceTypeLookup = () => {
   return (
     <>
-      <option value="api" label="Api" />
-      <option value="server_log" label="Server Log" />
-      <option value="p2p" label="P 2 p" />
+      <option value='api' label="Api" />
+      <option value='server_log' label="Server Log" />
+      <option value='p2p' label="P 2 p" />
     </>
   );
 };
@@ -586,12 +606,15 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value="system" label="System" />
-      <option value="user" label="User" />
-      <option value="assistant" label="Assistant" />
+      <option value='system' label="System" />
+      <option value='user' label="User" />
+      <option value='assistant' label="Assistant" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ChatMessageForm;
+

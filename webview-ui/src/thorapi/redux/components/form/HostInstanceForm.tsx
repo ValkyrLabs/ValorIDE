@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  HostInstance,
+  HostInstanceStatusEnum,
+} from '@thorapi/model';
 
-import { HostInstance, HostInstanceStatusEnum } from "@thorapi/model";
-
-import { useAddHostInstanceMutation } from "../../services/HostInstanceService";
+import { useAddHostInstanceMutation } from '../../services/HostInstanceService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,28 +62,33 @@ Records of hosted ThorAPI backend instances for persistence, templates, and hist
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return ["STARTING", "RUNNING", "STOPPED", "ERROR"];
+  return [
+    'STARTING',
+    'RUNNING',
+    'STOPPED',
+    'ERROR',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  domain: Yup.string(),
-  cluste: Yup.string(),
-  serviceArn: Yup.string(),
-  targetGroupArn: Yup.string(),
-  listenerRuleArn: Yup.string(),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  cpus: asNumber(Yup.number().integer().typeError("cpus must be a number")),
-  memory: asNumber(Yup.number().integer().typeError("memory must be a number")),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+        domain: Yup.string(),
+        cluste: Yup.string(),
+        serviceArn: Yup.string(),
+        targetGroupArn: Yup.string(),
+        listenerRuleArn: Yup.string(),
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        cpus: asNumber(Yup.number().integer().typeError("cpus must be a number")),
+        memory: asNumber(Yup.number().integer().typeError("memory must be a number")),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -105,18 +105,12 @@ const HostInstanceForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -124,16 +118,16 @@ const HostInstanceForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<HostInstance> = {
-    name: "",
-    domain: "",
-    cluste: "",
-    serviceArn: "",
-    targetGroupArn: "",
-    listenerRuleArn: "",
-    status: undefined,
-    cpus: 0,
-    memory: 0,
-    trashed: false,
+          name: '',
+          domain: '',
+          cluste: '',
+          serviceArn: '',
+          targetGroupArn: '',
+          listenerRuleArn: '',
+        status: undefined,
+          cpus: 0,
+          memory: 0,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -148,14 +142,11 @@ const HostInstanceForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new HostInstance:", grants);
+    console.log('Permissions saved for new HostInstance:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<HostInstance>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<HostInstance>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -166,7 +157,7 @@ const HostInstanceForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `HostInstance created successfully! Would you like to set permissions for this object?`,
+          `HostInstance created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -174,8 +165,8 @@ const HostInstanceForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create HostInstance:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create HostInstance:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -196,36 +187,44 @@ const HostInstanceForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addHostInstanceResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New HostInstance
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New HostInstance
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -237,21 +236,28 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="domain" className="nice-form-control">
                       <b>
                         Domain:
-                        {touched.domain && !errors.domain && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.domain &&
+                         !errors.domain && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="domain"
-                        value={values?.domain}
-                        placeholder="Domain"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="domain"
+                            value={values?.domain}
+                            placeholder="Domain"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -263,21 +269,28 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="cluste" className="nice-form-control">
                       <b>
                         Cluste:
-                        {touched.cluste && !errors.cluste && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.cluste &&
+                         !errors.cluste && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="cluste"
-                        value={values?.cluste}
-                        placeholder="Cluste"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="cluste"
+                            value={values?.cluste}
+                            placeholder="Cluste"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -289,21 +302,28 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="serviceArn" className="nice-form-control">
                       <b>
                         Service Arn:
-                        {touched.serviceArn && !errors.serviceArn && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.serviceArn &&
+                         !errors.serviceArn && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="serviceArn"
-                        value={values?.serviceArn}
-                        placeholder="Service Arn"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="serviceArn"
+                            value={values?.serviceArn}
+                            placeholder="Service Arn"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -312,27 +332,31 @@ const HostInstanceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="targetGroupArn"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="targetGroupArn" className="nice-form-control">
                       <b>
                         Target Group Arn:
-                        {touched.targetGroupArn && !errors.targetGroupArn && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.targetGroupArn &&
+                         !errors.targetGroupArn && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="targetGroupArn"
-                        value={values?.targetGroupArn}
-                        placeholder="Target Group Arn"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="targetGroupArn"
+                            value={values?.targetGroupArn}
+                            placeholder="Target Group Arn"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -341,27 +365,31 @@ const HostInstanceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="listenerRuleArn"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="listenerRuleArn" className="nice-form-control">
                       <b>
                         Listener Rule Arn:
-                        {touched.listenerRuleArn && !errors.listenerRuleArn && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.listenerRuleArn &&
+                         !errors.listenerRuleArn && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="listenerRuleArn"
-                        value={values?.listenerRuleArn}
-                        placeholder="Listener Rule Arn"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="listenerRuleArn"
+                            value={values?.listenerRuleArn}
+                            placeholder="Listener Rule Arn"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -373,30 +401,30 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -408,32 +436,36 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="cpus" className="nice-form-control">
                       <b>
                         Cpus:
-                        {touched.cpus && !errors.cpus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.cpus &&
+                         !errors.cpus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="cpus"
-                        type="number"
-                        value={values.cpus || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("cpus", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "cpus",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.cpus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="cpus"
+                            type="number"
+                            value={values.cpus || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('cpus', true);
+                              const v = e.target.value;
+                              setFieldValue('cpus', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.cpus
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -445,32 +477,36 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="memory" className="nice-form-control">
                       <b>
                         Memory:
-                        {touched.memory && !errors.memory && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.memory &&
+                         !errors.memory && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="memory"
-                        type="number"
-                        value={values.memory || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("memory", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "memory",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.memory
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="memory"
+                            type="number"
+                            value={values.memory || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('memory', true);
+                              const v = e.target.value;
+                              setFieldValue('memory', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.memory
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -482,25 +518,32 @@ const HostInstanceForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -510,59 +553,45 @@ const HostInstanceForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New HostInstance
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New HostInstance
+                  </CoolButton>
 
-                    {(addHostInstanceResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addHostInstanceResult as any).error
-                              ? (addHostInstanceResult as any).error.data
-                              : (addHostInstanceResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addHostInstanceResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addHostInstanceResult as any).error ? (addHostInstanceResult as any).error.data : (addHostInstanceResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addHostInstanceResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addHostInstanceResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addHostInstanceResult:{" "}
-                    {JSON.stringify(addHostInstanceResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addHostInstanceResult: {JSON.stringify(addHostInstanceResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -594,13 +623,16 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="STARTING" label="Starting" />
-      <option value="RUNNING" label="Running" />
-      <option value="STOPPED" label="Stopped" />
-      <option value="ERROR" label="Error" />
+      <option value='STARTING' label="Starting" />
+      <option value='RUNNING' label="Running" />
+      <option value='STOPPED' label="Stopped" />
+      <option value='ERROR' label="Error" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default HostInstanceForm;
+

@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ExecModuleObservabilityConfig,
+} from '@thorapi/model';
 
-import { ExecModuleObservabilityConfig } from "@thorapi/model";
-
-import { useAddExecModuleObservabilityConfigMutation } from "../../services/ExecModuleObservabilityConfigService";
+import { useAddExecModuleObservabilityConfigMutation } from '../../services/ExecModuleObservabilityConfigService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,42 +65,29 @@ ExecModuleObservabilityConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  capturePayloads: Yup.boolean(),
-  emitEvents: Yup.boolean(),
-  logLevel: asNumber(
-    Yup.number().integer().typeError("logLevel must be a number"),
-  ),
-  auditEnabled: Yup.boolean(),
-  channels: Yup.string(),
-  eventType: Yup.string(),
-  eventTypeMapping: Yup.string(),
-  eventTypeUrl: Yup.string(),
-  expiresAfterHours: asNumber(
-    Yup.number().integer().typeError("expiresAfterHours must be a number"),
-  ),
-  lookbackDays: asNumber(
-    Yup.number().integer().typeError("lookbackDays must be a number"),
-  ),
-  lookbackMinutes: asNumber(
-    Yup.number().integer().typeError("lookbackMinutes must be a number"),
-  ),
-  sessionGap: Yup.string(),
-  trashed: Yup.boolean(),
+        capturePayloads: Yup.boolean(),
+        emitEvents: Yup.boolean(),
+        logLevel: asNumber(Yup.number().integer().typeError("logLevel must be a number")),
+        auditEnabled: Yup.boolean(),
+        channels: Yup.string(),
+        eventType: Yup.string(),
+        eventTypeMapping: Yup.string(),
+        eventTypeUrl: Yup.string(),
+        expiresAfterHours: asNumber(Yup.number().integer().typeError("expiresAfterHours must be a number")),
+        lookbackDays: asNumber(Yup.number().integer().typeError("lookbackDays must be a number")),
+        lookbackMinutes: asNumber(Yup.number().integer().typeError("lookbackMinutes must be a number")),
+        sessionGap: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleObservabilityConfigForm: React.FC = () => {
-  const [
-    addExecModuleObservabilityConfig,
-    addExecModuleObservabilityConfigResult,
-  ] = useAddExecModuleObservabilityConfigMutation();
+  const [addExecModuleObservabilityConfig, addExecModuleObservabilityConfigResult] = useAddExecModuleObservabilityConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -116,18 +97,12 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -135,19 +110,19 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleObservabilityConfig> = {
-    capturePayloads: false,
-    emitEvents: false,
-    logLevel: 0,
-    auditEnabled: false,
-    channels: "",
-    eventType: "",
-    eventTypeMapping: "",
-    eventTypeUrl: "",
-    expiresAfterHours: 0,
-    lookbackDays: 0,
-    lookbackMinutes: 0,
-    sessionGap: "",
-    trashed: false,
+          capturePayloads: false,
+          emitEvents: false,
+          logLevel: 0,
+          auditEnabled: false,
+          channels: '',
+          eventType: '',
+          eventTypeMapping: '',
+          eventTypeUrl: '',
+          expiresAfterHours: 0,
+          lookbackDays: 0,
+          lookbackMinutes: 0,
+          sessionGap: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -162,30 +137,22 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log(
-      "Permissions saved for new ExecModuleObservabilityConfig:",
-      grants,
-    );
+    console.log('Permissions saved for new ExecModuleObservabilityConfig:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ExecModuleObservabilityConfig>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleObservabilityConfig>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("ExecModuleObservabilityConfig form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addExecModuleObservabilityConfig(
-        values as any,
-      ).unwrap();
+      const result = await addExecModuleObservabilityConfig(values as any).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleObservabilityConfig created successfully! Would you like to set permissions for this object?`,
+          `ExecModuleObservabilityConfig created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -193,8 +160,8 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ExecModuleObservabilityConfig:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ExecModuleObservabilityConfig:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -215,45 +182,48 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addExecModuleObservabilityConfigResult.isLoading;
+          const isSaving = isSubmitting || addExecModuleObservabilityConfigResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ExecModuleObservabilityConfig
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="capturePayloads"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleObservabilityConfig
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="capturePayloads" className="nice-form-control">
                       <b>
                         Capture Payloads:
-                        {touched.capturePayloads && !errors.capturePayloads && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.capturePayloads &&
+                         !errors.capturePayloads && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="capturePayloads"
-                        name="capturePayloads"
-                        checked={values.capturePayloads || false}
-                        onChange={(e) => {
-                          setFieldTouched("capturePayloads", true);
-                          setFieldValue("capturePayloads", e.target.checked);
-                        }}
-                        isInvalid={!!errors.capturePayloads}
-                        className={errors.capturePayloads ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="capturePayloads"
+                            name="capturePayloads"
+                            checked={values.capturePayloads || false}
+                            onChange={(e) => {
+                              setFieldTouched('capturePayloads', true);
+                              setFieldValue('capturePayloads', e.target.checked);
+                            }}
+                            isInvalid={!!errors.capturePayloads}
+                            className={errors.capturePayloads ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -265,25 +235,32 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="emitEvents" className="nice-form-control">
                       <b>
                         Emit Events:
-                        {touched.emitEvents && !errors.emitEvents && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.emitEvents &&
+                         !errors.emitEvents && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="emitEvents"
-                        name="emitEvents"
-                        checked={values.emitEvents || false}
-                        onChange={(e) => {
-                          setFieldTouched("emitEvents", true);
-                          setFieldValue("emitEvents", e.target.checked);
-                        }}
-                        isInvalid={!!errors.emitEvents}
-                        className={errors.emitEvents ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="emitEvents"
+                            name="emitEvents"
+                            checked={values.emitEvents || false}
+                            onChange={(e) => {
+                              setFieldTouched('emitEvents', true);
+                              setFieldValue('emitEvents', e.target.checked);
+                            }}
+                            isInvalid={!!errors.emitEvents}
+                            className={errors.emitEvents ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -295,32 +272,36 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="logLevel" className="nice-form-control">
                       <b>
                         Log Level:
-                        {touched.logLevel && !errors.logLevel && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.logLevel &&
+                         !errors.logLevel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="logLevel"
-                        type="number"
-                        value={values.logLevel || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("logLevel", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "logLevel",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.logLevel
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="logLevel"
+                            type="number"
+                            value={values.logLevel || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('logLevel', true);
+                              const v = e.target.value;
+                              setFieldValue('logLevel', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.logLevel
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -331,26 +312,33 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="auditEnabled" className="nice-form-control">
                       <b>
-                        Audit _ enabled:
-                        {touched.auditEnabled && !errors.auditEnabled && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Audit Enabled:
+                        {touched.auditEnabled &&
+                         !errors.auditEnabled && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="auditEnabled"
-                        name="auditEnabled"
-                        checked={values.auditEnabled || false}
-                        onChange={(e) => {
-                          setFieldTouched("auditEnabled", true);
-                          setFieldValue("auditEnabled", e.target.checked);
-                        }}
-                        isInvalid={!!errors.auditEnabled}
-                        className={errors.auditEnabled ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="auditEnabled"
+                            name="auditEnabled"
+                            checked={values.auditEnabled || false}
+                            onChange={(e) => {
+                              setFieldTouched('auditEnabled', true);
+                              setFieldValue('auditEnabled', e.target.checked);
+                            }}
+                            isInvalid={!!errors.auditEnabled}
+                            className={errors.auditEnabled ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -362,21 +350,28 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="channels" className="nice-form-control">
                       <b>
                         Channels:
-                        {touched.channels && !errors.channels && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.channels &&
+                         !errors.channels && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="channels"
-                        value={values?.channels}
-                        placeholder="Channels"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channels"
+                            value={values?.channels}
+                            placeholder="Channels"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -388,21 +383,28 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="eventType" className="nice-form-control">
                       <b>
                         Event Type:
-                        {touched.eventType && !errors.eventType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.eventType &&
+                         !errors.eventType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="eventType"
-                        value={values?.eventType}
-                        placeholder="Event Type"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="eventType"
+                            value={values?.eventType}
+                            placeholder="Event Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -411,28 +413,31 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="eventTypeMapping"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="eventTypeMapping" className="nice-form-control">
                       <b>
                         Event Type Mapping:
                         {touched.eventTypeMapping &&
-                          !errors.eventTypeMapping && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.eventTypeMapping && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="eventTypeMapping"
-                        value={values?.eventTypeMapping}
-                        placeholder="Event Type Mapping"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="eventTypeMapping"
+                            value={values?.eventTypeMapping}
+                            placeholder="Event Type Mapping"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -443,22 +448,29 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="eventTypeUrl" className="nice-form-control">
                       <b>
-                        Event _ type _ url:
-                        {touched.eventTypeUrl && !errors.eventTypeUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Event Type Url:
+                        {touched.eventTypeUrl &&
+                         !errors.eventTypeUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="eventTypeUrl"
-                        value={values?.eventTypeUrl}
-                        placeholder="Event _ type _ url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="eventTypeUrl"
+                            value={values?.eventTypeUrl}
+                            placeholder="Event Type Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -467,39 +479,39 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="expiresAfterHours"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="expiresAfterHours" className="nice-form-control">
                       <b>
                         Expires After Hours:
                         {touched.expiresAfterHours &&
-                          !errors.expiresAfterHours && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.expiresAfterHours && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="expiresAfterHours"
-                        type="number"
-                        value={values.expiresAfterHours || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("expiresAfterHours", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "expiresAfterHours",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.expiresAfterHours
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="expiresAfterHours"
+                            type="number"
+                            value={values.expiresAfterHours || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('expiresAfterHours', true);
+                              const v = e.target.value;
+                              setFieldValue('expiresAfterHours', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.expiresAfterHours
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -511,32 +523,36 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="lookbackDays" className="nice-form-control">
                       <b>
                         Lookback Days:
-                        {touched.lookbackDays && !errors.lookbackDays && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.lookbackDays &&
+                         !errors.lookbackDays && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="lookbackDays"
-                        type="number"
-                        value={values.lookbackDays || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("lookbackDays", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "lookbackDays",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.lookbackDays
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="lookbackDays"
+                            type="number"
+                            value={values.lookbackDays || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lookbackDays', true);
+                              const v = e.target.value;
+                              setFieldValue('lookbackDays', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.lookbackDays
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -545,38 +561,39 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="lookbackMinutes"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="lookbackMinutes" className="nice-form-control">
                       <b>
                         Lookback Minutes:
-                        {touched.lookbackMinutes && !errors.lookbackMinutes && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.lookbackMinutes &&
+                         !errors.lookbackMinutes && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="lookbackMinutes"
-                        type="number"
-                        value={values.lookbackMinutes || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("lookbackMinutes", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "lookbackMinutes",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.lookbackMinutes
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="lookbackMinutes"
+                            type="number"
+                            value={values.lookbackMinutes || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lookbackMinutes', true);
+                              const v = e.target.value;
+                              setFieldValue('lookbackMinutes', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.lookbackMinutes
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -587,22 +604,29 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <br />
                     <label htmlFor="sessionGap" className="nice-form-control">
                       <b>
-                        Session _ gap:
-                        {touched.sessionGap && !errors.sessionGap && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        Session Gap:
+                        {touched.sessionGap &&
+                         !errors.sessionGap && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sessionGap"
-                        value={values?.sessionGap}
-                        placeholder="Session _ gap"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sessionGap"
+                            value={values?.sessionGap}
+                            placeholder="Session Gap"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -614,25 +638,32 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -642,66 +673,45 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ExecModuleObservabilityConfig
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ExecModuleObservabilityConfig
+                  </CoolButton>
 
-                    {(addExecModuleObservabilityConfigResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addExecModuleObservabilityConfigResult as any)
-                                .error
-                              ? (addExecModuleObservabilityConfigResult as any)
-                                  .error.data
-                              : (addExecModuleObservabilityConfigResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addExecModuleObservabilityConfigResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addExecModuleObservabilityConfigResult as any).error ? (addExecModuleObservabilityConfigResult as any).error.data : (addExecModuleObservabilityConfigResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addExecModuleObservabilityConfigResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addExecModuleObservabilityConfigResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addExecModuleObservabilityConfigResult:{" "}
-                    {JSON.stringify(addExecModuleObservabilityConfigResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addExecModuleObservabilityConfigResult: {JSON.stringify(addExecModuleObservabilityConfigResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -721,5 +731,8 @@ const ExecModuleObservabilityConfigForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ExecModuleObservabilityConfigForm;
+

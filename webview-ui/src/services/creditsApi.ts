@@ -8,13 +8,27 @@
  * This server-side computation ensures consistency across all clients.
  */
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "@thorapi/redux/customBaseQuery";
+import customBaseQuery from "../redux/customBaseQuery";
+import type {
+  AppGenerationRequest,
+  AppGenerationTraceResponse,
+  ContextPageCompileRequest,
+  ContextPageHydrateRequest,
+  ContextPageRecompressRequest,
+  ContextPageResponse,
+  ContextPageTraverseRequest,
+  CreditDebitReceipt,
+  GenerationReceipt,
+  SkillOptRouteReceipt,
+} from "@thorapi/model";
 import { v4 as uuidv4 } from "uuid";
 
 // AccountBalance DTO - matches ValkyrAI's AccountBalanceDTO
 export interface AccountBalance {
+  customerId?: string;
   currentBalance: number;
   payments: PaymentTransaction[];
+  paymentTransactions?: PaymentTransaction[];
   usageTransactions: UsageTransaction[];
 }
 
@@ -42,6 +56,256 @@ export interface PaymentTransaction {
   description?: string;
 }
 
+const finiteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+  return undefined;
+};
+
+const normalizeCredits = (value: unknown): number => finiteNumber(value) ?? 0;
+
+const firstArray = (source: Record<string, any>, ...keys: string[]): any[] => {
+  for (const key of keys) {
+    const value = source[key];
+    if (Array.isArray(value)) {
+      return value;
+    }
+    if (Array.isArray(value?.content)) {
+      return value.content;
+    }
+    if (Array.isArray(value?.items)) {
+      return value.items;
+    }
+    if (Array.isArray(value?.results)) {
+      return value.results;
+    }
+    if (Array.isArray(value?.data)) {
+      return value.data;
+    }
+  }
+  return [];
+};
+
+const normalizeUsageRows = (source: Record<string, any>): UsageTransaction[] => {
+  const directRows = firstArray(
+    source,
+    "usageTransactions",
+    "usage",
+    "usageHistory",
+    "usage_history",
+  );
+  if (directRows.length) {
+    return directRows;
+  }
+
+  return firstArray(source, "creditDebitReceipts", "receipts").map(
+    (receipt) => ({
+      ...(receipt?.usageTransaction ?? receipt),
+      id: receipt?.usageTransaction?.id ?? receipt?.id ?? receipt?.receiptRef,
+      spentAt:
+        receipt?.usageTransaction?.spentAt ??
+        receipt?.spentAt ??
+        receipt?.createdAt ??
+        receipt?.createdDate,
+      credits:
+        receipt?.usageTransaction?.credits ??
+        receipt?.credits ??
+        receipt?.amountCredits,
+      description:
+        receipt?.description ??
+        receipt?.actionType ??
+        receipt?.actionRef ??
+        receipt?.receiptRef,
+    }),
+  );
+};
+
+export const normalizeAccountBalance = (payload: any): AccountBalance => {
+  const source = payload?.data ?? payload?.accountBalance ?? payload ?? {};
+  const payments = firstArray(
+    source,
+    "payments",
+    "paymentTransactions",
+    "paymentHistory",
+    "payment_history",
+  );
+  const usageTransactions = normalizeUsageRows(source);
+  const derivedBalance =
+    payments.reduce(
+      (sum: number, payment: PaymentTransaction) =>
+        sum + normalizeCredits((payment as any).credits),
+      0,
+    ) -
+    usageTransactions.reduce(
+      (sum: number, usage: UsageTransaction) =>
+        sum +
+        normalizeCredits((usage as any).credits ?? (usage as any).meteredUnits),
+      0,
+    );
+  const explicitBalance = finiteNumber(
+    source.currentBalance,
+    source.current_balance,
+    source.balance,
+    source.availableCredits,
+    source.creditBalance,
+    source.credits,
+  );
+
+  return {
+    ...source,
+    customerId:
+      source.customerId ??
+      source.customer_id ??
+      source.accountId ??
+      source.account_id ??
+      source.billingAccountId ??
+      source.creditAccountId ??
+      source.customer?.id ??
+      source.account?.id,
+    currentBalance:
+      explicitBalance !== undefined &&
+      !(explicitBalance === 0 && derivedBalance !== 0)
+        ? explicitBalance
+        : derivedBalance,
+    payments,
+    paymentTransactions: payments,
+    usageTransactions,
+  };
+};
+
+const getCustomerId = (payload: unknown): string | undefined => {
+  const value = (payload as any)?.data ?? payload;
+  const customerId =
+    value?.customerId ??
+    value?.customer_id ??
+    value?.accountId ??
+    value?.account_id ??
+    value?.billingAccountId ??
+    value?.creditAccountId ??
+    value?.customer?.id ??
+    value?.account?.id ??
+    value?.id;
+  return typeof customerId === "string" && customerId.trim()
+    ? customerId.trim()
+    : undefined;
+};
+
+const hasQueryError = (
+  result: unknown,
+): result is {
+  error: { status?: number | string; data?: unknown; error?: string };
+} => Boolean((result as any)?.error);
+
+const getQueryData = (result: unknown): unknown => (result as any)?.data;
+
+const shouldSurfaceQueryError = (error: {
+  status?: number | string;
+}): boolean =>
+  error.status === 401 ||
+  error.status === 403 ||
+  error.status === "FETCH_ERROR" ||
+  error.status === "TIMEOUT_ERROR" ||
+  error.status === "PARSING_ERROR";
+
+const getLedgerRowCount = (balance?: AccountBalance): number =>
+  (balance?.payments?.length ?? balance?.paymentTransactions?.length ?? 0) +
+  (balance?.usageTransactions?.length ?? 0);
+
+const hasLedgerRows = (balance?: AccountBalance): boolean =>
+  getLedgerRowCount(balance) > 0;
+
+const uniqueStrings = (values: Array<string | undefined>): string[] =>
+  Array.from(
+    new Set(
+      values
+        .map((value) => value?.trim())
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
+
+export const getAccountBalancePath = (accountId: string): string =>
+  accountId === "me"
+    ? "credits/me/balance"
+    : `credits/${encodeURIComponent(accountId)}/balance`;
+
+export const resolvePrimaryBalanceAccountId = (
+  accountId: string,
+  summaryAccountId?: string,
+): string => (accountId === "me" ? summaryAccountId || "me" : accountId);
+
+export const resolveBalanceLookupAccountIds = (
+  accountId: string,
+  summaryAccountId?: string,
+): string[] =>
+  uniqueStrings([
+    accountId,
+    summaryAccountId,
+    accountId === "me" ? undefined : "me",
+  ]);
+
+const exampleQuery = (example: Record<string, unknown>): string =>
+  `example=${encodeURIComponent(JSON.stringify(example))}`;
+
+const normalizeBalanceList = (payload: unknown): AccountBalance[] => {
+  const source = (payload as any)?.data ?? payload;
+  const rows = Array.isArray(source)
+    ? source
+    : Array.isArray((source as any)?.content)
+      ? (source as any).content
+      : Array.isArray((source as any)?.items)
+        ? (source as any).items
+        : Array.isArray((source as any)?.results)
+          ? (source as any).results
+          : [];
+  return rows.map(normalizeAccountBalance);
+};
+
+export const chooseBestBalance = (
+  candidates: Array<AccountBalance | undefined>,
+): AccountBalance | undefined =>
+  candidates
+    .filter((candidate): candidate is AccountBalance => Boolean(candidate))
+    .sort((a, b) => {
+      const score = (candidate: AccountBalance) =>
+        getLedgerRowCount(candidate) * 10 + (candidate.currentBalance !== 0 ? 1 : 0);
+
+      return score(b) - score(a);
+    })[0];
+
+export const mergeAccountBalance = (
+  summaryBalance?: AccountBalance,
+  balance?: AccountBalance,
+): AccountBalance | undefined => {
+  if (!summaryBalance) {
+    return balance;
+  }
+  if (!balance) {
+    return summaryBalance;
+  }
+
+  const shouldUseBalanceValue =
+    balance.currentBalance !== 0 ||
+    summaryBalance.currentBalance === 0 ||
+    hasLedgerRows(balance);
+
+  return {
+    ...balance,
+    customerId: balance.customerId || summaryBalance.customerId,
+    currentBalance: shouldUseBalanceValue
+      ? balance.currentBalance
+      : summaryBalance.currentBalance,
+  };
+};
+
 // Balance response for mutations
 export interface BalanceResponse {
   id?: string;
@@ -63,7 +327,13 @@ export interface ErrorResponse {
 export const creditsApi = createApi({
   reducerPath: "creditsApi",
   baseQuery: customBaseQuery,
-  tagTypes: ["AccountBalance", "Credits"],
+  tagTypes: [
+    "AccountBalance",
+    "Credits",
+    "Receipts",
+    "AppGeneration",
+    "GrayMatter",
+  ],
   endpoints: (builder) => ({
     /**
      * GET /v1/credits/{accountId}/balance
@@ -71,9 +341,105 @@ export const creditsApi = createApi({
      * Returns AccountBalance with computed currentBalance from payments - usage
      */
     getAccountBalance: builder.query<AccountBalance, string>({
-      query: (accountId) => `credits/${accountId}/balance`,
+      async queryFn(accountId, _api, _extraOptions, baseQuery) {
+        let blockingError:
+          | { status?: number | string; data?: unknown; error?: string }
+          | undefined;
+        const requestBalance = async (path: string) => {
+          const result = await baseQuery(path);
+          if (hasQueryError(result)) {
+            if (shouldSurfaceQueryError(result.error)) {
+              blockingError ??= result.error;
+            }
+            return undefined;
+          }
+          return getQueryData(result);
+        };
+
+        const summaryPayloads = await Promise.all([
+          requestBalance("credits/me/balance/summary"),
+          requestBalance("CreditBalanceSummary"),
+        ]);
+        const summaryBalances = summaryPayloads.flatMap((payload) =>
+          Array.isArray((payload as any)?.data) ||
+          Array.isArray(payload) ||
+          Array.isArray((payload as any)?.content) ||
+          Array.isArray((payload as any)?.items)
+            ? normalizeBalanceList(payload)
+            : payload !== undefined
+              ? [normalizeAccountBalance(payload)]
+              : [],
+        );
+        const summaryBalance = chooseBestBalance(summaryBalances);
+        const summaryAccountId = getCustomerId(summaryBalance);
+        const primaryAccountId = resolvePrimaryBalanceAccountId(
+          accountId,
+          summaryAccountId,
+        );
+        const candidateIds = resolveBalanceLookupAccountIds(
+          primaryAccountId,
+          summaryAccountId,
+        );
+        const balancePayloads: unknown[] = [];
+
+        for (const id of candidateIds) {
+          const encoded = encodeURIComponent(id);
+          const payloads = await Promise.all([
+            requestBalance(getAccountBalancePath(id)),
+            id === "me" ? undefined : requestBalance(`AccountBalance/${encoded}`),
+            id === "me"
+              ? undefined
+              : requestBalance(
+                  `AccountBalance?${exampleQuery({ customerId: id })}`,
+                ),
+            id === "me"
+              ? undefined
+              : requestBalance(
+                  `CreditBalanceSummary?${exampleQuery({ customerId: id })}`,
+                ),
+          ]);
+          balancePayloads.push(...payloads.filter(Boolean));
+        }
+
+        balancePayloads.push(
+          await requestBalance("AccountBalance"),
+          await requestBalance("CreditBalanceSummary"),
+        );
+        const balanceCandidates = balancePayloads.flatMap((payload) =>
+          Array.isArray((payload as any)?.data) ||
+          Array.isArray(payload) ||
+          Array.isArray((payload as any)?.content) ||
+          Array.isArray((payload as any)?.items)
+            ? normalizeBalanceList(payload)
+            : payload !== undefined
+              ? [normalizeAccountBalance(payload)]
+              : [],
+        );
+        const selectedBalance = chooseBestBalance([
+          ...balanceCandidates,
+          summaryBalance,
+        ]);
+
+        const balance = mergeAccountBalance(
+          summaryBalance,
+          selectedBalance,
+        );
+
+        if (!balance && blockingError) {
+          return { error: blockingError as any };
+        }
+
+        return {
+          data: {
+            ...balance,
+            customerId: balance?.customerId || summaryAccountId,
+            currentBalance: balance?.currentBalance ?? 0,
+          },
+        };
+      },
       providesTags: (result, error, accountId) => [
         { type: "AccountBalance", id: accountId },
+        { type: "AccountBalance", id: result?.customerId || "me" },
         { type: "Credits", id: "BALANCE" },
       ],
     }),
@@ -91,7 +457,7 @@ export const creditsApi = createApi({
       }
     >({
       query: ({ accountId, usage, idempotencyKey }) => ({
-        url: `credits/${accountId}/usage`,
+        url: `credits/${encodeURIComponent(accountId)}/usage`,
         method: "POST",
         body: usage,
         headers: {
@@ -117,7 +483,7 @@ export const creditsApi = createApi({
       }
     >({
       query: ({ accountId, payment, idempotencyKey }) => ({
-        url: `credits/${accountId}/payment`,
+        url: `credits/${encodeURIComponent(accountId)}/payment`,
         method: "POST",
         body: payment,
         headers: {
@@ -129,6 +495,155 @@ export const creditsApi = createApi({
         { type: "Credits", id: "BALANCE" },
       ],
     }),
+
+    getAppGenerationTrace: builder.query<AppGenerationTraceResponse, string>({
+      query: (receiptRef) =>
+        `app_generation_ops/traces/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, receiptRef) => [
+        { type: "Receipts", id: `app-generation-trace:${receiptRef}` },
+      ],
+    }),
+
+    createAppGenerationRequest: builder.mutation<
+      AppGenerationRequest,
+      AppGenerationRequest
+    >({
+      query: (appGenerationRequest) => ({
+        url: "app_generation_ops/requests",
+        method: "POST",
+        body: appGenerationRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "AppGeneration", id: result?.requestRef || "REQUEST" },
+      ],
+    }),
+
+    getAppGenerationRequest: builder.query<AppGenerationRequest, string>({
+      query: (requestRef) =>
+        `app_generation_ops/requests/${encodeURIComponent(requestRef)}`,
+      providesTags: (result, error, requestRef) => [
+        { type: "AppGeneration", id: requestRef },
+      ],
+    }),
+
+    runAppGenerationRequest: builder.mutation<GenerationReceipt, string>({
+      query: (requestRef) => ({
+        url: `app_generation_ops/requests/${encodeURIComponent(requestRef)}/run`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, requestRef) => [
+        { type: "AppGeneration", id: requestRef },
+        { type: "Receipts", id: `app-generation-trace:${result?.receiptRef}` },
+      ],
+    }),
+
+    compileContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageCompileRequest
+    >({
+      query: (contextPageCompileRequest) => ({
+        url: "graymatter_ops/context_page/compile",
+        method: "POST",
+        body: contextPageCompileRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    getContextPage: builder.query<ContextPageResponse, string>({
+      query: (contextPageRef) =>
+        `graymatter_ops/context_page/${encodeURIComponent(contextPageRef)}`,
+      providesTags: (result, error, contextPageRef) => [
+        { type: "GrayMatter", id: contextPageRef },
+      ],
+    }),
+
+    hydrateContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageHydrateRequest
+    >({
+      query: (contextPageHydrateRequest) => ({
+        url: "graymatter_ops/context_page/hydrate",
+        method: "POST",
+        body: contextPageHydrateRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    recompressContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageRecompressRequest
+    >({
+      query: (contextPageRecompressRequest) => ({
+        url: "graymatter_ops/context_page/recompress",
+        method: "POST",
+        body: contextPageRecompressRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    traverseContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageTraverseRequest
+    >({
+      query: (contextPageTraverseRequest) => ({
+        url: "graymatter_ops/context_page/traverse",
+        method: "POST",
+        body: contextPageTraverseRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    getSkilloptRouteReceipt: builder.query<
+      SkillOptRouteReceipt,
+      { accountId: string; receiptRef: string }
+    >({
+      query: ({ accountId, receiptRef }) =>
+        `skillopt_ops/${encodeURIComponent(accountId)}/route_receipts/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, { receiptRef }) => [
+        { type: "Receipts", id: `skillopt-route:${receiptRef}` },
+      ],
+    }),
+
+    listSkilloptRouteReceipts: builder.query<
+      SkillOptRouteReceipt[],
+      { accountId: string }
+    >({
+      query: ({ accountId }) =>
+        `skillopt_ops/${encodeURIComponent(accountId)}/route_receipts`,
+      providesTags: (result, error, { accountId }) => [
+        { type: "Receipts", id: `skillopt-route-list:${accountId}` },
+      ],
+    }),
+
+    getCreditDebitReceiptByReceiptRef: builder.query<
+      CreditDebitReceipt,
+      { accountId: string; receiptRef: string }
+    >({
+      query: ({ accountId, receiptRef }) =>
+        `credits/${encodeURIComponent(accountId)}/credit_debit_receipts/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, { receiptRef }) => [
+        { type: "Receipts", id: `credit-debit:${receiptRef}` },
+      ],
+    }),
+
+    listCreditDebitReceipts: builder.query<
+      CreditDebitReceipt[],
+      { accountId: string }
+    >({
+      query: ({ accountId }) =>
+        `credits/${encodeURIComponent(accountId)}/credit_debit_receipts`,
+      providesTags: (result, error, { accountId }) => [
+        { type: "Receipts", id: `credit-debit-list:${accountId}` },
+      ],
+    }),
   }),
 });
 
@@ -138,6 +653,19 @@ export const {
   useLazyGetAccountBalanceQuery,
   useRecordUsageTransactionMutation,
   useRecordPaymentTransactionMutation,
+  useCreateAppGenerationRequestMutation,
+  useCompileContextPageMutation,
+  useGetAppGenerationRequestQuery,
+  useGetAppGenerationTraceQuery,
+  useGetContextPageQuery,
+  useHydrateContextPageMutation,
+  useRecompressContextPageMutation,
+  useRunAppGenerationRequestMutation,
+  useTraverseContextPageMutation,
+  useGetSkilloptRouteReceiptQuery,
+  useListSkilloptRouteReceiptsQuery,
+  useGetCreditDebitReceiptByReceiptRefQuery,
+  useListCreditDebitReceiptsQuery,
 } = creditsApi;
 
 /**

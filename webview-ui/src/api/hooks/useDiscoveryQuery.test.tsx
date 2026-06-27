@@ -17,6 +17,14 @@ const jsonResponse = (body: unknown, init: ResponseInit = {}) =>
     ...init,
   });
 
+const clearStorage = (storage: Storage) => {
+  try {
+    storage.clear?.();
+  } catch {
+    // Some Vitest localStorage shims are partial when --localstorage-file is unset.
+  }
+};
+
 describe("useDiscoveryQuery host-aware Swarm discovery", () => {
   beforeEach(() => {
     vi.stubGlobal(
@@ -24,16 +32,16 @@ describe("useDiscoveryQuery host-aware Swarm discovery", () => {
       vi.fn().mockImplementation(() => Promise.resolve(jsonResponse([]))),
     );
     vi.spyOn(console, "error").mockImplementation(() => undefined);
-    window.sessionStorage.clear();
-    window.localStorage.clear();
+    clearStorage(window.sessionStorage);
+    clearStorage(window.localStorage);
     setValkyraiHost("https://api-0.valkyrlabs.com/v1");
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
-    window.sessionStorage.clear();
-    window.localStorage.clear();
+    clearStorage(window.sessionStorage);
+    clearStorage(window.localStorage);
   });
 
   it("builds hosted and enterprise discovery URLs from the configured ValkyrAI API host", () => {
@@ -74,6 +82,7 @@ describe("useDiscoveryQuery host-aware Swarm discovery", () => {
     expect(getSwarmDiscoveryHeaders().get("Authorization")).toBe(
       "Bearer session-token",
     );
+    expect(getSwarmDiscoveryHeaders().get("jwtSession")).toBe("session-token");
   });
 
   it("classifies auth, RBAC, cloud, local, and empty recovery states", () => {

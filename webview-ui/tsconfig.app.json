@@ -21,12 +21,47 @@
     /* Aliasing */
     "baseUrl": ".",
     "paths": {
+      "@thorapi/model": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model/index.ts"
+      ],
+      "@thorapi/model/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model/*"
+      ],
+      "@thorapi/src": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/src/index.ts"
+      ],
+      "@thorapi/redux": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux"
+      ],
+      "@thorapi/redux/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/*"
+      ],
+      "@thorapi/redux/services": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/services/index.ts"
+      ],
+      "@thorapi/redux/services/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux/services/*",
+        "src/redux/services/*"
+      ],
+      "@thorapi/api": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api/index.ts"
+      ],
+      "@thorapi/api/*": [
+        "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api/*"
+      ],
       "@thorapi/*": ["src/*"],
+      "@valkyrai/openapi-designer": [
+        "../../ValkyrAI/packages/component-library/src/openapi-designer"
+      ],
+      "@valkyrai/openapi-designer/*": [
+        "../../ValkyrAI/packages/component-library/src/openapi-designer/*"
+      ],
       "@components/*": ["src/components/*"],
       "@context/*": ["src/context/*"],
       "@shared/*": ["../src/shared/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/thorapi"]
 }

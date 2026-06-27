@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   McpTool,
   McpToolCategoryEnum,
   McpToolInvocationStyleEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddMcpToolMutation } from "../../services/McpToolService";
+import { useAddMcpToolMutation } from '../../services/McpToolService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,49 +64,50 @@ McpTool
 -------------------------------------------------------- */
 const CategoryValidation = () => {
   return [
-    "uncategorized",
-    "cloud_platform",
-    "devops",
-    "security",
-    "observability",
-    "data_engineering",
-    "ai_assistant",
-    "productivity",
-    "customization",
+    'uncategorized',
+    'cloud_platform',
+    'devops',
+    'security',
+    'observability',
+    'data_engineering',
+    'ai_assistant',
+    'productivity',
+    'customization',
   ];
 };
 const InvocationStyleValidation = () => {
-  return ["single_call", "conversational", "streaming", "background"];
+  return [
+    'single_call',
+    'conversational',
+    'streaming',
+    'background',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  mcpServerId: Yup.string(),
-  name: Yup.string(),
-  slug: Yup.string(),
-  description: Yup.string(),
-  category: Yup.mixed().oneOf(
-    CategoryValidation(),
-    "Invalid value for category",
-  ),
-  capabilities: Yup.string(),
-  invocationStyle: Yup.mixed().oneOf(
-    InvocationStyleValidation(),
-    "Invalid value for invocationStyle",
-  ),
-  streamingSupported: Yup.boolean(),
-  autoApprove: Yup.boolean(),
-  defaultAutoApprove: Yup.boolean(),
-  docsUrl: Yup.string(),
-  inputSchema: Yup.string(),
-  trashed: Yup.boolean(),
+        mcpServerId: Yup.string(),
+        name: Yup.string(),
+        slug: Yup.string(),
+        description: Yup.string(),
+      category: Yup.mixed()
+        .oneOf(CategoryValidation(), "Invalid value for category")
+        ,
+        capabilities: Yup.string(),
+      invocationStyle: Yup.mixed()
+        .oneOf(InvocationStyleValidation(), "Invalid value for invocationStyle")
+        ,
+        streamingSupported: Yup.boolean(),
+        autoApprove: Yup.boolean(),
+        defaultAutoApprove: Yup.boolean(),
+        docsUrl: Yup.string(),
+        inputSchema: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -131,18 +124,12 @@ const McpToolForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -150,19 +137,19 @@ const McpToolForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpTool> = {
-    mcpServerId: "",
-    name: "",
-    slug: "",
-    description: "",
-    category: undefined,
-    capabilities: "",
-    invocationStyle: undefined,
-    streamingSupported: false,
-    autoApprove: false,
-    defaultAutoApprove: false,
-    docsUrl: "",
-    inputSchema: "",
-    trashed: false,
+          mcpServerId: '',
+          name: '',
+          slug: '',
+          description: '',
+        category: undefined,
+          capabilities: '',
+        invocationStyle: undefined,
+          streamingSupported: false,
+          autoApprove: false,
+          defaultAutoApprove: false,
+          docsUrl: '',
+          inputSchema: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -177,14 +164,11 @@ const McpToolForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new McpTool:", grants);
+    console.log('Permissions saved for new McpTool:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<McpTool>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpTool>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -195,7 +179,7 @@ const McpToolForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpTool created successfully! Would you like to set permissions for this object?`,
+          `McpTool created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -203,8 +187,8 @@ const McpToolForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create McpTool:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create McpTool:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -225,36 +209,44 @@ const McpToolForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addMcpToolResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New McpTool
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpTool
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="mcpServerId" className="nice-form-control">
                       <b>
                         Mcp Server Id:
-                        {touched.mcpServerId && !errors.mcpServerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.mcpServerId &&
+                         !errors.mcpServerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="mcpServerId"
-                        value={values?.mcpServerId}
-                        placeholder="Mcp Server Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="mcpServerId"
+                            value={values?.mcpServerId}
+                            placeholder="Mcp Server Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -266,21 +258,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -292,21 +291,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="slug" className="nice-form-control">
                       <b>
                         Slug:
-                        {touched.slug && !errors.slug && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.slug &&
+                         !errors.slug && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="slug"
-                        value={values?.slug}
-                        placeholder="Slug"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="slug"
+                            value={values?.slug}
+                            placeholder="Slug"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -318,21 +324,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description && !errors.description && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="description"
-                        value={values?.description}
-                        placeholder="Description"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -344,33 +357,30 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category && !errors.category && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.category &&
+                         !errors.category && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="category"
-                        value={values.category || ""}
-                        className={
-                          errors.category
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("category", true);
-                          setFieldValue(
-                            "category",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Category" />
-                        <CategoryLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="category"
+                          value={values.category || ''}
+                          className={
+                            errors.category
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('category', true);
+                            setFieldValue('category', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Category" />
+                          <CategoryLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -382,21 +392,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="capabilities" className="nice-form-control">
                       <b>
                         Capabilities:
-                        {touched.capabilities && !errors.capabilities && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.capabilities &&
+                         !errors.capabilities && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="capabilities"
-                        value={values?.capabilities}
-                        placeholder="Capabilities"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="capabilities"
+                            value={values?.capabilities}
+                            placeholder="Capabilities"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -405,39 +422,33 @@ const McpToolForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="invocationStyle"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="invocationStyle" className="nice-form-control">
                       <b>
                         Invocation Style:
-                        {touched.invocationStyle && !errors.invocationStyle && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.invocationStyle &&
+                         !errors.invocationStyle && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="invocationStyle"
-                        value={values.invocationStyle || ""}
-                        className={
-                          errors.invocationStyle
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("invocationStyle", true);
-                          setFieldValue(
-                            "invocationStyle",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Invocation Style" />
-                        <InvocationStyleLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="invocationStyle"
+                          value={values.invocationStyle || ''}
+                          className={
+                            errors.invocationStyle
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('invocationStyle', true);
+                            setFieldValue('invocationStyle', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Invocation Style" />
+                          <InvocationStyleLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -446,32 +457,35 @@ const McpToolForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="streamingSupported"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="streamingSupported" className="nice-form-control">
                       <b>
                         Streaming Supported:
                         {touched.streamingSupported &&
-                          !errors.streamingSupported && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.streamingSupported && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="streamingSupported"
-                        name="streamingSupported"
-                        checked={values.streamingSupported || false}
-                        onChange={(e) => {
-                          setFieldTouched("streamingSupported", true);
-                          setFieldValue("streamingSupported", e.target.checked);
-                        }}
-                        isInvalid={!!errors.streamingSupported}
-                        className={errors.streamingSupported ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="streamingSupported"
+                            name="streamingSupported"
+                            checked={values.streamingSupported || false}
+                            onChange={(e) => {
+                              setFieldTouched('streamingSupported', true);
+                              setFieldValue('streamingSupported', e.target.checked);
+                            }}
+                            isInvalid={!!errors.streamingSupported}
+                            className={errors.streamingSupported ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -483,25 +497,32 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="autoApprove" className="nice-form-control">
                       <b>
                         Auto Approve:
-                        {touched.autoApprove && !errors.autoApprove && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.autoApprove &&
+                         !errors.autoApprove && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="autoApprove"
-                        name="autoApprove"
-                        checked={values.autoApprove || false}
-                        onChange={(e) => {
-                          setFieldTouched("autoApprove", true);
-                          setFieldValue("autoApprove", e.target.checked);
-                        }}
-                        isInvalid={!!errors.autoApprove}
-                        className={errors.autoApprove ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="autoApprove"
+                            name="autoApprove"
+                            checked={values.autoApprove || false}
+                            onChange={(e) => {
+                              setFieldTouched('autoApprove', true);
+                              setFieldValue('autoApprove', e.target.checked);
+                            }}
+                            isInvalid={!!errors.autoApprove}
+                            className={errors.autoApprove ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -510,32 +531,35 @@ const McpToolForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="defaultAutoApprove"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="defaultAutoApprove" className="nice-form-control">
                       <b>
                         Default Auto Approve:
                         {touched.defaultAutoApprove &&
-                          !errors.defaultAutoApprove && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.defaultAutoApprove && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="defaultAutoApprove"
-                        name="defaultAutoApprove"
-                        checked={values.defaultAutoApprove || false}
-                        onChange={(e) => {
-                          setFieldTouched("defaultAutoApprove", true);
-                          setFieldValue("defaultAutoApprove", e.target.checked);
-                        }}
-                        isInvalid={!!errors.defaultAutoApprove}
-                        className={errors.defaultAutoApprove ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="defaultAutoApprove"
+                            name="defaultAutoApprove"
+                            checked={values.defaultAutoApprove || false}
+                            onChange={(e) => {
+                              setFieldTouched('defaultAutoApprove', true);
+                              setFieldValue('defaultAutoApprove', e.target.checked);
+                            }}
+                            isInvalid={!!errors.defaultAutoApprove}
+                            className={errors.defaultAutoApprove ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -547,21 +571,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="docsUrl" className="nice-form-control">
                       <b>
                         Docs Url:
-                        {touched.docsUrl && !errors.docsUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.docsUrl &&
+                         !errors.docsUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="docsUrl"
-                        value={values?.docsUrl}
-                        placeholder="Docs Url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="docsUrl"
+                            value={values?.docsUrl}
+                            placeholder="Docs Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -573,21 +604,28 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="inputSchema" className="nice-form-control">
                       <b>
                         Input Schema:
-                        {touched.inputSchema && !errors.inputSchema && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.inputSchema &&
+                         !errors.inputSchema && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="inputSchema"
-                        value={values?.inputSchema}
-                        placeholder="Input Schema"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="inputSchema"
+                            value={values?.inputSchema}
+                            placeholder="Input Schema"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -599,25 +637,32 @@ const McpToolForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -627,58 +672,45 @@ const McpToolForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New McpTool
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New McpTool
+                  </CoolButton>
 
-                    {(addMcpToolResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addMcpToolResult as any).error
-                              ? (addMcpToolResult as any).error.data
-                              : (addMcpToolResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addMcpToolResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addMcpToolResult as any).error ? (addMcpToolResult as any).error.data : (addMcpToolResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addMcpToolResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addMcpToolResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addMcpToolResult: {JSON.stringify(addMcpToolResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addMcpToolResult: {JSON.stringify(addMcpToolResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -710,15 +742,15 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value="uncategorized" label="Uncategorized" />
-      <option value="cloud_platform" label="Cloud Platform" />
-      <option value="devops" label="Devops" />
-      <option value="security" label="Security" />
-      <option value="observability" label="Observability" />
-      <option value="data_engineering" label="Data Engineering" />
-      <option value="ai_assistant" label="Ai Assistant" />
-      <option value="productivity" label="Productivity" />
-      <option value="customization" label="Customization" />
+      <option value='uncategorized' label="Uncategorized" />
+      <option value='cloud_platform' label="Cloud Platform" />
+      <option value='devops' label="Devops" />
+      <option value='security' label="Security" />
+      <option value='observability' label="Observability" />
+      <option value='data_engineering' label="Data Engineering" />
+      <option value='ai_assistant' label="Ai Assistant" />
+      <option value='productivity' label="Productivity" />
+      <option value='customization' label="Customization" />
     </>
   );
 };
@@ -735,13 +767,16 @@ kebabcase invocation-style-lookup
 const InvocationStyleLookup = () => {
   return (
     <>
-      <option value="single_call" label="Single Call" />
-      <option value="conversational" label="Conversational" />
-      <option value="streaming" label="Streaming" />
-      <option value="background" label="Background" />
+      <option value='single_call' label="Single Call" />
+      <option value='conversational' label="Conversational" />
+      <option value='streaming' label="Streaming" />
+      <option value='background' label="Background" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default McpToolForm;
+

@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   TrustPolicyManifest,
   TrustPolicyManifestPolicyStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddTrustPolicyManifestMutation } from "../../services/TrustPolicyManifestService";
+import { useAddTrustPolicyManifestMutation } from '../../services/TrustPolicyManifestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,39 +62,40 @@ Canonical policy manifest binding runtime execution to API schema, generated sou
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const PolicyStatusValidation = () => {
-  return ["DRAFT", "ACTIVE", "SUSPENDED", "RETIRED"];
+  return [
+    'DRAFT',
+    'ACTIVE',
+    'SUSPENDED',
+    'RETIRED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  policyStatus: Yup.mixed().oneOf(
-    PolicyStatusValidation(),
-    "Invalid value for policyStatus",
-  ),
-  apiSpecHash: Yup.string(),
-  generatedSourceHash: Yup.string(),
-  runtimeImageHash: Yup.string(),
-  canonicalManifestHash: Yup.string(),
-  allowedModelRefs: Yup.string(),
-  requiredKeyRefs: Yup.string(),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+      policyStatus: Yup.mixed()
+        .oneOf(PolicyStatusValidation(), "Invalid value for policyStatus")
+        ,
+        apiSpecHash: Yup.string(),
+        generatedSourceHash: Yup.string(),
+        runtimeImageHash: Yup.string(),
+        canonicalManifestHash: Yup.string(),
+        allowedModelRefs: Yup.string(),
+        requiredKeyRefs: Yup.string(),
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustPolicyManifestForm: React.FC = () => {
-  const [addTrustPolicyManifest, addTrustPolicyManifestResult] =
-    useAddTrustPolicyManifestMutation();
+  const [addTrustPolicyManifest, addTrustPolicyManifestResult] = useAddTrustPolicyManifestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -112,18 +105,12 @@ const TrustPolicyManifestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -131,16 +118,16 @@ const TrustPolicyManifestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustPolicyManifest> = {
-    name: "",
-    policyStatus: undefined,
-    apiSpecHash: "",
-    generatedSourceHash: "",
-    runtimeImageHash: "",
-    canonicalManifestHash: "",
-    allowedModelRefs: "",
-    requiredKeyRefs: "",
-    ownerId: "",
-    trashed: false,
+          name: '',
+        policyStatus: undefined,
+          apiSpecHash: '',
+          generatedSourceHash: '',
+          runtimeImageHash: '',
+          canonicalManifestHash: '',
+          allowedModelRefs: '',
+          requiredKeyRefs: '',
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -155,14 +142,11 @@ const TrustPolicyManifestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new TrustPolicyManifest:", grants);
+    console.log('Permissions saved for new TrustPolicyManifest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<TrustPolicyManifest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustPolicyManifest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -173,7 +157,7 @@ const TrustPolicyManifestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustPolicyManifest created successfully! Would you like to set permissions for this object?`,
+          `TrustPolicyManifest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -181,8 +165,8 @@ const TrustPolicyManifestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create TrustPolicyManifest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create TrustPolicyManifest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -203,38 +187,44 @@ const TrustPolicyManifestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addTrustPolicyManifestResult.isLoading;
+          const isSaving = isSubmitting || addTrustPolicyManifestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    TrustPolicyManifest
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustPolicyManifest
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -246,33 +236,30 @@ const TrustPolicyManifestForm: React.FC = () => {
                     <label htmlFor="policyStatus" className="nice-form-control">
                       <b>
                         Policy Status:
-                        {touched.policyStatus && !errors.policyStatus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.policyStatus &&
+                         !errors.policyStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="policyStatus"
-                        value={values.policyStatus || ""}
-                        className={
-                          errors.policyStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("policyStatus", true);
-                          setFieldValue(
-                            "policyStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Policy Status" />
-                        <PolicyStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="policyStatus"
+                          value={values.policyStatus || ''}
+                          className={
+                            errors.policyStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('policyStatus', true);
+                            setFieldValue('policyStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Policy Status" />
+                          <PolicyStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -284,21 +271,28 @@ const TrustPolicyManifestForm: React.FC = () => {
                     <label htmlFor="apiSpecHash" className="nice-form-control">
                       <b>
                         Api Spec Hash:
-                        {touched.apiSpecHash && !errors.apiSpecHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.apiSpecHash &&
+                         !errors.apiSpecHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="apiSpecHash"
-                        value={values?.apiSpecHash}
-                        placeholder="Api Spec Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="apiSpecHash"
+                            value={values?.apiSpecHash}
+                            placeholder="Api Spec Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -307,147 +301,163 @@ const TrustPolicyManifestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="generatedSourceHash"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="generatedSourceHash" className="nice-form-control">
                       <b>
                         Generated Source Hash:
                         {touched.generatedSourceHash &&
-                          !errors.generatedSourceHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="generatedSourceHash"
-                        value={values?.generatedSourceHash}
-                        placeholder="Generated Source Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="generatedSourceHash"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="runtimeImageHash"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Runtime Image Hash:
-                        {touched.runtimeImageHash &&
-                          !errors.runtimeImageHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="runtimeImageHash"
-                        value={values?.runtimeImageHash}
-                        placeholder="Runtime Image Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="runtimeImageHash"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="canonicalManifestHash"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Canonical Manifest Hash:
-                        {touched.canonicalManifestHash &&
-                          !errors.canonicalManifestHash && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="canonicalManifestHash"
-                        value={values?.canonicalManifestHash}
-                        placeholder="Canonical Manifest Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="canonicalManifestHash"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="allowedModelRefs"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Allowed Model Refs:
-                        {touched.allowedModelRefs &&
-                          !errors.allowedModelRefs && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="allowedModelRefs"
-                        value={values?.allowedModelRefs}
-                        placeholder="Allowed Model Refs"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="allowedModelRefs"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="requiredKeyRefs"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Required Key Refs:
-                        {touched.requiredKeyRefs && !errors.requiredKeyRefs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                         !errors.generatedSourceHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="requiredKeyRefs"
-                        value={values?.requiredKeyRefs}
-                        placeholder="Required Key Refs"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="generatedSourceHash"
+                            value={values?.generatedSourceHash}
+                            placeholder="Generated Source Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="generatedSourceHash"
+                        component="span"
                       />
+                    </label>
+                    <br />
+                    <label htmlFor="runtimeImageHash" className="nice-form-control">
+                      <b>
+                        Runtime Image Hash:
+                        {touched.runtimeImageHash &&
+                         !errors.runtimeImageHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="runtimeImageHash"
+                            value={values?.runtimeImageHash}
+                            placeholder="Runtime Image Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="runtimeImageHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="canonicalManifestHash" className="nice-form-control">
+                      <b>
+                        Canonical Manifest Hash:
+                        {touched.canonicalManifestHash &&
+                         !errors.canonicalManifestHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="canonicalManifestHash"
+                            value={values?.canonicalManifestHash}
+                            placeholder="Canonical Manifest Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="canonicalManifestHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="allowedModelRefs" className="nice-form-control">
+                      <b>
+                        Allowed Model Refs:
+                        {touched.allowedModelRefs &&
+                         !errors.allowedModelRefs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="allowedModelRefs"
+                            value={values?.allowedModelRefs}
+                            placeholder="Allowed Model Refs"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="allowedModelRefs"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="requiredKeyRefs" className="nice-form-control">
+                      <b>
+                        Required Key Refs:
+                        {touched.requiredKeyRefs &&
+                         !errors.requiredKeyRefs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="requiredKeyRefs"
+                            value={values?.requiredKeyRefs}
+                            placeholder="Required Key Refs"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -459,21 +469,28 @@ const TrustPolicyManifestForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -485,25 +502,32 @@ const TrustPolicyManifestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -513,61 +537,45 @@ const TrustPolicyManifestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New TrustPolicyManifest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New TrustPolicyManifest
+                  </CoolButton>
 
-                    {(addTrustPolicyManifestResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addTrustPolicyManifestResult as any).error
-                              ? (addTrustPolicyManifestResult as any).error.data
-                              : (addTrustPolicyManifestResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustPolicyManifestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustPolicyManifestResult as any).error ? (addTrustPolicyManifestResult as any).error.data : (addTrustPolicyManifestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustPolicyManifestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustPolicyManifestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustPolicyManifestResult:{" "}
-                    {JSON.stringify(addTrustPolicyManifestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustPolicyManifestResult: {JSON.stringify(addTrustPolicyManifestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -599,13 +607,16 @@ kebabcase policy-status-lookup
 const PolicyStatusLookup = () => {
   return (
     <>
-      <option value="DRAFT" label="Draft" />
-      <option value="ACTIVE" label="Active" />
-      <option value="SUSPENDED" label="Suspended" />
-      <option value="RETIRED" label="Retired" />
+      <option value='DRAFT' label="Draft" />
+      <option value='ACTIVE' label="Active" />
+      <option value='SUSPENDED' label="Suspended" />
+      <option value='RETIRED' label="Retired" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustPolicyManifestForm;
+

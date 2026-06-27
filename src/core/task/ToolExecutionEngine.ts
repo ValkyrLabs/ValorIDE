@@ -40,6 +40,7 @@ import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolManager, ToolContext } from "./tools";
 import { Logger } from "@services/logging/Logger";
+import { ValorIDEHookService } from "@core/hooks/ValorIDEHookService";
 
 type ToolResponse =
   | string
@@ -53,6 +54,7 @@ type ToolFeedback = { text?: string; images?: string[] };
 export class ToolExecutionEngine {
   private toolApprovalManager: ToolApprovalManager;
   private toolManager: ToolManager;
+  private hookService: ValorIDEHookService;
 
   constructor(
     private task: any, // Task reference for accessing methods and properties
@@ -63,6 +65,10 @@ export class ToolExecutionEngine {
       this.task.ask.bind(this.task),
       this.task.say.bind(this.task),
     );
+    this.hookService = new ValorIDEHookService({
+      cwd: this.cwd,
+      taskId: this.task.taskId,
+    });
 
     // Create ToolContext from task properties
     const toolContext: ToolContext = {
@@ -191,19 +197,87 @@ export class ToolExecutionEngine {
       pushToolResult(formatResponse.toolError(errorString));
     };
 
-    if (block.name !== "browser_action") {
+    const appendHookContext = (context?: string) => {
+      if (!context) {
+        return;
+      }
+      userMessageContent.push({
+        type: "text",
+        text: `ValorIDE hook context:\n${context}`,
+      });
+    };
+
+    let effectiveBlock = block;
+    if (!block.partial) {
+      const preHookControl = await this.hookService.runPreToolUse(
+        block.name,
+        block.params,
+      );
+      appendHookContext(preHookControl?.context);
+
+      if (
+        preHookControl?.overrideInput &&
+        typeof preHookControl.overrideInput === "object" &&
+        !Array.isArray(preHookControl.overrideInput)
+      ) {
+        effectiveBlock = {
+          ...block,
+          params: {
+            ...block.params,
+            ...(preHookControl.overrideInput as Record<string, string>),
+          },
+        };
+      }
+
+      if (preHookControl?.cancel) {
+        const reason = preHookControl.context
+          ? ` Hook context: ${preHookControl.context}`
+          : "";
+        pushToolResult(
+          `Tool ${toolDescription()} was blocked by PreToolUse.${reason}`,
+        );
+        await this.task.say(
+          "error",
+          `PreToolUse hook blocked ${block.name}.${reason}`,
+        );
+        return {
+          shouldContinue: true,
+          didRejectTool: true,
+          didAlreadyUseTool: true,
+          handled: true,
+        };
+      }
+    }
+
+    if (effectiveBlock.name !== "browser_action") {
       await this.task.browserSession.closeBrowser();
     }
 
+    const resultStartIndex = userMessageContent.length;
+    const startedAt = Date.now();
     // Execute the specific tool
     const result = await this.executeSpecificTool(
-      block,
+      effectiveBlock,
       pushToolResult,
       handleError,
       removeClosingTag,
       toolDescription,
       handleFeedback,
     );
+    const executionTimeMs = Date.now() - startedAt;
+
+    if (!block.partial && result.handled === true) {
+      const postHookControl = await this.hookService.runPostToolUse({
+        toolName: effectiveBlock.name,
+        parameters: effectiveBlock.params,
+        result: serializeToolResponse(
+          userMessageContent.slice(resultStartIndex),
+        ),
+        success: result.handled === true && result.didRejectTool !== true,
+        executionTimeMs,
+      });
+      appendHookContext(postHookControl?.context);
+    }
 
     return {
       shouldContinue: result.shouldContinue,
@@ -300,3 +374,24 @@ export class ToolExecutionEngine {
     };
   }
 }
+
+const serializeToolResponse = (
+  content: Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>,
+): string =>
+  content
+    .map((part) => {
+      if (part.type === "text") {
+        return part.text;
+      }
+      if (part.type === "image") {
+        const mediaType =
+          part.source && "media_type" in part.source
+            ? part.source.media_type
+            : "unknown";
+        return `[image:${mediaType}]`;
+      }
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n")
+    .slice(0, 20_000);

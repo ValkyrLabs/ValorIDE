@@ -19,40 +19,20 @@ Description: ListDeployableApplications200ResponseInner
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import {
-  DataObject,
-  ListDeployableApplications200ResponseInner,
-} from "@thorapi/model";
-import {
-  useGetListDeployableApplications200ResponseInnersQuery,
-  useAddListDeployableApplications200ResponseInnerMutation,
-  useUpdateListDeployableApplications200ResponseInnerMutation,
-} from "../../services/ListDeployableApplications200ResponseInnerService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ListDeployableApplications200ResponseInner } from '@thorapi/model';
+import { useGetListDeployableApplications200ResponseInnersQuery, useAddListDeployableApplications200ResponseInnerMutation, useUpdateListDeployableApplications200ResponseInnerMutation } from '../../services/ListDeployableApplications200ResponseInnerService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ListDeployableApplications200ResponseInnerChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetListDeployableApplications200ResponseInnersQuery();
+  const { data: initialData = [], isLoading } = useGetListDeployableApplications200ResponseInnersQuery();
 
-  const [data, setData] = useState<
-    ListDeployableApplications200ResponseInner[]
-  >([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<ListDeployableApplications200ResponseInner>
-  >({});
-
+  const [data, setData] = useState<ListDeployableApplications200ResponseInner[]>([]); // Array to hold table data
+  const [chartData, setChartData] = useState<Partial<ListDeployableApplications200ResponseInner>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -70,9 +50,9 @@ const ListDeployableApplications200ResponseInnerChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -80,17 +60,11 @@ const ListDeployableApplications200ResponseInnerChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap(
-            (listdeployableapplications200responseinner: DataObject) => [
-              listdeployableapplications200responseinner,
-            ],
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((listdeployableapplications200responseinner: DataObject) => [listdeployableapplications200responseinner])} />
           )}
-        />
-      )}
     </>
   );
 };

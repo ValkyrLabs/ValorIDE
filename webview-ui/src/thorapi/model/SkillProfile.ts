@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,172 +36,153 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface SkillProfile
  */
-export type SkillProfile = DataObject & {
-  /**
-   * Reference to JobSeeker
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  jobSeekerId?: string;
-  /**
-   * Skill name (e.g., \"Spring Boot\", \"React\")
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  skillName?: string;
-  /**
-   * Proficiency level
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  proficiency?: SkillProfileProficiencyEnum;
-  /**
-   * Years of experience with this skill
-   * @type {number}
-   * @memberof SkillProfile
-   */
-  yearsOfExperience?: number;
-  /**
-   * Confirmed via resume parsing
-   * @type {boolean}
-   * @memberof SkillProfile
-   */
-  verifiedByAI?: boolean;
-  /**
-   * Confirmed by recruiting team
-   * @type {boolean}
-   * @memberof SkillProfile
-   */
-  verifiedByRecruiters?: boolean;
-  /**
-   * Last time this skill was used professionally
-   * @type {Date}
-   * @memberof SkillProfile
-   */
-  lastUsedDate?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof SkillProfile
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof SkillProfile
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof SkillProfile
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof SkillProfile
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof SkillProfile
-   */
-  trashed?: boolean;
-};
+export type SkillProfile  = DataObject & {
+    /**
+     * Reference to JobSeeker
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    jobSeekerId?: string;
+    /**
+     * Skill name (e.g., \"Spring Boot\", \"React\")
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    skillName?: string;
+    /**
+     * Proficiency level
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    proficiency?: SkillProfileProficiencyEnum;
+    /**
+     * Years of experience with this skill
+     * @type {number}
+     * @memberof SkillProfile
+     */
+    yearsOfExperience?: number;
+    /**
+     * Confirmed via resume parsing
+     * @type {boolean}
+     * @memberof SkillProfile
+     */
+    verifiedByAI?: boolean;
+    /**
+     * Confirmed by recruiting team
+     * @type {boolean}
+     * @memberof SkillProfile
+     */
+    verifiedByRecruiters?: boolean;
+    /**
+     * Last time this skill was used professionally
+     * @type {Date}
+     * @memberof SkillProfile
+     */
+    lastUsedDate?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof SkillProfile
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof SkillProfile
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof SkillProfile
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof SkillProfile
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof SkillProfile
+     */
+    trashed?: boolean;
+}
 
 export function SkillProfileFromJSON(json: any): SkillProfile {
-  return {
-    ...DataObjectFromJSON(json),
-    jobSeekerId: !exists(json, "jobSeekerId") ? undefined : json["jobSeekerId"],
-    skillName: !exists(json, "skillName") ? undefined : json["skillName"],
-    proficiency: !exists(json, "proficiency") ? undefined : json["proficiency"],
-    yearsOfExperience: !exists(json, "yearsOfExperience")
-      ? undefined
-      : json["yearsOfExperience"],
-    verifiedByAI: !exists(json, "verifiedByAI")
-      ? undefined
-      : json["verifiedByAI"],
-    verifiedByRecruiters: !exists(json, "verifiedByRecruiters")
-      ? undefined
-      : json["verifiedByRecruiters"],
-    lastUsedDate: !exists(json, "lastUsedDate")
-      ? undefined
-      : new Date(json["lastUsedDate"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'jobSeekerId': !exists(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'skillName': !exists(json, 'skillName') ? undefined : json['skillName'],
+        'proficiency': !exists(json, 'proficiency') ? undefined : json['proficiency'],
+        'yearsOfExperience': !exists(json, 'yearsOfExperience') ? undefined : json['yearsOfExperience'],
+        'verifiedByAI': !exists(json, 'verifiedByAI') ? undefined : json['verifiedByAI'],
+        'verifiedByRecruiters': !exists(json, 'verifiedByRecruiters') ? undefined : json['verifiedByRecruiters'],
+        'lastUsedDate': !exists(json, 'lastUsedDate') ? undefined : new Date(json['lastUsedDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function SkillProfileToJSON(value?: SkillProfile): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    jobSeekerId: value.jobSeekerId,
-    skillName: value.skillName,
-    proficiency: value.proficiency,
-    yearsOfExperience: value.yearsOfExperience,
-    verifiedByAI: value.verifiedByAI,
-    verifiedByRecruiters: value.verifiedByRecruiters,
-    lastUsedDate:
-      value.lastUsedDate === undefined
-        ? undefined
-        : value.lastUsedDate.toISOString(),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'jobSeekerId': value.jobSeekerId,
+        'skillName': value.skillName,
+        'proficiency': value.proficiency,
+        'yearsOfExperience': value.yearsOfExperience,
+        'verifiedByAI': value.verifiedByAI,
+        'verifiedByRecruiters': value.verifiedByRecruiters,
+        'lastUsedDate': value.lastUsedDate === undefined ? undefined : value.lastUsedDate.toISOString(),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum SkillProfileProficiencyEnum {
-  BEGINNER = "beginner",
-  INTERMEDIATE = "intermediate",
-  ADVANCED = "advanced",
-  EXPERT = "expert",
+    BEGINNER = 'beginner',
+    INTERMEDIATE = 'intermediate',
+    ADVANCED = 'advanced',
+    EXPERT = 'expert'
 }
+
+

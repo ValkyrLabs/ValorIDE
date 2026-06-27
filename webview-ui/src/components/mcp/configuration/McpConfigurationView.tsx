@@ -19,8 +19,9 @@ type McpViewProps = {
 
 const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
   const { mcpMarketplaceEnabled } = useExtensionState();
+  const isMarketplaceVisible = mcpMarketplaceEnabled !== false;
   const [activeTab, setActiveTab] = useState<McpViewTab>(
-    initialTab || (mcpMarketplaceEnabled ? "marketplace" : "installed"),
+    initialTab || (isMarketplaceVisible ? "marketplace" : "installed"),
   );
 
   const handleTabChange = (tab: McpViewTab) => {
@@ -28,18 +29,16 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
   };
 
   useEffect(() => {
-    if (!mcpMarketplaceEnabled && activeTab === "marketplace") {
+    if (!isMarketplaceVisible && activeTab === "marketplace") {
       // If marketplace is disabled and we're on marketplace tab, switch to installed
       setActiveTab("installed");
     }
-  }, [mcpMarketplaceEnabled, activeTab]);
+  }, [isMarketplaceVisible, activeTab]);
 
   useEffect(() => {
-    if (mcpMarketplaceEnabled) {
-      vscode.postMessage({ type: "silentlyRefreshMcpMarketplace" });
-      vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
-    }
-  }, [mcpMarketplaceEnabled]);
+    vscode.postMessage({ type: "silentlyRefreshMcpMarketplace" });
+    vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
+  }, []);
 
   const communicationService = useCommunicationService() as any;
   const ready = !!communicationService?.ready;
@@ -87,7 +86,7 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
               borderBottom: "1px solid var(--vscode-panel-border)",
             }}
           >
-            {mcpMarketplaceEnabled && (
+            {isMarketplaceVisible && (
               <TabButton
                 isActive={activeTab === "marketplace"}
                 onClick={() => handleTabChange("marketplace")}
@@ -111,7 +110,7 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
 
           {/* Content container */}
           <div style={{ width: "100%" }}>
-            {mcpMarketplaceEnabled && activeTab === "marketplace" && (
+            {isMarketplaceVisible && activeTab === "marketplace" && (
               <McpMarketplaceView />
             )}
             {activeTab === "addRemote" && (

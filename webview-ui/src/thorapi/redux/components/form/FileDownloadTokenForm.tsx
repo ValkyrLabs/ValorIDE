@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  FileDownloadToken,
+} from '@thorapi/model';
 
-import { FileDownloadToken } from "@thorapi/model";
-
-import { useAddFileDownloadTokenMutation } from "../../services/FileDownloadTokenService";
+import { useAddFileDownloadTokenMutation } from '../../services/FileDownloadTokenService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,38 +65,29 @@ Time-bound access token for authorized file downloads.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  token: Yup.string().required("token is required."),
-  expiresAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .required("expiresAt is required.")
-    .typeError("expiresAt must be a valid date"),
-  downloadCount: asNumber(
-    Yup.number().integer().typeError("downloadCount must be a number"),
-  ),
-  maxDownloads: asNumber(
-    Yup.number().integer().typeError("maxDownloads must be a number"),
-  ),
-  ipAddress: Yup.string(),
-  trashed: Yup.boolean(),
+        token: Yup.string().required("token is required."),
+        expiresAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).required("expiresAt is required.").typeError("expiresAt must be a valid date"),
+        downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
+        maxDownloads: asNumber(Yup.number().integer().typeError("maxDownloads must be a number")),
+        ipAddress: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const FileDownloadTokenForm: React.FC = () => {
-  const [addFileDownloadToken, addFileDownloadTokenResult] =
-    useAddFileDownloadTokenMutation();
+  const [addFileDownloadToken, addFileDownloadTokenResult] = useAddFileDownloadTokenMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -112,18 +97,12 @@ const FileDownloadTokenForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -131,12 +110,12 @@ const FileDownloadTokenForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileDownloadToken> = {
-    token: "",
-    expiresAt: new Date(),
-    downloadCount: 0,
-    maxDownloads: 0,
-    ipAddress: "",
-    trashed: false,
+          token: '',
+          expiresAt: new Date(),
+          downloadCount: 0,
+          maxDownloads: 0,
+          ipAddress: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -151,14 +130,11 @@ const FileDownloadTokenForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new FileDownloadToken:", grants);
+    console.log('Permissions saved for new FileDownloadToken:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<FileDownloadToken>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<FileDownloadToken>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -169,7 +145,7 @@ const FileDownloadTokenForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `FileDownloadToken created successfully! Would you like to set permissions for this object?`,
+          `FileDownloadToken created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -177,8 +153,8 @@ const FileDownloadTokenForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create FileDownloadToken:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create FileDownloadToken:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -199,37 +175,44 @@ const FileDownloadTokenForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addFileDownloadTokenResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    FileDownloadToken
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New FileDownloadToken
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="token" className="nice-form-control">
                       <b>
                         Token:
-                        {touched.token && !errors.token && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.token &&
+                         !errors.token && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="token"
-                        value={values?.token}
-                        placeholder="Token"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="token"
+                            value={values?.token}
+                            placeholder="Token"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -241,38 +224,38 @@ const FileDownloadTokenForm: React.FC = () => {
                     <label htmlFor="expiresAt" className="nice-form-control">
                       <b>
                         Expires At:
-                        {touched.expiresAt && !errors.expiresAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.expiresAt &&
+                         !errors.expiresAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="expiresAt"
-                        type="datetime-local"
-                        value={
-                          values.expiresAt
-                            ? new Date(values.expiresAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("expiresAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "expiresAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.expiresAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="expiresAt"
+                            type="datetime-local"
+                            value={values.expiresAt ? 
+                              new Date(values.expiresAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('expiresAt', true);
+                              const v = e.target.value;
+                              setFieldValue('expiresAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.expiresAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -281,38 +264,39 @@ const FileDownloadTokenForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="downloadCount"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="downloadCount" className="nice-form-control">
                       <b>
                         Download Count:
-                        {touched.downloadCount && !errors.downloadCount && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.downloadCount &&
+                         !errors.downloadCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="downloadCount"
-                        type="number"
-                        value={values.downloadCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("downloadCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "downloadCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.downloadCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="downloadCount"
+                            type="number"
+                            value={values.downloadCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('downloadCount', true);
+                              const v = e.target.value;
+                              setFieldValue('downloadCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.downloadCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -324,32 +308,36 @@ const FileDownloadTokenForm: React.FC = () => {
                     <label htmlFor="maxDownloads" className="nice-form-control">
                       <b>
                         Max Downloads:
-                        {touched.maxDownloads && !errors.maxDownloads && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxDownloads &&
+                         !errors.maxDownloads && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxDownloads"
-                        type="number"
-                        value={values.maxDownloads || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxDownloads", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxDownloads",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxDownloads
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxDownloads"
+                            type="number"
+                            value={values.maxDownloads || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxDownloads', true);
+                              const v = e.target.value;
+                              setFieldValue('maxDownloads', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxDownloads
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -361,21 +349,28 @@ const FileDownloadTokenForm: React.FC = () => {
                     <label htmlFor="ipAddress" className="nice-form-control">
                       <b>
                         Ip Address:
-                        {touched.ipAddress && !errors.ipAddress && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ipAddress &&
+                         !errors.ipAddress && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ipAddress"
-                        value={values?.ipAddress}
-                        placeholder="Ip Address"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ipAddress"
+                            value={values?.ipAddress}
+                            placeholder="Ip Address"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -387,25 +382,32 @@ const FileDownloadTokenForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -415,60 +417,45 @@ const FileDownloadTokenForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New FileDownloadToken
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New FileDownloadToken
+                  </CoolButton>
 
-                    {(addFileDownloadTokenResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addFileDownloadTokenResult as any).error
-                              ? (addFileDownloadTokenResult as any).error.data
-                              : (addFileDownloadTokenResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addFileDownloadTokenResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addFileDownloadTokenResult as any).error ? (addFileDownloadTokenResult as any).error.data : (addFileDownloadTokenResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addFileDownloadTokenResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addFileDownloadTokenResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addFileDownloadTokenResult:{" "}
-                    {JSON.stringify(addFileDownloadTokenResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addFileDownloadTokenResult: {JSON.stringify(addFileDownloadTokenResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -488,5 +475,8 @@ const FileDownloadTokenForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default FileDownloadTokenForm;
+

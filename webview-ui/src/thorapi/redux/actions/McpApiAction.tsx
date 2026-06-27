@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Mcp
 
-export const FETCH_MCP_REQUEST = "FETCH_MCP_REQUEST";
-export const FETCH_MCP_SUCCESS = "FETCH_MCP_SUCCESS";
-export const FETCH_MCP_FAILURE = "FETCH_MCP_FAILURE";
+export const FETCH_MCP_REQUEST = 'FETCH_MCP_REQUEST';
+export const FETCH_MCP_SUCCESS = 'FETCH_MCP_SUCCESS';
+export const FETCH_MCP_FAILURE = 'FETCH_MCP_FAILURE';
 
-export const ADD_MCP_REQUEST = "ADD_MCP_REQUEST";
-export const ADD_MCP_SUCCESS = "ADD_MCP_SUCCESS";
-export const ADD_MCP_FAILURE = "ADD_MCP_FAILURE";
+export const ADD_MCP_REQUEST = 'ADD_MCP_REQUEST';
+export const ADD_MCP_SUCCESS = 'ADD_MCP_SUCCESS';
+export const ADD_MCP_FAILURE = 'ADD_MCP_FAILURE';
 
-export const UPDATE_MCP_REQUEST = "UPDATE_MCP_REQUEST";
-export const UPDATE_MCP_SUCCESS = "UPDATE_MCP_SUCCESS";
-export const UPDATE_MCP_FAILURE = "UPDATE_MCP_FAILURE";
+export const UPDATE_MCP_REQUEST = 'UPDATE_MCP_REQUEST';
+export const UPDATE_MCP_SUCCESS = 'UPDATE_MCP_SUCCESS';
+export const UPDATE_MCP_FAILURE = 'UPDATE_MCP_FAILURE';
 
-export const DELETE_MCP_REQUEST = "DELETE_MCP_REQUEST";
-export const DELETE_MCP_SUCCESS = "DELETE_MCP_SUCCESS";
-export const DELETE_MCP_FAILURE = "DELETE_MCP_FAILURE";
+export const DELETE_MCP_REQUEST = 'DELETE_MCP_REQUEST';
+export const DELETE_MCP_SUCCESS = 'DELETE_MCP_SUCCESS';
+export const DELETE_MCP_FAILURE = 'DELETE_MCP_FAILURE';
 
-export const LIST_MCP_REQUEST = "LIST_MCP_REQUEST";
-export const LIST_MCP_SUCCESS = "LIST_MCP_SUCCESS";
-export const LIST_MCP_FAILURE = "LIST_MCP_FAILURE";
+export const LIST_MCP_REQUEST = 'LIST_MCP_REQUEST';
+export const LIST_MCP_SUCCESS = 'LIST_MCP_SUCCESS';
+export const LIST_MCP_FAILURE = 'LIST_MCP_FAILURE';
 
 export const addMcpRequest = () => ({
-  type: ADD_MCP_REQUEST,
+    type: ADD_MCP_REQUEST,
 });
 
 export const addMcpSuccess = (Mcps: any) => ({
-  type: ADD_MCP_SUCCESS,
-  payload: Mcps,
+    type: ADD_MCP_SUCCESS,
+    payload: Mcps,
 });
 
 export const addMcpFailure = (error: Error) => ({
-  type: ADD_MCP_FAILURE,
-  payload: error,
+    type: ADD_MCP_FAILURE,
+    payload: error,
 });
 
+
 export const fetchMcpRequest = () => ({
-  type: FETCH_MCP_REQUEST,
+    type: FETCH_MCP_REQUEST,
 });
 
 export const fetchMcpSuccess = (Mcps: any) => ({
-  type: FETCH_MCP_SUCCESS,
-  payload: Mcps,
+    type: FETCH_MCP_SUCCESS,
+    payload: Mcps,
 });
 
 export const fetchMcpFailure = (error: Error) => ({
-  type: FETCH_MCP_FAILURE,
-  payload: error,
+    type: FETCH_MCP_FAILURE,
+    payload: error,
 });
 
 export const listMcpRequest = () => ({
-  type: LIST_MCP_REQUEST,
+    type: LIST_MCP_REQUEST,
 });
 
 export const listMcpSuccess = (Mcps: any) => ({
-  type: LIST_MCP_SUCCESS,
-  payload: Mcps,
+    type: LIST_MCP_SUCCESS,
+    payload: Mcps,
 });
 
 export const listMcpFailure = (error: Error) => ({
-  type: LIST_MCP_FAILURE,
-  payload: error,
+    type: LIST_MCP_FAILURE,
+    payload: error,
 });
 
 export const updateMcpRequest = (Mcp: any) => ({
-  type: UPDATE_MCP_REQUEST,
-  payload: Mcp,
+    type: UPDATE_MCP_REQUEST,
+    payload: Mcp,
 });
 
 export const updateMcpSuccess = (Mcp: any) => ({
-  type: UPDATE_MCP_SUCCESS,
-  payload: Mcp,
+    type: UPDATE_MCP_SUCCESS,
+    payload: Mcp,
 });
 
 export const updateMcpFailure = (error: Error) => ({
-  type: UPDATE_MCP_FAILURE,
-  payload: error,
+    type: UPDATE_MCP_FAILURE,
+    payload: error,
 });
 
 export const deleteMcpRequest = (Mcp: any) => ({
-  type: DELETE_MCP_REQUEST,
-  payload: Mcp,
+    type: DELETE_MCP_REQUEST,
+    payload: Mcp,
 });
 
 export const deleteMcpSuccess = (Mcp: any) => ({
-  type: DELETE_MCP_SUCCESS,
-  payload: Mcp,
+    type: DELETE_MCP_SUCCESS,
+    payload: Mcp,
 });
 
 export const deleteMcpFailure = (error: Error) => ({
-  type: DELETE_MCP_FAILURE,
-  payload: error,
+    type: DELETE_MCP_FAILURE,
+    payload: error,
 });

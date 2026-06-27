@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  CreditBalanceSummary,
+} from '@thorapi/model';
 
-import { CreditBalanceSummary } from "@thorapi/model";
-
-import { useAddCreditBalanceSummaryMutation } from "../../services/CreditBalanceSummaryService";
+import { useAddCreditBalanceSummaryMutation } from '../../services/CreditBalanceSummaryService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,32 +65,21 @@ Lightweight current account balance summary for fast balance reads.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  customerId: Yup.string(),
-  currentBalance: asNumber(
-    Yup.number().integer().typeError("currentBalance must be a number"),
-  ),
-  paymentTransactionCount: asNumber(
-    Yup.number()
-      .integer()
-      .typeError("paymentTransactionCount must be a number"),
-  ),
-  usageTransactionCount: asNumber(
-    Yup.number().integer().typeError("usageTransactionCount must be a number"),
-  ),
-  trashed: Yup.boolean(),
+        customerId: Yup.string(),
+        currentBalance: asNumber(Yup.number().integer().typeError("currentBalance must be a number")),
+        paymentTransactionCount: asNumber(Yup.number().integer().typeError("paymentTransactionCount must be a number")),
+        usageTransactionCount: asNumber(Yup.number().integer().typeError("usageTransactionCount must be a number")),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CreditBalanceSummaryForm: React.FC = () => {
-  const [addCreditBalanceSummary, addCreditBalanceSummaryResult] =
-    useAddCreditBalanceSummaryMutation();
+  const [addCreditBalanceSummary, addCreditBalanceSummaryResult] = useAddCreditBalanceSummaryMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -106,18 +89,12 @@ const CreditBalanceSummaryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -125,11 +102,11 @@ const CreditBalanceSummaryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CreditBalanceSummary> = {
-    customerId: "",
-    currentBalance: 0,
-    paymentTransactionCount: 0,
-    usageTransactionCount: 0,
-    trashed: false,
+          customerId: '',
+          currentBalance: 0,
+          paymentTransactionCount: 0,
+          usageTransactionCount: 0,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -144,14 +121,11 @@ const CreditBalanceSummaryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new CreditBalanceSummary:", grants);
+    console.log('Permissions saved for new CreditBalanceSummary:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<CreditBalanceSummary>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CreditBalanceSummary>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -162,7 +136,7 @@ const CreditBalanceSummaryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CreditBalanceSummary created successfully! Would you like to set permissions for this object?`,
+          `CreditBalanceSummary created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -170,8 +144,8 @@ const CreditBalanceSummaryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create CreditBalanceSummary:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create CreditBalanceSummary:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -192,38 +166,44 @@ const CreditBalanceSummaryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addCreditBalanceSummaryResult.isLoading;
+          const isSaving = isSubmitting || addCreditBalanceSummaryResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    CreditBalanceSummary
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New CreditBalanceSummary
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="customerId" className="nice-form-control">
                       <b>
                         Customer Id:
-                        {touched.customerId && !errors.customerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="customerId"
-                        value={values?.customerId}
-                        placeholder="Customer Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -232,38 +212,39 @@ const CreditBalanceSummaryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="currentBalance"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="currentBalance" className="nice-form-control">
                       <b>
                         Current Balance:
-                        {touched.currentBalance && !errors.currentBalance && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.currentBalance &&
+                         !errors.currentBalance && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="currentBalance"
-                        type="number"
-                        value={values.currentBalance || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentBalance", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentBalance",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentBalance
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="currentBalance"
+                            type="number"
+                            value={values.currentBalance || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentBalance', true);
+                              const v = e.target.value;
+                              setFieldValue('currentBalance', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentBalance
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -272,39 +253,39 @@ const CreditBalanceSummaryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="paymentTransactionCount"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="paymentTransactionCount" className="nice-form-control">
                       <b>
                         Payment Transaction Count:
                         {touched.paymentTransactionCount &&
-                          !errors.paymentTransactionCount && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.paymentTransactionCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="paymentTransactionCount"
-                        type="number"
-                        value={values.paymentTransactionCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("paymentTransactionCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "paymentTransactionCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.paymentTransactionCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="paymentTransactionCount"
+                            type="number"
+                            value={values.paymentTransactionCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('paymentTransactionCount', true);
+                              const v = e.target.value;
+                              setFieldValue('paymentTransactionCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.paymentTransactionCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -313,39 +294,39 @@ const CreditBalanceSummaryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="usageTransactionCount"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="usageTransactionCount" className="nice-form-control">
                       <b>
                         Usage Transaction Count:
                         {touched.usageTransactionCount &&
-                          !errors.usageTransactionCount && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.usageTransactionCount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="usageTransactionCount"
-                        type="number"
-                        value={values.usageTransactionCount || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("usageTransactionCount", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "usageTransactionCount",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.usageTransactionCount
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="usageTransactionCount"
+                            type="number"
+                            value={values.usageTransactionCount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('usageTransactionCount', true);
+                              const v = e.target.value;
+                              setFieldValue('usageTransactionCount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.usageTransactionCount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -357,25 +338,32 @@ const CreditBalanceSummaryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -385,64 +373,45 @@ const CreditBalanceSummaryForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      CreditBalanceSummary
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New CreditBalanceSummary
+                  </CoolButton>
 
-                    {(addCreditBalanceSummaryResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addCreditBalanceSummaryResult as any).error
-                              ? (addCreditBalanceSummaryResult as any).error
-                                  .data
-                              : (addCreditBalanceSummaryResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addCreditBalanceSummaryResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addCreditBalanceSummaryResult as any).error ? (addCreditBalanceSummaryResult as any).error.data : (addCreditBalanceSummaryResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addCreditBalanceSummaryResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addCreditBalanceSummaryResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addCreditBalanceSummaryResult:{" "}
-                    {JSON.stringify(addCreditBalanceSummaryResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCreditBalanceSummaryResult: {JSON.stringify(addCreditBalanceSummaryResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -462,5 +431,8 @@ const CreditBalanceSummaryForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default CreditBalanceSummaryForm;
+

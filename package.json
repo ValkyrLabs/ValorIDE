@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.845",
+  "version": "3.20.903",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -394,6 +394,18 @@
           "markdownDescription": "Base URL used for ValkyrAI API calls (synced across machines).",
           "scope": "application"
         },
+        "valoride.revealOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Reveal and focus the ValorIDE sidebar on every startup. ValorIDE still reveals once after first activation and remains available from the Activity Bar, command palette, and status bar.",
+          "scope": "application"
+        },
+        "valoride.webview.useDevServer": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Use the local Vite webview dev server while running the extension in development mode. Set to false to force bundled webview assets.",
+          "scope": "application"
+        },
         "valoride.graymatter.enabled": {
           "type": "boolean",
           "default": true,
@@ -435,6 +447,11 @@
           "default": 3000,
           "minimum": 250,
           "markdownDescription": "Timeout in milliseconds for GrayMatter context queries."
+        },
+        "valoride.hooks.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Enable Cline-compatible ValorIDE lifecycle hooks from ~/.valoride/hooks, .valoride/hooks, and .clinerules/hooks. Hooks receive JSON on stdin and may return JSON or HOOK_CONTROL-prefixed JSON on stdout."
         },
         "valoride.P2P.turnServers": {
           "type": "array",
@@ -538,7 +555,7 @@
     "webview-errors": "node ./scripts/webview_error_server.js",
     "map-source": "node ./scripts/map_source.js",
     "capture-console": "node ./scripts/capture_console.js",
-    "build": "node esbuild.js",
+    "build": "npm run build:webview && node esbuild.js",
     "build:full": "npm run compile",
     "build:release": "npm run format:fix && npm install && tsc && npm run v",
     "build-staging": "build --mode staging",

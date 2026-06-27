@@ -19,32 +19,20 @@ Description: SheetColumn
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, SheetColumn } from "@thorapi/model";
-import {
-  useGetSheetColumnsQuery,
-  useAddSheetColumnMutation,
-  useUpdateSheetColumnMutation,
-} from "../../services/SheetColumnService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, SheetColumn } from '@thorapi/model';
+import { useGetSheetColumnsQuery, useAddSheetColumnMutation, useUpdateSheetColumnMutation } from '../../services/SheetColumnService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const SheetColumnChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSheetColumnsQuery();
 
   const [data, setData] = useState<SheetColumn[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<SheetColumn>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const SheetColumnChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const SheetColumnChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((sheetcolumn: DataObject) => [sheetcolumn])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((sheetcolumn: DataObject) => [sheetcolumn])} />
+          )}
     </>
   );
 };

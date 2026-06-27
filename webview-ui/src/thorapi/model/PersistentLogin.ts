@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,129 +36,118 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface PersistentLogin
  */
-export type PersistentLogin = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  username?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  series?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  token?: string;
-  /**
-   *
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  lastUsed?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof PersistentLogin
-   */
-  trashed?: boolean;
-};
+export type PersistentLogin  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    username?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    series?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    token?: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    lastUsed?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof PersistentLogin
+     */
+    trashed?: boolean;
+}
 
 export function PersistentLoginFromJSON(json: any): PersistentLogin {
-  return {
-    ...DataObjectFromJSON(json),
-    username: !exists(json, "username") ? undefined : json["username"],
-    series: !exists(json, "series") ? undefined : json["series"],
-    token: !exists(json, "token") ? undefined : json["token"],
-    lastUsed: !exists(json, "lastUsed")
-      ? undefined
-      : new Date(json["lastUsed"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'username': !exists(json, 'username') ? undefined : json['username'],
+        'series': !exists(json, 'series') ? undefined : json['series'],
+        'token': !exists(json, 'token') ? undefined : json['token'],
+        'lastUsed': !exists(json, 'lastUsed') ? undefined : new Date(json['lastUsed']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function PersistentLoginToJSON(value?: PersistentLogin): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    username: value.username,
-    series: value.series,
-    token: value.token,
-    lastUsed:
-      value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'username': value.username,
+        'series': value.series,
+        'token': value.token,
+        'lastUsed': value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
+        'trashed': value.trashed,
+    };
 }
+
+

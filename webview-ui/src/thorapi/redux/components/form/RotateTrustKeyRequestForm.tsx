@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   RotateTrustKeyRequest,
   RotateTrustKeyRequestRotationTypeEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddRotateTrustKeyRequestMutation } from "../../services/RotateTrustKeyRequestService";
+import { useAddRotateTrustKeyRequestMutation } from '../../services/RotateTrustKeyRequestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,11 +63,11 @@ RotateTrustKeyRequest
 -------------------------------------------------------- */
 const RotationTypeValidation = () => {
   return [
-    "SCHEDULED",
-    "MANUAL",
-    "COMPROMISE_RESPONSE",
-    "PROVIDER_MIGRATION",
-    "ALGORITHM_MIGRATION",
+    'SCHEDULED',
+    'MANUAL',
+    'COMPROMISE_RESPONSE',
+    'PROVIDER_MIGRATION',
+    'ALGORITHM_MIGRATION',
   ];
 };
 
@@ -83,27 +75,23 @@ const RotationTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  rotationType: Yup.mixed().oneOf(
-    RotationTypeValidation(),
-    "Invalid value for rotationType",
-  ),
-  targetProviderId: Yup.string(),
-  algorithm: Yup.string(),
-  reason: Yup.string(),
-  trashed: Yup.boolean(),
+      rotationType: Yup.mixed()
+        .oneOf(RotationTypeValidation(), "Invalid value for rotationType")
+        ,
+        targetProviderId: Yup.string(),
+        algorithm: Yup.string(),
+        reason: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const RotateTrustKeyRequestForm: React.FC = () => {
-  const [addRotateTrustKeyRequest, addRotateTrustKeyRequestResult] =
-    useAddRotateTrustKeyRequestMutation();
+  const [addRotateTrustKeyRequest, addRotateTrustKeyRequestResult] = useAddRotateTrustKeyRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -113,18 +101,12 @@ const RotateTrustKeyRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -132,11 +114,11 @@ const RotateTrustKeyRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<RotateTrustKeyRequest> = {
-    rotationType: undefined,
-    targetProviderId: "",
-    algorithm: "",
-    reason: "",
-    trashed: false,
+        rotationType: undefined,
+          targetProviderId: '',
+          algorithm: '',
+          reason: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -151,14 +133,11 @@ const RotateTrustKeyRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new RotateTrustKeyRequest:", grants);
+    console.log('Permissions saved for new RotateTrustKeyRequest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<RotateTrustKeyRequest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RotateTrustKeyRequest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -169,7 +148,7 @@ const RotateTrustKeyRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `RotateTrustKeyRequest created successfully! Would you like to set permissions for this object?`,
+          `RotateTrustKeyRequest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -177,8 +156,8 @@ const RotateTrustKeyRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create RotateTrustKeyRequest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create RotateTrustKeyRequest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -199,50 +178,46 @@ const RotateTrustKeyRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addRotateTrustKeyRequestResult.isLoading;
+          const isSaving = isSubmitting || addRotateTrustKeyRequestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    RotateTrustKeyRequest
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New RotateTrustKeyRequest
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="rotationType" className="nice-form-control">
                       <b>
                         Rotation Type:
-                        {touched.rotationType && !errors.rotationType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.rotationType &&
+                         !errors.rotationType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="rotationType"
-                        value={values.rotationType || ""}
-                        className={
-                          errors.rotationType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("rotationType", true);
-                          setFieldValue(
-                            "rotationType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Rotation Type" />
-                        <RotationTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="rotationType"
+                          value={values.rotationType || ''}
+                          className={
+                            errors.rotationType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('rotationType', true);
+                            setFieldValue('rotationType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Rotation Type" />
+                          <RotationTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -251,28 +226,31 @@ const RotateTrustKeyRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="targetProviderId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="targetProviderId" className="nice-form-control">
                       <b>
                         Target Provider Id:
                         {touched.targetProviderId &&
-                          !errors.targetProviderId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.targetProviderId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="targetProviderId"
-                        value={values?.targetProviderId}
-                        placeholder="Target Provider Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="targetProviderId"
+                            value={values?.targetProviderId}
+                            placeholder="Target Provider Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -284,21 +262,28 @@ const RotateTrustKeyRequestForm: React.FC = () => {
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
-                        {touched.algorithm && !errors.algorithm && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.algorithm &&
+                         !errors.algorithm && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="algorithm"
-                        value={values?.algorithm}
-                        placeholder="Algorithm"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="algorithm"
+                            value={values?.algorithm}
+                            placeholder="Algorithm"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -310,21 +295,28 @@ const RotateTrustKeyRequestForm: React.FC = () => {
                     <label htmlFor="reason" className="nice-form-control">
                       <b>
                         Reason:
-                        {touched.reason && !errors.reason && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.reason &&
+                         !errors.reason && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="reason"
-                        value={values?.reason}
-                        placeholder="Reason"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="reason"
+                            value={values?.reason}
+                            placeholder="Reason"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -336,25 +328,32 @@ const RotateTrustKeyRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -364,64 +363,45 @@ const RotateTrustKeyRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      RotateTrustKeyRequest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New RotateTrustKeyRequest
+                  </CoolButton>
 
-                    {(addRotateTrustKeyRequestResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addRotateTrustKeyRequestResult as any).error
-                              ? (addRotateTrustKeyRequestResult as any).error
-                                  .data
-                              : (addRotateTrustKeyRequestResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addRotateTrustKeyRequestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addRotateTrustKeyRequestResult as any).error ? (addRotateTrustKeyRequestResult as any).error.data : (addRotateTrustKeyRequestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addRotateTrustKeyRequestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addRotateTrustKeyRequestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addRotateTrustKeyRequestResult:{" "}
-                    {JSON.stringify(addRotateTrustKeyRequestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addRotateTrustKeyRequestResult: {JSON.stringify(addRotateTrustKeyRequestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -453,14 +433,17 @@ kebabcase rotation-type-lookup
 const RotationTypeLookup = () => {
   return (
     <>
-      <option value="SCHEDULED" label="Scheduled" />
-      <option value="MANUAL" label="Manual" />
-      <option value="COMPROMISE_RESPONSE" label="Compromise Response" />
-      <option value="PROVIDER_MIGRATION" label="Provider Migration" />
-      <option value="ALGORITHM_MIGRATION" label="Algorithm Migration" />
+      <option value='SCHEDULED' label="Scheduled" />
+      <option value='MANUAL' label="Manual" />
+      <option value='COMPROMISE_RESPONSE' label="Compromise Response" />
+      <option value='PROVIDER_MIGRATION' label="Provider Migration" />
+      <option value='ALGORITHM_MIGRATION' label="Algorithm Migration" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default RotateTrustKeyRequestForm;
+

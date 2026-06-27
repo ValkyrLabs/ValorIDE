@@ -5,17 +5,22 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useState, useCallback } from "react";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
-import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
+import type {
+  UsageTransaction,
+  PaymentTransaction,
+} from "@thorapi/services/creditsApi";
 import { formatDollars, formatTimestamp } from "@thorapi/utils/format";
 
 interface CreditsHistoryTableProps {
   isLoading: boolean;
+  error?: unknown;
   usageData: UsageTransaction[];
   paymentsData: PaymentTransaction[];
 }
 
 const CreditsHistoryTable = ({
   isLoading,
+  error,
   usageData,
   paymentsData,
 }: CreditsHistoryTableProps) => {
@@ -43,6 +48,16 @@ const CreditsHistoryTable = ({
     [selectedPaymentRow],
   );
 
+  const formatCredits = (value: unknown) =>
+    new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    }).format(Math.max(0, Math.round(Number(value) || 0)));
+  const creditLabel = (value: unknown) => {
+    const rounded = Math.max(0, Math.round(Number(value) || 0));
+    return `${formatCredits(rounded)} ${rounded === 1 ? "credit" : "credits"}`;
+  };
+
   return (
     <div className="flex flex-col grow h-full">
       {/* Tabs container */}
@@ -67,6 +82,12 @@ const CreditsHistoryTable = ({
           <div className="flex justify-center items-center p-4">
             <div className="text-[var(--vscode-descriptionForeground)]">
               Loading...
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center p-4">
+            <div className="text-[var(--vscode-errorForeground)]">
+              Unable to load credit history
             </div>
           </div>
         ) : (
@@ -118,7 +139,9 @@ const CreditsHistoryTable = ({
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`${row.modelProvider}/${row.model}`}</VSCodeDataGridCell>
                         {/* <VSCodeDataGridCell grid-column="3">{`${row.promptTokens} → ${row.completionTokens}`}</VSCodeDataGridCell> */}
-                        <VSCodeDataGridCell grid-column="3">{`$${Number(row.credits).toFixed(7)}`}</VSCodeDataGridCell>
+                        <VSCodeDataGridCell grid-column="3">
+                          {creditLabel((row as any).credits ?? (row as any).meteredUnits)}
+                        </VSCodeDataGridCell>
                       </VSCodeDataGridRow>
                     ))}
                   </VSCodeDataGrid>
@@ -175,7 +198,9 @@ const CreditsHistoryTable = ({
                             : ""}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`$${formatDollars(row.amountCents)}`}</VSCodeDataGridCell>
-                        <VSCodeDataGridCell grid-column="3">{`${row.credits}`}</VSCodeDataGridCell>
+                        <VSCodeDataGridCell grid-column="3">
+                          {creditLabel(row.credits)}
+                        </VSCodeDataGridCell>
                       </VSCodeDataGridRow>
                     ))}
                   </VSCodeDataGrid>

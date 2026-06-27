@@ -1,8 +1,15 @@
 .errorDialog {
-  max-width: 20vw;
-  max-height: 80vh;
+  width: calc(100vw - 24px);
+  max-width: calc(100vw - 24px);
+  min-width: min(520px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  resize: both;
+  overflow: auto;
+  margin: 12px auto;
 }
 
 .errorDialogMessage {
-  overflow-x: scroll;
+  overflow: auto;
+  max-height: calc(100vh - 180px);
+  overflow-wrap: anywhere;
 }

@@ -9,11 +9,25 @@ const DEFAULT_MAX_FILE_COUNT = 15000;
 const FORBIDDEN_RULES = [
   { id: 'worktrees', pattern: /(^|\/)\.worktrees(\/|$)/, message: 'workspace worktrees must never ship in the VSIX' },
   { id: 'node_modules', pattern: /(^|\/)node_modules(\/|$)/, message: 'dependency trees must be bundled into dist, not packaged raw' },
+  { id: 'source_tree', pattern: /^extension\/(src|test|tests|__tests__)(\/|$)/, message: 'source and test trees must not ship in marketplace packages' },
+  { id: 'docs_tree', pattern: /^extension\/(docs|samples|templates|evals|system-prompts-and-models-of-ai-tools)(\/|$)/, message: 'docs, samples, templates, and eval fixtures are not runtime assets' },
+  { id: 'webview_source', pattern: /^extension\/webview-ui\/(src|public|node_modules|build)(\/|$)/, message: 'webview source/build trees must ship only through dist/webview' },
+  { id: 'package_lock', pattern: /(^|\/)(yarn\.lock|package-lock\.json|pnpm-lock\.yaml|npm-shrinkwrap\.json)$/i, message: 'package manager lockfiles are release inputs, not VSIX runtime assets' },
+  { id: 'dev_config', pattern: /^extension\/(tsconfig[^/]*\.json|eslint\.config\.[cm]?js|jest\.config\.[cm]?js|vite\.config\.ts|esbuild\.js)$/i, message: 'development config must not ship in marketplace packages' },
   { id: 'source_map', pattern: /\.map$/i, message: 'source maps are dev-only and bloat marketplace uploads' },
   { id: 'duplicate_webview_build', pattern: /(^|\/)webview-ui\/build(\/|$)/, message: 'webview build output should ship only from dist/webview' },
   { id: 'native_swc_binary', pattern: /(^|\/)@swc\/core-[^/]+(\/|$)/, message: 'native SWC binaries are development tooling, not runtime extension assets' },
   { id: 'native_esbuild_binary', pattern: /(^|\/)@esbuild\/[^/]+(\/|$)/, message: 'native esbuild binaries are development tooling, not runtime extension assets' },
   { id: 'vsix_inside_vsix', pattern: /\.vsix$/i, message: 'previous VSIX artifacts must never be nested in a release package' },
+];
+
+const ALLOWED_RUNTIME_ENTRY_PATTERNS = [
+  /^\[Content_Types\]\.xml$/,
+  /^extension\.vsixmanifest$/,
+  /^extension\/(package\.json|README\.md|LICENSE)$/,
+  /^extension\/dist\//,
+  /^extension\/assets\/icons\//,
+  /^extension\/assets\/valorIde\.acorn$/,
 ];
 
 export function parseUnzipListing(listing) {
@@ -35,12 +49,16 @@ export function auditEntries(entries, options = {}) {
   const archiveBytes = Number(options.archiveBytes ?? 0);
   const totalUncompressedBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
   const forbiddenMatches = [];
+  const unexpectedRuntimeEntries = [];
 
   for (const entry of entries) {
     for (const rule of FORBIDDEN_RULES) {
       if (rule.pattern.test(entry.name)) {
         forbiddenMatches.push({ rule: rule.id, message: rule.message, path: entry.name, size: entry.size });
       }
+    }
+    if (!ALLOWED_RUNTIME_ENTRY_PATTERNS.some((pattern) => pattern.test(entry.name))) {
+      unexpectedRuntimeEntries.push({ path: entry.name, size: entry.size });
     }
   }
 
@@ -54,6 +72,9 @@ export function auditEntries(entries, options = {}) {
   if (forbiddenMatches.length > 0) {
     failures.push(`${forbiddenMatches.length} forbidden package entries detected`);
   }
+  if (unexpectedRuntimeEntries.length > 0) {
+    failures.push(`${unexpectedRuntimeEntries.length} entries outside the runtime package allowlist detected`);
+  }
 
   return {
     ok: failures.length === 0,
@@ -63,6 +84,7 @@ export function auditEntries(entries, options = {}) {
     fileCount: entries.length,
     failures,
     forbiddenMatches,
+    unexpectedRuntimeEntries,
     largestFiles: [...entries].sort((a, b) => b.size - a.size).slice(0, 50),
   };
 }
@@ -84,6 +106,11 @@ export function formatMarkdownReport(report, vsixPath = 'unknown') {
     '## Forbidden entries',
     ...(report.forbiddenMatches.length
       ? report.forbiddenMatches.slice(0, 100).map((entry) => `- ${entry.rule}: ${entry.path} (${entry.size} bytes)`)
+      : ['- none']),
+    '',
+    '## Unexpected runtime entries',
+    ...(report.unexpectedRuntimeEntries.length
+      ? report.unexpectedRuntimeEntries.slice(0, 100).map((entry) => `- ${entry.path} (${entry.size} bytes)`)
       : ['- none']),
     '',
     '## Largest files',

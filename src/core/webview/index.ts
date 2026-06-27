@@ -139,14 +139,44 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this.context.extensionUri],
     };
 
-    const htmlContent =
-      this.context.extensionMode === vscode.ExtensionMode.Development
-        ? await this.getHMRHtmlContent(webviewView.webview)
-        : this.getHtmlContent(webviewView.webview);
+    // Register the extension-host listener before assigning HTML. The webview
+    // posts startup messages immediately as its bundle executes.
+    try {
+      this.setWebviewMessageListener(webviewView.webview);
+    } catch (err) {
+      console.error("Failed to set webview message listener:", err);
+    }
+
+    let htmlContent: string;
+    try {
+      htmlContent =
+        this.context.extensionMode === vscode.ExtensionMode.Development &&
+        this.shouldUseWebviewDevServer()
+          ? await this.getHMRHtmlContent(webviewView.webview)
+          : this.getHtmlContent(webviewView.webview);
+    } catch (error) {
+      this.outputChannel.appendLine(
+        `Webview HTML generation failed, using bundled assets: ${String(error)}`,
+      );
+      htmlContent = this.getHtmlContent(webviewView.webview);
+    }
 
     // Cache the HTML for restoration if webview gets cleared
     this.cachedWebviewHtml = htmlContent;
     webviewView.webview.html = htmlContent;
+
+    // Do not depend solely on the webviewDidLaunch message; it can be missed if
+    // the webview bundle boots before VS Code finishes wiring callbacks.
+    setTimeout(() => {
+      void this.controller.postStateToWebview().catch((error) => {
+        console.error("Failed to post initial webview state:", error);
+      });
+    }, 250);
+    setTimeout(() => {
+      void this.controller.postStateToWebview().catch((error) => {
+        console.error("Failed to repost initial webview state:", error);
+      });
+    }, 1500);
 
     // Initialize bridge services with the active webview
     try {
@@ -163,14 +193,6 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       );
     } catch (e) {
       console.warn("ContentDataBridge not initialized:", e);
-    }
-
-    // Sets up an event listener to listen for messages passed from the webview view context
-    // and executes code based on the message that is received
-    try {
-      this.setWebviewMessageListener(webviewView.webview);
-    } catch (err) {
-      console.error("Failed to set webview message listener:", err);
     }
 
     // Register this provider with the TelecomHub for local multi-instance comms
@@ -305,6 +327,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   private getHtmlContent(webview: vscode.Webview): string {
     // Get the local path to main script run in the webview,
     // then convert it to a uri we can use in the webview.
+    const assetVersion = Date.now().toString(36);
 
     // The CSS file from the React build output
     const stylesUri = getUri(webview, this.context.extensionUri, [
@@ -312,14 +335,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       "webview",
       "assets",
       "index.css",
-    ]);
+    ]).with({ query: `v=${assetVersion}` });
     // The JS file from the React build output
     const scriptUri = getUri(webview, this.context.extensionUri, [
       "dist",
       "webview",
       "assets",
       "index.js",
-    ]);
+    ]).with({ query: `v=${assetVersion}` });
 
     // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
 
@@ -375,7 +398,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${connectSrc}; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${connectSrc}; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src ${webview.cspSource} 'nonce-${nonce}' 'unsafe-eval' 'wasm-unsafe-eval';">
             <title>ValorIDE</title>
           </head>
           <body>
@@ -406,7 +429,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     // Check if local dev server is running.
     try {
-      await axios.get(`http://${localServerUrl}`);
+      await axios.get(`http://${localServerUrl}`, { timeout: 1000 });
     } catch (error) {
       vscode.window.showErrorMessage(
         "ValorIDE: Local webview dev server is not running, HMR will not work. Please run 'npm run dev:webview' before launching the extension to enable HMR. Using bundled assets.",
@@ -455,7 +478,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       `font-src ${webview.cspSource}`,
       `style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
       `img-src ${webview.cspSource} https: data:`,
-      `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
+      `script-src ${webview.cspSource} 'unsafe-eval' 'wasm-unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
       `connect-src ${Array.from(connectSrcParts).filter(Boolean).join(" ")}`,
     ];
 
@@ -490,6 +513,20 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 				</body>
 			</html>
 		`;
+  }
+
+  private shouldUseWebviewDevServer(): boolean {
+    const envValue = process.env.VALORIDE_WEBVIEW_HMR?.trim().toLowerCase();
+    if (envValue && ["0", "false", "no", "off"].includes(envValue)) {
+      return false;
+    }
+    if (envValue && ["1", "true", "yes", "on"].includes(envValue)) {
+      return true;
+    }
+
+    return vscode.workspace
+      .getConfiguration("valoride.webview")
+      .get<boolean>("useDevServer", true);
   }
 
   /**

@@ -19,35 +19,20 @@ Description: McpMarketplaceItemTag
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, McpMarketplaceItemTag } from "@thorapi/model";
-import {
-  useGetMcpMarketplaceItemTagsQuery,
-  useAddMcpMarketplaceItemTagMutation,
-  useUpdateMcpMarketplaceItemTagMutation,
-} from "../../services/McpMarketplaceItemTagService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, McpMarketplaceItemTag } from '@thorapi/model';
+import { useGetMcpMarketplaceItemTagsQuery, useAddMcpMarketplaceItemTagMutation, useUpdateMcpMarketplaceItemTagMutation } from '../../services/McpMarketplaceItemTagService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const McpMarketplaceItemTagChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMcpMarketplaceItemTagsQuery();
+  const { data: initialData = [], isLoading } = useGetMcpMarketplaceItemTagsQuery();
 
   const [data, setData] = useState<McpMarketplaceItemTag[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<McpMarketplaceItemTag>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<McpMarketplaceItemTag>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const McpMarketplaceItemTagChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const McpMarketplaceItemTagChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((mcpmarketplaceitemtag: DataObject) => [
-            mcpmarketplaceitemtag,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((mcpmarketplaceitemtag: DataObject) => [mcpmarketplaceitemtag])} />
+          )}
     </>
   );
 };

@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,237 +36,211 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface DeadLetterQueue
  */
-export type DeadLetterQueue = DataObject & {
-  /**
-   * Reference to the failed Run
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  runId?: string;
-  /**
-   * Reference to the WorkflowExecution
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  executionId?: string;
-  /**
-   * Reference to the Task
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  taskId?: string;
-  /**
-   * Detailed failure reason message
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  failureReason?: string;
-  /**
-   * Classification of why the run was quarantined
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  failureType?: DeadLetterQueueFailureTypeEnum;
-  /**
-   * JSON snapshot of inputs for replay
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  originalInputs?: string;
-  /**
-   * JSON snapshot of module config at time of failure
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  originalConfig?: string;
-  /**
-   * When the run was moved to DLQ
-   * @type {Date}
-   * @memberof DeadLetterQueue
-   */
-  quarantinedAt?: Date;
-  /**
-   * Principal ID who reviewed this entry
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  reviewedBy?: string;
-  /**
-   * Resolution status
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  resolution?: DeadLetterQueueResolutionEnum;
-  /**
-   * When the DLQ entry was resolved
-   * @type {Date}
-   * @memberof DeadLetterQueue
-   */
-  resolvedAt?: Date;
-  /**
-   * Operator notes about resolution
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  notes?: string;
-  /**
-   * ID of the new run created when this entry was requeued
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  requeuedAsRunId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof DeadLetterQueue
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof DeadLetterQueue
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof DeadLetterQueue
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof DeadLetterQueue
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof DeadLetterQueue
-   */
-  trashed?: boolean;
-};
+export type DeadLetterQueue  = DataObject & {
+    /**
+     * Reference to the failed Run
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    runId?: string;
+    /**
+     * Reference to the WorkflowExecution
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    executionId?: string;
+    /**
+     * Reference to the Task
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    taskId?: string;
+    /**
+     * Detailed failure reason message
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    failureReason?: string;
+    /**
+     * Classification of why the run was quarantined
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    failureType?: DeadLetterQueueFailureTypeEnum;
+    /**
+     * JSON snapshot of inputs for replay
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    originalInputs?: string;
+    /**
+     * JSON snapshot of module config at time of failure
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    originalConfig?: string;
+    /**
+     * When the run was moved to DLQ
+     * @type {Date}
+     * @memberof DeadLetterQueue
+     */
+    quarantinedAt?: Date;
+    /**
+     * Principal ID who reviewed this entry
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    reviewedBy?: string;
+    /**
+     * Resolution status
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    resolution?: DeadLetterQueueResolutionEnum;
+    /**
+     * When the DLQ entry was resolved
+     * @type {Date}
+     * @memberof DeadLetterQueue
+     */
+    resolvedAt?: Date;
+    /**
+     * Operator notes about resolution
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    notes?: string;
+    /**
+     * ID of the new run created when this entry was requeued
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    requeuedAsRunId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof DeadLetterQueue
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof DeadLetterQueue
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof DeadLetterQueue
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof DeadLetterQueue
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof DeadLetterQueue
+     */
+    trashed?: boolean;
+}
 
 export function DeadLetterQueueFromJSON(json: any): DeadLetterQueue {
-  return {
-    ...DataObjectFromJSON(json),
-    runId: !exists(json, "runId") ? undefined : json["runId"],
-    executionId: !exists(json, "executionId") ? undefined : json["executionId"],
-    taskId: !exists(json, "taskId") ? undefined : json["taskId"],
-    failureReason: !exists(json, "failureReason")
-      ? undefined
-      : json["failureReason"],
-    failureType: !exists(json, "failureType") ? undefined : json["failureType"],
-    originalInputs: !exists(json, "originalInputs")
-      ? undefined
-      : json["originalInputs"],
-    originalConfig: !exists(json, "originalConfig")
-      ? undefined
-      : json["originalConfig"],
-    quarantinedAt: !exists(json, "quarantinedAt")
-      ? undefined
-      : new Date(json["quarantinedAt"]),
-    reviewedBy: !exists(json, "reviewedBy") ? undefined : json["reviewedBy"],
-    resolution: !exists(json, "resolution") ? undefined : json["resolution"],
-    resolvedAt: !exists(json, "resolvedAt")
-      ? undefined
-      : new Date(json["resolvedAt"]),
-    notes: !exists(json, "notes") ? undefined : json["notes"],
-    requeuedAsRunId: !exists(json, "requeuedAsRunId")
-      ? undefined
-      : json["requeuedAsRunId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'runId': !exists(json, 'runId') ? undefined : json['runId'],
+        'executionId': !exists(json, 'executionId') ? undefined : json['executionId'],
+        'taskId': !exists(json, 'taskId') ? undefined : json['taskId'],
+        'failureReason': !exists(json, 'failureReason') ? undefined : json['failureReason'],
+        'failureType': !exists(json, 'failureType') ? undefined : json['failureType'],
+        'originalInputs': !exists(json, 'originalInputs') ? undefined : json['originalInputs'],
+        'originalConfig': !exists(json, 'originalConfig') ? undefined : json['originalConfig'],
+        'quarantinedAt': !exists(json, 'quarantinedAt') ? undefined : new Date(json['quarantinedAt']),
+        'reviewedBy': !exists(json, 'reviewedBy') ? undefined : json['reviewedBy'],
+        'resolution': !exists(json, 'resolution') ? undefined : json['resolution'],
+        'resolvedAt': !exists(json, 'resolvedAt') ? undefined : new Date(json['resolvedAt']),
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'requeuedAsRunId': !exists(json, 'requeuedAsRunId') ? undefined : json['requeuedAsRunId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function DeadLetterQueueToJSON(value?: DeadLetterQueue): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    runId: value.runId,
-    executionId: value.executionId,
-    taskId: value.taskId,
-    failureReason: value.failureReason,
-    failureType: value.failureType,
-    originalInputs: value.originalInputs,
-    originalConfig: value.originalConfig,
-    quarantinedAt:
-      value.quarantinedAt === undefined
-        ? undefined
-        : value.quarantinedAt.toISOString(),
-    reviewedBy: value.reviewedBy,
-    resolution: value.resolution,
-    resolvedAt:
-      value.resolvedAt === undefined
-        ? undefined
-        : value.resolvedAt.toISOString(),
-    notes: value.notes,
-    requeuedAsRunId: value.requeuedAsRunId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'runId': value.runId,
+        'executionId': value.executionId,
+        'taskId': value.taskId,
+        'failureReason': value.failureReason,
+        'failureType': value.failureType,
+        'originalInputs': value.originalInputs,
+        'originalConfig': value.originalConfig,
+        'quarantinedAt': value.quarantinedAt === undefined ? undefined : value.quarantinedAt.toISOString(),
+        'reviewedBy': value.reviewedBy,
+        'resolution': value.resolution,
+        'resolvedAt': value.resolvedAt === undefined ? undefined : value.resolvedAt.toISOString(),
+        'notes': value.notes,
+        'requeuedAsRunId': value.requeuedAsRunId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum DeadLetterQueueFailureTypeEnum {
-  MAXRETRIES = "max_retries",
-  PERMANENTERROR = "permanent_error",
-  CIRCUITBREAKER = "circuit_breaker",
-  MANUAL = "manual",
+    MAXRETRIES = 'max_retries',
+    PERMANENTERROR = 'permanent_error',
+    CIRCUITBREAKER = 'circuit_breaker',
+    MANUAL = 'manual'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum DeadLetterQueueResolutionEnum {
-  PENDING = "pending",
-  REQUEUED = "requeued",
-  FIXED = "fixed",
-  DISCARDED = "discarded",
+    PENDING = 'pending',
+    REQUEUED = 'requeued',
+    FIXED = 'fixed',
+    DISCARDED = 'discarded'
 }
+
+

@@ -18,421 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: BorderApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Border, BorderFromJSON, BorderToJSON } from "../model";
+    Border,
+    BorderFromJSON,
+    BorderToJSON,
+} from '../model';
 
 export interface DeleteBorderApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetBorderApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetBorderListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchBorderByIdApiRequest {
-  id: string;
-  border: Border;
+    id: string;
+    border: Border;
 }
 
 export interface PostBorderApiRequest {
-  border: Border;
+    border: Border;
 }
 
 export interface UpdateBorderApiRequest {
-  id: string;
-  border: Border;
+    id: string;
+    border: Border;
 }
+
 
 /**
  * Deletes a specific Border.
  * Delete a Border.
  */
-function deleteBorderRaw<T>(
-  requestParameters: DeleteBorderApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteBorder.",
-    );
-  }
+function deleteBorderRaw<T>(requestParameters: DeleteBorderApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteBorder.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Border.
- * Delete a Border.
- */
-export function deleteBorder<T>(
-  requestParameters: DeleteBorderApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteBorderRaw(requestParameters, requestConfig);
+* Deletes a specific Border.
+* Delete a Border.
+*/
+export function deleteBorder<T>(requestParameters: DeleteBorderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteBorderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Border for a specific uid.
  * Retrieve a single Border
  */
-function getBorderRaw<T>(
-  requestParameters: GetBorderApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Border> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getBorder.",
-    );
-  }
+function getBorderRaw<T>(requestParameters: GetBorderApiRequest, requestConfig: runtime.TypedQueryConfig<T, Border> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getBorder.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BorderFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BorderFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Border for a specific uid.
- * Retrieve a single Border
- */
-export function getBorder<T>(
-  requestParameters: GetBorderApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Border>,
-): QueryConfig<T> {
-  return getBorderRaw(requestParameters, requestConfig);
+* Retrieves a single Border for a specific uid.
+* Retrieve a single Border
+*/
+export function getBorder<T>(requestParameters: GetBorderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Border>): QueryConfig<T> {
+    return getBorderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Borders.
  * Retrieve a list of Borders
  */
-function getBorderListRaw<T>(
-  requestParameters: GetBorderListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<Border>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getBorderListRaw<T>(requestParameters: GetBorderListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Border>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(BorderFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(BorderFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Borders.
- * Retrieve a list of Borders
- */
-export function getBorderList<T>(
-  requestParameters: GetBorderListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Border>>,
-): QueryConfig<T> {
-  return getBorderListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing Border.
- * Partially update an existing Border
- */
-function patchBorderByIdRaw<T>(
-  requestParameters: PatchBorderByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Border> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchBorderById.",
-    );
-  }
-
-  if (
-    requestParameters.border === null ||
-    requestParameters.border === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "border",
-      "Required parameter requestParameters.border was null or undefined when calling patchBorderById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || BorderToJSON(requestParameters.border),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BorderFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Borders.
+* Retrieve a list of Borders
+*/
+export function getBorderList<T>(requestParameters: GetBorderListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Border>>): QueryConfig<T> {
+    return getBorderListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Border.
  * Partially update an existing Border
  */
-export function patchBorderById<T>(
-  requestParameters: PatchBorderByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Border>,
-): QueryConfig<T> {
-  return patchBorderByIdRaw(requestParameters, requestConfig);
+function patchBorderByIdRaw<T>(requestParameters: PatchBorderByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Border> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchBorderById.');
+    }
+
+    if (requestParameters.border === null || requestParameters.border === undefined) {
+        throw new runtime.RequiredError('border','Required parameter requestParameters.border was null or undefined when calling patchBorderById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || BorderToJSON(requestParameters.border),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BorderFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Border.
+* Partially update an existing Border
+*/
+export function patchBorderById<T>(requestParameters: PatchBorderByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Border>): QueryConfig<T> {
+    return patchBorderByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Border.
  * Create a new Border
  */
-function postBorderRaw<T>(
-  requestParameters: PostBorderApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Border> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.border === null ||
-    requestParameters.border === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "border",
-      "Required parameter requestParameters.border was null or undefined when calling postBorder.",
-    );
-  }
+function postBorderRaw<T>(requestParameters: PostBorderApiRequest, requestConfig: runtime.TypedQueryConfig<T, Border> = {}): QueryConfig<T> {
+    if (requestParameters.border === null || requestParameters.border === undefined) {
+        throw new runtime.RequiredError('border','Required parameter requestParameters.border was null or undefined when calling postBorder.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || BorderToJSON(requestParameters.border),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BorderFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || BorderToJSON(requestParameters.border),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BorderFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new Border.
- * Create a new Border
- */
-export function postBorder<T>(
-  requestParameters: PostBorderApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Border>,
-): QueryConfig<T> {
-  return postBorderRaw(requestParameters, requestConfig);
+* Creates a new Border.
+* Create a new Border
+*/
+export function postBorder<T>(requestParameters: PostBorderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Border>): QueryConfig<T> {
+    return postBorderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Border.
  * Update an existing Border
  */
-function updateBorderRaw<T>(
-  requestParameters: UpdateBorderApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Border> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateBorder.",
-    );
-  }
+function updateBorderRaw<T>(requestParameters: UpdateBorderApiRequest, requestConfig: runtime.TypedQueryConfig<T, Border> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateBorder.');
+    }
 
-  if (
-    requestParameters.border === null ||
-    requestParameters.border === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "border",
-      "Required parameter requestParameters.border was null or undefined when calling updateBorder.",
-    );
-  }
+    if (requestParameters.border === null || requestParameters.border === undefined) {
+        throw new runtime.RequiredError('border','Required parameter requestParameters.border was null or undefined when calling updateBorder.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Border/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || BorderToJSON(requestParameters.border),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BorderFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Border/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || BorderToJSON(requestParameters.border),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BorderFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Border.
- * Update an existing Border
- */
-export function updateBorder<T>(
-  requestParameters: UpdateBorderApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Border>,
-): QueryConfig<T> {
-  return updateBorderRaw(requestParameters, requestConfig);
+* Updates an existing Border.
+* Update an existing Border
+*/
+export function updateBorder<T>(requestParameters: UpdateBorderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Border>): QueryConfig<T> {
+    return updateBorderRaw(requestParameters, requestConfig);
 }
+

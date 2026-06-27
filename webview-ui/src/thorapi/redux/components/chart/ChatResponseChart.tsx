@@ -19,32 +19,20 @@ Description: ChatResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ChatResponse } from "@thorapi/model";
-import {
-  useGetChatResponsesQuery,
-  useAddChatResponseMutation,
-  useUpdateChatResponseMutation,
-} from "../../services/ChatResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ChatResponse } from '@thorapi/model';
+import { useGetChatResponsesQuery, useAddChatResponseMutation, useUpdateChatResponseMutation } from '../../services/ChatResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ChatResponseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetChatResponsesQuery();
 
   const [data, setData] = useState<ChatResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ChatResponse>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ChatResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const ChatResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((chatresponse: DataObject) => [chatresponse])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((chatresponse: DataObject) => [chatresponse])} />
+          )}
     </>
   );
 };

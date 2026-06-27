@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_WORKFLOWEXECUTION_REQUEST,
-  FETCH_WORKFLOWEXECUTION_REQUEST,
-  LIST_WORKFLOWEXECUTION_REQUEST,
-  UPDATE_WORKFLOWEXECUTION_REQUEST,
-  DELETE_WORKFLOWEXECUTION_REQUEST,
-  addWorkflowExecutionFailure,
-  addWorkflowExecutionSuccess,
-  fetchWorkflowExecutionFailure,
-  fetchWorkflowExecutionSuccess,
-  listWorkflowExecutionFailure,
-  listWorkflowExecutionSuccess,
-  updateWorkflowExecutionFailure,
-  updateWorkflowExecutionSuccess,
-  deleteWorkflowExecutionFailure,
-  deleteWorkflowExecutionSuccess,
-} from "../actions/WorkflowExecutionApiAction";
+
+    ADD_WORKFLOWEXECUTION_REQUEST,
+    FETCH_WORKFLOWEXECUTION_REQUEST,
+    LIST_WORKFLOWEXECUTION_REQUEST,
+    UPDATE_WORKFLOWEXECUTION_REQUEST,
+    DELETE_WORKFLOWEXECUTION_REQUEST,
+
+    addWorkflowExecutionFailure,
+    addWorkflowExecutionSuccess,
+
+    fetchWorkflowExecutionFailure,
+    fetchWorkflowExecutionSuccess,
+    
+    listWorkflowExecutionFailure,
+    listWorkflowExecutionSuccess,
+
+    updateWorkflowExecutionFailure,
+    updateWorkflowExecutionSuccess,
+    
+    deleteWorkflowExecutionFailure,
+    deleteWorkflowExecutionSuccess,
+    
+} from '../actions/WorkflowExecutionApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: WorkflowExecution
 */
 
-export const WorkflowExecutionMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("WorkflowExecution MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const WorkflowExecutionMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("WorkflowExecution MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

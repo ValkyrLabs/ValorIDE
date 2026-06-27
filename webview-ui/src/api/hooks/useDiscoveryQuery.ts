@@ -3,6 +3,8 @@ import {
   getValkyraiHost,
   subscribeToValkyraiHost,
 } from "../../utils/valkyraiHost";
+import { getStoredJwtToken } from "../../utils/authTokenStorage";
+import { vscode } from "../../utils/vscode";
 
 const LOCAL_SWARM_API_BASE = "http://localhost:8080/v1/swarm";
 
@@ -121,12 +123,137 @@ const readAuthToken = () => {
   if (typeof window === "undefined") {
     return null;
   }
-  return (
-    window.sessionStorage.getItem("jwtToken") ||
-    window.sessionStorage.getItem("jwtSession") ||
-    window.localStorage.getItem("jwtToken") ||
-    window.localStorage.getItem("authToken")
-  );
+  const storedToken = getStoredJwtToken();
+  if (storedToken) {
+    return storedToken;
+  }
+  const storageKeys = [
+    "jwtToken",
+    "jwtSession",
+    "authToken",
+    "auth_token",
+    "valoride_jwt",
+    "temp_auth_token",
+    "VALKYR_AUTH",
+  ];
+  for (const storage of [window.sessionStorage, window.localStorage]) {
+    for (const key of storageKeys) {
+      try {
+        const value = storage?.getItem?.(key);
+        if (value?.trim()) {
+          return value.replace(/^Bearer\s+/i, "").trim();
+        }
+      } catch {
+        // Ignore unavailable storage in webview/test sandboxes.
+      }
+    }
+  }
+  return null;
+};
+
+const createThorapiRequestId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `swarm-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const headersToRecord = (headers?: HeadersInit): Record<string, string> => {
+  if (!headers) {
+    return {};
+  }
+  try {
+    const result: Record<string, string> = {};
+    new Headers(headers).forEach((value, key) => {
+      result[key] = value;
+    });
+    return result;
+  } catch {
+    return {};
+  }
+};
+
+type SwarmJsonResponse<T> = {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  data: T;
+};
+
+export const requestSwarmJson = async <T = any>(
+  url: string,
+  init: RequestInit = {},
+): Promise<SwarmJsonResponse<T>> => {
+  if (typeof window !== "undefined" && vscode.isAvailable()) {
+    const requestId = createThorapiRequestId();
+    return new Promise<SwarmJsonResponse<T>>((resolve) => {
+      let handleResponse: (event: MessageEvent) => void = () => undefined;
+      const timeoutId = window.setTimeout(() => {
+        window.removeEventListener("message", handleResponse);
+        resolve({
+          ok: false,
+          status: 0,
+          statusText: "ThorAPI request timed out.",
+          data: undefined as T,
+        });
+      }, 30000);
+
+      handleResponse = (event: MessageEvent) => {
+        const message = event.data;
+        const response = message?.thorapiResponse;
+        if (
+          message?.type !== "thorapiResponse" ||
+          response?.requestId !== requestId
+        ) {
+          return;
+        }
+
+        window.clearTimeout(timeoutId);
+        window.removeEventListener("message", handleResponse);
+        resolve({
+          ok: Boolean(response.ok),
+          status: response.status ?? 0,
+          statusText:
+            response.statusText ||
+            response.error ||
+            "ThorAPI request failed.",
+          data: response.data as T,
+        });
+      };
+
+      window.addEventListener("message", handleResponse);
+      vscode.postMessage({
+        type: "thorapiRequest",
+        thorapiRequest: {
+          requestId,
+          url,
+          method: init.method || "GET",
+          body: init.body,
+          headers: headersToRecord(init.headers),
+        },
+      });
+    });
+  }
+
+  const response = await fetch(url, init);
+  const text = await response.text();
+  let data: T = undefined as T;
+  if (text) {
+    try {
+      data = JSON.parse(text) as T;
+    } catch {
+      data = text as T;
+    }
+  }
+  return {
+    ok: response.ok,
+    status: response.status,
+    statusText: response.statusText,
+    data,
+  };
 };
 
 export const getSwarmDiscoveryHeaders = () => {
@@ -134,6 +261,7 @@ export const getSwarmDiscoveryHeaders = () => {
   const token = readAuthToken();
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
+    headers.set("jwtSession", token);
   }
   return headers;
 };
@@ -237,7 +365,7 @@ export function useDiscoveryQuery(
         hasStatusFilter: Boolean(status && status !== "all"),
       });
 
-      const response = await fetch(url, {
+      const response = await requestSwarmJson(url, {
         headers: getSwarmDiscoveryHeaders(),
       });
 
@@ -252,7 +380,7 @@ export function useDiscoveryQuery(
         );
       }
 
-      const result = await response.json();
+      const result = response.data;
       const agents = Array.isArray(result)
         ? result
         : result.data || result.agents || [];

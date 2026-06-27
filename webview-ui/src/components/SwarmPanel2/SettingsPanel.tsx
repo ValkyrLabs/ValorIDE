@@ -10,10 +10,35 @@ import {
   Typography,
   message as antdMessage,
 } from "antd";
+import {
+  getSwarmDiscoveryHeaders,
+  requestSwarmJson,
+} from "../../api/hooks/useDiscoveryQuery";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
 
 const { Text } = Typography;
 
-const SWARM_API_BASE = "http://localhost:8080/v1/swarm";
+const normalizeApiHost = () => {
+  try {
+    const parsed = new URL(getValkyraiHost());
+    const pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`.replace(
+      /\/+$/,
+      "",
+    );
+  } catch {
+    return "http://localhost:8080/v1";
+  }
+};
+
+const getSwarmApiBase = () => `${normalizeApiHost()}/swarm`;
+
+const getJsonHeaders = () => {
+  const headers = getSwarmDiscoveryHeaders();
+  headers.set("Content-Type", "application/json");
+  return headers;
+};
 
 interface SettingsPanelProps {
   organizationId: string;
@@ -44,11 +69,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     setLastError(null);
 
     try {
-      const response = await fetch(`${SWARM_API_BASE}/agents`, {
+      const response = await requestSwarmJson(`${getSwarmApiBase()}/agents`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getJsonHeaders(),
         body: JSON.stringify({
           organizationId,
           ...values,
@@ -56,7 +79,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
+        const errorText =
+          typeof response.data === "string"
+            ? response.data
+            : JSON.stringify(response.data ?? {});
         throw new Error(errorText || `HTTP ${response.status}`);
       }
 

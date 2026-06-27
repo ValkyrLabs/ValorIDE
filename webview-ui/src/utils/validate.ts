@@ -70,8 +70,18 @@ export function validateApiConfiguration(
           return "You must provide a valid API key or choose a different provider.";
         }
         break;
+      case "valkyrai":
       case "valoride":
-        if (!apiConfiguration.valorideApiKey) {
+        if (
+          apiConfiguration.apiProvider === "valkyrai" &&
+          !apiConfiguration.valkyraiServiceId
+        ) {
+          return "You must select a ValkyrAI model.";
+        }
+        if (
+          apiConfiguration.apiProvider === "valoride" &&
+          !apiConfiguration.valorideApiKey
+        ) {
           return "You must provide a valid API key or choose a different provider.";
         }
         break;
@@ -135,6 +145,11 @@ export function validateModelId(
 ): string | undefined {
   if (apiConfiguration) {
     switch (apiConfiguration.apiProvider) {
+      case "valkyrai":
+        if (!apiConfiguration.valkyraiServiceId) {
+          return "You must select a ValkyrAI model.";
+        }
+        break;
       case "openrouter":
       case "valoride":
         const modelId =

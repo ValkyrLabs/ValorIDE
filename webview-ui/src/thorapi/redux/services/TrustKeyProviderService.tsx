@@ -13,60 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustKeyProvider } from "@thorapi/model/TrustKeyProvider";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustKeyProvider } from '@thorapi/model/TrustKeyProvider'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustKeyProviderResponse = TrustKeyProvider[];
+type TrustKeyProviderResponse = TrustKeyProvider[]
+type TrustKeyProviderPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustKeyProvider>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type TrustKeyProviderListQueryArg = {
+  example?: Partial<TrustKeyProvider>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toTrustKeyProviderList = (result: unknown): TrustKeyProviderResponse => {
   if (Array.isArray(result)) {
-    return result as TrustKeyProviderResponse;
+    return result as TrustKeyProviderResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustKeyProviderResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustKeyProviderResponse) : []
+}
 
 export const TrustKeyProviderService = createApi({
-  reducerPath: "TrustKeyProvider", // This should remain unique
+  reducerPath: 'TrustKeyProvider', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustKeyProvider"],
+  tagTypes: ['TrustKeyProvider'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustKeyProvidersPaged: build.query<
-      TrustKeyProviderResponse,
-      { page: number; size?: number; example?: Partial<TrustKeyProvider> }
-    >({
+    getTrustKeyProvidersPaged: build.query<TrustKeyProviderResponse, TrustKeyProviderPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustKeyProvider?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustKeyProvider?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustKeyProviderList(result);
+        const rows = toTrustKeyProviderList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustKeyProvider" as const, id })),
-          { type: "TrustKeyProvider", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustKeyProvider' as const, id })),
+          { type: 'TrustKeyProvider', id: `PAGE_${page}` },
+          { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustKeyProviders: build.query<
-      TrustKeyProviderResponse,
-      { example?: Partial<TrustKeyProvider> } | void
-    >({
+    getTrustKeyProviders: build.query<TrustKeyProviderResponse, TrustKeyProviderListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -75,112 +82,86 @@ export const TrustKeyProviderService = createApi({
         return `TrustKeyProvider`;
       },
       providesTags: (result) => {
-        const rows = toTrustKeyProviderList(result);
+        const rows = toTrustKeyProviderList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustKeyProvider" as const, id })),
-          { type: "TrustKeyProvider", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustKeyProvider' as const, id })),
+          { type: 'TrustKeyProvider', id: 'LIST' },
+          { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustKeyProvider: build.mutation<
-      TrustKeyProvider,
-      Partial<TrustKeyProvider>
-    >({
+    addTrustKeyProvider: build.mutation<TrustKeyProvider, Partial<TrustKeyProvider>>({
       query: (body) => ({
         url: `TrustKeyProvider`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustKeyProvider", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustKeyProvider', id: 'LIST' },
+        { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustKeyProvider: build.query<TrustKeyProvider, string>({
       query: (id) => `TrustKeyProvider/${id}`,
-      providesTags: (result, error, id) => [{ type: "TrustKeyProvider", id }],
+      providesTags: (result, error, id) => [{ type: 'TrustKeyProvider', id }],
     }),
 
     // 5) Update
-    updateTrustKeyProvider: build.mutation<
-      void,
-      Pick<TrustKeyProvider, "id"> & Partial<TrustKeyProvider>
-    >({
+    updateTrustKeyProvider: build.mutation<TrustKeyProvider, Pick<TrustKeyProvider, 'id'> & Partial<TrustKeyProvider>>({
       query: ({ id, ...patch }) => ({
         url: `TrustKeyProvider/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustKeyProviderService.util.updateQueryData(
-              "getTrustKeyProvider",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustKeyProvider, "id">,
-      ) => [
-        { type: "TrustKeyProvider", id },
-        { type: "TrustKeyProvider", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustKeyProvider, 'id'>) => [
+        { type: 'TrustKeyProvider', id },
+        { type: 'TrustKeyProvider', id: 'LIST' },
+        { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustKeyProvider: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustKeyProvider: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustKeyProvider/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustKeyProvider", id },
+        { type: 'TrustKeyProvider', id },
+        { type: 'TrustKeyProvider', id: 'LIST' },
+        { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustKeyProviderCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustKeyProviderCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustKeyProvider/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustKeyProvider", id },
-        { type: "TrustKeyProvider", id: "LIST" },
+        { type: 'TrustKeyProvider', id },
+        { type: 'TrustKeyProvider', id: 'LIST' },
+        { type: 'TrustKeyProvider', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustKeyProvidersPagedQuery`
 export const {
-  useGetTrustKeyProvidersPagedQuery, // immediate fetch
+  useGetTrustKeyProvidersPagedQuery,     // immediate fetch
   useLazyGetTrustKeyProvidersPagedQuery, // lazy fetch
   useGetTrustKeyProviderQuery,
   useGetTrustKeyProvidersQuery,
@@ -188,4 +169,4 @@ export const {
   useUpdateTrustKeyProviderMutation,
   useDeleteTrustKeyProviderMutation,
   useDeleteTrustKeyProviderCascadeMutation,
-} = TrustKeyProviderService;
+} = TrustKeyProviderService

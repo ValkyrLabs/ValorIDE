@@ -13,7 +13,9 @@ const commandStatusMap: Record<
   AgenticCommandResult["status"],
   AgenticCommandStatus
 > = {
+  "approval-required": "approval-required",
   failed: "failed",
+  queued: "queued",
   rejected: "rejected",
   success: "completed",
 };

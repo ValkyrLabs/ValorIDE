@@ -17,8 +17,13 @@ import BuyCredits from "@thorapi/components/BuyCredits";
 import { vscode } from "@thorapi/utils/vscode";
 import CoolButton from "../CoolButton";
 import { CREDIT_INTENT_EVENT, CreditIntent } from "@thorapi/types/creditIntent";
-import { useSelector } from "react-redux";
-type AlertSeverity = "warning" | "danger" | "info";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearAccountBalancePrompt,
+  clearCreditIntent,
+  clearLastError,
+} from "../../redux/slices/apiErrorsSlice";
+type AlertSeverity = "warning" | "danger" | "info" | "neutral";
 
 interface SystemAlert {
   id: string;
@@ -31,6 +36,7 @@ interface SystemAlert {
 }
 
 const SystemAlerts: React.FC = () => {
+  const dispatch = useDispatch();
   const {
     valorideMessages,
     jwtToken,
@@ -44,6 +50,10 @@ const SystemAlerts: React.FC = () => {
   );
   const [showBuyCreditsModal, setShowBuyCreditsModal] = useState(false);
   const apiErrors = useSelector((state: any) => state?.apiErrors);
+  const creditLabel = (value: number) => {
+    const rounded = Math.max(0, Math.round(value));
+    return `${rounded.toLocaleString()} ${rounded === 1 ? "credit" : "credits"}`;
+  };
 
   const accountId = useMemo(() => {
     const rawId = authenticatedUser?.id ?? userInfo?.id;
@@ -94,8 +104,8 @@ const SystemAlerts: React.FC = () => {
     const budgetThresholds = [
       {
         threshold: budgetAlerts.depletedThreshold,
-        severity: "danger" as const,
-        title: "Budget Depleted",
+        severity: "neutral" as const,
+        title: "Credits need a top-up",
       },
       {
         threshold: budgetAlerts.criticalThreshold,
@@ -125,8 +135,8 @@ const SystemAlerts: React.FC = () => {
             title,
             message:
               effectiveBalance <= 0
-                ? "Your account balance has been depleted. Buy credits to continue using ValorIDE services."
-                : `Your balance is getting low ($${effectiveBalance.toFixed(2)}). Add credits soon for uninterrupted access.`,
+                ? "You are out of credits for now. Add credits when you are ready to keep using ValorIDE services."
+                : `Your credits are getting low (${creditLabel(effectiveBalance)}). Add credits soon for uninterrupted access.`,
             timestamp: Date.now(),
           };
 
@@ -219,10 +229,10 @@ const SystemAlerts: React.FC = () => {
           const newAlert: SystemAlert = {
             id: alertId,
             type: "budget",
-            severity: "danger",
-            title: "Insufficient Credits",
+            severity: "neutral",
+            title: "Credits need a top-up",
             message:
-              "You don't have enough credits to complete this request. Please add credits to continue.",
+              "This request needs more credits. Add credits when you are ready, then return to continue.",
             timestamp: Date.now(),
           };
 
@@ -296,6 +306,17 @@ const SystemAlerts: React.FC = () => {
   const handleDismiss = (alertId: string) => {
     setDismissedAlerts((prev) => new Set([...Array.from(prev), alertId]));
     setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+    if (alertId.startsWith("api-")) {
+      dispatch(clearLastError());
+    }
+    if (
+      alertId.startsWith("budget-") ||
+      alertId.startsWith("blocker-insufficient-funds-")
+    ) {
+      dispatch(clearAccountBalancePrompt());
+      dispatch(clearCreditIntent());
+      setShowBuyCreditsModal(false);
+    }
   };
 
   const handlePurchaseSuccess = (amount: number) => {
@@ -327,6 +348,8 @@ const SystemAlerts: React.FC = () => {
         return "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
       case "info":
         return "var(--vscode-inputValidation-infoBackground, #1e3a5f)";
+      case "neutral":
+        return "var(--vscode-editorWidget-background, #2b2b2b)";
       default:
         return "var(--vscode-inputValidation-warningBackground, #352a05)";
     }
@@ -337,6 +360,8 @@ const SystemAlerts: React.FC = () => {
         return "var(--vscode-inputValidation-errorForeground, #f48771)";
       case "info":
         return "var(--vscode-notificationsInfoIcon-foreground, #75beff)";
+      case "neutral":
+        return "var(--vscode-foreground, #d4d4d4)";
       default:
         return "var(--vscode-inputValidation-warningForeground, #cca700)";
     }
@@ -347,6 +372,8 @@ const SystemAlerts: React.FC = () => {
         return "1px solid var(--vscode-inputValidation-errorBorder, #f48771)";
       case "info":
         return "1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)";
+      case "neutral":
+        return "1px solid var(--vscode-panel-border, #5f5f5f)";
       default:
         return "1px solid var(--vscode-inputValidation-warningBorder, #cca700)";
     }
@@ -358,10 +385,11 @@ const SystemAlerts: React.FC = () => {
         style={{
           position: "fixed",
           top: 48,
+          left: 12,
           right: 12,
           zIndex: 9999,
-          maxWidth: "360px",
-          width: "calc(100vw - 24px)",
+          width: "auto",
+          maxWidth: "none",
           display: "flex",
           flexDirection: "column",
           gap: "8px",
@@ -376,7 +404,9 @@ const SystemAlerts: React.FC = () => {
                 ? "danger"
                 : alert.severity === "info"
                   ? "info"
-                  : "warning"
+                  : alert.severity === "neutral"
+                    ? "secondary"
+                    : "warning"
             }
             style={{
               margin: 0,
@@ -386,14 +416,17 @@ const SystemAlerts: React.FC = () => {
               color: alertFg(alert.severity),
               fontSize: "13px",
               borderRadius: "6px",
+              padding: alert.type === "budget" ? "16px 18px" : "18px 20px",
             }}
           >
             <div
-              style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
+              style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}
             >
-              <div style={{ marginTop: "2px" }}>
+              <div style={{ marginTop: "2px", flex: "0 0 auto" }}>
                 {alert.type === "budget" ? (
-                  alert.severity === "info" ? (
+                  alert.severity === "neutral" ? (
+                    <FaCreditCard size={16} />
+                  ) : alert.severity === "info" ? (
                     <FaExclamationTriangle size={16} />
                   ) : (
                     <FaDollarSign size={16} />
@@ -402,11 +435,11 @@ const SystemAlerts: React.FC = () => {
                   <FaSadTear size={16} />
                 )}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, marginBottom: "4px" }}>
+              <div style={{ flex: 1, paddingRight: "12px" }}>
+                <div style={{ fontWeight: 600, marginBottom: "6px" }}>
                   {alert.title}
                 </div>
-                <div style={{ fontSize: "13px", lineHeight: "1.4" }}>
+                <div style={{ fontSize: "13px", lineHeight: "1.55" }}>
                   {alert.message}
                 </div>
                 {alert.type === "budget" && (
@@ -429,7 +462,7 @@ const SystemAlerts: React.FC = () => {
                       }
                     }}
                     style={{
-                      marginTop: "8px",
+                      marginTop: "12px",
                       padding: "6px 14px",
                       backgroundColor: "#06ffa5",
                       color: "#000",
@@ -495,7 +528,7 @@ const SystemAlerts: React.FC = () => {
         show={shouldShowBuyCreditsModal}
         onHide={() => setShowBuyCreditsModal(false)}
         centered
-        size="sm"
+        fullscreen
       >
         <Modal.Header
           closeButton

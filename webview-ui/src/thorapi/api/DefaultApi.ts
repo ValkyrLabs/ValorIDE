@@ -18,318 +18,516 @@ Template file: typescript-redux-query/apis.mustache
 Description: DefaultApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  AgentChatMessageRequest,
-  AgentChatMessageRequestFromJSON,
-  AgentChatMessageRequestToJSON,
-  AgentChatMessageResponse,
-  AgentChatMessageResponseFromJSON,
-  AgentChatMessageResponseToJSON,
-  SwarmCommandRequest,
-  SwarmCommandRequestFromJSON,
-  SwarmCommandRequestToJSON,
-  SwarmCommandResponse,
-  SwarmCommandResponseFromJSON,
-  SwarmCommandResponseToJSON,
-  SwarmRegisterRequest,
-  SwarmRegisterRequestFromJSON,
-  SwarmRegisterRequestToJSON,
-  SwarmRegisterResponse,
-  SwarmRegisterResponseFromJSON,
-  SwarmRegisterResponseToJSON,
-  SwarmUnregisterRequest,
-  SwarmUnregisterRequestFromJSON,
-  SwarmUnregisterRequestToJSON,
-  SwarmUnregisterResponse,
-  SwarmUnregisterResponseFromJSON,
-  SwarmUnregisterResponseToJSON,
-} from "../model";
+    AgentChatMessageRequest,
+    AgentChatMessageRequestFromJSON,
+    AgentChatMessageRequestToJSON,
+    AgentChatMessageResponse,
+    AgentChatMessageResponseFromJSON,
+    AgentChatMessageResponseToJSON,
+    SwarmCommandRequest,
+    SwarmCommandRequestFromJSON,
+    SwarmCommandRequestToJSON,
+    SwarmCommandResponse,
+    SwarmCommandResponseFromJSON,
+    SwarmCommandResponseToJSON,
+    SwarmGraphSnapshot,
+    SwarmGraphSnapshotFromJSON,
+    SwarmGraphSnapshotToJSON,
+    SwarmRegisterRequest,
+    SwarmRegisterRequestFromJSON,
+    SwarmRegisterRequestToJSON,
+    SwarmRegisterResponse,
+    SwarmRegisterResponseFromJSON,
+    SwarmRegisterResponseToJSON,
+    SwarmUnregisterRequest,
+    SwarmUnregisterRequestFromJSON,
+    SwarmUnregisterRequestToJSON,
+    SwarmUnregisterResponse,
+    SwarmUnregisterResponseFromJSON,
+    SwarmUnregisterResponseToJSON,
+} from '../model';
 
 export interface ForwardSwarmCommandApiRequest {
-  swarmCommandRequest: SwarmCommandRequest;
+    swarmCommandRequest: SwarmCommandRequest;
+}
+
+export interface GetSwarmCommandRetryBacklogApiRequest {
+    dueOnly?: boolean;
+    includeLeased?: boolean;
+}
+
+export interface GetSwarmCommandStatusApiRequest {
+    commandId: string;
+}
+
+export interface MarkSwarmCommandTimedOutApiRequest {
+    commandId: string;
+    reason?: string;
 }
 
 export interface RegisterSwarmAgentApiRequest {
-  swarmRegisterRequest: SwarmRegisterRequest;
+    swarmRegisterRequest: SwarmRegisterRequest;
 }
 
 export interface SendAgentChatMessageApiRequest {
-  agentId: string;
-  agentChatMessageRequest: AgentChatMessageRequest;
+    agentId: string;
+    agentChatMessageRequest: AgentChatMessageRequest;
 }
 
 export interface UnregisterSwarmAgentApiRequest {
-  swarmUnregisterRequest: SwarmUnregisterRequest;
+    swarmUnregisterRequest: SwarmUnregisterRequest;
 }
+
 
 /**
  * Forwards a command message to a specific agent instance or broadcasts to all agents.
  * Forward a swarm command
  */
-function forwardSwarmCommandRaw<T>(
-  requestParameters: ForwardSwarmCommandApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.swarmCommandRequest === null ||
-    requestParameters.swarmCommandRequest === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "swarmCommandRequest",
-      "Required parameter requestParameters.swarmCommandRequest was null or undefined when calling forwardSwarmCommand.",
-    );
-  }
+function forwardSwarmCommandRaw<T>(requestParameters: ForwardSwarmCommandApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {}): QueryConfig<T> {
+    if (requestParameters.swarmCommandRequest === null || requestParameters.swarmCommandRequest === undefined) {
+        throw new runtime.RequiredError('swarmCommandRequest','Required parameter requestParameters.swarmCommandRequest was null or undefined when calling forwardSwarmCommand.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SwarmOps/command`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      SwarmCommandRequestToJSON(requestParameters.swarmCommandRequest),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SwarmCommandResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/command`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || SwarmCommandRequestToJSON(requestParameters.swarmCommandRequest),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmCommandResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Forwards a command message to a specific agent instance or broadcasts to all agents.
- * Forward a swarm command
+* Forwards a command message to a specific agent instance or broadcasts to all agents.
+* Forward a swarm command
+*/
+export function forwardSwarmCommand<T>(requestParameters: ForwardSwarmCommandApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>): QueryConfig<T> {
+    return forwardSwarmCommandRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns current latest retry_pending SWARM command status rows for operator visibility into retry backlog and lease contention.
+ * Inspect swarm retry backlog
  */
-export function forwardSwarmCommand<T>(
-  requestParameters: ForwardSwarmCommandApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>,
-): QueryConfig<T> {
-  return forwardSwarmCommandRaw(requestParameters, requestConfig);
+function getSwarmCommandRetryBacklogRaw<T>(requestParameters: GetSwarmCommandRetryBacklogApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SwarmCommandResponse>> = {}): QueryConfig<T> {
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.dueOnly !== undefined) {
+        queryParameters['dueOnly'] = requestParameters.dueOnly;
+    }
+
+
+    if (requestParameters.includeLeased !== undefined) {
+        queryParameters['includeLeased'] = requestParameters.includeLeased;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/commands/retry_backlog`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SwarmCommandResponseFromJSON), text);
+    }
+
+    return config;
+}
+
+/**
+* Returns current latest retry_pending SWARM command status rows for operator visibility into retry backlog and lease contention.
+* Inspect swarm retry backlog
+*/
+export function getSwarmCommandRetryBacklog<T>(requestParameters: GetSwarmCommandRetryBacklogApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SwarmCommandResponse>>): QueryConfig<T> {
+    return getSwarmCommandRetryBacklogRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns the latest durable SWARM command response/status receipt for a command id.
+ * Inspect swarm command status
+ */
+function getSwarmCommandStatusRaw<T>(requestParameters: GetSwarmCommandStatusApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {}): QueryConfig<T> {
+    if (requestParameters.commandId === null || requestParameters.commandId === undefined) {
+        throw new runtime.RequiredError('commandId','Required parameter requestParameters.commandId was null or undefined when calling getSwarmCommandStatus.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/commands/{commandId}/status`.replace(`{${"commandId"}}`, encodeURIComponent(String(requestParameters.commandId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmCommandResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Returns the latest durable SWARM command response/status receipt for a command id.
+* Inspect swarm command status
+*/
+export function getSwarmCommandStatus<T>(requestParameters: GetSwarmCommandStatusApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>): QueryConfig<T> {
+    return getSwarmCommandStatusRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns the current swarm graph nodes and edges for live coordination telemetry.
+ * Fetch swarm topology snapshot
+ */
+function getSwarmGraphSnapshotRaw<T>( requestConfig: runtime.TypedQueryConfig<T, SwarmGraphSnapshot> = {}): QueryConfig<T> {
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/graph`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmGraphSnapshotFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Returns the current swarm graph nodes and edges for live coordination telemetry.
+* Fetch swarm topology snapshot
+*/
+export function getSwarmGraphSnapshot<T>( requestConfig?: runtime.TypedQueryConfig<T, SwarmGraphSnapshot>): QueryConfig<T> {
+    return getSwarmGraphSnapshotRaw( requestConfig);
+}
+
+/**
+ * Marks a command timeout, moving it to retry_pending or dead_lettered according to retry policy.
+ * Mark a swarm command timeout
+ */
+function markSwarmCommandTimedOutRaw<T>(requestParameters: MarkSwarmCommandTimedOutApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {}): QueryConfig<T> {
+    if (requestParameters.commandId === null || requestParameters.commandId === undefined) {
+        throw new runtime.RequiredError('commandId','Required parameter requestParameters.commandId was null or undefined when calling markSwarmCommandTimedOut.');
+    }
+
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.reason !== undefined) {
+        queryParameters['reason'] = requestParameters.reason;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/commands/{commandId}/timeout`.replace(`{${"commandId"}}`, encodeURIComponent(String(requestParameters.commandId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmCommandResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Marks a command timeout, moving it to retry_pending or dead_lettered according to retry policy.
+* Mark a swarm command timeout
+*/
+export function markSwarmCommandTimedOut<T>(requestParameters: MarkSwarmCommandTimedOutApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>): QueryConfig<T> {
+    return markSwarmCommandTimedOutRaw(requestParameters, requestConfig);
 }
 
 /**
  * Registers an agent instance with the swarm registry and updates its metadata. Subject to ACL and billing constraints.
  * Register or refresh a swarm agent
  */
-function registerSwarmAgentRaw<T>(
-  requestParameters: RegisterSwarmAgentApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SwarmRegisterResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.swarmRegisterRequest === null ||
-    requestParameters.swarmRegisterRequest === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "swarmRegisterRequest",
-      "Required parameter requestParameters.swarmRegisterRequest was null or undefined when calling registerSwarmAgent.",
-    );
-  }
+function registerSwarmAgentRaw<T>(requestParameters: RegisterSwarmAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmRegisterResponse> = {}): QueryConfig<T> {
+    if (requestParameters.swarmRegisterRequest === null || requestParameters.swarmRegisterRequest === undefined) {
+        throw new runtime.RequiredError('swarmRegisterRequest','Required parameter requestParameters.swarmRegisterRequest was null or undefined when calling registerSwarmAgent.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SwarmOps/register`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      SwarmRegisterRequestToJSON(requestParameters.swarmRegisterRequest),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SwarmRegisterResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/register`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || SwarmRegisterRequestToJSON(requestParameters.swarmRegisterRequest),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmRegisterResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Registers an agent instance with the swarm registry and updates its metadata. Subject to ACL and billing constraints.
- * Register or refresh a swarm agent
- */
-export function registerSwarmAgent<T>(
-  requestParameters: RegisterSwarmAgentApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SwarmRegisterResponse>,
-): QueryConfig<T> {
-  return registerSwarmAgentRaw(requestParameters, requestConfig);
+* Registers an agent instance with the swarm registry and updates its metadata. Subject to ACL and billing constraints.
+* Register or refresh a swarm agent
+*/
+export function registerSwarmAgent<T>(requestParameters: RegisterSwarmAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmRegisterResponse>): QueryConfig<T> {
+    return registerSwarmAgentRaw(requestParameters, requestConfig);
 }
 
 /**
- * Sends a chat message to a specific agent instance. Messages are persisted and encrypted.
- * Send chat message to agent
+ * Redispatches commands currently in retry_pending state and writes retry receipts.
+ * Retry pending swarm commands
  */
-function sendAgentChatMessageRaw<T>(
-  requestParameters: SendAgentChatMessageApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AgentChatMessageResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.agentId === null ||
-    requestParameters.agentId === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "agentId",
-      "Required parameter requestParameters.agentId was null or undefined when calling sendAgentChatMessage.",
-    );
-  }
+function retryPendingSwarmCommandsRaw<T>( requestConfig: runtime.TypedQueryConfig<T, Array<SwarmCommandResponse>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  if (
-    requestParameters.agentChatMessageRequest === null ||
-    requestParameters.agentChatMessageRequest === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "agentChatMessageRequest",
-      "Required parameter requestParameters.agentChatMessageRequest was null or undefined when calling sendAgentChatMessage.",
-    );
-  }
 
-  let queryParameters = null;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const { meta = {} } = requestConfig;
 
-  const { meta = {} } = requestConfig;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/commands/retry_pending`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SwarmOps/agent/{agentId}/chat`.replace(
-      `{${"agentId"}}`,
-      encodeURIComponent(String(requestParameters.agentId)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      AgentChatMessageRequestToJSON(requestParameters.agentChatMessageRequest),
-  };
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SwarmCommandResponseFromJSON), text);
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AgentChatMessageResponseFromJSON(body), text);
-  }
+    return config;
+}
 
-  return config;
+/**
+* Redispatches commands currently in retry_pending state and writes retry receipts.
+* Retry pending swarm commands
+*/
+export function retryPendingSwarmCommands<T>( requestConfig?: runtime.TypedQueryConfig<T, Array<SwarmCommandResponse>>): QueryConfig<T> {
+    return retryPendingSwarmCommandsRaw( requestConfig);
 }
 
 /**
  * Sends a chat message to a specific agent instance. Messages are persisted and encrypted.
  * Send chat message to agent
  */
-export function sendAgentChatMessage<T>(
-  requestParameters: SendAgentChatMessageApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AgentChatMessageResponse>,
-): QueryConfig<T> {
-  return sendAgentChatMessageRaw(requestParameters, requestConfig);
+function sendAgentChatMessageRaw<T>(requestParameters: SendAgentChatMessageApiRequest, requestConfig: runtime.TypedQueryConfig<T, AgentChatMessageResponse> = {}): QueryConfig<T> {
+    if (requestParameters.agentId === null || requestParameters.agentId === undefined) {
+        throw new runtime.RequiredError('agentId','Required parameter requestParameters.agentId was null or undefined when calling sendAgentChatMessage.');
+    }
+
+    if (requestParameters.agentChatMessageRequest === null || requestParameters.agentChatMessageRequest === undefined) {
+        throw new runtime.RequiredError('agentChatMessageRequest','Required parameter requestParameters.agentChatMessageRequest was null or undefined when calling sendAgentChatMessage.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/agent/{agentId}/chat`.replace(`{${"agentId"}}`, encodeURIComponent(String(requestParameters.agentId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || AgentChatMessageRequestToJSON(requestParameters.agentChatMessageRequest),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentChatMessageResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Sends a chat message to a specific agent instance. Messages are persisted and encrypted.
+* Send chat message to agent
+*/
+export function sendAgentChatMessage<T>(requestParameters: SendAgentChatMessageApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AgentChatMessageResponse>): QueryConfig<T> {
+    return sendAgentChatMessageRaw(requestParameters, requestConfig);
 }
 
 /**
  * Removes an agent instance from the swarm registry.
  * Unregister a swarm agent
  */
-function unregisterSwarmAgentRaw<T>(
-  requestParameters: UnregisterSwarmAgentApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SwarmUnregisterResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.swarmUnregisterRequest === null ||
-    requestParameters.swarmUnregisterRequest === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "swarmUnregisterRequest",
-      "Required parameter requestParameters.swarmUnregisterRequest was null or undefined when calling unregisterSwarmAgent.",
-    );
-  }
+function unregisterSwarmAgentRaw<T>(requestParameters: UnregisterSwarmAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmUnregisterResponse> = {}): QueryConfig<T> {
+    if (requestParameters.swarmUnregisterRequest === null || requestParameters.swarmUnregisterRequest === undefined) {
+        throw new runtime.RequiredError('swarmUnregisterRequest','Required parameter requestParameters.swarmUnregisterRequest was null or undefined when calling unregisterSwarmAgent.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SwarmOps/unregister`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      SwarmUnregisterRequestToJSON(requestParameters.swarmUnregisterRequest),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SwarmUnregisterResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/swarm-ops/unregister`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || SwarmUnregisterRequestToJSON(requestParameters.swarmUnregisterRequest),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmUnregisterResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Removes an agent instance from the swarm registry.
- * Unregister a swarm agent
- */
-export function unregisterSwarmAgent<T>(
-  requestParameters: UnregisterSwarmAgentApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SwarmUnregisterResponse>,
-): QueryConfig<T> {
-  return unregisterSwarmAgentRaw(requestParameters, requestConfig);
+* Removes an agent instance from the swarm registry.
+* Unregister a swarm agent
+*/
+export function unregisterSwarmAgent<T>(requestParameters: UnregisterSwarmAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmUnregisterResponse>): QueryConfig<T> {
+    return unregisterSwarmAgentRaw(requestParameters, requestConfig);
 }
+

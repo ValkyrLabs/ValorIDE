@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,208 +44,194 @@ import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
  * @export
  * @interface Address
  */
-export type Address = DataObject & {
-  /**
-   *
-   * @type {boolean}
-   * @memberof Address
-   */
-  hasWifi?: boolean;
-  /**
-   *
-   * @type {Principal}
-   * @memberof Address
-   */
-  principal?: Principal;
-  /**
-   * The type of address
-   * @type {string}
-   * @memberof Address
-   */
-  addressType?: AddressAddressTypeEnum;
-  /**
-   * the latitude of the address
-   * @type {number}
-   * @memberof Address
-   */
-  gpsCoordinateLat?: number;
-  /**
-   * the longitude of the address
-   * @type {number}
-   * @memberof Address
-   */
-  gpsCoordinateLong?: number;
-  /**
-   * full name of addressee
-   * @type {string}
-   * @memberof Address
-   */
-  name?: string;
-  /**
-   * street address line 1
-   * @type {string}
-   * @memberof Address
-   */
-  street1?: string;
-  /**
-   * street address line 2
-   * @type {string}
-   * @memberof Address
-   */
-  street2?: string;
-  /**
-   * full name of city
-   * @type {string}
-   * @memberof Address
-   */
-  city?: string;
-  /**
-   * State of residence 2-character code (USA)
-   * @type {string}
-   * @memberof Address
-   */
-  state?: string;
-  /**
-   * 3 character country code (upper case)
-   * @type {string}
-   * @memberof Address
-   */
-  country?: string;
-  /**
-   * 5+4 digit zip code
-   * @type {string}
-   * @memberof Address
-   */
-  postalCode?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Address
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Address
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Address
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Address
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Address
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Address
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Address
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Address
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Address
-   */
-  trashed?: boolean;
-};
+export type Address  = DataObject & {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Address
+     */
+    hasWifi?: boolean;
+    /**
+     * 
+     * @type {Principal}
+     * @memberof Address
+     */
+    principal?: Principal;
+    /**
+     * The type of address
+     * @type {string}
+     * @memberof Address
+     */
+    addressType?: AddressAddressTypeEnum;
+    /**
+     * the latitude of the address
+     * @type {number}
+     * @memberof Address
+     */
+    gpsCoordinateLat?: number;
+    /**
+     * the longitude of the address
+     * @type {number}
+     * @memberof Address
+     */
+    gpsCoordinateLong?: number;
+    /**
+     * full name of addressee
+     * @type {string}
+     * @memberof Address
+     */
+    name?: string;
+    /**
+     * street address line 1
+     * @type {string}
+     * @memberof Address
+     */
+    street1?: string;
+    /**
+     * street address line 2
+     * @type {string}
+     * @memberof Address
+     */
+    street2?: string;
+    /**
+     * full name of city
+     * @type {string}
+     * @memberof Address
+     */
+    city?: string;
+    /**
+     * State of residence 2-character code (USA)
+     * @type {string}
+     * @memberof Address
+     */
+    state?: string;
+    /**
+     * 3 character country code (upper case)
+     * @type {string}
+     * @memberof Address
+     */
+    country?: string;
+    /**
+     * 5+4 digit zip code
+     * @type {string}
+     * @memberof Address
+     */
+    postalCode?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Address
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Address
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Address
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Address
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Address
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Address
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Address
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Address
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Address
+     */
+    trashed?: boolean;
+}
 
 export function AddressFromJSON(json: any): Address {
-  return {
-    ...DataObjectFromJSON(json),
-    hasWifi: !exists(json, "hasWifi") ? undefined : json["hasWifi"],
-    principal: !exists(json, "principal")
-      ? undefined
-      : PrincipalFromJSON(json["principal"]),
-    addressType: !exists(json, "addressType") ? undefined : json["addressType"],
-    gpsCoordinateLat: !exists(json, "gps_coordinate_lat")
-      ? undefined
-      : json["gps_coordinate_lat"],
-    gpsCoordinateLong: !exists(json, "gps_coordinate_long")
-      ? undefined
-      : json["gps_coordinate_long"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    street1: !exists(json, "street1") ? undefined : json["street1"],
-    street2: !exists(json, "street2") ? undefined : json["street2"],
-    city: !exists(json, "city") ? undefined : json["city"],
-    state: !exists(json, "state") ? undefined : json["state"],
-    country: !exists(json, "country") ? undefined : json["country"],
-    postalCode: !exists(json, "postal_code") ? undefined : json["postal_code"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'hasWifi': !exists(json, 'hasWifi') ? undefined : json['hasWifi'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'addressType': !exists(json, 'addressType') ? undefined : json['addressType'],
+        'gpsCoordinateLat': !exists(json, 'gpsCoordinateLat') ? undefined : json['gpsCoordinateLat'],
+        'gpsCoordinateLong': !exists(json, 'gpsCoordinateLong') ? undefined : json['gpsCoordinateLong'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'street1': !exists(json, 'street1') ? undefined : json['street1'],
+        'street2': !exists(json, 'street2') ? undefined : json['street2'],
+        'city': !exists(json, 'city') ? undefined : json['city'],
+        'state': !exists(json, 'state') ? undefined : json['state'],
+        'country': !exists(json, 'country') ? undefined : json['country'],
+        'postalCode': !exists(json, 'postalCode') ? undefined : json['postalCode'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function AddressToJSON(value?: Address): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    hasWifi: value.hasWifi,
-    principal: PrincipalToJSON(value.principal),
-    addressType: value.addressType,
-    gps_coordinate_lat: value.gpsCoordinateLat,
-    gps_coordinate_long: value.gpsCoordinateLong,
-    name: value.name,
-    street1: value.street1,
-    street2: value.street2,
-    city: value.city,
-    state: value.state,
-    country: value.country,
-    postal_code: value.postalCode,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'hasWifi': value.hasWifi,
+        'principal': PrincipalToJSON(value.principal),
+        'addressType': value.addressType,
+        'gpsCoordinateLat': value.gpsCoordinateLat,
+        'gpsCoordinateLong': value.gpsCoordinateLong,
+        'name': value.name,
+        'street1': value.street1,
+        'street2': value.street2,
+        'city': value.city,
+        'state': value.state,
+        'country': value.country,
+        'postalCode': value.postalCode,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum AddressAddressTypeEnum {
-  HOME = "home",
-  MAIL = "mail",
-  WORK = "work",
-  SCHOOL = "school",
-  OTHER = "other",
+    HOME = 'home',
+    MAIL = 'mail',
+    WORK = 'work',
+    SCHOOL = 'school',
+    OTHER = 'other'
 }
+
+

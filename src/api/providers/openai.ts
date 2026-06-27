@@ -13,6 +13,7 @@ import { ApiStream } from "../transform/stream";
 import { convertToR1Format } from "../transform/r1-format";
 import type { ChatCompletionReasoningEffort } from "openai/resources/chat/completions";
 import type { Headers } from "openai/core";
+import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
 
 export class OpenAiHandler implements ApiHandler {
   private options: ApiHandlerOptions;
@@ -134,11 +135,7 @@ export class OpenAiHandler implements ApiHandler {
       }
 
       if (chunk.usage) {
-        yield {
-          type: "usage",
-          inputTokens: chunk.usage.prompt_tokens || 0,
-          outputTokens: chunk.usage.completion_tokens || 0,
-        };
+        yield normalizeOpenAiUsageChunk(this.getModel().info, chunk.usage);
       }
     }
   }

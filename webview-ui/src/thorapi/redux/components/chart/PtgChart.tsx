@@ -19,32 +19,20 @@ Description: Ptg
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, Ptg } from "@thorapi/model";
-import {
-  useGetPtgsQuery,
-  useAddPtgMutation,
-  useUpdatePtgMutation,
-} from "../../services/PtgService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, Ptg } from '@thorapi/model';
+import { useGetPtgsQuery, useAddPtgMutation, useUpdatePtgMutation } from '../../services/PtgService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const PtgChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPtgsQuery();
 
   const [data, setData] = useState<Ptg[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Ptg>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const PtgChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,11 +60,11 @@ const PtgChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart data={data.flatMap((ptg: DataObject) => [ptg])} />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((ptg: DataObject) => [ptg])} />
+          )}
     </>
   );
 };

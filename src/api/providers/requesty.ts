@@ -20,7 +20,7 @@ export class RequestyHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://router.requesty.ai/v1",
-      apiKey: this.options.requestyApiKey,
+      apiKey: this.options.requestyApiKey || "noop",
       defaultHeaders: {
         "HTTP-Referer": "https://valkyrlabs.com/v1",
         "X-Title": "ValorIDE",
@@ -49,7 +49,12 @@ export class RequestyHandler implements ApiHandler {
       thinkingBudget > 0
         ? { thinking: { type: "enabled", budget_tokens: thinkingBudget } }
         : { thinking: { type: "disabled" } };
-    const thinkingArgs = model.id.includes("claude-3-7-sonnet") ? thinking : {};
+    const thinkingArgs =
+      model.id.includes("claude-sonnet-4-6") ||
+      model.id.includes("claude-haiku-4-5") ||
+      model.id.includes("claude-opus-4-8")
+        ? thinking
+        : {};
 
     // @ts-ignore-next-line
     const stream = await this.client.chat.completions.create({

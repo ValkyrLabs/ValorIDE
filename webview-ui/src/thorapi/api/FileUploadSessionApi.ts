@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: FileUploadSessionApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  FileUploadSession,
-  FileUploadSessionFromJSON,
-  FileUploadSessionToJSON,
-} from "../model";
+    FileUploadSession,
+    FileUploadSessionFromJSON,
+    FileUploadSessionToJSON,
+} from '../model';
 
 export interface DeleteFileUploadSessionApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetFileUploadSessionApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetFileUploadSessionListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchFileUploadSessionByIdApiRequest {
-  id: string;
-  fileUploadSession: FileUploadSession;
+    id: string;
+    fileUploadSession: FileUploadSession;
 }
 
 export interface PostFileUploadSessionApiRequest {
-  fileUploadSession: FileUploadSession;
+    fileUploadSession: FileUploadSession;
 }
 
 export interface UpdateFileUploadSessionApiRequest {
-  id: string;
-  fileUploadSession: FileUploadSession;
+    id: string;
+    fileUploadSession: FileUploadSession;
 }
+
 
 /**
  * Deletes a specific FileUploadSession.
  * Delete a FileUploadSession.
  */
-function deleteFileUploadSessionRaw<T>(
-  requestParameters: DeleteFileUploadSessionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteFileUploadSession.",
-    );
-  }
+function deleteFileUploadSessionRaw<T>(requestParameters: DeleteFileUploadSessionApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteFileUploadSession.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific FileUploadSession.
- * Delete a FileUploadSession.
- */
-export function deleteFileUploadSession<T>(
-  requestParameters: DeleteFileUploadSessionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteFileUploadSessionRaw(requestParameters, requestConfig);
+* Deletes a specific FileUploadSession.
+* Delete a FileUploadSession.
+*/
+export function deleteFileUploadSession<T>(requestParameters: DeleteFileUploadSessionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteFileUploadSessionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single FileUploadSession for a specific uid.
  * Retrieve a single FileUploadSession
  */
-function getFileUploadSessionRaw<T>(
-  requestParameters: GetFileUploadSessionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getFileUploadSession.",
-    );
-  }
+function getFileUploadSessionRaw<T>(requestParameters: GetFileUploadSessionApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFileUploadSession.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileUploadSessionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileUploadSessionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single FileUploadSession for a specific uid.
- * Retrieve a single FileUploadSession
- */
-export function getFileUploadSession<T>(
-  requestParameters: GetFileUploadSessionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>,
-): QueryConfig<T> {
-  return getFileUploadSessionRaw(requestParameters, requestConfig);
+* Retrieves a single FileUploadSession for a specific uid.
+* Retrieve a single FileUploadSession
+*/
+export function getFileUploadSession<T>(requestParameters: GetFileUploadSessionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>): QueryConfig<T> {
+    return getFileUploadSessionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of FileUploadSessions.
  * Retrieve a list of FileUploadSessions
  */
-function getFileUploadSessionListRaw<T>(
-  requestParameters: GetFileUploadSessionListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<FileUploadSession>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getFileUploadSessionListRaw<T>(requestParameters: GetFileUploadSessionListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<FileUploadSession>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(FileUploadSessionFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(FileUploadSessionFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of FileUploadSessions.
- * Retrieve a list of FileUploadSessions
- */
-export function getFileUploadSessionList<T>(
-  requestParameters: GetFileUploadSessionListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<FileUploadSession>>,
-): QueryConfig<T> {
-  return getFileUploadSessionListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing FileUploadSession.
- * Partially update an existing FileUploadSession
- */
-function patchFileUploadSessionByIdRaw<T>(
-  requestParameters: PatchFileUploadSessionByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchFileUploadSessionById.",
-    );
-  }
-
-  if (
-    requestParameters.fileUploadSession === null ||
-    requestParameters.fileUploadSession === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileUploadSession",
-      "Required parameter requestParameters.fileUploadSession was null or undefined when calling patchFileUploadSessionById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileUploadSessionToJSON(requestParameters.fileUploadSession),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileUploadSessionFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of FileUploadSessions.
+* Retrieve a list of FileUploadSessions
+*/
+export function getFileUploadSessionList<T>(requestParameters: GetFileUploadSessionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileUploadSession>>): QueryConfig<T> {
+    return getFileUploadSessionListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing FileUploadSession.
  * Partially update an existing FileUploadSession
  */
-export function patchFileUploadSessionById<T>(
-  requestParameters: PatchFileUploadSessionByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>,
-): QueryConfig<T> {
-  return patchFileUploadSessionByIdRaw(requestParameters, requestConfig);
+function patchFileUploadSessionByIdRaw<T>(requestParameters: PatchFileUploadSessionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileUploadSessionById.');
+    }
+
+    if (requestParameters.fileUploadSession === null || requestParameters.fileUploadSession === undefined) {
+        throw new runtime.RequiredError('fileUploadSession','Required parameter requestParameters.fileUploadSession was null or undefined when calling patchFileUploadSessionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileUploadSessionToJSON(requestParameters.fileUploadSession),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileUploadSessionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileUploadSession.
+* Partially update an existing FileUploadSession
+*/
+export function patchFileUploadSessionById<T>(requestParameters: PatchFileUploadSessionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>): QueryConfig<T> {
+    return patchFileUploadSessionByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new FileUploadSession.
  * Create a new FileUploadSession
  */
-function postFileUploadSessionRaw<T>(
-  requestParameters: PostFileUploadSessionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.fileUploadSession === null ||
-    requestParameters.fileUploadSession === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileUploadSession",
-      "Required parameter requestParameters.fileUploadSession was null or undefined when calling postFileUploadSession.",
-    );
-  }
+function postFileUploadSessionRaw<T>(requestParameters: PostFileUploadSessionApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {}): QueryConfig<T> {
+    if (requestParameters.fileUploadSession === null || requestParameters.fileUploadSession === undefined) {
+        throw new runtime.RequiredError('fileUploadSession','Required parameter requestParameters.fileUploadSession was null or undefined when calling postFileUploadSession.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileUploadSessionToJSON(requestParameters.fileUploadSession),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileUploadSessionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileUploadSessionToJSON(requestParameters.fileUploadSession),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileUploadSessionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new FileUploadSession.
- * Create a new FileUploadSession
- */
-export function postFileUploadSession<T>(
-  requestParameters: PostFileUploadSessionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>,
-): QueryConfig<T> {
-  return postFileUploadSessionRaw(requestParameters, requestConfig);
+* Creates a new FileUploadSession.
+* Create a new FileUploadSession
+*/
+export function postFileUploadSession<T>(requestParameters: PostFileUploadSessionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>): QueryConfig<T> {
+    return postFileUploadSessionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing FileUploadSession.
  * Update an existing FileUploadSession
  */
-function updateFileUploadSessionRaw<T>(
-  requestParameters: UpdateFileUploadSessionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateFileUploadSession.",
-    );
-  }
+function updateFileUploadSessionRaw<T>(requestParameters: UpdateFileUploadSessionApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateFileUploadSession.');
+    }
 
-  if (
-    requestParameters.fileUploadSession === null ||
-    requestParameters.fileUploadSession === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileUploadSession",
-      "Required parameter requestParameters.fileUploadSession was null or undefined when calling updateFileUploadSession.",
-    );
-  }
+    if (requestParameters.fileUploadSession === null || requestParameters.fileUploadSession === undefined) {
+        throw new runtime.RequiredError('fileUploadSession','Required parameter requestParameters.fileUploadSession was null or undefined when calling updateFileUploadSession.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileUploadSessionToJSON(requestParameters.fileUploadSession),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileUploadSessionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileUploadSessionToJSON(requestParameters.fileUploadSession),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileUploadSessionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing FileUploadSession.
- * Update an existing FileUploadSession
- */
-export function updateFileUploadSession<T>(
-  requestParameters: UpdateFileUploadSessionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>,
-): QueryConfig<T> {
-  return updateFileUploadSessionRaw(requestParameters, requestConfig);
+* Updates an existing FileUploadSession.
+* Update an existing FileUploadSession
+*/
+export function updateFileUploadSession<T>(requestParameters: UpdateFileUploadSessionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>): QueryConfig<T> {
+    return updateFileUploadSessionRaw(requestParameters, requestConfig);
 }
+

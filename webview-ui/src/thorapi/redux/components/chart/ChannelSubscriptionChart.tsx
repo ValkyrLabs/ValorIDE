@@ -19,33 +19,20 @@ Description: ChannelSubscription
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ChannelSubscription } from "@thorapi/model";
-import {
-  useGetChannelSubscriptionsQuery,
-  useAddChannelSubscriptionMutation,
-  useUpdateChannelSubscriptionMutation,
-} from "../../services/ChannelSubscriptionService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ChannelSubscription } from '@thorapi/model';
+import { useGetChannelSubscriptionsQuery, useAddChannelSubscriptionMutation, useUpdateChannelSubscriptionMutation } from '../../services/ChannelSubscriptionService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ChannelSubscriptionChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetChannelSubscriptionsQuery();
+  const { data: initialData = [], isLoading } = useGetChannelSubscriptionsQuery();
 
   const [data, setData] = useState<ChannelSubscription[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ChannelSubscription>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const ChannelSubscriptionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const ChannelSubscriptionChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((channelsubscription: DataObject) => [
-            channelsubscription,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((channelsubscription: DataObject) => [channelsubscription])} />
+          )}
     </>
   );
 };

@@ -19,32 +19,20 @@ Description: ApiMetricSnapshot
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ApiMetricSnapshot } from "@thorapi/model";
-import {
-  useGetApiMetricSnapshotsQuery,
-  useAddApiMetricSnapshotMutation,
-  useUpdateApiMetricSnapshotMutation,
-} from "../../services/ApiMetricSnapshotService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ApiMetricSnapshot } from '@thorapi/model';
+import { useGetApiMetricSnapshotsQuery, useAddApiMetricSnapshotMutation, useUpdateApiMetricSnapshotMutation } from '../../services/ApiMetricSnapshotService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ApiMetricSnapshotChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetApiMetricSnapshotsQuery();
 
   const [data, setData] = useState<ApiMetricSnapshot[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ApiMetricSnapshot>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ApiMetricSnapshotChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,15 +60,11 @@ const ApiMetricSnapshotChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((apimetricsnapshot: DataObject) => [
-            apimetricsnapshot,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((apimetricsnapshot: DataObject) => [apimetricsnapshot])} />
+          )}
     </>
   );
 };

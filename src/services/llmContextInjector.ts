@@ -1,11 +1,17 @@
 import * as vscode from "vscode";
+import { getGlobalState, getSecret } from "@core/storage/state";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { PromptService, getPromptService } from "./promptService";
 import { MemoryBankLoader, getMemoryBankLoader } from "./memoryBankLoader";
 import { LLMPromptService, getLLMPromptService } from "./llmPromptService";
+import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
 import {
   GrayMatterContextConfig,
   GrayMatterContextProvider,
+  getGrayMatterContextConfigFromSettings,
 } from "./graymatter/GrayMatterContextProvider";
+import { GrayMatterClient } from "./graymatter/GrayMatterClient";
+import type { GrayMatterSessionState } from "@shared/GrayMatterSession";
 
 /**
  * LLMContextInjector — Synthesizes all prompt configs into unified LLM system context
@@ -33,6 +39,7 @@ export interface InjectionConfig {
 }
 
 export class LLMContextInjector {
+  private context: vscode.ExtensionContext | null = null;
   private promptService: PromptService | null = null;
   private memoryBankLoader: MemoryBankLoader | null = null;
   private llmPromptService: LLMPromptService | null = null;
@@ -49,9 +56,11 @@ export class LLMContextInjector {
   constructor(
     logger: vscode.OutputChannel,
     grayMatterContextProvider?: GrayMatterContextProvider,
+    context?: vscode.ExtensionContext,
   ) {
     this.logger = logger;
     this.grayMatterContextProvider = grayMatterContextProvider ?? null;
+    this.context = context ?? null;
   }
 
   /**
@@ -99,22 +108,18 @@ export class LLMContextInjector {
         }
       }
 
-      const shouldReplaceSystemPrompt =
-        !!selectedPrompt &&
-        selectedPrompt.mode === "SYSTEM" &&
-        !!selectedPrompt.prompt;
-
-      // Layer 1: Base system prompt (§0–§10) or replacement
-      if (shouldReplaceSystemPrompt) {
-        sections.push(this.formatCustomPromptSection(selectedPrompt!));
-        this.logger.appendLine(
-          `[LLMContextInjector] ✅ Layer 1: Custom system prompt applied (${selectedPrompt!.name})`,
-        );
-      } else if (mergedConfig.includeSystemPrompt && this.promptService) {
+      // Layer 1: Base system prompt (§0–§10), never replaced by LLMDetails.
+      if (mergedConfig.includeSystemPrompt && this.promptService) {
         const systemText = this.promptService.getSystemPrompt();
-        sections.push(systemText);
+        sections.push(
+          selectedPrompt?.mode === "SYSTEM"
+            ? composeRuntimeSystemPrompt(systemText, selectedPrompt)
+            : systemText,
+        );
         this.logger.appendLine(
-          "[LLMContextInjector] ✅ Layer 1: System prompt injected",
+          selectedPrompt?.mode === "SYSTEM"
+            ? `[LLMContextInjector] ✅ Layer 1: Custom prompt plus built-in ValorIDE prompt injected (${selectedPrompt.name})`
+            : "[LLMContextInjector] ✅ Layer 1: System prompt injected",
         );
       }
 
@@ -182,21 +187,26 @@ export class LLMContextInjector {
   ): Promise<string> {
     const mergedConfig = { ...this.defaultConfig, ...config };
     const sections = this.generateBaseSections(mergedConfig);
+    const grayMatterConfig =
+      mergedConfig.grayMatter ??
+      (await this.createDefaultGrayMatterContextConfig(
+        mergedConfig.grayMatter?.seedQuery,
+      ));
 
     if (
-      mergedConfig.grayMatter?.enabled &&
-      mergedConfig.grayMatter.queryMemory &&
+      grayMatterConfig?.enabled &&
+      grayMatterConfig.queryMemory &&
       this.grayMatterContextProvider
     ) {
       const context = await this.grayMatterContextProvider.getContextForPrompt(
-        mergedConfig.grayMatter.seedQuery ?? "ValorIDE conversation start",
+        grayMatterConfig.seedQuery ?? "ValorIDE conversation start",
         {
-          enabled: mergedConfig.grayMatter.enabled,
-          maxTokens: mergedConfig.grayMatter.maxTokens,
-          queryMemory: mergedConfig.grayMatter.queryMemory,
-          scopes: mergedConfig.grayMatter.scopes,
-          seedQuery: mergedConfig.grayMatter.seedQuery,
-          timeoutMs: mergedConfig.grayMatter.timeoutMs,
+          enabled: grayMatterConfig.enabled,
+          maxTokens: grayMatterConfig.maxTokens,
+          queryMemory: grayMatterConfig.queryMemory,
+          scopes: grayMatterConfig.scopes,
+          seedQuery: grayMatterConfig.seedQuery,
+          timeoutMs: grayMatterConfig.timeoutMs,
         },
       );
       if (context?.formattedBlock) {
@@ -215,6 +225,39 @@ export class LLMContextInjector {
     return unified;
   }
 
+  private async createDefaultGrayMatterContextConfig(
+    seedQuery?: string,
+  ): Promise<GrayMatterContextConfig | undefined> {
+    if (!this.context) {
+      return undefined;
+    }
+
+    const [token, session] = await Promise.all([
+      getSecret(this.context, "jwtToken"),
+      getGlobalState(this.context, "grayMatterSession") as Promise<
+        GrayMatterSessionState | undefined
+      >,
+    ]);
+
+    if (
+      !token ||
+      session?.status !== "ready" ||
+      !session.capabilities.memoryQuery
+    ) {
+      return undefined;
+    }
+
+    const client = new GrayMatterClient({
+      baseUrl: getValkyraiBasePath(),
+      getAuthToken: () => token,
+    });
+
+    return getGrayMatterContextConfigFromSettings(
+      (query) => client.queryMemory(query),
+      seedQuery,
+    );
+  }
+
   private generateBaseSections(mergedConfig: InjectionConfig): string[] {
     const sections: string[] = [];
 
@@ -229,15 +272,13 @@ export class LLMContextInjector {
       }
     }
 
-    const shouldReplaceSystemPrompt =
-      !!selectedPrompt &&
-      selectedPrompt.mode === "SYSTEM" &&
-      !!selectedPrompt.prompt;
-
-    if (shouldReplaceSystemPrompt) {
-      sections.push(this.formatCustomPromptSection(selectedPrompt!));
-    } else if (mergedConfig.includeSystemPrompt && this.promptService) {
-      sections.push(this.promptService.getSystemPrompt());
+    if (mergedConfig.includeSystemPrompt && this.promptService) {
+      const systemText = this.promptService.getSystemPrompt();
+      sections.push(
+        selectedPrompt?.mode === "SYSTEM"
+          ? composeRuntimeSystemPrompt(systemText, selectedPrompt)
+          : systemText,
+      );
     }
 
     if (mergedConfig.includeThorAPICatalog && this.promptService) {
@@ -457,10 +498,12 @@ export let llmContextInjector: LLMContextInjector | null = null;
 export async function initializeLLMContextInjector(
   logger: vscode.OutputChannel,
   grayMatterContextProvider?: GrayMatterContextProvider,
+  context?: vscode.ExtensionContext,
 ): Promise<void> {
   llmContextInjector = new LLMContextInjector(
     logger,
     grayMatterContextProvider,
+    context,
   );
   await llmContextInjector.initialize();
 }

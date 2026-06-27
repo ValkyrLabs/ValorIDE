@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { DefaultResponse } from "@thorapi/model/DefaultResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { DefaultResponse } from '@thorapi/model/DefaultResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DefaultResponseResponse = DefaultResponse[];
+type DefaultResponseResponse = DefaultResponse[]
+type DefaultResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<DefaultResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type DefaultResponseListQueryArg = {
+  example?: Partial<DefaultResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toDefaultResponseList = (result: unknown): DefaultResponseResponse => {
   if (Array.isArray(result)) {
-    return result as DefaultResponseResponse;
+    return result as DefaultResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as DefaultResponseResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DefaultResponseResponse) : []
+}
 
 export const DefaultResponseService = createApi({
-  reducerPath: "DefaultResponse", // This should remain unique
+  reducerPath: 'DefaultResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["DefaultResponse"],
+  tagTypes: ['DefaultResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDefaultResponsesPaged: build.query<
-      DefaultResponseResponse,
-      { page: number; size?: number; example?: Partial<DefaultResponse> }
-    >({
+    getDefaultResponsesPaged: build.query<DefaultResponseResponse, DefaultResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DefaultResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DefaultResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDefaultResponseList(result);
+        const rows = toDefaultResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DefaultResponse" as const, id })),
-          { type: "DefaultResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'DefaultResponse' as const, id })),
+          { type: 'DefaultResponse', id: `PAGE_${page}` },
+          { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDefaultResponses: build.query<
-      DefaultResponseResponse,
-      { example?: Partial<DefaultResponse> } | void
-    >({
+    getDefaultResponses: build.query<DefaultResponseResponse, DefaultResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const DefaultResponseService = createApi({
         return `DefaultResponse`;
       },
       providesTags: (result) => {
-        const rows = toDefaultResponseList(result);
+        const rows = toDefaultResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DefaultResponse" as const, id })),
-          { type: "DefaultResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'DefaultResponse' as const, id })),
+          { type: 'DefaultResponse', id: 'LIST' },
+          { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addDefaultResponse: build.mutation<
-      DefaultResponse,
-      Partial<DefaultResponse>
-    >({
+    addDefaultResponse: build.mutation<DefaultResponse, Partial<DefaultResponse>>({
       query: (body) => ({
         url: `DefaultResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "DefaultResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'DefaultResponse', id: 'LIST' },
+        { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDefaultResponse: build.query<DefaultResponse, string>({
       query: (id) => `DefaultResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: "DefaultResponse", id }],
+      providesTags: (result, error, id) => [{ type: 'DefaultResponse', id }],
     }),
 
     // 5) Update
-    updateDefaultResponse: build.mutation<
-      void,
-      Pick<DefaultResponse, "id"> & Partial<DefaultResponse>
-    >({
+    updateDefaultResponse: build.mutation<DefaultResponse, Pick<DefaultResponse, 'id'> & Partial<DefaultResponse>>({
       query: ({ id, ...patch }) => ({
         url: `DefaultResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DefaultResponseService.util.updateQueryData(
-              "getDefaultResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<DefaultResponse, "id">) => [
-        { type: "DefaultResponse", id },
-        { type: "DefaultResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<DefaultResponse, 'id'>) => [
+        { type: 'DefaultResponse', id },
+        { type: 'DefaultResponse', id: 'LIST' },
+        { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteDefaultResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteDefaultResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `DefaultResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "DefaultResponse", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'DefaultResponse', id },
+        { type: 'DefaultResponse', id: 'LIST' },
+        { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDefaultResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDefaultResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `DefaultResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "DefaultResponse", id },
-        { type: "DefaultResponse", id: "LIST" },
+        { type: 'DefaultResponse', id },
+        { type: 'DefaultResponse', id: 'LIST' },
+        { type: 'DefaultResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDefaultResponsesPagedQuery`
 export const {
-  useGetDefaultResponsesPagedQuery, // immediate fetch
+  useGetDefaultResponsesPagedQuery,     // immediate fetch
   useLazyGetDefaultResponsesPagedQuery, // lazy fetch
   useGetDefaultResponseQuery,
   useGetDefaultResponsesQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateDefaultResponseMutation,
   useDeleteDefaultResponseMutation,
   useDeleteDefaultResponseCascadeMutation,
-} = DefaultResponseService;
+} = DefaultResponseService

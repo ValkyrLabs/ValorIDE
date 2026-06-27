@@ -26,8 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    AccountPlan,
+    AccountPlanFromJSON,
+    AccountPlanToJSON,
+} from './';
+
 
 // thorapi
 
@@ -36,244 +44,221 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface ProductFeature
  */
-export type ProductFeature = DataObject & {
-  /**
-   * ID of the product
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  productId?: string;
-  /**
-   * if the feature affects the price of the product this is the amount positive or negative
-   * @type {number}
-   * @memberof ProductFeature
-   */
-  price?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  type?: ProductFeatureTypeEnum;
-  /**
-   * the name of the feature
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  name?: string;
-  /**
-   * the long description of the feature
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  description?: string;
-  /**
-   * canonical machine-readable feature key (e.g. max_agents, allow_rbac)
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  featureKey?: string;
-  /**
-   * logical area this feature applies to
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  featureScope?: ProductFeatureFeatureScopeEnum;
-  /**
-   * semantic type used for gating evaluation
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  valueType?: ProductFeatureValueTypeEnum;
-  /**
-   * numeric limit for quota features (used when valueType=number)
-   * @type {number}
-   * @memberof ProductFeature
-   */
-  limitValue?: number;
-  /**
-   * boolean toggle value for feature flags (used when valueType=boolean)
-   * @type {boolean}
-   * @memberof ProductFeature
-   */
-  booleanValue?: boolean;
-  /**
-   * string value for custom feature settings (used when valueType=string)
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  stringValue?: string;
-  /**
-   * whether this feature record is active for entitlement resolution
-   * @type {boolean}
-   * @memberof ProductFeature
-   */
-  enabled?: boolean;
-  /**
-   * optional plan tier this feature applies to
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  planTier?: ProductFeaturePlanTierEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ProductFeature
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ProductFeature
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ProductFeature
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ProductFeature
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ProductFeature
-   */
-  trashed?: boolean;
-};
+export type ProductFeature  = DataObject & {
+    /**
+     * ID of the product
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    productId?: string;
+    /**
+     * if the feature affects the price of the product this is the amount positive or negative
+     * @type {number}
+     * @memberof ProductFeature
+     */
+    price?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    type?: ProductFeatureTypeEnum;
+    /**
+     * the name of the feature
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    name?: string;
+    /**
+     * the long description of the feature
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    description?: string;
+    /**
+     * canonical machine-readable feature key (e.g. max_agents, allow_rbac)
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    featureKey?: string;
+    /**
+     * logical area this feature applies to
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    featureScope?: ProductFeatureFeatureScopeEnum;
+    /**
+     * semantic type used for gating evaluation
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    valueType?: ProductFeatureValueTypeEnum;
+    /**
+     * numeric limit for quota features (used when valueType=number)
+     * @type {number}
+     * @memberof ProductFeature
+     */
+    limitValue?: number;
+    /**
+     * boolean toggle value for feature flags (used when valueType=boolean)
+     * @type {boolean}
+     * @memberof ProductFeature
+     */
+    booleanValue?: boolean;
+    /**
+     * string value for custom feature settings (used when valueType=string)
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    stringValue?: string;
+    /**
+     * whether this feature record is active for entitlement resolution
+     * @type {boolean}
+     * @memberof ProductFeature
+     */
+    enabled?: boolean;
+    /**
+     * 
+     * @type {AccountPlan}
+     * @memberof ProductFeature
+     */
+    planTierId?: AccountPlan;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ProductFeature
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ProductFeature
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ProductFeature
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ProductFeature
+     */
+    trashed?: boolean;
+}
 
 export function ProductFeatureFromJSON(json: any): ProductFeature {
-  return {
-    ...DataObjectFromJSON(json),
-    productId: !exists(json, "productId") ? undefined : json["productId"],
-    price: !exists(json, "price") ? undefined : json["price"],
-    type: !exists(json, "type") ? undefined : json["type"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    featureKey: !exists(json, "featureKey") ? undefined : json["featureKey"],
-    featureScope: !exists(json, "featureScope")
-      ? undefined
-      : json["featureScope"],
-    valueType: !exists(json, "valueType") ? undefined : json["valueType"],
-    limitValue: !exists(json, "limitValue") ? undefined : json["limitValue"],
-    booleanValue: !exists(json, "booleanValue")
-      ? undefined
-      : json["booleanValue"],
-    stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
-    enabled: !exists(json, "enabled") ? undefined : json["enabled"],
-    planTier: !exists(json, "planTier") ? undefined : json["planTier"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'productId': !exists(json, 'productId') ? undefined : json['productId'],
+        'price': !exists(json, 'price') ? undefined : json['price'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'featureKey': !exists(json, 'featureKey') ? undefined : json['featureKey'],
+        'featureScope': !exists(json, 'featureScope') ? undefined : json['featureScope'],
+        'valueType': !exists(json, 'valueType') ? undefined : json['valueType'],
+        'limitValue': !exists(json, 'limitValue') ? undefined : json['limitValue'],
+        'booleanValue': !exists(json, 'booleanValue') ? undefined : json['booleanValue'],
+        'stringValue': !exists(json, 'stringValue') ? undefined : json['stringValue'],
+        'enabled': !exists(json, 'enabled') ? undefined : json['enabled'],
+        'planTierId': !exists(json, 'planTierId') ? undefined : AccountPlanFromJSON(json['planTierId']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ProductFeatureToJSON(value?: ProductFeature): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    productId: value.productId,
-    price: value.price,
-    type: value.type,
-    name: value.name,
-    description: value.description,
-    featureKey: value.featureKey,
-    featureScope: value.featureScope,
-    valueType: value.valueType,
-    limitValue: value.limitValue,
-    booleanValue: value.booleanValue,
-    stringValue: value.stringValue,
-    enabled: value.enabled,
-    planTier: value.planTier,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'productId': value.productId,
+        'price': value.price,
+        'type': value.type,
+        'name': value.name,
+        'description': value.description,
+        'featureKey': value.featureKey,
+        'featureScope': value.featureScope,
+        'valueType': value.valueType,
+        'limitValue': value.limitValue,
+        'booleanValue': value.booleanValue,
+        'stringValue': value.stringValue,
+        'enabled': value.enabled,
+        'planTierId': AccountPlanToJSON(value.planTierId),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ProductFeatureTypeEnum {
-  PERCENTAGE = "percentage",
-  FIXED = "fixed",
+    PERCENTAGE = 'percentage',
+    FIXED = 'fixed'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ProductFeatureFeatureScopeEnum {
-  PLATFORM = "platform",
-  ORGANIZATION = "organization",
-  APPLICATION = "application",
-  AGENT = "agent",
-  BILLING = "billing",
-  UX = "ux",
+    CREDITS = 'credits',
+    PLATFORM = 'platform',
+    ORGANIZATION = 'organization',
+    APPLICATION = 'application',
+    AGENT = 'agent',
+    BILLING = 'billing',
+    UX = 'ux'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ProductFeatureValueTypeEnum {
-  NUMBER = "number",
-  BOOLEAN = "boolean",
-  STRING = "string",
+    NUMBER = 'number',
+    BOOLEAN = 'boolean',
+    STRING = 'string'
 }
-/**
- * @export
- * @enum {string}
- */
-export enum ProductFeaturePlanTierEnum {
-  FREE = "free",
-  SOLO = "solo",
-  PRO = "pro",
-  TEAM = "team",
-  RESELLER = "reseller",
-  ENTERPRISE = "enterprise",
-}
+
+

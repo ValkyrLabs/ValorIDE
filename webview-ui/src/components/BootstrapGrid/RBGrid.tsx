@@ -16,6 +16,11 @@ export interface RBGridProps {
   onKeyDownEdit?: (e: React.KeyboardEvent, editKey: string) => void;
   onBlurEdit?: () => void;
   onCellDoubleClick?: (id: string, key: string, value: any) => void;
+  onBooleanCellToggle?: (
+    rowId: string,
+    columnKey: string,
+    nextValue: boolean,
+  ) => void | Promise<void>;
   activeCell?: { rowIndex: number; colIndex: number } | null;
   onCellFocus?: (rowIndex: number, colIndex: number) => void;
   onCellKeyDownNav?: (
@@ -37,6 +42,11 @@ export interface RBGridProps {
     columnKey: string,
     refType?: string,
   ) => Promise<any | null>;
+  onReferenceCreate?: (
+    rowId: string,
+    columnKey: string,
+    refType?: string,
+  ) => unknown | Promise<unknown>;
   onRequestMoreRows?: (dir: "up" | "down") => void;
 }
 
@@ -133,23 +143,7 @@ const RBGrid: React.FC<RBGridProps> = ({
       );
     }
 
-    return (
-      <td
-        onDoubleClick={() => onCellDoubleClick?.(rowId, columnKey, value)}
-        onFocus={() => onCellFocus?.(rowIndex, colIndex)}
-        onKeyDown={(e) =>
-          onCellKeyDownNav?.(e, rowIndex, colIndex, rowId, columnKey, value)
-        }
-        tabIndex={isActive ? 0 : -1}
-        style={{
-          cursor: "pointer",
-          backgroundColor: isActive ? "#e7f3ff" : undefined,
-          outline: isActive ? "2px solid #0066cc" : "none",
-        }}
-      >
-        {value == null ? "" : String(value).substring(0, 100)}
-      </td>
-    );
+    return <>{value == null ? "" : String(value).substring(0, 100)}</>;
   };
 
   return (

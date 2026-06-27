@@ -8,102 +8,62 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { FaSync, FaSearch, FaTimes } from "react-icons/fa";
+import { FaExternalLinkAlt, FaSync, FaSearch, FaTimes } from "react-icons/fa";
 import { McpMarketplaceItem } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
-import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
-import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi/redux/services/McpMarketplaceCatalogService";
-import { useGetMcpMarketplaceItemsQuery } from "@thorapi/redux/services/McpMarketplaceItemService";
-import {
-  convertThorMcpServersToShared,
-  convertThorMcpMarketplaceCatalogsToShared,
-  convertThorMcpMarketplaceItemsToShared,
-} from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
-  safeConvert,
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+
+const MCP_MARKETPLACE_HELP_URL =
+  "https://valkyrlabs.comhttps://valkyrlabs.com/v1/Products/valoride/";
 
 const McpMarketplaceView = () => {
   const {
-    data: mcpServers,
-    error: serversError,
-    isLoading: serversLoading,
-    refetch: refetchServers,
-  } = useGetMcpServersQuery();
-  const {
-    data: marketplaceCatalogs,
-    error: catalogError,
-    isLoading: catalogLoading,
-    refetch: refetchCatalog,
-  } = useGetMcpMarketplaceCatalogsQuery();
-  const {
-    data: marketplaceItems,
-    error: itemsError,
-    isLoading: itemsLoading,
-    refetch: refetchItems,
-  } = useGetMcpMarketplaceItemsQuery();
+    mcpServers: extensionMcpServers,
+    mcpMarketplaceCatalog,
+    mcpServersLoading,
+    mcpMarketplaceCatalogLoading,
+    mcpMarketplaceCatalogError,
+    refetchMcpData,
+  } = useExtensionState();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<
     "newest" | "stars" | "name" | "downloadCount"
   >("downloadCount");
 
-  // Convert ThorAPI data to shared format with error handling
-  const sharedMcpServers = React.useMemo(() => {
-    return safeConvert(
-      mcpServers,
-      convertThorMcpServersToShared,
-      [],
-      "McpMarketplaceView - MCP Servers",
-    );
-  }, [mcpServers]);
-
-  const sharedMarketplaceCatalog = React.useMemo(() => {
-    return safeConvert(
-      marketplaceCatalogs,
-      convertThorMcpMarketplaceCatalogsToShared,
-      { items: [] },
-      "McpMarketplaceView - Marketplace Catalog",
-    );
-  }, [marketplaceCatalogs]);
-
-  // Convert marketplace items directly
-  const sharedMarketplaceItems = React.useMemo(() => {
-    return safeConvert(
-      marketplaceItems,
-      convertThorMcpMarketplaceItemsToShared,
-      [],
-      "McpMarketplaceView - Marketplace Items",
-    );
-  }, [marketplaceItems]);
-
-  // Use direct marketplace items if available, otherwise fall back to catalog items
-  const items =
-    sharedMarketplaceItems.length > 0
-      ? sharedMarketplaceItems
-      : sharedMarketplaceCatalog.items;
+  const extensionMarketplaceItems = mcpMarketplaceCatalog?.items || [];
+  const items = extensionMarketplaceItems;
+  const displayedMcpServers = extensionMcpServers;
 
   // Combined loading and error states
-  const isLoading = serversLoading || catalogLoading || itemsLoading;
-  const error = serversError || catalogError || itemsError;
+  const isLoading =
+    (mcpServersLoading || mcpMarketplaceCatalogLoading) && items.length === 0;
+  const error = items.length === 0 ? mcpMarketplaceCatalogError : undefined;
 
   const handleRefresh = React.useCallback(() => {
     try {
-      refetchServers();
-      refetchCatalog();
-      refetchItems();
+      refetchMcpData();
       vscode.postMessage({ type: "fetchMcpMarketplace", bool: true });
     } catch (error) {
       console.error("Failed to refresh marketplace:", error);
     }
-  }, [refetchServers, refetchCatalog, refetchItems]);
+  }, [refetchMcpData]);
+
+  const handleOpenHelp = React.useCallback(() => {
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: MCP_MARKETPLACE_HELP_URL,
+    });
+  }, []);
 
   const categories = useMemo(() => {
     const uniqueCategories = new Set(items.map((item) => item.category));
@@ -201,17 +161,34 @@ const McpMarketplaceView = () => {
             >
               {formatError(error)}
             </div>
-            {isRetryableError(error) && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "8px",
+                flexWrap: "wrap",
+              }}
+            >
+              {isRetryableError(error) && (
+                <VSCodeButton
+                  appearance="secondary"
+                  onClick={handleRefresh}
+                  disabled={isLoading}
+                  style={{ fontSize: "11px", padding: "4px 12px" }}
+                >
+                  <FaSync style={{ marginRight: "4px" }} />
+                  {isLoading ? "Retrying..." : "Retry"}
+                </VSCodeButton>
+              )}
               <VSCodeButton
                 appearance="secondary"
-                onClick={handleRefresh}
-                disabled={isLoading}
+                onClick={handleOpenHelp}
                 style={{ fontSize: "11px", padding: "4px 12px" }}
               >
-                <FaSync style={{ marginRight: "4px" }} />
-                {isLoading ? "Retrying..." : "Retry"}
+                <FaExternalLinkAlt style={{ marginRight: "4px" }} />
+                Help
               </VSCodeButton>
-            )}
+            </div>
           </div>
         </div>
       </>
@@ -416,7 +393,7 @@ const McpMarketplaceView = () => {
               <McpMarketplaceCard
                 key={item.mcpId}
                 item={item}
-                installedServers={sharedMcpServers}
+                installedServers={displayedMcpServers}
               />
             ))
           )}

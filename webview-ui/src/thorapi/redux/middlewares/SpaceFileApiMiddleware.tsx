@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SPACEFILE_REQUEST,
-  FETCH_SPACEFILE_REQUEST,
-  LIST_SPACEFILE_REQUEST,
-  UPDATE_SPACEFILE_REQUEST,
-  DELETE_SPACEFILE_REQUEST,
-  addSpaceFileFailure,
-  addSpaceFileSuccess,
-  fetchSpaceFileFailure,
-  fetchSpaceFileSuccess,
-  listSpaceFileFailure,
-  listSpaceFileSuccess,
-  updateSpaceFileFailure,
-  updateSpaceFileSuccess,
-  deleteSpaceFileFailure,
-  deleteSpaceFileSuccess,
-} from "../actions/SpaceFileApiAction";
+
+    ADD_SPACEFILE_REQUEST,
+    FETCH_SPACEFILE_REQUEST,
+    LIST_SPACEFILE_REQUEST,
+    UPDATE_SPACEFILE_REQUEST,
+    DELETE_SPACEFILE_REQUEST,
+
+    addSpaceFileFailure,
+    addSpaceFileSuccess,
+
+    fetchSpaceFileFailure,
+    fetchSpaceFileSuccess,
+    
+    listSpaceFileFailure,
+    listSpaceFileSuccess,
+
+    updateSpaceFileFailure,
+    updateSpaceFileSuccess,
+    
+    deleteSpaceFileFailure,
+    deleteSpaceFileSuccess,
+    
+} from '../actions/SpaceFileApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SpaceFile
 */
 
-export const SpaceFileMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SpaceFile MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SpaceFileMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SpaceFile MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

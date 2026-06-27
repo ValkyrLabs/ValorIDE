@@ -19,32 +19,20 @@ Description: Space
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, Space } from "@thorapi/model";
-import {
-  useGetSpacesQuery,
-  useAddSpaceMutation,
-  useUpdateSpaceMutation,
-} from "../../services/SpaceService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, Space } from '@thorapi/model';
+import { useGetSpacesQuery, useAddSpaceMutation, useUpdateSpaceMutation } from '../../services/SpaceService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const SpaceChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSpacesQuery();
 
   const [data, setData] = useState<Space[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Space>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const SpaceChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,11 +60,11 @@ const SpaceChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart data={data.flatMap((space: DataObject) => [space])} />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((space: DataObject) => [space])} />
+          )}
     </>
   );
 };

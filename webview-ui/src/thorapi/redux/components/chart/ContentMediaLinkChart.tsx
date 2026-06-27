@@ -19,32 +19,20 @@ Description: ContentMediaLink
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ContentMediaLink } from "@thorapi/model";
-import {
-  useGetContentMediaLinksQuery,
-  useAddContentMediaLinkMutation,
-  useUpdateContentMediaLinkMutation,
-} from "../../services/ContentMediaLinkService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ContentMediaLink } from '@thorapi/model';
+import { useGetContentMediaLinksQuery, useAddContentMediaLinkMutation, useUpdateContentMediaLinkMutation } from '../../services/ContentMediaLinkService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ContentMediaLinkChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetContentMediaLinksQuery();
 
   const [data, setData] = useState<ContentMediaLink[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ContentMediaLink>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ContentMediaLinkChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,15 +60,11 @@ const ContentMediaLinkChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((contentmedialink: DataObject) => [
-            contentmedialink,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((contentmedialink: DataObject) => [contentmedialink])} />
+          )}
     </>
   );
 };

@@ -19,32 +19,20 @@ Description: Deployment
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, Deployment } from "@thorapi/model";
-import {
-  useGetDeploymentsQuery,
-  useAddDeploymentMutation,
-  useUpdateDeploymentMutation,
-} from "../../services/DeploymentService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, Deployment } from '@thorapi/model';
+import { useGetDeploymentsQuery, useAddDeploymentMutation, useUpdateDeploymentMutation } from '../../services/DeploymentService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const DeploymentChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetDeploymentsQuery();
 
   const [data, setData] = useState<Deployment[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Deployment>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const DeploymentChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const DeploymentChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((deployment: DataObject) => [deployment])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((deployment: DataObject) => [deployment])} />
+          )}
     </>
   );
 };

@@ -26,156 +26,140 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface RotateTrustKeyRequest
  */
-export type RotateTrustKeyRequest = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  rotationType?: RotateTrustKeyRequestRotationTypeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  targetProviderId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  algorithm?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  reason?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof RotateTrustKeyRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof RotateTrustKeyRequest
-   */
-  trashed?: boolean;
-};
-
-export function RotateTrustKeyRequestFromJSON(
-  json: any,
-): RotateTrustKeyRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    rotationType: !exists(json, "rotationType")
-      ? undefined
-      : json["rotationType"],
-    targetProviderId: !exists(json, "targetProviderId")
-      ? undefined
-      : json["targetProviderId"],
-    algorithm: !exists(json, "algorithm") ? undefined : json["algorithm"],
-    reason: !exists(json, "reason") ? undefined : json["reason"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type RotateTrustKeyRequest  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    rotationType?: RotateTrustKeyRequestRotationTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    targetProviderId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    algorithm?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    reason?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof RotateTrustKeyRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof RotateTrustKeyRequest
+     */
+    trashed?: boolean;
 }
 
-export function RotateTrustKeyRequestToJSON(
-  value?: RotateTrustKeyRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    rotationType: value.rotationType,
-    targetProviderId: value.targetProviderId,
-    algorithm: value.algorithm,
-    reason: value.reason,
-    trashed: value.trashed,
-  };
+export function RotateTrustKeyRequestFromJSON(json: any): RotateTrustKeyRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'rotationType': !exists(json, 'rotationType') ? undefined : json['rotationType'],
+        'targetProviderId': !exists(json, 'targetProviderId') ? undefined : json['targetProviderId'],
+        'algorithm': !exists(json, 'algorithm') ? undefined : json['algorithm'],
+        'reason': !exists(json, 'reason') ? undefined : json['reason'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
+}
+
+export function RotateTrustKeyRequestToJSON(value?: RotateTrustKeyRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'rotationType': value.rotationType,
+        'targetProviderId': value.targetProviderId,
+        'algorithm': value.algorithm,
+        'reason': value.reason,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum RotateTrustKeyRequestRotationTypeEnum {
-  SCHEDULED = "scheduled",
-  MANUAL = "manual",
-  COMPROMISERESPONSE = "compromise_response",
-  PROVIDERMIGRATION = "provider_migration",
-  ALGORITHMMIGRATION = "algorithm_migration",
+    SCHEDULED = 'scheduled',
+    MANUAL = 'manual',
+    COMPROMISERESPONSE = 'compromise_response',
+    PROVIDERMIGRATION = 'provider_migration',
+    ALGORITHMMIGRATION = 'algorithm_migration'
 }
+
+

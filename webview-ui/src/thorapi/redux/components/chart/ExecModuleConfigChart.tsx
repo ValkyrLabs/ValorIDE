@@ -19,32 +19,20 @@ Description: ExecModuleConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ExecModuleConfig } from "@thorapi/model";
-import {
-  useGetExecModuleConfigsQuery,
-  useAddExecModuleConfigMutation,
-  useUpdateExecModuleConfigMutation,
-} from "../../services/ExecModuleConfigService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ExecModuleConfig } from '@thorapi/model';
+import { useGetExecModuleConfigsQuery, useAddExecModuleConfigMutation, useUpdateExecModuleConfigMutation } from '../../services/ExecModuleConfigService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ExecModuleConfigChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetExecModuleConfigsQuery();
 
   const [data, setData] = useState<ExecModuleConfig[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ExecModuleConfig>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ExecModuleConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,15 +60,11 @@ const ExecModuleConfigChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((execmoduleconfig: DataObject) => [
-            execmoduleconfig,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((execmoduleconfig: DataObject) => [execmoduleconfig])} />
+          )}
     </>
   );
 };

@@ -27,11 +27,29 @@ import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import { DEFAULT_VALKYRAI_HOST } from "@thorapi/utils/valkyraiHost";
+import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
 const { IS_DEV } = process.env;
 
 type SettingsViewProps = {
   onDone: () => void;
+};
+
+type SettingsTab = "application" | "valkyraiBackend" | "browser";
+
+const settingsTabs: Array<{ id: SettingsTab; label: string }> = [
+  { id: "application", label: "ValorIDE Application" },
+  { id: "valkyraiBackend", label: "ValkyrAI Backend" },
+  { id: "browser", label: "Browser" },
+];
+
+const titleCaseStatus = (value?: string): string => {
+  if (!value) return "Unknown";
+  return value
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 };
 
 const SettingsView = ({ onDone }: SettingsViewProps) => {
@@ -48,7 +66,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     setPlanActSeparateModelsSetting,
     selectedLlmDetails,
     isLoggedIn,
+    agenticState,
   } = useExtensionState();
+  const [activeSettingsTab, setActiveSettingsTab] =
+    useState<SettingsTab>("application");
   const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -338,6 +359,21 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     }
   };
 
+  const typedAgenticState = agenticState as
+    | AgenticCapabilityCommandCenterState
+    | undefined;
+  const swarmStatus = typedAgenticState?.swarm?.status ?? "offline";
+  const swarmKind =
+    swarmStatus === "online" || swarmStatus === "busy"
+      ? "ok"
+      : swarmStatus === "error" || swarmStatus === "rejected"
+        ? "error"
+        : "warn";
+  const swarmDetail =
+    typedAgenticState?.swarm?.instanceId ||
+    typedAgenticState?.swarm?.lastError ||
+    "No SWARM registration ACK yet.";
+
   return (
     <>
       <SystemAlerts />
@@ -417,213 +453,264 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </div>
           )}
 
-          {/* Tabs container */}
-          {planActSeparateModelsSetting ? (
-            <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-5 bg-(--vscode-panel-background)">
-              <div className="flex gap-px mb-2.5 -mt-2 border-0 border-b border-solid border-(--vscode-panel-border)">
-                <TabButton
-                  isActive={chatSettings.mode === "plan"}
-                  onClick={() => handleTabChange("plan")}
-                >
-                  Plan Mode
-                </TabButton>
-                <TabButton
-                  isActive={chatSettings.mode === "act"}
-                  onClick={() => handleTabChange("act")}
-                >
-                  Act Mode
-                </TabButton>
-              </div>
+          <div className="flex gap-px mb-3 border-0 border-b border-solid border-(--vscode-panel-border)">
+            {settingsTabs.map((tab) => (
+              <TabButton
+                key={tab.id}
+                isActive={activeSettingsTab === tab.id}
+                onClick={() => setActiveSettingsTab(tab.id)}
+              >
+                {tab.label}
+              </TabButton>
+            ))}
+          </div>
 
-              {/* Content container */}
-              <div className="-mb-3">
+          {activeSettingsTab === "application" && (
+            <>
+              {planActSeparateModelsSetting ? (
+                <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-5 bg-(--vscode-panel-background)">
+                  <div className="flex gap-px mb-2.5 -mt-2 border-0 border-b border-solid border-(--vscode-panel-border)">
+                    <TabButton
+                      isActive={chatSettings.mode === "plan"}
+                      onClick={() => handleTabChange("plan")}
+                    >
+                      Plan Mode
+                    </TabButton>
+                    <TabButton
+                      isActive={chatSettings.mode === "act"}
+                      onClick={() => handleTabChange("act")}
+                    >
+                      Act Mode
+                    </TabButton>
+                  </div>
+
+                  <div className="-mb-3">
+                    <ApiOptions
+                      key={chatSettings.mode}
+                      showModelOptions={true}
+                      apiErrorMessage={apiErrorMessage}
+                      modelIdErrorMessage={modelIdErrorMessage}
+                    />
+                  </div>
+                </div>
+              ) : (
                 <ApiOptions
-                  key={chatSettings.mode}
+                  key={"single"}
                   showModelOptions={true}
                   apiErrorMessage={apiErrorMessage}
                   modelIdErrorMessage={modelIdErrorMessage}
                 />
+              )}
+
+              <div className="mb-[5px]">
+                <VSCodeTextArea
+                  value={customInstructions ?? ""}
+                  className="w-full"
+                  resize="vertical"
+                  rows={4}
+                  placeholder={
+                    'e.g. "Run unit tests at the end", "Use TypeScript with async/await", "Speak in Spanish"'
+                  }
+                  onInput={(e: any) =>
+                    setCustomInstructions(e.target?.value ?? "")
+                  }
+                >
+                  <span className="font-medium">Custom Instructions</span>
+                </VSCodeTextArea>
+                <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
+                  These instructions are added to the end of the system prompt
+                  sent with every request.
+                </p>
               </div>
-            </div>
-          ) : (
-            <ApiOptions
-              key={"single"}
-              showModelOptions={true}
-              apiErrorMessage={apiErrorMessage}
-              modelIdErrorMessage={modelIdErrorMessage}
-            />
+
+              <div className="mb-[5px]">
+                <VSCodeCheckbox
+                  className="mb-[5px]"
+                  checked={planActSeparateModelsSetting}
+                  onChange={(e: any) => {
+                    const checked = e.target.checked === true;
+                    setPlanActSeparateModelsSetting(checked);
+                  }}
+                >
+                  Use different models for Plan and Act modes
+                </VSCodeCheckbox>
+                <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
+                  Switching between Plan and Act mode will persist the API and
+                  model used in the previous mode.
+                </p>
+              </div>
+
+              <div className="mb-[5px]">
+                <VSCodeCheckbox
+                  className="mb-[5px]"
+                  checked={telemetrySetting === "enabled"}
+                  onChange={(e: any) => {
+                    const checked = e.target.checked === true;
+                    setTelemetrySetting(checked ? "enabled" : "disabled");
+                  }}
+                >
+                  Allow anonymous error and usage reporting
+                </VSCodeCheckbox>
+                <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
+                  Help improve ValorIDE by sending anonymous usage data and
+                  error reports. No code, prompts, or personal information are
+                  ever sent. See our{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/v1/docs/Legal/privacy/"
+                    className="text-inherit"
+                  >
+                    telemetry overview
+                  </VSCodeLink>{" "}
+                  and{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/v1/docs/Legal/privacy"
+                    className="text-inherit"
+                  >
+                    privacy policy
+                  </VSCodeLink>{" "}
+                  for more details.
+                </p>
+              </div>
+            </>
           )}
 
-          <div className="mb-[5px]">
-            <VSCodeTextArea
-              value={customInstructions ?? ""}
-              className="w-full"
-              resize="vertical"
-              rows={4}
-              placeholder={
-                'e.g. "Run unit tests at the end", "Use TypeScript with async/await", "Speak in Spanish"'
-              }
-              onInput={(e: any) => setCustomInstructions(e.target?.value ?? "")}
+          {activeSettingsTab === "valkyraiBackend" && (
+            <div
+              className="border border-solid border-(--vscode-panel-border) rounded-md p-3 mb-[15px] bg-(--vscode-panel-background)"
+              id="valkyrai-backend-section"
             >
-              <span className="font-medium">Custom Instructions</span>
-            </VSCodeTextArea>
-            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
-              These instructions are added to the end of the system prompt sent
-              with every request.
-            </p>
-          </div>
-
-          <div className="mb-[5px]">
-            <VSCodeCheckbox
-              className="mb-[5px]"
-              checked={planActSeparateModelsSetting}
-              onChange={(e: any) => {
-                const checked = e.target.checked === true;
-                setPlanActSeparateModelsSetting(checked);
-              }}
-            >
-              Use different models for Plan and Act modes
-            </VSCodeCheckbox>
-            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
-              Switching between Plan and Act mode will persist the API and model
-              used in the previous mode. This may be helpful e.g. when using a
-              strong reasoning model to architect a plan for a cheaper coding
-              model to act on.
-            </p>
-          </div>
-
-          <div className="mb-[5px]">
-            <VSCodeCheckbox
-              className="mb-[5px]"
-              checked={telemetrySetting === "enabled"}
-              onChange={(e: any) => {
-                const checked = e.target.checked === true;
-                setTelemetrySetting(checked ? "enabled" : "disabled");
-              }}
-            >
-              Allow anonymous error and usage reporting
-            </VSCodeCheckbox>
-            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
-              Help improve ValorIDE by sending anonymous usage data and error
-              reports. No code, prompts, or personal information are ever sent.
-              See our{" "}
-              <VSCodeLink
-                href="https://valkyrlabs.com/v1/docs/Legal/privacy/"
-                className="text-inherit"
-              >
-                telemetry overview
-              </VSCodeLink>{" "}
-              and{" "}
-              <VSCodeLink
-                href="https://valkyrlabs.com/v1/docs/Legal/privacy"
-                className="text-inherit"
-              >
-                privacy policy
-              </VSCodeLink>{" "}
-              for more details.
-            </p>
-          </div>
-
-          <div
-            className="border border-solid border-(--vscode-panel-border) rounded-md p-3 mb-[15px] bg-(--vscode-panel-background)"
-            id="valkyrai-backend-section"
-          >
-            <div className="font-semibold mb-1 flex items-center gap-2">
-              <span>ValkyrAI Backend</span>
-              <StatusBadge
-                label="P2P"
-                value={value}
-                kind={kind as any}
-                title={
-                  hasError ? String(communicationService.error) : undefined
-                }
-              />
-            </div>
-            <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
-              Configure which ValkyrAI backend this IDE uses. Changes apply
-              immediately and sync via VS Code settings.
-            </p>
-            <VSCodeTextField
-              value={valkyraiHostInput}
-              onInput={(e: any) => setValkyraiHostInput(e.target?.value ?? "")}
-              placeholder="https://api-0.valkyrlabs.com/v1"
-            >
-              Base URL
-            </VSCodeTextField>
-            {valkyraiHostError && (
-              <div
-                className="text-xs mt-1 px-2 py-1 rounded"
-                style={{
-                  color:
-                    "var(--vscode-inputValidation-errorForeground, #f48771)",
-                  background:
-                    "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
-                  border:
-                    "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
-                }}
-              >
-                {valkyraiHostError}
+              <div className="font-semibold mb-1 flex items-center gap-2">
+                <span>ValkyrAI Backend</span>
+                <StatusBadge
+                  label="P2P"
+                  value={value}
+                  kind={kind as any}
+                  title={
+                    hasError ? String(communicationService.error) : undefined
+                  }
+                />
               </div>
-            )}
-            <div className="flex gap-2 mt-3 items-center flex-wrap">
-              <VSCodeButton
-                onClick={() => testAndSaveValkyraiHost()}
-                disabled={isTestingValkyraiHost}
-                title="Validate and apply this host"
-              >
-                {isTestingValkyraiHost ? <VSCodeProgressRing /> : "Test & Save"}
-              </VSCodeButton>
-              <VSCodeButton
-                appearance="secondary"
-                onClick={handleResetValkyraiHost}
-                disabled={
-                  isTestingValkyraiHost ||
-                  valkyraiHostInput === DEFAULT_VALKYRAI_HOST
-                }
-              >
-                Reset to default
-              </VSCodeButton>
-              <StatusBadge
-                label="Status"
-                value={valkyraiHostStatus || "Not tested"}
-                kind={valkyraiHostStatusKind}
-              />
-            </div>
-            <div className="mt-4">
-              <div className="font-semibold mb-1">LLM Prompt Selection</div>
               <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
-                Select which ValkyrAI prompt collection this backend should use.
-                Changes apply immediately for the active backend.
+                Configure which ValkyrAI backend this IDE uses. Changes apply
+                immediately and sync via VS Code settings.
               </p>
-              {selectedLlmDetails && (
-                <div className="text-xs mb-2 text-(--vscode-descriptionForeground) flex items-center gap-2">
-                  <span>
-                    Active prompt: <strong>{selectedLlmDetails.name}</strong>
-                  </span>
-                  <StatusBadge
-                    label="Mode"
-                    value={selectedLlmDetails.mode}
-                    kind={selectedLlmDetails.mode === "SYSTEM" ? "warn" : "ok"}
-                  />
+              <VSCodeTextField
+                value={valkyraiHostInput}
+                onInput={(e: any) =>
+                  setValkyraiHostInput(e.target?.value ?? "")
+                }
+                placeholder="https://api-0.valkyrlabs.com/v1"
+              >
+                Base URL
+              </VSCodeTextField>
+              {valkyraiHostError && (
+                <div
+                  className="text-xs mt-1 px-2 py-1 rounded"
+                  style={{
+                    color:
+                      "var(--vscode-inputValidation-errorForeground, #f48771)",
+                    background:
+                      "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
+                    border:
+                      "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
+                  }}
+                >
+                  {valkyraiHostError}
                 </div>
               )}
-              <LLMDetailsSelector
-                currentSelection={selectedLlmDetails?.id}
-                onSelectionChange={(detail) => {
-                  vscode.postMessage({
-                    type: "updateLLMDetails",
-                    llmDetails: detail,
-                    taskIntent: "code-edit",
-                  });
-                }}
-                taskIntent="code-edit"
-                isLoggedIn={isLoggedIn}
-              />
-            </div>
-          </div>
+              <div className="flex gap-2 mt-3 items-center flex-wrap">
+                <VSCodeButton
+                  onClick={() => testAndSaveValkyraiHost()}
+                  disabled={isTestingValkyraiHost}
+                  title="Validate and apply this host"
+                >
+                  {isTestingValkyraiHost ? (
+                    <VSCodeProgressRing />
+                  ) : (
+                    "Test & Save"
+                  )}
+                </VSCodeButton>
+                <VSCodeButton
+                  appearance="secondary"
+                  onClick={handleResetValkyraiHost}
+                  disabled={
+                    isTestingValkyraiHost ||
+                    valkyraiHostInput === DEFAULT_VALKYRAI_HOST
+                  }
+                >
+                  Reset to default
+                </VSCodeButton>
+                <StatusBadge
+                  label="Status"
+                  value={valkyraiHostStatus || "Not tested"}
+                  kind={valkyraiHostStatusKind}
+                />
+              </div>
 
-          {/* Browser Settings Section */}
-          <BrowserSettingsSection />
+              <div className="mt-4 border border-solid border-(--vscode-panel-border) rounded-md p-3 bg-(--vscode-editor-background)">
+                <div className="font-semibold mb-1 flex items-center gap-2">
+                  <span>SWARM</span>
+                  <StatusBadge
+                    label="Status"
+                    value={titleCaseStatus(swarmStatus)}
+                    kind={swarmKind as any}
+                    title={swarmDetail}
+                  />
+                </div>
+                <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
+                  Local agent registration and remote command readiness for the
+                  active ValkyrAI backend.
+                </p>
+                <div className="text-xs text-(--vscode-descriptionForeground) break-all mb-3">
+                  {swarmDetail}
+                </div>
+                <VSCodeButton
+                  appearance="secondary"
+                  onClick={() =>
+                    vscode.postMessage({ type: "retrySwarmRegistration" })
+                  }
+                >
+                  Retry SWARM
+                </VSCodeButton>
+              </div>
+
+              <div className="mt-4">
+                <div className="font-semibold mb-1">LLM Prompt Selection</div>
+                <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
+                  Select which ValkyrAI prompt collection this backend should
+                  use. Changes apply immediately for the active backend.
+                </p>
+                {selectedLlmDetails && (
+                  <div className="text-xs mb-2 text-(--vscode-descriptionForeground) flex items-center gap-2">
+                    <span>
+                      Active prompt: <strong>{selectedLlmDetails.name}</strong>
+                    </span>
+                    <StatusBadge
+                      label="Mode"
+                      value={selectedLlmDetails.mode}
+                      kind={
+                        selectedLlmDetails.mode === "SYSTEM" ? "warn" : "ok"
+                      }
+                    />
+                  </div>
+                )}
+                <LLMDetailsSelector
+                  currentSelection={selectedLlmDetails?.id}
+                  onSelectionChange={(detail) => {
+                    vscode.postMessage({
+                      type: "updateLLMDetails",
+                      llmDetails: detail,
+                      taskIntent: "code-edit",
+                    });
+                  }}
+                  taskIntent="code-edit"
+                  isLoggedIn={isLoggedIn}
+                />
+              </div>
+            </div>
+          )}
+
+          {activeSettingsTab === "browser" && <BrowserSettingsSection />}
 
           <div className="mt-auto pr-2 flex justify-center">
             <SettingsButton
@@ -658,10 +745,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               If you have any questions or feedback, feel free to open an issue
               at{" "}
               <VSCodeLink
-                href="https://github.com/valkyrlabs/valoride"
+                href="https://github.com/ValkyrLabs/ValorIDE/issues"
                 className="inline"
               >
-                https://github.com/valkyrlabs/valoride
+                https://github.com/ValkyrLabs/ValorIDE/issues
               </VSCodeLink>
             </p>
             <p className="italic mt-2.5 mb-0 p-0">v{version}</p>

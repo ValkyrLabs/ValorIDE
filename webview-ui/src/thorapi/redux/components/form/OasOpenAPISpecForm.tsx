@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   OasOpenAPISpec,
   OasOpenAPISpecSourceTypeEnum,
   OasOpenAPISpecOpenapiEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddOasOpenAPISpecMutation } from "../../services/OasOpenAPISpecService";
+import { useAddOasOpenAPISpecMutation } from '../../services/OasOpenAPISpecService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,45 +64,50 @@ An OAS Specification Object (OAS3)
 -------------------------------------------------------- */
 const SourceTypeValidation = () => {
   return [
-    "valkyrlabs",
-    "github",
-    "self",
-    "gitlab",
-    "bitbucket",
-    "vendor",
-    "notfound",
+    'valkyrlabs',
+    'github',
+    'self',
+    'gitlab',
+    'bitbucket',
+    'vendor',
+    'notfound',
   ];
 };
 const OpenapiValidation = () => {
-  return ["3.0.0", "3.0.1", "3.0.2", "3.0.3", "3.0.4", "3.1.0"];
+  return [
+    '3.0.0',
+    '3.0.1',
+    '3.0.2',
+    '3.0.3',
+    '3.0.4',
+    '3.1.0',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  execModuleId: Yup.string(),
-  sourceDetails: Yup.string(),
-  sourcePath: Yup.string(),
-  sourceType: Yup.mixed().oneOf(
-    SourceTypeValidation(),
-    "Invalid value for sourceType",
-  ),
-  openapi: Yup.mixed().oneOf(OpenapiValidation(), "Invalid value for openapi"),
-  trashed: Yup.boolean(),
+        execModuleId: Yup.string(),
+        sourceDetails: Yup.string(),
+        sourcePath: Yup.string(),
+      sourceType: Yup.mixed()
+        .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
+        ,
+      openapi: Yup.mixed()
+        .oneOf(OpenapiValidation(), "Invalid value for openapi")
+        ,
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const OasOpenAPISpecForm: React.FC = () => {
-  const [addOasOpenAPISpec, addOasOpenAPISpecResult] =
-    useAddOasOpenAPISpecMutation();
+  const [addOasOpenAPISpec, addOasOpenAPISpecResult] = useAddOasOpenAPISpecMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -120,18 +117,12 @@ const OasOpenAPISpecForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -139,12 +130,12 @@ const OasOpenAPISpecForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<OasOpenAPISpec> = {
-    execModuleId: "",
-    sourceDetails: "",
-    sourcePath: "",
-    sourceType: undefined,
-    openapi: undefined,
-    trashed: false,
+          execModuleId: '',
+          sourceDetails: '',
+          sourcePath: '',
+        sourceType: undefined,
+        openapi: undefined,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -159,14 +150,11 @@ const OasOpenAPISpecForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new OasOpenAPISpec:", grants);
+    console.log('Permissions saved for new OasOpenAPISpec:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<OasOpenAPISpec>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<OasOpenAPISpec>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -177,7 +165,7 @@ const OasOpenAPISpecForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `OasOpenAPISpec created successfully! Would you like to set permissions for this object?`,
+          `OasOpenAPISpec created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -185,8 +173,8 @@ const OasOpenAPISpecForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create OasOpenAPISpec:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create OasOpenAPISpec:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -207,36 +195,44 @@ const OasOpenAPISpecForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addOasOpenAPISpecResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New OasOpenAPISpec
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New OasOpenAPISpec
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
-                        {touched.execModuleId && !errors.execModuleId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.execModuleId &&
+                         !errors.execModuleId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="execModuleId"
-                        value={values?.execModuleId}
-                        placeholder="Exec Module Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="execModuleId"
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -245,27 +241,31 @@ const OasOpenAPISpecForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="sourceDetails"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="sourceDetails" className="nice-form-control">
                       <b>
                         Source Details:
-                        {touched.sourceDetails && !errors.sourceDetails && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sourceDetails &&
+                         !errors.sourceDetails && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sourceDetails"
-                        value={values?.sourceDetails}
-                        placeholder="Source Details"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sourceDetails"
+                            value={values?.sourceDetails}
+                            placeholder="Source Details"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -277,21 +277,28 @@ const OasOpenAPISpecForm: React.FC = () => {
                     <label htmlFor="sourcePath" className="nice-form-control">
                       <b>
                         Source Path:
-                        {touched.sourcePath && !errors.sourcePath && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sourcePath &&
+                         !errors.sourcePath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="sourcePath"
-                        value={values?.sourcePath}
-                        placeholder="Source Path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sourcePath"
+                            value={values?.sourcePath}
+                            placeholder="Source Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -303,33 +310,30 @@ const OasOpenAPISpecForm: React.FC = () => {
                     <label htmlFor="sourceType" className="nice-form-control">
                       <b>
                         Source Type:
-                        {touched.sourceType && !errors.sourceType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.sourceType &&
+                         !errors.sourceType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="sourceType"
-                        value={values.sourceType || ""}
-                        className={
-                          errors.sourceType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("sourceType", true);
-                          setFieldValue(
-                            "sourceType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Source Type" />
-                        <SourceTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="sourceType"
+                          value={values.sourceType || ''}
+                          className={
+                            errors.sourceType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('sourceType', true);
+                            setFieldValue('sourceType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Source Type" />
+                          <SourceTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -341,30 +345,30 @@ const OasOpenAPISpecForm: React.FC = () => {
                     <label htmlFor="openapi" className="nice-form-control">
                       <b>
                         Openapi:
-                        {touched.openapi && !errors.openapi && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.openapi &&
+                         !errors.openapi && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="openapi"
-                        value={values.openapi || ""}
-                        className={
-                          errors.openapi
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("openapi", true);
-                          setFieldValue("openapi", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Openapi" />
-                        <OpenapiLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="openapi"
+                          value={values.openapi || ''}
+                          className={
+                            errors.openapi
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('openapi', true);
+                            setFieldValue('openapi', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Openapi" />
+                          <OpenapiLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -376,25 +380,32 @@ const OasOpenAPISpecForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -404,59 +415,45 @@ const OasOpenAPISpecForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New OasOpenAPISpec
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New OasOpenAPISpec
+                  </CoolButton>
 
-                    {(addOasOpenAPISpecResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addOasOpenAPISpecResult as any).error
-                              ? (addOasOpenAPISpecResult as any).error.data
-                              : (addOasOpenAPISpecResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addOasOpenAPISpecResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addOasOpenAPISpecResult as any).error ? (addOasOpenAPISpecResult as any).error.data : (addOasOpenAPISpecResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addOasOpenAPISpecResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addOasOpenAPISpecResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addOasOpenAPISpecResult:{" "}
-                    {JSON.stringify(addOasOpenAPISpecResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addOasOpenAPISpecResult: {JSON.stringify(addOasOpenAPISpecResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -488,13 +485,13 @@ kebabcase source-type-lookup
 const SourceTypeLookup = () => {
   return (
     <>
-      <option value="valkyrlabs" label="Valkyrlabs" />
-      <option value="github" label="Github" />
-      <option value="self" label="Self" />
-      <option value="gitlab" label="Gitlab" />
-      <option value="bitbucket" label="Bitbucket" />
-      <option value="vendor" label="Vendor" />
-      <option value="notfound" label="Notfound" />
+      <option value='valkyrlabs' label="Valkyrlabs" />
+      <option value='github' label="Github" />
+      <option value='self' label="Self" />
+      <option value='gitlab' label="Gitlab" />
+      <option value='bitbucket' label="Bitbucket" />
+      <option value='vendor' label="Vendor" />
+      <option value='notfound' label="Notfound" />
     </>
   );
 };
@@ -511,15 +508,18 @@ kebabcase openapi-lookup
 const OpenapiLookup = () => {
   return (
     <>
-      <option value="3.0.0" label="_ 00" />
-      <option value="3.0.1" label="_ 01" />
-      <option value="3.0.2" label="_ 02" />
-      <option value="3.0.3" label="_ 03" />
-      <option value="3.0.4" label="_ 04" />
-      <option value="3.1.0" label="_ 10" />
+      <option value='3.0.0' label="_ 00" />
+      <option value='3.0.1' label="_ 01" />
+      <option value='3.0.2' label="_ 02" />
+      <option value='3.0.3' label="_ 03" />
+      <option value='3.0.4' label="_ 04" />
+      <option value='3.1.0' label="_ 10" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default OasOpenAPISpecForm;
+

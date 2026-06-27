@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_GRAYMATTER_REQUEST,
-  FETCH_GRAYMATTER_REQUEST,
-  LIST_GRAYMATTER_REQUEST,
-  UPDATE_GRAYMATTER_REQUEST,
-  DELETE_GRAYMATTER_REQUEST,
-  addGrayMatterFailure,
-  addGrayMatterSuccess,
-  fetchGrayMatterFailure,
-  fetchGrayMatterSuccess,
-  listGrayMatterFailure,
-  listGrayMatterSuccess,
-  updateGrayMatterFailure,
-  updateGrayMatterSuccess,
-  deleteGrayMatterFailure,
-  deleteGrayMatterSuccess,
-} from "../actions/GrayMatterApiAction";
+
+    ADD_GRAYMATTER_REQUEST,
+    FETCH_GRAYMATTER_REQUEST,
+    LIST_GRAYMATTER_REQUEST,
+    UPDATE_GRAYMATTER_REQUEST,
+    DELETE_GRAYMATTER_REQUEST,
+
+    addGrayMatterFailure,
+    addGrayMatterSuccess,
+
+    fetchGrayMatterFailure,
+    fetchGrayMatterSuccess,
+    
+    listGrayMatterFailure,
+    listGrayMatterSuccess,
+
+    updateGrayMatterFailure,
+    updateGrayMatterSuccess,
+    
+    deleteGrayMatterFailure,
+    deleteGrayMatterSuccess,
+    
+} from '../actions/GrayMatterApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: GrayMatter
 */
 
-export const GrayMatterMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("GrayMatter MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const GrayMatterMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("GrayMatter MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

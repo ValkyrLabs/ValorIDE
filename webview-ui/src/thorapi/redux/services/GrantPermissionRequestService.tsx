@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { GrantPermissionRequest } from "@thorapi/model/GrantPermissionRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { GrantPermissionRequest } from '@thorapi/model/GrantPermissionRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type GrantPermissionRequestResponse = GrantPermissionRequest[];
+type GrantPermissionRequestResponse = GrantPermissionRequest[]
+type GrantPermissionRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<GrantPermissionRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toGrantPermissionRequestList = (
-  result: unknown,
-): GrantPermissionRequestResponse => {
+type GrantPermissionRequestListQueryArg = {
+  example?: Partial<GrantPermissionRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toGrantPermissionRequestList = (result: unknown): GrantPermissionRequestResponse => {
   if (Array.isArray(result)) {
-    return result as GrantPermissionRequestResponse;
+    return result as GrantPermissionRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as GrantPermissionRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as GrantPermissionRequestResponse) : []
+}
 
 export const GrantPermissionRequestService = createApi({
-  reducerPath: "GrantPermissionRequest", // This should remain unique
+  reducerPath: 'GrantPermissionRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["GrantPermissionRequest"],
+  tagTypes: ['GrantPermissionRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGrantPermissionRequestsPaged: build.query<
-      GrantPermissionRequestResponse,
-      { page: number; size?: number; example?: Partial<GrantPermissionRequest> }
-    >({
+    getGrantPermissionRequestsPaged: build.query<GrantPermissionRequestResponse, GrantPermissionRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `GrantPermissionRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GrantPermissionRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGrantPermissionRequestList(result);
+        const rows = toGrantPermissionRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GrantPermissionRequest" as const, id })),
-          { type: "GrantPermissionRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'GrantPermissionRequest' as const, id })),
+          { type: 'GrantPermissionRequest', id: `PAGE_${page}` },
+          { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGrantPermissionRequests: build.query<
-      GrantPermissionRequestResponse,
-      { example?: Partial<GrantPermissionRequest> } | void
-    >({
+    getGrantPermissionRequests: build.query<GrantPermissionRequestResponse, GrantPermissionRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const GrantPermissionRequestService = createApi({
         return `GrantPermissionRequest`;
       },
       providesTags: (result) => {
-        const rows = toGrantPermissionRequestList(result);
+        const rows = toGrantPermissionRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GrantPermissionRequest" as const, id })),
-          { type: "GrantPermissionRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'GrantPermissionRequest' as const, id })),
+          { type: 'GrantPermissionRequest', id: 'LIST' },
+          { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addGrantPermissionRequest: build.mutation<
-      GrantPermissionRequest,
-      Partial<GrantPermissionRequest>
-    >({
+    addGrantPermissionRequest: build.mutation<GrantPermissionRequest, Partial<GrantPermissionRequest>>({
       query: (body) => ({
         url: `GrantPermissionRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "GrantPermissionRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'GrantPermissionRequest', id: 'LIST' },
+        { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getGrantPermissionRequest: build.query<GrantPermissionRequest, string>({
       query: (id) => `GrantPermissionRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "GrantPermissionRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'GrantPermissionRequest', id }],
     }),
 
     // 5) Update
-    updateGrantPermissionRequest: build.mutation<
-      void,
-      Pick<GrantPermissionRequest, "id"> & Partial<GrantPermissionRequest>
-    >({
+    updateGrantPermissionRequest: build.mutation<GrantPermissionRequest, Pick<GrantPermissionRequest, 'id'> & Partial<GrantPermissionRequest>>({
       query: ({ id, ...patch }) => ({
         url: `GrantPermissionRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            GrantPermissionRequestService.util.updateQueryData(
-              "getGrantPermissionRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<GrantPermissionRequest, "id">,
-      ) => [
-        { type: "GrantPermissionRequest", id },
-        { type: "GrantPermissionRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<GrantPermissionRequest, 'id'>) => [
+        { type: 'GrantPermissionRequest', id },
+        { type: 'GrantPermissionRequest', id: 'LIST' },
+        { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteGrantPermissionRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteGrantPermissionRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `GrantPermissionRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "GrantPermissionRequest", id },
+        { type: 'GrantPermissionRequest', id },
+        { type: 'GrantPermissionRequest', id: 'LIST' },
+        { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGrantPermissionRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteGrantPermissionRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `GrantPermissionRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "GrantPermissionRequest", id },
-        { type: "GrantPermissionRequest", id: "LIST" },
+        { type: 'GrantPermissionRequest', id },
+        { type: 'GrantPermissionRequest', id: 'LIST' },
+        { type: 'GrantPermissionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetGrantPermissionRequestsPagedQuery`
 export const {
-  useGetGrantPermissionRequestsPagedQuery, // immediate fetch
+  useGetGrantPermissionRequestsPagedQuery,     // immediate fetch
   useLazyGetGrantPermissionRequestsPagedQuery, // lazy fetch
   useGetGrantPermissionRequestQuery,
   useGetGrantPermissionRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateGrantPermissionRequestMutation,
   useDeleteGrantPermissionRequestMutation,
   useDeleteGrantPermissionRequestCascadeMutation,
-} = GrantPermissionRequestService;
+} = GrantPermissionRequestService

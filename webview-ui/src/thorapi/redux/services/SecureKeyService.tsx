@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SecureKey } from "@thorapi/model/SecureKey";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SecureKey } from '@thorapi/model/SecureKey'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SecureKeyResponse = SecureKey[];
+type SecureKeyResponse = SecureKey[]
+type SecureKeyPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SecureKey>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SecureKeyListQueryArg = {
+  example?: Partial<SecureKey>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSecureKeyList = (result: unknown): SecureKeyResponse => {
   if (Array.isArray(result)) {
-    return result as SecureKeyResponse;
+    return result as SecureKeyResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SecureKeyResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SecureKeyResponse) : []
+}
 
 export const SecureKeyService = createApi({
-  reducerPath: "SecureKey", // This should remain unique
+  reducerPath: 'SecureKey', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SecureKey"],
+  tagTypes: ['SecureKey'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSecureKeysPaged: build.query<
-      SecureKeyResponse,
-      { page: number; size?: number; example?: Partial<SecureKey> }
-    >({
+    getSecureKeysPaged: build.query<SecureKeyResponse, SecureKeyPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SecureKey?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SecureKey?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSecureKeyList(result);
+        const rows = toSecureKeyList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SecureKey" as const, id })),
-          { type: "SecureKey", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SecureKey' as const, id })),
+          { type: 'SecureKey', id: `PAGE_${page}` },
+          { type: 'SecureKey', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSecureKeys: build.query<
-      SecureKeyResponse,
-      { example?: Partial<SecureKey> } | void
-    >({
+    getSecureKeys: build.query<SecureKeyResponse, SecureKeyListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SecureKeyService = createApi({
         return `SecureKey`;
       },
       providesTags: (result) => {
-        const rows = toSecureKeyList(result);
+        const rows = toSecureKeyList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SecureKey" as const, id })),
-          { type: "SecureKey", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SecureKey' as const, id })),
+          { type: 'SecureKey', id: 'LIST' },
+          { type: 'SecureKey', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const SecureKeyService = createApi({
     addSecureKey: build.mutation<SecureKey, Partial<SecureKey>>({
       query: (body) => ({
         url: `SecureKey`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SecureKey", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SecureKey', id: 'LIST' },
+        { type: 'SecureKey', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSecureKey: build.query<SecureKey, string>({
       query: (id) => `SecureKey/${id}`,
-      providesTags: (result, error, id) => [{ type: "SecureKey", id }],
+      providesTags: (result, error, id) => [{ type: 'SecureKey', id }],
     }),
 
     // 5) Update
-    updateSecureKey: build.mutation<
-      void,
-      Pick<SecureKey, "id"> & Partial<SecureKey>
-    >({
+    updateSecureKey: build.mutation<SecureKey, Pick<SecureKey, 'id'> & Partial<SecureKey>>({
       query: ({ id, ...patch }) => ({
         url: `SecureKey/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SecureKeyService.util.updateQueryData(
-              "getSecureKey",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SecureKey, "id">) => [
-        { type: "SecureKey", id },
-        { type: "SecureKey", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SecureKey, 'id'>) => [
+        { type: 'SecureKey', id },
+        { type: 'SecureKey', id: 'LIST' },
+        { type: 'SecureKey', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const SecureKeyService = createApi({
       query(id) {
         return {
           url: `SecureKey/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SecureKey", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'SecureKey', id },
+        { type: 'SecureKey', id: 'LIST' },
+        { type: 'SecureKey', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSecureKeyCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSecureKeyCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SecureKey/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SecureKey", id },
-        { type: "SecureKey", id: "LIST" },
+        { type: 'SecureKey', id },
+        { type: 'SecureKey', id: 'LIST' },
+        { type: 'SecureKey', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSecureKeysPagedQuery`
 export const {
-  useGetSecureKeysPagedQuery, // immediate fetch
+  useGetSecureKeysPagedQuery,     // immediate fetch
   useLazyGetSecureKeysPagedQuery, // lazy fetch
   useGetSecureKeyQuery,
   useGetSecureKeysQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateSecureKeyMutation,
   useDeleteSecureKeyMutation,
   useDeleteSecureKeyCascadeMutation,
-} = SecureKeyService;
+} = SecureKeyService

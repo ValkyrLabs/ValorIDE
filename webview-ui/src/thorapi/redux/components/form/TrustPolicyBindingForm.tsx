@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   TrustPolicyBinding,
   TrustPolicyBindingBindingStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddTrustPolicyBindingMutation } from "../../services/TrustPolicyBindingService";
+import { useAddTrustPolicyBindingMutation } from '../../services/TrustPolicyBindingService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,34 +62,34 @@ RBAC-scoped binding between a trust policy manifest and an object, workflow, ten
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const BindingStatusValidation = () => {
-  return ["ACTIVE", "SUSPENDED", "RETIRED"];
+  return [
+    'ACTIVE',
+    'SUSPENDED',
+    'RETIRED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  boundObjectType: Yup.string(),
-  boundObjectId: Yup.string(),
-  bindingStatus: Yup.mixed().oneOf(
-    BindingStatusValidation(),
-    "Invalid value for bindingStatus",
-  ),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+        boundObjectType: Yup.string(),
+        boundObjectId: Yup.string(),
+      bindingStatus: Yup.mixed()
+        .oneOf(BindingStatusValidation(), "Invalid value for bindingStatus")
+        ,
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustPolicyBindingForm: React.FC = () => {
-  const [addTrustPolicyBinding, addTrustPolicyBindingResult] =
-    useAddTrustPolicyBindingMutation();
+  const [addTrustPolicyBinding, addTrustPolicyBindingResult] = useAddTrustPolicyBindingMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -107,18 +99,12 @@ const TrustPolicyBindingForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -126,11 +112,11 @@ const TrustPolicyBindingForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustPolicyBinding> = {
-    boundObjectType: "",
-    boundObjectId: "",
-    bindingStatus: undefined,
-    ownerId: "",
-    trashed: false,
+          boundObjectType: '',
+          boundObjectId: '',
+        bindingStatus: undefined,
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -145,14 +131,11 @@ const TrustPolicyBindingForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new TrustPolicyBinding:", grants);
+    console.log('Permissions saved for new TrustPolicyBinding:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<TrustPolicyBinding>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustPolicyBinding>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -163,7 +146,7 @@ const TrustPolicyBindingForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustPolicyBinding created successfully! Would you like to set permissions for this object?`,
+          `TrustPolicyBinding created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -171,8 +154,8 @@ const TrustPolicyBindingForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create TrustPolicyBinding:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create TrustPolicyBinding:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -193,41 +176,44 @@ const TrustPolicyBindingForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addTrustPolicyBindingResult.isLoading;
+          const isSaving = isSubmitting || addTrustPolicyBindingResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    TrustPolicyBinding
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="boundObjectType"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustPolicyBinding
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="boundObjectType" className="nice-form-control">
                       <b>
                         Bound Object Type:
-                        {touched.boundObjectType && !errors.boundObjectType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.boundObjectType &&
+                         !errors.boundObjectType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="boundObjectType"
-                        value={values?.boundObjectType}
-                        placeholder="Bound Object Type"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="boundObjectType"
+                            value={values?.boundObjectType}
+                            placeholder="Bound Object Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -236,27 +222,31 @@ const TrustPolicyBindingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="boundObjectId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="boundObjectId" className="nice-form-control">
                       <b>
                         Bound Object Id:
-                        {touched.boundObjectId && !errors.boundObjectId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.boundObjectId &&
+                         !errors.boundObjectId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="boundObjectId"
-                        value={values?.boundObjectId}
-                        placeholder="Bound Object Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="boundObjectId"
+                            value={values?.boundObjectId}
+                            placeholder="Bound Object Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -265,39 +255,33 @@ const TrustPolicyBindingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="bindingStatus"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="bindingStatus" className="nice-form-control">
                       <b>
                         Binding Status:
-                        {touched.bindingStatus && !errors.bindingStatus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.bindingStatus &&
+                         !errors.bindingStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="bindingStatus"
-                        value={values.bindingStatus || ""}
-                        className={
-                          errors.bindingStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("bindingStatus", true);
-                          setFieldValue(
-                            "bindingStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Binding Status" />
-                        <BindingStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="bindingStatus"
+                          value={values.bindingStatus || ''}
+                          className={
+                            errors.bindingStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('bindingStatus', true);
+                            setFieldValue('bindingStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Binding Status" />
+                          <BindingStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -309,21 +293,28 @@ const TrustPolicyBindingForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -335,25 +326,32 @@ const TrustPolicyBindingForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -363,60 +361,45 @@ const TrustPolicyBindingForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New TrustPolicyBinding
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New TrustPolicyBinding
+                  </CoolButton>
 
-                    {(addTrustPolicyBindingResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addTrustPolicyBindingResult as any).error
-                              ? (addTrustPolicyBindingResult as any).error.data
-                              : (addTrustPolicyBindingResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustPolicyBindingResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustPolicyBindingResult as any).error ? (addTrustPolicyBindingResult as any).error.data : (addTrustPolicyBindingResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustPolicyBindingResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustPolicyBindingResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustPolicyBindingResult:{" "}
-                    {JSON.stringify(addTrustPolicyBindingResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustPolicyBindingResult: {JSON.stringify(addTrustPolicyBindingResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -448,12 +431,15 @@ kebabcase binding-status-lookup
 const BindingStatusLookup = () => {
   return (
     <>
-      <option value="ACTIVE" label="Active" />
-      <option value="SUSPENDED" label="Suspended" />
-      <option value="RETIRED" label="Retired" />
+      <option value='ACTIVE' label="Active" />
+      <option value='SUSPENDED' label="Suspended" />
+      <option value='RETIRED' label="Retired" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustPolicyBindingForm;
+

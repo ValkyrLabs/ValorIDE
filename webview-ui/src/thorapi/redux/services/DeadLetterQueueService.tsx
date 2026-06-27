@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { DeadLetterQueue } from "@thorapi/model/DeadLetterQueue";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { DeadLetterQueue } from '@thorapi/model/DeadLetterQueue'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DeadLetterQueueResponse = DeadLetterQueue[];
+type DeadLetterQueueResponse = DeadLetterQueue[]
+type DeadLetterQueuePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<DeadLetterQueue>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type DeadLetterQueueListQueryArg = {
+  example?: Partial<DeadLetterQueue>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toDeadLetterQueueList = (result: unknown): DeadLetterQueueResponse => {
   if (Array.isArray(result)) {
-    return result as DeadLetterQueueResponse;
+    return result as DeadLetterQueueResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as DeadLetterQueueResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DeadLetterQueueResponse) : []
+}
 
 export const DeadLetterQueueService = createApi({
-  reducerPath: "DeadLetterQueue", // This should remain unique
+  reducerPath: 'DeadLetterQueue', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["DeadLetterQueue"],
+  tagTypes: ['DeadLetterQueue'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDeadLetterQueuesPaged: build.query<
-      DeadLetterQueueResponse,
-      { page: number; size?: number; example?: Partial<DeadLetterQueue> }
-    >({
+    getDeadLetterQueuesPaged: build.query<DeadLetterQueueResponse, DeadLetterQueuePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DeadLetterQueue?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DeadLetterQueue?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDeadLetterQueueList(result);
+        const rows = toDeadLetterQueueList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DeadLetterQueue" as const, id })),
-          { type: "DeadLetterQueue", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'DeadLetterQueue' as const, id })),
+          { type: 'DeadLetterQueue', id: `PAGE_${page}` },
+          { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDeadLetterQueues: build.query<
-      DeadLetterQueueResponse,
-      { example?: Partial<DeadLetterQueue> } | void
-    >({
+    getDeadLetterQueues: build.query<DeadLetterQueueResponse, DeadLetterQueueListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const DeadLetterQueueService = createApi({
         return `DeadLetterQueue`;
       },
       providesTags: (result) => {
-        const rows = toDeadLetterQueueList(result);
+        const rows = toDeadLetterQueueList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DeadLetterQueue" as const, id })),
-          { type: "DeadLetterQueue", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'DeadLetterQueue' as const, id })),
+          { type: 'DeadLetterQueue', id: 'LIST' },
+          { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addDeadLetterQueue: build.mutation<
-      DeadLetterQueue,
-      Partial<DeadLetterQueue>
-    >({
+    addDeadLetterQueue: build.mutation<DeadLetterQueue, Partial<DeadLetterQueue>>({
       query: (body) => ({
         url: `DeadLetterQueue`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "DeadLetterQueue", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'DeadLetterQueue', id: 'LIST' },
+        { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDeadLetterQueue: build.query<DeadLetterQueue, string>({
       query: (id) => `DeadLetterQueue/${id}`,
-      providesTags: (result, error, id) => [{ type: "DeadLetterQueue", id }],
+      providesTags: (result, error, id) => [{ type: 'DeadLetterQueue', id }],
     }),
 
     // 5) Update
-    updateDeadLetterQueue: build.mutation<
-      void,
-      Pick<DeadLetterQueue, "id"> & Partial<DeadLetterQueue>
-    >({
+    updateDeadLetterQueue: build.mutation<DeadLetterQueue, Pick<DeadLetterQueue, 'id'> & Partial<DeadLetterQueue>>({
       query: ({ id, ...patch }) => ({
         url: `DeadLetterQueue/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DeadLetterQueueService.util.updateQueryData(
-              "getDeadLetterQueue",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<DeadLetterQueue, "id">) => [
-        { type: "DeadLetterQueue", id },
-        { type: "DeadLetterQueue", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<DeadLetterQueue, 'id'>) => [
+        { type: 'DeadLetterQueue', id },
+        { type: 'DeadLetterQueue', id: 'LIST' },
+        { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteDeadLetterQueue: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteDeadLetterQueue: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `DeadLetterQueue/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "DeadLetterQueue", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'DeadLetterQueue', id },
+        { type: 'DeadLetterQueue', id: 'LIST' },
+        { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDeadLetterQueueCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDeadLetterQueueCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `DeadLetterQueue/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "DeadLetterQueue", id },
-        { type: "DeadLetterQueue", id: "LIST" },
+        { type: 'DeadLetterQueue', id },
+        { type: 'DeadLetterQueue', id: 'LIST' },
+        { type: 'DeadLetterQueue', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDeadLetterQueuesPagedQuery`
 export const {
-  useGetDeadLetterQueuesPagedQuery, // immediate fetch
+  useGetDeadLetterQueuesPagedQuery,     // immediate fetch
   useLazyGetDeadLetterQueuesPagedQuery, // lazy fetch
   useGetDeadLetterQueueQuery,
   useGetDeadLetterQueuesQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateDeadLetterQueueMutation,
   useDeleteDeadLetterQueueMutation,
   useDeleteDeadLetterQueueCascadeMutation,
-} = DeadLetterQueueService;
+} = DeadLetterQueueService

@@ -163,12 +163,63 @@ describe("GrayMatterSessionService", () => {
         now: () => new Date("2026-05-13T12:00:00.000Z"),
         token: "jwt-token",
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       baseUrl: "https://api-0.valkyrlabs.com/v1",
       capabilities: defaultGrayMatterCapabilities,
       checkedAt: "2026-05-13T12:00:00.000Z",
       error: "Forbidden by RBAC",
+      recovery: {
+        backendBaseUrl: "https://api-0.valkyrlabs.com/v1",
+        command: "valoride.accountButtonClicked",
+        actions: [
+          {
+            command: "valoride.accountButtonClicked",
+            id: "open_account",
+            primary: true,
+          },
+        ],
+        reason: "forbidden",
+        retryable: true,
+      },
       status: "forbidden",
+    });
+  });
+
+  it("routes exhausted GrayMatter credits to the recharge flow", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(402, { message: "Insufficient credits" }),
+    );
+
+    const session = await createGrayMatterSessionState({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      fetch: fetchMock,
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+      token: "jwt-token",
+    });
+
+    expect(session).toMatchObject({
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      capabilities: defaultGrayMatterCapabilities,
+      checkedAt: "2026-05-13T12:00:00.000Z",
+      error: "Insufficient credits",
+      recovery: {
+        backendBaseUrl: "https://api-0.valkyrlabs.com/v1",
+        command: "valoride.accountButtonClicked",
+        actions: [
+          {
+            command: "valoride.accountButtonClicked",
+            id: "buy_credits",
+            primary: true,
+          },
+          {
+            command: "valoride.accountButtonClicked",
+            id: "open_account",
+          },
+        ],
+        reason: "quota",
+        retryable: true,
+      },
+      status: "quota",
     });
   });
 
@@ -179,11 +230,24 @@ describe("GrayMatterSessionService", () => {
         now: () => new Date("2026-05-13T12:00:00.000Z"),
         token: undefined,
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       baseUrl: "https://api-0.valkyrlabs.com/v1",
       capabilities: defaultGrayMatterCapabilities,
       checkedAt: "2026-05-13T12:00:00.000Z",
       error: "GrayMatter authentication is required.",
+      recovery: {
+        backendBaseUrl: "https://api-0.valkyrlabs.com/v1",
+        command: "valoride.accountButtonClicked",
+        actions: [
+          {
+            command: "valoride.accountButtonClicked",
+            id: "open_account",
+            primary: true,
+          },
+        ],
+        reason: "unauthenticated",
+        retryable: true,
+      },
       status: "unauthenticated",
     });
   });

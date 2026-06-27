@@ -21,6 +21,7 @@ import {
   awaitAskWithTimeout,
   COMMAND_OUTPUT_TIMEOUT_MS,
 } from "../utils/askWithTimeout";
+import { resolveCommandRequiresApproval } from "./commandApproval";
 
 export class CommandToolHandler extends BaseToolHandler {
   async execute(
@@ -41,7 +42,7 @@ export class CommandToolHandler extends BaseToolHandler {
     const requiresApprovalRaw: string | undefined =
       block.params.requires_approval;
     const requiresApprovalPerLLM =
-      requiresApprovalRaw?.toLowerCase() === "true";
+      resolveCommandRequiresApproval(requiresApprovalRaw, command);
 
     try {
       if (partial) {
@@ -65,16 +66,6 @@ export class CommandToolHandler extends BaseToolHandler {
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "execute_command",
               "command",
-            ),
-          };
-        }
-        if (!requiresApprovalRaw) {
-          this.context.consecutiveMistakeCount++;
-          return {
-            shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError(
-              "execute_command",
-              "requires_approval",
             ),
           };
         }

@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Add a logout/auth-reset flow that restores the welcome screen after clearing client auth state.
+- Add a regression test covering the welcome screen after auth state is cleared.
+
 ## [3.13.2]
 
 - Add Gemini 2.5 Flash model to Vertex and Gemini Providers (Thanks monotykamary!)

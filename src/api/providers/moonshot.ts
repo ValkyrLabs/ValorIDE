@@ -24,7 +24,7 @@ export class MoonshotHandler implements ApiHandler {
         this.options.moonshotApiLine === "china"
           ? "https://api.moonshot.cn/v1"
           : "https://api.moonshot.ai/v1",
-      apiKey: this.options.moonshotApiKey,
+      apiKey: this.options.moonshotApiKey || "noop",
     });
   }
 

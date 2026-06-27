@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ApiTrafficEvent } from "@thorapi/model/ApiTrafficEvent";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ApiTrafficEvent } from '@thorapi/model/ApiTrafficEvent'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ApiTrafficEventResponse = ApiTrafficEvent[];
+type ApiTrafficEventResponse = ApiTrafficEvent[]
+type ApiTrafficEventPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ApiTrafficEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ApiTrafficEventListQueryArg = {
+  example?: Partial<ApiTrafficEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toApiTrafficEventList = (result: unknown): ApiTrafficEventResponse => {
   if (Array.isArray(result)) {
-    return result as ApiTrafficEventResponse;
+    return result as ApiTrafficEventResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ApiTrafficEventResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ApiTrafficEventResponse) : []
+}
 
 export const ApiTrafficEventService = createApi({
-  reducerPath: "ApiTrafficEvent", // This should remain unique
+  reducerPath: 'ApiTrafficEvent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ApiTrafficEvent"],
+  tagTypes: ['ApiTrafficEvent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getApiTrafficEventsPaged: build.query<
-      ApiTrafficEventResponse,
-      { page: number; size?: number; example?: Partial<ApiTrafficEvent> }
-    >({
+    getApiTrafficEventsPaged: build.query<ApiTrafficEventResponse, ApiTrafficEventPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ApiTrafficEvent?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ApiTrafficEvent?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toApiTrafficEventList(result);
+        const rows = toApiTrafficEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ApiTrafficEvent" as const, id })),
-          { type: "ApiTrafficEvent", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ApiTrafficEvent' as const, id })),
+          { type: 'ApiTrafficEvent', id: `PAGE_${page}` },
+          { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getApiTrafficEvents: build.query<
-      ApiTrafficEventResponse,
-      { example?: Partial<ApiTrafficEvent> } | void
-    >({
+    getApiTrafficEvents: build.query<ApiTrafficEventResponse, ApiTrafficEventListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const ApiTrafficEventService = createApi({
         return `ApiTrafficEvent`;
       },
       providesTags: (result) => {
-        const rows = toApiTrafficEventList(result);
+        const rows = toApiTrafficEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ApiTrafficEvent" as const, id })),
-          { type: "ApiTrafficEvent", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ApiTrafficEvent' as const, id })),
+          { type: 'ApiTrafficEvent', id: 'LIST' },
+          { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addApiTrafficEvent: build.mutation<
-      ApiTrafficEvent,
-      Partial<ApiTrafficEvent>
-    >({
+    addApiTrafficEvent: build.mutation<ApiTrafficEvent, Partial<ApiTrafficEvent>>({
       query: (body) => ({
         url: `ApiTrafficEvent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ApiTrafficEvent", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ApiTrafficEvent', id: 'LIST' },
+        { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getApiTrafficEvent: build.query<ApiTrafficEvent, string>({
       query: (id) => `ApiTrafficEvent/${id}`,
-      providesTags: (result, error, id) => [{ type: "ApiTrafficEvent", id }],
+      providesTags: (result, error, id) => [{ type: 'ApiTrafficEvent', id }],
     }),
 
     // 5) Update
-    updateApiTrafficEvent: build.mutation<
-      void,
-      Pick<ApiTrafficEvent, "id"> & Partial<ApiTrafficEvent>
-    >({
+    updateApiTrafficEvent: build.mutation<ApiTrafficEvent, Pick<ApiTrafficEvent, 'id'> & Partial<ApiTrafficEvent>>({
       query: ({ id, ...patch }) => ({
         url: `ApiTrafficEvent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ApiTrafficEventService.util.updateQueryData(
-              "getApiTrafficEvent",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ApiTrafficEvent, "id">) => [
-        { type: "ApiTrafficEvent", id },
-        { type: "ApiTrafficEvent", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ApiTrafficEvent, 'id'>) => [
+        { type: 'ApiTrafficEvent', id },
+        { type: 'ApiTrafficEvent', id: 'LIST' },
+        { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteApiTrafficEvent: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteApiTrafficEvent: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ApiTrafficEvent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "ApiTrafficEvent", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'ApiTrafficEvent', id },
+        { type: 'ApiTrafficEvent', id: 'LIST' },
+        { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteApiTrafficEventCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteApiTrafficEventCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ApiTrafficEvent/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ApiTrafficEvent", id },
-        { type: "ApiTrafficEvent", id: "LIST" },
+        { type: 'ApiTrafficEvent', id },
+        { type: 'ApiTrafficEvent', id: 'LIST' },
+        { type: 'ApiTrafficEvent', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetApiTrafficEventsPagedQuery`
 export const {
-  useGetApiTrafficEventsPagedQuery, // immediate fetch
+  useGetApiTrafficEventsPagedQuery,     // immediate fetch
   useLazyGetApiTrafficEventsPagedQuery, // lazy fetch
   useGetApiTrafficEventQuery,
   useGetApiTrafficEventsQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateApiTrafficEventMutation,
   useDeleteApiTrafficEventMutation,
   useDeleteApiTrafficEventCascadeMutation,
-} = ApiTrafficEventService;
+} = ApiTrafficEventService

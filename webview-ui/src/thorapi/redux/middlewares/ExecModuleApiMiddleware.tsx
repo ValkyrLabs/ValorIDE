@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_EXECMODULE_REQUEST,
-  FETCH_EXECMODULE_REQUEST,
-  LIST_EXECMODULE_REQUEST,
-  UPDATE_EXECMODULE_REQUEST,
-  DELETE_EXECMODULE_REQUEST,
-  addExecModuleFailure,
-  addExecModuleSuccess,
-  fetchExecModuleFailure,
-  fetchExecModuleSuccess,
-  listExecModuleFailure,
-  listExecModuleSuccess,
-  updateExecModuleFailure,
-  updateExecModuleSuccess,
-  deleteExecModuleFailure,
-  deleteExecModuleSuccess,
-} from "../actions/ExecModuleApiAction";
+
+    ADD_EXECMODULE_REQUEST,
+    FETCH_EXECMODULE_REQUEST,
+    LIST_EXECMODULE_REQUEST,
+    UPDATE_EXECMODULE_REQUEST,
+    DELETE_EXECMODULE_REQUEST,
+
+    addExecModuleFailure,
+    addExecModuleSuccess,
+
+    fetchExecModuleFailure,
+    fetchExecModuleSuccess,
+    
+    listExecModuleFailure,
+    listExecModuleSuccess,
+
+    updateExecModuleFailure,
+    updateExecModuleSuccess,
+    
+    deleteExecModuleFailure,
+    deleteExecModuleSuccess,
+    
+} from '../actions/ExecModuleApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ExecModule
 */
 
-export const ExecModuleMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const ExecModuleMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

@@ -104,6 +104,9 @@ const Form: React.FC<FormProps> = ({
       }
     } catch (error) {
       console.error("Form submission error:", error);
+      formikHelpers.setStatus(
+        error instanceof Error ? error.message : "Login failed.",
+      );
       setSubmitting(false);
     }
   };
@@ -135,6 +138,7 @@ const Form: React.FC<FormProps> = ({
             setFieldTouched,
             handleSubmit,
             isValid,
+            status,
           }) => {
             if (loginFailed) {
               touched = {};
@@ -176,6 +180,17 @@ const Form: React.FC<FormProps> = ({
                       error: loginUserResult?.error,
                       username: loginUserResult?.originalArgs?.username,
                     })}
+                    callback={() => {
+                      /* dismiss by retrying or editing fields */
+                    }}
+                  />
+                )}
+                {status && (
+                  <ErrorModal
+                    variant="inline"
+                    severity="danger"
+                    title="Login Failed"
+                    errorMessage={String(status)}
                     callback={() => {
                       /* dismiss by retrying or editing fields */
                     }}

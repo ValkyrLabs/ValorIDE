@@ -8,11 +8,13 @@
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
+    "noEmit": false,
+    "noEmitOnError": true,
     "types": ["node", "mocha", "should", "vscode", "chai"],
     "typeRoots": ["./node_modules/@types", "./src/test/types"],
     "outDir": "out",
-    "rootDir": "src"
+    "rootDir": "."
   },
-  "include": ["src/**/*.test.ts"],
-  "exclude": ["src/test/**/*.js", "src/**/__tests__/*"]
+  "include": ["src/test/*.ts"],
+  "exclude": ["src/test/**/*.js"]
 }

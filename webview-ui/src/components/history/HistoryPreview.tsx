@@ -1,4 +1,3 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { vscode } from "@thorapi/utils/vscode";
 import { memo } from "react";
@@ -72,47 +71,31 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
           .map((item) => (
             <Card
               className="history-preview-item history-preview-card"
-              style={{ cursor: "pointer", maxHeight: "8em", margin: "1em" }}
               key={item.id}
               onClick={() => handleHistorySelect(item.id)}
             >
-              <Card.Header
-                style={{
-                  cursor: "pointer",
-                  maxHeight: ".5em",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
+              <Card.Header>
                 <span className="timestamp">{formatDate(item.ts)}</span>
-              </Card.Header>
-
-              <Card.Body
-                style={{ cursor: "pointer", fontSize: "0.8em", padding: "1em" }}
-              >
-                <span className="task-text">{item.task}</span>
-                <span>
+                <span className="history-preview-token-row">
                   Tokens: ↑{formatLargeNumber(item.tokensIn || 0)} ↓
                   {formatLargeNumber(item.tokensOut || 0)}
                 </span>
                 {!!item.cacheWrites && (
-                  <>
-                    {" • "}
-                    <span>
-                      Cache: +{formatLargeNumber(item.cacheWrites || 0)} →{" "}
-                      {formatLargeNumber(item.cacheReads || 0)}
-                    </span>
-                  </>
+                  <span className="history-preview-meta-row">
+                    Cache: +{formatLargeNumber(item.cacheWrites || 0)} →{" "}
+                    {formatLargeNumber(item.cacheReads || 0)}
+                  </span>
                 )}
                 {!!item.totalCost && (
-                  <b>
-                    {" • "}
-                    <span>
-                      <FaDollarSign />
-                      API Cost: ${item.totalCost?.toFixed(4)}
-                    </span>
-                  </b>
+                  <span className="history-preview-meta-row">
+                    <FaDollarSign />
+                    API Cost: ${item.totalCost?.toFixed(4)}
+                  </span>
                 )}
+              </Card.Header>
+
+              <Card.Body>
+                <div className="task-text">{item.task}</div>
               </Card.Body>
             </Card>
           ))}

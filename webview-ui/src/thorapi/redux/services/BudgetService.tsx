@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Budget } from "@thorapi/model/Budget";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Budget } from '@thorapi/model/Budget'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BudgetResponse = Budget[];
+type BudgetResponse = Budget[]
+type BudgetPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Budget>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BudgetListQueryArg = {
+  example?: Partial<Budget>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBudgetList = (result: unknown): BudgetResponse => {
   if (Array.isArray(result)) {
-    return result as BudgetResponse;
+    return result as BudgetResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BudgetResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BudgetResponse) : []
+}
 
 export const BudgetService = createApi({
-  reducerPath: "Budget", // This should remain unique
+  reducerPath: 'Budget', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Budget"],
+  tagTypes: ['Budget'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBudgetsPaged: build.query<
-      BudgetResponse,
-      { page: number; size?: number; example?: Partial<Budget> }
-    >({
+    getBudgetsPaged: build.query<BudgetResponse, BudgetPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Budget?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Budget?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBudgetList(result);
+        const rows = toBudgetList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Budget" as const, id })),
-          { type: "Budget", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Budget' as const, id })),
+          { type: 'Budget', id: `PAGE_${page}` },
+          { type: 'Budget', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBudgets: build.query<
-      BudgetResponse,
-      { example?: Partial<Budget> } | void
-    >({
+    getBudgets: build.query<BudgetResponse, BudgetListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const BudgetService = createApi({
         return `Budget`;
       },
       providesTags: (result) => {
-        const rows = toBudgetList(result);
+        const rows = toBudgetList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Budget" as const, id })),
-          { type: "Budget", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Budget' as const, id })),
+          { type: 'Budget', id: 'LIST' },
+          { type: 'Budget', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,42 +97,32 @@ export const BudgetService = createApi({
     addBudget: build.mutation<Budget, Partial<Budget>>({
       query: (body) => ({
         url: `Budget`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Budget", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Budget', id: 'LIST' },
+        { type: 'Budget', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBudget: build.query<Budget, string>({
       query: (id) => `Budget/${id}`,
-      providesTags: (result, error, id) => [{ type: "Budget", id }],
+      providesTags: (result, error, id) => [{ type: 'Budget', id }],
     }),
 
     // 5) Update
-    updateBudget: build.mutation<void, Pick<Budget, "id"> & Partial<Budget>>({
+    updateBudget: build.mutation<Budget, Pick<Budget, 'id'> & Partial<Budget>>({
       query: ({ id, ...patch }) => ({
         url: `Budget/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BudgetService.util.updateQueryData("getBudget", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Budget, "id">) => [
-        { type: "Budget", id },
-        { type: "Budget", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Budget, 'id'>) => [
+        { type: 'Budget', id },
+        { type: 'Budget', id: 'LIST' },
+        { type: 'Budget', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -131,35 +131,37 @@ export const BudgetService = createApi({
       query(id) {
         return {
           url: `Budget/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Budget", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Budget', id },
+        { type: 'Budget', id: 'LIST' },
+        { type: 'Budget', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBudgetCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBudgetCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Budget/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Budget", id },
-        { type: "Budget", id: "LIST" },
+        { type: 'Budget', id },
+        { type: 'Budget', id: 'LIST' },
+        { type: 'Budget', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBudgetsPagedQuery`
 export const {
-  useGetBudgetsPagedQuery, // immediate fetch
+  useGetBudgetsPagedQuery,     // immediate fetch
   useLazyGetBudgetsPagedQuery, // lazy fetch
   useGetBudgetQuery,
   useGetBudgetsQuery,
@@ -167,4 +169,4 @@ export const {
   useUpdateBudgetMutation,
   useDeleteBudgetMutation,
   useDeleteBudgetCascadeMutation,
-} = BudgetService;
+} = BudgetService

@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  Budget,
+  BudgetStatusEnum,
+} from '@thorapi/model';
 
-import { Budget, BudgetStatusEnum } from "@thorapi/model";
-
-import { useAddBudgetMutation } from "../../services/BudgetService";
+import { useAddBudgetMutation } from '../../services/BudgetService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,55 +62,47 @@ Per-principal budget tracking for cost control and kill switches
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return ["ACTIVE", "EXCEEDED", "EXPIRED"];
+  return [
+    'ACTIVE',
+    'EXCEEDED',
+    'EXPIRED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  periodStart: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("periodStart must be a valid date"),
-  periodEnd: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("periodEnd must be a valid date"),
-  maxCostTokens: asNumber(
-    Yup.number().typeError("maxCostTokens must be a number"),
-  ),
-  maxExecutions: asNumber(
-    Yup.number().integer().typeError("maxExecutions must be a number"),
-  ),
-  currentCostTokens: asNumber(
-    Yup.number().typeError("currentCostTokens must be a number"),
-  ),
-  currentExecutions: asNumber(
-    Yup.number().integer().typeError("currentExecutions must be a number"),
-  ),
-  alertThreshold: asNumber(
-    Yup.number().typeError("alertThreshold must be a number"),
-  ),
-  killSwitchEnabled: Yup.boolean(),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+        periodStart: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("periodStart must be a valid date"),
+        periodEnd: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("periodEnd must be a valid date"),
+        maxCostTokens: asNumber(Yup.number().typeError("maxCostTokens must be a number")),
+        maxExecutions: asNumber(Yup.number().integer().typeError("maxExecutions must be a number")),
+        currentCostTokens: asNumber(Yup.number().typeError("currentCostTokens must be a number")),
+        currentExecutions: asNumber(Yup.number().integer().typeError("currentExecutions must be a number")),
+        alertThreshold: asNumber(Yup.number().typeError("alertThreshold must be a number")),
+        killSwitchEnabled: Yup.boolean(),
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -132,18 +119,12 @@ const BudgetForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -151,17 +132,17 @@ const BudgetForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Budget> = {
-    name: "",
-    periodStart: new Date(),
-    periodEnd: new Date(),
-    maxCostTokens: 0,
-    maxExecutions: 0,
-    currentCostTokens: 0,
-    currentExecutions: 0,
-    alertThreshold: 0,
-    killSwitchEnabled: false,
-    status: undefined,
-    trashed: false,
+          name: '',
+          periodStart: new Date(),
+          periodEnd: new Date(),
+          maxCostTokens: 0,
+          maxExecutions: 0,
+          currentCostTokens: 0,
+          currentExecutions: 0,
+          alertThreshold: 0,
+          killSwitchEnabled: false,
+        status: undefined,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -176,14 +157,11 @@ const BudgetForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Budget:", grants);
+    console.log('Permissions saved for new Budget:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Budget>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Budget>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -194,7 +172,7 @@ const BudgetForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Budget created successfully! Would you like to set permissions for this object?`,
+          `Budget created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -202,8 +180,8 @@ const BudgetForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Budget:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Budget:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -224,36 +202,44 @@ const BudgetForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addBudgetResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Budget
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Budget
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -265,38 +251,38 @@ const BudgetForm: React.FC = () => {
                     <label htmlFor="periodStart" className="nice-form-control">
                       <b>
                         Period Start:
-                        {touched.periodStart && !errors.periodStart && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.periodStart &&
+                         !errors.periodStart && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="periodStart"
-                        type="datetime-local"
-                        value={
-                          values.periodStart
-                            ? new Date(values.periodStart)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("periodStart", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "periodStart",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.periodStart
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="periodStart"
+                            type="datetime-local"
+                            value={values.periodStart ? 
+                              new Date(values.periodStart).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('periodStart', true);
+                              const v = e.target.value;
+                              setFieldValue('periodStart', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.periodStart
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -308,38 +294,38 @@ const BudgetForm: React.FC = () => {
                     <label htmlFor="periodEnd" className="nice-form-control">
                       <b>
                         Period End:
-                        {touched.periodEnd && !errors.periodEnd && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.periodEnd &&
+                         !errors.periodEnd && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="periodEnd"
-                        type="datetime-local"
-                        value={
-                          values.periodEnd
-                            ? new Date(values.periodEnd)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("periodEnd", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "periodEnd",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.periodEnd
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="periodEnd"
+                            type="datetime-local"
+                            value={values.periodEnd ? 
+                              new Date(values.periodEnd).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('periodEnd', true);
+                              const v = e.target.value;
+                              setFieldValue('periodEnd', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.periodEnd
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -348,39 +334,40 @@ const BudgetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="maxCostTokens"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="maxCostTokens" className="nice-form-control">
                       <b>
                         Max Cost Tokens:
-                        {touched.maxCostTokens && !errors.maxCostTokens && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxCostTokens &&
+                         !errors.maxCostTokens && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="maxCostTokens"
-                        type="number"
-                        step="any"
-                        value={values.maxCostTokens || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxCostTokens", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxCostTokens",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxCostTokens
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="maxCostTokens"
+                            type="number"
+                            step="any"
+                            value={values.maxCostTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxCostTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('maxCostTokens', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxCostTokens
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -389,38 +376,39 @@ const BudgetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="maxExecutions"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="maxExecutions" className="nice-form-control">
                       <b>
                         Max Executions:
-                        {touched.maxExecutions && !errors.maxExecutions && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.maxExecutions &&
+                         !errors.maxExecutions && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="maxExecutions"
-                        type="number"
-                        value={values.maxExecutions || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("maxExecutions", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "maxExecutions",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.maxExecutions
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="maxExecutions"
+                            type="number"
+                            value={values.maxExecutions || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxExecutions', true);
+                              const v = e.target.value;
+                              setFieldValue('maxExecutions', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.maxExecutions
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -429,122 +417,123 @@ const BudgetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="currentCostTokens"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="currentCostTokens" className="nice-form-control">
                       <b>
                         Current Cost Tokens:
                         {touched.currentCostTokens &&
-                          !errors.currentCostTokens && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="currentCostTokens"
-                        type="number"
-                        step="any"
-                        value={values.currentCostTokens || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentCostTokens", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentCostTokens",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentCostTokens
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="currentCostTokens"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="currentExecutions"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Current Executions:
-                        {touched.currentExecutions &&
-                          !errors.currentExecutions && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
-                      </b>
-
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="currentExecutions"
-                        type="number"
-                        value={values.currentExecutions || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("currentExecutions", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "currentExecutions",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.currentExecutions
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
-
-                      <ErrorMessage
-                        className="error"
-                        name="currentExecutions"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label
-                      htmlFor="alertThreshold"
-                      className="nice-form-control"
-                    >
-                      <b>
-                        Alert Threshold:
-                        {touched.alertThreshold && !errors.alertThreshold && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                         !errors.currentCostTokens && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="alertThreshold"
-                        type="number"
-                        step="any"
-                        value={values.alertThreshold || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("alertThreshold", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "alertThreshold",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.alertThreshold
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="currentCostTokens"
+                            type="number"
+                            step="any"
+                            value={values.currentCostTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentCostTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('currentCostTokens', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentCostTokens
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="currentCostTokens"
+                        component="span"
                       />
+                    </label>
+                    <br />
+                    <label htmlFor="currentExecutions" className="nice-form-control">
+                      <b>
+                        Current Executions:
+                        {touched.currentExecutions &&
+                         !errors.currentExecutions && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="currentExecutions"
+                            type="number"
+                            value={values.currentExecutions || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentExecutions', true);
+                              const v = e.target.value;
+                              setFieldValue('currentExecutions', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentExecutions
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="currentExecutions"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="alertThreshold" className="nice-form-control">
+                      <b>
+                        Alert Threshold:
+                        {touched.alertThreshold &&
+                         !errors.alertThreshold && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="alertThreshold"
+                            type="number"
+                            step="any"
+                            value={values.alertThreshold || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('alertThreshold', true);
+                              const v = e.target.value;
+                              setFieldValue('alertThreshold', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.alertThreshold
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -553,32 +542,35 @@ const BudgetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="killSwitchEnabled"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="killSwitchEnabled" className="nice-form-control">
                       <b>
                         Kill Switch Enabled:
                         {touched.killSwitchEnabled &&
-                          !errors.killSwitchEnabled && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.killSwitchEnabled && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="killSwitchEnabled"
-                        name="killSwitchEnabled"
-                        checked={values.killSwitchEnabled || false}
-                        onChange={(e) => {
-                          setFieldTouched("killSwitchEnabled", true);
-                          setFieldValue("killSwitchEnabled", e.target.checked);
-                        }}
-                        isInvalid={!!errors.killSwitchEnabled}
-                        className={errors.killSwitchEnabled ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="killSwitchEnabled"
+                            name="killSwitchEnabled"
+                            checked={values.killSwitchEnabled || false}
+                            onChange={(e) => {
+                              setFieldTouched('killSwitchEnabled', true);
+                              setFieldValue('killSwitchEnabled', e.target.checked);
+                            }}
+                            isInvalid={!!errors.killSwitchEnabled}
+                            className={errors.killSwitchEnabled ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -590,30 +582,30 @@ const BudgetForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -625,25 +617,32 @@ const BudgetForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -653,58 +652,45 @@ const BudgetForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Budget
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Budget
+                  </CoolButton>
 
-                    {(addBudgetResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addBudgetResult as any).error
-                              ? (addBudgetResult as any).error.data
-                              : (addBudgetResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addBudgetResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addBudgetResult as any).error ? (addBudgetResult as any).error.data : (addBudgetResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addBudgetResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addBudgetResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addBudgetResult: {JSON.stringify(addBudgetResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addBudgetResult: {JSON.stringify(addBudgetResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -736,12 +722,15 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="ACTIVE" label="Active" />
-      <option value="EXCEEDED" label="Exceeded" />
-      <option value="EXPIRED" label="Expired" />
+      <option value='ACTIVE' label="Active" />
+      <option value='EXCEEDED' label="Exceeded" />
+      <option value='EXPIRED' label="Expired" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default BudgetForm;
+

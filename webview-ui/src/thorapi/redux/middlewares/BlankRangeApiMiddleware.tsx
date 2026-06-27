@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_BLANKRANGE_REQUEST,
-  FETCH_BLANKRANGE_REQUEST,
-  LIST_BLANKRANGE_REQUEST,
-  UPDATE_BLANKRANGE_REQUEST,
-  DELETE_BLANKRANGE_REQUEST,
-  addBlankRangeFailure,
-  addBlankRangeSuccess,
-  fetchBlankRangeFailure,
-  fetchBlankRangeSuccess,
-  listBlankRangeFailure,
-  listBlankRangeSuccess,
-  updateBlankRangeFailure,
-  updateBlankRangeSuccess,
-  deleteBlankRangeFailure,
-  deleteBlankRangeSuccess,
-} from "../actions/BlankRangeApiAction";
+
+    ADD_BLANKRANGE_REQUEST,
+    FETCH_BLANKRANGE_REQUEST,
+    LIST_BLANKRANGE_REQUEST,
+    UPDATE_BLANKRANGE_REQUEST,
+    DELETE_BLANKRANGE_REQUEST,
+
+    addBlankRangeFailure,
+    addBlankRangeSuccess,
+
+    fetchBlankRangeFailure,
+    fetchBlankRangeSuccess,
+    
+    listBlankRangeFailure,
+    listBlankRangeSuccess,
+
+    updateBlankRangeFailure,
+    updateBlankRangeSuccess,
+    
+    deleteBlankRangeFailure,
+    deleteBlankRangeSuccess,
+    
+} from '../actions/BlankRangeApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: BlankRange
 */
 
-export const BlankRangeMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("BlankRange MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const BlankRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("BlankRange MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

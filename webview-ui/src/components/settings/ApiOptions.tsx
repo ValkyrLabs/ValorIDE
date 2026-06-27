@@ -84,7 +84,6 @@ import OpenRouterModelPicker, {
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
 import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
-import { useGetLlmDetailssQuery } from "@thorapi/redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
   showModelOptions: boolean;
@@ -233,34 +232,6 @@ const ApiOptions = ({
   }, []);
   useEvent("message", handleMessage);
 
-  // Valkyrai LlmDetails
-  const { data: llmDetailsList } = useGetLlmDetailssQuery();
-  // Workaround for VSCodeDropdown dynamic options selection bug:
-  // create a stable key based on option ids so the dropdown remounts
-  // when the available options change, preserving the selected value.
-  const valkyraiOptionsKey = useMemo(
-    () => JSON.stringify((llmDetailsList || []).map((m) => m.id || "")),
-    [llmDetailsList],
-  );
-  const valkyraiModels: Record<string, ModelInfo> = useMemo(() => {
-    const models: Record<string, ModelInfo> = {};
-    (llmDetailsList || []).forEach((m) => {
-      if (!m.id) return;
-      models[m.id] = {
-        maxTokens: m.maxTokens,
-        contextWindow: m.contextWindow,
-        supportsImages: m.supportsImages,
-        supportsPromptCache: !!m.supportsPromptCache,
-        inputPrice: m.inputPrice,
-        outputPrice: m.outputPrice,
-        description:
-          m.description ||
-          `${m.provider} ${m.name}${m.version ? ` (${m.version})` : ""}`,
-      } as ModelInfo;
-    });
-    return models;
-  }, [llmDetailsList]);
-
   /*
   VSCodeDropdown has an open bug where dynamically rendered options don't auto select the provided value prop. You can see this for yourself by comparing  it with normal select/option elements, which work as expected.
   https://github.com/microsoft/vscode-webview-ui-toolkit/issues/433
@@ -336,8 +307,7 @@ const ApiOptions = ({
             position: "relative",
           }}
         >
-          <VSCodeOption value="valkyrai">Valkyrai (LLM Details)</VSCodeOption>
-          <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
+          <VSCodeOption value="valkyrai">ValkyrAI</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
           <VSCodeOption value="moonshot">
             Moonshot (Kimi2 / Kimi2.5)
@@ -365,14 +335,9 @@ const ApiOptions = ({
         </VSCodeDropdown>
       </DropdownContainer>
 
-      {selectedProvider === "valoride" && (
-        <div style={{ marginBottom: 14, marginTop: 4 }}>
-          <ValorIDEAccountInfoCard />
-        </div>
-      )}
-
       {selectedProvider === "valkyrai" && (
         <div style={{ marginBottom: 14, marginTop: 4 }}>
+          <ValorIDEAccountInfoCard />
           <LlmDetailsModelPicker />
         </div>
       )}
@@ -1776,8 +1741,8 @@ const ApiOptions = ({
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              Extended thinking is available for models as Sonnet-3-7, o3-mini,
-              Deepseek R1, etc. More info on{" "}
+              Extended thinking is available for current Claude 4 models, GPT-5
+              reasoning models, Deepseek R1, etc. More info on{" "}
               <VSCodeLink
                 href="https://docs.litellm.ai/docs/reasoning_content"
                 style={{ display: "inline", fontSize: "inherit" }}
@@ -2345,17 +2310,28 @@ const ApiOptions = ({
             </DropdownContainer>
 
             {((selectedProvider === "anthropic" &&
-              selectedModelId === "claude-3-7-sonnet-20250219") ||
+              [
+                "claude-opus-4-8",
+                "claude-sonnet-4-6",
+                "claude-haiku-4-5-20251001",
+              ].includes(selectedModelId)) ||
               (selectedProvider === "bedrock" &&
-                selectedModelId ===
-                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                [
+                  "anthropic.claude-opus-4-8",
+                  "anthropic.claude-sonnet-4-6",
+                  "anthropic.claude-haiku-4-5-20251001-v1:0",
+                ].includes(selectedModelId)) ||
               (selectedProvider === "vertex" &&
-                selectedModelId === "claude-3-7-sonnet@20250219")) && (
-                <ThinkingBudgetSlider
-                  apiConfiguration={apiConfiguration}
-                  setApiConfiguration={setApiConfiguration}
-                />
-              )}
+                [
+                  "claude-opus-4-8",
+                  "claude-sonnet-4-6",
+                  "claude-haiku-4-5@20251001",
+                ].includes(selectedModelId))) && (
+              <ThinkingBudgetSlider
+                apiConfiguration={apiConfiguration}
+                setApiConfiguration={setApiConfiguration}
+              />
+            )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (
@@ -2694,7 +2670,10 @@ export function normalizeApiConfiguration(
   selectedModelId: string;
   selectedModelInfo: ModelInfo;
 } {
-  const provider = apiConfiguration?.apiProvider || "anthropic";
+  const provider =
+    apiConfiguration?.apiProvider === "valoride"
+      ? "valkyrai"
+      : apiConfiguration?.apiProvider || "anthropic";
   const modelId = apiConfiguration?.apiModelId;
 
   const getProviderData = (
@@ -2771,14 +2750,6 @@ export function normalizeApiConfiguration(
         selectedModelInfo:
           apiConfiguration?.requestyModelInfo || requestyDefaultModelInfo,
       };
-    case "valoride":
-      return {
-        selectedProvider: provider,
-        selectedModelId:
-          apiConfiguration?.openRouterModelId || openRouterDefaultModelId,
-        selectedModelInfo:
-          apiConfiguration?.openRouterModelInfo || openRouterDefaultModelInfo,
-      };
     case "openai":
       return {
         selectedProvider: provider,
@@ -2803,10 +2774,10 @@ export function normalizeApiConfiguration(
           supportsPromptCache: false,
           contextWindow:
             Number.isFinite(ollamaConfiguredContext) &&
-              ollamaConfiguredContext > 0
+            ollamaConfiguredContext > 0
               ? ollamaConfiguredContext
               : ollamaPreset?.contextWindow ||
-              openAiModelInfoSaneDefaults.contextWindow,
+                openAiModelInfoSaneDefaults.contextWindow,
         },
       };
     case "lmstudio":

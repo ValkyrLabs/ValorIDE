@@ -12,12 +12,13 @@
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
     "downlevelIteration": true,
     "resolveJsonModule": true,
-    "rootDir": ".",
+    "rootDir": "..",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": false,
@@ -27,39 +28,28 @@
     "baseUrl": ".",
     "paths": {
       "@api/*": ["src/api/*"],
-      "@thorapi/model": [
-        "webview-ui/src/thorapi/model/index.ts",
-        "src/thorapi/model/index.ts"
-      ],
-      "@thorapi/model/*": [
-        "webview-ui/src/thorapi/model/*",
-        "src/thorapi/model/*"
-      ],
-      "@thorapi/src": [
-        "webview-ui/src/thorapi/src/index.ts",
-        "src/thorapi/src/index.ts"
-      ],
-      "@thorapi/redux/*": [
-        "webview-ui/src/thorapi/redux/*",
-        "src/thorapi/redux/*"
-      ],
-      "@thorapi/redux/services/*": [
-        "webview-ui/src/thorapi/redux/services/*",
-        "src/thorapi/redux/services/*"
-      ],
+      "@thorapi/model": ["webview-ui/src/thorapi/model/index.ts"],
+      "@thorapi/model/*": ["webview-ui/src/thorapi/model/*"],
+      "@thorapi/src": ["webview-ui/src/thorapi/src/index.ts"],
+      "@thorapi/redux/*": ["webview-ui/src/thorapi/redux/*"],
+      "@thorapi/redux/services/*": ["webview-ui/src/thorapi/redux/services/*"],
       "@thorapi/api/*": [
         "webview-ui/src/api/*",
         "src/api/*",
-        "webview-ui/src/thorapi/api/*",
-        "src/thorapi/api/*"
+        "webview-ui/src/thorapi/api/*"
       ],
       "@thorapi/api": [
         "webview-ui/src/thorapi/api/index.ts",
-        "src/thorapi/api/index.ts",
         "webview-ui/src/api/index.ts",
         "src/api/index.ts"
       ],
       "@thorapi/*": ["webview-ui/src/*", "src/*"],
+      "@valkyrai/openapi-designer": [
+        "../ValkyrAI/packages/component-library/src/openapi-designer"
+      ],
+      "@valkyrai/openapi-designer/*": [
+        "../ValkyrAI/packages/component-library/src/openapi-designer/*"
+      ],
       "@websocket/*": ["webview-ui/src/websocket/*"],
       "@core/*": ["src/core/*"],
       "@integrations/*": ["src/integrations/*"],

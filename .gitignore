@@ -2,5 +2,11 @@ node_modules
 dist
 public
 
+# TypeScript source trees should not contain emitted JavaScript artifacts.
+src/**/*.js
+src/**/*.js.map
+webview-ui/src/**/*.js
+webview-ui/src/**/*.js.map
+
 *.vsix
 .worktrees/

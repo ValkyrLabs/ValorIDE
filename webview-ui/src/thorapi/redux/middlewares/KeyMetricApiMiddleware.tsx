@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_KEYMETRIC_REQUEST,
-  FETCH_KEYMETRIC_REQUEST,
-  LIST_KEYMETRIC_REQUEST,
-  UPDATE_KEYMETRIC_REQUEST,
-  DELETE_KEYMETRIC_REQUEST,
-  addKeyMetricFailure,
-  addKeyMetricSuccess,
-  fetchKeyMetricFailure,
-  fetchKeyMetricSuccess,
-  listKeyMetricFailure,
-  listKeyMetricSuccess,
-  updateKeyMetricFailure,
-  updateKeyMetricSuccess,
-  deleteKeyMetricFailure,
-  deleteKeyMetricSuccess,
-} from "../actions/KeyMetricApiAction";
+
+    ADD_KEYMETRIC_REQUEST,
+    FETCH_KEYMETRIC_REQUEST,
+    LIST_KEYMETRIC_REQUEST,
+    UPDATE_KEYMETRIC_REQUEST,
+    DELETE_KEYMETRIC_REQUEST,
+
+    addKeyMetricFailure,
+    addKeyMetricSuccess,
+
+    fetchKeyMetricFailure,
+    fetchKeyMetricSuccess,
+    
+    listKeyMetricFailure,
+    listKeyMetricSuccess,
+
+    updateKeyMetricFailure,
+    updateKeyMetricSuccess,
+    
+    deleteKeyMetricFailure,
+    deleteKeyMetricSuccess,
+    
+} from '../actions/KeyMetricApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: KeyMetric
 */
 
-export const KeyMetricMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("KeyMetric MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const KeyMetricMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("KeyMetric MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

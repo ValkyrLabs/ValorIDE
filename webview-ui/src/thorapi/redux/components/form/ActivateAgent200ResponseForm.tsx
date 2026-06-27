@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  ActivateAgent200Response,
+} from '@thorapi/model';
 
-import { ActivateAgent200Response } from "@thorapi/model";
-
-import { useAddActivateAgent200ResponseMutation } from "../../services/ActivateAgent200ResponseService";
+import { useAddActivateAgent200ResponseMutation } from '../../services/ActivateAgent200ResponseService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,26 +65,19 @@ Response for successful agent activation summary
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  scheduled: asNumber(
-    Yup.number().integer().typeError("scheduled must be a number"),
-  ),
-  triggersRegistered: asNumber(
-    Yup.number().integer().typeError("triggersRegistered must be a number"),
-  ),
-  trashed: Yup.boolean(),
+        scheduled: asNumber(Yup.number().integer().typeError("scheduled must be a number")),
+        triggersRegistered: asNumber(Yup.number().integer().typeError("triggersRegistered must be a number")),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ActivateAgent200ResponseForm: React.FC = () => {
-  const [addActivateAgent200Response, addActivateAgent200ResponseResult] =
-    useAddActivateAgent200ResponseMutation();
+  const [addActivateAgent200Response, addActivateAgent200ResponseResult] = useAddActivateAgent200ResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -100,18 +87,12 @@ const ActivateAgent200ResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -119,9 +100,9 @@ const ActivateAgent200ResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ActivateAgent200Response> = {
-    scheduled: 0,
-    triggersRegistered: 0,
-    trashed: false,
+          scheduled: 0,
+          triggersRegistered: 0,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,14 +117,11 @@ const ActivateAgent200ResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ActivateAgent200Response:", grants);
+    console.log('Permissions saved for new ActivateAgent200Response:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ActivateAgent200Response>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ActivateAgent200Response>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -154,7 +132,7 @@ const ActivateAgent200ResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ActivateAgent200Response created successfully! Would you like to set permissions for this object?`,
+          `ActivateAgent200Response created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -162,8 +140,8 @@ const ActivateAgent200ResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ActivateAgent200Response:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ActivateAgent200Response:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -184,49 +162,52 @@ const ActivateAgent200ResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addActivateAgent200ResponseResult.isLoading;
+          const isSaving = isSubmitting || addActivateAgent200ResponseResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    ActivateAgent200Response
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ActivateAgent200Response
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="scheduled" className="nice-form-control">
                       <b>
                         Scheduled:
-                        {touched.scheduled && !errors.scheduled && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.scheduled &&
+                         !errors.scheduled && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="scheduled"
-                        type="number"
-                        value={values.scheduled || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("scheduled", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "scheduled",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.scheduled
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="scheduled"
+                            type="number"
+                            value={values.scheduled || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('scheduled', true);
+                              const v = e.target.value;
+                              setFieldValue('scheduled', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.scheduled
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -235,39 +216,39 @@ const ActivateAgent200ResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="triggersRegistered"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="triggersRegistered" className="nice-form-control">
                       <b>
                         Triggers Registered:
                         {touched.triggersRegistered &&
-                          !errors.triggersRegistered && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.triggersRegistered && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="triggersRegistered"
-                        type="number"
-                        value={values.triggersRegistered || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("triggersRegistered", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "triggersRegistered",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.triggersRegistered
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="triggersRegistered"
+                            type="number"
+                            value={values.triggersRegistered || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('triggersRegistered', true);
+                              const v = e.target.value;
+                              setFieldValue('triggersRegistered', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.triggersRegistered
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -279,25 +260,32 @@ const ActivateAgent200ResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -307,65 +295,45 @@ const ActivateAgent200ResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      ActivateAgent200Response
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ActivateAgent200Response
+                  </CoolButton>
 
-                    {(addActivateAgent200ResponseResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addActivateAgent200ResponseResult as any).error
-                              ? (addActivateAgent200ResponseResult as any).error
-                                  .data
-                              : (addActivateAgent200ResponseResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addActivateAgent200ResponseResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addActivateAgent200ResponseResult as any).error ? (addActivateAgent200ResponseResult as any).error.data : (addActivateAgent200ResponseResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addActivateAgent200ResponseResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addActivateAgent200ResponseResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addActivateAgent200ResponseResult:{" "}
-                    {JSON.stringify(addActivateAgent200ResponseResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addActivateAgent200ResponseResult: {JSON.stringify(addActivateAgent200ResponseResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -385,5 +353,8 @@ const ActivateAgent200ResponseForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default ActivateAgent200ResponseForm;
+

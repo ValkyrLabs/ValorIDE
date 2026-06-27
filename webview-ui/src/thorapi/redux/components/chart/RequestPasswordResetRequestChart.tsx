@@ -19,35 +19,20 @@ Description: RequestPasswordResetRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, RequestPasswordResetRequest } from "@thorapi/model";
-import {
-  useGetRequestPasswordResetRequestsQuery,
-  useAddRequestPasswordResetRequestMutation,
-  useUpdateRequestPasswordResetRequestMutation,
-} from "../../services/RequestPasswordResetRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, RequestPasswordResetRequest } from '@thorapi/model';
+import { useGetRequestPasswordResetRequestsQuery, useAddRequestPasswordResetRequestMutation, useUpdateRequestPasswordResetRequestMutation } from '../../services/RequestPasswordResetRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const RequestPasswordResetRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetRequestPasswordResetRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetRequestPasswordResetRequestsQuery();
 
   const [data, setData] = useState<RequestPasswordResetRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<RequestPasswordResetRequest>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<RequestPasswordResetRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const RequestPasswordResetRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const RequestPasswordResetRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((requestpasswordresetrequest: DataObject) => [
-            requestpasswordresetrequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((requestpasswordresetrequest: DataObject) => [requestpasswordresetrequest])} />
+          )}
     </>
   );
 };

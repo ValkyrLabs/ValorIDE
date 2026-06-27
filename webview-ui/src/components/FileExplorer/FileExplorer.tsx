@@ -6,7 +6,6 @@ import {
 import { vscode } from "@thorapi/utils/vscode";
 import AddToProjectModal from "./AddToProjectModal";
 import StartServerModal from "./StartServerModal";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import "./FileExplorer.css";
 
@@ -346,7 +345,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   if (loading && files.length === 0) {
     return (
       <>
-        <SystemAlerts />
         <div className="file-explorer-loading">
           <VSCodeProgressRing />
           <span>Loading workspace files...</span>
@@ -358,7 +356,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   if (error) {
     return (
       <>
-        <SystemAlerts />
         <div className="file-explorer-error">
           <p>Error loading files: {error}</p>
           <VSCodeButton onClick={fetchFiles}>Retry</VSCodeButton>
@@ -369,7 +366,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 
   return (
     <>
-      <SystemAlerts />
       <div className="file-explorer">
         <div className="file-explorer-header">
           <h3>ThorAPI Generated Files</h3>

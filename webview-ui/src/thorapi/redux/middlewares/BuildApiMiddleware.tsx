@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_BUILD_REQUEST,
-  FETCH_BUILD_REQUEST,
-  LIST_BUILD_REQUEST,
-  UPDATE_BUILD_REQUEST,
-  DELETE_BUILD_REQUEST,
-  addBuildFailure,
-  addBuildSuccess,
-  fetchBuildFailure,
-  fetchBuildSuccess,
-  listBuildFailure,
-  listBuildSuccess,
-  updateBuildFailure,
-  updateBuildSuccess,
-  deleteBuildFailure,
-  deleteBuildSuccess,
-} from "../actions/BuildApiAction";
+
+    ADD_BUILD_REQUEST,
+    FETCH_BUILD_REQUEST,
+    LIST_BUILD_REQUEST,
+    UPDATE_BUILD_REQUEST,
+    DELETE_BUILD_REQUEST,
+
+    addBuildFailure,
+    addBuildSuccess,
+
+    fetchBuildFailure,
+    fetchBuildSuccess,
+    
+    listBuildFailure,
+    listBuildSuccess,
+
+    updateBuildFailure,
+    updateBuildSuccess,
+    
+    deleteBuildFailure,
+    deleteBuildSuccess,
+    
+} from '../actions/BuildApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Build
 */
 
-export const BuildMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Build MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const BuildMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Build MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

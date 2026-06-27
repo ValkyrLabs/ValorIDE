@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,155 +36,145 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface CloudProvider
  */
-export type CloudProvider = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  provider?: CloudProviderProviderEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  region?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  projectId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  resourceGroup?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  vpcId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  subnetId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof CloudProvider
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof CloudProvider
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof CloudProvider
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof CloudProvider
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof CloudProvider
-   */
-  trashed?: boolean;
-};
+export type CloudProvider  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    provider?: CloudProviderProviderEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    region?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    projectId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    resourceGroup?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    vpcId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    subnetId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof CloudProvider
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof CloudProvider
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof CloudProvider
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof CloudProvider
+     */
+    trashed?: boolean;
+}
 
 export function CloudProviderFromJSON(json: any): CloudProvider {
-  return {
-    ...DataObjectFromJSON(json),
-    provider: !exists(json, "provider") ? undefined : json["provider"],
-    region: !exists(json, "region") ? undefined : json["region"],
-    projectId: !exists(json, "projectId") ? undefined : json["projectId"],
-    resourceGroup: !exists(json, "resourceGroup")
-      ? undefined
-      : json["resourceGroup"],
-    vpcId: !exists(json, "vpcId") ? undefined : json["vpcId"],
-    subnetId: !exists(json, "subnetId") ? undefined : json["subnetId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'provider': !exists(json, 'provider') ? undefined : json['provider'],
+        'region': !exists(json, 'region') ? undefined : json['region'],
+        'projectId': !exists(json, 'projectId') ? undefined : json['projectId'],
+        'resourceGroup': !exists(json, 'resourceGroup') ? undefined : json['resourceGroup'],
+        'vpcId': !exists(json, 'vpcId') ? undefined : json['vpcId'],
+        'subnetId': !exists(json, 'subnetId') ? undefined : json['subnetId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function CloudProviderToJSON(value?: CloudProvider): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    provider: value.provider,
-    region: value.region,
-    projectId: value.projectId,
-    resourceGroup: value.resourceGroup,
-    vpcId: value.vpcId,
-    subnetId: value.subnetId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'provider': value.provider,
+        'region': value.region,
+        'projectId': value.projectId,
+        'resourceGroup': value.resourceGroup,
+        'vpcId': value.vpcId,
+        'subnetId': value.subnetId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CloudProviderProviderEnum {
-  AWS = "aws",
-  GCP = "gcp",
-  AZURE = "azure",
-  FLY = "fly",
+    AWS = 'aws',
+    GCP = 'gcp',
+    AZURE = 'azure',
+    FLY = 'fly'
 }
+
+

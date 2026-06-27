@@ -14,17 +14,34 @@ export function formatError(error: any): string {
     if ("status" in error) {
       const status = error.status;
       const data = error.data;
+      const detail =
+        typeof error.error === "string"
+          ? error.error
+          : typeof data === "string"
+            ? data
+            : typeof data?.message === "string"
+              ? data.message
+              : typeof data?.error === "string"
+                ? data.error
+                : undefined;
 
       if (status === "FETCH_ERROR") {
-        return "Network connection failed. Please check your internet connection.";
+        return detail
+          ? `Network connection failed: ${detail}`
+          : "Network connection failed. Please check your internet connection.";
       }
       if (status === "PARSING_ERROR") {
-        return "Failed to parse server response. The server may be experiencing issues.";
+        return detail
+          ? `Failed to parse server response: ${detail}`
+          : "Failed to parse server response. The server may be experiencing issues.";
       }
       if (status === "TIMEOUT_ERROR") {
-        return "Request timed out. Please try again.";
+        return detail
+          ? `Request timed out: ${detail}`
+          : "Request timed out. Please try again.";
       }
       if (typeof status === "number") {
+        if (detail) return detail;
         switch (status) {
           case 400:
             return "Bad request. Please check your configuration.";

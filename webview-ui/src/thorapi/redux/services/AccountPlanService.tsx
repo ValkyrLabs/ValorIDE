@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AccountPlan } from "@thorapi/model/AccountPlan";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AccountPlan } from '@thorapi/model/AccountPlan'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AccountPlanResponse = AccountPlan[];
+type AccountPlanResponse = AccountPlan[]
+type AccountPlanPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AccountPlan>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type AccountPlanListQueryArg = {
+  example?: Partial<AccountPlan>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toAccountPlanList = (result: unknown): AccountPlanResponse => {
   if (Array.isArray(result)) {
-    return result as AccountPlanResponse;
+    return result as AccountPlanResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as AccountPlanResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AccountPlanResponse) : []
+}
 
 export const AccountPlanService = createApi({
-  reducerPath: "AccountPlan", // This should remain unique
+  reducerPath: 'AccountPlan', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AccountPlan"],
+  tagTypes: ['AccountPlan'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAccountPlansPaged: build.query<
-      AccountPlanResponse,
-      { page: number; size?: number; example?: Partial<AccountPlan> }
-    >({
+    getAccountPlansPaged: build.query<AccountPlanResponse, AccountPlanPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AccountPlan?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AccountPlan?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAccountPlanList(result);
+        const rows = toAccountPlanList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AccountPlan" as const, id })),
-          { type: "AccountPlan", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AccountPlan' as const, id })),
+          { type: 'AccountPlan', id: `PAGE_${page}` },
+          { type: 'AccountPlan', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAccountPlans: build.query<
-      AccountPlanResponse,
-      { example?: Partial<AccountPlan> } | void
-    >({
+    getAccountPlans: build.query<AccountPlanResponse, AccountPlanListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const AccountPlanService = createApi({
         return `AccountPlan`;
       },
       providesTags: (result) => {
-        const rows = toAccountPlanList(result);
+        const rows = toAccountPlanList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AccountPlan" as const, id })),
-          { type: "AccountPlan", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AccountPlan' as const, id })),
+          { type: 'AccountPlan', id: 'LIST' },
+          { type: 'AccountPlan', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const AccountPlanService = createApi({
     addAccountPlan: build.mutation<AccountPlan, Partial<AccountPlan>>({
       query: (body) => ({
         url: `AccountPlan`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AccountPlan", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AccountPlan', id: 'LIST' },
+        { type: 'AccountPlan', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAccountPlan: build.query<AccountPlan, string>({
       query: (id) => `AccountPlan/${id}`,
-      providesTags: (result, error, id) => [{ type: "AccountPlan", id }],
+      providesTags: (result, error, id) => [{ type: 'AccountPlan', id }],
     }),
 
     // 5) Update
-    updateAccountPlan: build.mutation<
-      void,
-      Pick<AccountPlan, "id"> & Partial<AccountPlan>
-    >({
+    updateAccountPlan: build.mutation<AccountPlan, Pick<AccountPlan, 'id'> & Partial<AccountPlan>>({
       query: ({ id, ...patch }) => ({
         url: `AccountPlan/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AccountPlanService.util.updateQueryData(
-              "getAccountPlan",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<AccountPlan, "id">) => [
-        { type: "AccountPlan", id },
-        { type: "AccountPlan", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AccountPlan, 'id'>) => [
+        { type: 'AccountPlan', id },
+        { type: 'AccountPlan', id: 'LIST' },
+        { type: 'AccountPlan', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAccountPlan: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `AccountPlan/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "AccountPlan", id }],
+    deleteAccountPlan: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `AccountPlan/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'AccountPlan', id },
+        { type: 'AccountPlan', id: 'LIST' },
+        { type: 'AccountPlan', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAccountPlanCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAccountPlanCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AccountPlan/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AccountPlan", id },
-        { type: "AccountPlan", id: "LIST" },
+        { type: 'AccountPlan', id },
+        { type: 'AccountPlan', id: 'LIST' },
+        { type: 'AccountPlan', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAccountPlansPagedQuery`
 export const {
-  useGetAccountPlansPagedQuery, // immediate fetch
+  useGetAccountPlansPagedQuery,     // immediate fetch
   useLazyGetAccountPlansPagedQuery, // lazy fetch
   useGetAccountPlanQuery,
   useGetAccountPlansQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateAccountPlanMutation,
   useDeleteAccountPlanMutation,
   useDeleteAccountPlanCascadeMutation,
-} = AccountPlanService;
+} = AccountPlanService

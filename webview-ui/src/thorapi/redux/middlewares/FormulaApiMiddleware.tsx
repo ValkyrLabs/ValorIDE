@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_FORMULA_REQUEST,
-  FETCH_FORMULA_REQUEST,
-  LIST_FORMULA_REQUEST,
-  UPDATE_FORMULA_REQUEST,
-  DELETE_FORMULA_REQUEST,
-  addFormulaFailure,
-  addFormulaSuccess,
-  fetchFormulaFailure,
-  fetchFormulaSuccess,
-  listFormulaFailure,
-  listFormulaSuccess,
-  updateFormulaFailure,
-  updateFormulaSuccess,
-  deleteFormulaFailure,
-  deleteFormulaSuccess,
-} from "../actions/FormulaApiAction";
+
+    ADD_FORMULA_REQUEST,
+    FETCH_FORMULA_REQUEST,
+    LIST_FORMULA_REQUEST,
+    UPDATE_FORMULA_REQUEST,
+    DELETE_FORMULA_REQUEST,
+
+    addFormulaFailure,
+    addFormulaSuccess,
+
+    fetchFormulaFailure,
+    fetchFormulaSuccess,
+    
+    listFormulaFailure,
+    listFormulaSuccess,
+
+    updateFormulaFailure,
+    updateFormulaSuccess,
+    
+    deleteFormulaFailure,
+    deleteFormulaSuccess,
+    
+} from '../actions/FormulaApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Formula
 */
 
-export const FormulaMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Formula MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const FormulaMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Formula MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ConfirmPasswordResetResponse } from "@thorapi/model/ConfirmPasswordResetResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ConfirmPasswordResetResponse } from '@thorapi/model/ConfirmPasswordResetResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ConfirmPasswordResetResponseResponse = ConfirmPasswordResetResponse[];
+type ConfirmPasswordResetResponseResponse = ConfirmPasswordResetResponse[]
+type ConfirmPasswordResetResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ConfirmPasswordResetResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toConfirmPasswordResetResponseList = (
-  result: unknown,
-): ConfirmPasswordResetResponseResponse => {
+type ConfirmPasswordResetResponseListQueryArg = {
+  example?: Partial<ConfirmPasswordResetResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toConfirmPasswordResetResponseList = (result: unknown): ConfirmPasswordResetResponseResponse => {
   if (Array.isArray(result)) {
-    return result as ConfirmPasswordResetResponseResponse;
+    return result as ConfirmPasswordResetResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as ConfirmPasswordResetResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ConfirmPasswordResetResponseResponse) : []
+}
 
 export const ConfirmPasswordResetResponseService = createApi({
-  reducerPath: "ConfirmPasswordResetResponse", // This should remain unique
+  reducerPath: 'ConfirmPasswordResetResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ConfirmPasswordResetResponse"],
+  tagTypes: ['ConfirmPasswordResetResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getConfirmPasswordResetResponsesPaged: build.query<
-      ConfirmPasswordResetResponseResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<ConfirmPasswordResetResponse>;
-      }
-    >({
+    getConfirmPasswordResetResponsesPaged: build.query<ConfirmPasswordResetResponseResponse, ConfirmPasswordResetResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ConfirmPasswordResetResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ConfirmPasswordResetResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toConfirmPasswordResetResponseList(result);
+        const rows = toConfirmPasswordResetResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ConfirmPasswordResetResponse" as const,
-              id,
-            })),
-          { type: "ConfirmPasswordResetResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ConfirmPasswordResetResponse' as const, id })),
+          { type: 'ConfirmPasswordResetResponse', id: `PAGE_${page}` },
+          { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getConfirmPasswordResetResponses: build.query<
-      ConfirmPasswordResetResponseResponse,
-      { example?: Partial<ConfirmPasswordResetResponse> } | void
-    >({
+    getConfirmPasswordResetResponses: build.query<ConfirmPasswordResetResponseResponse, ConfirmPasswordResetResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const ConfirmPasswordResetResponseService = createApi({
         return `ConfirmPasswordResetResponse`;
       },
       providesTags: (result) => {
-        const rows = toConfirmPasswordResetResponseList(result);
+        const rows = toConfirmPasswordResetResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ConfirmPasswordResetResponse" as const,
-              id,
-            })),
-          { type: "ConfirmPasswordResetResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ConfirmPasswordResetResponse' as const, id })),
+          { type: 'ConfirmPasswordResetResponse', id: 'LIST' },
+          { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addConfirmPasswordResetResponse: build.mutation<
-      ConfirmPasswordResetResponse,
-      Partial<ConfirmPasswordResetResponse>
-    >({
+    addConfirmPasswordResetResponse: build.mutation<ConfirmPasswordResetResponse, Partial<ConfirmPasswordResetResponse>>({
       query: (body) => ({
         url: `ConfirmPasswordResetResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ConfirmPasswordResetResponse", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getConfirmPasswordResetResponse: build.query<
-      ConfirmPasswordResetResponse,
-      string
-    >({
-      query: (id) => `ConfirmPasswordResetResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "ConfirmPasswordResetResponse", id },
+      invalidatesTags: [
+        { type: 'ConfirmPasswordResetResponse', id: 'LIST' },
+        { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getConfirmPasswordResetResponse: build.query<ConfirmPasswordResetResponse, string>({
+      query: (id) => `ConfirmPasswordResetResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: 'ConfirmPasswordResetResponse', id }],
+    }),
+
     // 5) Update
-    updateConfirmPasswordResetResponse: build.mutation<
-      void,
-      Pick<ConfirmPasswordResetResponse, "id"> &
-        Partial<ConfirmPasswordResetResponse>
-    >({
+    updateConfirmPasswordResetResponse: build.mutation<ConfirmPasswordResetResponse, Pick<ConfirmPasswordResetResponse, 'id'> & Partial<ConfirmPasswordResetResponse>>({
       query: ({ id, ...patch }) => ({
         url: `ConfirmPasswordResetResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ConfirmPasswordResetResponseService.util.updateQueryData(
-              "getConfirmPasswordResetResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<ConfirmPasswordResetResponse, "id">,
-      ) => [
-        { type: "ConfirmPasswordResetResponse", id },
-        { type: "ConfirmPasswordResetResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ConfirmPasswordResetResponse, 'id'>) => [
+        { type: 'ConfirmPasswordResetResponse', id },
+        { type: 'ConfirmPasswordResetResponse', id: 'LIST' },
+        { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteConfirmPasswordResetResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteConfirmPasswordResetResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ConfirmPasswordResetResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "ConfirmPasswordResetResponse", id },
+        { type: 'ConfirmPasswordResetResponse', id },
+        { type: 'ConfirmPasswordResetResponse', id: 'LIST' },
+        { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteConfirmPasswordResetResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteConfirmPasswordResetResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ConfirmPasswordResetResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ConfirmPasswordResetResponse", id },
-        { type: "ConfirmPasswordResetResponse", id: "LIST" },
+        { type: 'ConfirmPasswordResetResponse', id },
+        { type: 'ConfirmPasswordResetResponse', id: 'LIST' },
+        { type: 'ConfirmPasswordResetResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetConfirmPasswordResetResponsesPagedQuery`
 export const {
-  useGetConfirmPasswordResetResponsesPagedQuery, // immediate fetch
+  useGetConfirmPasswordResetResponsesPagedQuery,     // immediate fetch
   useLazyGetConfirmPasswordResetResponsesPagedQuery, // lazy fetch
   useGetConfirmPasswordResetResponseQuery,
   useGetConfirmPasswordResetResponsesQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateConfirmPasswordResetResponseMutation,
   useDeleteConfirmPasswordResetResponseMutation,
   useDeleteConfirmPasswordResetResponseCascadeMutation,
-} = ConfirmPasswordResetResponseService;
+} = ConfirmPasswordResetResponseService

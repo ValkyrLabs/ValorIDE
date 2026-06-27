@@ -13,7 +13,7 @@ import { anthropicModels } from "@shared/api";
  */
 export function validateThinkingBudget(
   value: number,
-  maxTokens: number = anthropicModels["claude-3-7-sonnet-20250219"].maxTokens,
+  maxTokens: number = anthropicModels["claude-sonnet-4-6"].maxTokens,
 ): number {
   // If disabled (0), return as is
   if (value === 0) {

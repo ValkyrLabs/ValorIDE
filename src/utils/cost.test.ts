@@ -1,7 +1,7 @@
-import { describe, it } from "mocha";
 import "should";
 import { calculateApiCostAnthropic, calculateApiCostOpenAI } from "@utils/cost";
 import { ModelInfo } from "@shared/api";
+import { normalizeOpenAiUsageChunk } from "@api/transform/openai-usage";
 
 describe("Cost Utilities", () => {
   describe("calculateApiCostAnthropic", () => {
@@ -121,6 +121,26 @@ describe("Cost Utilities", () => {
 
       const cost = calculateApiCostOpenAI(modelInfo, 0, 0, 0, 0);
       cost.should.equal(0);
+    });
+
+    it("normalizes modern OpenAI usage shapes into priced stream usage", () => {
+      const modelInfo: ModelInfo = {
+        supportsPromptCache: true,
+        inputPrice: 2,
+        outputPrice: 8,
+        cacheReadsPrice: 0.5,
+      };
+
+      const usage = normalizeOpenAiUsageChunk(modelInfo, {
+        input_tokens: 1000,
+        output_tokens: 250,
+        input_tokens_details: { cached_tokens: 200 },
+      });
+
+      usage.inputTokens.should.equal(800);
+      usage.outputTokens.should.equal(250);
+      usage.cacheReadTokens.should.equal(200);
+      usage.totalCost!.should.equal(0.0037);
     });
   });
 });

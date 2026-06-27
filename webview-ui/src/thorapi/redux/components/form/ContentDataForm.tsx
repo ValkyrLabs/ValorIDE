@@ -13,33 +13,25 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   ContentData,
@@ -48,9 +40,9 @@ import {
   ContentDataDeliveryModeEnum,
   ContentDataCategoryEnum,
   ContentDataStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddContentDataMutation } from "../../services/ContentDataService";
+import { useAddContentDataMutation } from '../../services/ContentDataService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -67,7 +59,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-General Content record for various data formats
+General content record for various data formats. Visibility is enforced by the generated ThorAPI service/ACL path for both list and single object reads. Public discoverability for published article/blog content uses the standard ContentData list endpoint with QBE/search parameters and explicit ACL grants; slug URLs resolve through the generated ContentData slug lookup and then the canonical UUID read path.
 */
 
 /* -----------------------------------------------------
@@ -75,114 +67,127 @@ General Content record for various data formats
 -------------------------------------------------------- */
 const ContentTypeValidation = () => {
   return [
-    "plaintext",
-    "markdown",
-    "json",
-    "code",
-    "yaml",
-    "audio",
-    "video",
-    "url",
-    "spreadsheet",
-    "pdf",
-    "binary",
-    "presentation",
-    "image",
-    "document",
-    "ebook",
-    "FUNNEL",
+    'plaintext',
+    'markdown',
+    'json',
+    'code',
+    'yaml',
+    'audio',
+    'video',
+    'url',
+    'spreadsheet',
+    'pdf',
+    'binary',
+    'presentation',
+    'image',
+    'document',
+    'ebook',
+    'FUNNEL',
   ];
 };
 const PriceTierValidation = () => {
-  return ["FREE", "LOW", "MEDIUM", "HIGH", "PREMIUM"];
+  return [
+    'FREE',
+    'LOW',
+    'MEDIUM',
+    'HIGH',
+    'PREMIUM',
+  ];
 };
 const DeliveryModeValidation = () => {
-  return ["DIGITAL", "PHYSICAL", "HYBRID", "SERVICE"];
+  return [
+    'DIGITAL',
+    'PHYSICAL',
+    'HYBRID',
+    'SERVICE',
+  ];
 };
 const CategoryValidation = () => {
   return [
-    "CodeGen",
-    "slides",
-    "spreadsheets",
-    "docs",
-    "BLOG",
-    "Product",
-    "SECURITY",
-    "Event",
-    "Tutorial",
-    "News",
-    "Announcement",
-    "Guide",
-    "Review",
-    "Case Study",
-    "Whitepaper",
-    "EBOOK",
-    "FUNNEL",
-    "video",
-    "audio",
-    "image",
-    "podcast",
-    "webinar",
-    "course",
-    "other",
+    'CodeGen',
+    'slides',
+    'spreadsheets',
+    'docs',
+    'BLOG',
+    'Product',
+    'SECURITY',
+    'Event',
+    'Tutorial',
+    'News',
+    'Announcement',
+    'Guide',
+    'Review',
+    'Case Study',
+    'Whitepaper',
+    'EBOOK',
+    'FUNNEL',
+    'video',
+    'audio',
+    'image',
+    'podcast',
+    'webinar',
+    'course',
+    'policy',
+    'research',
+    'report',
+    'memory',
+    'other',
   ];
 };
 const StatusValidation = () => {
-  return ["holding", "editing", "published", "DRAFT"];
+  return [
+    'holding',
+    'editing',
+    'published',
+    'DRAFT',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  authorName: Yup.string(),
-  title: Yup.string(),
-  subtitle: Yup.string(),
-  fileName: Yup.string(),
-  contentUrl: Yup.string(),
-  contentData: Yup.string(),
-  contentType: Yup.mixed().oneOf(
-    ContentTypeValidation(),
-    "Invalid value for contentType",
-  ),
-  brand: Yup.string(),
-  targetAudience: Yup.string(),
-  priceTier: Yup.mixed().oneOf(
-    PriceTierValidation(),
-    "Invalid value for priceTier",
-  ),
-  deliveryMode: Yup.mixed().oneOf(
-    DeliveryModeValidation(),
-    "Invalid value for deliveryMode",
-  ),
-  heroBenefit: Yup.string(),
-  version: asNumber(
-    Yup.number().integer().typeError("version must be a number"),
-  ),
-  metadata: Yup.string(),
-  thumbnailImage: Yup.string(),
-  largeImage: Yup.string(),
-  category: Yup.mixed().oneOf(
-    CategoryValidation(),
-    "Invalid value for category",
-  ),
-  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
-  releaseDate: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("releaseDate must be a valid date"),
-  slug: Yup.string(),
-  trashed: Yup.boolean(),
+        authorName: Yup.string(),
+        title: Yup.string(),
+        subtitle: Yup.string(),
+        fileName: Yup.string(),
+        contentUrl: Yup.string(),
+        contentData: Yup.string(),
+      contentType: Yup.mixed()
+        .oneOf(ContentTypeValidation(), "Invalid value for contentType")
+        ,
+        brand: Yup.string(),
+        targetAudience: Yup.string(),
+      priceTier: Yup.mixed()
+        .oneOf(PriceTierValidation(), "Invalid value for priceTier")
+        ,
+      deliveryMode: Yup.mixed()
+        .oneOf(DeliveryModeValidation(), "Invalid value for deliveryMode")
+        ,
+        heroBenefit: Yup.string(),
+        version: asNumber(Yup.number().integer().typeError("version must be a number")),
+        metadata: Yup.string(),
+        thumbnailImage: Yup.string(),
+        largeImage: Yup.string(),
+      category: Yup.mixed()
+        .oneOf(CategoryValidation(), "Invalid value for category")
+        ,
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+        releaseDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("releaseDate must be a valid date"),
+        slug: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -199,18 +204,12 @@ const ContentDataForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -218,27 +217,27 @@ const ContentDataForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ContentData> = {
-    authorName: "",
-    title: "",
-    subtitle: "",
-    fileName: "",
-    contentUrl: "",
-    contentData: "",
-    contentType: undefined,
-    brand: "",
-    targetAudience: "",
-    priceTier: undefined,
-    deliveryMode: undefined,
-    heroBenefit: "",
-    version: 0,
-    metadata: "",
-    thumbnailImage: "",
-    largeImage: "",
-    category: undefined,
-    status: undefined,
-    releaseDate: new Date(),
-    slug: "",
-    trashed: false,
+          authorName: '',
+          title: '',
+          subtitle: '',
+          fileName: '',
+          contentUrl: '',
+          contentData: '',
+        contentType: undefined,
+          brand: '',
+          targetAudience: '',
+        priceTier: undefined,
+        deliveryMode: undefined,
+          heroBenefit: '',
+          version: 0,
+          metadata: '',
+          thumbnailImage: '',
+          largeImage: '',
+        category: undefined,
+        status: undefined,
+          releaseDate: new Date(),
+          slug: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -253,14 +252,11 @@ const ContentDataForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new ContentData:", grants);
+    console.log('Permissions saved for new ContentData:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<ContentData>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ContentData>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -271,7 +267,7 @@ const ContentDataForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ContentData created successfully! Would you like to set permissions for this object?`,
+          `ContentData created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -279,8 +275,8 @@ const ContentDataForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create ContentData:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create ContentData:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -301,36 +297,44 @@ const ContentDataForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addContentDataResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New ContentData
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ContentData
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="authorName" className="nice-form-control">
                       <b>
                         Author Name:
-                        {touched.authorName && !errors.authorName && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.authorName &&
+                         !errors.authorName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="authorName"
-                        value={values?.authorName}
-                        placeholder="Author Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="authorName"
+                            value={values?.authorName}
+                            placeholder="Author Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -342,21 +346,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="title" className="nice-form-control">
                       <b>
                         Title:
-                        {touched.title && !errors.title && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.title &&
+                         !errors.title && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="title"
-                        value={values?.title}
-                        placeholder="Title"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="title"
+                            value={values?.title}
+                            placeholder="Title"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -368,21 +379,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="subtitle" className="nice-form-control">
                       <b>
                         Subtitle:
-                        {touched.subtitle && !errors.subtitle && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.subtitle &&
+                         !errors.subtitle && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="subtitle"
-                        value={values?.subtitle}
-                        placeholder="Subtitle"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="subtitle"
+                            value={values?.subtitle}
+                            placeholder="Subtitle"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -394,21 +412,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="fileName" className="nice-form-control">
                       <b>
                         File Name:
-                        {touched.fileName && !errors.fileName && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.fileName &&
+                         !errors.fileName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="fileName"
-                        value={values?.fileName}
-                        placeholder="File Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="fileName"
+                            value={values?.fileName}
+                            placeholder="File Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -420,21 +445,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="contentUrl" className="nice-form-control">
                       <b>
                         Content Url:
-                        {touched.contentUrl && !errors.contentUrl && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contentUrl &&
+                         !errors.contentUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="contentUrl"
-                        value={values?.contentUrl}
-                        placeholder="Content Url"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="contentUrl"
+                            value={values?.contentUrl}
+                            placeholder="Content Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -446,21 +478,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="contentData" className="nice-form-control">
                       <b>
                         Content Data:
-                        {touched.contentData && !errors.contentData && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contentData &&
+                         !errors.contentData && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="contentData"
-                        value={values?.contentData}
-                        placeholder="Content Data"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="contentData"
+                            value={values?.contentData}
+                            placeholder="Content Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -472,33 +511,30 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="contentType" className="nice-form-control">
                       <b>
                         Content Type:
-                        {touched.contentType && !errors.contentType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contentType &&
+                         !errors.contentType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="contentType"
-                        value={values.contentType || ""}
-                        className={
-                          errors.contentType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("contentType", true);
-                          setFieldValue(
-                            "contentType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Content Type" />
-                        <ContentTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="contentType"
+                          value={values.contentType || ''}
+                          className={
+                            errors.contentType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('contentType', true);
+                            setFieldValue('contentType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Content Type" />
+                          <ContentTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -510,21 +546,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="brand" className="nice-form-control">
                       <b>
                         Brand:
-                        {touched.brand && !errors.brand && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.brand &&
+                         !errors.brand && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="brand"
-                        value={values?.brand}
-                        placeholder="Brand"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="brand"
+                            value={values?.brand}
+                            placeholder="Brand"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -533,27 +576,31 @@ const ContentDataForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="targetAudience"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="targetAudience" className="nice-form-control">
                       <b>
                         Target Audience:
-                        {touched.targetAudience && !errors.targetAudience && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.targetAudience &&
+                         !errors.targetAudience && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="targetAudience"
-                        value={values?.targetAudience}
-                        placeholder="Target Audience"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="targetAudience"
+                            value={values?.targetAudience}
+                            placeholder="Target Audience"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -565,33 +612,30 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="priceTier" className="nice-form-control">
                       <b>
                         Price Tier:
-                        {touched.priceTier && !errors.priceTier && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.priceTier &&
+                         !errors.priceTier && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="priceTier"
-                        value={values.priceTier || ""}
-                        className={
-                          errors.priceTier
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("priceTier", true);
-                          setFieldValue(
-                            "priceTier",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Price Tier" />
-                        <PriceTierLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="priceTier"
+                          value={values.priceTier || ''}
+                          className={
+                            errors.priceTier
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('priceTier', true);
+                            setFieldValue('priceTier', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Price Tier" />
+                          <PriceTierLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -603,33 +647,30 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="deliveryMode" className="nice-form-control">
                       <b>
                         Delivery Mode:
-                        {touched.deliveryMode && !errors.deliveryMode && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.deliveryMode &&
+                         !errors.deliveryMode && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="deliveryMode"
-                        value={values.deliveryMode || ""}
-                        className={
-                          errors.deliveryMode
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("deliveryMode", true);
-                          setFieldValue(
-                            "deliveryMode",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Delivery Mode" />
-                        <DeliveryModeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="deliveryMode"
+                          value={values.deliveryMode || ''}
+                          className={
+                            errors.deliveryMode
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('deliveryMode', true);
+                            setFieldValue('deliveryMode', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Delivery Mode" />
+                          <DeliveryModeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -641,21 +682,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="heroBenefit" className="nice-form-control">
                       <b>
                         Hero Benefit:
-                        {touched.heroBenefit && !errors.heroBenefit && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.heroBenefit &&
+                         !errors.heroBenefit && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="heroBenefit"
-                        value={values?.heroBenefit}
-                        placeholder="Hero Benefit"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="heroBenefit"
+                            value={values?.heroBenefit}
+                            placeholder="Hero Benefit"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -667,32 +715,36 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version && !errors.version && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.version &&
+                         !errors.version && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="version"
-                        type="number"
-                        value={values.version || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("version", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "version",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.version
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="version"
+                            type="number"
+                            value={values.version || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('version', true);
+                              const v = e.target.value;
+                              setFieldValue('version', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.version
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -704,21 +756,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata && !errors.metadata && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.metadata &&
+                         !errors.metadata && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="metadata"
-                        value={values?.metadata}
-                        placeholder="Metadata"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="metadata"
+                            value={values?.metadata}
+                            placeholder="Metadata"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -727,27 +786,31 @@ const ContentDataForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="thumbnailImage"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="thumbnailImage" className="nice-form-control">
                       <b>
                         Thumbnail Image:
-                        {touched.thumbnailImage && !errors.thumbnailImage && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.thumbnailImage &&
+                         !errors.thumbnailImage && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="thumbnailImage"
-                        value={values?.thumbnailImage}
-                        placeholder="Thumbnail Image"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="thumbnailImage"
+                            value={values?.thumbnailImage}
+                            placeholder="Thumbnail Image"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -759,21 +822,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="largeImage" className="nice-form-control">
                       <b>
                         Large Image:
-                        {touched.largeImage && !errors.largeImage && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.largeImage &&
+                         !errors.largeImage && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="largeImage"
-                        value={values?.largeImage}
-                        placeholder="Large Image"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="largeImage"
+                            value={values?.largeImage}
+                            placeholder="Large Image"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -785,33 +855,30 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category && !errors.category && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.category &&
+                         !errors.category && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="category"
-                        value={values.category || ""}
-                        className={
-                          errors.category
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("category", true);
-                          setFieldValue(
-                            "category",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Category" />
-                        <CategoryLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="category"
+                          value={values.category || ''}
+                          className={
+                            errors.category
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('category', true);
+                            setFieldValue('category', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Category" />
+                          <CategoryLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -823,30 +890,30 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status && !errors.status && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="status"
-                        value={values.status || ""}
-                        className={
-                          errors.status
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("status", true);
-                          setFieldValue("status", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Status" />
-                        <StatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -858,38 +925,38 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="releaseDate" className="nice-form-control">
                       <b>
                         Release Date:
-                        {touched.releaseDate && !errors.releaseDate && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.releaseDate &&
+                         !errors.releaseDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="releaseDate"
-                        type="datetime-local"
-                        value={
-                          values.releaseDate
-                            ? new Date(values.releaseDate)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("releaseDate", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "releaseDate",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.releaseDate
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="releaseDate"
+                            type="datetime-local"
+                            value={values.releaseDate ? 
+                              new Date(values.releaseDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('releaseDate', true);
+                              const v = e.target.value;
+                              setFieldValue('releaseDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.releaseDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -901,21 +968,28 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="slug" className="nice-form-control">
                       <b>
                         Slug:
-                        {touched.slug && !errors.slug && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.slug &&
+                         !errors.slug && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="slug"
-                        value={values?.slug}
-                        placeholder="Slug"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="slug"
+                            value={values?.slug}
+                            placeholder="Slug"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -927,25 +1001,32 @@ const ContentDataForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -955,58 +1036,45 @@ const ContentDataForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New ContentData
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ContentData
+                  </CoolButton>
 
-                    {(addContentDataResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addContentDataResult as any).error
-                              ? (addContentDataResult as any).error.data
-                              : (addContentDataResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addContentDataResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addContentDataResult as any).error ? (addContentDataResult as any).error.data : (addContentDataResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addContentDataResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addContentDataResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addContentDataResult: {JSON.stringify(addContentDataResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addContentDataResult: {JSON.stringify(addContentDataResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -1038,22 +1106,22 @@ kebabcase content-type-lookup
 const ContentTypeLookup = () => {
   return (
     <>
-      <option value="plaintext" label="Plaintext" />
-      <option value="markdown" label="Markdown" />
-      <option value="json" label="Json" />
-      <option value="code" label="Code" />
-      <option value="yaml" label="Yaml" />
-      <option value="audio" label="Audio" />
-      <option value="video" label="Video" />
-      <option value="url" label="Url" />
-      <option value="spreadsheet" label="Spreadsheet" />
-      <option value="pdf" label="Pdf" />
-      <option value="binary" label="Binary" />
-      <option value="presentation" label="Presentation" />
-      <option value="image" label="Image" />
-      <option value="document" label="Document" />
-      <option value="ebook" label="Ebook" />
-      <option value="FUNNEL" label="Funnel" />
+      <option value='plaintext' label="Plaintext" />
+      <option value='markdown' label="Markdown" />
+      <option value='json' label="Json" />
+      <option value='code' label="Code" />
+      <option value='yaml' label="Yaml" />
+      <option value='audio' label="Audio" />
+      <option value='video' label="Video" />
+      <option value='url' label="Url" />
+      <option value='spreadsheet' label="Spreadsheet" />
+      <option value='pdf' label="Pdf" />
+      <option value='binary' label="Binary" />
+      <option value='presentation' label="Presentation" />
+      <option value='image' label="Image" />
+      <option value='document' label="Document" />
+      <option value='ebook' label="Ebook" />
+      <option value='FUNNEL' label="Funnel" />
     </>
   );
 };
@@ -1070,11 +1138,11 @@ kebabcase price-tier-lookup
 const PriceTierLookup = () => {
   return (
     <>
-      <option value="FREE" label="Free" />
-      <option value="LOW" label="Low" />
-      <option value="MEDIUM" label="Medium" />
-      <option value="HIGH" label="High" />
-      <option value="PREMIUM" label="Premium" />
+      <option value='FREE' label="Free" />
+      <option value='LOW' label="Low" />
+      <option value='MEDIUM' label="Medium" />
+      <option value='HIGH' label="High" />
+      <option value='PREMIUM' label="Premium" />
     </>
   );
 };
@@ -1091,10 +1159,10 @@ kebabcase delivery-mode-lookup
 const DeliveryModeLookup = () => {
   return (
     <>
-      <option value="DIGITAL" label="Digital" />
-      <option value="PHYSICAL" label="Physical" />
-      <option value="HYBRID" label="Hybrid" />
-      <option value="SERVICE" label="Service" />
+      <option value='DIGITAL' label="Digital" />
+      <option value='PHYSICAL' label="Physical" />
+      <option value='HYBRID' label="Hybrid" />
+      <option value='SERVICE' label="Service" />
     </>
   );
 };
@@ -1111,30 +1179,34 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value="CodeGen" label="Code Gen" />
-      <option value="slides" label="Slides" />
-      <option value="spreadsheets" label="Spreadsheets" />
-      <option value="docs" label="Docs" />
-      <option value="BLOG" label="Blog" />
-      <option value="Product" label="Product" />
-      <option value="SECURITY" label="Security" />
-      <option value="Event" label="Event" />
-      <option value="Tutorial" label="Tutorial" />
-      <option value="News" label="News" />
-      <option value="Announcement" label="Announcement" />
-      <option value="Guide" label="Guide" />
-      <option value="Review" label="Review" />
-      <option value="Case Study" label="Case Study" />
-      <option value="Whitepaper" label="Whitepaper" />
-      <option value="EBOOK" label="Ebook" />
-      <option value="FUNNEL" label="Funnel" />
-      <option value="video" label="Video" />
-      <option value="audio" label="Audio" />
-      <option value="image" label="Image" />
-      <option value="podcast" label="Podcast" />
-      <option value="webinar" label="Webinar" />
-      <option value="course" label="Course" />
-      <option value="other" label="Other" />
+      <option value='CodeGen' label="Code Gen" />
+      <option value='slides' label="Slides" />
+      <option value='spreadsheets' label="Spreadsheets" />
+      <option value='docs' label="Docs" />
+      <option value='BLOG' label="Blog" />
+      <option value='Product' label="Product" />
+      <option value='SECURITY' label="Security" />
+      <option value='Event' label="Event" />
+      <option value='Tutorial' label="Tutorial" />
+      <option value='News' label="News" />
+      <option value='Announcement' label="Announcement" />
+      <option value='Guide' label="Guide" />
+      <option value='Review' label="Review" />
+      <option value='Case Study' label="Case Study" />
+      <option value='Whitepaper' label="Whitepaper" />
+      <option value='EBOOK' label="Ebook" />
+      <option value='FUNNEL' label="Funnel" />
+      <option value='video' label="Video" />
+      <option value='audio' label="Audio" />
+      <option value='image' label="Image" />
+      <option value='podcast' label="Podcast" />
+      <option value='webinar' label="Webinar" />
+      <option value='course' label="Course" />
+      <option value='policy' label="Policy" />
+      <option value='research' label="Research" />
+      <option value='report' label="Report" />
+      <option value='memory' label="Memory" />
+      <option value='other' label="Other" />
     </>
   );
 };
@@ -1151,13 +1223,16 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="holding" label="Holding" />
-      <option value="editing" label="Editing" />
-      <option value="published" label="Published" />
-      <option value="DRAFT" label="Draft" />
+      <option value='holding' label="Holding" />
+      <option value='editing' label="Editing" />
+      <option value='published' label="Published" />
+      <option value='DRAFT' label="Draft" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ContentDataForm;
+

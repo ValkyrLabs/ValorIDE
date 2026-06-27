@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  CompleteUploadRequestPartsInner,
+} from '@thorapi/model';
 
-import { CompleteUploadRequestPartsInner } from "@thorapi/model";
-
-import { useAddCompleteUploadRequestPartsInnerMutation } from "../../services/CompleteUploadRequestPartsInnerService";
+import { useAddCompleteUploadRequestPartsInnerMutation } from '../../services/CompleteUploadRequestPartsInnerService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,25 +65,18 @@ CompleteUploadRequestPartsInner
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  partNumber: asNumber(
-    Yup.number().integer().typeError("partNumber must be a number"),
-  ),
-  etag: Yup.string(),
+        partNumber: asNumber(Yup.number().integer().typeError("partNumber must be a number")),
+        etag: Yup.string(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CompleteUploadRequestPartsInnerForm: React.FC = () => {
-  const [
-    addCompleteUploadRequestPartsInner,
-    addCompleteUploadRequestPartsInnerResult,
-  ] = useAddCompleteUploadRequestPartsInnerMutation();
+  const [addCompleteUploadRequestPartsInner, addCompleteUploadRequestPartsInnerResult] = useAddCompleteUploadRequestPartsInnerMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -99,18 +86,12 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -118,8 +99,8 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CompleteUploadRequestPartsInner> = {
-    partNumber: 0,
-    etag: "",
+          partNumber: 0,
+          etag: '',
   };
 
   // Permission Management Handlers
@@ -134,30 +115,22 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log(
-      "Permissions saved for new CompleteUploadRequestPartsInner:",
-      grants,
-    );
+    console.log('Permissions saved for new CompleteUploadRequestPartsInner:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<CompleteUploadRequestPartsInner>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CompleteUploadRequestPartsInner>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("CompleteUploadRequestPartsInner form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addCompleteUploadRequestPartsInner(
-        values as any,
-      ).unwrap();
+      const result = await addCompleteUploadRequestPartsInner(values as any).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CompleteUploadRequestPartsInner created successfully! Would you like to set permissions for this object?`,
+          `CompleteUploadRequestPartsInner created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -165,8 +138,8 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create CompleteUploadRequestPartsInner:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create CompleteUploadRequestPartsInner:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -187,49 +160,52 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addCompleteUploadRequestPartsInnerResult.isLoading;
+          const isSaving = isSubmitting || addCompleteUploadRequestPartsInnerResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    CompleteUploadRequestPartsInner
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New CompleteUploadRequestPartsInner
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="partNumber" className="nice-form-control">
                       <b>
                         Part Number:
-                        {touched.partNumber && !errors.partNumber && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.partNumber &&
+                         !errors.partNumber && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="partNumber"
-                        type="number"
-                        value={values.partNumber || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("partNumber", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "partNumber",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.partNumber
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="partNumber"
+                            type="number"
+                            value={values.partNumber || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('partNumber', true);
+                              const v = e.target.value;
+                              setFieldValue('partNumber', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.partNumber
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -241,21 +217,28 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
                     <label htmlFor="etag" className="nice-form-control">
                       <b>
                         Etag:
-                        {touched.etag && !errors.etag && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.etag &&
+                         !errors.etag && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="etag"
-                        value={values?.etag}
-                        placeholder="Etag"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="etag"
+                            value={values?.etag}
+                            placeholder="Etag"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -265,68 +248,45 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      CompleteUploadRequestPartsInner
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New CompleteUploadRequestPartsInner
+                  </CoolButton>
 
-                    {(addCompleteUploadRequestPartsInnerResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addCompleteUploadRequestPartsInnerResult as any)
-                                .error
-                              ? (
-                                  addCompleteUploadRequestPartsInnerResult as any
-                                ).error.data
-                              : (
-                                  addCompleteUploadRequestPartsInnerResult as any
-                                ).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addCompleteUploadRequestPartsInnerResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addCompleteUploadRequestPartsInnerResult as any).error ? (addCompleteUploadRequestPartsInnerResult as any).error.data : (addCompleteUploadRequestPartsInnerResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addCompleteUploadRequestPartsInnerResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addCompleteUploadRequestPartsInnerResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addCompleteUploadRequestPartsInnerResult:{" "}
-                    {JSON.stringify(addCompleteUploadRequestPartsInnerResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCompleteUploadRequestPartsInnerResult: {JSON.stringify(addCompleteUploadRequestPartsInnerResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -346,5 +306,8 @@ const CompleteUploadRequestPartsInnerForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default CompleteUploadRequestPartsInnerForm;
+

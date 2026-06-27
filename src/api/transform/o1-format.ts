@@ -37,8 +37,10 @@ Remember:
 1. execute_command:
 <execute_command>
 <command>Your command here</command>
+<requires_approval>false</requires_approval>
 </execute_command>
 Description: Execute a CLI command on the system. Use this when you need to perform system operations or run specific commands to accomplish any step in the user's task. You must tailor your command to the user's system and provide a clear explanation of what the command does. Prefer to execute complex CLI commands over creating executable scripts, as they are more flexible and easier to run. Commands will be executed in the current working directory.
+Set requires_approval to "true" only for destructive, production, credential, billing, publishing, or external side-effect commands. Set it to "false" for safe local reads, tests, builds, and diagnostics. Do not call a separate request_approval tool; it does not exist.
 
 2. list_files:
 <list_files>
@@ -101,6 +103,7 @@ Let's run the test suite for our project. This will help us ensure that all our 
 
 <execute_command>
 <command>npm test</command>
+<requires_approval>false</requires_approval>
 </execute_command>
 
 Example 2: Using multiple tools
@@ -320,6 +323,10 @@ function parseToolCall(toolName: string, content: string): ToolCall | null {
     const [, paramName, paramValue] = match;
     // Preserve newlines and trim only leading/trailing whitespace
     tool_input[paramName] = paramValue.replace(/^\s+|\s+$/g, "");
+  }
+
+  if (toolName === "execute_command" && !("requires_approval" in tool_input)) {
+    tool_input.requires_approval = "true";
   }
 
   // Validate required parameters

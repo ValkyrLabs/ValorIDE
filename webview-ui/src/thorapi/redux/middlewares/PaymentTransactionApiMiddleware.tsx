@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_PAYMENTTRANSACTION_REQUEST,
-  FETCH_PAYMENTTRANSACTION_REQUEST,
-  LIST_PAYMENTTRANSACTION_REQUEST,
-  UPDATE_PAYMENTTRANSACTION_REQUEST,
-  DELETE_PAYMENTTRANSACTION_REQUEST,
-  addPaymentTransactionFailure,
-  addPaymentTransactionSuccess,
-  fetchPaymentTransactionFailure,
-  fetchPaymentTransactionSuccess,
-  listPaymentTransactionFailure,
-  listPaymentTransactionSuccess,
-  updatePaymentTransactionFailure,
-  updatePaymentTransactionSuccess,
-  deletePaymentTransactionFailure,
-  deletePaymentTransactionSuccess,
-} from "../actions/PaymentTransactionApiAction";
+
+    ADD_PAYMENTTRANSACTION_REQUEST,
+    FETCH_PAYMENTTRANSACTION_REQUEST,
+    LIST_PAYMENTTRANSACTION_REQUEST,
+    UPDATE_PAYMENTTRANSACTION_REQUEST,
+    DELETE_PAYMENTTRANSACTION_REQUEST,
+
+    addPaymentTransactionFailure,
+    addPaymentTransactionSuccess,
+
+    fetchPaymentTransactionFailure,
+    fetchPaymentTransactionSuccess,
+    
+    listPaymentTransactionFailure,
+    listPaymentTransactionSuccess,
+
+    updatePaymentTransactionFailure,
+    updatePaymentTransactionSuccess,
+    
+    deletePaymentTransactionFailure,
+    deletePaymentTransactionSuccess,
+    
+} from '../actions/PaymentTransactionApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: PaymentTransaction
 */
 
-export const PaymentTransactionMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("PaymentTransaction MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const PaymentTransactionMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("PaymentTransaction MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

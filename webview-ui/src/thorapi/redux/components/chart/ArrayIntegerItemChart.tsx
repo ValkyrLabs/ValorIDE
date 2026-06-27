@@ -19,32 +19,20 @@ Description: ArrayIntegerItem
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ArrayIntegerItem } from "@thorapi/model";
-import {
-  useGetArrayIntegerItemsQuery,
-  useAddArrayIntegerItemMutation,
-  useUpdateArrayIntegerItemMutation,
-} from "../../services/ArrayIntegerItemService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ArrayIntegerItem } from '@thorapi/model';
+import { useGetArrayIntegerItemsQuery, useAddArrayIntegerItemMutation, useUpdateArrayIntegerItemMutation } from '../../services/ArrayIntegerItemService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ArrayIntegerItemChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetArrayIntegerItemsQuery();
 
   const [data, setData] = useState<ArrayIntegerItem[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ArrayIntegerItem>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ArrayIntegerItemChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,15 +60,11 @@ const ArrayIntegerItemChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((arrayintegeritem: DataObject) => [
-            arrayintegeritem,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((arrayintegeritem: DataObject) => [arrayintegeritem])} />
+          )}
     </>
   );
 };

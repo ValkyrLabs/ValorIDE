@@ -13,33 +13,25 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   Format,
@@ -49,9 +41,9 @@ import {
   FormatAlignmentHorizontalEnum,
   FormatAlignmentVerticalEnum,
   FormatPatternEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddFormatMutation } from "../../services/FormatService";
+import { useAddFormatMutation } from '../../services/FormatService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -75,81 +67,103 @@ GridHeim Formatting Object
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const FontWeightValidation = () => {
-  return [200, 400, 700];
+  return [
+    200,
+    400,
+    700,
+  ];
 };
 const UnderlineValidation = () => {
-  return [0, 1, 2, 21, 22];
+  return [
+    0,
+    1,
+    2,
+    21,
+    22,
+  ];
 };
 const ColorValidation = () => {
   return [
-    "Black",
-    "White",
-    "Red",
-    "BrightGreen",
-    "Blue",
-    "Yellow",
-    "Pink",
-    "Turquoise",
-    "DarkRed",
-    "Orange",
-    "DarkYellow",
-    "Green",
-    "Teal",
-    "LightBlue",
-    "Violet",
-    "Gray80",
+    'Black',
+    'White',
+    'Red',
+    'BrightGreen',
+    'Blue',
+    'Yellow',
+    'Pink',
+    'Turquoise',
+    'DarkRed',
+    'Orange',
+    'DarkYellow',
+    'Green',
+    'Teal',
+    'LightBlue',
+    'Violet',
+    'Gray80',
   ];
 };
 const AlignmentHorizontalValidation = () => {
   return [
-    "Left",
-    "Center",
-    "Right",
-    "Fill",
-    "Justify",
-    "CenterAcrossSelection",
+    'Left',
+    'Center',
+    'Right',
+    'Fill',
+    'Justify',
+    'CenterAcrossSelection',
   ];
 };
 const AlignmentVerticalValidation = () => {
-  return ["Top", "Middle", "Bottom", "Justify"];
+  return [
+    'Top',
+    'Middle',
+    'Bottom',
+    'Justify',
+  ];
 };
 const PatternValidation = () => {
-  return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  return [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  workbookId: Yup.string(),
-  fontWeight: Yup.mixed().oneOf(
-    FontWeightValidation(),
-    "Invalid value for fontWeight",
-  ),
-  fontSize: asNumber(
-    Yup.number().integer().typeError("fontSize must be a number"),
-  ),
-  fontFace: Yup.string(),
-  underline: Yup.mixed().oneOf(
-    UnderlineValidation(),
-    "Invalid value for underline",
-  ),
-  color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
-  alignmentHorizontal: Yup.mixed().oneOf(
-    AlignmentHorizontalValidation(),
-    "Invalid value for alignmentHorizontal",
-  ),
-  alignmentVertical: Yup.mixed().oneOf(
-    AlignmentVerticalValidation(),
-    "Invalid value for alignmentVertical",
-  ),
-  pattern: Yup.mixed().oneOf(PatternValidation(), "Invalid value for pattern"),
-  trashed: Yup.boolean(),
+        workbookId: Yup.string(),
+      fontWeight: Yup.mixed()
+        .oneOf(FontWeightValidation(), "Invalid value for fontWeight")
+        ,
+        fontSize: asNumber(Yup.number().integer().typeError("fontSize must be a number")),
+        fontFace: Yup.string(),
+      underline: Yup.mixed()
+        .oneOf(UnderlineValidation(), "Invalid value for underline")
+        ,
+      color: Yup.mixed()
+        .oneOf(ColorValidation(), "Invalid value for color")
+        ,
+      alignmentHorizontal: Yup.mixed()
+        .oneOf(AlignmentHorizontalValidation(), "Invalid value for alignmentHorizontal")
+        ,
+      alignmentVertical: Yup.mixed()
+        .oneOf(AlignmentVerticalValidation(), "Invalid value for alignmentVertical")
+        ,
+      pattern: Yup.mixed()
+        .oneOf(PatternValidation(), "Invalid value for pattern")
+        ,
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -166,18 +180,12 @@ const FormatForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -185,16 +193,16 @@ const FormatForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Format> = {
-    workbookId: "",
-    fontWeight: undefined,
-    fontSize: 0,
-    fontFace: "",
-    underline: undefined,
-    color: undefined,
-    alignmentHorizontal: undefined,
-    alignmentVertical: undefined,
-    pattern: undefined,
-    trashed: false,
+          workbookId: '',
+        fontWeight: undefined,
+          fontSize: 0,
+          fontFace: '',
+        underline: undefined,
+        color: undefined,
+        alignmentHorizontal: undefined,
+        alignmentVertical: undefined,
+        pattern: undefined,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -209,14 +217,11 @@ const FormatForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new Format:", grants);
+    console.log('Permissions saved for new Format:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Format>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Format>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -227,7 +232,7 @@ const FormatForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Format created successfully! Would you like to set permissions for this object?`,
+          `Format created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -235,8 +240,8 @@ const FormatForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create Format:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create Format:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -257,36 +262,44 @@ const FormatForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addFormatResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New Format
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Format
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="workbookId" className="nice-form-control">
                       <b>
                         Workbook Id:
-                        {touched.workbookId && !errors.workbookId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.workbookId &&
+                         !errors.workbookId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="workbookId"
-                        value={values?.workbookId}
-                        placeholder="Workbook Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="workbookId"
+                            value={values?.workbookId}
+                            placeholder="Workbook Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -298,35 +311,30 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="fontWeight" className="nice-form-control">
                       <b>
                         Font Weight:
-                        {touched.fontWeight && !errors.fontWeight && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.fontWeight &&
+                         !errors.fontWeight && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="fontWeight"
-                        value={values.fontWeight || ""}
-                        className={
-                          errors.fontWeight
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("fontWeight", true);
-                          setFieldValue(
-                            "fontWeight",
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value),
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Font Weight" />
-                        <FontWeightLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="fontWeight"
+                          value={values.fontWeight || ''}
+                          className={
+                            errors.fontWeight
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('fontWeight', true);
+                            setFieldValue('fontWeight', e.target.value === '' ? undefined : Number(e.target.value));
+                          }}
+                        >
+                          <option value="" label="Select Font Weight" />
+                          <FontWeightLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -338,32 +346,36 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="fontSize" className="nice-form-control">
                       <b>
                         Font Size:
-                        {touched.fontSize && !errors.fontSize && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.fontSize &&
+                         !errors.fontSize && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="fontSize"
-                        type="number"
-                        value={values.fontSize || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("fontSize", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "fontSize",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.fontSize
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="fontSize"
+                            type="number"
+                            value={values.fontSize || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('fontSize', true);
+                              const v = e.target.value;
+                              setFieldValue('fontSize', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.fontSize
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -375,21 +387,28 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="fontFace" className="nice-form-control">
                       <b>
                         Font Face:
-                        {touched.fontFace && !errors.fontFace && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.fontFace &&
+                         !errors.fontFace && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="fontFace"
-                        value={values?.fontFace}
-                        placeholder="Font Face"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="fontFace"
+                            value={values?.fontFace}
+                            placeholder="Font Face"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -401,35 +420,30 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="underline" className="nice-form-control">
                       <b>
                         Underline:
-                        {touched.underline && !errors.underline && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.underline &&
+                         !errors.underline && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="underline"
-                        value={values.underline || ""}
-                        className={
-                          errors.underline
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("underline", true);
-                          setFieldValue(
-                            "underline",
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value),
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Underline" />
-                        <UnderlineLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="underline"
+                          value={values.underline || ''}
+                          className={
+                            errors.underline
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('underline', true);
+                            setFieldValue('underline', e.target.value === '' ? undefined : Number(e.target.value));
+                          }}
+                        >
+                          <option value="" label="Select Underline" />
+                          <UnderlineLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -441,30 +455,30 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="color" className="nice-form-control">
                       <b>
                         Color:
-                        {touched.color && !errors.color && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.color &&
+                         !errors.color && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="color"
-                        value={values.color || ""}
-                        className={
-                          errors.color
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("color", true);
-                          setFieldValue("color", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Color" />
-                        <ColorLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="color"
+                          value={values.color || ''}
+                          className={
+                            errors.color
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('color', true);
+                            setFieldValue('color', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Color" />
+                          <ColorLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -473,43 +487,33 @@ const FormatForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="alignmentHorizontal"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="alignmentHorizontal" className="nice-form-control">
                       <b>
                         Alignment - horizontal:
                         {touched.alignmentHorizontal &&
-                          !errors.alignmentHorizontal && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.alignmentHorizontal && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="alignmentHorizontal"
-                        value={values.alignmentHorizontal || ""}
-                        className={
-                          errors.alignmentHorizontal
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("alignmentHorizontal", true);
-                          setFieldValue(
-                            "alignmentHorizontal",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option
-                          value=""
-                          label="Select Alignment - horizontal"
-                        />
-                        <AlignmentHorizontalLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="alignmentHorizontal"
+                          value={values.alignmentHorizontal || ''}
+                          className={
+                            errors.alignmentHorizontal
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('alignmentHorizontal', true);
+                            setFieldValue('alignmentHorizontal', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Alignment - horizontal" />
+                          <AlignmentHorizontalLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -518,40 +522,33 @@ const FormatForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="alignmentVertical"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="alignmentVertical" className="nice-form-control">
                       <b>
                         Alignment - vertical:
                         {touched.alignmentVertical &&
-                          !errors.alignmentVertical && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.alignmentVertical && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="alignmentVertical"
-                        value={values.alignmentVertical || ""}
-                        className={
-                          errors.alignmentVertical
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("alignmentVertical", true);
-                          setFieldValue(
-                            "alignmentVertical",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Alignment - vertical" />
-                        <AlignmentVerticalLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="alignmentVertical"
+                          value={values.alignmentVertical || ''}
+                          className={
+                            errors.alignmentVertical
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('alignmentVertical', true);
+                            setFieldValue('alignmentVertical', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Alignment - vertical" />
+                          <AlignmentVerticalLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -563,35 +560,30 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="pattern" className="nice-form-control">
                       <b>
                         Pattern:
-                        {touched.pattern && !errors.pattern && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.pattern &&
+                         !errors.pattern && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="pattern"
-                        value={values.pattern || ""}
-                        className={
-                          errors.pattern
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("pattern", true);
-                          setFieldValue(
-                            "pattern",
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value),
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Pattern" />
-                        <PatternLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="pattern"
+                          value={values.pattern || ''}
+                          className={
+                            errors.pattern
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('pattern', true);
+                            setFieldValue('pattern', e.target.value === '' ? undefined : Number(e.target.value));
+                          }}
+                        >
+                          <option value="" label="Select Pattern" />
+                          <PatternLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -603,25 +595,32 @@ const FormatForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -631,58 +630,45 @@ const FormatForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New Format
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Format
+                  </CoolButton>
 
-                    {(addFormatResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addFormatResult as any).error
-                              ? (addFormatResult as any).error.data
-                              : (addFormatResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addFormatResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addFormatResult as any).error ? (addFormatResult as any).error.data : (addFormatResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addFormatResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addFormatResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addFormatResult: {JSON.stringify(addFormatResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addFormatResult: {JSON.stringify(addFormatResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -711,6 +697,7 @@ camelcase fontWeightLookup
 kebabcase font-weight-lookup
 */
 
+
 const FontWeightLookup = () => {
   return (
     <>
@@ -728,6 +715,7 @@ pascalcase UnderlineLookup
 camelcase underlineLookup
 kebabcase underline-lookup
 */
+
 
 const UnderlineLookup = () => {
   return (
@@ -752,22 +740,22 @@ kebabcase color-lookup
 const ColorLookup = () => {
   return (
     <>
-      <option value="Black" label="Color Black" />
-      <option value="White" label="Color White" />
-      <option value="Red" label="Color Red" />
-      <option value="BrightGreen" label="Color Bright Green" />
-      <option value="Blue" label="Color Blue" />
-      <option value="Yellow" label="Color Yellow" />
-      <option value="Pink" label="Color Pink" />
-      <option value="Turquoise" label="Color Turquoise" />
-      <option value="DarkRed" label="Color Dark Red" />
-      <option value="Orange" label="Color Orange" />
-      <option value="DarkYellow" label="Color Dark Yellow" />
-      <option value="Green" label="Color Green" />
-      <option value="Teal" label="Color Teal" />
-      <option value="LightBlue" label="Color Light Blue" />
-      <option value="Violet" label="Color Violet" />
-      <option value="Gray80" label="Color Gray 80" />
+      <option value='Black' label="Color Black" />
+      <option value='White' label="Color White" />
+      <option value='Red' label="Color Red" />
+      <option value='BrightGreen' label="Color Bright Green" />
+      <option value='Blue' label="Color Blue" />
+      <option value='Yellow' label="Color Yellow" />
+      <option value='Pink' label="Color Pink" />
+      <option value='Turquoise' label="Color Turquoise" />
+      <option value='DarkRed' label="Color Dark Red" />
+      <option value='Orange' label="Color Orange" />
+      <option value='DarkYellow' label="Color Dark Yellow" />
+      <option value='Green' label="Color Green" />
+      <option value='Teal' label="Color Teal" />
+      <option value='LightBlue' label="Color Light Blue" />
+      <option value='Violet' label="Color Violet" />
+      <option value='Gray80' label="Color Gray 80" />
     </>
   );
 };
@@ -784,15 +772,12 @@ kebabcase alignmenthorizontal-lookup
 const AlignmentHorizontalLookup = () => {
   return (
     <>
-      <option value="Left" label="Align Left" />
-      <option value="Center" label="Align Center" />
-      <option value="Right" label="Align Right" />
-      <option value="Fill" label="Align Fill" />
-      <option value="Justify" label="Align Justify" />
-      <option
-        value="CenterAcrossSelection"
-        label="Align Center Across Selection"
-      />
+      <option value='Left' label="Align Left" />
+      <option value='Center' label="Align Center" />
+      <option value='Right' label="Align Right" />
+      <option value='Fill' label="Align Fill" />
+      <option value='Justify' label="Align Justify" />
+      <option value='CenterAcrossSelection' label="Align Center Across Selection" />
     </>
   );
 };
@@ -809,10 +794,10 @@ kebabcase alignmentvertical-lookup
 const AlignmentVerticalLookup = () => {
   return (
     <>
-      <option value="Top" label="Align Top" />
-      <option value="Middle" label="Align Middle" />
-      <option value="Bottom" label="Align Bottom" />
-      <option value="Justify" label="Align Justify" />
+      <option value='Top' label="Align Top" />
+      <option value='Middle' label="Align Middle" />
+      <option value='Bottom' label="Align Bottom" />
+      <option value='Justify' label="Align Justify" />
     </>
   );
 };
@@ -825,6 +810,7 @@ pascalcase PatternLookup
 camelcase patternLookup
 kebabcase pattern-lookup
 */
+
 
 const PatternLookup = () => {
   return (
@@ -843,5 +829,7 @@ const PatternLookup = () => {
   );
 };
 
+
 /* Export the generated form */
 export default FormatForm;
+

@@ -19,32 +19,20 @@ Description: MediaObject
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, MediaObject } from "@thorapi/model";
-import {
-  useGetMediaObjectsQuery,
-  useAddMediaObjectMutation,
-  useUpdateMediaObjectMutation,
-} from "../../services/MediaObjectService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, MediaObject } from '@thorapi/model';
+import { useGetMediaObjectsQuery, useAddMediaObjectMutation, useUpdateMediaObjectMutation } from '../../services/MediaObjectService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const MediaObjectChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetMediaObjectsQuery();
 
   const [data, setData] = useState<MediaObject[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<MediaObject>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const MediaObjectChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const MediaObjectChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((mediaobject: DataObject) => [mediaobject])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((mediaobject: DataObject) => [mediaobject])} />
+          )}
     </>
   );
 };

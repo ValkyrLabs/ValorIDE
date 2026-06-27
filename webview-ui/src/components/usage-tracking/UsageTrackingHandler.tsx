@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
-import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
+import {
+  useGetAccountBalanceQuery,
+  useRecordUsageTransactionMutation,
+} from "@thorapi/services/creditsApi";
 import { UsageTransaction } from "@thorapi/model";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
@@ -15,14 +17,18 @@ interface UsageTrackingMessage {
  * and submits them via the generated TypeScript RTK Query clients
  */
 export const UsageTrackingHandler: React.FC = () => {
-  const [addUsageTransaction] = useAddUsageTransactionMutation();
+  const [recordUsageTransaction] = useRecordUsageTransactionMutation();
   const { authenticatedUser } = useExtensionState();
+  const accountId =
+    authenticatedUser?.id !== undefined && authenticatedUser?.id !== null
+      ? String(authenticatedUser.id)
+      : (authenticatedUser as any)?.username || (authenticatedUser as any)?.email || "";
 
   // Use the custom credits API endpoint for actual credit balance
   // GET /v1/credits/{accountId}/balance
   const { refetch: refetchAccountBalance } = useGetAccountBalanceQuery(
-    authenticatedUser?.id ?? "",
-    { skip: !authenticatedUser?.id },
+    accountId,
+    { skip: !accountId },
   );
 
   useEffect(() => {
@@ -43,7 +49,7 @@ export const UsageTrackingHandler: React.FC = () => {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [addUsageTransaction, refetchAccountBalance]);
+  }, [accountId, recordUsageTransaction, refetchAccountBalance]);
 
   const waitForJwtToken = async (timeoutMs = 3000): Promise<string | null> => {
     // Try immediate read
@@ -95,7 +101,14 @@ export const UsageTrackingHandler: React.FC = () => {
       if (!token) {
         throw new Error("Missing JWT token");
       }
-      const result = await addUsageTransaction(data.usageTransaction).unwrap();
+      if (!accountId) {
+        throw new Error("Missing account id");
+      }
+      const result = await recordUsageTransaction({
+        accountId,
+        usage: data.usageTransaction as any,
+        idempotencyKey: data.transactionId,
+      }).unwrap();
 
       // Send success response back to extension
       sendResponseToExtension(data.transactionId, true, result);
@@ -107,7 +120,7 @@ export const UsageTrackingHandler: React.FC = () => {
 
   const handleRequestBalance = async () => {
     try {
-      if (!authenticatedUser?.id) {
+      if (!accountId) {
         console.warn("Cannot fetch balance: no authenticated user");
         return;
       }

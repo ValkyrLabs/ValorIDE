@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   WorkflowExecution,
   WorkflowExecutionStateEnum,
   WorkflowExecutionTriggerTypeEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddWorkflowExecutionMutation } from "../../services/WorkflowExecutionService";
+import { useAddWorkflowExecutionMutation } from '../../services/WorkflowExecutionService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,70 +64,70 @@ An execution instance of a Workflow with full state tracking and observability
 -------------------------------------------------------- */
 const StateValidation = () => {
   return [
-    "PENDING",
-    "RUNNING",
-    "PAUSED",
-    "SUCCESS",
-    "FAILED",
-    "CANCELLED",
-    "TIMEOUT",
+    'PENDING',
+    'RUNNING',
+    'PAUSED',
+    'SUCCESS',
+    'FAILED',
+    'CANCELLED',
+    'TIMEOUT',
   ];
 };
 const TriggerTypeValidation = () => {
-  return ["MANUAL", "CRON", "EVENT", "WEBHOOK", "QUEUE"];
+  return [
+    'MANUAL',
+    'CRON',
+    'EVENT',
+    'WEBHOOK',
+    'QUEUE',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  workflowId: Yup.string(),
-  version: asNumber(
-    Yup.number().integer().typeError("version must be a number"),
-  ),
-  state: Yup.mixed().oneOf(StateValidation(), "Invalid value for state"),
-  startedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("startedAt must be a valid date"),
-  finishedAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("finishedAt must be a valid date"),
-  parentExecutionId: Yup.string(),
-  triggerType: Yup.mixed().oneOf(
-    TriggerTypeValidation(),
-    "Invalid value for triggerType",
-  ),
-  triggerPayload: Yup.string(),
-  contextData: Yup.string(),
-  errorMessage: Yup.string(),
-  errorStackTrace: Yup.string(),
-  metricsSnapshot: Yup.string(),
-  trashed: Yup.boolean(),
+        workflowId: Yup.string(),
+        version: asNumber(Yup.number().integer().typeError("version must be a number")),
+      state: Yup.mixed()
+        .oneOf(StateValidation(), "Invalid value for state")
+        ,
+        startedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("startedAt must be a valid date"),
+        finishedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("finishedAt must be a valid date"),
+        parentExecutionId: Yup.string(),
+      triggerType: Yup.mixed()
+        .oneOf(TriggerTypeValidation(), "Invalid value for triggerType")
+        ,
+        triggerPayload: Yup.string(),
+        contextData: Yup.string(),
+        errorMessage: Yup.string(),
+        errorStackTrace: Yup.string(),
+        metricsSnapshot: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WorkflowExecutionForm: React.FC = () => {
-  const [addWorkflowExecution, addWorkflowExecutionResult] =
-    useAddWorkflowExecutionMutation();
+  const [addWorkflowExecution, addWorkflowExecutionResult] = useAddWorkflowExecutionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -145,18 +137,12 @@ const WorkflowExecutionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -164,19 +150,19 @@ const WorkflowExecutionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<WorkflowExecution> = {
-    workflowId: "",
-    version: 0,
-    state: undefined,
-    startedAt: new Date(),
-    finishedAt: new Date(),
-    parentExecutionId: "",
-    triggerType: undefined,
-    triggerPayload: "",
-    contextData: "",
-    errorMessage: "",
-    errorStackTrace: "",
-    metricsSnapshot: "",
-    trashed: false,
+          workflowId: '',
+          version: 0,
+        state: undefined,
+          startedAt: new Date(),
+          finishedAt: new Date(),
+          parentExecutionId: '',
+        triggerType: undefined,
+          triggerPayload: '',
+          contextData: '',
+          errorMessage: '',
+          errorStackTrace: '',
+          metricsSnapshot: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -191,14 +177,11 @@ const WorkflowExecutionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new WorkflowExecution:", grants);
+    console.log('Permissions saved for new WorkflowExecution:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<WorkflowExecution>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WorkflowExecution>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -209,7 +192,7 @@ const WorkflowExecutionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `WorkflowExecution created successfully! Would you like to set permissions for this object?`,
+          `WorkflowExecution created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -217,8 +200,8 @@ const WorkflowExecutionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create WorkflowExecution:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create WorkflowExecution:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -239,37 +222,44 @@ const WorkflowExecutionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addWorkflowExecutionResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    WorkflowExecution
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New WorkflowExecution
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="workflowId" className="nice-form-control">
                       <b>
                         Workflow Id:
-                        {touched.workflowId && !errors.workflowId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.workflowId &&
+                         !errors.workflowId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="workflowId"
-                        value={values?.workflowId}
-                        placeholder="Workflow Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="workflowId"
+                            value={values?.workflowId}
+                            placeholder="Workflow Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -281,32 +271,36 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version && !errors.version && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.version &&
+                         !errors.version && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="version"
-                        type="number"
-                        value={values.version || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("version", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "version",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.version
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="version"
+                            type="number"
+                            value={values.version || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('version', true);
+                              const v = e.target.value;
+                              setFieldValue('version', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.version
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -318,30 +312,30 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
-                        {touched.state && !errors.state && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.state &&
+                         !errors.state && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="state"
-                        value={values.state || ""}
-                        className={
-                          errors.state
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("state", true);
-                          setFieldValue("state", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select State" />
-                        <StateLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="state"
+                          value={values.state || ''}
+                          className={
+                            errors.state
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('state', true);
+                            setFieldValue('state', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select State" />
+                          <StateLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -353,38 +347,38 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="startedAt" className="nice-form-control">
                       <b>
                         Started At:
-                        {touched.startedAt && !errors.startedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.startedAt &&
+                         !errors.startedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="startedAt"
-                        type="datetime-local"
-                        value={
-                          values.startedAt
-                            ? new Date(values.startedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("startedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "startedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.startedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="startedAt"
+                            type="datetime-local"
+                            value={values.startedAt ? 
+                              new Date(values.startedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('startedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('startedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.startedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -396,38 +390,38 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="finishedAt" className="nice-form-control">
                       <b>
                         Finished At:
-                        {touched.finishedAt && !errors.finishedAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.finishedAt &&
+                         !errors.finishedAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="finishedAt"
-                        type="datetime-local"
-                        value={
-                          values.finishedAt
-                            ? new Date(values.finishedAt)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("finishedAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "finishedAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.finishedAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="finishedAt"
+                            type="datetime-local"
+                            value={values.finishedAt ? 
+                              new Date(values.finishedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('finishedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('finishedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.finishedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -436,28 +430,31 @@ const WorkflowExecutionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="parentExecutionId"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="parentExecutionId" className="nice-form-control">
                       <b>
                         Parent Execution Id:
                         {touched.parentExecutionId &&
-                          !errors.parentExecutionId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.parentExecutionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="parentExecutionId"
-                        value={values?.parentExecutionId}
-                        placeholder="Parent Execution Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="parentExecutionId"
+                            value={values?.parentExecutionId}
+                            placeholder="Parent Execution Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -469,33 +466,30 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="triggerType" className="nice-form-control">
                       <b>
                         Trigger Type:
-                        {touched.triggerType && !errors.triggerType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.triggerType &&
+                         !errors.triggerType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="triggerType"
-                        value={values.triggerType || ""}
-                        className={
-                          errors.triggerType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("triggerType", true);
-                          setFieldValue(
-                            "triggerType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Trigger Type" />
-                        <TriggerTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="triggerType"
+                          value={values.triggerType || ''}
+                          className={
+                            errors.triggerType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('triggerType', true);
+                            setFieldValue('triggerType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Trigger Type" />
+                          <TriggerTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -504,27 +498,31 @@ const WorkflowExecutionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="triggerPayload"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="triggerPayload" className="nice-form-control">
                       <b>
                         Trigger Payload:
-                        {touched.triggerPayload && !errors.triggerPayload && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.triggerPayload &&
+                         !errors.triggerPayload && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="triggerPayload"
-                        value={values?.triggerPayload}
-                        placeholder="Trigger Payload"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="triggerPayload"
+                            value={values?.triggerPayload}
+                            placeholder="Trigger Payload"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -536,21 +534,28 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="contextData" className="nice-form-control">
                       <b>
                         Context Data:
-                        {touched.contextData && !errors.contextData && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contextData &&
+                         !errors.contextData && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="contextData"
-                        value={values?.contextData}
-                        placeholder="Context Data"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="contextData"
+                            value={values?.contextData}
+                            placeholder="Context Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -562,21 +567,28 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="errorMessage" className="nice-form-control">
                       <b>
                         Error Message:
-                        {touched.errorMessage && !errors.errorMessage && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.errorMessage &&
+                         !errors.errorMessage && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="errorMessage"
-                        value={values?.errorMessage}
-                        placeholder="Error Message"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="errorMessage"
+                            value={values?.errorMessage}
+                            placeholder="Error Message"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -585,27 +597,31 @@ const WorkflowExecutionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="errorStackTrace"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="errorStackTrace" className="nice-form-control">
                       <b>
                         Error Stack Trace:
-                        {touched.errorStackTrace && !errors.errorStackTrace && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.errorStackTrace &&
+                         !errors.errorStackTrace && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="errorStackTrace"
-                        value={values?.errorStackTrace}
-                        placeholder="Error Stack Trace"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="errorStackTrace"
+                            value={values?.errorStackTrace}
+                            placeholder="Error Stack Trace"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -614,27 +630,31 @@ const WorkflowExecutionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="metricsSnapshot"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="metricsSnapshot" className="nice-form-control">
                       <b>
                         Metrics Snapshot:
-                        {touched.metricsSnapshot && !errors.metricsSnapshot && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.metricsSnapshot &&
+                         !errors.metricsSnapshot && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="metricsSnapshot"
-                        value={values?.metricsSnapshot}
-                        placeholder="Metrics Snapshot"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="metricsSnapshot"
+                            value={values?.metricsSnapshot}
+                            placeholder="Metrics Snapshot"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -646,25 +666,32 @@ const WorkflowExecutionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -674,60 +701,45 @@ const WorkflowExecutionForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New WorkflowExecution
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New WorkflowExecution
+                  </CoolButton>
 
-                    {(addWorkflowExecutionResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addWorkflowExecutionResult as any).error
-                              ? (addWorkflowExecutionResult as any).error.data
-                              : (addWorkflowExecutionResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addWorkflowExecutionResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addWorkflowExecutionResult as any).error ? (addWorkflowExecutionResult as any).error.data : (addWorkflowExecutionResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addWorkflowExecutionResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addWorkflowExecutionResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addWorkflowExecutionResult:{" "}
-                    {JSON.stringify(addWorkflowExecutionResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addWorkflowExecutionResult: {JSON.stringify(addWorkflowExecutionResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -759,13 +771,13 @@ kebabcase state-lookup
 const StateLookup = () => {
   return (
     <>
-      <option value="PENDING" label="Pending" />
-      <option value="RUNNING" label="Running" />
-      <option value="PAUSED" label="Paused" />
-      <option value="SUCCESS" label="Success" />
-      <option value="FAILED" label="Failed" />
-      <option value="CANCELLED" label="Cancelled" />
-      <option value="TIMEOUT" label="Timeout" />
+      <option value='PENDING' label="Pending" />
+      <option value='RUNNING' label="Running" />
+      <option value='PAUSED' label="Paused" />
+      <option value='SUCCESS' label="Success" />
+      <option value='FAILED' label="Failed" />
+      <option value='CANCELLED' label="Cancelled" />
+      <option value='TIMEOUT' label="Timeout" />
     </>
   );
 };
@@ -782,14 +794,17 @@ kebabcase trigger-type-lookup
 const TriggerTypeLookup = () => {
   return (
     <>
-      <option value="MANUAL" label="Manual" />
-      <option value="CRON" label="Cron" />
-      <option value="EVENT" label="Event" />
-      <option value="WEBHOOK" label="Webhook" />
-      <option value="QUEUE" label="Queue" />
+      <option value='MANUAL' label="Manual" />
+      <option value='CRON' label="Cron" />
+      <option value='EVENT' label="Event" />
+      <option value='WEBHOOK' label="Webhook" />
+      <option value='QUEUE' label="Queue" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default WorkflowExecutionForm;
+

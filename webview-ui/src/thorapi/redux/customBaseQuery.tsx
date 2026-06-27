@@ -18,10 +18,23 @@ Template file: typescript-redux-query/customBaseQuery.mustache
   Cookie transport is default; bearer header fallback is opt-in.
 */
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { applyCsrfHeader, shouldAttachCsrfToken } from "../../utils/csrfToken";
 import { refreshCsrfToken } from "../../utils/authFetch";
 import { getStoredJwtToken } from "../../utils/authTokenStorage";
+import { applyTenantHeaders } from "../../utils/tenantContext";
+import { vscode } from "../../utils/vscode";
 import { BASE_PATH } from "../src";
+
+type ThorapiBridgeResult =
+  | { data: unknown }
+  | {
+      error: {
+        status: number | string;
+        data?: unknown;
+        error?: string;
+      };
+    };
 
 const readBearerFallbackFlag = (): string => {
   const procValue =
@@ -43,8 +56,146 @@ const isBearerFallbackEnabled = (): boolean => {
   }
 };
 
+const resolveBaseUrl = () => {
+  const trimmed = (BASE_PATH || "").replace(/\/+$/, "");
+  if (typeof window === "undefined") {
+    return trimmed || "/";
+  }
+
+  try {
+    const absolute = new URL(trimmed);
+    const currentOrigin = window.location.origin;
+    const isDev = Boolean((import.meta as any)?.env?.DEV);
+    if (isDev && absolute.origin !== currentOrigin) {
+      return absolute.pathname || "/";
+    }
+    return absolute.toString();
+  } catch {
+    return trimmed || "/";
+  }
+};
+
+const createThorapiRequestId = () => {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+  return `thorapi-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const headersToRecord = (
+  headers: unknown,
+): Record<string, string> | undefined => {
+  if (!headers) {
+    return undefined;
+  }
+
+  try {
+    if (headers instanceof Headers) {
+      const result: Record<string, string> = {};
+      headers.forEach((value, key) => {
+        result[key] = value;
+      });
+      return result;
+    }
+    if (Array.isArray(headers)) {
+      return Object.fromEntries(headers as Array<[string, string]>);
+    }
+    if (typeof headers === "object") {
+      return Object.fromEntries(
+        Object.entries(headers as Record<string, unknown>).map(
+          ([key, value]) => [key, String(value)],
+        ),
+      );
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+};
+
+const argsToThorapiRequest = (args: any) => {
+  if (typeof args === "string") {
+    return {
+      url: args,
+      method: "GET",
+    };
+  }
+
+  return {
+    url: args?.url || "",
+    method: args?.method || "GET",
+    body: args?.body,
+    params: args?.params,
+    headers: headersToRecord(args?.headers),
+  };
+};
+
+const shouldUseExtensionThorapiBridge = () =>
+  typeof window !== "undefined" && vscode.isAvailable();
+
+const extensionThorapiBaseQuery = async (
+  args: any,
+): Promise<ThorapiBridgeResult> => {
+  const requestId = createThorapiRequestId();
+  const request = argsToThorapiRequest(args);
+
+  return new Promise<ThorapiBridgeResult>((resolve) => {
+    let handleResponse: (event: MessageEvent) => void = () => undefined;
+    const timeoutId = window.setTimeout(() => {
+      window.removeEventListener("message", handleResponse);
+      resolve({
+        error: {
+          status: "TIMEOUT_ERROR",
+          error: "ThorAPI request timed out.",
+        },
+      });
+    }, 30000);
+
+    handleResponse = (event: MessageEvent) => {
+      const message = event.data;
+      const response = message?.thorapiResponse;
+      if (
+        message?.type !== "thorapiResponse" ||
+        response?.requestId !== requestId
+      ) {
+        return;
+      }
+
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("message", handleResponse);
+
+      if (response.ok) {
+        resolve({ data: response.data });
+        return;
+      }
+
+      resolve({
+        error: {
+          status: response.status ?? "FETCH_ERROR",
+          data: response.data,
+          error:
+            response.error || response.statusText || "ThorAPI request failed.",
+        },
+      });
+    };
+
+    window.addEventListener("message", handleResponse);
+    vscode.postMessage({
+      type: "thorapiRequest",
+      thorapiRequest: {
+        requestId,
+        ...request,
+      },
+    });
+  });
+};
+
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: BASE_PATH, // Replace with your base URL
+  baseUrl: resolveBaseUrl(),
   credentials: "include",
   prepareHeaders: (headers, { arg }) => {
     const storedToken = getStoredJwtToken();
@@ -63,18 +214,58 @@ const rawBaseQuery = fetchBaseQuery({
         headers.set("Authorization", `Bearer ${token}`);
       }
     }
+    applyTenantHeaders(headers);
     const method = typeof arg === "string" ? undefined : arg?.method;
     return applyCsrfHeader(headers, method);
   },
 });
 
-const customBaseQuery = async (args: any, api: any, extraOptions: any) => {
+const describeThorapiArgs = (args: any): string => {
+  const baseUrl = resolveBaseUrl();
+  const rawUrl = typeof args === "string" ? args : args?.url || "";
+  try {
+    return new URL(rawUrl, baseUrl).toString();
+  } catch {
+    return `${baseUrl.replace(/\/+$/, "")}/${String(rawUrl).replace(/^\/+/, "")}`;
+  }
+};
+
+const withThorapiFetchContext = (result: any, args: any) => {
+  if (!result?.error || result.error.status !== "FETCH_ERROR") {
+    return result;
+  }
+
+  return {
+    ...result,
+    error: {
+      ...result.error,
+      data: {
+        message: `ThorAPI request failed to fetch ${describeThorapiArgs(args)}.`,
+        cause: result.error.error,
+      },
+    },
+  };
+};
+
+const customBaseQuery: BaseQueryFn = async (
+  args: any,
+  api: any,
+  extraOptions: any,
+) => {
+  if (shouldUseExtensionThorapiBridge()) {
+    return extensionThorapiBaseQuery(args);
+  }
+
   let result = await rawBaseQuery(args, api, extraOptions);
 
   // On 403 for mutating requests, the CSRF token may be stale (common in
   // cross-subdomain deployments where JS cannot read the API-domain cookie).
   // Refresh the token via /auth/csrf and retry exactly once.
-  if (result.error && typeof result.error === "object" && "status" in result.error) {
+  if (
+    result.error &&
+    typeof result.error === "object" &&
+    "status" in result.error
+  ) {
     const status = (result.error as any).status;
     if (status === 403) {
       const method = typeof args === "string" ? undefined : args?.method;
@@ -87,7 +278,7 @@ const customBaseQuery = async (args: any, api: any, extraOptions: any) => {
     }
   }
 
-  return result;
+  return withThorapiFetchContext(result, args);
 };
 
 export default customBaseQuery;

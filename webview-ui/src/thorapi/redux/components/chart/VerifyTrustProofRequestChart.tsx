@@ -19,35 +19,20 @@ Description: VerifyTrustProofRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, VerifyTrustProofRequest } from "@thorapi/model";
-import {
-  useGetVerifyTrustProofRequestsQuery,
-  useAddVerifyTrustProofRequestMutation,
-  useUpdateVerifyTrustProofRequestMutation,
-} from "../../services/VerifyTrustProofRequestService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, VerifyTrustProofRequest } from '@thorapi/model';
+import { useGetVerifyTrustProofRequestsQuery, useAddVerifyTrustProofRequestMutation, useUpdateVerifyTrustProofRequestMutation } from '../../services/VerifyTrustProofRequestService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const VerifyTrustProofRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetVerifyTrustProofRequestsQuery();
+  const { data: initialData = [], isLoading } = useGetVerifyTrustProofRequestsQuery();
 
   const [data, setData] = useState<VerifyTrustProofRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<VerifyTrustProofRequest>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<VerifyTrustProofRequest>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const VerifyTrustProofRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const VerifyTrustProofRequestChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((verifytrustproofrequest: DataObject) => [
-            verifytrustproofrequest,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((verifytrustproofrequest: DataObject) => [verifytrustproofrequest])} />
+          )}
     </>
   );
 };

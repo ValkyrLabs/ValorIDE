@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_FILEAUDITLOG_REQUEST,
-  FETCH_FILEAUDITLOG_REQUEST,
-  LIST_FILEAUDITLOG_REQUEST,
-  UPDATE_FILEAUDITLOG_REQUEST,
-  DELETE_FILEAUDITLOG_REQUEST,
-  addFileAuditLogFailure,
-  addFileAuditLogSuccess,
-  fetchFileAuditLogFailure,
-  fetchFileAuditLogSuccess,
-  listFileAuditLogFailure,
-  listFileAuditLogSuccess,
-  updateFileAuditLogFailure,
-  updateFileAuditLogSuccess,
-  deleteFileAuditLogFailure,
-  deleteFileAuditLogSuccess,
-} from "../actions/FileAuditLogApiAction";
+
+    ADD_FILEAUDITLOG_REQUEST,
+    FETCH_FILEAUDITLOG_REQUEST,
+    LIST_FILEAUDITLOG_REQUEST,
+    UPDATE_FILEAUDITLOG_REQUEST,
+    DELETE_FILEAUDITLOG_REQUEST,
+
+    addFileAuditLogFailure,
+    addFileAuditLogSuccess,
+
+    fetchFileAuditLogFailure,
+    fetchFileAuditLogSuccess,
+    
+    listFileAuditLogFailure,
+    listFileAuditLogSuccess,
+
+    updateFileAuditLogFailure,
+    updateFileAuditLogSuccess,
+    
+    deleteFileAuditLogFailure,
+    deleteFileAuditLogSuccess,
+    
+} from '../actions/FileAuditLogApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: FileAuditLog
 */
 
-export const FileAuditLogMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("FileAuditLog MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const FileAuditLogMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("FileAuditLog MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

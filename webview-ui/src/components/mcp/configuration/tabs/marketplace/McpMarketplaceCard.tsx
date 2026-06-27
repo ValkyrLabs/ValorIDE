@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useMemo } from "react";
+import { useCallback, useState, useRef, useMemo, type MouseEvent } from "react";
 import styled from "styled-components";
 import { McpMarketplaceItem, McpServer } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
@@ -73,12 +73,43 @@ export const getMarketplaceDetailUrl = (item: McpMarketplaceItem) => {
   return item.githubUrl;
 };
 
+const normalized = (value: unknown) => String(value ?? "").trim();
+
+const getMarketplaceAliases = (item: McpMarketplaceItem): string[] => {
+  const aliases = [
+    item.mcpServerId,
+    item.slug,
+    item.serviceId,
+    item.mcpId,
+    item.name,
+    (item as any).displayName,
+  ]
+    .map(normalized)
+    .filter(Boolean);
+  const lowerAliases = aliases.map((alias) => alias.toLowerCase());
+  if (
+    lowerAliases.some(
+      (alias) => alias === "graymatter" || alias.includes("graymatter"),
+    )
+  ) {
+    aliases.push("graymatter-memory");
+  }
+  return Array.from(new Set(aliases));
+};
+
+export const getMarketplaceInstallId = (item: McpMarketplaceItem): string =>
+  getMarketplaceAliases(item)[0] || item.mcpId;
+
 const McpMarketplaceCard = ({
   item,
   installedServers,
 }: McpMarketplaceCardProps) => {
-  const isInstalled = installedServers.some(
-    (server) => server.name === item.mcpId,
+  const installAliases = useMemo(() => getMarketplaceAliases(item), [item]);
+  const installId = useMemo(() => getMarketplaceInstallId(item), [item]);
+  const isInstalled = installedServers.some((server) =>
+    installAliases.some(
+      (alias) => server.name.toLowerCase() === alias.toLowerCase(),
+    ),
   );
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,6 +146,17 @@ const McpMarketplaceCard = ({
     return !!(item as any).applicationId;
   }, [item]);
 
+  const openDetail = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      vscode.postMessage({
+        type: "openInBrowser",
+        url: detailUrl,
+      });
+    },
+    [detailUrl],
+  );
+
   return (
     <>
       <style>
@@ -134,13 +176,7 @@ const McpMarketplaceCard = ({
       <a
         href={detailUrl}
         className="mcp-card"
-        onClick={(e) => {
-          e.preventDefault();
-          vscode.postMessage({
-            type: "openInBrowser",
-            url: detailUrl,
-          });
-        }}
+        onClick={openDetail}
         style={{
           padding: "14px 16px",
           display: "flex",
@@ -221,7 +257,8 @@ const McpMarketplaceCard = ({
                     setIsDownloading(true);
                     vscode.postMessage({
                       type: "downloadMcp",
-                      mcpId: item.mcpId,
+                      mcpId: installId,
+                      mcpMarketplaceItem: item,
                     });
                   }
                 }}

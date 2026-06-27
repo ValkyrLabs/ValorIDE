@@ -53,7 +53,7 @@ const SwarmPanel2: React.FC<SwarmPanel2Props> = ({
     "offline",
   );
   const [agentFilter, setAgentFilter] = useState<
-    "all" | "online" | "offline" | "busy"
+    "all" | "ONLINE" | "OFFLINE" | "BUSY"
   >("all");
   const [loading, setLoading] = useState(false);
 
@@ -66,6 +66,12 @@ const SwarmPanel2: React.FC<SwarmPanel2Props> = ({
   const {
     data: agents = [],
     isLoading: agentsLoading,
+    isError: discoveryIsError,
+    error: discoveryError,
+    errorKind,
+    endpoint,
+    endpointType,
+    recoveryActions,
     refetch,
   } = useDiscoveryQuery({
     organizationId,
@@ -130,7 +136,7 @@ const SwarmPanel2: React.FC<SwarmPanel2Props> = ({
             <Button
               icon={<ReloadOutlined />}
               size="small"
-              onClick={() => refetch()}
+              onClick={() => void refetch()}
               loading={agentsLoading}
             />
           </Tooltip>
@@ -148,6 +154,61 @@ const SwarmPanel2: React.FC<SwarmPanel2Props> = ({
           message="WebSocket Disconnected"
           description="Real-time updates are unavailable. Refresh to reconnect."
           type="warning"
+          showIcon
+          closable
+          style={{ marginBottom: "10px" }}
+        />
+      )}
+
+      {(discoveryIsError || errorKind) && (
+        <Alert
+          message={
+            discoveryIsError
+              ? "Swarm discovery unavailable"
+              : "No Swarm agents found"
+          }
+          description={
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <span>
+                {discoveryError?.message ||
+                  `Checked ${endpointType} discovery endpoint.`}
+              </span>
+              {endpoint && (
+                <code style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+                  {endpoint}
+                </code>
+              )}
+              <Space wrap>
+                {recoveryActions.map((action) => (
+                  <Button
+                    key={action.id}
+                    size="small"
+                    onClick={() => {
+                      if (action.id === "retry") {
+                        void refetch();
+                        return;
+                      }
+                      if (action.id === "connect-account") {
+                        window.dispatchEvent(
+                          new CustomEvent("valoride:open-account"),
+                        );
+                        return;
+                      }
+                      if (action.id === "buy-credits") {
+                        window.open("https://valkyrlabs.com/buy-credits", "_blank");
+                        return;
+                      }
+                      setActiveTab("settings");
+                    }}
+                    loading={action.id === "retry" && agentsLoading}
+                  >
+                    {action.label}
+                  </Button>
+                ))}
+              </Space>
+            </Space>
+          }
+          type={discoveryIsError ? "error" : "info"}
           showIcon
           closable
           style={{ marginBottom: "10px" }}
@@ -176,9 +237,9 @@ const SwarmPanel2: React.FC<SwarmPanel2Props> = ({
                       onChange={setAgentFilter}
                       options={[
                         { label: "All Agents", value: "all" },
-                        { label: "Online", value: "online" },
-                        { label: "Offline", value: "offline" },
-                        { label: "Busy", value: "busy" },
+                        { label: "Online", value: "ONLINE" },
+                        { label: "Offline", value: "OFFLINE" },
+                        { label: "Busy", value: "BUSY" },
                       ]}
                       style={{ width: "100%" }}
                     />

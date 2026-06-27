@@ -19,32 +19,20 @@ Description: DeploymentSpec
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, DeploymentSpec } from "@thorapi/model";
-import {
-  useGetDeploymentSpecsQuery,
-  useAddDeploymentSpecMutation,
-  useUpdateDeploymentSpecMutation,
-} from "../../services/DeploymentSpecService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, DeploymentSpec } from '@thorapi/model';
+import { useGetDeploymentSpecsQuery, useAddDeploymentSpecMutation, useUpdateDeploymentSpecMutation } from '../../services/DeploymentSpecService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const DeploymentSpecChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetDeploymentSpecsQuery();
 
   const [data, setData] = useState<DeploymentSpec[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<DeploymentSpec>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const DeploymentSpecChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const DeploymentSpecChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((deploymentspec: DataObject) => [deploymentspec])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((deploymentspec: DataObject) => [deploymentspec])} />
+          )}
     </>
   );
 };

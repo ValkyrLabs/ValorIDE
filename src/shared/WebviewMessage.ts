@@ -7,13 +7,16 @@ import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 import { ChatContent } from "./ChatContent";
 import { TelemetrySetting } from "./TelemetrySetting";
 import { LlmDetailsSummary } from "./llm";
-import { McpViewTab } from "./mcp";
+import { McpMarketplaceItem, McpViewTab } from "./mcp";
+import type { RemoteCodingCommand } from "../services/communication/RemoteCodingSessionOrchestrator";
+import type { ValorTaskBridgePayload } from "./BuildMode";
 
 export interface WebviewMessage {
   type:
     | "addRemoteServer"
     | "apiConfiguration"
     | "webviewDidLaunch"
+    | "retrySwarmRegistration"
     | "requestTheme"
     | "newTask"
     | "condense"
@@ -76,7 +79,6 @@ export interface WebviewMessage {
     | "updateSettings"
     | "updateLLMDetails"
     | "clearAllTaskHistory"
-    | "fetchUserCreditsData"
     | "optionsResponse"
     | "requestTotalTasksSize"
     | "relaunchChromeDebugMode"
@@ -96,7 +98,9 @@ export interface WebviewMessage {
     | "displayVSCodeWarning"
     | "displayVSCodeError"
     | "accountLoginSuccess"
+    | "accountLoginRequest"
     | "streamToThorapi"
+    | "thorapiRequest"
     | "openFileExplorerTab"
     | "getThorapiFolderContents"
     | "promptAddGeneratedToProject"
@@ -104,9 +108,21 @@ export interface WebviewMessage {
     | "startServer"
     | "uploadOpenAPISpec"
     | "uploadOpenAPISpecResult"
-    | "openFile";
+    | "openOpenAPIEditor"
+    | "openFile"
+    | "trackFunnelEvent"
+    | "remoteCodingSessionCommand"
+    | "valorBuildModeLaunchTask"
+    | "valorBuildModeRequestAutomationSnapshot"
+    | "valorBuildModeSetAutomationStatus"
+    | "valorBuildModeRunCommand"
+    | "valorBuildModeRunAutonomousQueue"
+    | "valorBuildModeRunDueAutomations"
+    | "valorBuildModeOpenArtifact";
 
   // | "relaunchChromeDebugMode"
+  event?: string;
+  payload?: Record<string, unknown>;
   text?: string;
   uris?: string[]; // Used for getRelativePaths
   disabled?: boolean;
@@ -122,8 +138,22 @@ export interface WebviewMessage {
   chatSettings?: ChatSettings;
   chatContent?: ChatContent;
   mcpId?: string;
+  mcpMarketplaceItem?: McpMarketplaceItem;
   timeout?: number;
   tab?: McpViewTab;
+  accountTab?:
+    | "login"
+    | "signup"
+    | "account"
+    | "applications"
+    | "appGeneration"
+    | "contextPage"
+    | "generatedFiles"
+    | "receipts"
+    | "swarm"
+    | "agenticCommandCenter"
+    | "userPreferences"
+    | "serverConsole";
   // For toggleToolAutoApprove
   serverName?: string;
   serverUrl?: string;
@@ -134,6 +164,9 @@ export interface WebviewMessage {
   user?: { id: string; name: string } | null; // Replace with the actual structure of Principal
   customToken?: string;
   authenticatedPrincipal?: any;
+  requestId?: string;
+  username?: string;
+  password?: string;
   // For openInBrowser
   url?: string;
   planActSeparateModelsSetting?: boolean;
@@ -184,6 +217,17 @@ export interface WebviewMessage {
   llmDetails?: LlmDetailsSummary;
   taskIntent?: string;
   valkyraiHost?: string;
+  remoteCodingCommand?: RemoteCodingCommand;
+  valorTaskBridgePayload?: Partial<ValorTaskBridgePayload>;
+  thorapiRequest?: {
+    requestId: string;
+    url: string;
+    method?: string;
+    body?: unknown;
+    params?: Record<string, unknown>;
+    headers?: Record<string, string>;
+    responseType?: "json" | "arraybuffer";
+  };
 }
 
 export type ValorIDEAskResponse =

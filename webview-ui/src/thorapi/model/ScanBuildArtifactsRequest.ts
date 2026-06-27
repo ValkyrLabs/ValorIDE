@@ -26,50 +26,48 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface ScanBuildArtifactsRequest
  */
-export type ScanBuildArtifactsRequest = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof ScanBuildArtifactsRequest
-   */
-  applicationId: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ScanBuildArtifactsRequest
-   */
-  searchPath?: string;
-};
-
-export function ScanBuildArtifactsRequestFromJSON(
-  json: any,
-): ScanBuildArtifactsRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    applicationId: json["applicationId"],
-    searchPath: !exists(json, "searchPath") ? undefined : json["searchPath"],
-  };
+export type ScanBuildArtifactsRequest  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof ScanBuildArtifactsRequest
+     */
+    applicationId: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ScanBuildArtifactsRequest
+     */
+    searchPath?: string;
 }
 
-export function ScanBuildArtifactsRequestToJSON(
-  value?: ScanBuildArtifactsRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    applicationId: value.applicationId,
-    searchPath: value.searchPath,
-  };
+export function ScanBuildArtifactsRequestFromJSON(json: any): ScanBuildArtifactsRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'applicationId': json['applicationId'],
+        'searchPath': !exists(json, 'searchPath') ? undefined : json['searchPath'],
+    };
 }
+
+export function ScanBuildArtifactsRequestToJSON(value?: ScanBuildArtifactsRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'applicationId': value.applicationId,
+        'searchPath': value.searchPath,
+    };
+}
+
+

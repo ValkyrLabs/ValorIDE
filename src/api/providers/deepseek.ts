@@ -22,7 +22,7 @@ export class DeepSeekHandler implements ApiHandler {
     this.options = options;
     this.client = new OpenAI({
       baseURL: "https://api.deepseek.com/v1",
-      apiKey: this.options.deepSeekApiKey,
+      apiKey: this.options.deepSeekApiKey || "noop",
     });
   }
 

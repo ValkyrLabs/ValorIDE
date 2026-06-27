@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  BuildArtifact,
+} from '@thorapi/model';
 
-import { BuildArtifact } from "@thorapi/model";
-
-import { useAddBuildArtifactMutation } from "../../services/BuildArtifactService";
+import { useAddBuildArtifactMutation } from '../../services/BuildArtifactService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,41 +65,33 @@ Built JAR and frontend distribution for deployment
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  applicationId: Yup.string(),
-  jarPath: Yup.string(),
-  jarSize: asNumber(
-    Yup.number().integer().typeError("jarSize must be a number"),
-  ),
-  frontendDistPath: Yup.string(),
-  frontendSize: asNumber(
-    Yup.number().integer().typeError("frontendSize must be a number"),
-  ),
-  buildTimestamp: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("buildTimestamp must be a valid date"),
-  buildVersion: Yup.string(),
-  builtBy: Yup.string(),
-  verified: Yup.boolean(),
-  trashed: Yup.boolean(),
+        applicationId: Yup.string(),
+        jarPath: Yup.string(),
+        jarSize: asNumber(Yup.number().integer().typeError("jarSize must be a number")),
+        frontendDistPath: Yup.string(),
+        frontendSize: asNumber(Yup.number().integer().typeError("frontendSize must be a number")),
+        buildTimestamp: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("buildTimestamp must be a valid date"),
+        buildVersion: Yup.string(),
+        builtBy: Yup.string(),
+        verified: Yup.boolean(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const BuildArtifactForm: React.FC = () => {
-  const [addBuildArtifact, addBuildArtifactResult] =
-    useAddBuildArtifactMutation();
+  const [addBuildArtifact, addBuildArtifactResult] = useAddBuildArtifactMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -115,18 +101,12 @@ const BuildArtifactForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -134,16 +114,16 @@ const BuildArtifactForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<BuildArtifact> = {
-    applicationId: "",
-    jarPath: "",
-    jarSize: 0,
-    frontendDistPath: "",
-    frontendSize: 0,
-    buildTimestamp: new Date(),
-    buildVersion: "",
-    builtBy: "",
-    verified: false,
-    trashed: false,
+          applicationId: '',
+          jarPath: '',
+          jarSize: 0,
+          frontendDistPath: '',
+          frontendSize: 0,
+          buildTimestamp: new Date(),
+          buildVersion: '',
+          builtBy: '',
+          verified: false,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -158,14 +138,11 @@ const BuildArtifactForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new BuildArtifact:", grants);
+    console.log('Permissions saved for new BuildArtifact:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<BuildArtifact>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<BuildArtifact>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -176,7 +153,7 @@ const BuildArtifactForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `BuildArtifact created successfully! Would you like to set permissions for this object?`,
+          `BuildArtifact created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -184,8 +161,8 @@ const BuildArtifactForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create BuildArtifact:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create BuildArtifact:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -206,39 +183,44 @@ const BuildArtifactForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addBuildArtifactResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New BuildArtifact
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="applicationId"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New BuildArtifact
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="applicationId" className="nice-form-control">
                       <b>
                         Application Id:
-                        {touched.applicationId && !errors.applicationId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.applicationId &&
+                         !errors.applicationId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="applicationId"
-                        value={values?.applicationId}
-                        placeholder="Application Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="applicationId"
+                            value={values?.applicationId}
+                            placeholder="Application Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -250,21 +232,28 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="jarPath" className="nice-form-control">
                       <b>
                         Jar Path:
-                        {touched.jarPath && !errors.jarPath && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.jarPath &&
+                         !errors.jarPath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="jarPath"
-                        value={values?.jarPath}
-                        placeholder="Jar Path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="jarPath"
+                            value={values?.jarPath}
+                            placeholder="Jar Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -276,32 +265,36 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="jarSize" className="nice-form-control">
                       <b>
                         Jar Size:
-                        {touched.jarSize && !errors.jarSize && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.jarSize &&
+                         !errors.jarSize && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="jarSize"
-                        type="number"
-                        value={values.jarSize || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("jarSize", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "jarSize",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.jarSize
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="jarSize"
+                            type="number"
+                            value={values.jarSize || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('jarSize', true);
+                              const v = e.target.value;
+                              setFieldValue('jarSize', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.jarSize
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -310,28 +303,31 @@ const BuildArtifactForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="frontendDistPath"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="frontendDistPath" className="nice-form-control">
                       <b>
                         Frontend Dist Path:
                         {touched.frontendDistPath &&
-                          !errors.frontendDistPath && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.frontendDistPath && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="frontendDistPath"
-                        value={values?.frontendDistPath}
-                        placeholder="Frontend Dist Path"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="frontendDistPath"
+                            value={values?.frontendDistPath}
+                            placeholder="Frontend Dist Path"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -343,32 +339,36 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="frontendSize" className="nice-form-control">
                       <b>
                         Frontend Size:
-                        {touched.frontendSize && !errors.frontendSize && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.frontendSize &&
+                         !errors.frontendSize && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="frontendSize"
-                        type="number"
-                        value={values.frontendSize || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("frontendSize", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "frontendSize",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.frontendSize
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="frontendSize"
+                            type="number"
+                            value={values.frontendSize || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('frontendSize', true);
+                              const v = e.target.value;
+                              setFieldValue('frontendSize', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.frontendSize
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -377,44 +377,41 @@ const BuildArtifactForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="buildTimestamp"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="buildTimestamp" className="nice-form-control">
                       <b>
                         Build Timestamp:
-                        {touched.buildTimestamp && !errors.buildTimestamp && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.buildTimestamp &&
+                         !errors.buildTimestamp && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="buildTimestamp"
-                        type="datetime-local"
-                        value={
-                          values.buildTimestamp
-                            ? new Date(values.buildTimestamp)
-                                .toISOString()
-                                .slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("buildTimestamp", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "buildTimestamp",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.buildTimestamp
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="buildTimestamp"
+                            type="datetime-local"
+                            value={values.buildTimestamp ? 
+                              new Date(values.buildTimestamp).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('buildTimestamp', true);
+                              const v = e.target.value;
+                              setFieldValue('buildTimestamp', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.buildTimestamp
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -426,21 +423,28 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="buildVersion" className="nice-form-control">
                       <b>
                         Build Version:
-                        {touched.buildVersion && !errors.buildVersion && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.buildVersion &&
+                         !errors.buildVersion && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="buildVersion"
-                        value={values?.buildVersion}
-                        placeholder="Build Version"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="buildVersion"
+                            value={values?.buildVersion}
+                            placeholder="Build Version"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -452,21 +456,28 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="builtBy" className="nice-form-control">
                       <b>
                         Built By:
-                        {touched.builtBy && !errors.builtBy && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.builtBy &&
+                         !errors.builtBy && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="builtBy"
-                        value={values?.builtBy}
-                        placeholder="Built By"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="builtBy"
+                            value={values?.builtBy}
+                            placeholder="Built By"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -478,25 +489,32 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="verified" className="nice-form-control">
                       <b>
                         Verified:
-                        {touched.verified && !errors.verified && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.verified &&
+                         !errors.verified && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="verified"
-                        name="verified"
-                        checked={values.verified || false}
-                        onChange={(e) => {
-                          setFieldTouched("verified", true);
-                          setFieldValue("verified", e.target.checked);
-                        }}
-                        isInvalid={!!errors.verified}
-                        className={errors.verified ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="verified"
+                            name="verified"
+                            checked={values.verified || false}
+                            onChange={(e) => {
+                              setFieldTouched('verified', true);
+                              setFieldValue('verified', e.target.checked);
+                            }}
+                            isInvalid={!!errors.verified}
+                            className={errors.verified ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -508,25 +526,32 @@ const BuildArtifactForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -536,59 +561,45 @@ const BuildArtifactForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New BuildArtifact
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New BuildArtifact
+                  </CoolButton>
 
-                    {(addBuildArtifactResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addBuildArtifactResult as any).error
-                              ? (addBuildArtifactResult as any).error.data
-                              : (addBuildArtifactResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addBuildArtifactResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addBuildArtifactResult as any).error ? (addBuildArtifactResult as any).error.data : (addBuildArtifactResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addBuildArtifactResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addBuildArtifactResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addBuildArtifactResult:{" "}
-                    {JSON.stringify(addBuildArtifactResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addBuildArtifactResult: {JSON.stringify(addBuildArtifactResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -608,5 +619,8 @@ const BuildArtifactForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default BuildArtifactForm;
+

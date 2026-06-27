@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 
 import App from "./App";
+import OpenAPIEditorStandalone from "./components/openapi/OpenAPIEditorStandalone";
 // Initialize ThorAPI/STOMP bridge so CommunicationService can relay to mothership
 import "./P2P/thorBridge";
 
@@ -96,6 +97,13 @@ const root = ReactDOM.createRoot(
 
 import ErrorBoundary from "./components/common/ErrorBoundary";
 
+const webviewMode =
+  typeof window !== "undefined"
+    ? (window as any).__valorideWebviewMode
+    : undefined;
+const RootComponent =
+  webviewMode === "openapi-editor" ? OpenAPIEditorStandalone : App;
+
 root.render(
   <ReduxProvider store={store}>
     <MemoryRouter>
@@ -108,7 +116,7 @@ root.render(
             typeof navigator !== "undefined" ? navigator.userAgent : "",
         }}
       >
-        <App />
+        <RootComponent />
       </ErrorBoundary>
     </MemoryRouter>
   </ReduxProvider>,

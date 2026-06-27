@@ -19,33 +19,20 @@ Description: McpServiceResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, McpServiceResponse } from "@thorapi/model";
-import {
-  useGetMcpServiceResponsesQuery,
-  useAddMcpServiceResponseMutation,
-  useUpdateMcpServiceResponseMutation,
-} from "../../services/McpServiceResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, McpServiceResponse } from '@thorapi/model';
+import { useGetMcpServiceResponsesQuery, useAddMcpServiceResponseMutation, useUpdateMcpServiceResponseMutation } from '../../services/McpServiceResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const McpServiceResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMcpServiceResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetMcpServiceResponsesQuery();
 
   const [data, setData] = useState<McpServiceResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpServiceResponse>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const McpServiceResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const McpServiceResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((mcpserviceresponse: DataObject) => [
-            mcpserviceresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((mcpserviceresponse: DataObject) => [mcpserviceresponse])} />
+          )}
     </>
   );
 };

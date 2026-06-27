@@ -19,33 +19,20 @@ Description: McpDownloadResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, McpDownloadResponse } from "@thorapi/model";
-import {
-  useGetMcpDownloadResponsesQuery,
-  useAddMcpDownloadResponseMutation,
-  useUpdateMcpDownloadResponseMutation,
-} from "../../services/McpDownloadResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, McpDownloadResponse } from '@thorapi/model';
+import { useGetMcpDownloadResponsesQuery, useAddMcpDownloadResponseMutation, useUpdateMcpDownloadResponseMutation } from '../../services/McpDownloadResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const McpDownloadResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetMcpDownloadResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetMcpDownloadResponsesQuery();
 
   const [data, setData] = useState<McpDownloadResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpDownloadResponse>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const McpDownloadResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const McpDownloadResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((mcpdownloadresponse: DataObject) => [
-            mcpdownloadresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((mcpdownloadresponse: DataObject) => [mcpdownloadresponse])} />
+          )}
     </>
   );
 };

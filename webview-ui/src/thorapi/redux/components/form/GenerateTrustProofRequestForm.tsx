@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   GenerateTrustProofRequest,
   GenerateTrustProofRequestProofFormatEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddGenerateTrustProofRequestMutation } from "../../services/GenerateTrustProofRequestService";
+import { useAddGenerateTrustProofRequestMutation } from '../../services/GenerateTrustProofRequestService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,32 +62,31 @@ GenerateTrustProofRequest
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ProofFormatValidation = () => {
-  return ["JCS_JSON", "CANONICAL_CBOR"];
+  return [
+    'JCS_JSON',
+    'CANONICAL_CBOR',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  executionId: Yup.string(),
-  proofFormat: Yup.mixed().oneOf(
-    ProofFormatValidation(),
-    "Invalid value for proofFormat",
-  ),
-  trashed: Yup.boolean(),
+        executionId: Yup.string(),
+      proofFormat: Yup.mixed()
+        .oneOf(ProofFormatValidation(), "Invalid value for proofFormat")
+        ,
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const GenerateTrustProofRequestForm: React.FC = () => {
-  const [addGenerateTrustProofRequest, addGenerateTrustProofRequestResult] =
-    useAddGenerateTrustProofRequestMutation();
+  const [addGenerateTrustProofRequest, addGenerateTrustProofRequestResult] = useAddGenerateTrustProofRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -105,18 +96,12 @@ const GenerateTrustProofRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -124,9 +109,9 @@ const GenerateTrustProofRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<GenerateTrustProofRequest> = {
-    executionId: "",
-    proofFormat: undefined,
-    trashed: false,
+          executionId: '',
+        proofFormat: undefined,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -141,14 +126,11 @@ const GenerateTrustProofRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new GenerateTrustProofRequest:", grants);
+    console.log('Permissions saved for new GenerateTrustProofRequest:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<GenerateTrustProofRequest>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<GenerateTrustProofRequest>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -159,7 +141,7 @@ const GenerateTrustProofRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `GenerateTrustProofRequest created successfully! Would you like to set permissions for this object?`,
+          `GenerateTrustProofRequest created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -167,8 +149,8 @@ const GenerateTrustProofRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create GenerateTrustProofRequest:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create GenerateTrustProofRequest:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -189,38 +171,44 @@ const GenerateTrustProofRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addGenerateTrustProofRequestResult.isLoading;
+          const isSaving = isSubmitting || addGenerateTrustProofRequestResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    GenerateTrustProofRequest
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New GenerateTrustProofRequest
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="executionId" className="nice-form-control">
                       <b>
                         Execution Id:
-                        {touched.executionId && !errors.executionId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.executionId &&
+                         !errors.executionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="executionId"
-                        value={values?.executionId}
-                        placeholder="Execution Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="executionId"
+                            value={values?.executionId}
+                            placeholder="Execution Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -232,33 +220,30 @@ const GenerateTrustProofRequestForm: React.FC = () => {
                     <label htmlFor="proofFormat" className="nice-form-control">
                       <b>
                         Proof Format:
-                        {touched.proofFormat && !errors.proofFormat && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.proofFormat &&
+                         !errors.proofFormat && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="proofFormat"
-                        value={values.proofFormat || ""}
-                        className={
-                          errors.proofFormat
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("proofFormat", true);
-                          setFieldValue(
-                            "proofFormat",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Proof Format" />
-                        <ProofFormatLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="proofFormat"
+                          value={values.proofFormat || ''}
+                          className={
+                            errors.proofFormat
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('proofFormat', true);
+                            setFieldValue('proofFormat', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Proof Format" />
+                          <ProofFormatLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -270,25 +255,32 @@ const GenerateTrustProofRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -298,65 +290,45 @@ const GenerateTrustProofRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      GenerateTrustProofRequest
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New GenerateTrustProofRequest
+                  </CoolButton>
 
-                    {(addGenerateTrustProofRequestResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addGenerateTrustProofRequestResult as any).error
-                              ? (addGenerateTrustProofRequestResult as any)
-                                  .error.data
-                              : (addGenerateTrustProofRequestResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addGenerateTrustProofRequestResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addGenerateTrustProofRequestResult as any).error ? (addGenerateTrustProofRequestResult as any).error.data : (addGenerateTrustProofRequestResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addGenerateTrustProofRequestResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addGenerateTrustProofRequestResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addGenerateTrustProofRequestResult:{" "}
-                    {JSON.stringify(addGenerateTrustProofRequestResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addGenerateTrustProofRequestResult: {JSON.stringify(addGenerateTrustProofRequestResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -388,11 +360,14 @@ kebabcase proof-format-lookup
 const ProofFormatLookup = () => {
   return (
     <>
-      <option value="JCS_JSON" label="Jcs Json" />
-      <option value="CANONICAL_CBOR" label="Canonical Cbor" />
+      <option value='JCS_JSON' label="Jcs Json" />
+      <option value='CANONICAL_CBOR' label="Canonical Cbor" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default GenerateTrustProofRequestForm;
+

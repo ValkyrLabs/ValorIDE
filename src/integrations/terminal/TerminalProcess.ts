@@ -25,6 +25,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
   private hasFinished: boolean = false;
   private hasEmittedCompleted: boolean = false;
   private hasEmittedContinue: boolean = false;
+  private exitCode: number | undefined;
 
   private clearHotState() {
     if (this.hotTimer) {
@@ -56,6 +57,10 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
     error?: unknown;
     emitNoShellIntegration?: boolean;
   }) {
+    if (options && "exitCode" in options) {
+      this.exitCode = options.exitCode;
+    }
+
     if (this.hasFinished) {
       return;
     }
@@ -95,6 +100,8 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
         let didOutputNonCommand = false;
         let didEmitEmptyLine = false;
         for await (let data of stream) {
+          this.captureExitCodeFromShellIntegration(data);
+
           // 1. Process chunk and remove artifacts
           if (isFirstChunk) {
             /*
@@ -319,6 +326,23 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
     const unretrieved = this.fullOutput.slice(this.lastRetrievedIndex);
     this.lastRetrievedIndex = this.fullOutput.length;
     return this.removeLastLineArtifacts(unretrieved);
+  }
+
+  getExitCode(): number | undefined {
+    return this.exitCode;
+  }
+
+  private captureExitCodeFromShellIntegration(output: string) {
+    const matches = output.matchAll(/\]633;D(?:;(-?\d+))?/g);
+    for (const match of matches) {
+      if (match[1] === undefined) {
+        continue;
+      }
+      const exitCode = Number.parseInt(match[1], 10);
+      if (!Number.isNaN(exitCode)) {
+        this.exitCode = exitCode;
+      }
+    }
   }
 
   // some processing to remove artifacts like '%' at the end of the buffer (it seems that since vsode uses % at the beginning of newlines in terminal, it makes its way into the stream)

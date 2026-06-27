@@ -13,37 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  WebsocketMessage,
+  WebsocketMessageTypeEnum,
+} from '@thorapi/model';
 
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
-
-import { useAddWebsocketMessageMutation } from "../../services/WebsocketMessageService";
+import { useAddWebsocketMessageMutation } from '../../services/WebsocketMessageService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -68,19 +63,19 @@ Websocket Message is the unit of websocket communication
 -------------------------------------------------------- */
 const TypeValidation = () => {
   return [
-    "command",
-    "service",
-    "agent",
-    "user",
-    "console",
-    "broadcast",
-    "room",
-    "private",
-    "secure",
-    "warn",
-    "error",
-    "info",
-    "debug",
+    'command',
+    'service',
+    'agent',
+    'user',
+    'console',
+    'broadcast',
+    'room',
+    'private',
+    'secure',
+    'warn',
+    'error',
+    'info',
+    'debug',
   ];
 };
 
@@ -88,24 +83,23 @@ const TypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  websocketSessionId: Yup.string(),
-  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
-  payload: Yup.string(),
-  time: Yup.string(),
-  trashed: Yup.boolean(),
+        websocketSessionId: Yup.string(),
+      type: Yup.mixed()
+        .oneOf(TypeValidation(), "Invalid value for type")
+        ,
+        payload: Yup.string(),
+        time: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WebsocketMessageForm: React.FC = () => {
-  const [addWebsocketMessage, addWebsocketMessageResult] =
-    useAddWebsocketMessageMutation();
+  const [addWebsocketMessage, addWebsocketMessageResult] = useAddWebsocketMessageMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -115,18 +109,12 @@ const WebsocketMessageForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -134,11 +122,11 @@ const WebsocketMessageForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<WebsocketMessage> = {
-    websocketSessionId: "",
-    type: undefined,
-    payload: "",
-    time: "",
-    trashed: false,
+          websocketSessionId: '',
+        type: undefined,
+          payload: '',
+          time: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -153,14 +141,11 @@ const WebsocketMessageForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new WebsocketMessage:", grants);
+    console.log('Permissions saved for new WebsocketMessage:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<WebsocketMessage>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WebsocketMessage>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -171,7 +156,7 @@ const WebsocketMessageForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `WebsocketMessage created successfully! Would you like to set permissions for this object?`,
+          `WebsocketMessage created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -179,8 +164,8 @@ const WebsocketMessageForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create WebsocketMessage:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create WebsocketMessage:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -201,41 +186,44 @@ const WebsocketMessageForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addWebsocketMessageResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    WebsocketMessage
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <label
-                      htmlFor="websocketSessionId"
-                      className="nice-form-control"
-                    >
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New WebsocketMessage
+                </Accordion.Header>
+                <Accordion.Body>
+                    <label htmlFor="websocketSessionId" className="nice-form-control">
                       <b>
                         Websocket Session Id:
                         {touched.websocketSessionId &&
-                          !errors.websocketSessionId && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.websocketSessionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="websocketSessionId"
-                        value={values?.websocketSessionId}
-                        placeholder="Websocket Session Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="websocketSessionId"
+                            value={values?.websocketSessionId}
+                            placeholder="Websocket Session Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -247,30 +235,30 @@ const WebsocketMessageForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type && !errors.type && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.type &&
+                         !errors.type && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="type"
-                        value={values.type || ""}
-                        className={
-                          errors.type
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("type", true);
-                          setFieldValue("type", e.target.value || undefined);
-                        }}
-                      >
-                        <option value="" label="Select Type" />
-                        <TypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="type"
+                          value={values.type || ''}
+                          className={
+                            errors.type
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('type', true);
+                            setFieldValue('type', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Type" />
+                          <TypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -282,21 +270,28 @@ const WebsocketMessageForm: React.FC = () => {
                     <label htmlFor="payload" className="nice-form-control">
                       <b>
                         Payload:
-                        {touched.payload && !errors.payload && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.payload &&
+                         !errors.payload && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="payload"
-                        value={values?.payload}
-                        placeholder="Payload"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="payload"
+                            value={values?.payload}
+                            placeholder="Payload"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -308,21 +303,28 @@ const WebsocketMessageForm: React.FC = () => {
                     <label htmlFor="time" className="nice-form-control">
                       <b>
                         Time:
-                        {touched.time && !errors.time && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.time &&
+                         !errors.time && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="time"
-                        value={values?.time}
-                        placeholder="Time"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="time"
+                            value={values?.time}
+                            placeholder="Time"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -334,25 +336,32 @@ const WebsocketMessageForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -362,60 +371,45 @@ const WebsocketMessageForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New WebsocketMessage
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New WebsocketMessage
+                  </CoolButton>
 
-                    {(addWebsocketMessageResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addWebsocketMessageResult as any).error
-                              ? (addWebsocketMessageResult as any).error.data
-                              : (addWebsocketMessageResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addWebsocketMessageResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addWebsocketMessageResult as any).error ? (addWebsocketMessageResult as any).error.data : (addWebsocketMessageResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addWebsocketMessageResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addWebsocketMessageResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addWebsocketMessageResult:{" "}
-                    {JSON.stringify(addWebsocketMessageResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addWebsocketMessageResult: {JSON.stringify(addWebsocketMessageResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -447,22 +441,25 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value="command" label="Command" />
-      <option value="service" label="Service" />
-      <option value="agent" label="Agent" />
-      <option value="user" label="User" />
-      <option value="console" label="Console" />
-      <option value="broadcast" label="Broadcast" />
-      <option value="room" label="Room" />
-      <option value="private" label="Private" />
-      <option value="secure" label="Secure" />
-      <option value="warn" label="Warn" />
-      <option value="error" label="Error" />
-      <option value="info" label="Info" />
-      <option value="debug" label="Debug" />
+      <option value='command' label="Command" />
+      <option value='service' label="Service" />
+      <option value='agent' label="Agent" />
+      <option value='user' label="User" />
+      <option value='console' label="Console" />
+      <option value='broadcast' label="Broadcast" />
+      <option value='room' label="Room" />
+      <option value='private' label="Private" />
+      <option value='secure' label="Secure" />
+      <option value='warn' label="Warn" />
+      <option value='error' label="Error" />
+      <option value='info' label="Info" />
+      <option value='debug' label="Debug" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default WebsocketMessageForm;
+

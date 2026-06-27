@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,122 +36,110 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface ConfirmPasswordResetResponse
  */
-export type ConfirmPasswordResetResponse = DataObject & {
-  /**
-   * Whether password was successfully reset
-   * @type {boolean}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  success?: boolean;
-  /**
-   * Status message
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  message?: string;
-  /**
-   * URL to redirect user after successful reset
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  redirectUrl?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ConfirmPasswordResetResponse
-   */
-  trashed?: boolean;
-};
-
-export function ConfirmPasswordResetResponseFromJSON(
-  json: any,
-): ConfirmPasswordResetResponse {
-  return {
-    ...DataObjectFromJSON(json),
-    success: !exists(json, "success") ? undefined : json["success"],
-    message: !exists(json, "message") ? undefined : json["message"],
-    redirectUrl: !exists(json, "redirectUrl") ? undefined : json["redirectUrl"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type ConfirmPasswordResetResponse  = DataObject & {
+    /**
+     * Whether password was successfully reset
+     * @type {boolean}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    success?: boolean;
+    /**
+     * Status message
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    message?: string;
+    /**
+     * URL to redirect user after successful reset
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    redirectUrl?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ConfirmPasswordResetResponse
+     */
+    trashed?: boolean;
 }
 
-export function ConfirmPasswordResetResponseToJSON(
-  value?: ConfirmPasswordResetResponse,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    success: value.success,
-    message: value.message,
-    redirectUrl: value.redirectUrl,
-    trashed: value.trashed,
-  };
+export function ConfirmPasswordResetResponseFromJSON(json: any): ConfirmPasswordResetResponse {
+    return {
+        ...DataObjectFromJSON(json),
+        'success': !exists(json, 'success') ? undefined : json['success'],
+        'message': !exists(json, 'message') ? undefined : json['message'],
+        'redirectUrl': !exists(json, 'redirectUrl') ? undefined : json['redirectUrl'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function ConfirmPasswordResetResponseToJSON(value?: ConfirmPasswordResetResponse): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'success': value.success,
+        'message': value.message,
+        'redirectUrl': value.redirectUrl,
+        'trashed': value.trashed,
+    };
+}
+
+

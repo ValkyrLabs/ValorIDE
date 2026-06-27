@@ -13,55 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Quota } from "@thorapi/model/Quota";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Quota } from '@thorapi/model/Quota'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type QuotaResponse = Quota[];
+type QuotaResponse = Quota[]
+type QuotaPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Quota>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type QuotaListQueryArg = {
+  example?: Partial<Quota>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toQuotaList = (result: unknown): QuotaResponse => {
   if (Array.isArray(result)) {
-    return result as QuotaResponse;
+    return result as QuotaResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as QuotaResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as QuotaResponse) : []
+}
 
 export const QuotaService = createApi({
-  reducerPath: "Quota", // This should remain unique
+  reducerPath: 'Quota', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Quota"],
+  tagTypes: ['Quota'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getQuotasPaged: build.query<
-      QuotaResponse,
-      { page: number; size?: number; example?: Partial<Quota> }
-    >({
+    getQuotasPaged: build.query<QuotaResponse, QuotaPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Quota?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Quota?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toQuotaList(result);
+        const rows = toQuotaList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Quota" as const, id })),
-          { type: "Quota", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Quota' as const, id })),
+          { type: 'Quota', id: `PAGE_${page}` },
+          { type: 'Quota', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getQuotas: build.query<QuotaResponse, { example?: Partial<Quota> } | void>({
+    getQuotas: build.query<QuotaResponse, QuotaListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -70,13 +82,14 @@ export const QuotaService = createApi({
         return `Quota`;
       },
       providesTags: (result) => {
-        const rows = toQuotaList(result);
+        const rows = toQuotaList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Quota" as const, id })),
-          { type: "Quota", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Quota' as const, id })),
+          { type: 'Quota', id: 'LIST' },
+          { type: 'Quota', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -84,42 +97,32 @@ export const QuotaService = createApi({
     addQuota: build.mutation<Quota, Partial<Quota>>({
       query: (body) => ({
         url: `Quota`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Quota", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Quota', id: 'LIST' },
+        { type: 'Quota', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getQuota: build.query<Quota, string>({
       query: (id) => `Quota/${id}`,
-      providesTags: (result, error, id) => [{ type: "Quota", id }],
+      providesTags: (result, error, id) => [{ type: 'Quota', id }],
     }),
 
     // 5) Update
-    updateQuota: build.mutation<void, Pick<Quota, "id"> & Partial<Quota>>({
+    updateQuota: build.mutation<Quota, Pick<Quota, 'id'> & Partial<Quota>>({
       query: ({ id, ...patch }) => ({
         url: `Quota/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            QuotaService.util.updateQueryData("getQuota", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Quota, "id">) => [
-        { type: "Quota", id },
-        { type: "Quota", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Quota, 'id'>) => [
+        { type: 'Quota', id },
+        { type: 'Quota', id: 'LIST' },
+        { type: 'Quota', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -128,35 +131,37 @@ export const QuotaService = createApi({
       query(id) {
         return {
           url: `Quota/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Quota", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Quota', id },
+        { type: 'Quota', id: 'LIST' },
+        { type: 'Quota', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteQuotaCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteQuotaCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Quota/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Quota", id },
-        { type: "Quota", id: "LIST" },
+        { type: 'Quota', id },
+        { type: 'Quota', id: 'LIST' },
+        { type: 'Quota', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetQuotasPagedQuery`
 export const {
-  useGetQuotasPagedQuery, // immediate fetch
+  useGetQuotasPagedQuery,     // immediate fetch
   useLazyGetQuotasPagedQuery, // lazy fetch
   useGetQuotaQuery,
   useGetQuotasQuery,
@@ -164,4 +169,4 @@ export const {
   useUpdateQuotaMutation,
   useDeleteQuotaMutation,
   useDeleteQuotaCascadeMutation,
-} = QuotaService;
+} = QuotaService

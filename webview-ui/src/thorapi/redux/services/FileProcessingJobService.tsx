@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { FileProcessingJob } from "@thorapi/model/FileProcessingJob";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { FileProcessingJob } from '@thorapi/model/FileProcessingJob'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type FileProcessingJobResponse = FileProcessingJob[];
+type FileProcessingJobResponse = FileProcessingJob[]
+type FileProcessingJobPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<FileProcessingJob>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toFileProcessingJobList = (
-  result: unknown,
-): FileProcessingJobResponse => {
+type FileProcessingJobListQueryArg = {
+  example?: Partial<FileProcessingJob>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toFileProcessingJobList = (result: unknown): FileProcessingJobResponse => {
   if (Array.isArray(result)) {
-    return result as FileProcessingJobResponse;
+    return result as FileProcessingJobResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as FileProcessingJobResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as FileProcessingJobResponse) : []
+}
 
 export const FileProcessingJobService = createApi({
-  reducerPath: "FileProcessingJob", // This should remain unique
+  reducerPath: 'FileProcessingJob', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["FileProcessingJob"],
+  tagTypes: ['FileProcessingJob'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getFileProcessingJobsPaged: build.query<
-      FileProcessingJobResponse,
-      { page: number; size?: number; example?: Partial<FileProcessingJob> }
-    >({
+    getFileProcessingJobsPaged: build.query<FileProcessingJobResponse, FileProcessingJobPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `FileProcessingJob?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `FileProcessingJob?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toFileProcessingJobList(result);
+        const rows = toFileProcessingJobList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "FileProcessingJob" as const, id })),
-          { type: "FileProcessingJob", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'FileProcessingJob' as const, id })),
+          { type: 'FileProcessingJob', id: `PAGE_${page}` },
+          { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFileProcessingJobs: build.query<
-      FileProcessingJobResponse,
-      { example?: Partial<FileProcessingJob> } | void
-    >({
+    getFileProcessingJobs: build.query<FileProcessingJobResponse, FileProcessingJobListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const FileProcessingJobService = createApi({
         return `FileProcessingJob`;
       },
       providesTags: (result) => {
-        const rows = toFileProcessingJobList(result);
+        const rows = toFileProcessingJobList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "FileProcessingJob" as const, id })),
-          { type: "FileProcessingJob", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'FileProcessingJob' as const, id })),
+          { type: 'FileProcessingJob', id: 'LIST' },
+          { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addFileProcessingJob: build.mutation<
-      FileProcessingJob,
-      Partial<FileProcessingJob>
-    >({
+    addFileProcessingJob: build.mutation<FileProcessingJob, Partial<FileProcessingJob>>({
       query: (body) => ({
         url: `FileProcessingJob`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "FileProcessingJob", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'FileProcessingJob', id: 'LIST' },
+        { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getFileProcessingJob: build.query<FileProcessingJob, string>({
       query: (id) => `FileProcessingJob/${id}`,
-      providesTags: (result, error, id) => [{ type: "FileProcessingJob", id }],
+      providesTags: (result, error, id) => [{ type: 'FileProcessingJob', id }],
     }),
 
     // 5) Update
-    updateFileProcessingJob: build.mutation<
-      void,
-      Pick<FileProcessingJob, "id"> & Partial<FileProcessingJob>
-    >({
+    updateFileProcessingJob: build.mutation<FileProcessingJob, Pick<FileProcessingJob, 'id'> & Partial<FileProcessingJob>>({
       query: ({ id, ...patch }) => ({
         url: `FileProcessingJob/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            FileProcessingJobService.util.updateQueryData(
-              "getFileProcessingJob",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<FileProcessingJob, "id">,
-      ) => [
-        { type: "FileProcessingJob", id },
-        { type: "FileProcessingJob", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<FileProcessingJob, 'id'>) => [
+        { type: 'FileProcessingJob', id },
+        { type: 'FileProcessingJob', id: 'LIST' },
+        { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteFileProcessingJob: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteFileProcessingJob: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `FileProcessingJob/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "FileProcessingJob", id },
+        { type: 'FileProcessingJob', id },
+        { type: 'FileProcessingJob', id: 'LIST' },
+        { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteFileProcessingJobCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteFileProcessingJobCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `FileProcessingJob/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "FileProcessingJob", id },
-        { type: "FileProcessingJob", id: "LIST" },
+        { type: 'FileProcessingJob', id },
+        { type: 'FileProcessingJob', id: 'LIST' },
+        { type: 'FileProcessingJob', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetFileProcessingJobsPagedQuery`
 export const {
-  useGetFileProcessingJobsPagedQuery, // immediate fetch
+  useGetFileProcessingJobsPagedQuery,     // immediate fetch
   useLazyGetFileProcessingJobsPagedQuery, // lazy fetch
   useGetFileProcessingJobQuery,
   useGetFileProcessingJobsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateFileProcessingJobMutation,
   useDeleteFileProcessingJobMutation,
   useDeleteFileProcessingJobCascadeMutation,
-} = FileProcessingJobService;
+} = FileProcessingJobService

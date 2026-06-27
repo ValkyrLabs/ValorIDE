@@ -19,32 +19,20 @@ Description: ProductFeature
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ProductFeature } from "@thorapi/model";
-import {
-  useGetProductFeaturesQuery,
-  useAddProductFeatureMutation,
-  useUpdateProductFeatureMutation,
-} from "../../services/ProductFeatureService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ProductFeature } from '@thorapi/model';
+import { useGetProductFeaturesQuery, useAddProductFeatureMutation, useUpdateProductFeatureMutation } from '../../services/ProductFeatureService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ProductFeatureChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetProductFeaturesQuery();
 
   const [data, setData] = useState<ProductFeature[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ProductFeature>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ProductFeatureChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const ProductFeatureChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((productfeature: DataObject) => [productfeature])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((productfeature: DataObject) => [productfeature])} />
+          )}
     </>
   );
 };

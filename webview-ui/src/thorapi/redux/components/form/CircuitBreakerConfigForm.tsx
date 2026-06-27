@@ -13,37 +13,31 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
+
 import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+  CircuitBreakerConfig,
+} from '@thorapi/model';
 
-import { CircuitBreakerConfig } from "@thorapi/model";
-
-import { useAddCircuitBreakerConfigMutation } from "../../services/CircuitBreakerConfigService";
+import { useAddCircuitBreakerConfigMutation } from '../../services/CircuitBreakerConfigService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -71,34 +65,23 @@ Static configuration for circuit breaker behavior applied to ExecModule executio
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-  failureThreshold: asNumber(
-    Yup.number().integer().typeError("failureThreshold must be a number"),
-  ),
-  successThreshold: asNumber(
-    Yup.number().integer().typeError("successThreshold must be a number"),
-  ),
-  timeoutMs: asNumber(
-    Yup.number().integer().typeError("timeoutMs must be a number"),
-  ),
-  windowMs: asNumber(
-    Yup.number().integer().typeError("windowMs must be a number"),
-  ),
-  enabled: Yup.boolean(),
-  trashed: Yup.boolean(),
+        name: Yup.string(),
+        failureThreshold: asNumber(Yup.number().integer().typeError("failureThreshold must be a number")),
+        successThreshold: asNumber(Yup.number().integer().typeError("successThreshold must be a number")),
+        timeoutMs: asNumber(Yup.number().integer().typeError("timeoutMs must be a number")),
+        windowMs: asNumber(Yup.number().integer().typeError("windowMs must be a number")),
+        enabled: Yup.boolean(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CircuitBreakerConfigForm: React.FC = () => {
-  const [addCircuitBreakerConfig, addCircuitBreakerConfigResult] =
-    useAddCircuitBreakerConfigMutation();
+  const [addCircuitBreakerConfig, addCircuitBreakerConfigResult] = useAddCircuitBreakerConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -108,18 +91,12 @@ const CircuitBreakerConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -127,13 +104,13 @@ const CircuitBreakerConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CircuitBreakerConfig> = {
-    name: "",
-    failureThreshold: 0,
-    successThreshold: 0,
-    timeoutMs: 0,
-    windowMs: 0,
-    enabled: false,
-    trashed: false,
+          name: '',
+          failureThreshold: 0,
+          successThreshold: 0,
+          timeoutMs: 0,
+          windowMs: 0,
+          enabled: false,
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -148,14 +125,11 @@ const CircuitBreakerConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new CircuitBreakerConfig:", grants);
+    console.log('Permissions saved for new CircuitBreakerConfig:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<CircuitBreakerConfig>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CircuitBreakerConfig>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -166,7 +140,7 @@ const CircuitBreakerConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CircuitBreakerConfig created successfully! Would you like to set permissions for this object?`,
+          `CircuitBreakerConfig created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -174,8 +148,8 @@ const CircuitBreakerConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create CircuitBreakerConfig:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create CircuitBreakerConfig:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -196,38 +170,44 @@ const CircuitBreakerConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addCircuitBreakerConfigResult.isLoading;
+          const isSaving = isSubmitting || addCircuitBreakerConfigResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    CircuitBreakerConfig
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New CircuitBreakerConfig
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name && !errors.name && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="name"
-                        value={values?.name}
-                        placeholder="Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -236,39 +216,39 @@ const CircuitBreakerConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="failureThreshold"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="failureThreshold" className="nice-form-control">
                       <b>
                         Failure Threshold:
                         {touched.failureThreshold &&
-                          !errors.failureThreshold && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.failureThreshold && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="failureThreshold"
-                        type="number"
-                        value={values.failureThreshold || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("failureThreshold", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "failureThreshold",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.failureThreshold
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="failureThreshold"
+                            type="number"
+                            value={values.failureThreshold || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('failureThreshold', true);
+                              const v = e.target.value;
+                              setFieldValue('failureThreshold', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.failureThreshold
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -277,39 +257,39 @@ const CircuitBreakerConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="successThreshold"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="successThreshold" className="nice-form-control">
                       <b>
                         Success Threshold:
                         {touched.successThreshold &&
-                          !errors.successThreshold && (
-                            <span className="okCheck">
-                              <FaCheckCircle /> looks good!
-                            </span>
-                          )}
+                         !errors.successThreshold && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="successThreshold"
-                        type="number"
-                        value={values.successThreshold || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("successThreshold", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "successThreshold",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.successThreshold
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="successThreshold"
+                            type="number"
+                            value={values.successThreshold || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('successThreshold', true);
+                              const v = e.target.value;
+                              setFieldValue('successThreshold', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.successThreshold
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -321,32 +301,36 @@ const CircuitBreakerConfigForm: React.FC = () => {
                     <label htmlFor="timeoutMs" className="nice-form-control">
                       <b>
                         Timeout Ms:
-                        {touched.timeoutMs && !errors.timeoutMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.timeoutMs &&
+                         !errors.timeoutMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="timeoutMs"
-                        type="number"
-                        value={values.timeoutMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("timeoutMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "timeoutMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.timeoutMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="timeoutMs"
+                            type="number"
+                            value={values.timeoutMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('timeoutMs', true);
+                              const v = e.target.value;
+                              setFieldValue('timeoutMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.timeoutMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -358,32 +342,36 @@ const CircuitBreakerConfigForm: React.FC = () => {
                     <label htmlFor="windowMs" className="nice-form-control">
                       <b>
                         Window Ms:
-                        {touched.windowMs && !errors.windowMs && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.windowMs &&
+                         !errors.windowMs && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* INTEGER FIELD */}
-                      <Field
-                        name="windowMs"
-                        type="number"
-                        value={values.windowMs || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("windowMs", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "windowMs",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.windowMs
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="windowMs"
+                            type="number"
+                            value={values.windowMs || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('windowMs', true);
+                              const v = e.target.value;
+                              setFieldValue('windowMs', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.windowMs
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -395,25 +383,32 @@ const CircuitBreakerConfigForm: React.FC = () => {
                     <label htmlFor="enabled" className="nice-form-control">
                       <b>
                         Enabled:
-                        {touched.enabled && !errors.enabled && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.enabled &&
+                         !errors.enabled && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="enabled"
-                        name="enabled"
-                        checked={values.enabled || false}
-                        onChange={(e) => {
-                          setFieldTouched("enabled", true);
-                          setFieldValue("enabled", e.target.checked);
-                        }}
-                        isInvalid={!!errors.enabled}
-                        className={errors.enabled ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="enabled"
+                            name="enabled"
+                            checked={values.enabled || false}
+                            onChange={(e) => {
+                              setFieldTouched('enabled', true);
+                              setFieldValue('enabled', e.target.checked);
+                            }}
+                            isInvalid={!!errors.enabled}
+                            className={errors.enabled ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -425,25 +420,32 @@ const CircuitBreakerConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -453,64 +455,45 @@ const CircuitBreakerConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      CircuitBreakerConfig
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New CircuitBreakerConfig
+                  </CoolButton>
 
-                    {(addCircuitBreakerConfigResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addCircuitBreakerConfigResult as any).error
-                              ? (addCircuitBreakerConfigResult as any).error
-                                  .data
-                              : (addCircuitBreakerConfigResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addCircuitBreakerConfigResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addCircuitBreakerConfigResult as any).error ? (addCircuitBreakerConfigResult as any).error.data : (addCircuitBreakerConfigResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addCircuitBreakerConfigResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addCircuitBreakerConfigResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addCircuitBreakerConfigResult:{" "}
-                    {JSON.stringify(addCircuitBreakerConfigResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCircuitBreakerConfigResult: {JSON.stringify(addCircuitBreakerConfigResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -530,5 +513,8 @@ const CircuitBreakerConfigForm: React.FC = () => {
   );
 };
 
+
+
 /* Export the generated form */
 export default CircuitBreakerConfigForm;
+

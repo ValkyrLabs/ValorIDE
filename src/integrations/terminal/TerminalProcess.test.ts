@@ -187,6 +187,27 @@ describe("TerminalProcess (Integration Tests)", () => {
       .should.be.true();
   });
 
+  it("should retain shell execution exit codes for Build Mode receipts", () => {
+    process.handleShellExecutionEnd(7);
+
+    process.getExitCode().should.equal(7);
+  });
+
+  it("should retain late shell execution exit codes after process finalization", () => {
+    process.handleTerminalClosed();
+    process.handleShellExecutionEnd(7);
+
+    process.getExitCode().should.equal(7);
+  });
+
+  it("should capture exit codes from VS Code shell integration metadata", () => {
+    const processAny = process as any;
+
+    processAny.captureExitCodeFromShellIntegration("\u001b]633;D;42\u0007");
+
+    process.getExitCode().should.equal(42);
+  });
+
   // The following tests require shell integration and controlled terminal output
   describe("Shell integration tests", () => {
     // We'll mock the terminal run process and TerminalProcess for these tests

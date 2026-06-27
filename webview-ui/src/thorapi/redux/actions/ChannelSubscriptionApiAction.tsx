@@ -17,109 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // ChannelSubscription
 
-export const FETCH_CHANNELSUBSCRIPTION_REQUEST =
-  "FETCH_CHANNELSUBSCRIPTION_REQUEST";
-export const FETCH_CHANNELSUBSCRIPTION_SUCCESS =
-  "FETCH_CHANNELSUBSCRIPTION_SUCCESS";
-export const FETCH_CHANNELSUBSCRIPTION_FAILURE =
-  "FETCH_CHANNELSUBSCRIPTION_FAILURE";
+export const FETCH_CHANNELSUBSCRIPTION_REQUEST = 'FETCH_CHANNELSUBSCRIPTION_REQUEST';
+export const FETCH_CHANNELSUBSCRIPTION_SUCCESS = 'FETCH_CHANNELSUBSCRIPTION_SUCCESS';
+export const FETCH_CHANNELSUBSCRIPTION_FAILURE = 'FETCH_CHANNELSUBSCRIPTION_FAILURE';
 
-export const ADD_CHANNELSUBSCRIPTION_REQUEST =
-  "ADD_CHANNELSUBSCRIPTION_REQUEST";
-export const ADD_CHANNELSUBSCRIPTION_SUCCESS =
-  "ADD_CHANNELSUBSCRIPTION_SUCCESS";
-export const ADD_CHANNELSUBSCRIPTION_FAILURE =
-  "ADD_CHANNELSUBSCRIPTION_FAILURE";
+export const ADD_CHANNELSUBSCRIPTION_REQUEST = 'ADD_CHANNELSUBSCRIPTION_REQUEST';
+export const ADD_CHANNELSUBSCRIPTION_SUCCESS = 'ADD_CHANNELSUBSCRIPTION_SUCCESS';
+export const ADD_CHANNELSUBSCRIPTION_FAILURE = 'ADD_CHANNELSUBSCRIPTION_FAILURE';
 
-export const UPDATE_CHANNELSUBSCRIPTION_REQUEST =
-  "UPDATE_CHANNELSUBSCRIPTION_REQUEST";
-export const UPDATE_CHANNELSUBSCRIPTION_SUCCESS =
-  "UPDATE_CHANNELSUBSCRIPTION_SUCCESS";
-export const UPDATE_CHANNELSUBSCRIPTION_FAILURE =
-  "UPDATE_CHANNELSUBSCRIPTION_FAILURE";
+export const UPDATE_CHANNELSUBSCRIPTION_REQUEST = 'UPDATE_CHANNELSUBSCRIPTION_REQUEST';
+export const UPDATE_CHANNELSUBSCRIPTION_SUCCESS = 'UPDATE_CHANNELSUBSCRIPTION_SUCCESS';
+export const UPDATE_CHANNELSUBSCRIPTION_FAILURE = 'UPDATE_CHANNELSUBSCRIPTION_FAILURE';
 
-export const DELETE_CHANNELSUBSCRIPTION_REQUEST =
-  "DELETE_CHANNELSUBSCRIPTION_REQUEST";
-export const DELETE_CHANNELSUBSCRIPTION_SUCCESS =
-  "DELETE_CHANNELSUBSCRIPTION_SUCCESS";
-export const DELETE_CHANNELSUBSCRIPTION_FAILURE =
-  "DELETE_CHANNELSUBSCRIPTION_FAILURE";
+export const DELETE_CHANNELSUBSCRIPTION_REQUEST = 'DELETE_CHANNELSUBSCRIPTION_REQUEST';
+export const DELETE_CHANNELSUBSCRIPTION_SUCCESS = 'DELETE_CHANNELSUBSCRIPTION_SUCCESS';
+export const DELETE_CHANNELSUBSCRIPTION_FAILURE = 'DELETE_CHANNELSUBSCRIPTION_FAILURE';
 
-export const LIST_CHANNELSUBSCRIPTION_REQUEST =
-  "LIST_CHANNELSUBSCRIPTION_REQUEST";
-export const LIST_CHANNELSUBSCRIPTION_SUCCESS =
-  "LIST_CHANNELSUBSCRIPTION_SUCCESS";
-export const LIST_CHANNELSUBSCRIPTION_FAILURE =
-  "LIST_CHANNELSUBSCRIPTION_FAILURE";
+export const LIST_CHANNELSUBSCRIPTION_REQUEST = 'LIST_CHANNELSUBSCRIPTION_REQUEST';
+export const LIST_CHANNELSUBSCRIPTION_SUCCESS = 'LIST_CHANNELSUBSCRIPTION_SUCCESS';
+export const LIST_CHANNELSUBSCRIPTION_FAILURE = 'LIST_CHANNELSUBSCRIPTION_FAILURE';
 
 export const addChannelSubscriptionRequest = () => ({
-  type: ADD_CHANNELSUBSCRIPTION_REQUEST,
+    type: ADD_CHANNELSUBSCRIPTION_REQUEST,
 });
 
 export const addChannelSubscriptionSuccess = (ChannelSubscriptions: any) => ({
-  type: ADD_CHANNELSUBSCRIPTION_SUCCESS,
-  payload: ChannelSubscriptions,
+    type: ADD_CHANNELSUBSCRIPTION_SUCCESS,
+    payload: ChannelSubscriptions,
 });
 
 export const addChannelSubscriptionFailure = (error: Error) => ({
-  type: ADD_CHANNELSUBSCRIPTION_FAILURE,
-  payload: error,
+    type: ADD_CHANNELSUBSCRIPTION_FAILURE,
+    payload: error,
 });
 
+
 export const fetchChannelSubscriptionRequest = () => ({
-  type: FETCH_CHANNELSUBSCRIPTION_REQUEST,
+    type: FETCH_CHANNELSUBSCRIPTION_REQUEST,
 });
 
 export const fetchChannelSubscriptionSuccess = (ChannelSubscriptions: any) => ({
-  type: FETCH_CHANNELSUBSCRIPTION_SUCCESS,
-  payload: ChannelSubscriptions,
+    type: FETCH_CHANNELSUBSCRIPTION_SUCCESS,
+    payload: ChannelSubscriptions,
 });
 
 export const fetchChannelSubscriptionFailure = (error: Error) => ({
-  type: FETCH_CHANNELSUBSCRIPTION_FAILURE,
-  payload: error,
+    type: FETCH_CHANNELSUBSCRIPTION_FAILURE,
+    payload: error,
 });
 
 export const listChannelSubscriptionRequest = () => ({
-  type: LIST_CHANNELSUBSCRIPTION_REQUEST,
+    type: LIST_CHANNELSUBSCRIPTION_REQUEST,
 });
 
 export const listChannelSubscriptionSuccess = (ChannelSubscriptions: any) => ({
-  type: LIST_CHANNELSUBSCRIPTION_SUCCESS,
-  payload: ChannelSubscriptions,
+    type: LIST_CHANNELSUBSCRIPTION_SUCCESS,
+    payload: ChannelSubscriptions,
 });
 
 export const listChannelSubscriptionFailure = (error: Error) => ({
-  type: LIST_CHANNELSUBSCRIPTION_FAILURE,
-  payload: error,
+    type: LIST_CHANNELSUBSCRIPTION_FAILURE,
+    payload: error,
 });
 
 export const updateChannelSubscriptionRequest = (ChannelSubscription: any) => ({
-  type: UPDATE_CHANNELSUBSCRIPTION_REQUEST,
-  payload: ChannelSubscription,
+    type: UPDATE_CHANNELSUBSCRIPTION_REQUEST,
+    payload: ChannelSubscription,
 });
 
 export const updateChannelSubscriptionSuccess = (ChannelSubscription: any) => ({
-  type: UPDATE_CHANNELSUBSCRIPTION_SUCCESS,
-  payload: ChannelSubscription,
+    type: UPDATE_CHANNELSUBSCRIPTION_SUCCESS,
+    payload: ChannelSubscription,
 });
 
 export const updateChannelSubscriptionFailure = (error: Error) => ({
-  type: UPDATE_CHANNELSUBSCRIPTION_FAILURE,
-  payload: error,
+    type: UPDATE_CHANNELSUBSCRIPTION_FAILURE,
+    payload: error,
 });
 
 export const deleteChannelSubscriptionRequest = (ChannelSubscription: any) => ({
-  type: DELETE_CHANNELSUBSCRIPTION_REQUEST,
-  payload: ChannelSubscription,
+    type: DELETE_CHANNELSUBSCRIPTION_REQUEST,
+    payload: ChannelSubscription,
 });
 
 export const deleteChannelSubscriptionSuccess = (ChannelSubscription: any) => ({
-  type: DELETE_CHANNELSUBSCRIPTION_SUCCESS,
-  payload: ChannelSubscription,
+    type: DELETE_CHANNELSUBSCRIPTION_SUCCESS,
+    payload: ChannelSubscription,
 });
 
 export const deleteChannelSubscriptionFailure = (error: Error) => ({
-  type: DELETE_CHANNELSUBSCRIPTION_FAILURE,
-  payload: error,
+    type: DELETE_CHANNELSUBSCRIPTION_FAILURE,
+    payload: error,
 });

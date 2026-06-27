@@ -19,33 +19,20 @@ Description: CreditBalanceSummary
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, CreditBalanceSummary } from "@thorapi/model";
-import {
-  useGetCreditBalanceSummarysQuery,
-  useAddCreditBalanceSummaryMutation,
-  useUpdateCreditBalanceSummaryMutation,
-} from "../../services/CreditBalanceSummaryService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, CreditBalanceSummary } from '@thorapi/model';
+import { useGetCreditBalanceSummarysQuery, useAddCreditBalanceSummaryMutation, useUpdateCreditBalanceSummaryMutation } from '../../services/CreditBalanceSummaryService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const CreditBalanceSummaryChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetCreditBalanceSummarysQuery();
+  const { data: initialData = [], isLoading } = useGetCreditBalanceSummarysQuery();
 
   const [data, setData] = useState<CreditBalanceSummary[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<CreditBalanceSummary>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const CreditBalanceSummaryChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const CreditBalanceSummaryChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((creditbalancesummary: DataObject) => [
-            creditbalancesummary,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((creditbalancesummary: DataObject) => [creditbalancesummary])} />
+          )}
     </>
   );
 };

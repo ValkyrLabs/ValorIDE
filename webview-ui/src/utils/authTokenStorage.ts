@@ -30,6 +30,7 @@ const getStorageScope = (): {
 const READABLE_AUTH_COOKIE_NAMES = [
   "jwtSession",
   "jwtToken",
+  "authToken",
   "auth_token",
   "valoride_jwt",
   "temp_auth_token",
@@ -37,6 +38,18 @@ const READABLE_AUTH_COOKIE_NAMES = [
   "JSESSIONID",
   "SESSION",
   "XSRF-TOKEN",
+] as const;
+
+const COOKIE_PRESERVE_DURING_AUTH_CLEAR = new Set(["cart"]);
+
+const JWT_STORAGE_KEYS = [
+  "jwtToken",
+  "authToken",
+  "jwtSession",
+  "auth_token",
+  "valoride_jwt",
+  "temp_auth_token",
+  "VALKYR_AUTH",
 ] as const;
 
 type ClearBrowserAuthStorageOptions = {
@@ -104,7 +117,10 @@ const getCookieNames = (): string[] => {
   const readableCookieNames = document.cookie
     .split(";")
     .map((cookie) => cookie.split("=")[0]?.trim())
-    .filter((name): name is string => Boolean(name));
+    .filter(
+      (name): name is string =>
+        Boolean(name) && !COOKIE_PRESERVE_DURING_AUTH_CLEAR.has(name),
+    );
   return Array.from(
     new Set([...readableCookieNames, ...READABLE_AUTH_COOKIE_NAMES]),
   );
@@ -128,6 +144,36 @@ const getCookieDomains = (): Array<string | undefined> => {
       ? `.${parts.slice(parts.length - 2).join(".")}`
       : undefined;
   return Array.from(new Set([undefined, hostname, `.${hostname}`, rootDomain]));
+};
+
+const normalizeJwtToken = (value?: string | null): string | null => {
+  const token = value?.trim();
+  if (!token) {
+    return null;
+  }
+  const bearerMatch = token.match(/^Bearer\s+(.+)$/i);
+  return bearerMatch ? bearerMatch[1]?.trim() || null : token;
+};
+
+const readCookie = (name: string): string | null => {
+  if (typeof document === "undefined" || !document.cookie) {
+    return null;
+  }
+  const encodedName = encodeURIComponent(name);
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const [rawName, ...rawValue] = cookie.split("=");
+    const cookieName = rawName?.trim();
+    if (cookieName !== name && cookieName !== encodedName) {
+      continue;
+    }
+    try {
+      return decodeURIComponent(rawValue.join("=").trim());
+    } catch {
+      return rawValue.join("=").trim();
+    }
+  }
+  return null;
 };
 
 export const clearReadableAuthCookies = (): void => {
@@ -160,5 +206,34 @@ export const clearBrowserAuthStorage = (
 };
 
 export const getStoredJwtToken = (): string | null => {
+  const { localStorage, sessionStorage } = getStorageScope();
+
+  for (const key of JWT_STORAGE_KEYS) {
+    const sessionToken = normalizeJwtToken(readStorage(sessionStorage, key));
+    if (sessionToken) {
+      return sessionToken;
+    }
+  }
+
+  for (const key of JWT_STORAGE_KEYS) {
+    const localToken = normalizeJwtToken(readStorage(localStorage, key));
+    if (localToken) {
+      try {
+        sessionStorage?.setItem("jwtToken", localToken);
+        sessionStorage?.setItem("jwtSession", localToken);
+      } catch {
+        // no-op
+      }
+      return localToken;
+    }
+  }
+
+  for (const key of JWT_STORAGE_KEYS) {
+    const cookieToken = normalizeJwtToken(readCookie(key));
+    if (cookieToken) {
+      return cookieToken;
+    }
+  }
+
   return null;
 };

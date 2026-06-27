@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Deployment
 
-export const FETCH_DEPLOYMENT_REQUEST = "FETCH_DEPLOYMENT_REQUEST";
-export const FETCH_DEPLOYMENT_SUCCESS = "FETCH_DEPLOYMENT_SUCCESS";
-export const FETCH_DEPLOYMENT_FAILURE = "FETCH_DEPLOYMENT_FAILURE";
+export const FETCH_DEPLOYMENT_REQUEST = 'FETCH_DEPLOYMENT_REQUEST';
+export const FETCH_DEPLOYMENT_SUCCESS = 'FETCH_DEPLOYMENT_SUCCESS';
+export const FETCH_DEPLOYMENT_FAILURE = 'FETCH_DEPLOYMENT_FAILURE';
 
-export const ADD_DEPLOYMENT_REQUEST = "ADD_DEPLOYMENT_REQUEST";
-export const ADD_DEPLOYMENT_SUCCESS = "ADD_DEPLOYMENT_SUCCESS";
-export const ADD_DEPLOYMENT_FAILURE = "ADD_DEPLOYMENT_FAILURE";
+export const ADD_DEPLOYMENT_REQUEST = 'ADD_DEPLOYMENT_REQUEST';
+export const ADD_DEPLOYMENT_SUCCESS = 'ADD_DEPLOYMENT_SUCCESS';
+export const ADD_DEPLOYMENT_FAILURE = 'ADD_DEPLOYMENT_FAILURE';
 
-export const UPDATE_DEPLOYMENT_REQUEST = "UPDATE_DEPLOYMENT_REQUEST";
-export const UPDATE_DEPLOYMENT_SUCCESS = "UPDATE_DEPLOYMENT_SUCCESS";
-export const UPDATE_DEPLOYMENT_FAILURE = "UPDATE_DEPLOYMENT_FAILURE";
+export const UPDATE_DEPLOYMENT_REQUEST = 'UPDATE_DEPLOYMENT_REQUEST';
+export const UPDATE_DEPLOYMENT_SUCCESS = 'UPDATE_DEPLOYMENT_SUCCESS';
+export const UPDATE_DEPLOYMENT_FAILURE = 'UPDATE_DEPLOYMENT_FAILURE';
 
-export const DELETE_DEPLOYMENT_REQUEST = "DELETE_DEPLOYMENT_REQUEST";
-export const DELETE_DEPLOYMENT_SUCCESS = "DELETE_DEPLOYMENT_SUCCESS";
-export const DELETE_DEPLOYMENT_FAILURE = "DELETE_DEPLOYMENT_FAILURE";
+export const DELETE_DEPLOYMENT_REQUEST = 'DELETE_DEPLOYMENT_REQUEST';
+export const DELETE_DEPLOYMENT_SUCCESS = 'DELETE_DEPLOYMENT_SUCCESS';
+export const DELETE_DEPLOYMENT_FAILURE = 'DELETE_DEPLOYMENT_FAILURE';
 
-export const LIST_DEPLOYMENT_REQUEST = "LIST_DEPLOYMENT_REQUEST";
-export const LIST_DEPLOYMENT_SUCCESS = "LIST_DEPLOYMENT_SUCCESS";
-export const LIST_DEPLOYMENT_FAILURE = "LIST_DEPLOYMENT_FAILURE";
+export const LIST_DEPLOYMENT_REQUEST = 'LIST_DEPLOYMENT_REQUEST';
+export const LIST_DEPLOYMENT_SUCCESS = 'LIST_DEPLOYMENT_SUCCESS';
+export const LIST_DEPLOYMENT_FAILURE = 'LIST_DEPLOYMENT_FAILURE';
 
 export const addDeploymentRequest = () => ({
-  type: ADD_DEPLOYMENT_REQUEST,
+    type: ADD_DEPLOYMENT_REQUEST,
 });
 
 export const addDeploymentSuccess = (Deployments: any) => ({
-  type: ADD_DEPLOYMENT_SUCCESS,
-  payload: Deployments,
+    type: ADD_DEPLOYMENT_SUCCESS,
+    payload: Deployments,
 });
 
 export const addDeploymentFailure = (error: Error) => ({
-  type: ADD_DEPLOYMENT_FAILURE,
-  payload: error,
+    type: ADD_DEPLOYMENT_FAILURE,
+    payload: error,
 });
 
+
 export const fetchDeploymentRequest = () => ({
-  type: FETCH_DEPLOYMENT_REQUEST,
+    type: FETCH_DEPLOYMENT_REQUEST,
 });
 
 export const fetchDeploymentSuccess = (Deployments: any) => ({
-  type: FETCH_DEPLOYMENT_SUCCESS,
-  payload: Deployments,
+    type: FETCH_DEPLOYMENT_SUCCESS,
+    payload: Deployments,
 });
 
 export const fetchDeploymentFailure = (error: Error) => ({
-  type: FETCH_DEPLOYMENT_FAILURE,
-  payload: error,
+    type: FETCH_DEPLOYMENT_FAILURE,
+    payload: error,
 });
 
 export const listDeploymentRequest = () => ({
-  type: LIST_DEPLOYMENT_REQUEST,
+    type: LIST_DEPLOYMENT_REQUEST,
 });
 
 export const listDeploymentSuccess = (Deployments: any) => ({
-  type: LIST_DEPLOYMENT_SUCCESS,
-  payload: Deployments,
+    type: LIST_DEPLOYMENT_SUCCESS,
+    payload: Deployments,
 });
 
 export const listDeploymentFailure = (error: Error) => ({
-  type: LIST_DEPLOYMENT_FAILURE,
-  payload: error,
+    type: LIST_DEPLOYMENT_FAILURE,
+    payload: error,
 });
 
 export const updateDeploymentRequest = (Deployment: any) => ({
-  type: UPDATE_DEPLOYMENT_REQUEST,
-  payload: Deployment,
+    type: UPDATE_DEPLOYMENT_REQUEST,
+    payload: Deployment,
 });
 
 export const updateDeploymentSuccess = (Deployment: any) => ({
-  type: UPDATE_DEPLOYMENT_SUCCESS,
-  payload: Deployment,
+    type: UPDATE_DEPLOYMENT_SUCCESS,
+    payload: Deployment,
 });
 
 export const updateDeploymentFailure = (error: Error) => ({
-  type: UPDATE_DEPLOYMENT_FAILURE,
-  payload: error,
+    type: UPDATE_DEPLOYMENT_FAILURE,
+    payload: error,
 });
 
 export const deleteDeploymentRequest = (Deployment: any) => ({
-  type: DELETE_DEPLOYMENT_REQUEST,
-  payload: Deployment,
+    type: DELETE_DEPLOYMENT_REQUEST,
+    payload: Deployment,
 });
 
 export const deleteDeploymentSuccess = (Deployment: any) => ({
-  type: DELETE_DEPLOYMENT_SUCCESS,
-  payload: Deployment,
+    type: DELETE_DEPLOYMENT_SUCCESS,
+    payload: Deployment,
 });
 
 export const deleteDeploymentFailure = (error: Error) => ({
-  type: DELETE_DEPLOYMENT_FAILURE,
-  payload: error,
+    type: DELETE_DEPLOYMENT_FAILURE,
+    payload: error,
 });

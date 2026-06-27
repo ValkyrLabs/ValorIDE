@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
 import * as childProcess from "child_process";
+import * as fs from "fs/promises";
+import type { Dirent } from "fs";
 import * as path from "path";
 import * as readline from "readline";
 import { fileExistsAtPath } from "@utils/fs";
+import "@utils/path";
 import { ValorIDEIgnoreController } from "@core/ignore/ValorIDEIgnoreController";
 
 /*
@@ -60,20 +63,68 @@ interface SearchResult {
 }
 
 const MAX_RESULTS = 300;
+const FALLBACK_SKIP_DIRS = new Set([
+  ".git",
+  "node_modules",
+  "out",
+  "dist",
+  "build",
+  ".cache",
+  "tmp",
+  "temp",
+  "__pycache__",
+  ".venv",
+  "venv",
+]);
 
 export async function getBinPath(
   vscodeAppRoot: string,
 ): Promise<string | undefined> {
-  const checkPath = async (pkgFolder: string) => {
-    const fullPath = path.join(vscodeAppRoot, pkgFolder, binName);
+  const checkPath = async (root: string, pkgFolder: string) => {
+    const fullPath = path.join(root, pkgFolder, binName);
     return (await fileExistsAtPath(fullPath)) ? fullPath : undefined;
   };
 
+  const candidateRoots = [
+    vscodeAppRoot,
+    process.cwd(),
+    path.resolve(__dirname, "../../.."),
+    path.resolve(__dirname, "../../../.."),
+  ];
+  const packageFolders = [
+    "node_modules/@vscode/ripgrep/bin/",
+    "node_modules/vscode-ripgrep/bin",
+    "node_modules.asar.unpacked/vscode-ripgrep/bin/",
+    "node_modules.asar.unpacked/@vscode/ripgrep/bin/",
+  ];
+
+  for (const root of candidateRoots) {
+    for (const folder of packageFolders) {
+      const found = await checkPath(root, folder);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  const pathProbe = childProcess.spawnSync(
+    isWindows ? "where" : "command",
+    isWindows ? [binName] : ["-v", binName],
+    { encoding: "utf8", shell: !isWindows },
+  );
+  const pathMatch = pathProbe.stdout
+    ?.split(/\r?\n/)
+    .map((line) => line.trim())
+    .find(Boolean);
+  if (pathMatch) {
+    return pathMatch;
+  }
+
   return (
-    (await checkPath("node_modules/@vscode/ripgrep/bin/")) ||
-    (await checkPath("node_modules/vscode-ripgrep/bin")) ||
-    (await checkPath("node_modules.asar.unpacked/vscode-ripgrep/bin/")) ||
-    (await checkPath("node_modules.asar.unpacked/@vscode/ripgrep/bin/"))
+    childProcess.spawnSync(binName, ["--version"], { encoding: "utf8" })
+      .status === 0
+      ? binName
+      : undefined
   );
 }
 
@@ -117,6 +168,103 @@ async function execRipgrep(bin: string, args: string[]): Promise<string> {
   });
 }
 
+const matchesFilePattern = (filePath: string, filePattern?: string) => {
+  if (!filePattern || filePattern === "*") {
+    return true;
+  }
+  const basename = path.basename(filePath);
+  if (filePattern.startsWith("*.")) {
+    return basename.endsWith(filePattern.slice(1));
+  }
+  return basename === filePattern || filePath.endsWith(filePattern);
+};
+
+async function fallbackRegexSearchFiles(
+  cwd: string,
+  directoryPath: string,
+  regex: string,
+  filePattern?: string,
+  valorideIgnoreController?: ValorIDEIgnoreController,
+): Promise<string> {
+  let matcher: RegExp;
+  try {
+    matcher = new RegExp(regex);
+  } catch (error) {
+    return `Invalid regex: ${error instanceof Error ? error.message : String(error)}`;
+  }
+
+  const results: SearchResult[] = [];
+  const visit = async (dir: string): Promise<void> => {
+    if (results.length >= MAX_RESULTS) {
+      return;
+    }
+
+    let entries: Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    for (const entry of entries) {
+      if (results.length >= MAX_RESULTS) {
+        return;
+      }
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (!FALLBACK_SKIP_DIRS.has(entry.name)) {
+          await visit(fullPath);
+        }
+        continue;
+      }
+      if (!entry.isFile() || !matchesFilePattern(fullPath, filePattern)) {
+        continue;
+      }
+      if (
+        valorideIgnoreController &&
+        !valorideIgnoreController.validateAccess(fullPath)
+      ) {
+        continue;
+      }
+
+      let text: string;
+      try {
+        const stat = await fs.stat(fullPath);
+        if (stat.size > 1_000_000) {
+          continue;
+        }
+        text = await fs.readFile(fullPath, "utf8");
+      } catch {
+        continue;
+      }
+
+      const lines = text.split(/\r?\n/);
+      for (let index = 0; index < lines.length; index++) {
+        if (results.length >= MAX_RESULTS) {
+          break;
+        }
+        matcher.lastIndex = 0;
+        const line = lines[index];
+        if (!matcher.test(line)) {
+          continue;
+        }
+        results.push({
+          filePath: fullPath,
+          line: index + 1,
+          column: Math.max(line.search(matcher), 0),
+          match: `${line}\n`,
+          beforeContext: index > 0 ? [`${lines[index - 1]}\n`] : [],
+          afterContext:
+            index < lines.length - 1 ? [`${lines[index + 1]}\n`] : [],
+        });
+      }
+    }
+  };
+
+  await visit(directoryPath);
+  return formatResults(results, cwd);
+}
+
 export async function regexSearchFiles(
   cwd: string,
   directoryPath: string,
@@ -128,7 +276,13 @@ export async function regexSearchFiles(
   const rgPath = await getBinPath(vscodeAppRoot);
 
   if (!rgPath) {
-    throw new Error("Could not find ripgrep binary");
+    return fallbackRegexSearchFiles(
+      cwd,
+      directoryPath,
+      regex,
+      filePattern,
+      valorideIgnoreController,
+    );
   }
 
   const args = [

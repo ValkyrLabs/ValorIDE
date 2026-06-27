@@ -19,32 +19,20 @@ Description: BlankRange
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, BlankRange } from "@thorapi/model";
-import {
-  useGetBlankRangesQuery,
-  useAddBlankRangeMutation,
-  useUpdateBlankRangeMutation,
-} from "../../services/BlankRangeService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, BlankRange } from '@thorapi/model';
+import { useGetBlankRangesQuery, useAddBlankRangeMutation, useUpdateBlankRangeMutation } from '../../services/BlankRangeService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const BlankRangeChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetBlankRangesQuery();
 
   const [data, setData] = useState<BlankRange[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<BlankRange>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const BlankRangeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const BlankRangeChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((blankrange: DataObject) => [blankrange])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((blankrange: DataObject) => [blankrange])} />
+          )}
     </>
   );
 };

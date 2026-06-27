@@ -19,33 +19,20 @@ Description: ProductFunnelWizard
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ProductFunnelWizard } from "@thorapi/model";
-import {
-  useGetProductFunnelWizardsQuery,
-  useAddProductFunnelWizardMutation,
-  useUpdateProductFunnelWizardMutation,
-} from "../../services/ProductFunnelWizardService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ProductFunnelWizard } from '@thorapi/model';
+import { useGetProductFunnelWizardsQuery, useAddProductFunnelWizardMutation, useUpdateProductFunnelWizardMutation } from '../../services/ProductFunnelWizardService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ProductFunnelWizardChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetProductFunnelWizardsQuery();
+  const { data: initialData = [], isLoading } = useGetProductFunnelWizardsQuery();
 
   const [data, setData] = useState<ProductFunnelWizard[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ProductFunnelWizard>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -63,9 +50,9 @@ const ProductFunnelWizardChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -73,15 +60,11 @@ const ProductFunnelWizardChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((productfunnelwizard: DataObject) => [
-            productfunnelwizard,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((productfunnelwizard: DataObject) => [productfunnelwizard])} />
+          )}
     </>
   );
 };

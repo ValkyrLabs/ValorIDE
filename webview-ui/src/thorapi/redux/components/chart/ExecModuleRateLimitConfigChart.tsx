@@ -19,35 +19,20 @@ Description: ExecModuleRateLimitConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, ExecModuleRateLimitConfig } from "@thorapi/model";
-import {
-  useGetExecModuleRateLimitConfigsQuery,
-  useAddExecModuleRateLimitConfigMutation,
-  useUpdateExecModuleRateLimitConfigMutation,
-} from "../../services/ExecModuleRateLimitConfigService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, ExecModuleRateLimitConfig } from '@thorapi/model';
+import { useGetExecModuleRateLimitConfigsQuery, useAddExecModuleRateLimitConfigMutation, useUpdateExecModuleRateLimitConfigMutation } from '../../services/ExecModuleRateLimitConfigService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ExecModuleRateLimitConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetExecModuleRateLimitConfigsQuery();
+  const { data: initialData = [], isLoading } = useGetExecModuleRateLimitConfigsQuery();
 
   const [data, setData] = useState<ExecModuleRateLimitConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<ExecModuleRateLimitConfig>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<ExecModuleRateLimitConfig>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const ExecModuleRateLimitConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const ExecModuleRateLimitConfigChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((execmoduleratelimitconfig: DataObject) => [
-            execmoduleratelimitconfig,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((execmoduleratelimitconfig: DataObject) => [execmoduleratelimitconfig])} />
+          )}
     </>
   );
 };

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MEMORYENTRY_REQUEST,
-  FETCH_MEMORYENTRY_REQUEST,
-  LIST_MEMORYENTRY_REQUEST,
-  UPDATE_MEMORYENTRY_REQUEST,
-  DELETE_MEMORYENTRY_REQUEST,
-  addMemoryEntryFailure,
-  addMemoryEntrySuccess,
-  fetchMemoryEntryFailure,
-  fetchMemoryEntrySuccess,
-  listMemoryEntryFailure,
-  listMemoryEntrySuccess,
-  updateMemoryEntryFailure,
-  updateMemoryEntrySuccess,
-  deleteMemoryEntryFailure,
-  deleteMemoryEntrySuccess,
-} from "../actions/MemoryEntryApiAction";
+
+    ADD_MEMORYENTRY_REQUEST,
+    FETCH_MEMORYENTRY_REQUEST,
+    LIST_MEMORYENTRY_REQUEST,
+    UPDATE_MEMORYENTRY_REQUEST,
+    DELETE_MEMORYENTRY_REQUEST,
+
+    addMemoryEntryFailure,
+    addMemoryEntrySuccess,
+
+    fetchMemoryEntryFailure,
+    fetchMemoryEntrySuccess,
+    
+    listMemoryEntryFailure,
+    listMemoryEntrySuccess,
+
+    updateMemoryEntryFailure,
+    updateMemoryEntrySuccess,
+    
+    deleteMemoryEntryFailure,
+    deleteMemoryEntrySuccess,
+    
+} from '../actions/MemoryEntryApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: MemoryEntry
 */
 
-export const MemoryEntryMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("MemoryEntry MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const MemoryEntryMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("MemoryEntry MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

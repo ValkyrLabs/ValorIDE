@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_TRUST_REQUEST,
-  FETCH_TRUST_REQUEST,
-  LIST_TRUST_REQUEST,
-  UPDATE_TRUST_REQUEST,
-  DELETE_TRUST_REQUEST,
-  addTrustFailure,
-  addTrustSuccess,
-  fetchTrustFailure,
-  fetchTrustSuccess,
-  listTrustFailure,
-  listTrustSuccess,
-  updateTrustFailure,
-  updateTrustSuccess,
-  deleteTrustFailure,
-  deleteTrustSuccess,
-} from "../actions/TrustApiAction";
+
+    ADD_TRUST_REQUEST,
+    FETCH_TRUST_REQUEST,
+    LIST_TRUST_REQUEST,
+    UPDATE_TRUST_REQUEST,
+    DELETE_TRUST_REQUEST,
+
+    addTrustFailure,
+    addTrustSuccess,
+
+    fetchTrustFailure,
+    fetchTrustSuccess,
+    
+    listTrustFailure,
+    listTrustSuccess,
+
+    updateTrustFailure,
+    updateTrustSuccess,
+    
+    deleteTrustFailure,
+    deleteTrustSuccess,
+    
+} from '../actions/TrustApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Trust
 */
 
-export const TrustMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Trust MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const TrustMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Trust MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

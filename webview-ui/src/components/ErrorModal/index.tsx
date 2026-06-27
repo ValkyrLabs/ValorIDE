@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Card, Modal, Toast } from "react-bootstrap";
 import { FiAlertTriangle, FiInfo, FiCheckCircle } from "react-icons/fi";
 import CoolButton from "@valkyr/component-library/CoolButton";
+import "./index.css";
 
 type Severity =
   | "info"
@@ -204,9 +205,8 @@ const ErrorModal: React.FC<EnhancedErrorModalProps> = (props) => {
   return (
     <Modal
       show={show}
-      className={"errorDialog"}
+      dialogClassName="errorDialog"
       title={resolvedTitle}
-      size="sm"
       aria-labelledby="contained-modal-title-vcenter"
       centered
       onHide={handleClose}

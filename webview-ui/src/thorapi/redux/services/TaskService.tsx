@@ -13,55 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Task } from "@thorapi/model/Task";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Task } from '@thorapi/model/Task'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TaskResponse = Task[];
+type TaskResponse = Task[]
+type TaskPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Task>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type TaskListQueryArg = {
+  example?: Partial<Task>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toTaskList = (result: unknown): TaskResponse => {
   if (Array.isArray(result)) {
-    return result as TaskResponse;
+    return result as TaskResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as TaskResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TaskResponse) : []
+}
 
 export const TaskService = createApi({
-  reducerPath: "Task", // This should remain unique
+  reducerPath: 'Task', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Task"],
+  tagTypes: ['Task'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTasksPaged: build.query<
-      TaskResponse,
-      { page: number; size?: number; example?: Partial<Task> }
-    >({
+    getTasksPaged: build.query<TaskResponse, TaskPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Task?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Task?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTaskList(result);
+        const rows = toTaskList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Task" as const, id })),
-          { type: "Task", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Task' as const, id })),
+          { type: 'Task', id: `PAGE_${page}` },
+          { type: 'Task', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTasks: build.query<TaskResponse, { example?: Partial<Task> } | void>({
+    getTasks: build.query<TaskResponse, TaskListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -70,13 +82,14 @@ export const TaskService = createApi({
         return `Task`;
       },
       providesTags: (result) => {
-        const rows = toTaskList(result);
+        const rows = toTaskList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Task" as const, id })),
-          { type: "Task", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Task' as const, id })),
+          { type: 'Task', id: 'LIST' },
+          { type: 'Task', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -84,42 +97,32 @@ export const TaskService = createApi({
     addTask: build.mutation<Task, Partial<Task>>({
       query: (body) => ({
         url: `Task`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Task", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Task', id: 'LIST' },
+        { type: 'Task', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTask: build.query<Task, string>({
       query: (id) => `Task/${id}`,
-      providesTags: (result, error, id) => [{ type: "Task", id }],
+      providesTags: (result, error, id) => [{ type: 'Task', id }],
     }),
 
     // 5) Update
-    updateTask: build.mutation<void, Pick<Task, "id"> & Partial<Task>>({
+    updateTask: build.mutation<Task, Pick<Task, 'id'> & Partial<Task>>({
       query: ({ id, ...patch }) => ({
         url: `Task/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TaskService.util.updateQueryData("getTask", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Task, "id">) => [
-        { type: "Task", id },
-        { type: "Task", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Task, 'id'>) => [
+        { type: 'Task', id },
+        { type: 'Task', id: 'LIST' },
+        { type: 'Task', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -128,35 +131,37 @@ export const TaskService = createApi({
       query(id) {
         return {
           url: `Task/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Task", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Task', id },
+        { type: 'Task', id: 'LIST' },
+        { type: 'Task', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTaskCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTaskCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Task/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Task", id },
-        { type: "Task", id: "LIST" },
+        { type: 'Task', id },
+        { type: 'Task', id: 'LIST' },
+        { type: 'Task', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTasksPagedQuery`
 export const {
-  useGetTasksPagedQuery, // immediate fetch
+  useGetTasksPagedQuery,     // immediate fetch
   useLazyGetTasksPagedQuery, // lazy fetch
   useGetTaskQuery,
   useGetTasksQuery,
@@ -164,4 +169,4 @@ export const {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useDeleteTaskCascadeMutation,
-} = TaskService;
+} = TaskService

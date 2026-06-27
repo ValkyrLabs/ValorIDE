@@ -110,6 +110,34 @@ describe("computeIsChatLoadingState", () => {
     expect(result).toBe(false);
   });
 
+  it("ignores an earlier usage-pending API request once tool progress is visible", () => {
+    const apiStarted: ValorIDEMessage = {
+      ts: Date.now() - 20,
+      type: "say",
+      say: "api_req_started",
+      text: JSON.stringify({ isComplete: true, usagePending: true }),
+    };
+    const toolProgress: ValorIDEMessage = {
+      ts: Date.now(),
+      type: "say",
+      say: "tool",
+      text: JSON.stringify({
+        tool: "readFile",
+        path: "README.md",
+      }),
+    };
+
+    const result = computeIsChatLoadingState({
+      ...baseParams,
+      messages: [apiStarted, toolProgress],
+      lastMessage: toolProgress,
+      textAreaDisabled: true,
+      enableButtons: false,
+    });
+
+    expect(result).toBe(false);
+  });
+
   it("marks inline spinner for in-flight api and suppresses overlay duplication", () => {
     const apiStarted: ValorIDEMessage = {
       ts: Date.now(),

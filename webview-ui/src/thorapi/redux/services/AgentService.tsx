@@ -13,55 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Agent } from "@thorapi/model/Agent";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Agent } from '@thorapi/model/Agent'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AgentResponse = Agent[];
+type AgentResponse = Agent[]
+type AgentPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Agent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type AgentListQueryArg = {
+  example?: Partial<Agent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toAgentList = (result: unknown): AgentResponse => {
   if (Array.isArray(result)) {
-    return result as AgentResponse;
+    return result as AgentResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as AgentResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentResponse) : []
+}
 
 export const AgentService = createApi({
-  reducerPath: "Agent", // This should remain unique
+  reducerPath: 'Agent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Agent"],
+  tagTypes: ['Agent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAgentsPaged: build.query<
-      AgentResponse,
-      { page: number; size?: number; example?: Partial<Agent> }
-    >({
+    getAgentsPaged: build.query<AgentResponse, AgentPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Agent?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Agent?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAgentList(result);
+        const rows = toAgentList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Agent" as const, id })),
-          { type: "Agent", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Agent' as const, id })),
+          { type: 'Agent', id: `PAGE_${page}` },
+          { type: 'Agent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAgents: build.query<AgentResponse, { example?: Partial<Agent> } | void>({
+    getAgents: build.query<AgentResponse, AgentListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -70,13 +82,14 @@ export const AgentService = createApi({
         return `Agent`;
       },
       providesTags: (result) => {
-        const rows = toAgentList(result);
+        const rows = toAgentList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Agent" as const, id })),
-          { type: "Agent", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Agent' as const, id })),
+          { type: 'Agent', id: 'LIST' },
+          { type: 'Agent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -84,42 +97,32 @@ export const AgentService = createApi({
     addAgent: build.mutation<Agent, Partial<Agent>>({
       query: (body) => ({
         url: `Agent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Agent", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Agent', id: 'LIST' },
+        { type: 'Agent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAgent: build.query<Agent, string>({
       query: (id) => `Agent/${id}`,
-      providesTags: (result, error, id) => [{ type: "Agent", id }],
+      providesTags: (result, error, id) => [{ type: 'Agent', id }],
     }),
 
     // 5) Update
-    updateAgent: build.mutation<void, Pick<Agent, "id"> & Partial<Agent>>({
+    updateAgent: build.mutation<Agent, Pick<Agent, 'id'> & Partial<Agent>>({
       query: ({ id, ...patch }) => ({
         url: `Agent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AgentService.util.updateQueryData("getAgent", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Agent, "id">) => [
-        { type: "Agent", id },
-        { type: "Agent", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Agent, 'id'>) => [
+        { type: 'Agent', id },
+        { type: 'Agent', id: 'LIST' },
+        { type: 'Agent', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -128,35 +131,37 @@ export const AgentService = createApi({
       query(id) {
         return {
           url: `Agent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Agent", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Agent', id },
+        { type: 'Agent', id: 'LIST' },
+        { type: 'Agent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAgentCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAgentCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Agent/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Agent", id },
-        { type: "Agent", id: "LIST" },
+        { type: 'Agent', id },
+        { type: 'Agent', id: 'LIST' },
+        { type: 'Agent', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAgentsPagedQuery`
 export const {
-  useGetAgentsPagedQuery, // immediate fetch
+  useGetAgentsPagedQuery,     // immediate fetch
   useLazyGetAgentsPagedQuery, // lazy fetch
   useGetAgentQuery,
   useGetAgentsQuery,
@@ -164,4 +169,4 @@ export const {
   useUpdateAgentMutation,
   useDeleteAgentMutation,
   useDeleteAgentCascadeMutation,
-} = AgentService;
+} = AgentService

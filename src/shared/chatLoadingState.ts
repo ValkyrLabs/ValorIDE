@@ -33,7 +33,7 @@ export function deriveChatLoadingState({
     return { isChatLoading: false, inlineSpinnerCount: 0, inlineSources };
   }
 
-  const lastApiStatus = (() => {
+  const lastApiStatusInfo = (() => {
     for (let i = messages.length - 1; i >= 0; i -= 1) {
       const msg = messages[i];
       if (
@@ -42,13 +42,32 @@ export function deriveChatLoadingState({
         msg.say === "api_req_retried" ||
         (msg.type === "ask" && msg.ask === "api_req_failed")
       ) {
-        return msg;
+        return { msg, index: i };
       }
     }
     return undefined;
   })();
+  const lastApiStatus = lastApiStatusInfo?.msg;
+  const hasLaterVisibleProgress =
+    lastApiStatusInfo !== undefined &&
+    messages
+      .slice(lastApiStatusInfo.index + 1)
+      .some(
+        (msg) =>
+          msg.type === "ask" ||
+          msg.say === "tool" ||
+          msg.say === "reasoning" ||
+          msg.say === "text" ||
+          msg.say === "command" ||
+          msg.say === "command_output" ||
+          msg.say === "browser_action_launch" ||
+          msg.say === "browser_action" ||
+          msg.say === "mcp_server_request_started" ||
+          msg.say === "completion_result",
+      );
 
   const apiReqInFlight =
+    !hasLaterVisibleProgress &&
     (lastApiStatus?.say === "api_req_started" ||
       lastApiStatus?.say === "api_req_retried") &&
     (() => {
@@ -56,6 +75,8 @@ export function deriveChatLoadingState({
       try {
         const parsed = JSON.parse(lastApiStatus.text);
         const hasCompletionDetails =
+          parsed?.isComplete === true ||
+          parsed?.usagePending === true ||
           parsed?.cancelReason != null ||
           typeof parsed?.cost === "number" ||
           typeof parsed?.tokensIn === "number" ||
@@ -98,7 +119,7 @@ export function deriveChatLoadingState({
     !isResponseComplete &&
     (apiReqInFlight ||
       lastMessage?.partial === true ||
-      (textAreaDisabled && !enableButtons) ||
+      (textAreaDisabled && !enableButtons && !hasLaterVisibleProgress) ||
       (lastMessage?.ask === "followup" && lastMessage?.partial) ||
       isCommandStillRunning);
 

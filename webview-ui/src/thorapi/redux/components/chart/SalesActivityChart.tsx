@@ -19,32 +19,20 @@ Description: SalesActivity
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, SalesActivity } from "@thorapi/model";
-import {
-  useGetSalesActivitysQuery,
-  useAddSalesActivityMutation,
-  useUpdateSalesActivityMutation,
-} from "../../services/SalesActivityService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, SalesActivity } from '@thorapi/model';
+import { useGetSalesActivitysQuery, useAddSalesActivityMutation, useUpdateSalesActivityMutation } from '../../services/SalesActivityService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const SalesActivityChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSalesActivitysQuery();
 
   const [data, setData] = useState<SalesActivity[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<SalesActivity>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const SalesActivityChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const SalesActivityChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((salesactivity: DataObject) => [salesactivity])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((salesactivity: DataObject) => [salesactivity])} />
+          )}
     </>
   );
 };

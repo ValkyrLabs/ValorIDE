@@ -14,85 +14,85 @@ Template file: typescript-redux-query/runtime.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import {
-  Meta,
-  OptimisticUpdate,
-  QueryKey,
-  QueryOptions,
-  Rollback,
-  TransformStrategy,
-  Update,
-} from "redux-query";
+import { Meta, OptimisticUpdate, QueryKey, QueryOptions, Rollback, TransformStrategy, Update } from "redux-query";
 
-const sanitizeBasePath = (value?: string): string => {
-  const raw = (value ?? "").trim();
-  return raw ? raw.replace(/\/+$/, "") : "";
+type ViteImportMeta = ImportMeta & {
+    env?: {
+        VITE_basePath?: string;
+    };
 };
 
-// Mutable base path so it can be overridden by runtime settings.
-export let BASE_PATH = sanitizeBasePath(import.meta.env?.VITE_basePath ?? "");
+const getViteBasePath = (): string => {
+    const viteEnv = (import.meta as ViteImportMeta).env;
+    return typeof viteEnv?.VITE_basePath === "string" ? viteEnv.VITE_basePath : "";
+};
+
+const sanitizeBasePath = (value?: string): string => {
+    const raw = (value ?? "").trim();
+    return raw ? raw.replace(/\/+$/, "") : "";
+};
+
+// un-comment for Vite apps
+export let BASE_PATH = sanitizeBasePath(getViteBasePath());
 
 // un-comment for Create REact APp apps
 // export let BASE_PATH = sanitizeBasePath(process.env.REACT_APP_BASE_PATH);
 
+
+
 export const Configuration = {
-  basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
-  // previous versions, the default is an empty string.  Other generators typically use
-  // BASE_PATH as the default.
+    basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
+                  // previous versions, the default is an empty string.  Other generators typically use
+                  // BASE_PATH as the default.
 };
 
-export const setBasePath = (value?: string) => {
-  BASE_PATH = sanitizeBasePath(value ?? import.meta.env?.VITE_basePath ?? "");
-  Configuration.basePath = BASE_PATH;
-  return BASE_PATH;
+export const setBasePath = (basePath?: string) => {
+    BASE_PATH = sanitizeBasePath(basePath ?? getViteBasePath());
+    Configuration.basePath = BASE_PATH;
+    return BASE_PATH;
 };
-
-export const getBasePath = () => BASE_PATH;
 
 export interface TypedQueryConfig<TState, TBody> {
-  force?: boolean;
-  meta?: Meta;
-  options?: QueryOptions;
-  queryKey?: QueryKey;
-  update?: Update<TState>;
-  optimisticUpdate?: OptimisticUpdate<TState>;
-  retry?: boolean;
-  rollback?: Rollback<TState>;
-  transform?: TransformStrategy<TState, TBody>;
+    force?: boolean;
+    meta?: Meta;
+    options?: QueryOptions;
+    queryKey?: QueryKey;
+    update?: Update<TState>;
+    optimisticUpdate?: OptimisticUpdate<TState>;
+    retry?: boolean;
+    rollback?: Rollback<TState>;
+    transform?: TransformStrategy<TState, TBody>
 }
 
+
 export class RequiredError extends Error {
-  constructor(
-    public field: string,
-    msg?: string,
-  ) {
-    super(msg);
-  }
+	constructor(
+		public field: string,
+		msg?: string,
+	) {
+		super(msg)
+	}
 }
 
 export const COLLECTION_FORMATS = {
-  csv: ",",
-  ssv: " ",
-  tsv: "\t",
-  pipes: "|",
+    csv: ",",
+    ssv: " ",
+    tsv: "\t",
+    pipes: "|",
 };
 
-export type ModelPropertyNaming =
-  | "camelCase"
-  | "snake_case"
-  | "PascalCase"
-  | "original";
+export type ModelPropertyNaming = 'camelCase' | 'snake_case' | 'PascalCase' | 'original';
 
 export type HttpHeaders = { [key: string]: string };
 
 export function exists(json: any, key: string) {
-  const value = json[key];
-  return value !== null && value !== undefined;
+    const value = json[key];
+    return value !== null && value !== undefined;
 }
 
 export function mapValues(data: any, fn: (item: any) => any) {
   return Object.keys(data).reduce(
     (acc, key) => ({ ...acc, [key]: fn(data[key]) }),
-    {},
+    {}
   );
 }

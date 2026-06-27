@@ -1,12 +1,16 @@
 export type CapabilityKind =
+  | "automation"
   | "browser"
+  | "checkpoint"
+  | "connector"
   | "filesystem"
   | "graymatter"
   | "mcp"
   | "psr"
   | "swarm"
   | "terminal"
-  | "thorapi";
+  | "thorapi"
+  | "workflow";
 
 export type CapabilityRisk = "low" | "medium" | "high";
 
@@ -40,10 +44,17 @@ export interface CapabilitySnapshotInput {
 }
 
 export interface LocalExecutionCapabilities {
+  automation: boolean;
   browser: boolean;
+  checkpoint: boolean;
+  connector: boolean;
   filesystem: boolean;
+  graymatter: boolean;
   mcp: boolean;
+  swarm: boolean;
   terminal: boolean;
+  thorapi: boolean;
+  workflow: boolean;
 }
 
 export interface CapabilityAnnouncement extends CapabilitySnapshotInput {
@@ -106,6 +117,40 @@ export const createDefaultValorCapabilities = (): CapabilityDescriptor[] => [
     requiresApproval: true,
     risk: "medium",
     localOnly: true,
+  },
+  {
+    id: "workflow.execute",
+    label: "Run ValkyrAI workflows",
+    kind: "workflow",
+    enabled: true,
+    requiresApproval: true,
+    risk: "high",
+  },
+  {
+    id: "automation.schedule",
+    label: "Schedule guarded automations",
+    kind: "automation",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
+    localOnly: true,
+  },
+  {
+    id: "checkpoint.manage",
+    label: "Create and restore task checkpoints",
+    kind: "checkpoint",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
+    localOnly: true,
+  },
+  {
+    id: "connector.read",
+    label: "Read authorized connector data",
+    kind: "connector",
+    enabled: true,
+    requiresApproval: true,
+    risk: "medium",
   },
   {
     id: "thorapi.rest",
@@ -185,11 +230,18 @@ export class CapabilityRegistry {
       capabilities,
       generatedAt: this.now().toISOString(),
       localExecution: {
+        automation: hasCapability("automation.schedule"),
         browser: hasCapability("browser.automation"),
+        checkpoint: hasCapability("checkpoint.manage"),
+        connector: hasCapability("connector.read"),
         filesystem:
           hasCapability("filesystem.read") || hasCapability("filesystem.write"),
+        graymatter: hasCapability("graymatter.memory"),
         mcp: hasCapability("mcp.tool"),
+        swarm: hasCapability("swarm.command"),
         terminal: hasCapability("terminal.execute"),
+        thorapi: hasCapability("thorapi.rest"),
+        workflow: hasCapability("workflow.execute"),
       },
     };
   }

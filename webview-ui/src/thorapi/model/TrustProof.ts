@@ -26,19 +26,22 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  TrustMerkleBatch,
-  TrustMerkleBatchFromJSON,
-  TrustMerkleBatchToJSON,
-  TrustPolicyManifest,
-  TrustPolicyManifestFromJSON,
-  TrustPolicyManifestToJSON,
-  TrustRuntimeExecution,
-  TrustRuntimeExecutionFromJSON,
-  TrustRuntimeExecutionToJSON,
-} from "./";
+
+
+    TrustMerkleBatch,
+    TrustMerkleBatchFromJSON,
+    TrustMerkleBatchToJSON,
+    TrustPolicyManifest,
+    TrustPolicyManifestFromJSON,
+    TrustPolicyManifestToJSON,
+    TrustRuntimeExecution,
+    TrustRuntimeExecutionFromJSON,
+    TrustRuntimeExecutionToJSON,
+} from './';
+
 
 // thorapi
 
@@ -47,178 +50,162 @@ import {
  * @export
  * @interface TrustProof
  */
-export type TrustProof = DataObject & {
-  /**
-   *
-   * @type {TrustRuntimeExecution}
-   * @memberof TrustProof
-   */
-  execution?: TrustRuntimeExecution;
-  /**
-   *
-   * @type {TrustPolicyManifest}
-   * @memberof TrustProof
-   */
-  policyManifest?: TrustPolicyManifest;
-  /**
-   *
-   * @type {TrustMerkleBatch}
-   * @memberof TrustProof
-   */
-  merkleBatch?: TrustMerkleBatch;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustProof
-   */
-  proofHash?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustProof
-   */
-  proofStatus?: TrustProofProofStatusEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustProof
-   */
-  proofFormat?: TrustProofProofFormatEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustProof
-   */
-  proofBundleRef?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustProof
-   */
-  ownerId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof TrustProof
-   */
-  readonly id?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof TrustProof
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof TrustProof
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof TrustProof
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof TrustProof
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof TrustProof
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof TrustProof
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof TrustProof
-   */
-  trashed?: boolean;
-};
+export type TrustProof  = DataObject & {
+    /**
+     * 
+     * @type {TrustRuntimeExecution}
+     * @memberof TrustProof
+     */
+    execution?: TrustRuntimeExecution;
+    /**
+     * 
+     * @type {TrustPolicyManifest}
+     * @memberof TrustProof
+     */
+    policyManifest?: TrustPolicyManifest;
+    /**
+     * 
+     * @type {TrustMerkleBatch}
+     * @memberof TrustProof
+     */
+    merkleBatch?: TrustMerkleBatch;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustProof
+     */
+    proofHash?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustProof
+     */
+    proofStatus?: TrustProofProofStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustProof
+     */
+    proofFormat?: TrustProofProofFormatEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustProof
+     */
+    proofBundleRef?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustProof
+     */
+    ownerId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof TrustProof
+     */
+    readonly id?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof TrustProof
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof TrustProof
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof TrustProof
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof TrustProof
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof TrustProof
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof TrustProof
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof TrustProof
+     */
+    trashed?: boolean;
+}
 
 export function TrustProofFromJSON(json: any): TrustProof {
-  return {
-    ...DataObjectFromJSON(json),
-    execution: !exists(json, "execution")
-      ? undefined
-      : TrustRuntimeExecutionFromJSON(json["execution"]),
-    policyManifest: !exists(json, "policyManifest")
-      ? undefined
-      : TrustPolicyManifestFromJSON(json["policyManifest"]),
-    merkleBatch: !exists(json, "merkleBatch")
-      ? undefined
-      : TrustMerkleBatchFromJSON(json["merkleBatch"]),
-    proofHash: !exists(json, "proofHash") ? undefined : json["proofHash"],
-    proofStatus: !exists(json, "proofStatus") ? undefined : json["proofStatus"],
-    proofFormat: !exists(json, "proofFormat") ? undefined : json["proofFormat"],
-    proofBundleRef: !exists(json, "proofBundleRef")
-      ? undefined
-      : json["proofBundleRef"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'execution': !exists(json, 'execution') ? undefined : TrustRuntimeExecutionFromJSON(json['execution']),
+        'policyManifest': !exists(json, 'policyManifest') ? undefined : TrustPolicyManifestFromJSON(json['policyManifest']),
+        'merkleBatch': !exists(json, 'merkleBatch') ? undefined : TrustMerkleBatchFromJSON(json['merkleBatch']),
+        'proofHash': !exists(json, 'proofHash') ? undefined : json['proofHash'],
+        'proofStatus': !exists(json, 'proofStatus') ? undefined : json['proofStatus'],
+        'proofFormat': !exists(json, 'proofFormat') ? undefined : json['proofFormat'],
+        'proofBundleRef': !exists(json, 'proofBundleRef') ? undefined : json['proofBundleRef'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function TrustProofToJSON(value?: TrustProof): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    execution: TrustRuntimeExecutionToJSON(value.execution),
-    policyManifest: TrustPolicyManifestToJSON(value.policyManifest),
-    merkleBatch: TrustMerkleBatchToJSON(value.merkleBatch),
-    proofHash: value.proofHash,
-    proofStatus: value.proofStatus,
-    proofFormat: value.proofFormat,
-    proofBundleRef: value.proofBundleRef,
-    ownerId: value.ownerId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'execution': TrustRuntimeExecutionToJSON(value.execution),
+        'policyManifest': TrustPolicyManifestToJSON(value.policyManifest),
+        'merkleBatch': TrustMerkleBatchToJSON(value.merkleBatch),
+        'proofHash': value.proofHash,
+        'proofStatus': value.proofStatus,
+        'proofFormat': value.proofFormat,
+        'proofBundleRef': value.proofBundleRef,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustProofProofStatusEnum {
-  GENERATED = "generated",
-  VERIFIED = "verified",
-  FAILED = "failed",
-  REVOKED = "revoked",
+    GENERATED = 'generated',
+    VERIFIED = 'verified',
+    FAILED = 'failed',
+    REVOKED = 'revoked'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustProofProofFormatEnum {
-  JCSJSON = "jcs_json",
-  CANONICALCBOR = "canonical_cbor",
+    JCSJSON = 'jcs_json',
+    CANONICALCBOR = 'canonical_cbor'
 }
+
+

@@ -13,55 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Build } from "@thorapi/model/Build";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Build } from '@thorapi/model/Build'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BuildResponse = Build[];
+type BuildResponse = Build[]
+type BuildPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Build>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BuildListQueryArg = {
+  example?: Partial<Build>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBuildList = (result: unknown): BuildResponse => {
   if (Array.isArray(result)) {
-    return result as BuildResponse;
+    return result as BuildResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BuildResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BuildResponse) : []
+}
 
 export const BuildService = createApi({
-  reducerPath: "Build", // This should remain unique
+  reducerPath: 'Build', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Build"],
+  tagTypes: ['Build'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBuildsPaged: build.query<
-      BuildResponse,
-      { page: number; size?: number; example?: Partial<Build> }
-    >({
+    getBuildsPaged: build.query<BuildResponse, BuildPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Build?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Build?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBuildList(result);
+        const rows = toBuildList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Build" as const, id })),
-          { type: "Build", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Build' as const, id })),
+          { type: 'Build', id: `PAGE_${page}` },
+          { type: 'Build', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBuilds: build.query<BuildResponse, { example?: Partial<Build> } | void>({
+    getBuilds: build.query<BuildResponse, BuildListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -70,13 +82,14 @@ export const BuildService = createApi({
         return `Build`;
       },
       providesTags: (result) => {
-        const rows = toBuildList(result);
+        const rows = toBuildList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Build" as const, id })),
-          { type: "Build", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Build' as const, id })),
+          { type: 'Build', id: 'LIST' },
+          { type: 'Build', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -84,42 +97,32 @@ export const BuildService = createApi({
     addBuild: build.mutation<Build, Partial<Build>>({
       query: (body) => ({
         url: `Build`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Build", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Build', id: 'LIST' },
+        { type: 'Build', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBuild: build.query<Build, string>({
       query: (id) => `Build/${id}`,
-      providesTags: (result, error, id) => [{ type: "Build", id }],
+      providesTags: (result, error, id) => [{ type: 'Build', id }],
     }),
 
     // 5) Update
-    updateBuild: build.mutation<void, Pick<Build, "id"> & Partial<Build>>({
+    updateBuild: build.mutation<Build, Pick<Build, 'id'> & Partial<Build>>({
       query: ({ id, ...patch }) => ({
         url: `Build/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BuildService.util.updateQueryData("getBuild", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Build, "id">) => [
-        { type: "Build", id },
-        { type: "Build", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Build, 'id'>) => [
+        { type: 'Build', id },
+        { type: 'Build', id: 'LIST' },
+        { type: 'Build', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -128,35 +131,37 @@ export const BuildService = createApi({
       query(id) {
         return {
           url: `Build/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Build", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Build', id },
+        { type: 'Build', id: 'LIST' },
+        { type: 'Build', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBuildCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBuildCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Build/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Build", id },
-        { type: "Build", id: "LIST" },
+        { type: 'Build', id },
+        { type: 'Build', id: 'LIST' },
+        { type: 'Build', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBuildsPagedQuery`
 export const {
-  useGetBuildsPagedQuery, // immediate fetch
+  useGetBuildsPagedQuery,     // immediate fetch
   useLazyGetBuildsPagedQuery, // lazy fetch
   useGetBuildQuery,
   useGetBuildsQuery,
@@ -164,4 +169,4 @@ export const {
   useUpdateBuildMutation,
   useDeleteBuildMutation,
   useDeleteBuildCascadeMutation,
-} = BuildService;
+} = BuildService

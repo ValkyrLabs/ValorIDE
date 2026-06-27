@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Run
 
-export const FETCH_RUN_REQUEST = "FETCH_RUN_REQUEST";
-export const FETCH_RUN_SUCCESS = "FETCH_RUN_SUCCESS";
-export const FETCH_RUN_FAILURE = "FETCH_RUN_FAILURE";
+export const FETCH_RUN_REQUEST = 'FETCH_RUN_REQUEST';
+export const FETCH_RUN_SUCCESS = 'FETCH_RUN_SUCCESS';
+export const FETCH_RUN_FAILURE = 'FETCH_RUN_FAILURE';
 
-export const ADD_RUN_REQUEST = "ADD_RUN_REQUEST";
-export const ADD_RUN_SUCCESS = "ADD_RUN_SUCCESS";
-export const ADD_RUN_FAILURE = "ADD_RUN_FAILURE";
+export const ADD_RUN_REQUEST = 'ADD_RUN_REQUEST';
+export const ADD_RUN_SUCCESS = 'ADD_RUN_SUCCESS';
+export const ADD_RUN_FAILURE = 'ADD_RUN_FAILURE';
 
-export const UPDATE_RUN_REQUEST = "UPDATE_RUN_REQUEST";
-export const UPDATE_RUN_SUCCESS = "UPDATE_RUN_SUCCESS";
-export const UPDATE_RUN_FAILURE = "UPDATE_RUN_FAILURE";
+export const UPDATE_RUN_REQUEST = 'UPDATE_RUN_REQUEST';
+export const UPDATE_RUN_SUCCESS = 'UPDATE_RUN_SUCCESS';
+export const UPDATE_RUN_FAILURE = 'UPDATE_RUN_FAILURE';
 
-export const DELETE_RUN_REQUEST = "DELETE_RUN_REQUEST";
-export const DELETE_RUN_SUCCESS = "DELETE_RUN_SUCCESS";
-export const DELETE_RUN_FAILURE = "DELETE_RUN_FAILURE";
+export const DELETE_RUN_REQUEST = 'DELETE_RUN_REQUEST';
+export const DELETE_RUN_SUCCESS = 'DELETE_RUN_SUCCESS';
+export const DELETE_RUN_FAILURE = 'DELETE_RUN_FAILURE';
 
-export const LIST_RUN_REQUEST = "LIST_RUN_REQUEST";
-export const LIST_RUN_SUCCESS = "LIST_RUN_SUCCESS";
-export const LIST_RUN_FAILURE = "LIST_RUN_FAILURE";
+export const LIST_RUN_REQUEST = 'LIST_RUN_REQUEST';
+export const LIST_RUN_SUCCESS = 'LIST_RUN_SUCCESS';
+export const LIST_RUN_FAILURE = 'LIST_RUN_FAILURE';
 
 export const addRunRequest = () => ({
-  type: ADD_RUN_REQUEST,
+    type: ADD_RUN_REQUEST,
 });
 
 export const addRunSuccess = (Runs: any) => ({
-  type: ADD_RUN_SUCCESS,
-  payload: Runs,
+    type: ADD_RUN_SUCCESS,
+    payload: Runs,
 });
 
 export const addRunFailure = (error: Error) => ({
-  type: ADD_RUN_FAILURE,
-  payload: error,
+    type: ADD_RUN_FAILURE,
+    payload: error,
 });
 
+
 export const fetchRunRequest = () => ({
-  type: FETCH_RUN_REQUEST,
+    type: FETCH_RUN_REQUEST,
 });
 
 export const fetchRunSuccess = (Runs: any) => ({
-  type: FETCH_RUN_SUCCESS,
-  payload: Runs,
+    type: FETCH_RUN_SUCCESS,
+    payload: Runs,
 });
 
 export const fetchRunFailure = (error: Error) => ({
-  type: FETCH_RUN_FAILURE,
-  payload: error,
+    type: FETCH_RUN_FAILURE,
+    payload: error,
 });
 
 export const listRunRequest = () => ({
-  type: LIST_RUN_REQUEST,
+    type: LIST_RUN_REQUEST,
 });
 
 export const listRunSuccess = (Runs: any) => ({
-  type: LIST_RUN_SUCCESS,
-  payload: Runs,
+    type: LIST_RUN_SUCCESS,
+    payload: Runs,
 });
 
 export const listRunFailure = (error: Error) => ({
-  type: LIST_RUN_FAILURE,
-  payload: error,
+    type: LIST_RUN_FAILURE,
+    payload: error,
 });
 
 export const updateRunRequest = (Run: any) => ({
-  type: UPDATE_RUN_REQUEST,
-  payload: Run,
+    type: UPDATE_RUN_REQUEST,
+    payload: Run,
 });
 
 export const updateRunSuccess = (Run: any) => ({
-  type: UPDATE_RUN_SUCCESS,
-  payload: Run,
+    type: UPDATE_RUN_SUCCESS,
+    payload: Run,
 });
 
 export const updateRunFailure = (error: Error) => ({
-  type: UPDATE_RUN_FAILURE,
-  payload: error,
+    type: UPDATE_RUN_FAILURE,
+    payload: error,
 });
 
 export const deleteRunRequest = (Run: any) => ({
-  type: DELETE_RUN_REQUEST,
-  payload: Run,
+    type: DELETE_RUN_REQUEST,
+    payload: Run,
 });
 
 export const deleteRunSuccess = (Run: any) => ({
-  type: DELETE_RUN_SUCCESS,
-  payload: Run,
+    type: DELETE_RUN_SUCCESS,
+    payload: Run,
 });
 
 export const deleteRunFailure = (error: Error) => ({
-  type: DELETE_RUN_FAILURE,
-  payload: error,
+    type: DELETE_RUN_FAILURE,
+    payload: error,
 });

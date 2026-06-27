@@ -19,35 +19,20 @@ Description: PublishFunnel200Response
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, PublishFunnel200Response } from "@thorapi/model";
-import {
-  useGetPublishFunnel200ResponsesQuery,
-  useAddPublishFunnel200ResponseMutation,
-  useUpdatePublishFunnel200ResponseMutation,
-} from "../../services/PublishFunnel200ResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, PublishFunnel200Response } from '@thorapi/model';
+import { useGetPublishFunnel200ResponsesQuery, useAddPublishFunnel200ResponseMutation, useUpdatePublishFunnel200ResponseMutation } from '../../services/PublishFunnel200ResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const PublishFunnel200ResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetPublishFunnel200ResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetPublishFunnel200ResponsesQuery();
 
   const [data, setData] = useState<PublishFunnel200Response[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<PublishFunnel200Response>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<PublishFunnel200Response>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const PublishFunnel200ResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const PublishFunnel200ResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((publishfunnel200response: DataObject) => [
-            publishfunnel200response,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((publishfunnel200response: DataObject) => [publishfunnel200response])} />
+          )}
     </>
   );
 };

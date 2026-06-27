@@ -51,10 +51,8 @@ import {
 import { VscError, VscCheck } from "react-icons/vsc";
 import type {
   ValorIDEApiReqInfo,
-  ValorIDEAskQuestion,
   ValorIDEAskUseMcpServer,
   ValorIDEMessage,
-  ValorIDEPlanModeResponse,
   ValorIDESayTool,
   ValorIDEChangesSummary,
   ValorIDEFileChangeStatus,
@@ -290,10 +288,6 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
   onOpenFileDiff,
   messageTs,
 }) => {
-  if (!summary || summary.totalFiles === 0) {
-    return null;
-  }
-
   const totalFilesLabel =
     summary.totalFiles === 1 ? "1 file" : `${summary.totalFiles} files`;
 
@@ -351,6 +345,10 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
       }
     }
   };
+
+  if (summary.totalFiles === 0) {
+    return null;
+  }
 
   return (
     <ChangesSummaryContainer>
@@ -672,6 +670,43 @@ const Markdown = memo(({ markdown }: { markdown?: string }) => {
   );
 });
 
+const stripMarkdownHeadingPrefix = (value?: string) =>
+  value
+    ?.replace(/^#{1,6}\s+/, "")
+    .replace(/^[^A-Za-z0-9]+/, "")
+    .trim();
+
+const buildCompletionFallbackMarkdown = (
+  text?: string,
+  changesSummary?: ValorIDEChangesSummary,
+): string => {
+  const sections: string[] = [];
+  if (text?.trim()) {
+    sections.push(text.trim());
+  }
+  if (changesSummary) {
+    const { totalInsertions, totalDeletions, files = [] } = changesSummary;
+    const keyFiles = files
+      .slice(0, 3)
+      .map(
+        (f) =>
+          `- ${f.relativePath} (${(f.status ?? "modified").toUpperCase()})`,
+      )
+      .join("\n");
+    sections.push(
+      [
+        "## 🔧 Implementation Details",
+        `- Files created/modified: ${files.length}`,
+        `- Insertions/deletions: +${totalInsertions} / -${totalDeletions}`,
+        keyFiles ? `- Key files:\n${keyFiles}` : undefined,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+  }
+  return sections.filter(Boolean).join("\n\n");
+};
+
 export const CompletionSummaryCard = memo(
   ({
     markdown,
@@ -692,28 +727,11 @@ export const CompletionSummaryCard = memo(
         : `Completed ${date.toLocaleString()}`;
     }
 
-    // Avoid duplicating the task title in the rendered markdown by stripping
-    // the leading `# Task: {title}` heading if present. The card already shows
-    // the title in its header, so rendering it again inside the markdown makes
-    // the summary look like the initial task prompt, which is confusing.
-    const stripTaskTitleHeading = (md?: string) => {
-      if (!md) return md;
-      return md.replace(/^# Task: .*\n?/, "");
-    };
-
-    const bodyMarkdown = stripTaskTitleHeading(markdown);
-    const fallbackBody = stripTaskTitleHeading(fallbackMarkdown);
+    const bodyMarkdown = markdown;
+    const fallbackBody = fallbackMarkdown;
     const summarySection = bodyMarkdown?.trim() || fallbackBody?.trim() || "";
-    const nextStepsSection = [
-      "### Next Steps",
-      "- Review the code changes in the diff viewer.",
-      "- Run relevant tests/linters before merging.",
-      "- Confirm any external configuration or deployment steps are updated.",
-    ].join("\n");
-    const narrativeMarkdown = [summarySection, nextStepsSection, bodyMarkdown]
-      .filter(Boolean)
-      .join("\n\n")
-      .trim();
+    const displayTitle = stripMarkdownHeadingPrefix(title);
+    const narrativeMarkdown = summarySection.trim();
 
     if (!narrativeMarkdown) {
       return null;
@@ -745,7 +763,9 @@ export const CompletionSummaryCard = memo(
           <FaCheckCircle size={28} color="var(--vscode-charts-green)" />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 13 }}>
-              {title ? `Task Summary — ${title}` : "Task Summary"}
+              {displayTitle
+                ? `Completion Report — ${displayTitle}`
+                : "Completion Report"}
             </div>
             {completedLabel && (
               <div
@@ -845,6 +865,8 @@ export const ChatRowContent = ({
         cacheWrites: toNumber(info.cacheWrites),
         cacheReads: toNumber(info.cacheReads),
         cost: toNumber(info.cost),
+        isComplete: info.isComplete === true,
+        usagePending: info.usagePending === true,
       };
     }
     return undefined;
@@ -858,6 +880,8 @@ export const ChatRowContent = ({
     ],
     [parsedApiReqInfo],
   );
+  const formatUsageValue = (value: number | undefined) =>
+    value == null ? "—" : value.toLocaleString();
 
   const apiRequestUsageAvailable = useMemo(() => {
     if (message.say !== "api_req_started" || !parsedApiReqInfo) {
@@ -865,6 +889,8 @@ export const ChatRowContent = ({
     }
     return (
       typeof parsedApiReqInfo.cost === "number" ||
+      parsedApiReqInfo.usagePending === true ||
+      parsedApiReqInfo.isComplete === true ||
       typeof parsedApiReqInfo.tokensIn === "number" ||
       typeof parsedApiReqInfo.tokensOut === "number" ||
       typeof parsedApiReqInfo.cacheWrites === "number" ||
@@ -2089,23 +2115,23 @@ export const ChatRowContent = ({
                         {apiRequestFailedMessage
                           ?.toLowerCase()
                           .includes("powershell") && (
-                            <>
-                              <br />
-                              <br />
-                              It seems like you're having Windows PowerShell
-                              issues, please see this{" "}
-                              <a
-                                href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                                style={{
-                                  color: "inherit",
-                                  textDecoration: "underline",
-                                }}
-                              >
-                                troubleshooting guide
-                              </a>
-                              .
-                            </>
-                          )}
+                          <>
+                            <br />
+                            <br />
+                            It seems like you're having Windows PowerShell
+                            issues, please see this{" "}
+                            <a
+                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                              style={{
+                                color: "inherit",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              troubleshooting guide
+                            </a>
+                            .
+                          </>
+                        )}
                       </p>
                     );
                   })()}
@@ -2130,10 +2156,22 @@ export const ChatRowContent = ({
                       Usage
                     </div>
                     <div style={{ fontSize: 12, lineHeight: 1.5 }}>
-                      <div>In: {apiReqInfo?.tokensIn ?? 0} tokens</div>
-                      <div>Out: {apiReqInfo?.tokensOut ?? 0} tokens</div>
-                      <div>Cache writes: {apiReqInfo?.cacheWrites ?? 0}</div>
-                      <div>Cache reads: {apiReqInfo?.cacheReads ?? 0}</div>
+                      {apiReqInfo?.usagePending === true && (
+                        <div>Usage: pending</div>
+                      )}
+                      <div>
+                        In: {formatUsageValue(apiReqInfo?.tokensIn)} tokens
+                      </div>
+                      <div>
+                        Out: {formatUsageValue(apiReqInfo?.tokensOut)} tokens
+                      </div>
+                      <div>
+                        Cache writes:{" "}
+                        {formatUsageValue(apiReqInfo?.cacheWrites)}
+                      </div>
+                      <div>
+                        Cache reads: {formatUsageValue(apiReqInfo?.cacheReads)}
+                      </div>
                       <div>
                         Cost:{" "}
                         {cost != null
@@ -2430,16 +2468,13 @@ export const ChatRowContent = ({
             ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
             : message.text;
           // Hide the message text if a generated summary exists and the text is
-          // just the initial task prompt. This prevents duplicate rendering of
-          // the prompt next to the built summary card while still showing rich
-          // completion details when provided.
+          // already represented by the completion report. This prevents
+          // duplicate rendering next to the built summary card.
           const initialPromptText = valorideMessages?.[0]?.text;
           const hasSummary = !!message.summaryMarkdown;
-          // Only hide text if there's a summary AND text matches the initial prompt
           const shouldHideText = Boolean(
-            hasSummary &&
-            initialPromptText &&
-            text?.trim() === initialPromptText.trim(),
+            hasSummary ||
+              (initialPromptText && text?.trim() === initialPromptText.trim()),
           );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
@@ -2477,37 +2512,10 @@ export const ChatRowContent = ({
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
-                  fallbackMarkdown={(() => {
-                    const sections: string[] = [];
-                    if (text && !shouldHideText) {
-                      sections.push(text.trim());
-                    }
-                    if (message.changesSummary) {
-                      const {
-                        totalInsertions,
-                        totalDeletions,
-                        files = [],
-                      } = message.changesSummary;
-                      const keyFiles = files
-                        .slice(0, 3)
-                        .map(
-                          (f) =>
-                            `- ${f.relativePath} (${f.status.toUpperCase()})`,
-                        )
-                        .join("\n");
-                      sections.push(
-                        [
-                          "### Changes",
-                          `- Files touched: ${files.length}`,
-                          `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
-                          keyFiles ? `Key files:\n${keyFiles}` : undefined,
-                        ]
-                          .filter(Boolean)
-                          .join("\n"),
-                      );
-                    }
-                    return sections.filter(Boolean).join("\n\n");
-                  })()}
+                  fallbackMarkdown={buildCompletionFallbackMarkdown(
+                    text,
+                    message.changesSummary,
+                  )}
                 />
                 {message.partial !== true &&
                   hasChanges &&
@@ -2573,7 +2581,7 @@ export const ChatRowContent = ({
                 PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
                 Select Default Profile").{" "}
                 <a
-                  href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
+                  href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started-new-coders/installing-essential-development-tools"
                   style={{
                     color: "inherit",
                     textDecoration: "underline",
@@ -2645,9 +2653,10 @@ export const ChatRowContent = ({
             const hasSummary = !!message.summaryMarkdown;
             const initialPromptText = valorideMessages?.[0]?.text;
             const shouldHideText = Boolean(
-              text &&
-              initialPromptText &&
-              text.trim() === initialPromptText.trim(),
+              hasSummary ||
+                (text &&
+                  initialPromptText &&
+                  text.trim() === initialPromptText.trim()),
             );
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
@@ -2685,37 +2694,10 @@ export const ChatRowContent = ({
                     markdown={message.summaryMarkdown}
                     title={message.summaryTitle}
                     completedAt={message.summaryCompletedAt}
-                    fallbackMarkdown={(() => {
-                      const sections: string[] = [];
-                      if (text && !shouldHideText) {
-                        sections.push(text.trim());
-                      }
-                      if (message.changesSummary) {
-                        const {
-                          totalInsertions,
-                          totalDeletions,
-                          files = [],
-                        } = message.changesSummary;
-                        const keyFiles = files
-                          .slice(0, 3)
-                          .map(
-                            (f) =>
-                              `- ${f.relativePath} (${f.status.toUpperCase()})`,
-                          )
-                          .join("\n");
-                        sections.push(
-                          [
-                            "### Changes",
-                            `- Files touched: ${files.length}`,
-                            `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
-                            keyFiles ? `Key files:\n${keyFiles}` : undefined,
-                          ]
-                            .filter(Boolean)
-                            .join("\n"),
-                        );
-                      }
-                      return sections.filter(Boolean).join("\n\n");
-                    })()}
+                    fallbackMarkdown={buildCompletionFallbackMarkdown(
+                      text,
+                      message.changesSummary,
+                    )}
                   />
                   {message.partial !== true &&
                     hasChanges &&
@@ -2745,21 +2727,14 @@ export const ChatRowContent = ({
           }
         }
         case "followup":
-          let question: string | undefined;
-          let options: string[] | undefined;
-          let selected: string | undefined;
-          const parsedMessage = safeParseJSON<ValorIDEAskQuestion>(
+          const { question, options, selected } = normalizeAskQuestionMessage(
             message.text,
           );
-
-          if (parsedMessage) {
-            question = parsedMessage.question;
-            options = parsedMessage.options;
-            selected = parsedMessage.selected;
-          } else {
-            // legacy messages would pass question directly
-            question = message.text;
-          }
+          const questionMarkdown =
+            question ||
+            (message.partial
+              ? "Preparing question..."
+              : "ValorIDE needs your input to continue.");
 
           return (
             <>
@@ -2770,7 +2745,7 @@ export const ChatRowContent = ({
                 </div>
               )}
               <div style={{ paddingTop: 10 }}>
-                <Markdown markdown={question} />
+                <Markdown markdown={questionMarkdown} />
                 <OptionsButtons
                   options={options}
                   selected={selected}
@@ -2812,21 +2787,9 @@ export const ChatRowContent = ({
             </>
           );
         case "plan_mode_respond": {
-          let response: string | undefined;
-          let options: string[] | undefined;
-          let selected: string | undefined;
-          const parsedMessage = safeParseJSON<ValorIDEPlanModeResponse>(
+          const { response, options, selected } = normalizePlanResponseMessage(
             message.text,
           );
-
-          if (parsedMessage) {
-            response = parsedMessage.response;
-            options = parsedMessage.options;
-            selected = parsedMessage.selected;
-          } else {
-            // legacy messages would pass response directly
-            response = message.text;
-          }
           return (
             <div style={{}}>
               <Markdown markdown={response} />
@@ -2859,11 +2822,122 @@ function safeParseJSON<T = any>(text?: string, fallback?: T): T | undefined {
     return JSON.parse(text) as T;
   } catch (err) {
     // Avoid noisy errors in production UI but keep a debug line for devs
-    // eslint-disable-next-line no-console
     console.debug("safeParseJSON failed to parse text", text);
     return fallback;
   }
 }
+
+const firstNonEmptyString = (...values: unknown[]): string | undefined => {
+  for (const value of values) {
+    if (value === undefined || value === null) {
+      continue;
+    }
+    const stringValue = String(value).trim();
+    if (stringValue) {
+      return stringValue;
+    }
+  }
+  return undefined;
+};
+
+const firstOptionPayload = (...values: unknown[]): unknown[] | undefined => {
+  for (const value of values) {
+    if (Array.isArray(value)) {
+      return value;
+    }
+    if (value && typeof value === "object") {
+      return Object.entries(value as Record<string, unknown>).map(
+        ([key, entry]) =>
+          entry && typeof entry === "object"
+            ? { id: key, ...(entry as Record<string, unknown>) }
+            : { label: key, value: entry },
+      );
+    }
+  }
+  return undefined;
+};
+
+const normalizeAskQuestionMessage = (
+  text?: string,
+): {
+  question?: string;
+  options?: unknown[];
+  selected?: string;
+  parsed: boolean;
+} => {
+  const parsedMessage = safeParseJSON<Record<string, any> | unknown[]>(text);
+  if (Array.isArray(parsedMessage)) {
+    return { options: parsedMessage, parsed: true };
+  }
+  if (parsedMessage && typeof parsedMessage === "object") {
+    return {
+      question: firstNonEmptyString(
+        (parsedMessage as any).question,
+        (parsedMessage as any).prompt,
+        (parsedMessage as any).message,
+        (parsedMessage as any).content,
+        (parsedMessage as any).text,
+        (parsedMessage as any).body,
+      ),
+      options: firstOptionPayload(
+        (parsedMessage as any).options,
+        (parsedMessage as any).choices,
+        (parsedMessage as any).actions,
+        (parsedMessage as any).suggestions,
+        (parsedMessage as any).quickReplies,
+        (parsedMessage as any).quick_replies,
+      ),
+      selected: firstNonEmptyString(
+        (parsedMessage as any).selected,
+        (parsedMessage as any).selectedOption,
+        (parsedMessage as any).selected_option,
+        (parsedMessage as any).response,
+      ),
+      parsed: true,
+    };
+  }
+  return { question: text, parsed: false };
+};
+
+const normalizePlanResponseMessage = (
+  text?: string,
+): {
+  response?: string;
+  options?: unknown[];
+  selected?: string;
+  parsed: boolean;
+} => {
+  const parsedMessage = safeParseJSON<Record<string, any> | unknown[]>(text);
+  if (Array.isArray(parsedMessage)) {
+    return { options: parsedMessage, parsed: true };
+  }
+  if (parsedMessage && typeof parsedMessage === "object") {
+    return {
+      response: firstNonEmptyString(
+        (parsedMessage as any).response,
+        (parsedMessage as any).message,
+        (parsedMessage as any).content,
+        (parsedMessage as any).text,
+        (parsedMessage as any).body,
+      ),
+      options: firstOptionPayload(
+        (parsedMessage as any).options,
+        (parsedMessage as any).choices,
+        (parsedMessage as any).actions,
+        (parsedMessage as any).suggestions,
+        (parsedMessage as any).quickReplies,
+        (parsedMessage as any).quick_replies,
+      ),
+      selected: firstNonEmptyString(
+        (parsedMessage as any).selected,
+        (parsedMessage as any).selectedOption,
+        (parsedMessage as any).selected_option,
+      ),
+      parsed: true,
+    };
+  }
+  return { response: text, parsed: false };
+};
 
 function parseErrorText(text?: string): Record<string, any> | undefined {
   if (!text) return undefined;

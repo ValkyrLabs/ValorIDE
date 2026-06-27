@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SheetColumn } from "@thorapi/model/SheetColumn";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SheetColumn } from '@thorapi/model/SheetColumn'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SheetColumnResponse = SheetColumn[];
+type SheetColumnResponse = SheetColumn[]
+type SheetColumnPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SheetColumn>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SheetColumnListQueryArg = {
+  example?: Partial<SheetColumn>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSheetColumnList = (result: unknown): SheetColumnResponse => {
   if (Array.isArray(result)) {
-    return result as SheetColumnResponse;
+    return result as SheetColumnResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SheetColumnResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SheetColumnResponse) : []
+}
 
 export const SheetColumnService = createApi({
-  reducerPath: "SheetColumn", // This should remain unique
+  reducerPath: 'SheetColumn', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SheetColumn"],
+  tagTypes: ['SheetColumn'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSheetColumnsPaged: build.query<
-      SheetColumnResponse,
-      { page: number; size?: number; example?: Partial<SheetColumn> }
-    >({
+    getSheetColumnsPaged: build.query<SheetColumnResponse, SheetColumnPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SheetColumn?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SheetColumn?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSheetColumnList(result);
+        const rows = toSheetColumnList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SheetColumn" as const, id })),
-          { type: "SheetColumn", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SheetColumn' as const, id })),
+          { type: 'SheetColumn', id: `PAGE_${page}` },
+          { type: 'SheetColumn', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSheetColumns: build.query<
-      SheetColumnResponse,
-      { example?: Partial<SheetColumn> } | void
-    >({
+    getSheetColumns: build.query<SheetColumnResponse, SheetColumnListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SheetColumnService = createApi({
         return `SheetColumn`;
       },
       providesTags: (result) => {
-        const rows = toSheetColumnList(result);
+        const rows = toSheetColumnList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SheetColumn" as const, id })),
-          { type: "SheetColumn", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SheetColumn' as const, id })),
+          { type: 'SheetColumn', id: 'LIST' },
+          { type: 'SheetColumn', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const SheetColumnService = createApi({
     addSheetColumn: build.mutation<SheetColumn, Partial<SheetColumn>>({
       query: (body) => ({
         url: `SheetColumn`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SheetColumn", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SheetColumn', id: 'LIST' },
+        { type: 'SheetColumn', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSheetColumn: build.query<SheetColumn, string>({
       query: (id) => `SheetColumn/${id}`,
-      providesTags: (result, error, id) => [{ type: "SheetColumn", id }],
+      providesTags: (result, error, id) => [{ type: 'SheetColumn', id }],
     }),
 
     // 5) Update
-    updateSheetColumn: build.mutation<
-      void,
-      Pick<SheetColumn, "id"> & Partial<SheetColumn>
-    >({
+    updateSheetColumn: build.mutation<SheetColumn, Pick<SheetColumn, 'id'> & Partial<SheetColumn>>({
       query: ({ id, ...patch }) => ({
         url: `SheetColumn/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SheetColumnService.util.updateQueryData(
-              "getSheetColumn",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SheetColumn, "id">) => [
-        { type: "SheetColumn", id },
-        { type: "SheetColumn", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SheetColumn, 'id'>) => [
+        { type: 'SheetColumn', id },
+        { type: 'SheetColumn', id: 'LIST' },
+        { type: 'SheetColumn', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSheetColumn: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `SheetColumn/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "SheetColumn", id }],
+    deleteSheetColumn: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `SheetColumn/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'SheetColumn', id },
+        { type: 'SheetColumn', id: 'LIST' },
+        { type: 'SheetColumn', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSheetColumnCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSheetColumnCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SheetColumn/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SheetColumn", id },
-        { type: "SheetColumn", id: "LIST" },
+        { type: 'SheetColumn', id },
+        { type: 'SheetColumn', id: 'LIST' },
+        { type: 'SheetColumn', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSheetColumnsPagedQuery`
 export const {
-  useGetSheetColumnsPagedQuery, // immediate fetch
+  useGetSheetColumnsPagedQuery,     // immediate fetch
   useLazyGetSheetColumnsPagedQuery, // lazy fetch
   useGetSheetColumnQuery,
   useGetSheetColumnsQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateSheetColumnMutation,
   useDeleteSheetColumnMutation,
   useDeleteSheetColumnCascadeMutation,
-} = SheetColumnService;
+} = SheetColumnService

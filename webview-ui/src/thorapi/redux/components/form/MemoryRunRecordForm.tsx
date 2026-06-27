@@ -13,40 +13,32 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   MemoryRunRecord,
   MemoryRunRecordQualitySignalEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddMemoryRunRecordMutation } from "../../services/MemoryRunRecordService";
+import { useAddMemoryRunRecordMutation } from '../../services/MemoryRunRecordService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -70,55 +62,47 @@ Timeline row for recent workflow run memory telemetry.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const QualitySignalValidation = () => {
-  return ["good", "noisy", "improved", "degraded"];
+  return [
+    'good',
+    'noisy',
+    'improved',
+    'degraded',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  runNumber: asNumber(
-    Yup.number().integer().typeError("runNumber must be a number"),
-  ),
-  workflowId: Yup.string(),
-  workflowName: Yup.string(),
-  creditsBurned: asNumber(
-    Yup.number().typeError("creditsBurned must be a number"),
-  ),
-  qualitySignal: Yup.mixed().oneOf(
-    QualitySignalValidation(),
-    "Invalid value for qualitySignal",
-  ),
-  contextUsedPct: asNumber(
-    Yup.number().typeError("contextUsedPct must be a number"),
-  ),
-  wastedPct: asNumber(Yup.number().typeError("wastedPct must be a number")),
-  memoriesUsed: asNumber(
-    Yup.number().integer().typeError("memoriesUsed must be a number"),
-  ),
-  runAt: Yup.date()
-    .transform((value, originalValue) => {
-      if (!originalValue) {
-        return value;
-      }
-      const parsed = new Date(originalValue);
-      return Number.isNaN(parsed.getTime()) ? value : parsed;
-    })
-    .typeError("runAt must be a valid date"),
-  trashed: Yup.boolean(),
+        runNumber: asNumber(Yup.number().integer().typeError("runNumber must be a number")),
+        workflowId: Yup.string(),
+        workflowName: Yup.string(),
+        creditsBurned: asNumber(Yup.number().typeError("creditsBurned must be a number")),
+      qualitySignal: Yup.mixed()
+        .oneOf(QualitySignalValidation(), "Invalid value for qualitySignal")
+        ,
+        contextUsedPct: asNumber(Yup.number().typeError("contextUsedPct must be a number")),
+        wastedPct: asNumber(Yup.number().typeError("wastedPct must be a number")),
+        memoriesUsed: asNumber(Yup.number().integer().typeError("memoriesUsed must be a number")),
+        runAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("runAt must be a valid date"),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryRunRecordForm: React.FC = () => {
-  const [addMemoryRunRecord, addMemoryRunRecordResult] =
-    useAddMemoryRunRecordMutation();
+  const [addMemoryRunRecord, addMemoryRunRecordResult] = useAddMemoryRunRecordMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -128,18 +112,12 @@ const MemoryRunRecordForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -147,16 +125,16 @@ const MemoryRunRecordForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryRunRecord> = {
-    runNumber: 0,
-    workflowId: "",
-    workflowName: "",
-    creditsBurned: 0,
-    qualitySignal: undefined,
-    contextUsedPct: 0,
-    wastedPct: 0,
-    memoriesUsed: 0,
-    runAt: new Date(),
-    trashed: false,
+          runNumber: 0,
+          workflowId: '',
+          workflowName: '',
+          creditsBurned: 0,
+        qualitySignal: undefined,
+          contextUsedPct: 0,
+          wastedPct: 0,
+          memoriesUsed: 0,
+          runAt: new Date(),
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -171,14 +149,11 @@ const MemoryRunRecordForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new MemoryRunRecord:", grants);
+    console.log('Permissions saved for new MemoryRunRecord:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<MemoryRunRecord>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryRunRecord>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -189,7 +164,7 @@ const MemoryRunRecordForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryRunRecord created successfully! Would you like to set permissions for this object?`,
+          `MemoryRunRecord created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -197,8 +172,8 @@ const MemoryRunRecordForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create MemoryRunRecord:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create MemoryRunRecord:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -219,47 +194,52 @@ const MemoryRunRecordForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
           const isSaving = isSubmitting || addMemoryRunRecordResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryRunRecord
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryRunRecord
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="runNumber" className="nice-form-control">
                       <b>
                         Run Number:
-                        {touched.runNumber && !errors.runNumber && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.runNumber &&
+                         !errors.runNumber && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="runNumber"
-                        type="number"
-                        value={values.runNumber || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("runNumber", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "runNumber",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.runNumber
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="runNumber"
+                            type="number"
+                            value={values.runNumber || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('runNumber', true);
+                              const v = e.target.value;
+                              setFieldValue('runNumber', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.runNumber
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -271,21 +251,28 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="workflowId" className="nice-form-control">
                       <b>
                         Workflow Id:
-                        {touched.workflowId && !errors.workflowId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.workflowId &&
+                         !errors.workflowId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="workflowId"
-                        value={values?.workflowId}
-                        placeholder="Workflow Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="workflowId"
+                            value={values?.workflowId}
+                            placeholder="Workflow Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -297,21 +284,28 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="workflowName" className="nice-form-control">
                       <b>
                         Workflow Name:
-                        {touched.workflowName && !errors.workflowName && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.workflowName &&
+                         !errors.workflowName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="workflowName"
-                        value={values?.workflowName}
-                        placeholder="Workflow Name"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="workflowName"
+                            value={values?.workflowName}
+                            placeholder="Workflow Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -320,39 +314,40 @@ const MemoryRunRecordForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="creditsBurned"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="creditsBurned" className="nice-form-control">
                       <b>
                         Credits Burned:
-                        {touched.creditsBurned && !errors.creditsBurned && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.creditsBurned &&
+                         !errors.creditsBurned && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="creditsBurned"
-                        type="number"
-                        step="any"
-                        value={values.creditsBurned || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("creditsBurned", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "creditsBurned",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.creditsBurned
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="creditsBurned"
+                            type="number"
+                            step="any"
+                            value={values.creditsBurned || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('creditsBurned', true);
+                              const v = e.target.value;
+                              setFieldValue('creditsBurned', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.creditsBurned
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -361,39 +356,33 @@ const MemoryRunRecordForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="qualitySignal"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="qualitySignal" className="nice-form-control">
                       <b>
                         Quality Signal:
-                        {touched.qualitySignal && !errors.qualitySignal && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.qualitySignal &&
+                         !errors.qualitySignal && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="qualitySignal"
-                        value={values.qualitySignal || ""}
-                        className={
-                          errors.qualitySignal
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("qualitySignal", true);
-                          setFieldValue(
-                            "qualitySignal",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Quality Signal" />
-                        <QualitySignalLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="qualitySignal"
+                          value={values.qualitySignal || ''}
+                          className={
+                            errors.qualitySignal
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('qualitySignal', true);
+                            setFieldValue('qualitySignal', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Quality Signal" />
+                          <QualitySignalLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -402,39 +391,40 @@ const MemoryRunRecordForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="contextUsedPct"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="contextUsedPct" className="nice-form-control">
                       <b>
                         Context Used Pct:
-                        {touched.contextUsedPct && !errors.contextUsedPct && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.contextUsedPct &&
+                         !errors.contextUsedPct && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="contextUsedPct"
-                        type="number"
-                        step="any"
-                        value={values.contextUsedPct || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("contextUsedPct", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "contextUsedPct",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.contextUsedPct
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="contextUsedPct"
+                            type="number"
+                            step="any"
+                            value={values.contextUsedPct || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('contextUsedPct', true);
+                              const v = e.target.value;
+                              setFieldValue('contextUsedPct', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.contextUsedPct
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -446,33 +436,37 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="wastedPct" className="nice-form-control">
                       <b>
                         Wasted Pct:
-                        {touched.wastedPct && !errors.wastedPct && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.wastedPct &&
+                         !errors.wastedPct && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DOUBLE FIELD */}
-                      <Field
-                        name="wastedPct"
-                        type="number"
-                        step="any"
-                        value={values.wastedPct || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("wastedPct", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "wastedPct",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.wastedPct
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="wastedPct"
+                            type="number"
+                            step="any"
+                            value={values.wastedPct || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('wastedPct', true);
+                              const v = e.target.value;
+                              setFieldValue('wastedPct', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.wastedPct
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -484,32 +478,36 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="memoriesUsed" className="nice-form-control">
                       <b>
                         Memories Used:
-                        {touched.memoriesUsed && !errors.memoriesUsed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.memoriesUsed &&
+                         !errors.memoriesUsed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* LONG FIELD */}
-                      <Field
-                        name="memoriesUsed"
-                        type="number"
-                        value={values.memoriesUsed || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("memoriesUsed", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "memoriesUsed",
-                            v === "" ? undefined : Number(v),
-                          );
-                        }}
-                        className={
-                          errors.memoriesUsed
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="memoriesUsed"
+                            type="number"
+                            value={values.memoriesUsed || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('memoriesUsed', true);
+                              const v = e.target.value;
+                              setFieldValue('memoriesUsed', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.memoriesUsed
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
 
                       <ErrorMessage
                         className="error"
@@ -521,36 +519,38 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="runAt" className="nice-form-control">
                       <b>
                         Run At:
-                        {touched.runAt && !errors.runAt && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.runAt &&
+                         !errors.runAt && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* DATETIME FIELD */}
-                      <Field
-                        name="runAt"
-                        type="datetime-local"
-                        value={
-                          values.runAt
-                            ? new Date(values.runAt).toISOString().slice(0, 16)
-                            : ""
-                        }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldTouched("runAt", true);
-                          const v = e.target.value;
-                          setFieldValue(
-                            "runAt",
-                            v ? new Date(v).toISOString() : "",
-                          );
-                        }}
-                        className={
-                          errors.runAt
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                      />
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="runAt"
+                            type="datetime-local"
+                            value={values.runAt ? 
+                              new Date(values.runAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('runAt', true);
+                              const v = e.target.value;
+                              setFieldValue('runAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.runAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -562,25 +562,32 @@ const MemoryRunRecordForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -590,59 +597,45 @@ const MemoryRunRecordForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New MemoryRunRecord
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New MemoryRunRecord
+                  </CoolButton>
 
-                    {(addMemoryRunRecordResult.isError || errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in (addMemoryRunRecordResult as any).error
-                              ? (addMemoryRunRecordResult as any).error.data
-                              : (addMemoryRunRecordResult as any).error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addMemoryRunRecordResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addMemoryRunRecordResult as any).error ? (addMemoryRunRecordResult as any).error.data : (addMemoryRunRecordResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addMemoryRunRecordResult.isSuccess || successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addMemoryRunRecordResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addMemoryRunRecordResult:{" "}
-                    {JSON.stringify(addMemoryRunRecordResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addMemoryRunRecordResult: {JSON.stringify(addMemoryRunRecordResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -674,13 +667,16 @@ kebabcase quality-signal-lookup
 const QualitySignalLookup = () => {
   return (
     <>
-      <option value="good" label="Good" />
-      <option value="noisy" label="Noisy" />
-      <option value="improved" label="Improved" />
-      <option value="degraded" label="Degraded" />
+      <option value='good' label="Good" />
+      <option value='noisy' label="Noisy" />
+      <option value='improved' label="Improved" />
+      <option value='degraded' label="Degraded" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default MemoryRunRecordForm;
+

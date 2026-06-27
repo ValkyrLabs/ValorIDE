@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { UserPreference } from "@thorapi/model/UserPreference";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { UserPreference } from '@thorapi/model/UserPreference'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type UserPreferenceResponse = UserPreference[];
+type UserPreferenceResponse = UserPreference[]
+type UserPreferencePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<UserPreference>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type UserPreferenceListQueryArg = {
+  example?: Partial<UserPreference>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toUserPreferenceList = (result: unknown): UserPreferenceResponse => {
   if (Array.isArray(result)) {
-    return result as UserPreferenceResponse;
+    return result as UserPreferenceResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as UserPreferenceResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as UserPreferenceResponse) : []
+}
 
 export const UserPreferenceService = createApi({
-  reducerPath: "UserPreference", // This should remain unique
+  reducerPath: 'UserPreference', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["UserPreference"],
+  tagTypes: ['UserPreference'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getUserPreferencesPaged: build.query<
-      UserPreferenceResponse,
-      { page: number; size?: number; example?: Partial<UserPreference> }
-    >({
+    getUserPreferencesPaged: build.query<UserPreferenceResponse, UserPreferencePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `UserPreference?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `UserPreference?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toUserPreferenceList(result);
+        const rows = toUserPreferenceList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "UserPreference" as const, id })),
-          { type: "UserPreference", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'UserPreference' as const, id })),
+          { type: 'UserPreference', id: `PAGE_${page}` },
+          { type: 'UserPreference', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getUserPreferences: build.query<
-      UserPreferenceResponse,
-      { example?: Partial<UserPreference> } | void
-    >({
+    getUserPreferences: build.query<UserPreferenceResponse, UserPreferenceListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const UserPreferenceService = createApi({
         return `UserPreference`;
       },
       providesTags: (result) => {
-        const rows = toUserPreferenceList(result);
+        const rows = toUserPreferenceList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "UserPreference" as const, id })),
-          { type: "UserPreference", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'UserPreference' as const, id })),
+          { type: 'UserPreference', id: 'LIST' },
+          { type: 'UserPreference', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const UserPreferenceService = createApi({
     addUserPreference: build.mutation<UserPreference, Partial<UserPreference>>({
       query: (body) => ({
         url: `UserPreference`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "UserPreference", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'UserPreference', id: 'LIST' },
+        { type: 'UserPreference', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getUserPreference: build.query<UserPreference, string>({
       query: (id) => `UserPreference/${id}`,
-      providesTags: (result, error, id) => [{ type: "UserPreference", id }],
+      providesTags: (result, error, id) => [{ type: 'UserPreference', id }],
     }),
 
     // 5) Update
-    updateUserPreference: build.mutation<
-      void,
-      Pick<UserPreference, "id"> & Partial<UserPreference>
-    >({
+    updateUserPreference: build.mutation<UserPreference, Pick<UserPreference, 'id'> & Partial<UserPreference>>({
       query: ({ id, ...patch }) => ({
         url: `UserPreference/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            UserPreferenceService.util.updateQueryData(
-              "getUserPreference",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<UserPreference, "id">) => [
-        { type: "UserPreference", id },
-        { type: "UserPreference", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<UserPreference, 'id'>) => [
+        { type: 'UserPreference', id },
+        { type: 'UserPreference', id: 'LIST' },
+        { type: 'UserPreference', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteUserPreference: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteUserPreference: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `UserPreference/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "UserPreference", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'UserPreference', id },
+        { type: 'UserPreference', id: 'LIST' },
+        { type: 'UserPreference', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteUserPreferenceCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteUserPreferenceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `UserPreference/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "UserPreference", id },
-        { type: "UserPreference", id: "LIST" },
+        { type: 'UserPreference', id },
+        { type: 'UserPreference', id: 'LIST' },
+        { type: 'UserPreference', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetUserPreferencesPagedQuery`
 export const {
-  useGetUserPreferencesPagedQuery, // immediate fetch
+  useGetUserPreferencesPagedQuery,     // immediate fetch
   useLazyGetUserPreferencesPagedQuery, // lazy fetch
   useGetUserPreferenceQuery,
   useGetUserPreferencesQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateUserPreferenceMutation,
   useDeleteUserPreferenceMutation,
   useDeleteUserPreferenceCascadeMutation,
-} = UserPreferenceService;
+} = UserPreferenceService

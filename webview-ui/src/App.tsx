@@ -27,6 +27,15 @@ import StartupDebit from "./components/usage-tracking/StartupDebit";
 import { registerExternalLinkInterceptor } from "./utils/linkInterceptor";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import LoadingSpinner from "./components/LoadingSpinner";
+import BuildModeView from "./components/build-mode/BuildModeView";
+import {
+  coerceValorTaskBridgePayload,
+  getBuildModeCurrentConsecutiveCommandCount,
+  mergeBuildModeAutomationSnapshot,
+  mergeBuildModeCommandReceipt,
+  renderBuildModeFinalReport,
+} from "./components/build-mode/valorTaskBridge";
+import type { ValorTaskBridgePayload } from "@shared/BuildMode";
 
 import { vscode } from "./utils/vscode";
 import {
@@ -40,6 +49,93 @@ import {
   clearAccountBalancePrompt,
   clearCreditIntent,
 } from "./redux/slices/apiErrorsSlice";
+
+const parseJsonRecord = (
+  value: unknown,
+): Record<string, unknown> | undefined => {
+  if (!value) return undefined;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  if (typeof value !== "string") return undefined;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const hasSwarmTraceEvidence = (value: Record<string, unknown>): boolean =>
+  [
+    "receiptRef",
+    "traceId",
+    "contextPageRef",
+    "skillOptReceiptRef",
+    "workflowExecutionRef",
+    "workflowDispatchJson",
+  ].some((key) => typeof value[key] === "string" && value[key] !== "");
+
+const coerceSwarmTraceCandidate = (
+  value: unknown,
+): Record<string, unknown> | undefined => {
+  const record = parseJsonRecord(value);
+  if (!record) return undefined;
+
+  const nestedCandidates = [
+    record.swarmCommandResponse,
+    record.commandResponse,
+    record.response,
+    record.result,
+    record.data,
+    record.payload,
+  ];
+  if (hasSwarmTraceEvidence(record)) {
+    return record;
+  }
+
+  for (const nested of nestedCandidates) {
+    const candidate = coerceSwarmTraceCandidate(nested);
+    if (candidate) return candidate;
+  }
+
+  return undefined;
+};
+
+const extractSwarmCommandInspectionPayload = (
+  message: ExtensionMessage,
+): Record<string, unknown> | undefined => {
+  const directCandidate =
+    coerceSwarmTraceCandidate(message.swarmCommandResponse) ||
+    coerceSwarmTraceCandidate(message.payload) ||
+    coerceSwarmTraceCandidate((message as any).response);
+  if (directCandidate) {
+    return directCandidate;
+  }
+
+  const command = message.command;
+  if (!command) {
+    return undefined;
+  }
+
+  const commandPayload = parseJsonRecord(command.payload) ?? command.payload;
+  const commandCandidate = coerceSwarmTraceCandidate(commandPayload);
+  if (!commandCandidate) {
+    return undefined;
+  }
+
+  return {
+    ...commandCandidate,
+    commandId:
+      commandCandidate.commandId ??
+      (commandPayload as any)?.commandId ??
+      command.id,
+    targetInstanceId:
+      commandCandidate.targetInstanceId ?? command.targetInstanceId,
+  };
+};
 
 const AppContent = () => {
   const {
@@ -57,6 +153,7 @@ const AppContent = () => {
     (state: any) => state?.apiErrors?.creditIntent,
   );
   const [hasStoredAuth, setHasStoredAuth] = useState(false);
+  const [forceShowWelcome, setForceShowWelcome] = useState(false);
 
   // Check for stored credentials BEFORE rendering to prevent welcome flicker
   useLayoutEffect(() => {
@@ -88,16 +185,32 @@ const AppContent = () => {
     useState(false);
   const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
     | "login"
+    | "signup"
     | "account"
     | "applications"
+    | "appGeneration"
+    | "contextPage"
     | "generatedFiles"
+    | "receipts"
+    | "swarm"
+    | "agenticCommandCenter"
     | "userPreferences"
     | "serverConsole"
     | undefined
   >(undefined);
+  const [
+    accountInitialSwarmCommandResponse,
+    setAccountInitialSwarmCommandResponse,
+  ] = useState<Record<string, unknown> | undefined>(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
   const [showApplicationProgress, setShowApplicationProgress] = useState(false);
+  const [buildModePayload, setBuildModePayload] = useState<
+    ValorTaskBridgePayload | undefined
+  >(undefined);
+  const [buildModeLaunchError, setBuildModeLaunchError] = useState<
+    { issues: string[]; summary: string } | undefined
+  >(undefined);
   const [creditIntent, setCreditIntent] = useState<CreditIntent | undefined>(
     undefined,
   );
@@ -134,6 +247,7 @@ const AppContent = () => {
       // Track different message types to mothership
       switch (message.type) {
         case "loginSuccess":
+          setForceShowWelcome(false);
           // After successful login, show the Account view and keep File Explorer visible
           setShowSettings(false);
           setShowHistory(false);
@@ -141,10 +255,29 @@ const AppContent = () => {
           setShowAccount(true);
           setShowGeneratedFiles(false);
           setShowApplicationProgress(false);
+          setBuildModePayload(undefined);
           setShowFileExplorer(true);
 
           // Track login success as a task start
           trackTaskStart("user-session", "User logged in successfully");
+          break;
+
+        case "clearClientAuthState":
+          setHasStoredAuth(false);
+          setForceShowWelcome(true);
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(false);
+          setShowGeneratedFiles(false);
+          setShowServerConsole(false);
+          setShowApplicationProgress(false);
+          setBuildModePayload(undefined);
+          setShowFileExplorer(false);
+          setAccountInitialActiveTab("login");
+          setAccountInitialSwarmCommandResponse(undefined);
+          setServerConsoleNeedsAttention(false);
+          setCreditIntent(undefined);
           break;
 
         case "action":
@@ -157,6 +290,7 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               break;
             case "historyButtonClicked":
               setShowSettings(false);
@@ -166,6 +300,7 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               break;
             case "mcpButtonClicked":
               setShowSettings(false);
@@ -178,15 +313,21 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               break;
             case "accountButtonClicked":
+              setForceShowWelcome(false);
               setShowSettings(false);
               setShowHistory(false);
               setShowMcp(false);
               setShowAccount(true);
+              if (message.accountTab) {
+                setAccountInitialActiveTab(message.accountTab);
+              }
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               // Opening Account should clear server console attention since tab is visible now
               setServerConsoleNeedsAttention(false);
               break;
@@ -199,6 +340,7 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               setServerConsoleNeedsAttention(false);
               setAccountInitialActiveTab("serverConsole");
               break;
@@ -210,6 +352,7 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               break;
             case "generatedFilesButtonClicked":
               setShowSettings(false);
@@ -219,6 +362,7 @@ const AppContent = () => {
               setShowGeneratedFiles(true);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               break;
             // serverConsoleButtonClicked moved to account tabs; keep legacy handling minimal
           }
@@ -231,6 +375,7 @@ const AppContent = () => {
             if (result.applicationId) {
               setCurrentApplicationId(result.applicationId);
               setShowApplicationProgress(false);
+              setBuildModePayload(undefined);
               // File explorer is already visible, just ensure it stays visible
               setShowFileExplorer(true);
               // Hide other views but keep file explorer
@@ -242,6 +387,90 @@ const AppContent = () => {
             }
           }
           break;
+
+        case "valorBuildModeTask": {
+          setBuildModeLaunchError(undefined);
+          setBuildModePayload(
+            coerceValorTaskBridgePayload(
+              message.valorTaskBridgePayload ?? message.payload,
+            ),
+          );
+          vscode.postMessage({
+            type: "valorBuildModeRequestAutomationSnapshot",
+          });
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(false);
+          setShowGeneratedFiles(false);
+          setShowServerConsole(false);
+          setShowApplicationProgress(false);
+          setShowFileExplorer(true);
+          break;
+        }
+
+        case "valorBuildModeLaunchRejected": {
+          const payload =
+            message.payload && typeof message.payload === "object"
+              ? (message.payload as {
+                  issues?: unknown;
+                  summary?: unknown;
+                })
+              : {};
+          const issues = Array.isArray(payload.issues)
+            ? payload.issues.filter(
+                (issue): issue is string => typeof issue === "string",
+              )
+            : [];
+          const summary =
+            typeof payload.summary === "string"
+              ? payload.summary
+              : issues.join(" ");
+          setBuildModeLaunchError({
+            issues,
+            summary:
+              summary ||
+              "Build Mode task launch was rejected by the Valor task bridge.",
+          });
+          setBuildModePayload(undefined);
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(false);
+          setShowGeneratedFiles(false);
+          setShowServerConsole(false);
+          setShowApplicationProgress(false);
+          setShowFileExplorer(true);
+          break;
+        }
+
+        case "valorBuildModeAutomationSnapshot": {
+          if (message.buildModeAutomationSnapshot) {
+            setBuildModePayload((current) =>
+              current
+                ? mergeBuildModeAutomationSnapshot(
+                    current,
+                    message.buildModeAutomationSnapshot!,
+                  )
+                : current,
+            );
+          }
+          break;
+        }
+
+        case "valorBuildModeCommandResult": {
+          if (message.buildModeCommandReceipt) {
+            setBuildModePayload((current) =>
+              current
+                ? mergeBuildModeCommandReceipt(
+                    current,
+                    message.buildModeCommandReceipt!,
+                  )
+                : current,
+            );
+          }
+          break;
+        }
 
         // Track other extension messages as generic actions
         case "invoke":
@@ -271,6 +500,36 @@ const AppContent = () => {
           setServerConsoleNeedsAttention(true);
 
           break;
+
+        case "swarm:command-response":
+        case "swarm:remote-command":
+        case "swarm:widget-command": {
+          const swarmCommandResponse =
+            extractSwarmCommandInspectionPayload(message);
+          if (swarmCommandResponse) {
+            setShowSettings(false);
+            setShowHistory(false);
+            setShowMcp(false);
+            setShowAccount(true);
+            setShowGeneratedFiles(false);
+            setShowServerConsole(false);
+            setShowApplicationProgress(false);
+            setBuildModePayload(undefined);
+            setShowFileExplorer(true);
+            setAccountInitialActiveTab("receipts");
+            setAccountInitialSwarmCommandResponse(swarmCommandResponse);
+            break;
+          }
+
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              messageType: message.type,
+              timestamp: Date.now(),
+            },
+          });
+          break;
+        }
 
         default:
           // Track any other message types as generic activity
@@ -302,6 +561,7 @@ const AppContent = () => {
       setShowGeneratedFiles(false);
       setShowServerConsole(false);
       setShowApplicationProgress(false);
+      setBuildModePayload(undefined);
       setShowAccount(true);
       setAccountInitialActiveTab("account");
     };
@@ -334,6 +594,7 @@ const AppContent = () => {
     setShowGeneratedFiles(false);
     setShowServerConsole(false);
     setShowApplicationProgress(false);
+    setBuildModePayload(undefined);
     setShowFileExplorer(true);
     setAccountInitialActiveTab("account");
     if (apiErrorCreditIntent) {
@@ -380,11 +641,22 @@ const AppContent = () => {
     showMcp ||
     showAccount ||
     showGeneratedFiles ||
+    !!buildModePayload ||
     false;
+  const shouldShowWelcomeView =
+    (showWelcome || forceShowWelcome) &&
+    !hasStoredAuth &&
+    !showSettings &&
+    !showHistory &&
+    !showMcp &&
+    !showAccount &&
+    !showGeneratedFiles &&
+    !showApplicationProgress &&
+    !buildModePayload;
 
   return (
     <>
-      {showWelcome && !hasStoredAuth ? (
+      {shouldShowWelcomeView ? (
         <WelcomeView />
       ) : (
         <>
@@ -404,6 +676,10 @@ const AppContent = () => {
               onConsumeInitialActiveTab={() =>
                 setAccountInitialActiveTab(undefined)
               }
+              initialSwarmCommandResponse={accountInitialSwarmCommandResponse}
+              onConsumeInitialSwarmCommandResponse={() =>
+                setAccountInitialSwarmCommandResponse(undefined)
+              }
               creditIntent={creditIntent}
               onClearCreditIntent={() => {
                 setCreditIntent(undefined);
@@ -412,6 +688,156 @@ const AppContent = () => {
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}
+          {buildModeLaunchError && !buildModePayload && (
+            <section className="error-message" role="alert">
+              <strong>Build Mode launch rejected.</strong>{" "}
+              {buildModeLaunchError.summary}
+            </section>
+          )}
+          {buildModePayload && (
+            <BuildModeView
+              payload={buildModePayload}
+              onClose={() => setBuildModePayload(undefined)}
+              onOpenArtifact={(uri) =>
+                vscode.postMessage({
+                  type: "valorBuildModeOpenArtifact",
+                  payload: { uri },
+                })
+              }
+              onOpenPreview={(url) =>
+                vscode.postMessage({
+                  type: "openInBrowser",
+                  url,
+                })
+              }
+              onRunDueAutomations={(commands, providerRoute, promptContext) =>
+                vscode.postMessage({
+                  type: "valorBuildModeRunDueAutomations",
+                  payload: {
+                    commands,
+                    taskId: buildModePayload.taskId,
+                    scope: buildModePayload.scope,
+                    providerRoute:
+                      providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
+                    promptContext,
+                  },
+                })
+              }
+              onRunAutonomousQueue={(
+                commands,
+                providerRoute,
+                promptContext,
+                commandCatalog,
+              ) =>
+                vscode.postMessage({
+                  type: "valorBuildModeRunAutonomousQueue",
+                  payload: {
+                    commands: commands.map((command) => ({
+                      ...command,
+                      protectedPaths: buildModePayload.appBundle.artifacts
+                        .filter((artifact) => artifact.kind === "generated")
+                        .map((artifact) => artifact.path),
+                    })),
+                    appBundle: buildModePayload.appBundle,
+                    taskId: buildModePayload.taskId,
+                    scope: buildModePayload.scope,
+                    autonomyPolicy: buildModePayload.autonomyPolicy,
+                    currentConsecutiveCommands:
+                      getBuildModeCurrentConsecutiveCommandCount(
+                        buildModePayload.commandReceipts,
+                      ),
+                    browserPreviewUrl:
+                      buildModePayload.browserVerification.previewUrl,
+                    creditEstimateId: buildModePayload.creditEstimate.id,
+                    estimatedCredits:
+                      buildModePayload.creditEstimate.estimatedCredits,
+                    finalReportMarkdown:
+                      renderBuildModeFinalReport(buildModePayload),
+                    grayMatterContextPack:
+                      buildModePayload.grayMatterContextPack,
+                    providerRoute:
+                      providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
+                    requireGrayMatterContext: true,
+                    promptContext,
+                    checkpoints: buildModePayload.checkpoints,
+                    agentRuntimes: buildModePayload.agentRuntimes,
+                    swarmRoles: buildModePayload.swarmRoles,
+                    commandCatalog: commandCatalog ?? buildModePayload.commands,
+                    commandReceipts: buildModePayload.commandReceipts,
+                    commandPolicyRules: buildModePayload.commandPolicyRules,
+                    executionPlan: buildModePayload.executionPlan,
+                    readinessGates: buildModePayload.readinessGates,
+                    toolPermissions: buildModePayload.toolPermissions,
+                  },
+                })
+              }
+              onSetAutomationStatus={(id, status) =>
+                vscode.postMessage({
+                  type: "valorBuildModeSetAutomationStatus",
+                  payload: {
+                    id,
+                    status,
+                  },
+                })
+              }
+              onRunCommand={(
+                command,
+                approval,
+                providerRoute,
+                promptContext,
+                commandCatalog,
+              ) =>
+                vscode.postMessage({
+                  type: "valorBuildModeRunCommand",
+                  payload: {
+                    approval,
+                    appBundle: buildModePayload.appBundle,
+                    taskId: buildModePayload.taskId,
+                    scope: buildModePayload.scope,
+                    autonomyPolicy: buildModePayload.autonomyPolicy,
+                    currentConsecutiveCommands:
+                      getBuildModeCurrentConsecutiveCommandCount(
+                        buildModePayload.commandReceipts,
+                      ),
+                    browserPreviewUrl:
+                      buildModePayload.browserVerification.previewUrl,
+                    creditEstimateId: buildModePayload.creditEstimate.id,
+                    estimatedCredits:
+                      buildModePayload.creditEstimate.estimatedCredits,
+                    finalReportMarkdown:
+                      renderBuildModeFinalReport(buildModePayload),
+                    grayMatterContextPack:
+                      buildModePayload.grayMatterContextPack,
+                    providerRoute:
+                      providerRoute ?? buildModePayload.selectedProviderRoute,
+                    providerCredentials: buildModePayload.providerCredentials,
+                    receipts: buildModePayload.receipts,
+                    requireGrayMatterContext: true,
+                    promptContext,
+                    checkpoints: buildModePayload.checkpoints,
+                    agentRuntimes: buildModePayload.agentRuntimes,
+                    swarmRoles: buildModePayload.swarmRoles,
+                    commandCatalog: commandCatalog ?? buildModePayload.commands,
+                    commandReceipts: buildModePayload.commandReceipts,
+                    commandPolicyRules: buildModePayload.commandPolicyRules,
+                    executionPlan: buildModePayload.executionPlan,
+                    readinessGates: buildModePayload.readinessGates,
+                    toolPermissions: buildModePayload.toolPermissions,
+                    command: {
+                      ...command,
+                      protectedPaths: buildModePayload.appBundle.artifacts
+                        .filter((artifact) => artifact.kind === "generated")
+                        .map((artifact) => artifact.path),
+                    },
+                  },
+                })
+              }
+            />
+          )}
           {/* Server Console is now available in the Account view tabs */}
 
           {/* Application Progress Overlay - shows over the split pane */}
@@ -453,6 +879,7 @@ const AppContent = () => {
                 showGeneratedFiles,
                 showServerConsole,
                 showApplicationProgress,
+                buildModeTaskId: buildModePayload?.taskId,
                 currentApplicationId,
                 vscMachineId,
               }}

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SpaceMember } from "@thorapi/model/SpaceMember";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SpaceMember } from '@thorapi/model/SpaceMember'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SpaceMemberResponse = SpaceMember[];
+type SpaceMemberResponse = SpaceMember[]
+type SpaceMemberPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SpaceMember>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SpaceMemberListQueryArg = {
+  example?: Partial<SpaceMember>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSpaceMemberList = (result: unknown): SpaceMemberResponse => {
   if (Array.isArray(result)) {
-    return result as SpaceMemberResponse;
+    return result as SpaceMemberResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SpaceMemberResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SpaceMemberResponse) : []
+}
 
 export const SpaceMemberService = createApi({
-  reducerPath: "SpaceMember", // This should remain unique
+  reducerPath: 'SpaceMember', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SpaceMember"],
+  tagTypes: ['SpaceMember'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSpaceMembersPaged: build.query<
-      SpaceMemberResponse,
-      { page: number; size?: number; example?: Partial<SpaceMember> }
-    >({
+    getSpaceMembersPaged: build.query<SpaceMemberResponse, SpaceMemberPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SpaceMember?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SpaceMember?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSpaceMemberList(result);
+        const rows = toSpaceMemberList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SpaceMember" as const, id })),
-          { type: "SpaceMember", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SpaceMember' as const, id })),
+          { type: 'SpaceMember', id: `PAGE_${page}` },
+          { type: 'SpaceMember', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSpaceMembers: build.query<
-      SpaceMemberResponse,
-      { example?: Partial<SpaceMember> } | void
-    >({
+    getSpaceMembers: build.query<SpaceMemberResponse, SpaceMemberListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SpaceMemberService = createApi({
         return `SpaceMember`;
       },
       providesTags: (result) => {
-        const rows = toSpaceMemberList(result);
+        const rows = toSpaceMemberList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SpaceMember" as const, id })),
-          { type: "SpaceMember", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SpaceMember' as const, id })),
+          { type: 'SpaceMember', id: 'LIST' },
+          { type: 'SpaceMember', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const SpaceMemberService = createApi({
     addSpaceMember: build.mutation<SpaceMember, Partial<SpaceMember>>({
       query: (body) => ({
         url: `SpaceMember`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SpaceMember", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SpaceMember', id: 'LIST' },
+        { type: 'SpaceMember', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSpaceMember: build.query<SpaceMember, string>({
       query: (id) => `SpaceMember/${id}`,
-      providesTags: (result, error, id) => [{ type: "SpaceMember", id }],
+      providesTags: (result, error, id) => [{ type: 'SpaceMember', id }],
     }),
 
     // 5) Update
-    updateSpaceMember: build.mutation<
-      void,
-      Pick<SpaceMember, "id"> & Partial<SpaceMember>
-    >({
+    updateSpaceMember: build.mutation<SpaceMember, Pick<SpaceMember, 'id'> & Partial<SpaceMember>>({
       query: ({ id, ...patch }) => ({
         url: `SpaceMember/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SpaceMemberService.util.updateQueryData(
-              "getSpaceMember",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SpaceMember, "id">) => [
-        { type: "SpaceMember", id },
-        { type: "SpaceMember", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SpaceMember, 'id'>) => [
+        { type: 'SpaceMember', id },
+        { type: 'SpaceMember', id: 'LIST' },
+        { type: 'SpaceMember', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSpaceMember: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `SpaceMember/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "SpaceMember", id }],
+    deleteSpaceMember: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `SpaceMember/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'SpaceMember', id },
+        { type: 'SpaceMember', id: 'LIST' },
+        { type: 'SpaceMember', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSpaceMemberCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSpaceMemberCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SpaceMember/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SpaceMember", id },
-        { type: "SpaceMember", id: "LIST" },
+        { type: 'SpaceMember', id },
+        { type: 'SpaceMember', id: 'LIST' },
+        { type: 'SpaceMember', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSpaceMembersPagedQuery`
 export const {
-  useGetSpaceMembersPagedQuery, // immediate fetch
+  useGetSpaceMembersPagedQuery,     // immediate fetch
   useLazyGetSpaceMembersPagedQuery, // lazy fetch
   useGetSpaceMemberQuery,
   useGetSpaceMembersQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateSpaceMemberMutation,
   useDeleteSpaceMemberMutation,
   useDeleteSpaceMemberCascadeMutation,
-} = SpaceMemberService;
+} = SpaceMemberService

@@ -13,41 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React, { useState } from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert,
-} from "react-bootstrap";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "@valkyr/component-library/CoolButton";
-import * as Yup from "yup";
-import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
+  Alert
+} from 'react-bootstrap';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
+import * as Yup from 'yup';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
 
-import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import {
-  AclGrantRequest,
-  PermissionType,
-} from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
+
 
 import {
   TrustAttestationEvidence,
   TrustAttestationEvidenceEvidenceTypeEnum,
   TrustAttestationEvidenceEvidenceStatusEnum,
-} from "@thorapi/model";
+} from '@thorapi/model';
 
-import { useAddTrustAttestationEvidenceMutation } from "../../services/TrustAttestationEvidenceService";
+import { useAddTrustAttestationEvidenceMutation } from '../../services/TrustAttestationEvidenceService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,48 +64,47 @@ Optional software, container, CI, host, or hardware attestation evidence used by
 -------------------------------------------------------- */
 const EvidenceTypeValidation = () => {
   return [
-    "SOFTWARE_DECLARATION",
-    "CONTAINER_IMAGE",
-    "CI_BUILD",
-    "TPM",
-    "SGX",
-    "SEV_SNP",
-    "NITRO_ENCLAVE",
+    'SOFTWARE_DECLARATION',
+    'CONTAINER_IMAGE',
+    'CI_BUILD',
+    'TPM',
+    'SGX',
+    'SEV_SNP',
+    'NITRO_ENCLAVE',
   ];
 };
 const EvidenceStatusValidation = () => {
-  return ["ACCEPTED", "REJECTED", "EXPIRED"];
+  return [
+    'ACCEPTED',
+    'REJECTED',
+    'EXPIRED',
+  ];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) =>
-    orig === "" || orig === null ? undefined : val,
-  );
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-  evidenceType: Yup.mixed().oneOf(
-    EvidenceTypeValidation(),
-    "Invalid value for evidenceType",
-  ),
-  evidenceHash: Yup.string(),
-  evidenceRef: Yup.string(),
-  evidenceStatus: Yup.mixed().oneOf(
-    EvidenceStatusValidation(),
-    "Invalid value for evidenceStatus",
-  ),
-  ownerId: Yup.string(),
-  trashed: Yup.boolean(),
+      evidenceType: Yup.mixed()
+        .oneOf(EvidenceTypeValidation(), "Invalid value for evidenceType")
+        ,
+        evidenceHash: Yup.string(),
+        evidenceRef: Yup.string(),
+      evidenceStatus: Yup.mixed()
+        .oneOf(EvidenceStatusValidation(), "Invalid value for evidenceStatus")
+        ,
+        ownerId: Yup.string(),
+        trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustAttestationEvidenceForm: React.FC = () => {
-  const [addTrustAttestationEvidence, addTrustAttestationEvidenceResult] =
-    useAddTrustAttestationEvidenceMutation();
+  const [addTrustAttestationEvidence, addTrustAttestationEvidenceResult] = useAddTrustAttestationEvidenceMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -123,18 +114,12 @@ const TrustAttestationEvidenceForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: "current_user",
+    username: 'current_user',
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [
-        PermissionType.READ,
-        PermissionType.WRITE,
-        PermissionType.CREATE,
-        PermissionType.DELETE,
-        PermissionType.ADMINISTRATION,
-      ],
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
@@ -142,12 +127,12 @@ const TrustAttestationEvidenceForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustAttestationEvidence> = {
-    evidenceType: undefined,
-    evidenceHash: "",
-    evidenceRef: "",
-    evidenceStatus: undefined,
-    ownerId: "",
-    trashed: false,
+        evidenceType: undefined,
+          evidenceHash: '',
+          evidenceRef: '',
+        evidenceStatus: undefined,
+          ownerId: '',
+          trashed: false,
   };
 
   // Permission Management Handlers
@@ -162,14 +147,11 @@ const TrustAttestationEvidenceForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log("Permissions saved for new TrustAttestationEvidence:", grants);
+    console.log('Permissions saved for new TrustAttestationEvidence:', grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<TrustAttestationEvidence>,
-  ) => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustAttestationEvidence>) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -180,7 +162,7 @@ const TrustAttestationEvidenceForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustAttestationEvidence created successfully! Would you like to set permissions for this object?`,
+          `TrustAttestationEvidence created successfully! Would you like to set permissions for this object?`
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -188,8 +170,8 @@ const TrustAttestationEvidenceForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error("Failed to create TrustAttestationEvidence:", error);
-      setErrorMessage("Failed to save. Please try again.");
+      console.error('Failed to create TrustAttestationEvidence:', error);
+      setErrorMessage('Failed to save. Please try again.');
     }
     setSubmitting(false);
   };
@@ -210,50 +192,46 @@ const TrustAttestationEvidenceForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => {
-          const isSaving =
-            isSubmitting || addTrustAttestationEvidenceResult.isLoading;
+          const isSaving = isSubmitting || addTrustAttestationEvidenceResult.isLoading;
           return (
-            <form onSubmit={handleSubmit} className="form">
-              <Accordion defaultActiveKey="1">
-                {/* Editable Fields (NON read-only) */}
-                <Accordion.Item eventKey="1">
-                  <Accordion.Header>
-                    <FaRegPlusSquare size={28} /> &nbsp; Add New
-                    TrustAttestationEvidence
-                  </Accordion.Header>
-                  <Accordion.Body>
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              
+              {/* Editable Fields (NON read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustAttestationEvidence
+                </Accordion.Header>
+                <Accordion.Body>
                     <label htmlFor="evidenceType" className="nice-form-control">
                       <b>
                         Evidence Type:
-                        {touched.evidenceType && !errors.evidenceType && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.evidenceType &&
+                         !errors.evidenceType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="evidenceType"
-                        value={values.evidenceType || ""}
-                        className={
-                          errors.evidenceType
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("evidenceType", true);
-                          setFieldValue(
-                            "evidenceType",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Evidence Type" />
-                        <EvidenceTypeLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="evidenceType"
+                          value={values.evidenceType || ''}
+                          className={
+                            errors.evidenceType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('evidenceType', true);
+                            setFieldValue('evidenceType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Evidence Type" />
+                          <EvidenceTypeLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -265,21 +243,28 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                     <label htmlFor="evidenceHash" className="nice-form-control">
                       <b>
                         Evidence Hash:
-                        {touched.evidenceHash && !errors.evidenceHash && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.evidenceHash &&
+                         !errors.evidenceHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="evidenceHash"
-                        value={values?.evidenceHash}
-                        placeholder="Evidence Hash"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="evidenceHash"
+                            value={values?.evidenceHash}
+                            placeholder="Evidence Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -291,21 +276,28 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                     <label htmlFor="evidenceRef" className="nice-form-control">
                       <b>
                         Evidence Ref:
-                        {touched.evidenceRef && !errors.evidenceRef && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.evidenceRef &&
+                         !errors.evidenceRef && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="evidenceRef"
-                        value={values?.evidenceRef}
-                        placeholder="Evidence Ref"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="evidenceRef"
+                            value={values?.evidenceRef}
+                            placeholder="Evidence Ref"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -314,39 +306,33 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label
-                      htmlFor="evidenceStatus"
-                      className="nice-form-control"
-                    >
+                    <label htmlFor="evidenceStatus" className="nice-form-control">
                       <b>
                         Evidence Status:
-                        {touched.evidenceStatus && !errors.evidenceStatus && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.evidenceStatus &&
+                         !errors.evidenceStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* ENUM DROPDOWN */}
-                      <BSForm.Select
-                        name="evidenceStatus"
-                        value={values.evidenceStatus || ""}
-                        className={
-                          errors.evidenceStatus
-                            ? "form-control field-error"
-                            : "nice-form-control form-control"
-                        }
-                        onChange={(e) => {
-                          setFieldTouched("evidenceStatus", true);
-                          setFieldValue(
-                            "evidenceStatus",
-                            e.target.value || undefined,
-                          );
-                        }}
-                      >
-                        <option value="" label="Select Evidence Status" />
-                        <EvidenceStatusLookup />
-                      </BSForm.Select>
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="evidenceStatus"
+                          value={values.evidenceStatus || ''}
+                          className={
+                            errors.evidenceStatus
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('evidenceStatus', true);
+                            setFieldValue('evidenceStatus', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Evidence Status" />
+                          <EvidenceStatusLookup />
+                        </BSForm.Select>
+
 
                       <ErrorMessage
                         className="error"
@@ -358,21 +344,28 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId && !errors.ownerId && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                      <SmartField
-                        name="ownerId"
-                        value={values?.ownerId}
-                        placeholder="Owner Id"
-                        setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
-                      />
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="ownerId"
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -384,25 +377,32 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed && !errors.trashed && (
-                          <span className="okCheck">
-                            <FaCheckCircle /> looks good!
-                          </span>
+                        {touched.trashed &&
+                         !errors.trashed && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-                      {/* CHECKBOX FIELD */}
-                      <BSForm.Check
-                        id="trashed"
-                        name="trashed"
-                        checked={values.trashed || false}
-                        onChange={(e) => {
-                          setFieldTouched("trashed", true);
-                          setFieldValue("trashed", e.target.checked);
-                        }}
-                        isInvalid={!!errors.trashed}
-                        className={errors.trashed ? "error" : ""}
-                      />
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="trashed"
+                            name="trashed"
+                            checked={values.trashed || false}
+                            onChange={(e) => {
+                              setFieldTouched('trashed', true);
+                              setFieldValue('trashed', e.target.checked);
+                            }}
+                            isInvalid={!!errors.trashed}
+                            className={errors.trashed ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
 
                       <ErrorMessage
                         className="error"
@@ -412,65 +412,45 @@ const TrustAttestationEvidenceForm: React.FC = () => {
                     </label>
                     <br />
 
-                    {/* SUBMIT BUTTON */}
-                    <CoolButton
-                      variant={
-                        isValid
-                          ? isSaving
-                            ? "disabled"
-                            : "success"
-                          : "warning"
-                      }
-                      type="submit"
-                      disabled={!isValid || isSaving}
-                    >
-                      {isSaving && (
-                        <span style={{ float: "left", minHeight: 0 }}>
-                          <LoadingSpinner label="" size={18} />
-                        </span>
-                      )}
-                      <FaCheckCircle size={28} /> Create New
-                      TrustAttestationEvidence
-                    </CoolButton>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
+                    type="submit"
+                    disabled={!isValid || isSaving}
+                  >
+                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New TrustAttestationEvidence
+                  </CoolButton>
 
-                    {(addTrustAttestationEvidenceResult.isError ||
-                      errorMessage) && (
-                      <Alert variant="danger" className="mt-3">
-                        {errorMessage ||
-                          JSON.stringify(
-                            "data" in
-                              (addTrustAttestationEvidenceResult as any).error
-                              ? (addTrustAttestationEvidenceResult as any).error
-                                  .data
-                              : (addTrustAttestationEvidenceResult as any)
-                                  .error,
-                          )}
-                      </Alert>
-                    )}
+                  {(addTrustAttestationEvidenceResult.isError || errorMessage) && (
+                    <Alert variant="danger" className="mt-3">
+                      {errorMessage ||
+                        JSON.stringify('data' in (addTrustAttestationEvidenceResult as any).error ? (addTrustAttestationEvidenceResult as any).error.data : (addTrustAttestationEvidenceResult as any).error)}
+                    </Alert>
+                  )}
 
-                    {(addTrustAttestationEvidenceResult.isSuccess ||
-                      successMessage) && (
-                      <Alert variant="success" className="mt-3">
-                        {successMessage || "Saved successfully."}
-                      </Alert>
-                    )}
-                  </Accordion.Body>
-                </Accordion.Item>
+                  {(addTrustAttestationEvidenceResult.isSuccess || successMessage) && (
+                    <Alert variant="success" className="mt-3">
+                      {successMessage || 'Saved successfully.'}
+                    </Alert>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
 
-                {/* Debug/Dev Accordion */}
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                    <FaCogs size={28} /> &nbsp;Server Messages
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    errors: {JSON.stringify(errors)}
-                    <br />
-                    addTrustAttestationEvidenceResult:{" "}
-                    {JSON.stringify(addTrustAttestationEvidenceResult)}
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </form>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addTrustAttestationEvidenceResult: {JSON.stringify(addTrustAttestationEvidenceResult)}
+                </Accordion.Body>
+              </Accordion.Item>
+
+            </Accordion>
+          </form>
           );
         }}
       </Formik>
@@ -502,13 +482,13 @@ kebabcase evidence-type-lookup
 const EvidenceTypeLookup = () => {
   return (
     <>
-      <option value="SOFTWARE_DECLARATION" label="Software Declaration" />
-      <option value="CONTAINER_IMAGE" label="Container Image" />
-      <option value="CI_BUILD" label="Ci Build" />
-      <option value="TPM" label="Tpm" />
-      <option value="SGX" label="Sgx" />
-      <option value="SEV_SNP" label="Sev Snp" />
-      <option value="NITRO_ENCLAVE" label="Nitro Enclave" />
+      <option value='SOFTWARE_DECLARATION' label="Software Declaration" />
+      <option value='CONTAINER_IMAGE' label="Container Image" />
+      <option value='CI_BUILD' label="Ci Build" />
+      <option value='TPM' label="Tpm" />
+      <option value='SGX' label="Sgx" />
+      <option value='SEV_SNP' label="Sev Snp" />
+      <option value='NITRO_ENCLAVE' label="Nitro Enclave" />
     </>
   );
 };
@@ -525,12 +505,15 @@ kebabcase evidence-status-lookup
 const EvidenceStatusLookup = () => {
   return (
     <>
-      <option value="ACCEPTED" label="Accepted" />
-      <option value="REJECTED" label="Rejected" />
-      <option value="EXPIRED" label="Expired" />
+      <option value='ACCEPTED' label="Accepted" />
+      <option value='REJECTED' label="Rejected" />
+      <option value='EXPIRED' label="Expired" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default TrustAttestationEvidenceForm;
+

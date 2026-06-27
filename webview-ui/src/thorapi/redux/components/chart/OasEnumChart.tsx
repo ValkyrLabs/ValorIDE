@@ -19,32 +19,20 @@ Description: OasEnum
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, OasEnum } from "@thorapi/model";
-import {
-  useGetOasEnumsQuery,
-  useAddOasEnumMutation,
-  useUpdateOasEnumMutation,
-} from "../../services/OasEnumService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, OasEnum } from '@thorapi/model';
+import { useGetOasEnumsQuery, useAddOasEnumMutation, useUpdateOasEnumMutation } from '../../services/OasEnumService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const OasEnumChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetOasEnumsQuery();
 
   const [data, setData] = useState<OasEnum[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<OasEnum>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const OasEnumChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const OasEnumChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((oasenum: DataObject) => [oasenum])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((oasenum: DataObject) => [oasenum])} />
+          )}
     </>
   );
 };

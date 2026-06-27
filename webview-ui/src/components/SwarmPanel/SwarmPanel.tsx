@@ -1,4 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
+import {
+  buildSwarmDiscoveryUrl,
+  getSwarmDiscoveryHeaders,
+  requestSwarmJson,
+} from "../../api/hooks/useDiscoveryQuery";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
 
 type AgentMeta = {
   id: string;
@@ -40,9 +46,9 @@ type BillingStatus = {
 
 type BillingHistoryEntry = {
   id: string;
-  kind: "CHARGE" | "USAGE" | "PURCHASE";
+  kind: "CHARGE" | "USAGE" | "PURCHASE" | "INVOICE";
   amount: number;
-  status: "SUCCEEDED" | "FAILED";
+  status: "SUCCEEDED" | "FAILED" | "PENDING";
   createdAt: string;
   detail: string;
 };
@@ -53,7 +59,28 @@ type ErrorAlert = {
   timestamp: number;
 };
 
-const SWARM_API_BASE = "http://localhost:8080/v1/swarm";
+const normalizeApiHost = () => {
+  const host = getValkyraiHost();
+  try {
+    const parsed = new URL(host);
+    const pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`.replace(
+      /\/+$/,
+      "",
+    );
+  } catch {
+    return "http://localhost:8080/v1";
+  }
+};
+
+const getSwarmApiBase = () => `${normalizeApiHost()}/swarm`;
+
+const getJsonHeaders = () => {
+  const headers = getSwarmDiscoveryHeaders();
+  headers.set("Content-Type", "application/json");
+  return headers;
+};
 
 function genMessageId() {
   return Math.random().toString(36).substring(2, 12);
@@ -71,11 +98,16 @@ function getOrganizationId(): string {
 const fetchAgentDiscovery = async (orgId?: string): Promise<AgentMeta[]> => {
   try {
     const org = orgId || getOrganizationId();
-    const response = await fetch(
-      `${SWARM_API_BASE}/agents/discovery?orgId=${encodeURIComponent(org)}`,
+    const response = await requestSwarmJson<AgentMeta[]>(
+      buildSwarmDiscoveryUrl({
+        organizationId: org,
+        apiHost: getValkyraiHost(),
+        path: "agents/discovery",
+      }),
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok) throw new Error(`Discovery failed: ${response.status}`);
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Agent discovery failed:", e);
     return [];
@@ -87,12 +119,13 @@ const fetchAgentHierarchy = async (
 ): Promise<AgentHierarchy[]> => {
   try {
     const org = orgId || getOrganizationId();
-    const response = await fetch(
-      `${SWARM_API_BASE}/agents/hierarchy?orgId=${encodeURIComponent(org)}`,
+    const response = await requestSwarmJson<AgentHierarchy[]>(
+      `${getSwarmApiBase()}/agents/hierarchy?organizationId=${encodeURIComponent(org)}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`Hierarchy fetch failed: ${response.status}`);
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Hierarchy fetch failed:", e);
     return [];
@@ -108,22 +141,28 @@ const sendChatMessage = async (
 ): Promise<ChatMessage | null> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${SWARM_API_BASE}/agent/${agentId}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        organizationId: org,
-        conversationId,
-        senderId,
-        message,
-        senderType,
-      }),
-    });
+    const response = await requestSwarmJson<ChatMessage>(
+      `${getSwarmApiBase()}/agent/${agentId}/chat`,
+      {
+        method: "POST",
+        headers: getJsonHeaders(),
+        body: JSON.stringify({
+          organizationId: org,
+          conversationId,
+          senderId,
+          message,
+          senderType,
+        }),
+      },
+    );
     if (!response.ok) {
-      const error = await response.text();
+      const error =
+        typeof response.data === "string"
+          ? response.data
+          : JSON.stringify(response.data ?? {});
       throw new Error(`Chat send failed (${response.status}): ${error}`);
     }
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.error("Chat send failed:", e);
     return null;
@@ -137,13 +176,16 @@ const fetchChatHistory = async (
 ): Promise<ChatMessage[]> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(
-      `${SWARM_API_BASE}/agent/${agentId}/chat/history?organizationId=${encodeURIComponent(org)}&conversationId=${encodeURIComponent(conversationId)}&page=${page}`,
+    const response = await requestSwarmJson<
+      { content?: ChatMessage[] } | ChatMessage[]
+    >(
+      `${getSwarmApiBase()}/agent/${agentId}/chat/history?organizationId=${encodeURIComponent(org)}&conversationId=${encodeURIComponent(conversationId)}&page=${page}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok)
       throw new Error(`History fetch failed: ${response.status}`);
-    const data = await response.json();
-    return data.content || data;
+    const data = response.data;
+    return Array.isArray(data) ? data : data.content || [];
   } catch (e) {
     console.warn("Chat history fetch failed:", e);
     return [];
@@ -155,8 +197,9 @@ const fetchBillingStatus = async (
 ): Promise<BillingStatus | null> => {
   try {
     const org = organizationId || getOrganizationId();
-    const response = await fetch(
-      `${SWARM_API_BASE}/billing/status?organizationId=${encodeURIComponent(org)}`,
+    const response = await requestSwarmJson<BillingStatus>(
+      `${getSwarmApiBase()}/billing/status?organizationId=${encodeURIComponent(org)}`,
+      { headers: getSwarmDiscoveryHeaders() },
     );
     if (!response.ok) {
       if (response.status === 402) {
@@ -164,11 +207,41 @@ const fetchBillingStatus = async (
       }
       return null;
     }
-    return await response.json();
+    return response.data;
   } catch (e) {
     console.warn("Billing status fetch failed:", e);
     return null;
   }
+};
+
+const buildBillingUrl = (
+  path:
+    | "checkout"
+    | "payment-method"
+    | "credits"
+    | "history"
+    | "admin-handoff"
+    | "support",
+  billingStatus: BillingStatus | null,
+): string => {
+  const origin =
+    (window as any).__valkyr_billingBaseUrl || "https://valkyrlabs.com/billing";
+  const url = new URL(`${origin}/${path}`);
+  const organizationId = getOrganizationId();
+  const workspaceId =
+    (window as any).__valoride_workspaceId || "workspace-default";
+  url.searchParams.set("source", "valoride-swarm-quota");
+  url.searchParams.set("organizationId", organizationId);
+  url.searchParams.set("workspaceId", workspaceId);
+  if (billingStatus) {
+    url.searchParams.set("billingStatus", billingStatus.billingStatus);
+    url.searchParams.set(
+      "activeAgents",
+      String(billingStatus.activeAgentCount),
+    );
+    url.searchParams.set("quotaAgents", String(billingStatus.quotaAgents));
+  }
+  return url.toString();
 };
 
 /**
@@ -199,11 +272,14 @@ const markMessageAsRead = async (
 ): Promise<boolean> => {
   try {
     const org = getOrganizationId();
-    const response = await fetch(`${SWARM_API_BASE}/chat/${messageId}/read`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ organizationId: org, readerId }),
-    });
+    const response = await requestSwarmJson(
+      `${getSwarmApiBase()}/chat/${messageId}/read`,
+      {
+        method: "POST",
+        headers: getJsonHeaders(),
+        body: JSON.stringify({ organizationId: org, readerId }),
+      },
+    );
     return response.ok;
   } catch (e) {
     console.warn("Mark read failed:", e);
@@ -233,6 +309,7 @@ export const SwarmPanel: React.FC = () => {
   const [alerts, setAlerts] = useState<ErrorAlert[]>([]);
   const [showUpgradeFlow, setShowUpgradeFlow] = useState(false);
   const [showBillingHistory, setShowBillingHistory] = useState(false);
+  const quotaWarningTrackedRef = React.useRef(false);
 
   // Get userId/senderId from window or localStorage
   const getSenderId = useCallback(() => {
@@ -259,6 +336,8 @@ export const SwarmPanel: React.FC = () => {
           detail: {
             eventName,
             organizationId: getOrganizationId(),
+            workspaceId:
+              (window as any).__valoride_workspaceId || "workspace-default",
             timestamp: Date.now(),
           },
         }),
@@ -359,6 +438,10 @@ export const SwarmPanel: React.FC = () => {
           status &&
           status.activeAgentCount >= status.quotaAgents * 0.8
         ) {
+          if (!quotaWarningTrackedRef.current) {
+            trackBillingEvent("valoride.quota_warning_seen");
+            quotaWarningTrackedRef.current = true;
+          }
           addAlert(
             "warning",
             `⚠️ Quota warning: Using ${Math.round((status.activeAgentCount / status.quotaAgents) * 100)}% of your agent limit.`,
@@ -372,7 +455,7 @@ export const SwarmPanel: React.FC = () => {
     loadBilling();
     const billingInterval = setInterval(loadBilling, 30000); // Refresh every 30s
     return () => clearInterval(billingInterval);
-  }, [addAlert]);
+  }, [addAlert, trackBillingEvent]);
 
   // Load chat history when agent is selected + auto-refresh every 5 seconds
   useEffect(() => {
@@ -529,7 +612,9 @@ export const SwarmPanel: React.FC = () => {
   });
 
   const usagePercent = billingStatus
-    ? Math.round((billingStatus.activeAgentCount / billingStatus.quotaAgents) * 100)
+    ? Math.round(
+        (billingStatus.activeAgentCount / billingStatus.quotaAgents) * 100,
+      )
     : 0;
 
   const billingHistory: BillingHistoryEntry[] = [
@@ -548,6 +633,18 @@ export const SwarmPanel: React.FC = () => {
       status: "SUCCEEDED",
       createdAt: new Date(Date.now() - 86400000).toISOString(),
       detail: "Agent instantiation usage",
+    },
+    {
+      id: "invoice-1",
+      kind: "INVOICE",
+      amount: billingStatus?.totalCharges || 0,
+      status:
+        billingStatus?.billingStatus === "SUSPENDED" ? "FAILED" : "PENDING",
+      createdAt: new Date(Date.now() - 172800000).toISOString(),
+      detail:
+        billingStatus?.billingStatus === "SUSPENDED"
+          ? "Payment recovery required"
+          : "Current billing period invoice",
     },
   ];
 
@@ -1109,11 +1206,14 @@ export const SwarmPanel: React.FC = () => {
                   >
                     <strong>Upgrade quota</strong>
                     <p style={{ fontSize: 12, marginTop: 8 }}>
-                      Usage: {billingStatus.activeAgentCount}/{billingStatus.quotaAgents} ({usagePercent}%).
+                      Usage: {billingStatus.activeAgentCount}/
+                      {billingStatus.quotaAgents} ({usagePercent}%).
                     </p>
                     {billingStatus.billingStatus === "SUSPENDED" ? (
                       <p style={{ fontSize: 12, color: "#b71c1c" }}>
-                        Billing is suspended. Update payment method or contact your workspace admin.
+                        Billing is suspended. Update payment method, buy
+                        credits, contact your workspace admin, or contact
+                        support.
                       </p>
                     ) : null}
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -1121,13 +1221,61 @@ export const SwarmPanel: React.FC = () => {
                         onClick={() => {
                           trackBillingEvent("valoride.checkout_started");
                           window.open(
-                            `https://valkyrlabs.com/billing/checkout?organizationId=${encodeURIComponent(getOrganizationId())}`,
+                            buildBillingUrl("checkout", billingStatus),
                             "_blank",
                           );
                         }}
                         style={{ padding: "6px 10px", cursor: "pointer" }}
                       >
                         Start checkout
+                      </button>
+                      <button
+                        onClick={() => {
+                          trackBillingEvent("valoride.billing_recovered");
+                          window.open(
+                            buildBillingUrl("payment-method", billingStatus),
+                            "_blank",
+                          );
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Update payment method
+                      </button>
+                      <button
+                        onClick={() => {
+                          trackBillingEvent("valoride.checkout_started");
+                          window.open(
+                            buildBillingUrl("credits", billingStatus),
+                            "_blank",
+                          );
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Buy credits
+                      </button>
+                      <button
+                        onClick={() => {
+                          trackBillingEvent("valoride.billing_recovered");
+                          window.open(
+                            buildBillingUrl("admin-handoff", billingStatus),
+                            "_blank",
+                          );
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Contact admin
+                      </button>
+                      <button
+                        onClick={() => {
+                          trackBillingEvent("valoride.billing_recovered");
+                          window.open(
+                            buildBillingUrl("support", billingStatus),
+                            "_blank",
+                          );
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Contact support
                       </button>
                       <button
                         onClick={async () => {
@@ -1161,17 +1309,38 @@ export const SwarmPanel: React.FC = () => {
                   >
                     <strong>Billing history</strong>
                     <div style={{ marginTop: 8, fontSize: 12 }}>
-                      {billingHistory.map((entry) => (
-                        <div key={entry.id} style={{ marginBottom: 8 }}>
-                          <div>
-                            {entry.kind} • ${entry.amount.toFixed(2)} • {entry.status}
+                      {billingHistory.length > 0 ? (
+                        billingHistory.map((entry) => (
+                          <div key={entry.id} style={{ marginBottom: 8 }}>
+                            <div>
+                              {entry.kind} • ${entry.amount.toFixed(2)} •{" "}
+                              {entry.status}
+                            </div>
+                            <div style={{ color: "#666" }}>
+                              {entry.detail} •{" "}
+                              {new Date(entry.createdAt).toLocaleString()}
+                            </div>
                           </div>
-                          <div style={{ color: "#666" }}>
-                            {entry.detail} • {new Date(entry.createdAt).toLocaleString()}
-                          </div>
-                        </div>
-                      ))}
+                        ))
+                      ) : (
+                        <p>No billing activity yet.</p>
+                      )}
                     </div>
+                    <button
+                      onClick={() =>
+                        window.open(
+                          buildBillingUrl("history", billingStatus),
+                          "_blank",
+                        )
+                      }
+                      style={{
+                        padding: "6px 10px",
+                        cursor: "pointer",
+                        marginRight: 8,
+                      }}
+                    >
+                      Open full history
+                    </button>
                     <button
                       onClick={() => setShowBillingHistory(false)}
                       style={{ padding: "6px 10px", cursor: "pointer" }}

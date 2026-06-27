@@ -19,32 +19,20 @@ Description: Expense
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, Expense } from "@thorapi/model";
-import {
-  useGetExpensesQuery,
-  useAddExpenseMutation,
-  useUpdateExpenseMutation,
-} from "../../services/ExpenseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, Expense } from '@thorapi/model';
+import { useGetExpensesQuery, useAddExpenseMutation, useUpdateExpenseMutation } from '../../services/ExpenseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const ExpenseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetExpensesQuery();
 
   const [data, setData] = useState<Expense[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Expense>>({});
-
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -62,9 +50,9 @@ const ExpenseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -72,13 +60,11 @@ const ExpenseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((expense: DataObject) => [expense])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((expense: DataObject) => [expense])} />
+          )}
     </>
   );
 };

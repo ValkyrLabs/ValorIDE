@@ -19,35 +19,20 @@ Description: JobApplicationResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, JobApplicationResponse } from "@thorapi/model";
-import {
-  useGetJobApplicationResponsesQuery,
-  useAddJobApplicationResponseMutation,
-  useUpdateJobApplicationResponseMutation,
-} from "../../services/JobApplicationResponseService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, JobApplicationResponse } from '@thorapi/model';
+import { useGetJobApplicationResponsesQuery, useAddJobApplicationResponseMutation, useUpdateJobApplicationResponseMutation } from '../../services/JobApplicationResponseService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const JobApplicationResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetJobApplicationResponsesQuery();
+  const { data: initialData = [], isLoading } = useGetJobApplicationResponsesQuery();
 
   const [data, setData] = useState<JobApplicationResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<JobApplicationResponse>>(
-    {},
-  );
-
+  const [chartData, setChartData] = useState<Partial<JobApplicationResponse>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const JobApplicationResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const JobApplicationResponseChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((jobapplicationresponse: DataObject) => [
-            jobapplicationresponse,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((jobapplicationresponse: DataObject) => [jobapplicationresponse])} />
+          )}
     </>
   );
 };

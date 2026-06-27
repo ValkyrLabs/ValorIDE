@@ -19,35 +19,20 @@ Description: CompleteUploadRequestPartsInner
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from "react";
-import { DataObject, CompleteUploadRequestPartsInner } from "@thorapi/model";
-import {
-  useGetCompleteUploadRequestPartsInnersQuery,
-  useAddCompleteUploadRequestPartsInnerMutation,
-  useUpdateCompleteUploadRequestPartsInnerMutation,
-} from "../../services/CompleteUploadRequestPartsInnerService";
+import React, { useState, useEffect, useRef } from 'react';
+import { DataObject, CompleteUploadRequestPartsInner } from '@thorapi/model';
+import { useGetCompleteUploadRequestPartsInnersQuery, useAddCompleteUploadRequestPartsInnerMutation, useUpdateCompleteUploadRequestPartsInnerMutation } from '../../services/CompleteUploadRequestPartsInnerService';
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 
-const fieldSkipList = [
-  "keyHash",
-  "workflowStateId",
-  "createdDate",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedDate",
-  "lastModifiedById",
-];
+const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
 
 const CompleteUploadRequestPartsInnerChart: React.FC = () => {
-  const { data: initialData = [], isLoading } =
-    useGetCompleteUploadRequestPartsInnersQuery();
+  const { data: initialData = [], isLoading } = useGetCompleteUploadRequestPartsInnersQuery();
 
   const [data, setData] = useState<CompleteUploadRequestPartsInner[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<
-    Partial<CompleteUploadRequestPartsInner>
-  >({});
-
+  const [chartData, setChartData] = useState<Partial<CompleteUploadRequestPartsInner>>({});
+  
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -65,9 +50,9 @@ const CompleteUploadRequestPartsInnerChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -75,15 +60,11 @@ const CompleteUploadRequestPartsInnerChart: React.FC = () => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <TimeSeriesChart
-          data={data.flatMap((completeuploadrequestpartsinner: DataObject) => [
-            completeuploadrequestpartsinner,
-          ])}
-        />
-      )}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <TimeSeriesChart data={data.flatMap((completeuploadrequestpartsinner: DataObject) => [completeuploadrequestpartsinner])} />
+          )}
     </>
   );
 };

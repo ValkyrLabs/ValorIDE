@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,171 +36,154 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface GeneralLedgerEntry
  */
-export type GeneralLedgerEntry = DataObject & {
-  /**
-   *
-   * @type {Date}
-   * @memberof GeneralLedgerEntry
-   */
-  entryDate?: Date;
-  /**
-   *
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  debitAccount?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  creditAccount?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof GeneralLedgerEntry
-   */
-  amount?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  referenceType?: GeneralLedgerEntryReferenceTypeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  referenceId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  notes?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof GeneralLedgerEntry
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof GeneralLedgerEntry
-   */
-  trashed?: boolean;
-};
+export type GeneralLedgerEntry  = DataObject & {
+    /**
+     * 
+     * @type {Date}
+     * @memberof GeneralLedgerEntry
+     */
+    entryDate?: Date;
+    /**
+     * 
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    debitAccount?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    creditAccount?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof GeneralLedgerEntry
+     */
+    amount?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    referenceType?: GeneralLedgerEntryReferenceTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    referenceId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    notes?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof GeneralLedgerEntry
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof GeneralLedgerEntry
+     */
+    trashed?: boolean;
+}
 
 export function GeneralLedgerEntryFromJSON(json: any): GeneralLedgerEntry {
-  return {
-    ...DataObjectFromJSON(json),
-    entryDate: !exists(json, "entryDate")
-      ? undefined
-      : new Date(json["entryDate"]),
-    debitAccount: !exists(json, "debitAccount")
-      ? undefined
-      : json["debitAccount"],
-    creditAccount: !exists(json, "creditAccount")
-      ? undefined
-      : json["creditAccount"],
-    amount: !exists(json, "amount") ? undefined : json["amount"],
-    referenceType: !exists(json, "referenceType")
-      ? undefined
-      : json["referenceType"],
-    referenceId: !exists(json, "referenceId") ? undefined : json["referenceId"],
-    notes: !exists(json, "notes") ? undefined : json["notes"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'entryDate': !exists(json, 'entryDate') ? undefined : new Date(json['entryDate']),
+        'debitAccount': !exists(json, 'debitAccount') ? undefined : json['debitAccount'],
+        'creditAccount': !exists(json, 'creditAccount') ? undefined : json['creditAccount'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'referenceType': !exists(json, 'referenceType') ? undefined : json['referenceType'],
+        'referenceId': !exists(json, 'referenceId') ? undefined : json['referenceId'],
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function GeneralLedgerEntryToJSON(value?: GeneralLedgerEntry): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    entryDate:
-      value.entryDate === undefined ? undefined : value.entryDate.toISOString(),
-    debitAccount: value.debitAccount,
-    creditAccount: value.creditAccount,
-    amount: value.amount,
-    referenceType: value.referenceType,
-    referenceId: value.referenceId,
-    notes: value.notes,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'entryDate': value.entryDate === undefined ? undefined : value.entryDate.toISOString(),
+        'debitAccount': value.debitAccount,
+        'creditAccount': value.creditAccount,
+        'amount': value.amount,
+        'referenceType': value.referenceType,
+        'referenceId': value.referenceId,
+        'notes': value.notes,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum GeneralLedgerEntryReferenceTypeEnum {
-  PAYMENTTRANSACTION = "paymenttransaction",
-  USAGETRANSACTION = "usagetransaction",
-  SALESORDER = "salesorder",
-  INVOICE = "invoice",
-  EXPENSE = "expense",
+    PAYMENTTRANSACTION = 'paymenttransaction',
+    USAGETRANSACTION = 'usagetransaction',
+    SALESORDER = 'salesorder',
+    INVOICE = 'invoice',
+    EXPENSE = 'expense'
 }
+
+

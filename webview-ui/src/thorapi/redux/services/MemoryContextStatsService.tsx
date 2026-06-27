@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { MemoryContextStats } from "@thorapi/model/MemoryContextStats";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { MemoryContextStats } from '@thorapi/model/MemoryContextStats'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type MemoryContextStatsResponse = MemoryContextStats[];
+type MemoryContextStatsResponse = MemoryContextStats[]
+type MemoryContextStatsPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<MemoryContextStats>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toMemoryContextStatsList = (
-  result: unknown,
-): MemoryContextStatsResponse => {
+type MemoryContextStatsListQueryArg = {
+  example?: Partial<MemoryContextStats>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toMemoryContextStatsList = (result: unknown): MemoryContextStatsResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryContextStatsResponse;
+    return result as MemoryContextStatsResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as MemoryContextStatsResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as MemoryContextStatsResponse) : []
+}
 
 export const MemoryContextStatsService = createApi({
-  reducerPath: "MemoryContextStats", // This should remain unique
+  reducerPath: 'MemoryContextStats', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["MemoryContextStats"],
+  tagTypes: ['MemoryContextStats'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryContextStatssPaged: build.query<
-      MemoryContextStatsResponse,
-      { page: number; size?: number; example?: Partial<MemoryContextStats> }
-    >({
+    getMemoryContextStatssPaged: build.query<MemoryContextStatsResponse, MemoryContextStatsPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryContextStats?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryContextStats?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryContextStatsList(result);
+        const rows = toMemoryContextStatsList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "MemoryContextStats" as const, id })),
-          { type: "MemoryContextStats", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'MemoryContextStats' as const, id })),
+          { type: 'MemoryContextStats', id: `PAGE_${page}` },
+          { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryContextStatss: build.query<
-      MemoryContextStatsResponse,
-      { example?: Partial<MemoryContextStats> } | void
-    >({
+    getMemoryContextStatss: build.query<MemoryContextStatsResponse, MemoryContextStatsListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const MemoryContextStatsService = createApi({
         return `MemoryContextStats`;
       },
       providesTags: (result) => {
-        const rows = toMemoryContextStatsList(result);
+        const rows = toMemoryContextStatsList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "MemoryContextStats" as const, id })),
-          { type: "MemoryContextStats", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'MemoryContextStats' as const, id })),
+          { type: 'MemoryContextStats', id: 'LIST' },
+          { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addMemoryContextStats: build.mutation<
-      MemoryContextStats,
-      Partial<MemoryContextStats>
-    >({
+    addMemoryContextStats: build.mutation<MemoryContextStats, Partial<MemoryContextStats>>({
       query: (body) => ({
         url: `MemoryContextStats`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "MemoryContextStats", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'MemoryContextStats', id: 'LIST' },
+        { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getMemoryContextStats: build.query<MemoryContextStats, string>({
       query: (id) => `MemoryContextStats/${id}`,
-      providesTags: (result, error, id) => [{ type: "MemoryContextStats", id }],
+      providesTags: (result, error, id) => [{ type: 'MemoryContextStats', id }],
     }),
 
     // 5) Update
-    updateMemoryContextStats: build.mutation<
-      void,
-      Pick<MemoryContextStats, "id"> & Partial<MemoryContextStats>
-    >({
+    updateMemoryContextStats: build.mutation<MemoryContextStats, Pick<MemoryContextStats, 'id'> & Partial<MemoryContextStats>>({
       query: ({ id, ...patch }) => ({
         url: `MemoryContextStats/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            MemoryContextStatsService.util.updateQueryData(
-              "getMemoryContextStats",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<MemoryContextStats, "id">,
-      ) => [
-        { type: "MemoryContextStats", id },
-        { type: "MemoryContextStats", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<MemoryContextStats, 'id'>) => [
+        { type: 'MemoryContextStats', id },
+        { type: 'MemoryContextStats', id: 'LIST' },
+        { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryContextStats: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteMemoryContextStats: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `MemoryContextStats/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "MemoryContextStats", id },
+        { type: 'MemoryContextStats', id },
+        { type: 'MemoryContextStats', id: 'LIST' },
+        { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryContextStatsCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteMemoryContextStatsCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `MemoryContextStats/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "MemoryContextStats", id },
-        { type: "MemoryContextStats", id: "LIST" },
+        { type: 'MemoryContextStats', id },
+        { type: 'MemoryContextStats', id: 'LIST' },
+        { type: 'MemoryContextStats', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetMemoryContextStatssPagedQuery`
 export const {
-  useGetMemoryContextStatssPagedQuery, // immediate fetch
+  useGetMemoryContextStatssPagedQuery,     // immediate fetch
   useLazyGetMemoryContextStatssPagedQuery, // lazy fetch
   useGetMemoryContextStatsQuery,
   useGetMemoryContextStatssQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateMemoryContextStatsMutation,
   useDeleteMemoryContextStatsMutation,
   useDeleteMemoryContextStatsCascadeMutation,
-} = MemoryContextStatsService;
+} = MemoryContextStatsService
