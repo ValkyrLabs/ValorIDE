@@ -129,25 +129,3 @@ npm run dev      # Watch mode
 ---
 
 **Status:** Phase 1 scaffold COMPLETE. Ready for Phase 2 (Multi-Agent Orchestrator).
-
----
-
-## Current Task Context: Welcome Reset / Auth Clear Flow
-
-### Objective
-Add a reliable way to clear authentication state and return users to the welcome screen, including a visible reset path after logout/auth invalidation.
-
-### Implemented
-- Added a webview-side `clearClientAuthState` handler in `webview-ui/src/App.tsx`.
-- Added `forceShowWelcome` state so the welcome screen can be re-shown after auth is cleared.
-- Cleared local UI state when auth is reset: account, history, MCP, build mode, file explorer, credit intent, and server console attention.
-- Added a regression test proving the welcome screen appears after auth state is cleared.
-
-### Verification
-- Test run completed successfully with 25 passing tests in the extension suite.
-- The new welcome-reset test passed as part of the run.
-
-### Notes
-- Current auth-clear path is triggered by the extension host via `clearClientAuthState`.
-- OpenAI-native still uses OAuth-backed local credentials when available; Anthropic remains API-key based in current config.
-- Next validation step should be a browser-level check of the welcome/account flow in the webview.

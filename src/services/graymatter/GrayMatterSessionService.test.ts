@@ -119,7 +119,7 @@ describe("GrayMatterSessionService", () => {
                 "/v1/MemoryEntry/write": {},
                 "/v1/Project": {},
                 "/v1/ProjectObjectLink": {},
-                "/v1/SwarmOps/register": {},
+                "/v1/swarm-ops/register": {},
               },
             }),
     );

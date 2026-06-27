@@ -205,6 +205,48 @@ describe("GrayMatterContextProvider", () => {
     );
   });
 
+  it("suppresses MCP graymatterPolicy-blocked receipt context without fallback", async () => {
+    const appendLine = jest.fn();
+    const provider = new GrayMatterContextProvider({ appendLine }, () => 1000);
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      graymatterPolicy: {
+        answerAllowed: false,
+        answerPolicy: "ALLOW_ANSWER",
+        caveatRequired: false,
+        disposition: "do_not_answer_from_memory",
+        receiptId: "gm_rr_policy",
+        requiredActions: ["retry_or_clarify_before_answering"],
+        retrievalStatus: "OK",
+        traceId: "gm_trace_policy",
+      },
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        items: [
+          {
+            memoryId: "blocked-1",
+            textPreview: "This wrapper-blocked memory must stay out.",
+          },
+        ],
+        receiptId: "gm_rr_policy",
+        recommendedAction: "ANSWER",
+        retrievalStatus: "OK",
+        traceId: "gm_trace_policy",
+      },
+    }));
+
+    const result = await provider.getContextForPrompt(
+      "wrapper-blocked context",
+      baseConfig(queryMemory, retrieveMemoryWithReceipt),
+    );
+
+    expect(result).toBeNull();
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(appendLine).toHaveBeenCalledWith(
+      expect.stringContaining("disposition=do_not_answer_from_memory"),
+    );
+  });
+
   it("keeps invariant decisions when the ordinary context query also returns them", async () => {
     const provider = new GrayMatterContextProvider(undefined, () => 1000);
     const invariant = {

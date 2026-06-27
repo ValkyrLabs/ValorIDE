@@ -101,7 +101,7 @@ describe("GrayMatterClient", () => {
                 "/MemoryEntry/write": {},
                 "/Project": {},
                 "/ProjectObjectLink": {},
-                "/SwarmOps/graph": {},
+                "/swarm-ops/graph": {},
               },
             }),
     );
@@ -133,7 +133,7 @@ describe("GrayMatterClient", () => {
     });
   });
 
-  it("discovers GrayMatter, MemoryEntry, Agent, and SwarmOps paths even when OpenAPI includes the /v1 prefix", async () => {
+  it("discovers GrayMatter, MemoryEntry, Agent, and canonical swarm-ops paths even when OpenAPI includes the /v1 prefix", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async (url) =>
         url.endsWith("/graymatter/control")
@@ -147,8 +147,8 @@ describe("GrayMatterClient", () => {
                 "/v1/MemoryEntry/write": {},
                 "/v1/Project": {},
                 "/v1/ProjectObjectLink": {},
-                "/v1/SwarmOps/graph": {},
-                "/v1/SwarmOps/register": {},
+                "/v1/swarm-ops/graph": {},
+                "/v1/swarm-ops/register": {},
               },
             }),
     );
@@ -169,6 +169,38 @@ describe("GrayMatterClient", () => {
       projectObjectLink: true,
       swarmGraph: true,
       swarmOps: true,
+    });
+  });
+
+  it("does not treat stale PascalCase SwarmOps aliases as canonical swarm-ops capability", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/graymatter/control")
+          ? jsonResponse(404, { message: "Control surface unavailable" })
+          : jsonResponse(200, {
+              paths: {
+                "/v1/Agent": {},
+                "/v1/GrayMatter/search": {},
+                "/v1/MemoryEntry/query": {},
+                "/v1/MemoryEntry/write": {},
+                "/v1/SwarmOps/graph": {},
+                "/v1/SwarmOps/register": {},
+              },
+            }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(client.loadCapabilities()).resolves.toMatchObject({
+      agent: true,
+      grayMatter: true,
+      memoryQuery: true,
+      memoryWrite: true,
+      swarmGraph: false,
+      swarmOps: false,
     });
   });
 

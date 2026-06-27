@@ -224,6 +224,54 @@ describe("AgentContextAssembler", () => {
     expect(context.promptSection).not.toContain("This should not be included");
   });
 
+  it("suppresses nested MCP graymatterPolicy-blocked receipt context without fallback", async () => {
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        graymatterPolicy: {
+          answerAllowed: false,
+          caveatRequired: false,
+          disposition: "do_not_answer_from_memory",
+          requiredActions: ["retry_or_clarify_before_answering"],
+        },
+        items: [
+          {
+            memoryId: "memory-blocked",
+            textPreview: "This wrapper-blocked memory must stay out.",
+          },
+        ],
+        receiptId: "receipt-policy",
+        recommendedAction: "ANSWER",
+        retrievalStatus: "OK",
+        traceId: "trace-policy",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: { queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      task: "Use wrapper-blocked memory",
+    });
+
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(context.grayMatter.status).toBe("unavailable");
+    expect(context.grayMatter.citations).toEqual([]);
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({
+        citations: [],
+        receiptIds: ["receipt-policy"],
+        traceIds: ["trace-policy"],
+        warning: expect.stringContaining("do_not_answer_from_memory"),
+      }),
+    );
+    expect(context.promptSection).not.toContain(
+      "This wrapper-blocked memory must stay out.",
+    );
+  });
+
   it("surfaces RBAC denials without throwing or inventing memory context", async () => {
     const assembler = new AgentContextAssembler({
       grayMatter: {

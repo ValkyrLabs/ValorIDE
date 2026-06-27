@@ -71,11 +71,16 @@ type MemoryEntryLike = Record<string, unknown>;
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
 interface ReceiptMetadata {
+  answerAllowed?: boolean;
   answerPolicy?: string;
+  caveatRequired?: boolean;
+  disposition?: string;
   receiptId?: string;
   recommendedAction?: string;
   retrievalStatus?: string;
+  requiredActions?: string[];
   traceId?: string;
+  warning?: string;
 }
 
 interface ContextReadResponse {
@@ -220,7 +225,7 @@ export class AgentContextAssembler {
       const metadata = extractReceiptMetadata(receiptResponse);
       const policyWarning = receiptPolicyWarning(metadata);
 
-      if (policyWarning) {
+      if (receiptPolicyBlocks(metadata)) {
         return {
           metadata,
           warning: policyWarning,
@@ -437,17 +442,125 @@ const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
 const extractReceiptMetadata = (
   response: unknown,
 ): ReceiptMetadata | undefined => {
-  if (!isRecord(response) || !isRecord(response.receipt)) {
+  if (!isRecord(response)) {
     return undefined;
   }
-  const receipt = response.receipt;
-  return {
-    answerPolicy: getStringField(receipt, "answerPolicy"),
-    receiptId: getStringField(receipt, "receiptId"),
-    recommendedAction: getStringField(receipt, "recommendedAction"),
-    retrievalStatus: getStringField(receipt, "retrievalStatus"),
-    traceId: getStringField(receipt, "traceId"),
+  const receipt = isRecord(response.receipt) ? response.receipt : undefined;
+  const policy = extractGrayMatterPolicy(response, receipt);
+  if (!receipt && !policy) {
+    return undefined;
+  }
+
+  const metadata: ReceiptMetadata = {
+    answerAllowed: policy ? getBooleanField(policy, "answerAllowed") : undefined,
+    answerPolicy:
+      getStringField(policy ?? {}, "answerPolicy") ??
+      getStringField(receipt ?? {}, "answerPolicy"),
+    caveatRequired: policy
+      ? getBooleanField(policy, "caveatRequired")
+      : undefined,
+    disposition: policy ? getStringField(policy, "disposition") : undefined,
+    receiptId:
+      getStringField(policy ?? {}, "receiptId") ??
+      getStringField(receipt ?? {}, "receiptId"),
+    recommendedAction:
+      getStringField(policy ?? {}, "recommendedAction") ??
+      getStringField(receipt ?? {}, "recommendedAction"),
+    retrievalStatus:
+      getStringField(policy ?? {}, "retrievalStatus") ??
+      getStringField(receipt ?? {}, "retrievalStatus"),
+    requiredActions: policy
+      ? getStringArrayField(policy, "requiredActions")
+      : undefined,
+    traceId:
+      getStringField(policy ?? {}, "traceId") ??
+      getStringField(receipt ?? {}, "traceId"),
+    warning: policy ? getStringField(policy, "warning") : undefined,
   };
+
+  return Object.values(metadata).some((value) => value !== undefined)
+    ? metadata
+    : undefined;
+};
+
+const extractGrayMatterPolicy = (
+  response: MemoryEntryLike,
+  receipt?: MemoryEntryLike,
+): MemoryEntryLike | undefined => {
+  const topLevelPolicy = response.graymatterPolicy;
+  if (isRecord(topLevelPolicy)) {
+    return topLevelPolicy;
+  }
+
+  const receiptPolicy = receipt?.graymatterPolicy;
+  return isRecord(receiptPolicy) ? receiptPolicy : undefined;
+};
+
+const getBooleanField = (
+  record: MemoryEntryLike,
+  key: string,
+): boolean | undefined => {
+  const value = record[key];
+  return typeof value === "boolean" ? value : undefined;
+};
+
+const receiptPolicyBlocks = (metadata?: ReceiptMetadata): boolean => {
+  if (!metadata) {
+    return false;
+  }
+
+  const disposition = metadata.disposition?.toLowerCase();
+  if (metadata.answerAllowed === false && metadata.caveatRequired !== true) {
+    return true;
+  }
+  if (
+    disposition &&
+    [
+      "deny",
+      "denied",
+      "do_not_answer",
+      "do_not_answer_from_memory",
+      "require_clarification",
+      "require_retry",
+      "retry",
+      "clarify",
+    ].includes(disposition)
+  ) {
+    return true;
+  }
+
+  const answerPolicy = metadata.answerPolicy;
+  const retrievalStatus = metadata.retrievalStatus;
+  const recommendedAction = metadata.recommendedAction;
+  return (
+    [
+      "DENY",
+      "DO_NOT_ANSWER_CONFIDENTLY",
+      "REQUIRE_CLARIFICATION",
+      "REQUIRE_RETRY",
+    ].includes(answerPolicy ?? "") ||
+    [
+      "ACCESS_DENIED",
+      "CONFLICTING_CONTEXT",
+      "ERROR",
+      "EVALUATOR_REJECTED",
+      "LOW_CONFIDENCE",
+      "PARTIAL_COVERAGE",
+      "POLICY_REDACTED",
+      "RETRY_REQUIRED",
+      "STALE_CONTEXT",
+    ].includes(retrievalStatus ?? "") ||
+    [
+      "ASK_CLARIFYING_QUESTION",
+      "DO_NOT_ANSWER",
+      "ESCALATE_TO_USER",
+      "RETRY_SAME_QUERY",
+      "RETRY_WITH_EXPANDED_QUERY",
+      "RETRY_WITH_RECENCY_BIAS",
+      "RETRY_WITH_SCHEMA_FILTER",
+      "RUN_EVALUATOR",
+    ].includes(recommendedAction ?? "")
+  );
 };
 
 const receiptPolicyWarning = (
@@ -488,7 +601,28 @@ const receiptPolicyWarning = (
     "RUN_EVALUATOR",
   ].includes(recommendedAction ?? "");
 
-  if (!blockedPolicy && !blockedStatus && !blockedAction) {
+  const policyDisposition = metadata.disposition;
+  const policyActions = metadata.requiredActions?.join(",");
+  const policyWarning = metadata.warning;
+  const policyAnswerAllowed =
+    metadata.answerAllowed === undefined
+      ? undefined
+      : `answerAllowed=${metadata.answerAllowed}`;
+  const policyCaveatRequired =
+    metadata.caveatRequired === undefined
+      ? undefined
+      : `caveatRequired=${metadata.caveatRequired}`;
+  const policyCaveat = metadata.caveatRequired === true;
+  const policyBlocked = receiptPolicyBlocks(metadata);
+
+  if (
+    !blockedPolicy &&
+    !blockedStatus &&
+    !blockedAction &&
+    !policyBlocked &&
+    !policyCaveat &&
+    !policyWarning
+  ) {
     return undefined;
   }
 
@@ -498,6 +632,11 @@ const receiptPolicyWarning = (
     answerPolicy ? `answerPolicy=${answerPolicy}` : undefined,
     retrievalStatus ? `retrievalStatus=${retrievalStatus}` : undefined,
     recommendedAction ? `recommendedAction=${recommendedAction}` : undefined,
+    policyAnswerAllowed,
+    policyCaveatRequired,
+    policyDisposition ? `disposition=${policyDisposition}` : undefined,
+    policyActions ? `requiredActions=${policyActions}` : undefined,
+    policyWarning,
   ]
     .filter(Boolean)
     .join(" ");

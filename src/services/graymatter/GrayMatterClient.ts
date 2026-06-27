@@ -154,6 +154,21 @@ export class GrayMatterClient {
           path === operationPath || path.startsWith(`${operationPath}/`),
       );
     };
+    const hasCustomOperation = (basePath: string, operation: string) => {
+      const operationPath = `${basePath.toLowerCase()}/${operation.toLowerCase()}`;
+      return paths.some(
+        (path) =>
+          path === operationPath || path.startsWith(`${operationPath}/`),
+      );
+    };
+    const hasCustomResource = (basePath: string) => {
+      const normalizedBasePath = basePath.toLowerCase();
+      return paths.some(
+        (path) =>
+          path === normalizedBasePath ||
+          path.startsWith(`${normalizedBasePath}/`),
+      );
+    };
 
     return {
       agent: hasResource("Agent"),
@@ -166,8 +181,8 @@ export class GrayMatterClient {
         hasResourceRoot("MemoryEntry") || hasOperation("MemoryEntry", "write"),
       project: hasResource("Project"),
       projectObjectLink: hasResource("ProjectObjectLink"),
-      swarmGraph: hasOperation("SwarmOps", "graph"),
-      swarmOps: hasResource("SwarmOps"),
+      swarmGraph: hasCustomOperation("/swarm-ops", "graph"),
+      swarmOps: hasCustomResource("/swarm-ops"),
     };
   }
 
