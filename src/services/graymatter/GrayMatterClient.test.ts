@@ -261,4 +261,53 @@ describe("GrayMatterClient", () => {
       status: 403,
     });
   });
+
+  it("retrieves GrayMatter memory through retrieval receipts with policy metadata", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () =>
+        jsonResponse(200, {
+          receipt: {
+            answerPolicy: "ALLOW_ANSWER",
+            receiptId: "gm_rr_123",
+            retrievalStatus: "OK",
+          },
+        }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(
+      client.retrieveMemoryWithReceipt({
+        filters: { entityTypes: ["MemoryEntry"] },
+        query: "ValorIDE invariants",
+        topK: 12,
+      }),
+    ).resolves.toMatchObject({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        receiptId: "gm_rr_123",
+      },
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+
+    expect(url).toBe(
+      "https://api.example.test/v1/graymatter-retrieval-receipts",
+    );
+    expect(init?.method).toBe("POST");
+    expect(body).toEqual({
+      filters: { entityTypes: ["MemoryEntry"] },
+      includeEvaluator: false,
+      includeItems: true,
+      includeText: true,
+      qualityProfile: "DEFAULT",
+      query: "ValorIDE invariants",
+      retrievalMode: "HYBRID",
+      topK: 12,
+    });
+  });
 });

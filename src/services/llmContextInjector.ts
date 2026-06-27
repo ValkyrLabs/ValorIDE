@@ -255,6 +255,7 @@ export class LLMContextInjector {
     return getGrayMatterContextConfigFromSettings(
       (query) => client.queryMemory(query),
       seedQuery,
+      (query) => client.retrieveMemoryWithReceipt(query),
     );
   }
 

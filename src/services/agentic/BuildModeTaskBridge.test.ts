@@ -11303,6 +11303,84 @@ describe("BuildModeTaskBridge", () => {
     }
   });
 
+  it("normalizes canonical GrayMatter receipt policies before Build Mode launch", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        grayMatterContextPack: {
+          ...basePayload.grayMatterContextPack,
+          answerPolicy: "ALLOW_ANSWER",
+          policy: "ALLOW_ANSWER",
+          retrievalStatus: "OK",
+        },
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.grayMatterContextPack).toMatchObject({
+      answerPolicy: "answer-confidently",
+      policy: "answer-confidently",
+      retrievalStatus: "ready",
+    });
+  });
+
+  it("rejects canonical GrayMatter deny policies before Build Mode launch", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        grayMatterContextPack: {
+          ...basePayload.grayMatterContextPack,
+          answerPolicy: "DENY",
+          policy: "DENY",
+          retrievalStatus: "OK",
+        },
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        "GrayMatter answer policy must allow confident context use.",
+      ]),
+    );
+    expect(result.issues).not.toContain(
+      "Build Mode grayMatterContextPack.answerPolicy has unsupported enum value.",
+    );
+  });
+
+  it("requires review for canonical GrayMatter caveat policies before Build Mode launch", () => {
+    const result = coerceBuildModeTaskLaunchPayload(
+      {
+        ...basePayload,
+        grayMatterContextPack: {
+          ...basePayload.grayMatterContextPack,
+          answerPolicy: "ALLOW_WITH_CAVEAT",
+          policy: "ALLOW_WITH_CAVEAT",
+          retrievalStatus: "OK",
+        },
+      },
+      {
+        now: fixedNow,
+        workspaceRoot: "/workspace/valor",
+      },
+    );
+
+    expect(result.payload).toBeUndefined();
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        "GrayMatter answer policy must be reviewed before launch.",
+      ]),
+    );
+  });
+
   it("rejects launch payloads without GrayMatter receipt proof", () => {
     const result = coerceBuildModeTaskLaunchPayload(
       {

@@ -24,8 +24,13 @@ describe("composeRuntimeSystemPrompt", () => {
     expect(prompt).toContain("SERVER PROMPT");
     expect(prompt).toContain("BUILT-IN VALORIDE RUNTIME PROMPT");
     expect(prompt).toContain("BUILT-IN PROMPT");
+    expect(prompt).toContain("RUNTIME PROMPT PRECEDENCE");
+    expect(prompt).toContain("built-in ValorIDE runtime contract wins");
     expect(prompt.indexOf("SERVER PROMPT")).toBeLessThan(
       prompt.indexOf("BUILT-IN PROMPT"),
+    );
+    expect(prompt.indexOf("BUILT-IN PROMPT")).toBeLessThan(
+      prompt.indexOf("RUNTIME PROMPT PRECEDENCE"),
     );
   });
 
@@ -38,6 +43,10 @@ describe("composeRuntimeSystemPrompt", () => {
     expect(prompt.indexOf("BUILT-IN PROMPT")).toBeLessThan(
       prompt.indexOf("SERVER PROMPT"),
     );
+    expect(prompt.indexOf("SERVER PROMPT")).toBeLessThan(
+      prompt.indexOf("RUNTIME PROMPT PRECEDENCE"),
+    );
+    expect(prompt).toContain("required completion-report contract");
   });
 
   it("uses the built-in prompt unchanged when no server prompt is active", () => {

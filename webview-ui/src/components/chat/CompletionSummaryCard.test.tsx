@@ -74,4 +74,22 @@ describe("CompletionSummaryCard", () => {
 
     expect(screen.queryByText(/Next Steps/)).not.toBeInTheDocument();
   });
+
+  it("uses the fallback report when the summary payload is only a thin heading", () => {
+    render(
+      <MockExtensionStateProvider>
+        <CompletionSummaryCard
+          markdown={"# Task"}
+          fallbackMarkdown={
+            "# 🎯 Feature X — COMPLETE\n\n## 📊 Executive Summary\n- Status: ✅ SHIPPED"
+          }
+          title={"Feature X"}
+        />
+      </MockExtensionStateProvider>,
+    );
+
+    expect(screen.getByText(/Completion Report — Feature X/)).toBeInTheDocument();
+    expect(screen.getByText(/Executive Summary/)).toBeInTheDocument();
+    expect(screen.getByText(/SHIPPED/)).toBeInTheDocument();
+  });
 });

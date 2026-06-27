@@ -37,7 +37,7 @@ describe("ValkyraiHandler", () => {
       expect.objectContaining({
         jwt: "session-token",
         serviceId: "service-1",
-        prompt: "hello",
+        prompt: "# Conversation\n\n## USER\n\nhello",
       }),
     );
   });
@@ -61,5 +61,28 @@ describe("ValkyraiHandler", () => {
         jwt: "explicit-token",
       }),
     );
+  });
+
+  it("includes the ValorIDE system prompt and conversation history in the ValkyrAI prompt", async () => {
+    const handler = new ValkyraiHandler({
+      valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      valkyraiServiceId: "service-1",
+      valkyraiSessionJwt: "session-token",
+    });
+
+    for await (const _chunk of handler.createMessage("SYSTEM CONTRACT", [
+      { role: "user", content: "first user message" },
+      { role: "assistant", content: "assistant context" },
+      { role: "user", content: "final user message" },
+    ])) {
+      // exhaust stream
+    }
+
+    const request = mockedCallValkyraiLlm.mock.calls[0][0];
+    expect(request.prompt).toContain("# System Instructions");
+    expect(request.prompt).toContain("SYSTEM CONTRACT");
+    expect(request.prompt).toContain("## USER\n\nfirst user message");
+    expect(request.prompt).toContain("## ASSISTANT\n\nassistant context");
+    expect(request.prompt).toContain("## USER\n\nfinal user message");
   });
 });

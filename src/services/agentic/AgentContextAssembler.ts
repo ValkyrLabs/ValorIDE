@@ -3,6 +3,7 @@ import {
   GrayMatterClientError,
   GrayMatterErrorKind,
   GrayMatterMemoryQuery,
+  GrayMatterRetrievalReceiptQuery,
 } from "@services/graymatter/GrayMatterClient";
 import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 
@@ -17,6 +18,9 @@ export type GrayMatterReadStatus =
 
 export interface GrayMatterReadableClient {
   queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
+  retrieveMemoryWithReceipt?: (
+    query: GrayMatterRetrievalReceiptQuery,
+  ) => Promise<unknown>;
 }
 
 export interface GrayMatterContextCitation {
@@ -32,7 +36,10 @@ export interface GrayMatterTranscriptRead {
   citations: string[];
   error?: string;
   query: string;
+  receiptIds?: string[];
   status: GrayMatterReadStatus;
+  traceIds?: string[];
+  warning?: string;
 }
 
 export interface AgentGrayMatterContext {
@@ -62,6 +69,20 @@ export interface AssembleAgentContextInput {
 
 type MemoryEntryLike = Record<string, unknown>;
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
+
+interface ReceiptMetadata {
+  answerPolicy?: string;
+  receiptId?: string;
+  recommendedAction?: string;
+  retrievalStatus?: string;
+  traceId?: string;
+}
+
+interface ContextReadResponse {
+  metadata?: ReceiptMetadata;
+  value?: unknown;
+  warning?: string;
+}
 
 export interface CreateAgentContextSectionForTaskOptions
   extends AssembleAgentContextInput {
@@ -99,10 +120,36 @@ export class AgentContextAssembler {
     const readAt = this.now().toISOString();
 
     try {
-      const response = await this.options.grayMatter.queryMemory({
+      const response = await this.retrieveContext({
         limit: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
         query,
       });
+      const metadata = response.metadata;
+      if (response.warning && !response.value) {
+        const status: GrayMatterReadStatus = "unavailable";
+        const read: GrayMatterTranscriptRead = {
+          at: readAt,
+          citations: [],
+          query,
+          status,
+        };
+        applyReceiptDetails(read, metadata, response.warning);
+
+        return {
+          grayMatter: {
+            citations: [],
+            error: response.warning,
+            query,
+            reads: [read],
+            status,
+          },
+          promptSection: formatGrayMatterPromptSection(
+            status,
+            [],
+            response.warning,
+          ),
+        };
+      }
       const citations = extractCitations(response, {
         maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
         maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
@@ -114,6 +161,7 @@ export class AgentContextAssembler {
         query,
         status,
       };
+      applyReceiptDetails(read, metadata, response.warning);
 
       return {
         grayMatter: {
@@ -145,6 +193,48 @@ export class AgentContextAssembler {
           status,
         },
         promptSection: formatGrayMatterPromptSection(status, [], message),
+      };
+    }
+  }
+
+  private async retrieveContext(
+    query: GrayMatterMemoryQuery,
+  ): Promise<ContextReadResponse> {
+    const grayMatter = this.options.grayMatter;
+    if (!grayMatter?.retrieveMemoryWithReceipt) {
+      return {
+        value: await grayMatter?.queryMemory(query),
+      };
+    }
+
+    try {
+      const receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
+        includeEvaluator: false,
+        includeItems: true,
+        includeText: true,
+        qualityProfile: "DEFAULT",
+        query: query.query,
+        retrievalMode: "HYBRID",
+        topK: query.limit ?? DEFAULT_MAX_ENTRIES,
+      });
+      const metadata = extractReceiptMetadata(receiptResponse);
+      const policyWarning = receiptPolicyWarning(metadata);
+
+      if (policyWarning) {
+        return {
+          metadata,
+          warning: policyWarning,
+        };
+      }
+
+      return {
+        metadata,
+        value: receiptResponse,
+      };
+    } catch (error) {
+      return {
+        value: await grayMatter.queryMemory(query),
+        warning: `receipt_fallback:${formatReadError(error)}`,
       };
     }
   }
@@ -186,20 +276,18 @@ const buildGrayMatterQuery = (task: string, cwd?: string) =>
     .join("\n");
 
 const extractCitations = (
-  response: unknown,
+  response: ContextReadResponse | unknown,
   options: { maxEntries: number; maxEntryChars: number },
 ): GrayMatterContextCitation[] => {
-  const entries = extractEntries(response);
+  const entries = isContextReadResponse(response)
+    ? extractEntries(response.value)
+    : extractEntries(response);
   const seen = new Set<string>();
   const citations: GrayMatterContextCitation[] = [];
 
   for (const entry of entries) {
-    const id = getStringField(entry, "id") ?? getStringField(entry, "uid");
-    const content =
-      getStringField(entry, "content") ??
-      getStringField(entry, "summary") ??
-      getStringField(entry, "text") ??
-      getStringField(entry, "body");
+    const id = getCitationId(entry);
+    const content = getCitationContent(entry);
 
     if (!id || !content || seen.has(id)) {
       continue;
@@ -213,8 +301,13 @@ const extractCitations = (
       title:
         getStringField(entry, "title") ??
         getStringField(entry, "name") ??
+        getStringField(entry, "fieldName") ??
         getMetadataTitle(entry),
-      type: getStringField(entry, "type") ?? "context",
+      type:
+        getStringField(entry, "type") ??
+        getStringField(entry, "sourceType") ??
+        getStringField(entry, "entityType") ??
+        "context",
     });
 
     if (citations.length >= options.maxEntries) {
@@ -234,6 +327,11 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
     return [];
   }
 
+  const receipt = response.receipt;
+  if (isRecord(receipt) && Array.isArray(receipt.items)) {
+    return receipt.items.filter(isRecord);
+  }
+
   for (const key of ["results", "items", "data", "memoryEntries", "entries"]) {
     const candidate = response[key];
     if (Array.isArray(candidate)) {
@@ -243,6 +341,20 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
 
   return [];
 };
+
+const getCitationId = (entry: MemoryEntryLike) =>
+  getStringField(entry, "id") ??
+  getStringField(entry, "uid") ??
+  getStringField(entry, "memoryId") ??
+  getStringField(entry, "sourceId") ??
+  getStringField(entry, "entityId");
+
+const getCitationContent = (entry: MemoryEntryLike) =>
+  getStringField(entry, "content") ??
+  getStringField(entry, "summary") ??
+  getStringField(entry, "textPreview") ??
+  getStringField(entry, "text") ??
+  getStringField(entry, "body");
 
 const getReadFailureStatus = (error: unknown): GrayMatterReadStatus => {
   if (error instanceof GrayMatterClientError) {
@@ -321,6 +433,105 @@ const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
   }
   return getStringField(metadata, "title");
 };
+
+const extractReceiptMetadata = (
+  response: unknown,
+): ReceiptMetadata | undefined => {
+  if (!isRecord(response) || !isRecord(response.receipt)) {
+    return undefined;
+  }
+  const receipt = response.receipt;
+  return {
+    answerPolicy: getStringField(receipt, "answerPolicy"),
+    receiptId: getStringField(receipt, "receiptId"),
+    recommendedAction: getStringField(receipt, "recommendedAction"),
+    retrievalStatus: getStringField(receipt, "retrievalStatus"),
+    traceId: getStringField(receipt, "traceId"),
+  };
+};
+
+const receiptPolicyWarning = (
+  metadata?: ReceiptMetadata,
+): string | undefined => {
+  if (!metadata) {
+    return undefined;
+  }
+
+  const answerPolicy = metadata.answerPolicy;
+  const retrievalStatus = metadata.retrievalStatus;
+  const recommendedAction = metadata.recommendedAction;
+  const blockedPolicy = [
+    "DENY",
+    "DO_NOT_ANSWER_CONFIDENTLY",
+    "REQUIRE_CLARIFICATION",
+    "REQUIRE_RETRY",
+  ].includes(answerPolicy ?? "");
+  const blockedStatus = [
+    "ACCESS_DENIED",
+    "CONFLICTING_CONTEXT",
+    "ERROR",
+    "EVALUATOR_REJECTED",
+    "LOW_CONFIDENCE",
+    "PARTIAL_COVERAGE",
+    "POLICY_REDACTED",
+    "RETRY_REQUIRED",
+    "STALE_CONTEXT",
+  ].includes(retrievalStatus ?? "");
+  const blockedAction = [
+    "ASK_CLARIFYING_QUESTION",
+    "DO_NOT_ANSWER",
+    "ESCALATE_TO_USER",
+    "RETRY_SAME_QUERY",
+    "RETRY_WITH_EXPANDED_QUERY",
+    "RETRY_WITH_RECENCY_BIAS",
+    "RETRY_WITH_SCHEMA_FILTER",
+    "RUN_EVALUATOR",
+  ].includes(recommendedAction ?? "");
+
+  if (!blockedPolicy && !blockedStatus && !blockedAction) {
+    return undefined;
+  }
+
+  return [
+    metadata.receiptId ? `receiptId=${metadata.receiptId}` : undefined,
+    metadata.traceId ? `traceId=${metadata.traceId}` : undefined,
+    answerPolicy ? `answerPolicy=${answerPolicy}` : undefined,
+    retrievalStatus ? `retrievalStatus=${retrievalStatus}` : undefined,
+    recommendedAction ? `recommendedAction=${recommendedAction}` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
+
+const uniqueStrings = (values: Array<string | undefined>) =>
+  Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+
+const applyReceiptDetails = (
+  read: GrayMatterTranscriptRead,
+  metadata?: ReceiptMetadata,
+  warning?: string,
+) => {
+  const receiptIds = uniqueStrings([metadata?.receiptId]);
+  const traceIds = uniqueStrings([metadata?.traceId]);
+  if (receiptIds.length) {
+    read.receiptIds = receiptIds;
+  }
+  if (traceIds.length) {
+    read.traceIds = traceIds;
+  }
+  if (warning) {
+    read.warning = warning;
+  }
+};
+
+const isContextReadResponse = (
+  response: ContextReadResponse | unknown,
+): response is ContextReadResponse =>
+  isRecord(response) &&
+  ("value" in response || "metadata" in response || "warning" in response);
+
+const formatReadError = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
 
 const redactSensitive = (value: string) =>
   value

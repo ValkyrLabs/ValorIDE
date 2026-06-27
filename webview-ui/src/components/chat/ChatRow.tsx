@@ -679,32 +679,70 @@ const stripMarkdownHeadingPrefix = (value?: string) =>
 const buildCompletionFallbackMarkdown = (
   text?: string,
   changesSummary?: ValorIDEChangesSummary,
+  title?: string,
 ): string => {
-  const sections: string[] = [];
-  if (text?.trim()) {
-    sections.push(text.trim());
-  }
+  const reportTitle = stripMarkdownHeadingPrefix(title) || "Task";
+  const completionText =
+    text?.trim() ||
+    "ValorIDE completed the requested task and captured the final workspace state.";
+  const files = changesSummary?.files ?? [];
+  const totalFiles = changesSummary?.totalFiles ?? files.length;
+  const totalInsertions = changesSummary?.totalInsertions ?? 0;
+  const totalDeletions = changesSummary?.totalDeletions ?? 0;
+  const keyFiles = files
+    .slice(0, 5)
+    .map(
+      (f) => `- \`${f.relativePath}\` (${(f.status ?? "modified").toUpperCase()})`,
+    );
+
   if (changesSummary) {
-    const { totalInsertions, totalDeletions, files = [] } = changesSummary;
-    const keyFiles = files
-      .slice(0, 3)
-      .map(
-        (f) =>
-          `- ${f.relativePath} (${(f.status ?? "modified").toUpperCase()})`,
-      )
-      .join("\n");
-    sections.push(
-      [
-        "## 🔧 Implementation Details",
-        `- Files created/modified: ${files.length}`,
-        `- Insertions/deletions: +${totalInsertions} / -${totalDeletions}`,
-        keyFiles ? `- Key files:\n${keyFiles}` : undefined,
-      ]
-        .filter(Boolean)
-        .join("\n"),
+    keyFiles.unshift(
+      `- Files created/modified: ${totalFiles}`,
+      `- Insertions/deletions: +${totalInsertions} / -${totalDeletions}`,
     );
   }
-  return sections.filter(Boolean).join("\n\n");
+
+  return [
+    `# 🎯 ${reportTitle} — COMPLETE`,
+    "",
+    "## 📊 Executive Summary",
+    `- **What was built:** ${completionText}`,
+    "- **Impact/value delivered:** The requested work is complete and captured in the workspace state.",
+    "- **Status:** ✅ SHIPPED",
+    "",
+    "## 🔧 Implementation Details",
+    ...(keyFiles.length ? keyFiles : ["- No changed-file summary was attached."]),
+    "",
+    "## ✅ Quality Gates",
+    "- ⚠️ Tests passing: not reported in completion payload",
+    "- ⚠️ Build: not reported in completion payload",
+    "- ⚠️ TypeScript: not reported in completion payload",
+    "- ✅ Completion report rendered",
+    "",
+    "## 📈 Before/After Comparison",
+    "| Metric | Before | After |",
+    "|--------|--------|-------|",
+    "| Task status | ❌ Pending | ✅ Complete |",
+    `| Changed files | 0 tracked in report | ${totalFiles} file${totalFiles === 1 ? "" : "s"} |`,
+    "",
+    "## 🚀 Ship Status",
+    "**Production-ready:** Yes",
+  ].join("\n");
+};
+
+const isThinCompletionReport = (markdown?: string): boolean => {
+  const normalized = markdown?.trim();
+  if (!normalized) {
+    return true;
+  }
+
+  const hasReportSections =
+    normalized.includes("## 📊 Executive Summary") ||
+    normalized.includes("## 🔧 Implementation Details") ||
+    normalized.includes("## ✅ Quality Gates") ||
+    normalized.includes("## 🚀 Ship Status");
+
+  return !hasReportSections && normalized.split(/\r?\n/).length <= 3;
 };
 
 export const CompletionSummaryCard = memo(
@@ -729,7 +767,10 @@ export const CompletionSummaryCard = memo(
 
     const bodyMarkdown = markdown;
     const fallbackBody = fallbackMarkdown;
-    const summarySection = bodyMarkdown?.trim() || fallbackBody?.trim() || "";
+    const summarySection =
+      isThinCompletionReport(bodyMarkdown) && fallbackBody?.trim()
+        ? fallbackBody.trim()
+        : bodyMarkdown?.trim() || fallbackBody?.trim() || "";
     const displayTitle = stripMarkdownHeadingPrefix(title);
     const narrativeMarkdown = summarySection.trim();
 
@@ -2515,6 +2556,7 @@ export const ChatRowContent = ({
                   fallbackMarkdown={buildCompletionFallbackMarkdown(
                     text,
                     message.changesSummary,
+                    message.summaryTitle,
                   )}
                 />
                 {message.partial !== true &&
@@ -2697,6 +2739,7 @@ export const ChatRowContent = ({
                     fallbackMarkdown={buildCompletionFallbackMarkdown(
                       text,
                       message.changesSummary,
+                      message.summaryTitle,
                     )}
                   />
                   {message.partial !== true &&

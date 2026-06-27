@@ -913,6 +913,74 @@ describe("BuildModeCommandPolicy prompt bundle proof", () => {
       reasons: [],
     });
   });
+
+  it("allows canonical GrayMatter allow receipt values after normalization", () => {
+    expect(
+      evaluateBuildModeCommandPolicy(baseCommand, {
+        grayMatterContextPack: {
+          answerPolicy: "ALLOW_ANSWER",
+          compiledAt: "2026-06-22T18:00:00.000Z",
+          id: "gm-context-pack-dpp-001",
+          invariantPreflightStatus: "passed",
+          majorTaskRefs: ["plan-tests"],
+          memoryEntryIds: ["memory-entry-valhalla-prd"],
+          policy: "ALLOW_ANSWER",
+          retrievalReceiptIds: ["retrieval-receipt-dpp-001"],
+          retrievalStatus: "OK",
+          source: "GrayMatter retrieval receipts",
+          sourceRefs: ["graymatter://MemoryEntry/memory-entry-valhalla-prd"],
+          summary: "Validated context.",
+        },
+        promptContext: {
+          promptProfileId: "prompt-profile-valhalla",
+          promptProfileName: "Valhalla Build Operator",
+          promptBundleId: "prompt-bundle-valhalla-001",
+          promptBundleVersion: "2026.06.21",
+          promptBundlePolicy: "locked",
+          promptBundleReceiptIds: ["receipt-prompt-bundle-dpp-001"],
+        },
+        requireGrayMatterContext: true,
+      }),
+    ).toMatchObject({
+      decision: "allow",
+      reasons: [],
+    });
+  });
+
+  it("rejects canonical GrayMatter deny receipt values before command execution", () => {
+    expect(
+      evaluateBuildModeCommandPolicy(baseCommand, {
+        grayMatterContextPack: {
+          answerPolicy: "DENY",
+          compiledAt: "2026-06-22T18:00:00.000Z",
+          id: "gm-context-pack-dpp-001",
+          invariantPreflightStatus: "passed",
+          majorTaskRefs: ["plan-tests"],
+          memoryEntryIds: ["memory-entry-valhalla-prd"],
+          policy: "DENY",
+          retrievalReceiptIds: ["retrieval-receipt-dpp-001"],
+          retrievalStatus: "OK",
+          source: "GrayMatter retrieval receipts",
+          sourceRefs: ["graymatter://MemoryEntry/memory-entry-valhalla-prd"],
+          summary: "Denied context.",
+        },
+        promptContext: {
+          promptProfileId: "prompt-profile-valhalla",
+          promptProfileName: "Valhalla Build Operator",
+          promptBundleId: "prompt-bundle-valhalla-001",
+          promptBundleVersion: "2026.06.21",
+          promptBundlePolicy: "locked",
+          promptBundleReceiptIds: ["receipt-prompt-bundle-dpp-001"],
+        },
+        requireGrayMatterContext: true,
+      }),
+    ).toMatchObject({
+      decision: "reject",
+      reasons: expect.arrayContaining([
+        "GrayMatter answer policy blocks confident execution for gm-context-pack-dpp-001.",
+      ]),
+    });
+  });
 });
 
 describe("BuildModeCommandPolicy provider route proof", () => {

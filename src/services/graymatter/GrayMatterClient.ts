@@ -44,6 +44,26 @@ export interface GrayMatterMemoryQuery {
   query: string;
 }
 
+export interface GrayMatterRetrievalReceiptQuery {
+  agentId?: string;
+  filters?: Record<string, unknown>;
+  includeEvaluator?: boolean;
+  includeItems?: boolean;
+  includeText?: boolean;
+  qualityProfile?: "DEFAULT" | "ENTERPRISE_AUDIT" | "FAST" | "STRICT" | string;
+  query: string;
+  retrievalMode?:
+    | "HYBRID"
+    | "KEYWORD"
+    | "RECENCY_BIASED"
+    | "SCHEMA_FILTERED"
+    | "VECTOR"
+    | string;
+  tenantId?: string;
+  topK?: number;
+  workflowId?: string;
+}
+
 export interface GrayMatterProjectInput {
   currentStage?: string;
   description?: string;
@@ -164,6 +184,40 @@ export class GrayMatterClient {
           };
 
     return this.request("/MemoryEntry/query", {
+      body: JSON.stringify(payload),
+      method: "POST",
+    });
+  }
+
+  async retrieveMemoryWithReceipt(
+    query: string | GrayMatterRetrievalReceiptQuery,
+  ): Promise<unknown> {
+    const payload =
+      typeof query === "string"
+        ? {
+            includeEvaluator: false,
+            includeItems: true,
+            includeText: true,
+            qualityProfile: "DEFAULT",
+            query,
+            retrievalMode: "HYBRID",
+            topK: 8,
+          }
+        : {
+            includeEvaluator: query.includeEvaluator ?? false,
+            includeItems: query.includeItems ?? true,
+            includeText: query.includeText ?? true,
+            qualityProfile: query.qualityProfile ?? "DEFAULT",
+            query: query.query,
+            retrievalMode: query.retrievalMode ?? "HYBRID",
+            topK: query.topK ?? 8,
+            ...(query.agentId ? { agentId: query.agentId } : {}),
+            ...(query.filters ? { filters: query.filters } : {}),
+            ...(query.tenantId ? { tenantId: query.tenantId } : {}),
+            ...(query.workflowId ? { workflowId: query.workflowId } : {}),
+          };
+
+    return this.request("/graymatter-retrieval-receipts", {
       body: JSON.stringify(payload),
       method: "POST",
     });

@@ -185,20 +185,46 @@ export interface GrayMatterContextPack {
   id: string;
   compiledAt: string;
   source: string;
-  policy: "answer-confidently" | "requires-review" | "do-not-answer";
+  policy:
+    | "answer-confidently"
+    | "requires-review"
+    | "do-not-answer"
+    | "ALLOW_ANSWER"
+    | "ALLOW_WITH_CAVEAT"
+    | "DO_NOT_ANSWER_CONFIDENTLY"
+    | "REQUIRE_RETRY"
+    | "REQUIRE_CLARIFICATION"
+    | "DENY";
   answerPolicy:
     | "answer-confidently"
     | "requires-review"
     | "do-not-answer"
     | "retry"
-    | "clarify";
+    | "clarify"
+    | "ALLOW_ANSWER"
+    | "ALLOW_WITH_CAVEAT"
+    | "DO_NOT_ANSWER_CONFIDENTLY"
+    | "REQUIRE_RETRY"
+    | "REQUIRE_CLARIFICATION"
+    | "DENY";
   retrievalStatus:
     | "ready"
     | "partial-coverage"
     | "low-confidence"
     | "stale-context"
     | "conflicting-context"
-    | "blocked";
+    | "blocked"
+    | "OK"
+    | "NO_RESULTS"
+    | "LOW_CONFIDENCE"
+    | "PARTIAL_COVERAGE"
+    | "STALE_CONTEXT"
+    | "CONFLICTING_CONTEXT"
+    | "ACCESS_DENIED"
+    | "POLICY_REDACTED"
+    | "EVALUATOR_REJECTED"
+    | "RETRY_REQUIRED"
+    | "ERROR";
   invariantPreflightStatus: "passed" | "warning" | "blocked" | "missing";
   retrievalReceiptIds: string[];
   retrievalTraceId?: string;

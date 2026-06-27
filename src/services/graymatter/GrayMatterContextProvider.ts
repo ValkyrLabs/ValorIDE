@@ -3,6 +3,7 @@ import {
   GrayMatterClientError,
   GrayMatterErrorKind,
   GrayMatterMemoryQuery,
+  GrayMatterRetrievalReceiptQuery,
 } from "./GrayMatterClient";
 
 export type GrayMatterMemoryScope = "organization" | "project" | "user";
@@ -11,6 +12,9 @@ export interface GrayMatterContextConfig {
   enabled: boolean;
   maxTokens: number;
   queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
+  retrieveMemoryWithReceipt?: (
+    query: GrayMatterRetrievalReceiptQuery,
+  ) => Promise<unknown>;
   scopes: GrayMatterMemoryScope[];
   seedQuery?: string;
   timeoutMs: number;
@@ -21,6 +25,9 @@ export interface GrayMatterContextResult {
   entriesUsed: number;
   formattedBlock: string;
   fromScopes: string[];
+  retrievalReceiptIds: string[];
+  retrievalTraceIds: string[];
+  retrievalWarnings: string[];
   tokensEstimated: number;
 }
 
@@ -35,6 +42,21 @@ interface MemoryEntryForPrompt {
 }
 
 type MemoryEntryLike = Record<string, unknown>;
+type RetrievalKind = "context" | "invariant";
+
+interface ReceiptMetadata {
+  answerPolicy?: string;
+  receiptId?: string;
+  recommendedAction?: string;
+  retrievalStatus?: string;
+  traceId?: string;
+}
+
+interface RetrievalResponse {
+  metadata?: ReceiptMetadata;
+  value?: unknown;
+  warning?: string;
+}
 
 const DEFAULT_MAX_TOKENS = 2000;
 const DEFAULT_TIMEOUT_MS = 3000;
@@ -72,20 +94,24 @@ export class GrayMatterContextProvider {
     try {
       const invariantQuery = `${query} ${INVARIANT_QUERY_SUFFIX}`.trim();
       const [invariantResponse, contextResponse] = await Promise.allSettled([
-        withTimeout(
-          config.queryMemory({
+        this.retrieveContext({
+          config,
+          kind: "invariant",
+          query: {
             limit: 12,
             query: invariantQuery,
-          }),
+          },
           timeoutMs,
-        ),
-        withTimeout(
-          config.queryMemory({
+        }),
+        this.retrieveContext({
+          config,
+          kind: "context",
+          query: {
             limit: 24,
             query,
-          }),
+          },
           timeoutMs,
-        ),
+        }),
       ]);
 
       if (invariantResponse.status === "rejected") {
@@ -103,12 +129,19 @@ export class GrayMatterContextProvider {
 
       const responses = [invariantResponse, contextResponse]
         .filter(
-          (response): response is PromiseFulfilledResult<unknown> =>
+          (response): response is PromiseFulfilledResult<RetrievalResponse> =>
             response.status === "fulfilled",
         )
         .map((response) => response.value);
 
-      const entries = dedupeEntries(responses.flatMap(extractEntries))
+      const receiptMetadata = responses
+        .map((response) => response.metadata)
+        .filter((metadata): metadata is ReceiptMetadata => Boolean(metadata));
+      const retrievalWarnings = responses
+        .map((response) => response.warning)
+        .filter((warning): warning is string => Boolean(warning));
+
+      const entries = dedupeEntries(responses.flatMap((response) => extractEntries(response.value)))
         .map(normalizeEntry)
         .filter((entry): entry is MemoryEntryForPrompt => Boolean(entry))
         .filter((entry) => config.scopes.includes(entry.scope))
@@ -128,12 +161,21 @@ export class GrayMatterContextProvider {
       const fromScopes = Array.from(
         new Set(selected.map((entry) => entry.scope)),
       );
+      const retrievalReceiptIds = uniqueStrings(
+        receiptMetadata.map((metadata) => metadata.receiptId),
+      );
+      const retrievalTraceIds = uniqueStrings(
+        receiptMetadata.map((metadata) => metadata.traceId),
+      );
 
       return {
         durationMs: this.now() - start,
         entriesUsed: selected.length,
         formattedBlock,
         fromScopes,
+        retrievalReceiptIds,
+        retrievalTraceIds,
+        retrievalWarnings,
         tokensEstimated,
       };
     } catch (error) {
@@ -143,17 +185,77 @@ export class GrayMatterContextProvider {
       return null;
     }
   }
+
+  private async retrieveContext({
+    config,
+    kind,
+    query,
+    timeoutMs,
+  }: {
+    config: GrayMatterContextConfig;
+    kind: RetrievalKind;
+    query: GrayMatterMemoryQuery;
+    timeoutMs: number;
+  }): Promise<RetrievalResponse> {
+    if (!config.retrieveMemoryWithReceipt) {
+      return {
+        value: await withTimeout(config.queryMemory(query), timeoutMs),
+      };
+    }
+
+    try {
+      const receiptResponse = await withTimeout(
+        config.retrieveMemoryWithReceipt({
+          includeEvaluator: false,
+          includeItems: true,
+          includeText: true,
+          qualityProfile: "DEFAULT",
+          query: query.query,
+          retrievalMode: "HYBRID",
+          topK: query.limit ?? 10,
+        }),
+        timeoutMs,
+      );
+      const metadata = extractReceiptMetadata(receiptResponse);
+      const policyWarning = receiptPolicyWarning(metadata);
+
+      if (policyWarning) {
+        this.logger?.appendLine(
+          `[GrayMatterContextProvider] Receipt policy suppressed ${kind} context: ${policyWarning}`,
+        );
+        return {
+          metadata,
+          warning: policyWarning,
+        };
+      }
+
+      return {
+        metadata,
+        value: receiptResponse,
+      };
+    } catch (error) {
+      this.logger?.appendLine(
+        `[GrayMatterContextProvider] Receipt retrieval degraded for ${kind}; falling back to MemoryEntry/query: ${formatReadError(error)}`,
+      );
+      return {
+        value: await withTimeout(config.queryMemory(query), timeoutMs),
+        warning: `receipt_fallback:${kind}`,
+      };
+    }
+  }
 }
 
 export const getGrayMatterContextConfigFromSettings = (
   queryMemory: GrayMatterContextConfig["queryMemory"],
   seedQuery?: string,
+  retrieveMemoryWithReceipt?: GrayMatterContextConfig["retrieveMemoryWithReceipt"],
 ): GrayMatterContextConfig => {
   const config = vscode.workspace.getConfiguration("valoride.graymatter");
   return {
     enabled: config.get<boolean>("enabled", true),
     maxTokens: config.get<number>("contextMaxTokens", DEFAULT_MAX_TOKENS),
     queryMemory,
+    retrieveMemoryWithReceipt,
     scopes: ["project", "organization", "user"],
     seedQuery,
     timeoutMs: config.get<number>("queryTimeoutMs", DEFAULT_TIMEOUT_MS),
@@ -188,6 +290,10 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
   if (!isRecord(response)) {
     return [];
   }
+  const receipt = response.receipt;
+  if (isRecord(receipt) && Array.isArray(receipt.items)) {
+    return receipt.items.filter(isRecord);
+  }
   for (const key of ["results", "items", "data", "memoryEntries", "entries"]) {
     const candidate = response[key];
     if (Array.isArray(candidate)) {
@@ -200,10 +306,16 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
 const normalizeEntry = (
   entry: MemoryEntryLike,
 ): MemoryEntryForPrompt | undefined => {
-  const id = getString(entry, "id") ?? getString(entry, "uid");
+  const id =
+    getString(entry, "id") ??
+    getString(entry, "uid") ??
+    getString(entry, "memoryId") ??
+    getString(entry, "sourceId") ??
+    getString(entry, "entityId");
   const content =
     getString(entry, "content") ??
     getString(entry, "summary") ??
+    getString(entry, "textPreview") ??
     getString(entry, "text") ??
     getString(entry, "body");
   if (!id || !content) {
@@ -220,8 +332,13 @@ const normalizeEntry = (
     title:
       getString(entry, "title") ??
       getString(entry, "name") ??
+      getString(entry, "fieldName") ??
       getMetadataTitle(entry),
-    type: getString(entry, "type") ?? "context",
+    type:
+      getString(entry, "type") ??
+      getString(entry, "sourceType") ??
+      getString(entry, "entityType") ??
+      "context",
   };
 };
 
@@ -357,6 +474,74 @@ const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
   }
   return getString(metadata, "title");
 };
+
+const extractReceiptMetadata = (response: unknown): ReceiptMetadata | undefined => {
+  if (!isRecord(response) || !isRecord(response.receipt)) {
+    return undefined;
+  }
+  const receipt = response.receipt;
+  return {
+    answerPolicy: getString(receipt, "answerPolicy"),
+    receiptId: getString(receipt, "receiptId"),
+    recommendedAction: getString(receipt, "recommendedAction"),
+    retrievalStatus: getString(receipt, "retrievalStatus"),
+    traceId: getString(receipt, "traceId"),
+  };
+};
+
+const receiptPolicyWarning = (metadata?: ReceiptMetadata): string | undefined => {
+  if (!metadata) {
+    return undefined;
+  }
+
+  const answerPolicy = metadata.answerPolicy;
+  const retrievalStatus = metadata.retrievalStatus;
+  const recommendedAction = metadata.recommendedAction;
+  const blockedPolicy = [
+    "DENY",
+    "DO_NOT_ANSWER_CONFIDENTLY",
+    "REQUIRE_CLARIFICATION",
+    "REQUIRE_RETRY",
+  ].includes(answerPolicy ?? "");
+  const blockedStatus = [
+    "ACCESS_DENIED",
+    "CONFLICTING_CONTEXT",
+    "ERROR",
+    "EVALUATOR_REJECTED",
+    "LOW_CONFIDENCE",
+    "PARTIAL_COVERAGE",
+    "POLICY_REDACTED",
+    "RETRY_REQUIRED",
+    "STALE_CONTEXT",
+  ].includes(retrievalStatus ?? "");
+  const blockedAction = [
+    "ASK_CLARIFYING_QUESTION",
+    "DO_NOT_ANSWER",
+    "ESCALATE_TO_USER",
+    "RETRY_SAME_QUERY",
+    "RETRY_WITH_EXPANDED_QUERY",
+    "RETRY_WITH_RECENCY_BIAS",
+    "RETRY_WITH_SCHEMA_FILTER",
+    "RUN_EVALUATOR",
+  ].includes(recommendedAction ?? "");
+
+  if (!blockedPolicy && !blockedStatus && !blockedAction) {
+    return undefined;
+  }
+
+  return [
+    metadata.receiptId ? `receiptId=${metadata.receiptId}` : undefined,
+    metadata.traceId ? `traceId=${metadata.traceId}` : undefined,
+    answerPolicy ? `answerPolicy=${answerPolicy}` : undefined,
+    retrievalStatus ? `retrievalStatus=${retrievalStatus}` : undefined,
+    recommendedAction ? `recommendedAction=${recommendedAction}` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
+
+const uniqueStrings = (values: Array<string | undefined>) =>
+  Array.from(new Set(values.filter((value): value is string => Boolean(value))));
 
 const estimateTokens = (value: string) => Math.ceil(value.length / 4);
 

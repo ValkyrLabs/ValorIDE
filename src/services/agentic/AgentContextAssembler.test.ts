@@ -91,6 +91,139 @@ describe("AgentContextAssembler", () => {
     expect(context.promptSection).not.toContain("secret-token");
   });
 
+  it("prefers retrieval receipts and records receipt metadata", async () => {
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        items: [
+          {
+            fieldName: "Agent safety invariant",
+            memoryId: "memory-1",
+            sourceType: "decision",
+            tags: ["security"],
+            textPreview:
+              "Do not execute destructive workspace operations without explicit user direction.",
+          },
+        ],
+        receiptId: "receipt-1",
+        recommendedAction: "ANSWER",
+        retrievalStatus: "OK",
+        traceId: "trace-1",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: { queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      cwd: "/repo",
+      task: "Run an agentic edit",
+    });
+
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalledWith({
+      includeEvaluator: false,
+      includeItems: true,
+      includeText: true,
+      qualityProfile: "DEFAULT",
+      query: "ValorIDE task context: Run an agentic edit\nWorkspace: /repo",
+      retrievalMode: "HYBRID",
+      topK: 5,
+    });
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({
+        citations: ["gm:memory-1"],
+        receiptIds: ["receipt-1"],
+        traceIds: ["trace-1"],
+      }),
+    );
+    expect(context.promptSection).toContain("[gm:memory-1] decision");
+    expect(context.promptSection).toContain("Agent safety invariant");
+  });
+
+  it("falls back to MemoryEntry query when receipt retrieval is unavailable", async () => {
+    const queryMemory = jest.fn(async () => ({
+      results: [
+        {
+          content: "Use local project context when GrayMatter receipts degrade.",
+          id: "memory-1",
+          tags: ["resilience"],
+          type: "context",
+        },
+      ],
+    }));
+    const retrieveMemoryWithReceipt = jest.fn(async () => {
+      throw new Error("receipt endpoint unavailable");
+    });
+    const assembler = new AgentContextAssembler({
+      grayMatter: { queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      task: "Continue safely",
+    });
+
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalled();
+    expect(queryMemory).toHaveBeenCalledWith({
+      limit: 5,
+      query: "ValorIDE task context: Continue safely",
+    });
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({
+        citations: ["gm:memory-1"],
+        warning: "receipt_fallback:receipt endpoint unavailable",
+      }),
+    );
+  });
+
+  it("suppresses receipt-backed context when policy requires retry", async () => {
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "REQUIRE_RETRY",
+        items: [
+          {
+            memoryId: "memory-1",
+            textPreview: "This should not be included in prompt context.",
+          },
+        ],
+        receiptId: "receipt-retry",
+        recommendedAction: "RETRY_WITH_EXPANDED_QUERY",
+        retrievalStatus: "LOW_CONFIDENCE",
+        traceId: "trace-retry",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: { queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      task: "Use uncertain memory",
+    });
+
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(context.grayMatter.status).toBe("unavailable");
+    expect(context.grayMatter.citations).toEqual([]);
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({
+        citations: [],
+        receiptIds: ["receipt-retry"],
+        traceIds: ["trace-retry"],
+        warning: expect.stringContaining("LOW_CONFIDENCE"),
+      }),
+    );
+    expect(context.promptSection).toContain(
+      "GrayMatter status: unavailable. Continue with local project context only.",
+    );
+    expect(context.promptSection).not.toContain("This should not be included");
+  });
+
   it("surfaces RBAC denials without throwing or inventing memory context", async () => {
     const assembler = new AgentContextAssembler({
       grayMatter: {
@@ -153,12 +286,17 @@ describe("AgentContextAssembler", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api-0.valkyrlabs.com/v1/MemoryEntry/query",
+      "https://api-0.valkyrlabs.com/v1/graymatter-retrieval-receipts",
       expect.objectContaining({
         body: JSON.stringify({
-          limit: 5,
+          includeEvaluator: false,
+          includeItems: true,
+          includeText: true,
+          qualityProfile: "DEFAULT",
           query:
             "ValorIDE task context: Implement GrayMatter prompt injection\nWorkspace: /repo",
+          retrievalMode: "HYBRID",
+          topK: 5,
         }),
         method: "POST",
       }),

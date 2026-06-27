@@ -92,6 +92,12 @@ const grayMatterPolicies = new Set([
   "answer-confidently",
   "requires-review",
   "do-not-answer",
+  "ALLOW_ANSWER",
+  "ALLOW_WITH_CAVEAT",
+  "DO_NOT_ANSWER_CONFIDENTLY",
+  "REQUIRE_RETRY",
+  "REQUIRE_CLARIFICATION",
+  "DENY",
 ]);
 const grayMatterAnswerPolicies = new Set([
   "answer-confidently",
@@ -99,6 +105,12 @@ const grayMatterAnswerPolicies = new Set([
   "do-not-answer",
   "retry",
   "clarify",
+  "ALLOW_ANSWER",
+  "ALLOW_WITH_CAVEAT",
+  "DO_NOT_ANSWER_CONFIDENTLY",
+  "REQUIRE_RETRY",
+  "REQUIRE_CLARIFICATION",
+  "DENY",
 ]);
 const grayMatterRetrievalStatuses = new Set([
   "ready",
@@ -107,6 +119,17 @@ const grayMatterRetrievalStatuses = new Set([
   "stale-context",
   "conflicting-context",
   "blocked",
+  "OK",
+  "NO_RESULTS",
+  "LOW_CONFIDENCE",
+  "PARTIAL_COVERAGE",
+  "STALE_CONTEXT",
+  "CONFLICTING_CONTEXT",
+  "ACCESS_DENIED",
+  "POLICY_REDACTED",
+  "EVALUATOR_REJECTED",
+  "RETRY_REQUIRED",
+  "ERROR",
 ]);
 const grayMatterInvariantPreflightStatuses = new Set([
   "passed",
@@ -6967,6 +6990,17 @@ const coerceGrayMatterContextPack = (
   }
   const id = readNonEmptyString(value.id);
   const retrievalReceiptIds = readStringArray(value.retrievalReceiptIds);
+  const answerPolicy = readGrayMatterAnswerPolicy(value.answerPolicy);
+  const policy = readGrayMatterPolicy(value.policy);
+  const retrievalStatus = readGrayMatterRetrievalStatus(value.retrievalStatus);
+  const policyInputSupported = isOptionalEnumValue(
+    value.policy,
+    grayMatterPolicies,
+  );
+  const answerPolicyInputSupported = isOptionalEnumValue(
+    value.answerPolicy,
+    grayMatterAnswerPolicies,
+  );
   if (!id) issues.push("GrayMatter context pack requires an id.");
   if (!retrievalReceiptIds.length) {
     issues.push("GrayMatter context pack requires retrieval receipt ids.");
@@ -6974,14 +7008,21 @@ const coerceGrayMatterContextPack = (
   if (value.invariantPreflightStatus !== "passed") {
     issues.push("GrayMatter invariant preflight must be passed.");
   }
-  if (value.retrievalStatus !== "ready") {
+  if (retrievalStatus !== "ready") {
     issues.push("GrayMatter context retrieval status must be ready.");
+  }
+  if (policyInputSupported && answerPolicyInputSupported) {
+    if (policy === "do-not-answer" || answerPolicy === "do-not-answer") {
+      issues.push("GrayMatter answer policy must allow confident context use.");
+    } else if (policy === "requires-review" || answerPolicy !== "answer-confidently") {
+      issues.push("GrayMatter answer policy must be reviewed before launch.");
+    }
   }
   if (!id || !retrievalReceiptIds.length) {
     return undefined;
   }
   return {
-    answerPolicy: readGrayMatterAnswerPolicy(value.answerPolicy),
+    answerPolicy,
     compiledAt:
       readNonEmptyString(value.compiledAt) ??
       options.now?.().toISOString() ??
@@ -6990,10 +7031,10 @@ const coerceGrayMatterContextPack = (
     invariantPreflightStatus: "passed",
     majorTaskRefs: readStringArray(value.majorTaskRefs),
     memoryEntryIds: readStringArray(value.memoryEntryIds),
-    policy: readGrayMatterPolicy(value.policy),
+    policy,
     preflightReceiptId: readNonEmptyString(value.preflightReceiptId),
     retrievalReceiptIds,
-    retrievalStatus: "ready",
+    retrievalStatus,
     retrievalTraceId: readNonEmptyString(value.retrievalTraceId),
     source: readNonEmptyString(value.source) ?? "GrayMatter retrieval receipts",
     sourceRefs: readStringArray(value.sourceRefs),
@@ -7064,20 +7105,77 @@ const readLaunchSource = (value: unknown): ValorTaskBridgePayload["source"] => {
 
 const readGrayMatterPolicy = (
   value: unknown,
-): GrayMatterContextPack["policy"] =>
-  value === "requires-review" || value === "do-not-answer"
-    ? value
-    : "answer-confidently";
+): GrayMatterContextPack["policy"] => {
+  switch (value) {
+    case undefined:
+    case null:
+    case "answer-confidently":
+    case "ALLOW_ANSWER":
+      return "answer-confidently";
+    case "requires-review":
+    case "ALLOW_WITH_CAVEAT":
+    case "REQUIRE_RETRY":
+    case "REQUIRE_CLARIFICATION":
+      return "requires-review";
+    default:
+      return "do-not-answer";
+  }
+};
 
 const readGrayMatterAnswerPolicy = (
   value: unknown,
-): GrayMatterContextPack["answerPolicy"] =>
-  value === "requires-review" ||
-  value === "do-not-answer" ||
-  value === "retry" ||
-  value === "clarify"
-    ? value
-    : "answer-confidently";
+): GrayMatterContextPack["answerPolicy"] => {
+  switch (value) {
+    case undefined:
+    case null:
+    case "answer-confidently":
+    case "ALLOW_ANSWER":
+      return "answer-confidently";
+    case "requires-review":
+    case "ALLOW_WITH_CAVEAT":
+      return "requires-review";
+    case "retry":
+    case "REQUIRE_RETRY":
+      return "retry";
+    case "clarify":
+    case "REQUIRE_CLARIFICATION":
+      return "clarify";
+    default:
+      return "do-not-answer";
+  }
+};
+
+const readGrayMatterRetrievalStatus = (
+  value: unknown,
+): GrayMatterContextPack["retrievalStatus"] => {
+  switch (value) {
+    case "ready":
+    case "OK":
+      return "ready";
+    case "partial-coverage":
+    case "PARTIAL_COVERAGE":
+      return "partial-coverage";
+    case "low-confidence":
+    case "LOW_CONFIDENCE":
+      return "low-confidence";
+    case "stale-context":
+    case "STALE_CONTEXT":
+      return "stale-context";
+    case "conflicting-context":
+    case "CONFLICTING_CONTEXT":
+      return "conflicting-context";
+    default:
+      return "blocked";
+  }
+};
+
+const isOptionalEnumValue = (
+  value: unknown,
+  supportedValues: Set<string>,
+): boolean =>
+  value === undefined ||
+  value === null ||
+  (typeof value === "string" && supportedValues.has(value));
 
 const isWorkspaceRootWithin = (
   candidateRoot: string,

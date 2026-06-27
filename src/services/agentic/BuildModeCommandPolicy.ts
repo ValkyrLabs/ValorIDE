@@ -1194,6 +1194,13 @@ const validateGrayMatterContextPack = (
   }
 
   const reasons: string[] = [];
+  const retrievalStatus = normalizeGrayMatterRetrievalStatus(
+    contextPack.retrievalStatus,
+  );
+  const policy = normalizeGrayMatterPolicy(contextPack.policy);
+  const answerPolicy = normalizeGrayMatterAnswerPolicy(
+    contextPack.answerPolicy,
+  );
   if (!contextPack.retrievalReceiptIds.length) {
     reasons.push(
       `GrayMatter context pack ${contextPack.id} has no retrieval receipts.`,
@@ -1204,24 +1211,21 @@ const validateGrayMatterContextPack = (
       `GrayMatter invariant preflight is ${contextPack.invariantPreflightStatus} for ${contextPack.id}.`,
     );
   }
-  if (contextPack.retrievalStatus !== "ready") {
+  if (retrievalStatus !== "ready") {
     reasons.push(
       `GrayMatter retrieval status is ${contextPack.retrievalStatus} for ${contextPack.id}.`,
     );
   }
-  if (
-    contextPack.policy === "do-not-answer" ||
-    contextPack.answerPolicy === "do-not-answer"
-  ) {
+  if (policy === "do-not-answer" || answerPolicy === "do-not-answer") {
     reasons.push(
       `GrayMatter answer policy blocks confident execution for ${contextPack.id}.`,
     );
   }
   if (
-    contextPack.policy === "requires-review" ||
-    contextPack.answerPolicy === "requires-review" ||
-    contextPack.answerPolicy === "retry" ||
-    contextPack.answerPolicy === "clarify"
+    policy === "requires-review" ||
+    answerPolicy === "requires-review" ||
+    answerPolicy === "retry" ||
+    answerPolicy === "clarify"
   ) {
     reasons.push(
       `GrayMatter context pack ${contextPack.id} requires review before command execution.`,
@@ -1229,6 +1233,79 @@ const validateGrayMatterContextPack = (
   }
 
   return reasons;
+};
+
+const normalizeGrayMatterPolicy = (
+  value: GrayMatterContextPack["policy"],
+): "answer-confidently" | "requires-review" | "do-not-answer" => {
+  switch (value) {
+    case "answer-confidently":
+    case "ALLOW_ANSWER":
+      return "answer-confidently";
+    case "requires-review":
+    case "ALLOW_WITH_CAVEAT":
+    case "REQUIRE_RETRY":
+    case "REQUIRE_CLARIFICATION":
+      return "requires-review";
+    default:
+      return "do-not-answer";
+  }
+};
+
+const normalizeGrayMatterAnswerPolicy = (
+  value: GrayMatterContextPack["answerPolicy"],
+):
+  | "answer-confidently"
+  | "requires-review"
+  | "do-not-answer"
+  | "retry"
+  | "clarify" => {
+  switch (value) {
+    case "answer-confidently":
+    case "ALLOW_ANSWER":
+      return "answer-confidently";
+    case "requires-review":
+    case "ALLOW_WITH_CAVEAT":
+      return "requires-review";
+    case "retry":
+    case "REQUIRE_RETRY":
+      return "retry";
+    case "clarify":
+    case "REQUIRE_CLARIFICATION":
+      return "clarify";
+    default:
+      return "do-not-answer";
+  }
+};
+
+const normalizeGrayMatterRetrievalStatus = (
+  value: GrayMatterContextPack["retrievalStatus"],
+):
+  | "ready"
+  | "partial-coverage"
+  | "low-confidence"
+  | "stale-context"
+  | "conflicting-context"
+  | "blocked" => {
+  switch (value) {
+    case "ready":
+    case "OK":
+      return "ready";
+    case "partial-coverage":
+    case "PARTIAL_COVERAGE":
+      return "partial-coverage";
+    case "low-confidence":
+    case "LOW_CONFIDENCE":
+      return "low-confidence";
+    case "stale-context":
+    case "STALE_CONTEXT":
+      return "stale-context";
+    case "conflicting-context":
+    case "CONFLICTING_CONTEXT":
+      return "conflicting-context";
+    default:
+      return "blocked";
+  }
 };
 
 const requiresGrayMatterContext = (command: BuildModeCommand): boolean =>
