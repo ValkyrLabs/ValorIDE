@@ -90,14 +90,31 @@ test('auditEntries enforces the runtime package allowlist', () => {
   ]);
 });
 
+test('auditEntries fails packages missing required runtime bundles', () => {
+  const report = auditEntries([
+    { size: 10, name: '[Content_Types].xml' },
+    { size: 10, name: 'extension.vsixmanifest' },
+    { size: 20, name: 'extension/package.json' },
+    { size: 20, name: 'extension/README.md' },
+  ], { archiveBytes: 60, maxArchiveBytes: 1000, maxFileCount: 20 });
+
+  assert.equal(report.ok, false);
+  assert.match(report.failures.join('\n'), /required runtime entries missing/);
+  assert.deepEqual(report.missingRuntimeEntries.map((entry) => entry.rule), [
+    'extension_bundle',
+    'webview_bundle',
+  ]);
+});
+
 test('formatMarkdownReport includes package summary and largest files', () => {
   const report = auditEntries([
     { size: 20, name: 'extension/dist/extension.js' },
     { size: 10, name: 'extension/package.json' },
+    { size: 10, name: 'extension/dist/webview/assets/index.js' },
   ], { archiveBytes: 30, maxArchiveBytes: 1000, maxFileCount: 10 });
 
   const markdown = formatMarkdownReport(report, 'valoride.vsix');
   assert.match(markdown, /Status: PASS/);
-  assert.match(markdown, /File count: 2/);
+  assert.match(markdown, /File count: 3/);
   assert.match(markdown, /20\textension\/dist\/extension.js/);
 });
