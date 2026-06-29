@@ -2591,6 +2591,20 @@ export class Controller {
         });
         break;
       }
+      case "retryGrayMatterBlockedAction": {
+        const session = await this.refreshGrayMatterSessionState();
+        await this.postStateToWebview();
+        if (session.status === "ready") {
+          void vscode.window.showInformationMessage(
+            `GrayMatter credits are ready. Retry ${message.resumeActionLabel ?? message.resumeCapabilityId ?? "the blocked action"}.`,
+          );
+        } else {
+          void vscode.window.showWarningMessage(
+            `GrayMatter is still ${session.status}. Recharge or sign in before retrying the blocked action.`,
+          );
+        }
+        break;
+      }
       case "showMcpView": {
         await this.postMessageToWebview({
           type: "action",
