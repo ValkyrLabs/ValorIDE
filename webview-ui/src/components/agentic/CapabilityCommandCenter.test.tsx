@@ -224,6 +224,25 @@ describe("CapabilityCommandCenter", () => {
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showAccountViewClicked",
     });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Retry after recharge" }),
+    );
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      resumeActionLabel: "Recall project memory",
+      resumeCapabilityId: "graymatter.memory",
+      resumeCommandId: "cmd-quota-1",
+      type: "retryGrayMatterBlockedAction",
+    });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      event: "valoride_activation_recovery_action",
+      payload: {
+        action: "retry_after_recharge",
+        status: "quota",
+        surface: "graymatter",
+      },
+      type: "trackFunnelEvent",
+    });
   });
 
   it("opens the local ValorIDE sign-in panel for unauthenticated sessions", async () => {
