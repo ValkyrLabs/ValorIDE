@@ -199,7 +199,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
   }, [selectedFile]);
 
   return (
-    <div className="openapi-file-picker">
+    <section className="openapi-file-picker openapi-import-card">
       <div className="file-picker-header" style={{ marginBottom: "16px" }}>
         <h3>Import Application from OpenAPI</h3>
         <p
@@ -321,7 +321,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
           {uploadStatus.type === "success" ? "✅" : "❌"} {uploadStatus.message}
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

@@ -66,18 +66,27 @@ describe("AgentContextAssembler", () => {
       task: "Implement a ThorAPI-backed settings panel",
     });
 
-    expect(queryMemory).toHaveBeenCalledWith({
-      limit: 5,
-      query:
-        "ValorIDE task context: Implement a ThorAPI-backed settings panel\nWorkspace: /repo",
-    });
+    const queryArg = (queryMemory.mock.calls as any[])[0]?.[0];
+    expect(queryArg).toEqual(
+      expect.objectContaining({
+        limit: 8,
+        query: expect.stringContaining(
+          "ValorIDE task context: Implement a ThorAPI-backed settings panel\nWorkspace: /repo",
+        ),
+      }),
+    );
+    expect((queryArg as any).query).toContain(
+      "invariants, rules, instructions",
+    );
+    expect((queryArg as any).query).toContain("ValkyrAI, ThorAPI");
     expect(context.grayMatter.status).toBe("ready");
     expect(context.grayMatter.reads).toEqual([
       {
         at: "2026-05-13T12:00:00.000Z",
         citations: ["gm:memory-1", "gm:memory-2"],
-        query:
+        query: expect.stringContaining(
           "ValorIDE task context: Implement a ThorAPI-backed settings panel\nWorkspace: /repo",
+        ),
         status: "ready",
       },
     ]);
@@ -122,15 +131,19 @@ describe("AgentContextAssembler", () => {
       task: "Run an agentic edit",
     });
 
-    expect(retrieveMemoryWithReceipt).toHaveBeenCalledWith({
-      includeEvaluator: false,
-      includeItems: true,
-      includeText: true,
-      qualityProfile: "DEFAULT",
-      query: "ValorIDE task context: Run an agentic edit\nWorkspace: /repo",
-      retrievalMode: "HYBRID",
-      topK: 5,
-    });
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        includeEvaluator: false,
+        includeItems: true,
+        includeText: true,
+        qualityProfile: "DEFAULT",
+        query: expect.stringContaining(
+          "ValorIDE task context: Run an agentic edit\nWorkspace: /repo",
+        ),
+        retrievalMode: "HYBRID",
+        topK: 8,
+      }),
+    );
     expect(queryMemory).not.toHaveBeenCalled();
     expect(context.grayMatter.status).toBe("ready");
     expect(context.grayMatter.reads[0]).toEqual(
@@ -142,6 +155,50 @@ describe("AgentContextAssembler", () => {
     );
     expect(context.promptSection).toContain("[gm:memory-1] decision");
     expect(context.promptSection).toContain("Agent safety invariant");
+  });
+
+  it("falls back to direct memory query when retrieval receipt returns no items", async () => {
+    const queryMemory = jest.fn(async () => ({
+      results: [
+        {
+          content:
+            "Use generated ThorAPI TypeScript models and RTK Query services for ValkyrAI API work.",
+          id: "memory-thorapi",
+          tags: ["invariant", "thorapi"],
+          type: "decision",
+        },
+      ],
+    }));
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        items: [],
+        receiptId: "receipt-empty",
+        recommendedAction: "ANSWER",
+        retrievalStatus: "OK",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: { queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      task: "Fix ValorIDE rating UUID handling",
+    });
+
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalled();
+    const fallbackQueryArg = (queryMemory.mock.calls as any[])[0]?.[0];
+    const fallbackQuery =
+      typeof fallbackQueryArg === "string"
+        ? fallbackQueryArg
+        : (fallbackQueryArg as any)?.query;
+    expect(fallbackQuery).toContain("ValkyrAI, ThorAPI");
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.citations[0]?.id).toBe("memory-thorapi");
+    expect(context.grayMatter.reads[0]?.warning).toContain(
+      "receipt_empty_fallback:direct_memory_query_used",
+    );
   });
 
   it("falls back to MemoryEntry query when receipt retrieval is unavailable", async () => {
@@ -168,10 +225,14 @@ describe("AgentContextAssembler", () => {
     });
 
     expect(retrieveMemoryWithReceipt).toHaveBeenCalled();
-    expect(queryMemory).toHaveBeenCalledWith({
-      limit: 5,
-      query: "ValorIDE task context: Continue safely",
-    });
+    expect(queryMemory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        limit: 8,
+        query: expect.stringContaining(
+          "ValorIDE task context: Continue safely",
+        ),
+      }),
+    );
     expect(context.grayMatter.status).toBe("ready");
     expect(context.grayMatter.reads[0]).toEqual(
       expect.objectContaining({
@@ -336,21 +397,63 @@ describe("AgentContextAssembler", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api-0.valkyrlabs.com/v1/graymatter-retrieval-receipts",
       expect.objectContaining({
-        body: JSON.stringify({
-          includeEvaluator: false,
-          includeItems: true,
-          includeText: true,
-          qualityProfile: "DEFAULT",
-          query:
-            "ValorIDE task context: Implement GrayMatter prompt injection\nWorkspace: /repo",
-          retrievalMode: "HYBRID",
-          topK: 5,
-        }),
         method: "POST",
       }),
     );
+    const receiptBody = JSON.parse(
+      (fetchMock.mock.calls[0]?.[1]?.body as string) ?? "{}",
+    );
+    expect(receiptBody).toEqual(
+      expect.objectContaining({
+        includeEvaluator: false,
+        includeItems: true,
+        includeText: true,
+        qualityProfile: "DEFAULT",
+        query: expect.stringContaining(
+          "ValorIDE task context: Implement GrayMatter prompt injection\nWorkspace: /repo",
+        ),
+        retrievalMode: "HYBRID",
+        topK: 8,
+      }),
+    );
+    expect(receiptBody.query).toContain("invariants, rules, instructions");
     expect(section).toContain("[gm:memory-1] decision");
     expect(section).toContain("Use server-side RBAC");
+  });
+
+  it("passes tenant context through GrayMatter task memory retrieval", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () =>
+        jsonResponse(200, {
+          results: [
+            {
+              content: "Use tenant-scoped GrayMatter invariants.",
+              id: "memory-tenant",
+              tags: ["scope:organization"],
+              type: "decision",
+            },
+          ],
+        }),
+    );
+
+    await createAgentContextSectionForTask({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      cwd: "/repo",
+      fetch: fetchMock,
+      grayMatterSession: readySession,
+      task: "Implement GrayMatter prompt injection",
+      tenantContext: { tenantId: "tenant-123" },
+      token: "session-token",
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "x-tenant-id": "tenant-123",
+        }),
+      }),
+    );
   });
 
   it("skips task prompt context when the session lacks memory query permission", async () => {

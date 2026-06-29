@@ -248,10 +248,10 @@ export class AckTracker {
    * Cancel all pending acks (on disconnect).
    */
   cancelAll(): void {
-    for (const [id, pending] of this.pending.entries()) {
+    this.pending.forEach((pending) => {
       clearTimeout(pending.timeout);
       pending.reject(new Error("Connection closed"));
-    }
+    });
     this.pending.clear();
   }
 

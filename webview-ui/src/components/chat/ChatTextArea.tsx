@@ -1323,12 +1323,18 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
       // --- 3. Image Drop Handling ---
       // Only proceed if it wasn't a VSCode resource or plain text drop
-      const files = Array.from(e.dataTransfer.files);
-      const acceptedTypes = ["png", "jpeg", "webp"];
-      const imageFiles = files.filter((file) => {
-        const [type, subtype] = file.type.split("/");
-        return type === "image" && acceptedTypes.includes(subtype);
-      });
+      const acceptedTypes = ["png", "jpeg", "webp"]; // supported by anthropic and openrouter (jpg is just a file extension but the image will be recognized as jpeg)
+      const dataTransferFiles = Array.from(e.dataTransfer.files);
+      const dataTransferItems = Array.from(e.dataTransfer.items ?? [])
+        .filter((item) => item.kind === "file")
+        .map((item) => item.getAsFile())
+        .filter((file): file is File => Boolean(file));
+      const imageFiles = [...dataTransferFiles, ...dataTransferItems].filter(
+        (file) => {
+          const [type, subtype] = file.type.split("/");
+          return type === "image" && acceptedTypes.includes(subtype);
+        },
+      );
 
       if (shouldDisableImages || imageFiles.length === 0) {
         return;
@@ -1396,6 +1402,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
     return (
       <div>
         <div
+          data-testid="chat-textarea-dropzone"
           style={{
             border: 0,
             borderRadius: 10,

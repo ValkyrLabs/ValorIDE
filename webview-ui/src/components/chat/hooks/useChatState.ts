@@ -313,7 +313,7 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
     vscode.postMessage({
       type: "askResponse",
       askResponse: "messageResponse",
-      text: "Cancel this request",
+      text: "End this task now. Summarize the current state and stop without starting new work.",
       images: [],
     });
     setDidClickCancel(true);

@@ -10,7 +10,9 @@ import { digitalProductProBuildModePayload } from "../components/build-mode/buil
 
 const appTestHarness = vi.hoisted(() => ({
   accountProps: vi.fn(),
+  dispatch: vi.fn(),
   postMessage: vi.fn(),
+  useGetAccountBalanceQuery: vi.fn(),
   apiErrors: {
     creditIntent: undefined as any,
     showAccountBalance: true,
@@ -283,6 +285,11 @@ vi.mock("../components/content-data/ContentDataHandler", () => ({
   ContentDataHandler: () => null,
 }));
 
+vi.mock("../services/creditsApi", () => ({
+  useGetAccountBalanceQuery: (...args: any[]) =>
+    appTestHarness.useGetAccountBalanceQuery(...args),
+}));
+
 vi.mock("../components/usage-tracking/StartupDebit", () => ({
   __esModule: true,
   default: () => null,
@@ -291,16 +298,23 @@ vi.mock("../components/usage-tracking/StartupDebit", () => ({
 vi.mock("react-redux", () => ({
   useSelector: (selector: any) =>
     selector({ apiErrors: appTestHarness.apiErrors }),
-  useDispatch: () => vi.fn(),
+  useDispatch: () => appTestHarness.dispatch,
 }));
 
 vi.mock("../context/ExtensionStateContext", () => ({
   ExtensionStateContextProvider: ({ children }: { children: any }) => children,
+  hasConfiguredApiProvider: (config?: any) =>
+    config?.apiProvider === "openai-native" ||
+    Boolean(config && Object.values(config).some((value) => value !== undefined)),
   useExtensionState: () => ({
+    authenticatedUser: { id: "user-123" },
     didHydrateState: true,
+    isLoggedIn: true,
+    jwtToken: "token",
     showWelcome: false,
     shouldShowAnnouncement: false,
     telemetrySetting: "unset",
+    userInfo: { id: "user-123" },
     vscMachineId: "test",
   }),
 }));
@@ -326,9 +340,23 @@ const mockStorage = () => {
 describe("App account balance prompt", () => {
   beforeEach(() => {
     appTestHarness.accountProps.mockClear();
+    appTestHarness.dispatch.mockClear();
     appTestHarness.postMessage.mockClear();
+    appTestHarness.useGetAccountBalanceQuery.mockReset();
+    appTestHarness.useGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 0 },
+      isLoading: false,
+      isFetching: false,
+      isSuccess: true,
+      error: undefined,
+    });
     appTestHarness.apiErrors.showAccountBalance = true;
-    appTestHarness.apiErrors.creditIntent = undefined;
+    appTestHarness.apiErrors.creditIntent = {
+      actionName: "Continue current request",
+      currentBalance: 0,
+      requiredCredits: 2,
+      originView: "chat",
+    };
     (globalThis as any).localStorage = mockStorage();
     (globalThis as any).sessionStorage = mockStorage();
     (globalThis as any).acquireVsCodeApi = () => ({
@@ -344,13 +372,53 @@ describe("App account balance prompt", () => {
     delete (globalThis as any).acquireVsCodeApi;
   });
 
-  it("opens account view when insufficient credits flag is set", async () => {
+  it("opens account view only after validated balance is below required credits", async () => {
     const { default: App } = await import("../App");
 
     render(<App />);
 
     await waitFor(() =>
       expect(screen.getByTestId("account-view")).toBeInTheDocument(),
+    );
+    expect(appTestHarness.accountProps).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        creditIntent: expect.objectContaining({
+          currentBalance: 0,
+          requiredCredits: 2,
+        }),
+      }),
+    );
+  });
+
+  it("does not open account view while credit balance is loading", async () => {
+    appTestHarness.useGetAccountBalanceQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isSuccess: false,
+      error: undefined,
+    });
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    expect(screen.queryByTestId("account-view")).not.toBeInTheDocument();
+  });
+
+  it("does not open account view when validated balance covers the operation", async () => {
+    appTestHarness.useGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 2_000_000 },
+      isLoading: false,
+      isFetching: false,
+      isSuccess: true,
+      error: undefined,
+    });
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("account-view")).not.toBeInTheDocument(),
     );
   });
 

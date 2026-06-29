@@ -38,6 +38,10 @@ import {
 } from '@thorapi/model';
 
 import { useAddPrincipalMutation } from '../../services/PrincipalService';
+import {
+  PASSWORD_POLICY_DESCRIPTION,
+  buildPasswordValidation,
+} from '../../../../utils/passwordPolicy';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -72,12 +76,12 @@ const validationSchema = Yup.object().shape({
         middleName: Yup.string(),
         lastName: Yup.string(),
         username: Yup.string(),
-        password: Yup.string().matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$/, "password must match pattern Your account password"),
+        password: buildPasswordValidation(),
         federalIdentification: Yup.string().matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
         residenceCountry: Yup.string(),
-        stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
+        stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver&#39;s License or a 10 digit state government ID"),
         residenceState: Yup.string(),
-        email: Yup.string().email("Invalid email").matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
+        email: Yup.string().email("Invalid email").matches(/^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
         phone: Yup.string().matches(/^\\+?[1-9]\\d{1,14}$/, "phone must match pattern The main phone number"),
         social: Yup.string(),
         bio: Yup.string(),
@@ -379,6 +383,9 @@ const PrincipalForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+                          <div className="form-text signup-password-policy">
+                            {PASSWORD_POLICY_DESCRIPTION}
+                          </div>
 
 
 
@@ -1203,4 +1210,3 @@ const PrincipalForm: React.FC = () => {
 
 /* Export the generated form */
 export default PrincipalForm;
-

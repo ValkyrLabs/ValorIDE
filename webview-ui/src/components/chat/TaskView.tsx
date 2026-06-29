@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { VscChevronDown } from "react-icons/vsc";
-import { FaTimes } from "react-icons/fa";
+import { FaTerminal, FaStopCircle } from "react-icons/fa";
 import debounce from "debounce";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import styled from "styled-components";
@@ -18,6 +18,7 @@ import {
 import { combineApiRequests } from "@shared/combineApiRequests";
 import {
   COMMAND_OUTPUT_STRING,
+  COMMAND_REQ_APP_STRING,
   combineCommandSequences,
 } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
@@ -29,6 +30,7 @@ import BrowserSessionRow from "@thorapi/components/chat/BrowserSessionRow";
 import ChatRow from "@thorapi/components/chat/ChatRow";
 import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 import ErrorBoundary from "@thorapi/components/common/ErrorBoundary";
+import { getVisibleTaskMessages } from "@thorapi/components/chat/taskMessageVisibility";
 
 const ScrollToBottomButton = styled.div`
   background-color: color-mix(
@@ -64,6 +66,8 @@ const ScrollToBottomButton = styled.div`
 
 const ActionButtonsContainer = styled.div`
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 15px;
   border-top: 1px solid var(--vscode-editorGroup-border);
@@ -72,6 +76,31 @@ const ActionButtonsContainer = styled.div`
   z-index: 1;
   flex-shrink: 0;
 `;
+
+const CommandApprovalPrompt = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 260px;
+  color: var(--vscode-foreground);
+  font-size: 12px;
+`;
+
+const CommandApprovalText = styled.code`
+  color: var(--vscode-descriptionForeground);
+  background: var(--vscode-textCodeBlock-background);
+  border: 1px solid var(--vscode-editorGroup-border);
+  border-radius: 4px;
+  padding: 3px 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const normalizeCommandApprovalText = (text?: string) =>
+  (text ?? "").replace(new RegExp(`${COMMAND_REQ_APP_STRING}$`), "").trim();
 
 interface TaskViewProps {
   task: ValorIDEMessage;
@@ -119,6 +148,13 @@ const TaskView: React.FC<TaskViewProps> = ({
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [showWorkingPopup, setShowWorkingPopup] = useState(false);
+  const [displayedProgress, setDisplayedProgress] = useState({
+    phase: "PLAN" as TaskPhase,
+    ratio: 0,
+    confidence: "normal" as ReturnType<typeof deriveTaskProgress>["confidence"],
+    anchors: {} as Partial<Record<TaskPhase, number>>,
+  });
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const disableAutoScrollRef = useRef(false);
@@ -136,42 +172,10 @@ const TaskView: React.FC<TaskViewProps> = ({
     [apiConfiguration],
   );
 
-  const visibleMessages = useMemo(() => {
-    return modifiedMessages.filter((message) => {
-      switch (message.ask) {
-        case "completion_result":
-          if (
-            message.text === "" &&
-            !message.summaryMarkdown &&
-            !message.changesSummary
-          ) {
-            return false;
-          }
-          break;
-        case "api_req_failed":
-        case "resume_task":
-        case "resume_completed_task":
-          return false;
-      }
-      switch (message.say) {
-        case "api_req_finished":
-        case "api_req_retried":
-        case "deleted_api_reqs":
-          return false;
-        case "text":
-          if (
-            (message.text ?? "") === "" &&
-            (message.images?.length ?? 0) === 0
-          ) {
-            return false;
-          }
-          break;
-        case "mcp_server_request_started":
-          return false;
-      }
-      return true;
-    });
-  }, [modifiedMessages]);
+  const visibleMessages = useMemo(
+    () => getVisibleTaskMessages(modifiedMessages),
+    [modifiedMessages],
+  );
 
   const groupedMessages = useMemo(() => {
     const result: (ValorIDEMessage | ValorIDEMessage[])[] = [];
@@ -260,6 +264,52 @@ const TaskView: React.FC<TaskViewProps> = ({
     confidence: taskPhaseConfidence,
     anchors: taskPhaseAnchors,
   } = useMemo(() => deriveTaskProgress(messages), [messages]);
+
+  useEffect(() => {
+    const nextProgress = {
+      phase: taskPhase,
+      ratio: taskPhaseRatio,
+      confidence: taskPhaseConfidence,
+      anchors: taskPhaseAnchors,
+    };
+
+    if (taskPhase === "DONE") {
+      setDisplayedProgress(nextProgress);
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setDisplayedProgress(nextProgress);
+    }, 180);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [taskPhase, taskPhaseRatio, taskPhaseConfidence, taskPhaseAnchors]);
+
+  const latestCommandApprovalText = useMemo(() => {
+    if (valorideAsk !== "command") {
+      return "";
+    }
+
+    const commandAsk = [...messages]
+      .reverse()
+      .find((message) => message.ask === "command");
+    return normalizeCommandApprovalText(commandAsk?.text);
+  }, [messages, valorideAsk]);
+
+  useEffect(() => {
+    const shouldShow =
+      isChatLoading &&
+      taskPhase !== "DONE" &&
+      !enableButtons &&
+      valorideAsk == null;
+
+    const timeoutId = window.setTimeout(
+      () => setShowWorkingPopup(shouldShow),
+      shouldShow ? 350 : 180,
+    );
+
+    return () => window.clearTimeout(timeoutId);
+  }, [enableButtons, isChatLoading, taskPhase, valorideAsk]);
 
   const scrollToPhase = useCallback(
     (phase: TaskPhase) => {
@@ -476,10 +526,10 @@ const TaskView: React.FC<TaskViewProps> = ({
         cacheReads={apiMetrics.totalCacheReads}
         totalCost={apiMetrics.totalCost}
         lastApiReqTotalTokens={lastApiReqTotalTokens}
-        phase={taskPhase}
-        phaseRatio={taskPhaseRatio}
-        phaseAnchors={taskPhaseAnchors}
-        phaseConfidence={taskPhaseConfidence}
+        phase={displayedProgress.phase}
+        phaseRatio={displayedProgress.ratio}
+        phaseAnchors={displayedProgress.anchors}
+        phaseConfidence={displayedProgress.confidence}
         onPhaseSelect={scrollToPhase}
         onClose={onTaskClose}
       />
@@ -514,7 +564,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           }}
           atBottomThreshold={10}
         />
-        {isChatLoading && taskPhase !== "DONE" && (
+        {showWorkingPopup && (
           <div
             style={{
               position: "absolute",
@@ -546,6 +596,17 @@ const TaskView: React.FC<TaskViewProps> = ({
       </div>
 
       <ActionButtonsContainer>
+        {enableButtons &&
+          valorideAsk === "command" &&
+          latestCommandApprovalText && (
+            <CommandApprovalPrompt>
+              <FaTerminal aria-hidden="true" />
+              <span>Approve command</span>
+              <CommandApprovalText title={latestCommandApprovalText}>
+                {latestCommandApprovalText}
+              </CommandApprovalText>
+            </CommandApprovalPrompt>
+          )}
         {enableButtons && secondaryButtonText && (
           <VSCodeButton appearance="secondary" onClick={onSecondaryButton}>
             {secondaryButtonText}
@@ -556,9 +617,14 @@ const TaskView: React.FC<TaskViewProps> = ({
             {primaryButtonText}
           </VSCodeButton>
         )}
-        {valorideAsk && (
-          <VSCodeButton appearance="icon" onClick={onCancel}>
-            <FaTimes />
+        {valorideAsk && valorideAsk !== "completion_result" && (
+          <VSCodeButton
+            appearance="secondary"
+            title="End this task"
+            onClick={onCancel}
+          >
+            <FaStopCircle />
+            End Task
           </VSCodeButton>
         )}
       </ActionButtonsContainer>

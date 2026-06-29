@@ -23,6 +23,10 @@ import {
   storeJwtToken,
   writeStoredPrincipal,
 } from "@thorapi/utils/accessControl";
+import {
+  PASSWORD_POLICY_DESCRIPTION,
+  buildPasswordValidation,
+} from "../../utils/passwordPolicy";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -43,13 +47,7 @@ const validationSchema = Yup.object().shape({
   acceptedTos: Yup.boolean()
     .required("The terms of service must be accepted to continue.")
     .oneOf([true], "The terms of service must be accepted to continue."),
-  password: Yup.string()
-    .matches(
-      /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/,
-      "Password must contain a lowercase character, an uppercase character, and a number",
-    )
-    .required()
-    .min(8, "Password must be at least 8 characters"),
+  password: buildPasswordValidation(),
 });
 
 const Form: React.FC = () => {
@@ -321,6 +319,9 @@ const Form: React.FC = () => {
                             : "form-control"
                         }
                       />
+                      <div className="form-text signup-password-policy">
+                        {PASSWORD_POLICY_DESCRIPTION}
+                      </div>
                       <ErrorMessage
                         className="error"
                         name="password"

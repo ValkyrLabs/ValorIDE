@@ -1,10 +1,14 @@
 import React from "react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import ApplicationsList, { getApplicationOpenUrl } from "./ApplicationsList";
+import ApplicationsList, {
+  getApplicationDeployUrl,
+  getApplicationOpenUrl,
+} from "./ApplicationsList";
 
 const mockRefetch = vi.fn();
 const mockUseGetApplicationsQuery = vi.fn();
+const mockPostMessage = vi.fn();
 
 vi.mock("../../redux/services/ApplicationService", () => ({
   useGetApplicationsQuery: (...args: any[]) =>
@@ -22,13 +26,14 @@ vi.mock("../../context/ExtensionStateContext", () => ({
 }));
 
 vi.mock("../../utils/vscode", () => ({
-  vscode: { postMessage: vi.fn() },
+  vscode: { postMessage: (...args: unknown[]) => mockPostMessage(...args) },
 }));
 
 describe("ApplicationsList", () => {
   beforeEach(() => {
     mockRefetch.mockReset();
     mockUseGetApplicationsQuery.mockReset();
+    mockPostMessage.mockReset();
     vi.unstubAllEnvs();
   });
 
@@ -67,12 +72,49 @@ describe("ApplicationsList", () => {
     );
   });
 
-  it("prefers API-provided application entrypoint URLs", () => {
+  it("always opens hosted application detail URLs instead of API entrypoints", () => {
     expect(
       getApplicationOpenUrl({
         id: "app-1",
         entrypointUrl: "https://api-0.valkyrlabs.com/v1/apps/app-1",
       } as any),
-    ).toBe("https://api-0.valkyrlabs.com/v1/apps/app-1");
+    ).toBe("https://valkyrlabs.com/application-detail/app-1");
+  });
+
+  it("builds hosted deploy URLs", () => {
+    expect(getApplicationDeployUrl("app-1")).toBe(
+      "https://valkyrlabs.com/deploy/app-1",
+    );
+  });
+
+  it("routes open and deploy actions through the editor browser", () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          name: "Sample App",
+          description: "Demo app",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    fireEvent.click(screen.getByRole("button", { name: "Deploy" }));
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "openInBrowser",
+      url: "https://valkyrlabs.com/application-detail/app-1",
+    });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "openInBrowser",
+      url: "https://valkyrlabs.com/deploy/app-1",
+    });
   });
 });

@@ -319,6 +319,7 @@ export class CommandToolHandler extends BaseToolHandler {
 
     let userFeedback: { text?: string; images?: string[] } | undefined;
     let didContinue = false;
+    let didEmitCommandOutputToChat = false;
 
     // Chunked terminal output buffering
     const CHUNK_LINE_COUNT = 20;
@@ -343,6 +344,7 @@ export class CommandToolHandler extends BaseToolHandler {
       outputBufferSize = 0;
       chunkEnroute = true;
       try {
+        didEmitCommandOutputToChat = true;
         const askPromise = this.context.ask("command_output", chunk);
         const { response, text, images } = await awaitAskWithTimeout(
           askPromise,
@@ -393,6 +395,7 @@ export class CommandToolHandler extends BaseToolHandler {
           scheduleFlush();
         }
       } else {
+        didEmitCommandOutputToChat = true;
         this.context.say("command_output", line);
       }
     });
@@ -426,6 +429,10 @@ export class CommandToolHandler extends BaseToolHandler {
     );
 
     result = result.trim();
+
+    if (filteredOutput.length > 0 && !didEmitCommandOutputToChat) {
+      await this.context.say("command_output", filteredOutput);
+    }
 
     if (userFeedback) {
       return [

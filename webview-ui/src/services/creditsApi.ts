@@ -95,7 +95,9 @@ const firstArray = (source: Record<string, any>, ...keys: string[]): any[] => {
   return [];
 };
 
-const normalizeUsageRows = (source: Record<string, any>): UsageTransaction[] => {
+const normalizeUsageRows = (
+  source: Record<string, any>,
+): UsageTransaction[] => {
   const directRows = firstArray(
     source,
     "usageTransactions",
@@ -237,6 +239,11 @@ export const getAccountBalancePath = (accountId: string): string =>
     ? "credits/me/balance"
     : `credits/${encodeURIComponent(accountId)}/balance`;
 
+export const getAccountBalanceSummaryPath = (accountId: string): string =>
+  accountId === "me"
+    ? "credits/me/balance/summary"
+    : `credits/${encodeURIComponent(accountId)}/balance/summary`;
+
 export const resolvePrimaryBalanceAccountId = (
   accountId: string,
   summaryAccountId?: string,
@@ -276,7 +283,8 @@ export const chooseBestBalance = (
     .filter((candidate): candidate is AccountBalance => Boolean(candidate))
     .sort((a, b) => {
       const score = (candidate: AccountBalance) =>
-        getLedgerRowCount(candidate) * 10 + (candidate.currentBalance !== 0 ? 1 : 0);
+        getLedgerRowCount(candidate) * 10 +
+        (candidate.currentBalance !== 0 ? 1 : 0);
 
       return score(b) - score(a);
     })[0];
@@ -304,6 +312,38 @@ export const mergeAccountBalance = (
       ? balance.currentBalance
       : summaryBalance.currentBalance,
   };
+};
+
+export const selectSyncedAccountBalance = ({
+  authoritativeCandidates,
+  fallbackCandidates,
+  summaryBalance,
+}: {
+  authoritativeCandidates: AccountBalance[];
+  fallbackCandidates: AccountBalance[];
+  summaryBalance?: AccountBalance;
+}): AccountBalance | undefined => {
+  const authoritativeBalance = chooseBestBalance(authoritativeCandidates);
+  if (summaryBalance) {
+    return {
+      ...(authoritativeBalance || summaryBalance),
+      customerId: authoritativeBalance?.customerId || summaryBalance.customerId,
+      currentBalance: summaryBalance.currentBalance,
+      payments: authoritativeBalance?.payments || summaryBalance.payments,
+      paymentTransactions:
+        authoritativeBalance?.paymentTransactions ||
+        summaryBalance.paymentTransactions,
+      usageTransactions:
+        authoritativeBalance?.usageTransactions ||
+        summaryBalance.usageTransactions,
+    };
+  }
+
+  if (authoritativeBalance) {
+    return authoritativeBalance;
+  }
+
+  return chooseBestBalance(fallbackCandidates);
 };
 
 // Balance response for mutations
@@ -356,10 +396,9 @@ export const creditsApi = createApi({
           return getQueryData(result);
         };
 
-        const summaryPayloads = await Promise.all([
-          requestBalance("credits/me/balance/summary"),
-          requestBalance("CreditBalanceSummary"),
-        ]);
+        const summaryPayloads = [
+          await requestBalance(getAccountBalanceSummaryPath(accountId)),
+        ];
         const summaryBalances = summaryPayloads.flatMap((payload) =>
           Array.isArray((payload as any)?.data) ||
           Array.isArray(payload) ||
@@ -380,13 +419,22 @@ export const creditsApi = createApi({
           primaryAccountId,
           summaryAccountId,
         );
-        const balancePayloads: unknown[] = [];
+        const authoritativeBalancePayloads: unknown[] = [];
+        const fallbackBalancePayloads: unknown[] = [];
 
         for (const id of candidateIds) {
           const encoded = encodeURIComponent(id);
+          const authoritativePayload = await requestBalance(
+            getAccountBalancePath(id),
+          );
+          if (authoritativePayload) {
+            authoritativeBalancePayloads.push(authoritativePayload);
+          }
+
           const payloads = await Promise.all([
-            requestBalance(getAccountBalancePath(id)),
-            id === "me" ? undefined : requestBalance(`AccountBalance/${encoded}`),
+            id === "me"
+              ? undefined
+              : requestBalance(`AccountBalance/${encoded}`),
             id === "me"
               ? undefined
               : requestBalance(
@@ -398,14 +446,25 @@ export const creditsApi = createApi({
                   `CreditBalanceSummary?${exampleQuery({ customerId: id })}`,
                 ),
           ]);
-          balancePayloads.push(...payloads.filter(Boolean));
+          fallbackBalancePayloads.push(...payloads.filter(Boolean));
         }
 
-        balancePayloads.push(
+        fallbackBalancePayloads.push(
           await requestBalance("AccountBalance"),
           await requestBalance("CreditBalanceSummary"),
         );
-        const balanceCandidates = balancePayloads.flatMap((payload) =>
+        const authoritativeCandidates = authoritativeBalancePayloads.flatMap(
+          (payload) =>
+            Array.isArray((payload as any)?.data) ||
+            Array.isArray(payload) ||
+            Array.isArray((payload as any)?.content) ||
+            Array.isArray((payload as any)?.items)
+              ? normalizeBalanceList(payload)
+              : payload !== undefined
+                ? [normalizeAccountBalance(payload)]
+                : [],
+        );
+        const fallbackCandidates = fallbackBalancePayloads.flatMap((payload) =>
           Array.isArray((payload as any)?.data) ||
           Array.isArray(payload) ||
           Array.isArray((payload as any)?.content) ||
@@ -415,15 +474,11 @@ export const creditsApi = createApi({
               ? [normalizeAccountBalance(payload)]
               : [],
         );
-        const selectedBalance = chooseBestBalance([
-          ...balanceCandidates,
+        const balance = selectSyncedAccountBalance({
+          authoritativeCandidates,
+          fallbackCandidates,
           summaryBalance,
-        ]);
-
-        const balance = mergeAccountBalance(
-          summaryBalance,
-          selectedBalance,
-        );
+        });
 
         if (!balance && blockingError) {
           return { error: blockingError as any };

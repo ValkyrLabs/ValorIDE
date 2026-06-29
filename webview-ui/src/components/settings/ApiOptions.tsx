@@ -153,6 +153,10 @@ const ApiOptions = ({
   const [reasoningEffortSelected, setReasoningEffortSelected] = useState(
     !!apiConfiguration?.reasoningEffort,
   );
+  const [openAiOAuthStatus, setOpenAiOAuthStatus] = useState<{
+    kind: "error" | "idle" | "pending" | "success";
+    message?: string;
+  }>({ kind: "idle" });
 
   const handleInputChange = (field: keyof ApiConfiguration) => (event: any) => {
     const newValue = event.target.value;
@@ -228,6 +232,15 @@ const ApiOptions = ({
       setLmStudioModels(message.lmStudioModels);
     } else if (message.type === "vsCodeLmModels" && message.vsCodeLmModels) {
       setVsCodeLmModels(message.vsCodeLmModels);
+    } else if (message.type === "openAiNativeOAuthResult") {
+      const payload = message.payload ?? {};
+      const success = payload.success === true;
+      setOpenAiOAuthStatus({
+        kind: success ? "success" : "error",
+        message: success
+          ? `Connected${payload.accountId ? ` account ${payload.accountId}` : ""}. OAuth credentials saved.`
+          : String(payload.error || "OpenAI OAuth failed."),
+      });
     }
   }, []);
   useEvent("message", handleMessage);
@@ -438,7 +451,7 @@ const ApiOptions = ({
       )}
 
       {selectedProvider === "openai-native" && (
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <VSCodeTextField
             value={apiConfiguration?.openAiNativeApiKey || ""}
             style={{ width: "100%" }}
@@ -448,17 +461,66 @@ const ApiOptions = ({
           >
             <span style={{ fontWeight: 500 }}>OpenAI API Key (Optional)</span>
           </VSCodeTextField>
+          <div
+            style={{
+              border: "1px solid var(--vscode-panel-border)",
+              borderRadius: 6,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              padding: 10,
+            }}
+          >
+            <div
+              style={{
+                alignItems: "center",
+                display: "flex",
+                gap: 8,
+                justifyContent: "space-between",
+              }}
+            >
+              <span style={{ fontWeight: 600 }}>ChatGPT OAuth</span>
+              <VSCodeButton
+                disabled={openAiOAuthStatus.kind === "pending"}
+                onClick={() => {
+                  setOpenAiOAuthStatus({
+                    kind: "pending",
+                    message: "Opening OpenAI sign-in in the editor...",
+                  });
+                  vscode.postMessage({ type: "openAiNativeOAuthLogin" });
+                }}
+              >
+                {openAiOAuthStatus.kind === "pending"
+                  ? "Connecting..."
+                  : "Connect OpenAI"}
+              </VSCodeButton>
+            </div>
+            <p
+              style={{
+                color:
+                  openAiOAuthStatus.kind === "error"
+                    ? "var(--vscode-editorError-foreground)"
+                    : openAiOAuthStatus.kind === "success"
+                      ? "var(--vscode-charts-green)"
+                      : "var(--vscode-descriptionForeground)",
+                fontSize: "12px",
+                margin: 0,
+              }}
+            >
+              {openAiOAuthStatus.message ||
+                "Use your ChatGPT/OpenAI OAuth session without adding an API key. ValorIDE stores the token in ~/.codex/auth.json and refreshes it automatically."}
+            </p>
+          </div>
           <p
             style={{
               fontSize: "12px",
-              marginTop: 3,
+              marginTop: 0,
               color: "var(--vscode-descriptionForeground)",
             }}
           >
-            If this field is blank, ValorIDE uses Codex OAuth credentials from{" "}
-            <code>~/.codex/auth.json</code>. Run <code>codex login</code> to set
-            that up. Any API key entered here is stored locally and only used to
-            make API requests from this extension.{" "}
+            If this field is blank, ValorIDE uses OAuth credentials from{" "}
+            <code>~/.codex/auth.json</code>. Any API key entered here overrides
+            OAuth and is stored locally for requests from this extension.{" "}
             {!apiConfiguration?.openAiNativeApiKey && (
               <VSCodeLink
                 href="https://platform.openai.com/api-keys"

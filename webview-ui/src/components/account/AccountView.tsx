@@ -15,7 +15,6 @@ import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
-import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
 import LoginForm from "../Login/form";
@@ -58,6 +57,7 @@ import { useCommunicationService } from "@thorapi/context/CommunicationServiceCo
 import UserPreferences from "./UserPreferences";
 // import BuyCredits from "@thorapi/components/BuyCredits";
 import {
+  clearStoredAuthSession,
   storeJwtToken,
   useAccessControl,
   writeStoredPrincipal,
@@ -131,7 +131,7 @@ const firstNonEmptyString = (...values: unknown[]): string | undefined => {
 };
 
 const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
-  const explicitAccountId = firstNonEmptyString(
+  return firstNonEmptyString(
     principal?.customerId,
     principal?.creditAccountId,
     principal?.billingAccountId,
@@ -139,20 +139,6 @@ const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
     principal?.customer?.id,
     principal?.account?.id,
   );
-  if (explicitAccountId) {
-    return explicitAccountId;
-  }
-
-  const fallbackId = firstNonEmptyString(
-    principal?.id,
-    principal?.principalId,
-    principal?.ownerId,
-  );
-  const username = firstNonEmptyString(principal?.username);
-  const email = firstNonEmptyString(principal?.email);
-  return fallbackId && fallbackId !== username && fallbackId !== email
-    ? fallbackId
-    : undefined;
 };
 
 const hasUnmeteredAccountAccess = (
@@ -191,14 +177,6 @@ const AccountView = ({
     advancedSettings,
     agenticState,
   } = useExtensionState();
-  // Read live messages once at top-level to respect Hooks rules
-  const { valorideMessages } = useExtensionState();
-  // Compute API metrics from messages once using useMemo
-  const apiMetrics = useMemo(
-    () => getApiMetrics(valorideMessages || []),
-    [valorideMessages],
-  );
-
   // Local immediate login flag to reveal tabs before context updates
   const [didLogin, setDidLogin] = useState(false);
 
@@ -326,8 +304,8 @@ const AccountView = ({
   const effectiveBalance = useMemo(() => {
     const rawBalance =
       firstFiniteNumber(creditBalanceData?.currentBalance) ?? 0;
-    return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
-  }, [apiMetrics.totalCost, creditBalanceData?.currentBalance]);
+    return Math.max(0, rawBalance);
+  }, [creditBalanceData?.currentBalance]);
   const criticalBalanceThreshold =
     advancedSettings?.budgetAlerts?.criticalThreshold;
   const shouldShowBuyCredits =
@@ -417,8 +395,10 @@ const AccountView = ({
   };
 
   const handleLogout = () => {
+    clearStoredAuthSession("account-logout");
     vscode.postMessage({ type: "accountLogoutClicked" });
     setDidLogin(false);
+    setActiveTab("login");
   };
 
   const handleFileSelect = useCallback((filePath: string) => {
@@ -703,7 +683,7 @@ const AccountView = ({
           )}
         </div>
       ) : activeTab === "applications" ? (
-        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+        <div className="account-applications-panel h-full flex flex-col pr-3 overflow-hidden">
           {loading && (
             <div
               style={{
@@ -716,14 +696,14 @@ const AccountView = ({
               <LoadingSpinner label="Loading applications..." size={32} />
             </div>
           )}
-          <div style={{ marginBottom: "1em" }}>
+          <div className="account-applications-content">
             <OpenAPIFilePicker
               onFileSelected={handleOpenAPIFileSelected}
               onOpenEditor={() =>
                 vscode.postMessage({ type: "openOpenAPIEditor" })
               }
             />
-            <ApplicationsList showTitle={true} title="Available Applications" />
+            <ApplicationsList showTitle={true} title="Applications" />
           </div>
         </div>
       ) : activeTab === "appGeneration" ? (
@@ -836,7 +816,9 @@ const AccountView = ({
                 </VSCodeButtonLink>
               </div>
               <VSCodeButton
+                aria-label="Log out"
                 appearance="secondary"
+                title="Log out"
                 onClick={handleLogout}
                 className="w-full min-[225px]:w-1/2"
               >
@@ -856,9 +838,7 @@ const AccountView = ({
                   <>
                     <FaCreditCard aria-hidden="true" />
                     {creditBalanceError ? (
-                      <span style={{ fontSize: "0.45em" }}>
-                        Unable to load
-                      </span>
+                      <span style={{ fontSize: "0.45em" }}>Unable to load</span>
                     ) : hasUnmeteredAccess ? (
                       <span data-testid="unmetered-balance">Unlimited</span>
                     ) : (
@@ -932,6 +912,12 @@ const AccountView = ({
                   <VSCodeButton
                     appearance="primary"
                     className="w-full mt-2"
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#0f5132",
+                      borderColor: "#198754",
+                      color: "#fff",
+                    }}
                     onClick={() => {
                       vscode.postMessage({
                         type: "openInBrowser",

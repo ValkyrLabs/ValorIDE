@@ -176,12 +176,30 @@ export class OllamaHandler implements ApiHandler {
         ollamaMessages,
         ollamaOptions,
         timeout,
+        true,
       );
       yield* streamOllamaChatResponse(stream, {
         modelId,
         contextWindow: this.getModel().info.contextWindow,
       });
     } catch (error: any) {
+      if (this.isThinkingUnsupportedError(error)) {
+        console.warn(
+          `[Ollama] Model ${modelId} does not support native thinking; retrying without think=true`,
+        );
+        const stream = await this.createStreamWithTimeout(
+          modelId,
+          ollamaMessages,
+          ollamaOptions,
+          timeout,
+        );
+        yield* streamOllamaChatResponse(stream, {
+          modelId,
+          contextWindow: this.getModel().info.contextWindow,
+        });
+        return;
+      }
+
       throw this.enhanceFinalError(error, modelId);
     }
   }
@@ -191,6 +209,7 @@ export class OllamaHandler implements ApiHandler {
     ollamaMessages: Message[],
     ollamaOptions: Record<string, any>,
     timeout: number,
+    think?: boolean | "high" | "medium" | "low",
   ): Promise<AsyncIterable<any>> {
     // Initialize the stream directly without timeout race condition on initial request
     // This prevents timing out during stream setup
@@ -207,6 +226,7 @@ export class OllamaHandler implements ApiHandler {
           stream: true,
           options: ollamaOptions,
           keep_alive: this.options.ollamaKeepAlive || "30m",
+          ...(think ? { think } : {}),
         }),
         new Promise<never>((_, reject) => {
           timeoutHandle = setTimeout(
@@ -232,6 +252,14 @@ export class OllamaHandler implements ApiHandler {
       );
       throw this.enhanceOllamaError(error, modelId);
     }
+  }
+
+  private isThinkingUnsupportedError(error: unknown): boolean {
+    const message = error instanceof Error ? error.message : String(error);
+    return (
+      /\bthink(?:ing)?\b/i.test(message) &&
+      /support|unknown|invalid/i.test(message)
+    );
   }
 
   /**

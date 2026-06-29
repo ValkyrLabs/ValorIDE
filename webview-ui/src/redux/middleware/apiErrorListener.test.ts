@@ -171,6 +171,32 @@ describe("apiErrorListener", () => {
     expect(state.showAccountBalance).toBe(false);
   });
 
+  it("keeps receipt lookup misses inline instead of showing global API errors", async () => {
+    const store = makeStore();
+    sessionStorage.setItem("jwtToken", "valid");
+
+    store.dispatch({
+      type: "fake/rejected",
+      payload: {
+        status: 404,
+        data: { message: "SkillOpt route receipt not found for account" },
+      },
+      meta: {
+        arg: { endpointName: "getSkilloptRouteReceipt" },
+        requestId: "r2c",
+        rejectedWithValue: true,
+        requestStatus: "rejected",
+      },
+      error: { message: "Rejected" },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const state = store.getState().apiErrors;
+    expect(state.lastError).toBeNull();
+    expect(state.showAccountBalance).toBe(false);
+  });
+
   it("clears stale auth when api-0 reports an expired or replaced session", async () => {
     const store = makeStore();
     sessionStorage.setItem("jwtToken", "stale");

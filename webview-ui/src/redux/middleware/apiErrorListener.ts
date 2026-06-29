@@ -154,6 +154,25 @@ const isNonBlockingMeteringPermissionError = (
   );
 };
 
+const RECEIPT_LOOKUP_ENDPOINTS = new Set([
+  "getAppGenerationTrace",
+  "getCreditDebitReceiptByReceiptRef",
+  "getSkilloptRouteReceipt",
+]);
+
+const isReceiptLookupMiss = (
+  status: number,
+  data: any,
+  endpointName?: string,
+): boolean => {
+  if (!endpointName || !RECEIPT_LOOKUP_ENDPOINTS.has(endpointName)) {
+    return false;
+  }
+  if (status === 404) return true;
+  const message = buildMessage(status, data).toLowerCase();
+  return message.includes("receipt") && message.includes("not found");
+};
+
 export const apiErrorListener = createListenerMiddleware();
 
 apiErrorListener.startListening({
@@ -186,6 +205,10 @@ apiErrorListener.startListening({
     }
 
     if (isNonBlockingMeteringPermissionError(status, data, endpointName)) {
+      return;
+    }
+
+    if (isReceiptLookupMiss(status, data, endpointName)) {
       return;
     }
 

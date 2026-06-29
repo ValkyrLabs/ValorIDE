@@ -112,8 +112,21 @@ export class GrayMatterClient {
   async loadDiscovery(): Promise<GrayMatterDiscovery> {
     try {
       const controlSurface = await this.loadControlSurface();
+      let capabilities = capabilitiesFromControlSurface(controlSurface);
+      if (isMissingCriticalMemoryCapability(capabilities)) {
+        try {
+          capabilities = mergeCapabilities(
+            capabilities,
+            await this.loadCapabilitiesFromOpenApi(),
+          );
+        } catch (error) {
+          console.warn(
+            `[GrayMatterClient] OpenAPI capability merge failed: ${String(error)}`,
+          );
+        }
+      }
       return {
-        capabilities: capabilitiesFromControlSurface(controlSurface),
+        capabilities,
         controlSurface,
       };
     } catch (error) {
@@ -467,6 +480,31 @@ const capabilitiesFromControlSurface = (
     ),
   };
 };
+
+const isMissingCriticalMemoryCapability = (
+  capabilities: GrayMatterCapabilities,
+) =>
+  !capabilities.grayMatter ||
+  !capabilities.memoryEntry ||
+  !capabilities.memoryQuery ||
+  !capabilities.memoryRead ||
+  !capabilities.memoryWrite;
+
+const mergeCapabilities = (
+  primary: GrayMatterCapabilities,
+  fallback: GrayMatterCapabilities,
+): GrayMatterCapabilities => ({
+  agent: primary.agent || fallback.agent,
+  grayMatter: primary.grayMatter || fallback.grayMatter,
+  memoryEntry: primary.memoryEntry || fallback.memoryEntry,
+  memoryQuery: primary.memoryQuery || fallback.memoryQuery,
+  memoryRead: primary.memoryRead || fallback.memoryRead,
+  memoryWrite: primary.memoryWrite || fallback.memoryWrite,
+  project: primary.project || fallback.project,
+  projectObjectLink: primary.projectObjectLink || fallback.projectObjectLink,
+  swarmGraph: primary.swarmGraph || fallback.swarmGraph,
+  swarmOps: primary.swarmOps || fallback.swarmOps,
+});
 
 const normalizeOpenApiPath = (value: string) => {
   const withoutQuery = value.split("?")[0] || "";

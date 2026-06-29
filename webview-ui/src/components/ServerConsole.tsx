@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { VSCodeButton, VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
@@ -25,15 +25,17 @@ const ServerConsole: React.FC = () => {
   const [logs, setLogs] = useState<string[]>([]);
   const [testMessage, setTestMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+  const lastAuthLogRef = useRef<string | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const addLog = (message: string) => {
+  const addLog = useCallback((message: string) => {
     const timestamp = new Date().toISOString();
     setLogs((prev) => [...prev.slice(-49), `[${timestamp}] ${message}`]);
-  };
+  }, []);
 
   useEffect(() => {
     const handleTelecomStatus = (event: CustomEvent) => {
@@ -56,21 +58,10 @@ const ServerConsole: React.FC = () => {
       handleWebsocketMessage as EventListener,
     );
 
-    // Check current authentication status using cookie session
-    if (jwtToken && authenticatedUser) {
-      addLog(
-        `Authenticated as ${authenticatedUser.username || authenticatedUser.email} - cookie session active`,
-      );
-    } else if (jwtToken) {
-      addLog("JWT token available - cookie session should be active");
-    } else {
-      addLog(
-        "WARNING: No active authentication session - connection will fail",
-      );
+    if (!initializedRef.current) {
+      addLog("ServerConsole initialized");
+      initializedRef.current = true;
     }
-
-    // Add initial log
-    addLog("ServerConsole initialized");
 
     return () => {
       window.removeEventListener(
@@ -82,7 +73,38 @@ const ServerConsole: React.FC = () => {
         handleWebsocketMessage as EventListener,
       );
     };
-  }, [jwtToken, authenticatedUser]);
+  }, [addLog]);
+
+  useEffect(() => {
+    const userKey =
+      authenticatedUser?.username ||
+      authenticatedUser?.email ||
+      authenticatedUser?.id ||
+      "";
+    const authKey = jwtToken ? `token:${userKey || "available"}` : "none";
+    if (lastAuthLogRef.current === authKey) {
+      return;
+    }
+    lastAuthLogRef.current = authKey;
+
+    if (jwtToken && authenticatedUser) {
+      addLog(
+        `Authenticated as ${authenticatedUser.username || authenticatedUser.email || authenticatedUser.id} - cookie session active`,
+      );
+    } else if (jwtToken) {
+      addLog("JWT token available - cookie session should be active");
+    } else {
+      addLog(
+        "WARNING: No active authentication session - connection will fail",
+      );
+    }
+  }, [
+    addLog,
+    authenticatedUser?.email,
+    authenticatedUser?.id,
+    authenticatedUser?.username,
+    jwtToken,
+  ]);
 
   useEffect(() => {
     scrollToBottom();

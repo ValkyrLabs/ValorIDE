@@ -47,6 +47,7 @@ import {
   FaCarCrash,
   FaMagic,
   FaFileUpload,
+  FaBolt,
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
 import type {
@@ -94,6 +95,7 @@ import NewTaskPreview from "./NewTaskPreview";
 import McpResourceRow from "@thorapi/components/mcp/configuration/tabs/installed/server-row/McpResourceRow";
 import UserMessage from "./UserMessage";
 import { type TaskConfidence } from "@thorapi/utils/taskPhase";
+import { hasRenderableFollowupContent } from "@thorapi/components/chat/taskMessageVisibility";
 
 const statusColorMap: Record<ValorIDEFileChangeStatus, string> = {
   added: "var(--vscode-charts-green)",
@@ -692,7 +694,8 @@ const buildCompletionFallbackMarkdown = (
   const keyFiles = files
     .slice(0, 5)
     .map(
-      (f) => `- \`${f.relativePath}\` (${(f.status ?? "modified").toUpperCase()})`,
+      (f) =>
+        `- \`${f.relativePath}\` (${(f.status ?? "modified").toUpperCase()})`,
     );
 
   if (changesSummary) {
@@ -711,7 +714,9 @@ const buildCompletionFallbackMarkdown = (
     "- **Status:** ✅ SHIPPED",
     "",
     "## 🔧 Implementation Details",
-    ...(keyFiles.length ? keyFiles : ["- No changed-file summary was attached."]),
+    ...(keyFiles.length
+      ? keyFiles
+      : ["- No changed-file summary was attached."]),
     "",
     "## ✅ Quality Gates",
     "- ⚠️ Tests passing: not reported in completion payload",
@@ -743,6 +748,273 @@ const isThinCompletionReport = (markdown?: string): boolean => {
     normalized.includes("## 🚀 Ship Status");
 
   return !hasReportSections && normalized.split(/\r?\n/).length <= 3;
+};
+
+const resolveCompletionReportMarkdown = (
+  markdown: string | undefined,
+  fallbackMarkdown: string | undefined,
+  text: string | undefined,
+): string | undefined => {
+  const fallback = fallbackMarkdown?.trim();
+  const body = markdown?.trim();
+  if (isThinCompletionReport(body) && fallback) {
+    return fallback;
+  }
+  return body || fallback || text?.trim() || undefined;
+};
+
+const renderCompletionInlineMarkdown = (text: string): React.ReactNode[] => {
+  const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return <code key={index}>{part.slice(1, -1)}</code>;
+    }
+    return <React.Fragment key={index}>{part}</React.Fragment>;
+  });
+};
+
+const parseCompletionTableRow = (line: string): string[] =>
+  line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
+
+const isCompletionTableDivider = (line: string): boolean =>
+  /^\|\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(line.trim());
+
+const CompletionReportBody = memo(({ markdown }: { markdown: string }) => {
+  const lines = markdown.split(/\r?\n/);
+  const elements: React.ReactNode[] = [];
+  let index = 0;
+
+  const pushParagraph = (paragraphLines: string[], key: string) => {
+    const paragraph = paragraphLines.join(" ").trim();
+    if (!paragraph) {
+      return;
+    }
+    elements.push(
+      <p key={key} style={{ margin: "4px 0", lineHeight: 1.35 }}>
+        {renderCompletionInlineMarkdown(paragraph)}
+      </p>,
+    );
+  };
+
+  while (index < lines.length) {
+    const rawLine = lines[index] ?? "";
+    const line = rawLine.trim();
+
+    if (!line) {
+      index++;
+      continue;
+    }
+
+    const headingMatch = /^(#{1,6})\s+(.+)$/.exec(line);
+    if (headingMatch) {
+      const level = headingMatch[1].length;
+      const content = headingMatch[2].trim();
+      const Tag = `h${Math.min(level, 3)}` as keyof JSX.IntrinsicElements;
+      elements.push(
+        <Tag
+          key={`heading-${index}`}
+          style={{
+            color: "var(--vscode-foreground)",
+            fontSize: level === 1 ? 16 : level === 2 ? 14 : 13,
+            fontWeight: 800,
+            lineHeight: 1.25,
+            margin: elements.length === 0 ? "0 0 8px" : "12px 0 6px",
+          }}
+        >
+          {renderCompletionInlineMarkdown(content)}
+        </Tag>,
+      );
+      index++;
+      continue;
+    }
+
+    if (line.startsWith("|") && lines[index + 1]?.trim().startsWith("|")) {
+      const tableLines: string[] = [];
+      while (index < lines.length && lines[index]?.trim().startsWith("|")) {
+        tableLines.push(lines[index].trim());
+        index++;
+      }
+      const [headerLine, ...bodyLines] = tableLines;
+      const headers = parseCompletionTableRow(headerLine);
+      const rows = bodyLines
+        .filter((tableLine) => !isCompletionTableDivider(tableLine))
+        .map(parseCompletionTableRow);
+      elements.push(
+        <div
+          key={`table-${index}`}
+          style={{
+            overflowX: "auto",
+            marginTop: 6,
+            marginBottom: 8,
+          }}
+        >
+          <table
+            style={{
+              borderCollapse: "collapse",
+              width: "100%",
+              color: "var(--vscode-foreground)",
+              fontSize: 12,
+            }}
+          >
+            <thead>
+              <tr>
+                {headers.map((header, headerIndex) => (
+                  <th
+                    key={`${header}-${headerIndex}`}
+                    style={{
+                      borderBottom:
+                        "1px solid var(--vscode-editorWidget-border, rgba(255,255,255,0.16))",
+                      padding: "5px 6px",
+                      textAlign: "left",
+                    }}
+                  >
+                    {renderCompletionInlineMarkdown(header)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <td
+                      key={`${rowIndex}-${cellIndex}`}
+                      style={{
+                        borderBottom:
+                          "1px solid var(--vscode-editorWidget-border, rgba(255,255,255,0.08))",
+                        padding: "5px 6px",
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {renderCompletionInlineMarkdown(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>,
+      );
+      continue;
+    }
+
+    if (/^[-*]\s+/.test(line)) {
+      const items: string[] = [];
+      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^[-*]\s+/, ""));
+        index++;
+      }
+      elements.push(
+        <ul
+          key={`list-${index}`}
+          style={{
+            margin: "4px 0 8px",
+            paddingLeft: 20,
+            color: "var(--vscode-foreground)",
+          }}
+        >
+          {items.map((item, itemIndex) => (
+            <li
+              key={itemIndex}
+              style={{
+                lineHeight: 1.35,
+                marginBottom: 3,
+              }}
+            >
+              {renderCompletionInlineMarkdown(item)}
+            </li>
+          ))}
+        </ul>,
+      );
+      continue;
+    }
+
+    const paragraphLines: string[] = [];
+    while (index < lines.length) {
+      const paragraphLine = lines[index]?.trim() ?? "";
+      if (
+        !paragraphLine ||
+        /^#{1,6}\s+/.test(paragraphLine) ||
+        /^[-*]\s+/.test(paragraphLine) ||
+        paragraphLine.startsWith("|")
+      ) {
+        break;
+      }
+      paragraphLines.push(paragraphLine);
+      index++;
+    }
+    pushParagraph(paragraphLines, `paragraph-${index}`);
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      {elements}
+    </div>
+  );
+});
+
+interface GrayMatterContextPayload {
+  citations?: number;
+  checkedAt?: string;
+  message?: string;
+  recovery?: {
+    actions?: Array<{ id?: string; label?: string; primary?: boolean }>;
+    message?: string;
+    reason?: string;
+  };
+  status?: string;
+}
+
+const getGrayMatterRecoveryActions = (
+  payload: GrayMatterContextPayload,
+): Array<{ id?: string; label?: string; primary?: boolean }> => {
+  const actions = payload.recovery?.actions ?? [];
+  if (actions.length > 0) {
+    return actions;
+  }
+
+  switch (payload.status) {
+    case "unauthenticated":
+      return [
+        {
+          id: "open_login",
+          label: "Sign in to ValkyrAI",
+          primary: true,
+        },
+      ];
+    case "quota":
+      return [
+        {
+          id: "buy_credits",
+          label: "Open account and credits",
+          primary: true,
+        },
+      ];
+    case "forbidden":
+      return [
+        {
+          id: "open_account",
+          label: "Open account",
+          primary: true,
+        },
+      ];
+    default:
+      return [];
+  }
 };
 
 export const CompletionSummaryCard = memo(
@@ -821,7 +1093,7 @@ export const CompletionSummaryCard = memo(
           </div>
         </div>
         <div style={{ marginTop: 4 }}>
-          <Markdown markdown={narrativeMarkdown} />
+          <CompletionReportBody markdown={narrativeMarkdown} />
         </div>
       </div>
     );
@@ -987,7 +1259,7 @@ export const ChatRowContent = ({
   const command = requestsApproval
     ? rawCommand.slice(0, -COMMAND_REQ_APP_STRING.length)
     : rawCommand;
-  const commandHeaderSuffix = !isOutputOnly && command ? ` ${command}` : "";
+  const commandHeaderSuffix = !isOutputOnly && command ? command : "";
   const apiRequestTimeoutMessage = apiRequestTimedOut
     ? "API request timed out waiting for usage details."
     : undefined;
@@ -1157,6 +1429,23 @@ export const ChatRowContent = ({
             Maximum Requests Reached
           </span>,
         ];
+      case "graymatter_context":
+        return [
+          <FaBolt
+            style={{
+              color: "var(--vscode-charts-green)",
+              marginBottom: "-1.5px",
+            }}
+          />,
+          <span
+            style={{
+              color: "var(--vscode-charts-green)",
+              fontWeight: "bold",
+            }}
+          >
+            GrayMatter
+          </span>,
+        ];
       case "command":
       case "command_output":
         return [
@@ -1170,12 +1459,35 @@ export const ChatRowContent = ({
               }}
             />
           ),
-          <>
-            <span style={{ color: normalColor, fontWeight: "bold" }}>
-              ValorIDE executing command:
+          <span
+            style={{
+              color: normalColor,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
+            <span style={{ fontWeight: "bold", flexShrink: 0 }}>
+              {isCommandExecuting ? "Executing Command:" : "Command:"}
             </span>
-            <p>{commandHeaderSuffix}</p>
-          </>,
+            {commandHeaderSuffix && (
+              <span
+                title={commandHeaderSuffix}
+                style={{
+                  color: "var(--vscode-descriptionForeground)",
+                  fontWeight: 400,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
+                }}
+              >
+                {commandHeaderSuffix}
+              </span>
+            )}
+          </span>,
         ];
       case "use_mcp_server":
         const mcpServerUse =
@@ -1890,9 +2202,10 @@ export const ChatRowContent = ({
         ? `${condensed.slice(0, 137)}...`
         : condensed;
     })();
-    const outputBody = hasOutputContent
-      ? normalizedOutput
-      : "[no command output captured yet]";
+    const emptyOutputLabel = isCommandExecuting
+      ? "Waiting for command output..."
+      : "Command completed with no output.";
+    const outputBody = hasOutputContent ? normalizedOutput : emptyOutputLabel;
     const shouldRenderOutputSection =
       message.ask === "command" ||
       message.say === "command" ||
@@ -1902,9 +2215,28 @@ export const ChatRowContent = ({
 
     return (
       <>
-        <div style={headerStyle}>
-          {icon}
-          {title}
+        <div
+          style={{
+            ...headerStyle,
+            cursor: "pointer",
+            justifyContent: "space-between",
+            userSelect: "none",
+          }}
+          onClick={onToggleExpand}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
+            {icon}
+            {title}
+          </div>
+          {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
         </div>
         <div
           style={{
@@ -1914,10 +2246,12 @@ export const ChatRowContent = ({
             backgroundColor: CODE_BLOCK_BG_COLOR,
           }}
         >
-          <CodeBlock
-            source={`${"```"}shell\n${command}\n${"```"}`}
-            forceWrap={true}
-          />
+          {isExpanded && (
+            <CodeBlock
+              source={`${"```"}shell\n${command}\n${"```"}`}
+              forceWrap={true}
+            />
+          )}
           {shouldRenderOutputSection && (
             <div style={{ width: "100%" }}>
               <div
@@ -1952,7 +2286,7 @@ export const ChatRowContent = ({
                         fontSize: "0.8em",
                       }}
                     >
-                      {outputPreview || "No output yet"}
+                      {outputPreview || emptyOutputLabel}
                     </span>
                   )}
                 </span>
@@ -2237,6 +2571,94 @@ export const ChatRowContent = ({
               <Markdown markdown={message.text} />
             </div>
           );
+        case "graymatter_context": {
+          const payload =
+            safeParseJSON<GrayMatterContextPayload>(message.text) || {};
+          const status = payload.status || "unavailable";
+          const isReady = status === "ready" || status === "empty";
+          const recoveryMessage = payload.recovery?.message || payload.message;
+          const actions = getGrayMatterRecoveryActions({
+            ...payload,
+            status,
+          });
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                border: `1px solid ${
+                  isReady
+                    ? "color-mix(in srgb, var(--vscode-charts-green) 55%, transparent)"
+                    : "color-mix(in srgb, var(--vscode-editorWarning-foreground) 55%, transparent)"
+                }`,
+                borderRadius: 8,
+                padding: 10,
+                background:
+                  "color-mix(in srgb, var(--vscode-editorWidget-background) 82%, transparent)",
+              }}
+            >
+              <div style={headerStyle}>
+                <FaBolt
+                  color={
+                    isReady
+                      ? "var(--vscode-charts-green)"
+                      : "var(--vscode-editorWarning-foreground)"
+                  }
+                />
+                <span
+                  style={{
+                    color: isReady
+                      ? "var(--vscode-charts-green)"
+                      : "var(--vscode-editorWarning-foreground)",
+                    fontWeight: 700,
+                  }}
+                >
+                  GrayMatter {isReady ? "memory checked" : "needs attention"}
+                </span>
+                <span
+                  style={{
+                    color: "var(--vscode-descriptionForeground)",
+                    fontSize: 11,
+                    marginLeft: "auto",
+                  }}
+                >
+                  {status}
+                </span>
+              </div>
+              {recoveryMessage && (
+                <div
+                  style={{
+                    color: "var(--vscode-foreground)",
+                    fontSize: 12,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  {recoveryMessage}
+                </div>
+              )}
+              {actions.length > 0 && (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {actions.map((action) => (
+                    <VSCodeButton
+                      key={action.id || action.label}
+                      appearance={action.primary ? "primary" : "secondary"}
+                      onClick={() =>
+                        vscode.postMessage({
+                          type: "showAccountViewClicked",
+                          accountTab:
+                            action.id === "buy_credits" ? "credits" : "login",
+                        } as any)
+                      }
+                    >
+                      {action.label || "Open account"}
+                    </VSCodeButton>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }
         case "reasoning":
           if (!message.text) {
             return null;
@@ -2517,6 +2939,16 @@ export const ChatRowContent = ({
             hasSummary ||
               (initialPromptText && text?.trim() === initialPromptText.trim()),
           );
+          const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
+            text,
+            message.changesSummary,
+            message.summaryTitle,
+          );
+          const completionReportMarkdown = resolveCompletionReportMarkdown(
+            message.summaryMarkdown,
+            completionFallbackMarkdown,
+            text,
+          );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
           }
@@ -2532,6 +2964,9 @@ export const ChatRowContent = ({
                 {title}
                 <TaskFeedbackButtons
                   messageTs={message.ts}
+                  completedAt={message.summaryCompletedAt}
+                  reportMarkdown={completionReportMarkdown}
+                  reportTitle={message.summaryTitle}
                   isFromHistory={
                     !isLast ||
                     lastModifiedMessage?.ask === "resume_completed_task" ||
@@ -2553,11 +2988,7 @@ export const ChatRowContent = ({
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
-                  fallbackMarkdown={buildCompletionFallbackMarkdown(
-                    text,
-                    message.changesSummary,
-                    message.summaryTitle,
-                  )}
+                  fallbackMarkdown={completionFallbackMarkdown}
                 />
                 {message.partial !== true &&
                   hasChanges &&
@@ -2700,6 +3131,16 @@ export const ChatRowContent = ({
                   initialPromptText &&
                   text.trim() === initialPromptText.trim()),
             );
+            const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
+              text,
+              message.changesSummary,
+              message.summaryTitle,
+            );
+            const completionReportMarkdown = resolveCompletionReportMarkdown(
+              message.summaryMarkdown,
+              completionFallbackMarkdown,
+              text,
+            );
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
             }
@@ -2715,6 +3156,9 @@ export const ChatRowContent = ({
                   {title}
                   <TaskFeedbackButtons
                     messageTs={message.ts}
+                    completedAt={message.summaryCompletedAt}
+                    reportMarkdown={completionReportMarkdown}
+                    reportTitle={message.summaryTitle}
                     isFromHistory={
                       !isLast ||
                       lastModifiedMessage?.ask === "resume_completed_task" ||
@@ -2736,11 +3180,7 @@ export const ChatRowContent = ({
                     markdown={message.summaryMarkdown}
                     title={message.summaryTitle}
                     completedAt={message.summaryCompletedAt}
-                    fallbackMarkdown={buildCompletionFallbackMarkdown(
-                      text,
-                      message.changesSummary,
-                      message.summaryTitle,
-                    )}
+                    fallbackMarkdown={completionFallbackMarkdown}
                   />
                   {message.partial !== true &&
                     hasChanges &&
@@ -2770,14 +3210,15 @@ export const ChatRowContent = ({
           }
         }
         case "followup":
+          if (!hasRenderableFollowupContent(message.text)) {
+            return null;
+          }
           const { question, options, selected } = normalizeAskQuestionMessage(
             message.text,
           );
           const questionMarkdown =
             question ||
-            (message.partial
-              ? "Preparing question..."
-              : "ValorIDE needs your input to continue.");
+            (options?.length ? "Select an option to continue." : undefined);
 
           return (
             <>
@@ -2788,7 +3229,7 @@ export const ChatRowContent = ({
                 </div>
               )}
               <div style={{ paddingTop: 10 }}>
-                <Markdown markdown={questionMarkdown} />
+                {questionMarkdown && <Markdown markdown={questionMarkdown} />}
                 <OptionsButtons
                   options={options}
                   selected={selected}
@@ -2939,7 +3380,7 @@ const normalizeAskQuestionMessage = (
       parsed: true,
     };
   }
-  return { question: text, parsed: false };
+  return { question: firstNonEmptyString(text), parsed: false };
 };
 
 const normalizePlanResponseMessage = (
@@ -2979,7 +3420,7 @@ const normalizePlanResponseMessage = (
       parsed: true,
     };
   }
-  return { response: text, parsed: false };
+  return { response: firstNonEmptyString(text), parsed: false };
 };
 
 function parseErrorText(text?: string): Record<string, any> | undefined {

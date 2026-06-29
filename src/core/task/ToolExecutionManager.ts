@@ -133,6 +133,7 @@ export class ToolExecutionManager {
 
     let userFeedback: { text?: string; images?: string[] } | undefined;
     let didContinue = false;
+    let didEmitCommandOutputToChat = false;
 
     // Chunked terminal output buffering
     const CHUNK_LINE_COUNT = 20;
@@ -157,6 +158,7 @@ export class ToolExecutionManager {
       outputBufferSize = 0;
       chunkEnroute = true;
       try {
+        didEmitCommandOutputToChat = true;
         const { response, text, images } = await this.ask(
           "command_output",
           chunk,
@@ -206,6 +208,7 @@ export class ToolExecutionManager {
           scheduleFlush();
         }
       } else {
+        didEmitCommandOutputToChat = true;
         this.say("command_output", line);
       }
     });
@@ -243,6 +246,10 @@ export class ToolExecutionManager {
     );
 
     result = result.trim();
+
+    if (filteredOutput.length > 0 && !didEmitCommandOutputToChat) {
+      await this.say("command_output", filteredOutput);
+    }
 
     if (userFeedback) {
       await this.say("user_feedback", userFeedback.text, userFeedback.images);

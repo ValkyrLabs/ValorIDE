@@ -1,6 +1,12 @@
 import React from "react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+
+const querySpies = vi.hoisted(() => ({
+  appGeneration: vi.fn(),
+  creditDebit: vi.fn(),
+  skillopt: vi.fn(),
+}));
 
 const emptyQuery = {
   data: undefined,
@@ -23,176 +29,9 @@ vi.mock("@vscode/webview-ui-toolkit/react", () => ({
 }));
 
 vi.mock("@thorapi/services/creditsApi", () => ({
-  useGetAppGenerationTraceQuery: () => ({
-    ...emptyQuery,
-    data: {
-      receiptRef: "generation-receipt-1",
-      requestRef: "request-1",
-      generationRunRef: "run-1",
-      traceId: "trace-generation-1",
-      tenantId: "main",
-      accountId: "account-123",
-      applicationId: "app-1",
-      contextPageRef: "ctx-generation-1",
-      skillOptRouteReceiptRef: "route-generation-1",
-      creditDebitReceiptRef: "credit-generation-1",
-      artifactSetRef: "artifact-set-1",
-      buildRunRef: "build-1",
-      testRunRef: "test-1",
-      runtimeBindingRef: "runtime-1",
-      generationReceipt: {
-        receiptRef: "generation-receipt-1",
-        requestRef: "request-1",
-        generationRunRef: "run-1",
-        tenantId: "main",
-        traceId: "trace-generation-1",
-        status: "succeeded",
-        accountId: "account-123",
-        applicationId: "app-1",
-        contextPageRef: "ctx-generation-1",
-        skillOptRouteReceiptRef: "route-generation-1",
-        artifactSetRef: "artifact-set-1",
-        buildRunRef: "build-1",
-        testRunRef: "test-1",
-        runtimeBindingRef: "runtime-1",
-        billable: true,
-        estimatedCredits: 100,
-        debitedCredits: 32,
-        generator: "ThorAPI Maven generator",
-        summaryJson: JSON.stringify({
-          buildReadiness: "ready_for_external_build",
-        }),
-      },
-      appGenerationRequest: {
-        requestRef: "request-1",
-        tenantId: "main",
-        traceId: "trace-generation-1",
-        status: "completed",
-        accountId: "account-123",
-        intentSummary: "Generate onboarding portal",
-        applicationId: "app-1",
-        specDraftRef: "draft-1",
-        objectModelRef: "object-model-1",
-        specRevisionRef: "spec-revision-1",
-        generationRunRef: "run-1",
-        idempotencyKey: "idem-1",
-      },
-      thorApiGenerationRun: {
-        generationRunRef: "run-1",
-        tenantId: "main",
-        traceId: "trace-generation-1",
-        status: "succeeded",
-        requestRef: "request-1",
-        accountId: "account-123",
-        applicationId: "app-1",
-        artifactSetRef: "artifact-set-1",
-        buildRunRef: "build-1",
-        testRunRef: "test-1",
-        runtimeBindingRef: "runtime-1",
-        generator: "ThorAPI Maven generator",
-        durationMillis: 2400,
-        summaryJson: JSON.stringify({ javaCompilePassed: true }),
-      },
-      generatedArtifactSet: {
-        artifactSetRef: "artifact-set-1",
-        generationRunRef: "run-1",
-        tenantId: "main",
-        traceId: "trace-generation-1",
-        status: "packaged",
-        applicationId: "app-1",
-        zipFileName: "package.zip",
-        artifactCount: 2,
-        totalBytes: 4096,
-        manifestJson: JSON.stringify({ safePaths: true }),
-      },
-      generatedArtifacts: [
-        {
-          artifactRef: "artifact-backend-1",
-          artifactSetRef: "artifact-set-1",
-          generationRunRef: "run-1",
-          tenantId: "main",
-          traceId: "trace-generation-1",
-          artifactType: "backend",
-          status: "validated",
-          fileName: "backend.zip",
-          byteSize: 2048,
-        },
-        {
-          artifactRef: "artifact-frontend-1",
-          artifactSetRef: "artifact-set-1",
-          generationRunRef: "run-1",
-          tenantId: "main",
-          traceId: "trace-generation-1",
-          artifactType: "frontend",
-          status: "validated",
-          fileName: "frontend.zip",
-          byteSize: 2048,
-        },
-      ],
-      skillOptRouteReceipt: {
-        receiptRef: "route-generation-1",
-        traceId: "trace-generation-1",
-        taskType: "tenant_app_generation",
-        recommendedRoute: "run_thorapi_generation",
-        routeExplanation: "Route allowed generation.",
-        estimatedCreditCost: 100,
-        confidence: 0.88,
-        contextSufficiency: 0.79,
-      },
-      contextPage: {
-        pageRef: "ctx-generation-1",
-        traceId: "trace-generation-1",
-        taskIntent: "Generate onboarding portal",
-        compactSummary: "Source-backed onboarding app context.",
-        status: "compiled",
-        tokenEstimate: 1200,
-      },
-      creditDebitReceipt: {
-        receiptRef: "credit-generation-1",
-        customerId: "account-123",
-        reservationRef: "reservation-1",
-        status: "settled",
-        amountCredits: 32,
-        idempotencyKey: "debit-1",
-        accountId: "account-123",
-        tenantId: "main",
-        traceId: "trace-generation-1",
-        currentBalance: 68,
-      },
-    },
-  }),
-  useGetCreditDebitReceiptByReceiptRefQuery: () => emptyQuery,
-  useGetSkilloptRouteReceiptQuery: () => ({
-    ...emptyQuery,
-    data: {
-      receiptRef: "route-receipt-1",
-      traceId: "trace-1",
-      taskType: "tenant_app_generation",
-      recommendedRoute: "run_thorapi_generation",
-      routeExplanation:
-        "Credits are sufficient and the ContextPage has enough source-backed evidence.",
-      estimatedCreditCost: 12.5,
-      confidence: 0.82,
-      creditBalance: 140,
-      contextSufficiency: 0.76,
-      requiredHydration: false,
-      requiredApproval: false,
-      billable: true,
-      fallbackRoute: "ask_human_approval",
-      policyDecision: "allow",
-      routeScoresJson: JSON.stringify({
-        run_thorapi_generation: 0.82,
-        hydrate_context: 0.41,
-      }),
-      contextPage: {
-        pageRef: "ctx-page-1",
-      },
-      procedure: {
-        procedureRef: "procedure-1",
-      },
-      outcome: "success",
-    },
-  }),
+  useGetAppGenerationTraceQuery: querySpies.appGeneration,
+  useGetCreditDebitReceiptByReceiptRefQuery: querySpies.creditDebit,
+  useGetSkilloptRouteReceiptQuery: querySpies.skillopt,
   useListCreditDebitReceiptsQuery: () => ({
     ...emptyQuery,
     data: [{ receiptRef: "credit-receipt-1", authorization: "secret" }],
@@ -208,6 +47,201 @@ import ReceiptTraceInspector, {
 } from "./ReceiptTraceInspector";
 
 describe("ReceiptTraceInspector", () => {
+  beforeEach(() => {
+    querySpies.appGeneration.mockImplementation(
+      () =>
+        ({
+          ...emptyQuery,
+          data: {
+            receiptRef: "generation-receipt-1",
+            requestRef: "request-1",
+            generationRunRef: "run-1",
+            traceId: "trace-generation-1",
+            tenantId: "main",
+            accountId: "account-123",
+            applicationId: "app-1",
+            contextPageRef: "ctx-generation-1",
+            skillOptRouteReceiptRef: "route-generation-1",
+            creditDebitReceiptRef: "credit-generation-1",
+            artifactSetRef: "artifact-set-1",
+            buildRunRef: "build-1",
+            testRunRef: "test-1",
+            runtimeBindingRef: "runtime-1",
+            generationReceipt: {
+              receiptRef: "generation-receipt-1",
+              requestRef: "request-1",
+              generationRunRef: "run-1",
+              tenantId: "main",
+              traceId: "trace-generation-1",
+              status: "succeeded",
+              accountId: "account-123",
+              applicationId: "app-1",
+              contextPageRef: "ctx-generation-1",
+              skillOptRouteReceiptRef: "route-generation-1",
+              artifactSetRef: "artifact-set-1",
+              buildRunRef: "build-1",
+              testRunRef: "test-1",
+              runtimeBindingRef: "runtime-1",
+              billable: true,
+              estimatedCredits: 100,
+              debitedCredits: 32,
+              generator: "ThorAPI Maven generator",
+              summaryJson: JSON.stringify({
+                buildReadiness: "ready_for_external_build",
+              }),
+            },
+            appGenerationRequest: {
+              requestRef: "request-1",
+              tenantId: "main",
+              traceId: "trace-generation-1",
+              status: "completed",
+              accountId: "account-123",
+              intentSummary: "Generate onboarding portal",
+              applicationId: "app-1",
+              specDraftRef: "draft-1",
+              objectModelRef: "object-model-1",
+              specRevisionRef: "spec-revision-1",
+              generationRunRef: "run-1",
+              idempotencyKey: "idem-1",
+            },
+            thorApiGenerationRun: {
+              generationRunRef: "run-1",
+              tenantId: "main",
+              traceId: "trace-generation-1",
+              status: "succeeded",
+              requestRef: "request-1",
+              accountId: "account-123",
+              applicationId: "app-1",
+              artifactSetRef: "artifact-set-1",
+              buildRunRef: "build-1",
+              testRunRef: "test-1",
+              runtimeBindingRef: "runtime-1",
+              generator: "ThorAPI Maven generator",
+              durationMillis: 2400,
+              summaryJson: JSON.stringify({ javaCompilePassed: true }),
+            },
+            generatedArtifactSet: {
+              artifactSetRef: "artifact-set-1",
+              generationRunRef: "run-1",
+              tenantId: "main",
+              traceId: "trace-generation-1",
+              status: "packaged",
+              applicationId: "app-1",
+              zipFileName: "package.zip",
+              artifactCount: 2,
+              totalBytes: 4096,
+              manifestJson: JSON.stringify({ safePaths: true }),
+            },
+            generatedArtifacts: [
+              {
+                artifactRef: "artifact-backend-1",
+                artifactSetRef: "artifact-set-1",
+                generationRunRef: "run-1",
+                tenantId: "main",
+                traceId: "trace-generation-1",
+                artifactType: "backend",
+                status: "validated",
+                fileName: "backend.zip",
+                byteSize: 2048,
+              },
+              {
+                artifactRef: "artifact-frontend-1",
+                artifactSetRef: "artifact-set-1",
+                generationRunRef: "run-1",
+                tenantId: "main",
+                traceId: "trace-generation-1",
+                artifactType: "frontend",
+                status: "validated",
+                fileName: "frontend.zip",
+                byteSize: 2048,
+              },
+            ],
+            skillOptRouteReceipt: {
+              receiptRef: "route-generation-1",
+              traceId: "trace-generation-1",
+              taskType: "tenant_app_generation",
+              recommendedRoute: "run_thorapi_generation",
+              routeExplanation: "Route allowed generation.",
+              estimatedCreditCost: 100,
+              confidence: 0.88,
+              contextSufficiency: 0.79,
+            },
+            contextPage: {
+              pageRef: "ctx-generation-1",
+              traceId: "trace-generation-1",
+              taskIntent: "Generate onboarding portal",
+              compactSummary: "Source-backed onboarding app context.",
+              status: "compiled",
+              tokenEstimate: 1200,
+            },
+            creditDebitReceipt: {
+              receiptRef: "credit-generation-1",
+              customerId: "account-123",
+              reservationRef: "reservation-1",
+              status: "settled",
+              amountCredits: 32,
+              idempotencyKey: "debit-1",
+              accountId: "account-123",
+              tenantId: "main",
+              traceId: "trace-generation-1",
+              currentBalance: 68,
+            },
+          },
+        }) as any,
+    );
+    querySpies.creditDebit.mockImplementation((_request: any, options: any) =>
+      options?.skip
+        ? emptyQuery
+        : {
+            ...emptyQuery,
+            data: {
+              receiptRef: "cdr_gm_0f635915-ac93-4514-b4e5-332747906e65",
+              customerId: "account-123",
+              status: "settled",
+              amountCredits: 12,
+              accountId: "account-123",
+              tenantId: "main",
+              traceId: "trace-credit-1",
+              currentBalance: 2000000,
+            },
+          },
+    );
+    querySpies.skillopt.mockImplementation(
+      () =>
+        ({
+          ...emptyQuery,
+          data: {
+            receiptRef: "route-receipt-1",
+            traceId: "trace-1",
+            taskType: "tenant_app_generation",
+            recommendedRoute: "run_thorapi_generation",
+            routeExplanation:
+              "Credits are sufficient and the ContextPage has enough source-backed evidence.",
+            estimatedCreditCost: 12.5,
+            confidence: 0.82,
+            creditBalance: 140,
+            contextSufficiency: 0.76,
+            requiredHydration: false,
+            requiredApproval: false,
+            billable: true,
+            fallbackRoute: "ask_human_approval",
+            policyDecision: "allow",
+            routeScoresJson: JSON.stringify({
+              run_thorapi_generation: 0.82,
+              hydrate_context: 0.41,
+            }),
+            contextPage: {
+              pageRef: "ctx-page-1",
+            },
+            procedure: {
+              procedureRef: "procedure-1",
+            },
+            outcome: "success",
+          },
+        }) as any,
+    );
+  });
+
   it("redacts sensitive fields recursively", () => {
     expect(
       sanitizeReceiptPayload({
@@ -322,5 +356,29 @@ describe("ReceiptTraceInspector", () => {
     expect(screen.getByText("Workflow dispatch evidence")).toBeInTheDocument();
     expect(screen.getAllByText(/workflow-1/).length).toBeGreaterThan(0);
     expect(screen.queryByText(/super-secret/)).not.toBeInTheDocument();
+  });
+
+  it("routes credit receipt references to the credit trace endpoint", () => {
+    render(<ReceiptTraceInspector accountId="account-123" />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /SkillOpt/i })[0]);
+    fireEvent.input(screen.getByPlaceholderText("receiptRef"), {
+      target: {
+        value: "cdr_gm_0f635915-ac93-4514-b4e5-332747906e65",
+      },
+    });
+    fireEvent.click(screen.getByTitle("Lookup receipt"));
+
+    expect(querySpies.creditDebit).toHaveBeenLastCalledWith(
+      {
+        accountId: "account-123",
+        receiptRef: "cdr_gm_0f635915-ac93-4514-b4e5-332747906e65",
+      },
+      { skip: false },
+    );
+    expect(
+      screen.getAllByText("cdr_gm_0f635915-ac93-4514-b4e5-332747906e65").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText(/"currentBalance": 2000000/)).toBeInTheDocument();
   });
 });

@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   chooseBestBalance,
   getAccountBalancePath,
+  getAccountBalanceSummaryPath,
   isInsufficientFunds,
   mergeAccountBalance,
   normalizeAccountBalance,
   resolveBalanceLookupAccountIds,
   resolvePrimaryBalanceAccountId,
+  selectSyncedAccountBalance,
 } from "./creditsApi";
 
 describe("creditsApi isInsufficientFunds", () => {
@@ -143,10 +145,62 @@ describe("mergeAccountBalance", () => {
   });
 });
 
+describe("selectSyncedAccountBalance", () => {
+  it("keeps authenticated summary over stale generated fallback rows", () => {
+    const summary = normalizeAccountBalance({
+      customerId: "acct-live",
+      currentBalance: 1906,
+    });
+    const staleFallback = normalizeAccountBalance({
+      customerId: "acct-old",
+      currentBalance: 3400,
+      usageTransactions: [{ credits: 1 }, { credits: 1 }],
+    });
+
+    expect(
+      selectSyncedAccountBalance({
+        authoritativeCandidates: [],
+        fallbackCandidates: [staleFallback],
+        summaryBalance: summary,
+      })?.currentBalance,
+    ).toBe(1906);
+  });
+
+  it("keeps the dashboard summary balance while using live rows for history", () => {
+    const summary = normalizeAccountBalance({
+      customerId: "acct-live",
+      currentBalance: 1906,
+    });
+    const liveBalance = normalizeAccountBalance({
+      customerId: "acct-live",
+      currentBalance: 1880,
+      usageTransactions: [{ credits: 26 }],
+    });
+
+    expect(
+      selectSyncedAccountBalance({
+        authoritativeCandidates: [liveBalance],
+        fallbackCandidates: [],
+        summaryBalance: summary,
+      })?.currentBalance,
+    ).toBe(1906);
+    expect(
+      selectSyncedAccountBalance({
+        authoritativeCandidates: [liveBalance],
+        fallbackCandidates: [],
+        summaryBalance: summary,
+      })?.usageTransactions,
+    ).toEqual([{ credits: 26 }]);
+  });
+});
+
 describe("creditsApi balance request resolution", () => {
   it("prefers explicit account ids over me when the summary exposes one", () => {
     expect(resolvePrimaryBalanceAccountId("me", "acct-123")).toBe("acct-123");
     expect(getAccountBalancePath("me")).toBe("credits/me/balance");
+    expect(getAccountBalanceSummaryPath("me")).toBe(
+      "credits/me/balance/summary",
+    );
   });
 
   it("keeps me as a fallback after explicit account ids", () => {

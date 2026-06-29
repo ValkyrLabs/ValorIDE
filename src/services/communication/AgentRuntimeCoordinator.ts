@@ -22,6 +22,13 @@ import {
   SwarmNodeRegistrationError,
   SwarmNodeService,
 } from "../swarm/SwarmNodeService";
+import {
+  buildSwarmMessage,
+  SwarmEntityType,
+  SwarmMessage,
+  SwarmMessageType,
+  validateSwarmMessage,
+} from "@shared/swarm-protocol";
 import type {
   AgenticCapabilityCommandCenterState,
   AgenticSwarmState,
@@ -83,6 +90,20 @@ type CapabilityEnvelope = {
 
 const INSTANCE_ID_KEY = "valorideSwarmInstanceId" as const;
 const WIDGET_PROTOCOL_VERSION = "1.0" as const;
+const EXECUTABLE_SWARM_ACTIONS = new Set([
+  "chat.send",
+  "code.execute",
+  "deploy-application",
+  "execute",
+  "ide.execute",
+  "new-task",
+  "newtask",
+  "remote_chat_message",
+  "send_message",
+  "task.start",
+  "valhalla.swarm.createapp",
+  "valor.execute",
+]);
 
 /**
  * Coordinates ValorIDE's swarm runtime presence when running inside VS Code.
@@ -513,10 +534,159 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       case "ui-widget-submit":
         this.handleWidgetCommand("submit", command, payload);
         break;
+      case "chat.send":
+      case "code.execute":
+      case "deploy-application":
+      case "execute":
+      case "ide.execute":
+      case "new-task":
+      case "newtask":
+      case "remote_chat_message":
+      case "send_message":
+      case "task.start":
+      case "valhalla.swarm.createapp":
+      case "valor.execute":
+        if (await this.tryHandleInboundSwarmCommand(command, payload)) {
+          break;
+        }
+        this.forwardRemoteCommandToWebview(command);
+        break;
       default:
+        if (await this.tryHandleInboundSwarmCommand(command, payload)) {
+          break;
+        }
         Logger.log(`Unhandled remote command type: ${command.type}`);
         this.forwardRemoteCommandToWebview(command);
     }
+  }
+
+  private async tryHandleInboundSwarmCommand(
+    command: RemoteCommand,
+    payload: any,
+  ): Promise<boolean> {
+    if (!this.swarmNode || !this.swarmTransport || !this.instanceId) {
+      return false;
+    }
+
+    const swarmCommand = this.toInboundSwarmCommand(command, payload);
+    if (!swarmCommand) {
+      return false;
+    }
+
+    const response = await this.swarmNode.handleInboundCommand(
+      swarmCommand,
+      (message) => this.executeInboundSwarmCommand(message),
+    );
+    await this.swarmTransport.send(response);
+    return true;
+  }
+
+  private toInboundSwarmCommand(
+    command: RemoteCommand,
+    payload: any,
+  ): SwarmMessage | undefined {
+    const raw = command.raw?.command ?? command.raw ?? command;
+    if (validateSwarmMessage(raw)) {
+      return raw.type === SwarmMessageType.COMMAND
+        ? { ...raw, id: command.id }
+        : undefined;
+    }
+
+    const action = String(command.type || payload?.action || "").trim();
+    if (!EXECUTABLE_SWARM_ACTIONS.has(action)) {
+      return undefined;
+    }
+
+    const data =
+      payload && typeof payload === "object" ? payload : { message: payload };
+    const sourceInstanceId =
+      command.sourceInstanceId || command.raw?.sourceInstanceId || "api-0";
+    const message = buildSwarmMessage(
+      SwarmMessageType.COMMAND,
+      {
+        instanceId: sourceInstanceId,
+        type:
+          sourceInstanceId === "api-0"
+            ? SwarmEntityType.SERVER
+            : SwarmEntityType.AGENT,
+      },
+      {
+        instanceId: command.targetInstanceId || this.instanceId,
+        type: SwarmEntityType.AGENT,
+      },
+      action,
+      data,
+      {
+        metadata: {
+          commandId: command.id,
+          receiptRef: command.raw?.receiptRef ?? payload?.receiptRef,
+          traceId:
+            command.raw?.trace?.traceId ??
+            command.raw?.traceId ??
+            payload?.traceId,
+        },
+      },
+    );
+    message.id = command.id;
+    return message;
+  }
+
+  private async executeInboundSwarmCommand(
+    message: SwarmMessage,
+  ): Promise<Record<string, unknown>> {
+    const action = message.payload.action;
+    const data = message.payload.data ?? {};
+    const text = this.extractRemoteTaskText(action, data);
+    const images = Array.isArray(data.images)
+      ? data.images.filter((image): image is string => typeof image === "string")
+      : undefined;
+    const webview = WebviewProvider.getAllInstances()[0];
+    if (!webview) {
+      throw new Error(
+        "No active ValorIDE webview is available to accept remote SWARM tasks.",
+      );
+    }
+
+    this.setSwarmState({
+      activeTaskId: message.id,
+      instanceId: this.instanceId ?? undefined,
+      status: "busy",
+    });
+    await webview.controller.initTask(text, images);
+
+    return {
+      action,
+      commandId: message.id,
+      instanceId: this.instanceId,
+      status: "started",
+      taskPreview: text.slice(0, 240),
+    };
+  }
+
+  private extractRemoteTaskText(action: string, data: Record<string, any>): string {
+    const candidates = [
+      data.text,
+      data.prompt,
+      data.message,
+      data.task,
+      data.description,
+      data.scope,
+      data.command,
+      data.content,
+    ];
+    const direct = candidates.find(
+      (candidate) => typeof candidate === "string" && candidate.trim(),
+    );
+    if (direct) {
+      return direct.trim();
+    }
+
+    return [
+      `Execute remote SageChat/Valor SWARM command: ${action}`,
+      "",
+      "Payload:",
+      JSON.stringify(data, null, 2),
+    ].join("\n");
   }
 
   private handleWidgetCommand(

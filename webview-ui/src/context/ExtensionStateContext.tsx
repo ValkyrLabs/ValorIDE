@@ -33,6 +33,7 @@ import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@thorapi/model";
 import { Application } from "@thorapi/model/Application";
 import {
+  clearStoredAuthSession,
   clearStoredJwtToken,
   clearStoredPrincipal,
   hydrateStoredCredentials,
@@ -118,6 +119,44 @@ const principalToUserInfo = (principal?: Principal): UserInfo | undefined => {
     avatarUrl: principal.avatarUrl ?? null,
     password: principal.password ?? "",
   };
+};
+
+export const hasConfiguredApiProvider = (
+  config?: ApiConfiguration,
+): boolean => {
+  if (!config) {
+    return false;
+  }
+
+  if (config.apiProvider === "openai-native") {
+    return true;
+  }
+
+  return [
+    config.apiKey,
+    config.openRouterApiKey,
+    config.awsRegion,
+    config.vertexProjectId,
+    config.openAiApiKey,
+    config.ollamaModelId,
+    config.lmStudioModelId,
+    config.liteLlmApiKey,
+    config.geminiApiKey,
+    config.openAiNativeApiKey,
+    config.deepSeekApiKey,
+    config.moonshotApiKey,
+    config.minimaxApiKey,
+    config.requestyApiKey,
+    config.togetherApiKey,
+    config.qwenApiKey,
+    config.doubaoApiKey,
+    config.mistralApiKey,
+    config.vsCodeLmModelSelector,
+    config.valorideApiKey,
+    config.asksageApiKey,
+    config.xaiApiKey,
+    config.sambanovaApiKey,
+  ].some((key) => key !== undefined);
 };
 
 export const ExtensionStateContextProvider: React.FC<{
@@ -264,34 +303,7 @@ export const ExtensionStateContextProvider: React.FC<{
               : prevState.autoApprovalSettings,
           };
         });
-        const config = incoming.apiConfiguration;
-        const hasKey = config
-          ? [
-              config.apiKey,
-              config.openRouterApiKey,
-              config.awsRegion,
-              config.vertexProjectId,
-              config.openAiApiKey,
-              config.ollamaModelId,
-              config.lmStudioModelId,
-              config.liteLlmApiKey,
-              config.geminiApiKey,
-              config.openAiNativeApiKey,
-              config.deepSeekApiKey,
-              config.moonshotApiKey,
-              config.minimaxApiKey,
-              config.requestyApiKey,
-              config.togetherApiKey,
-              config.qwenApiKey,
-              config.doubaoApiKey,
-              config.mistralApiKey,
-              config.vsCodeLmModelSelector,
-              config.valorideApiKey,
-              config.asksageApiKey,
-              config.xaiApiKey,
-              config.sambanovaApiKey,
-            ].some((key) => key !== undefined)
-          : false;
+        const hasKey = hasConfiguredApiProvider(incoming.apiConfiguration);
         // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
         const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
         const hasStoredAuth = !!(
@@ -454,28 +466,35 @@ export const ExtensionStateContextProvider: React.FC<{
       case "clearClientAuthState": {
         // Clear all client-side authentication state
         try {
-          // Clear sessionStorage
-          sessionStorage.removeItem("jwtToken");
-          sessionStorage.removeItem("jwtSession");
-          sessionStorage.removeItem("authenticatedPrincipal");
-          sessionStorage.removeItem("authenticatedUser");
+          clearStoredAuthSession("logout");
+
+          // Clear non-auth session markers that should not survive logout.
           sessionStorage.removeItem("valoride.persistJwt");
           sessionStorage.removeItem("valoride.instanceId");
           sessionStorage.removeItem("valoride.startupDebit.sent");
 
-          // Clear localStorage
-          localStorage.removeItem("jwtToken");
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("jwtSession");
-          localStorage.removeItem("authenticatedPrincipal");
-          localStorage.removeItem("authenticatedUser");
           localStorage.removeItem("valoride.persistJwt");
           localStorage.removeItem("valoride.instanceId");
           localStorage.removeItem("valoride.startupDebit.sent");
 
+          if (typeof globalThis !== "undefined") {
+            delete (globalThis as any).__VALKYR_AUTH_TOKEN__;
+            delete (globalThis as any).__VALKYR_AUTH_PRINCIPAL__;
+          }
+
           // Clear React state
           setJwtToken(undefined);
           setAuthenticatedUser(undefined);
+          setState((prevState) => ({
+            ...prevState,
+            authenticatedPrincipal: undefined,
+            grayMatterSession: undefined,
+            agenticState: undefined,
+            isLoggedIn: false,
+            jwtToken: undefined,
+            userInfo: undefined,
+          }));
+          setShowWelcome(true);
 
           // Dispatch event to notify other components/bridges of logout
           window.dispatchEvent(
@@ -503,6 +522,11 @@ export const ExtensionStateContextProvider: React.FC<{
     const { token, principal } = hydrateStoredCredentials("extension-init");
     if (token) {
       setJwtToken((prev) => prev ?? token);
+      vscode.postMessage({
+        type: "accountLoginSuccess",
+        customToken: token,
+        authenticatedPrincipal: principal ?? undefined,
+      });
     }
     if (principal) {
       setAuthenticatedUser((prev) => prev ?? normalizePrincipal(principal));

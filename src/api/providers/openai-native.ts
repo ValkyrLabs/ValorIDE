@@ -19,12 +19,15 @@ import type {
 } from "openai/resources/responses/responses";
 import { resolveOpenAiNativeAuthToken } from "./openai-native-auth";
 import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
+import { extractOpenAiResponsesReasoningText } from "./openai-native-events";
 
 interface OpenAiNativeHandlerOptions {
   openAiNativeApiKey?: string;
   reasoningEffort?: string;
   apiModelId?: string;
 }
+
+const OPENAI_NATIVE_REASONING_SUMMARY = "detailed" as const;
 
 export class OpenAiNativeHandler implements ApiHandler {
   private options: OpenAiNativeHandlerOptions;
@@ -145,6 +148,7 @@ export class OpenAiNativeHandler implements ApiHandler {
   ): ApiStream {
     const client = await this.ensureClient();
     const model = this.getModel();
+    const emittedReasoning = new Set<string>();
     const stream = await client.responses.create({
       model: model.id,
       instructions: systemPrompt,
@@ -154,33 +158,26 @@ export class OpenAiNativeHandler implements ApiHandler {
         effort:
           (this.options.reasoningEffort as ChatCompletionReasoningEffort) ||
           "medium",
-        summary: "auto",
+        summary: OPENAI_NATIVE_REASONING_SUMMARY,
       },
     });
 
     for await (const event of stream as AsyncIterable<ResponseStreamEvent>) {
+      const reasoningText = extractOpenAiResponsesReasoningText(event);
+      if (reasoningText && !emittedReasoning.has(reasoningText)) {
+        emittedReasoning.add(reasoningText);
+        yield {
+          type: "reasoning",
+          reasoning: reasoningText,
+        };
+      }
+
       switch (event.type) {
         case "response.output_text.delta":
           if (event.delta) {
             yield {
               type: "text",
               text: event.delta,
-            };
-          }
-          break;
-        case "response.reasoning_summary_text.delta":
-          if (event.delta) {
-            yield {
-              type: "reasoning",
-              reasoning: event.delta,
-            };
-          }
-          break;
-        case "response.reasoning_summary.delta":
-          if (typeof event.delta === "string" && event.delta) {
-            yield {
-              type: "reasoning",
-              reasoning: event.delta,
             };
           }
           break;

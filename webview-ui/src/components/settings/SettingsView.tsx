@@ -21,7 +21,7 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
-import { FaStar, FaShareAlt, FaCheck, FaShieldAlt } from "react-icons/fa";
+import { FaGithub, FaShareAlt, FaCheck, FaShieldAlt } from "react-icons/fa";
 import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
@@ -387,7 +387,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               onClick={handleStar}
               title="Star us on GitHub"
             >
-              <FaStar />
+              <FaGithub />
             </VSCodeButton>
             <VSCodeButton
               appearance="icon"
@@ -407,21 +407,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 <span className="text-xs">Remember login</span>
               </VSCodeCheckbox>
             </div>
-            <SettingsButton
-              onClick={() => {
-                try {
-                  vscode.postMessage({ type: "fixLayout" });
-                } catch (err) {
-                  console.warn("Reset layout message failed: ", err);
-                }
-              }}
-              title="Reset layout"
-              className="mr-2"
-            >
-              <span className="flex items-center gap-1 text-xs">
-                <FaShieldAlt size={11} /> Reset Layout
-              </span>
-            </SettingsButton>
             <VSCodeButton onClick={() => handleSubmit(false)}>
               Save
             </VSCodeButton>
@@ -712,7 +697,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
           {activeSettingsTab === "browser" && <BrowserSettingsSection />}
 
-          <div className="mt-auto pr-2 flex justify-center">
+          <div className="mt-auto pr-2 flex flex-wrap justify-center gap-2">
             <SettingsButton
               onClick={() =>
                 vscode.postMessage({ type: "openExtensionSettings" })
@@ -721,6 +706,20 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             >
               <VscSettingsGear />
               Advanced Settings
+            </SettingsButton>
+            <SettingsButton
+              onClick={() => {
+                try {
+                  vscode.postMessage({ type: "fixLayout" });
+                } catch (err) {
+                  console.warn("Reset layout message failed: ", err);
+                }
+              }}
+              title="Reset layout"
+              className="mt-0 mr-0 mb-4 ml-0"
+            >
+              <FaShieldAlt />
+              Reset Layout
             </SettingsButton>
           </div>
 

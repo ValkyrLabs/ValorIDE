@@ -20,6 +20,40 @@ const baseExtensionState = {
 let mockExtensionState: any = { ...baseExtensionState };
 let AccountView: typeof import("./AccountView").default;
 
+const clearTestStorage = (storage: Storage) => {
+  if (typeof storage.clear === "function") {
+    storage.clear();
+    return;
+  }
+  for (const key of [
+    "jwtToken",
+    "jwtSession",
+    "authToken",
+    "authenticatedPrincipal",
+    "authenticatedUser",
+  ]) {
+    storage.removeItem(key);
+  }
+};
+
+const createMemoryStorage = (): Storage => {
+  const store = new Map<string, string>();
+  return {
+    get length() {
+      return store.size;
+    },
+    clear: vi.fn(() => store.clear()),
+    getItem: vi.fn((key: string) => store.get(key) ?? null),
+    key: vi.fn((index: number) => Array.from(store.keys())[index] ?? null),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key);
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+  } as Storage;
+};
+
 vi.mock("../Login/form", () => ({
   __esModule: true,
   default: () => <div data-testid="login-form" />,
@@ -236,9 +270,20 @@ beforeAll(async () => {
 
 describe("AccountView - Buy Credits button integration", () => {
   beforeEach(async () => {
+    Object.defineProperty(window, "sessionStorage", {
+      configurable: true,
+      value: createMemoryStorage(),
+    });
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: createMemoryStorage(),
+    });
     mockExtensionState = { ...baseExtensionState };
     mockUseGetAccountBalanceQuery.mockClear();
     mockUseGetAccountBalancesQuery.mockClear();
+    mockPostMessage.mockClear();
+    clearTestStorage(window.sessionStorage);
+    clearTestStorage(window.localStorage);
     mockReceiptQuery.mockClear();
     mockReceiptQuery.mockReturnValue({
       data: undefined,
@@ -275,7 +320,6 @@ describe("AccountView - Buy Credits button integration", () => {
   }, 30_000);
 
   it("renders the Buy Credits button and triggers openInBrowser message", () => {
-    mockPostMessage.mockClear();
     render(
       <AccountView
         {...({
@@ -292,6 +336,39 @@ describe("AccountView - Buy Credits button integration", () => {
       type: "openInBrowser",
       url: "https://valkyrlabs.com/buy-credits",
     });
+  });
+
+  it("clears stored auth immediately when logging out", () => {
+    window.sessionStorage.setItem("jwtToken", "session-token");
+    window.sessionStorage.setItem(
+      "authenticatedPrincipal",
+      JSON.stringify({ id: "user-123", username: "valor" }),
+    );
+    window.localStorage.setItem("jwtToken", "local-token");
+    window.localStorage.setItem(
+      "authenticatedPrincipal",
+      JSON.stringify({ id: "user-123", username: "valor" }),
+    );
+
+    render(
+      <AccountView
+        {...({
+          onDone: () => {},
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => {},
+        } as any)}
+      />,
+    );
+
+    fireEvent.click(screen.getByLabelText("Log out"));
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "accountLogoutClicked",
+    });
+    expect(window.sessionStorage.getItem("jwtToken")).toBeNull();
+    expect(window.sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
+    expect(window.localStorage.getItem("jwtToken")).toBeNull();
+    expect(window.localStorage.getItem("authenticatedPrincipal")).toBeNull();
   });
 
   it("adds a 'needs-attention' class on the Server Console tab when flagged and clears it on click", () => {
@@ -414,7 +491,7 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(screen.getByText("ContextPage")).toBeInTheDocument();
   });
 
-  it("fetches the resolved account balance when authenticatedUser is missing", () => {
+  it("uses the authenticated me balance when no billing identifier is available", () => {
     mockExtensionState = {
       ...baseExtensionState,
       authenticatedUser: undefined,
@@ -430,7 +507,7 @@ describe("AccountView - Buy Credits button integration", () => {
     );
 
     expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
-      "user-123",
+      "me",
       expect.objectContaining({ skip: false }),
     );
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();

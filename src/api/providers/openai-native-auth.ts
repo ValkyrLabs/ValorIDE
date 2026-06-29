@@ -1,4 +1,6 @@
 import fs from "node:fs/promises";
+import crypto from "node:crypto";
+import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import axios from "axios";
@@ -30,9 +32,29 @@ interface RefreshCodexTokenResult {
   idToken?: string;
 }
 
+export interface OpenAiNativeOAuthLoginOptions {
+  callbackPort?: number;
+  codexAuthPath?: string;
+  nowMs?: number;
+  openAuthorizationUrl: (url: string) => Promise<void>;
+  timeoutMs?: number;
+}
+
+export interface OpenAiNativeOAuthLoginResult {
+  accountId?: string;
+  authPath: string;
+  expiresAt?: string;
+}
+
 const OPENAI_OAUTH_CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
+const OPENAI_OAUTH_AUTHORIZE_ENDPOINT = "https://auth.openai.com/oauth/authorize";
 const OPENAI_OAUTH_TOKEN_ENDPOINT = "https://auth.openai.com/oauth/token";
+const OPENAI_OAUTH_SCOPE =
+  "openid profile email offline_access api.connectors.read api.connectors.invoke";
+const OPENAI_OAUTH_ORIGINATOR = "Codex Desktop";
 const ACCESS_TOKEN_EXPIRY_SKEW_MS = 60_000;
+const DEFAULT_OAUTH_CALLBACK_PORT = 1455;
+const DEFAULT_OAUTH_TIMEOUT_MS = 5 * 60_000;
 
 const parseJwtPayload = (
   token?: string,
@@ -93,6 +115,193 @@ const getAccountIdFromToken = (token?: string): string | undefined => {
   return undefined;
 };
 
+const createPkceVerifier = (): string =>
+  crypto.randomBytes(32).toString("base64url");
+
+const createPkceChallenge = (verifier: string): string =>
+  crypto.createHash("sha256").update(verifier).digest("base64url");
+
+export const createOpenAiNativeOAuthAuthorizationUrl = ({
+  codeChallenge,
+  redirectUri,
+  state,
+}: {
+  codeChallenge: string;
+  redirectUri: string;
+  state: string;
+}): string => {
+  const url = new URL(OPENAI_OAUTH_AUTHORIZE_ENDPOINT);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("client_id", OPENAI_OAUTH_CLIENT_ID);
+  url.searchParams.set("redirect_uri", redirectUri);
+  url.searchParams.set("scope", OPENAI_OAUTH_SCOPE);
+  url.searchParams.set("code_challenge", codeChallenge);
+  url.searchParams.set("code_challenge_method", "S256");
+  url.searchParams.set("state", state);
+  url.searchParams.set("id_token_add_organizations", "true");
+  url.searchParams.set("codex_cli_simplified_flow", "true");
+  url.searchParams.set("originator", OPENAI_OAUTH_ORIGINATOR);
+  return url.toString();
+};
+
+const waitForOAuthCode = async ({
+  onReady,
+  redirectUri,
+  state,
+  timeoutMs,
+}: {
+  onReady?: () => void;
+  redirectUri: string;
+  state: string;
+  timeoutMs: number;
+}): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const redirectUrl = new URL(redirectUri);
+    let settled = false;
+
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      server.closeAllConnections?.();
+      if (server.listening) {
+        server.close(fn);
+      } else {
+        fn();
+      }
+    };
+
+    const server = http.createServer((req, res) => {
+      try {
+        const requestUrl = new URL(req.url || "/", redirectUri);
+        if (requestUrl.pathname !== redirectUrl.pathname) {
+          res.writeHead(404, { "content-type": "text/plain" });
+          res.end("Not found");
+          return;
+        }
+
+        const error = requestUrl.searchParams.get("error");
+        const code = requestUrl.searchParams.get("code");
+        const returnedState = requestUrl.searchParams.get("state");
+
+        if (error) {
+          res.writeHead(400, { "content-type": "text/html" });
+          res.end(renderOAuthCallbackPage(false));
+          settle(() => reject(new Error(`OpenAI OAuth failed: ${error}`)));
+          return;
+        }
+
+        if (!code || returnedState !== state) {
+          res.writeHead(400, { "content-type": "text/html" });
+          res.end(renderOAuthCallbackPage(false));
+          settle(() =>
+            reject(new Error("OpenAI OAuth callback failed validation.")),
+          );
+          return;
+        }
+
+        res.writeHead(200, { "content-type": "text/html" });
+        res.end(renderOAuthCallbackPage(true));
+        settle(() => resolve(code));
+      } catch (error) {
+        settle(() => reject(error));
+      }
+    });
+
+    const timeout = setTimeout(() => {
+      settle(() => reject(new Error("OpenAI OAuth login timed out.")));
+    }, timeoutMs);
+
+    server.on("error", (error) => {
+      settle(() => reject(error));
+    });
+    server.listen(Number(redirectUrl.port), () => onReady?.());
+  });
+
+const renderOAuthCallbackPage = (success: boolean): string =>
+  `<!doctype html><html><head><meta charset="utf-8"><title>ValorIDE OpenAI OAuth</title></head><body style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#111;color:#ddd;display:grid;place-items:center;min-height:100vh;margin:0"><main style="max-width:520px;padding:24px;border:1px solid #333;border-radius:8px;background:#181818"><h1 style="margin-top:0;color:${success ? "#7ee787" : "#ff7b72"}">${success ? "OpenAI connected" : "OpenAI connection failed"}</h1><p>${success ? "ValorIDE saved your OpenAI OAuth token. You can close this editor tab." : "ValorIDE could not complete the OpenAI OAuth flow. Return to ValorIDE settings and try again."}</p></main></body></html>`;
+
+const exchangeOpenAiNativeOAuthCode = async ({
+  code,
+  codeVerifier,
+  redirectUri,
+}: {
+  code: string;
+  codeVerifier: string;
+  redirectUri: string;
+}): Promise<RefreshCodexTokenResult> => {
+  const params = new URLSearchParams({
+    grant_type: "authorization_code",
+    client_id: OPENAI_OAUTH_CLIENT_ID,
+    code,
+    code_verifier: codeVerifier,
+    redirect_uri: redirectUri,
+  });
+
+  const response = await axios.post(OPENAI_OAUTH_TOKEN_ENDPOINT, params, {
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+    },
+    timeout: 15_000,
+  });
+
+  const accessToken = response.data?.access_token;
+  if (typeof accessToken !== "string" || accessToken.length === 0) {
+    throw new Error("Invalid OAuth response: missing access_token");
+  }
+
+  return {
+    accessToken,
+    refreshToken:
+      typeof response.data?.refresh_token === "string"
+        ? response.data.refresh_token
+        : undefined,
+    idToken:
+      typeof response.data?.id_token === "string"
+        ? response.data.id_token
+        : undefined,
+  };
+};
+
+const writeCodexAuthFile = async ({
+  authPath,
+  nowMs,
+  tokens,
+}: {
+  authPath: string;
+  nowMs: number;
+  tokens: RefreshCodexTokenResult;
+}): Promise<OpenAiNativeOAuthLoginResult> => {
+  const accountId =
+    getAccountIdFromToken(tokens.idToken) ||
+    getAccountIdFromToken(tokens.accessToken);
+  const updatedAuth: CodexAuthFile = {
+    auth_mode: "chatgpt",
+    OPENAI_API_KEY: null,
+    tokens: {
+      access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken,
+      id_token: tokens.idToken,
+      account_id: accountId,
+    },
+    last_refresh: new Date(nowMs).toISOString(),
+  };
+
+  await fs.mkdir(path.dirname(authPath), { recursive: true });
+  await fs.writeFile(authPath, `${JSON.stringify(updatedAuth, null, 2)}\n`, {
+    encoding: "utf8",
+    mode: 0o600,
+  });
+  await fs.chmod(authPath, 0o600).catch(() => undefined);
+
+  const expiresAtMs = getTokenExpiryMs(tokens.accessToken);
+  return {
+    accountId,
+    authPath,
+    expiresAt: expiresAtMs ? new Date(expiresAtMs).toISOString() : undefined,
+  };
+};
+
 const refreshCodexToken = async (
   refreshToken: string,
 ): Promise<RefreshCodexTokenResult> => {
@@ -134,6 +343,53 @@ export const getDefaultCodexAuthPath = (): string => {
       ? codexHome
       : path.join(os.homedir(), ".codex");
   return path.join(baseDir, "auth.json");
+};
+
+export const startOpenAiNativeOAuthLogin = async (
+  options: OpenAiNativeOAuthLoginOptions,
+): Promise<OpenAiNativeOAuthLoginResult> => {
+  const callbackPort = options.callbackPort ?? DEFAULT_OAUTH_CALLBACK_PORT;
+  const timeoutMs = options.timeoutMs ?? DEFAULT_OAUTH_TIMEOUT_MS;
+  const authPath = options.codexAuthPath || getDefaultCodexAuthPath();
+  const redirectUri = `http://localhost:${callbackPort}/auth/callback`;
+  const codeVerifier = createPkceVerifier();
+  const state = crypto.randomBytes(24).toString("base64url");
+  const authorizationUrl = createOpenAiNativeOAuthAuthorizationUrl({
+    codeChallenge: createPkceChallenge(codeVerifier),
+    redirectUri,
+    state,
+  });
+  let resolveServerReady: () => void;
+  let rejectServerReady: (error: Error) => void;
+  const serverReady = new Promise<void>((resolve, reject) => {
+    resolveServerReady = resolve;
+    rejectServerReady = reject;
+  });
+
+  const codePromise = waitForOAuthCode({
+    onReady: resolveServerReady!,
+    redirectUri,
+    state,
+    timeoutMs,
+  });
+  codePromise.catch((error) => {
+    rejectServerReady!(
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  });
+  await serverReady;
+  await options.openAuthorizationUrl(authorizationUrl);
+  const code = await codePromise;
+  const tokens = await exchangeOpenAiNativeOAuthCode({
+    code,
+    codeVerifier,
+    redirectUri,
+  });
+  return writeCodexAuthFile({
+    authPath,
+    nowMs: options.nowMs ?? Date.now(),
+    tokens,
+  });
 };
 
 export const resolveOpenAiNativeAuthToken = async (

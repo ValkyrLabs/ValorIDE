@@ -35,6 +35,79 @@ interface SystemAlert {
   dismissed?: boolean;
 }
 
+const firstFiniteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numeric =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+  return undefined;
+};
+
+const stripTags = (value: string): string =>
+  value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+
+const decodeHtmlEntities = (value: string): string => {
+  if (typeof document === "undefined") {
+    return value;
+  }
+  const textArea = document.createElement("textarea");
+  textArea.innerHTML = value;
+  return textArea.value;
+};
+
+const cleanApiErrorMessage = (
+  message: string | undefined,
+  endpointName?: string,
+): string => {
+  const raw = typeof message === "string" ? message.trim() : "";
+  if (!raw) {
+    return "ValorIDE encountered an error processing your request.";
+  }
+
+  const endpointSuffix = endpointName ? ` (${endpointName})` : "";
+  const withoutEndpoint =
+    endpointSuffix && raw.endsWith(endpointSuffix)
+      ? raw.slice(0, -endpointSuffix.length).trim()
+      : raw;
+  const looksLikeHtml =
+    /<!doctype\s+html/i.test(withoutEndpoint) ||
+    /<\/?(html|head|body|title|h1|p)\b/i.test(withoutEndpoint);
+
+  if (!looksLikeHtml) {
+    return decodeHtmlEntities(raw);
+  }
+
+  const scrubbed = withoutEndpoint
+    .replace(/<!doctype[^>]*>/gi, " ")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ");
+  const pieces = ["title", "h1", "p"]
+    .map((tag) => {
+      const match = scrubbed.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)</${tag}>`, "i"));
+      return match ? decodeHtmlEntities(stripTags(match[1])) : "";
+    })
+    .filter(Boolean);
+  const uniquePieces = pieces.filter(
+    (piece, index) =>
+      pieces.findIndex((candidate) => candidate.toLowerCase() === piece.toLowerCase()) ===
+      index,
+  );
+
+  if (uniquePieces.length > 0) {
+    return uniquePieces.join(" — ");
+  }
+
+  const stripped = decodeHtmlEntities(stripTags(scrubbed));
+  return stripped || "ValorIDE encountered an HTML error response.";
+};
+
 const SystemAlerts: React.FC = () => {
   const dispatch = useDispatch();
   const {
@@ -70,15 +143,46 @@ const SystemAlerts: React.FC = () => {
   const shouldFetchBalance = Boolean(jwtToken && accountId);
 
   // Get balance data for budget alerts using the new creditsApi
-  const { data: balanceData } = useGetAccountBalanceQuery(accountId, {
+  const {
+    data: balanceData,
+    isLoading: isBalanceLoading,
+    isFetching: isBalanceFetching,
+    isSuccess: didLoadBalance,
+  } = useGetAccountBalanceQuery(accountId, {
     skip: !shouldFetchBalance,
   });
+  const hasValidatedBalance = Boolean(
+    shouldFetchBalance &&
+      didLoadBalance &&
+      !isBalanceLoading &&
+      !isBalanceFetching &&
+      typeof balanceData?.currentBalance === "number",
+  );
 
   // Calculate current API metrics
   const apiMetrics = useMemo(
     () => getApiMetrics(valorideMessages || []),
     [valorideMessages],
   );
+
+  const activeInsufficientFundsMessage = useMemo(() => {
+    if (!valorideMessages?.length) {
+      return false;
+    }
+
+    const lastMessage = valorideMessages[valorideMessages.length - 1];
+    if (lastMessage?.type !== "ask" || lastMessage.ask !== "api_req_failed") {
+      return false;
+    }
+
+    const errorText = lastMessage.text || "";
+    return (
+      isInsufficientFunds({ status: 402, data: { message: errorText } }) ||
+      errorText.toLowerCase().includes("insufficient") ||
+      errorText.toLowerCase().includes("credit") ||
+      errorText.toLowerCase().includes("balance")
+    );
+  }, [valorideMessages]);
 
   const budgetAlerts = useMemo(
     () =>
@@ -93,13 +197,23 @@ const SystemAlerts: React.FC = () => {
 
   // Calculate effective balance using the new creditsApi AccountBalance
   const effectiveBalance = useMemo(() => {
+    if (!hasValidatedBalance) {
+      return undefined;
+    }
     const rawBalance = balanceData?.currentBalance ?? 0;
     return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
-  }, [balanceData, apiMetrics.totalCost]);
+  }, [apiMetrics.totalCost, balanceData?.currentBalance, hasValidatedBalance]);
 
   // Check for budget alerts
   useEffect(() => {
-    if (!jwtToken || effectiveBalance === undefined) return;
+    if (
+      !jwtToken ||
+      effectiveBalance === undefined ||
+      !hasValidatedBalance ||
+      activeInsufficientFundsMessage
+    ) {
+      return;
+    }
 
     const budgetThresholds = [
       {
@@ -151,7 +265,14 @@ const SystemAlerts: React.FC = () => {
         break; // Only show the most severe alert
       }
     }
-  }, [budgetAlerts, effectiveBalance, jwtToken, dismissedAlerts]);
+  }, [
+    budgetAlerts,
+    effectiveBalance,
+    hasValidatedBalance,
+    jwtToken,
+    dismissedAlerts,
+    activeInsufficientFundsMessage,
+  ]);
 
   // Check for API errors from RTK Query
   useEffect(() => {
@@ -164,6 +285,21 @@ const SystemAlerts: React.FC = () => {
     const isInsufficientCredits =
       apiError?.data?.error === "INSUFFICIENT_CREDITS" ||
       apiError?.data?.error === "INSUFFICIENT_FUNDS";
+    const apiRequiredCredits =
+      firstFiniteNumber(
+        apiErrors?.creditIntent?.requiredCredits,
+        apiError?.data?.requiredCredits,
+        apiError?.data?.requiredBalance,
+      ) ?? 1;
+
+    if (
+      isInsufficientCredits &&
+      (!hasValidatedBalance ||
+        effectiveBalance === undefined ||
+        effectiveBalance >= apiRequiredCredits)
+    ) {
+      return;
+    }
 
     let errorTitle = "API Error";
     if (isInsufficientCredits) {
@@ -179,8 +315,7 @@ const SystemAlerts: React.FC = () => {
       title: errorTitle,
       message: isInsufficientCredits
         ? "You don't have enough credits to complete this request. Please add credits to continue."
-        : apiError.message ||
-        "ValorIDE encountered an error processing your request.",
+        : cleanApiErrorMessage(apiError.message, apiError.endpointName),
       timestamp: Date.now(),
     };
 
@@ -191,7 +326,13 @@ const SystemAlerts: React.FC = () => {
       }
       return prev;
     });
-  }, [apiErrors?.lastError, dismissedAlerts]);
+  }, [
+    apiErrors?.creditIntent?.requiredCredits,
+    apiErrors?.lastError,
+    dismissedAlerts,
+    effectiveBalance,
+    hasValidatedBalance,
+  ]);
 
   // Check for blocker alerts (error states)
   useEffect(() => {
@@ -211,10 +352,17 @@ const SystemAlerts: React.FC = () => {
         const alertId = `blocker-insufficient-funds-${lastMessage.ts}`;
         if (!dismissedAlerts.has(alertId)) {
           const requiredCredits = Math.max(1, Math.ceil((apiMetrics.totalCost || 0) + 1));
+          if (
+            !hasValidatedBalance ||
+            effectiveBalance === undefined ||
+            effectiveBalance >= requiredCredits
+          ) {
+            return;
+          }
           const intent: CreditIntent = {
             actionName: "Continue current request",
             requiredCredits,
-            currentBalance: typeof balanceData?.currentBalance === "number" ? balanceData.currentBalance : 0,
+            currentBalance: balanceData?.currentBalance ?? 0,
             originView: "chat",
             resumeLabel: "Return to chat",
             messageTs: Number(lastMessage.ts || Date.now()),
@@ -301,7 +449,14 @@ const SystemAlerts: React.FC = () => {
         });
       }
     }
-  }, [valorideMessages, dismissedAlerts, apiMetrics.totalCost, balanceData?.currentBalance]);
+  }, [
+    valorideMessages,
+    dismissedAlerts,
+    apiMetrics.totalCost,
+    balanceData?.currentBalance,
+    effectiveBalance,
+    hasValidatedBalance,
+  ]);
 
   const handleDismiss = (alertId: string) => {
     setDismissedAlerts((prev) => new Set([...Array.from(prev), alertId]));
@@ -336,8 +491,11 @@ const SystemAlerts: React.FC = () => {
 
   const shouldShowBuyCreditsModal =
     showBuyCreditsModal &&
+    hasValidatedBalance &&
     typeof balanceData?.currentBalance === "number" &&
-    balanceData.currentBalance <= budgetAlerts.criticalThreshold;
+    balanceData.currentBalance <
+      (apiErrors?.creditIntent?.requiredCredits ??
+        budgetAlerts.criticalThreshold);
 
   const hasVisibleAlerts = activeAlerts.length > 0 || shouldShowBuyCreditsModal;
   if (!hasVisibleAlerts) return null;
@@ -463,28 +621,30 @@ const SystemAlerts: React.FC = () => {
                     }}
                     style={{
                       marginTop: "12px",
-                      padding: "6px 14px",
-                      backgroundColor: "#06ffa5",
-                      color: "#000",
-                      border: "none",
+                      padding: "9px 14px",
+                      width: "100%",
+                      backgroundColor: "#0f5132",
+                      color: "#fff",
+                      border: "1px solid #198754",
                       borderRadius: "4px",
                       cursor: "pointer",
                       fontWeight: 600,
                       fontSize: "12px",
                       display: "inline-flex",
                       alignItems: "center",
+                      justifyContent: "center",
                       gap: "6px",
                       transition: "all 0.2s ease",
-                      boxShadow: "0 2px 8px rgba(6, 255, 165, 0.2)",
+                      boxShadow: "0 2px 8px rgba(15, 81, 50, 0.25)",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.boxShadow =
-                        "0 4px 12px rgba(6, 255, 165, 0.4)";
+                        "0 4px 12px rgba(15, 81, 50, 0.45)";
                       e.currentTarget.style.transform = "translateY(-1px)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.boxShadow =
-                        "0 2px 8px rgba(6, 255, 165, 0.2)";
+                        "0 2px 8px rgba(15, 81, 50, 0.25)";
                       e.currentTarget.style.transform = "translateY(0)";
                     }}
                   >

@@ -222,6 +222,48 @@ describe("customBaseQuery", () => {
     expect(request.headers.jwtSession).toBe("session-token");
   });
 
+  it("adds stored auth headers to generated ThorAPI VS Code bridged requests", async () => {
+    vi.resetModules();
+    sessionStorage.setItem("jwtToken", "session-token");
+    const postMessage = vi.fn((message: any) => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "thorapiResponse",
+            thorapiResponse: {
+              requestId: message.thorapiRequest.requestId,
+              ok: true,
+              status: 201,
+              data: { id: "rating-1" },
+            },
+          },
+        }),
+      );
+    });
+    vi.stubGlobal("acquireVsCodeApi", () => ({
+      postMessage,
+      getState: vi.fn(),
+      setState: vi.fn((state) => state),
+    }));
+    const { default: generatedBridgedBaseQuery } = await import(
+      "../thorapi/redux/customBaseQuery"
+    );
+
+    await generatedBridgedBaseQuery(
+      {
+        url: "Rating",
+        method: "POST",
+        body: { rating: 100 },
+      },
+      baseQueryApi,
+      {},
+    );
+
+    const request = postMessage.mock.calls[0][0].thorapiRequest;
+    expect(request.headers.Authorization).toBe("Bearer session-token");
+    expect(request.headers.jwtSession).toBe("session-token");
+  });
+
   it("uses cookie transport for generated ThorAPI calls without bearer fallback", async () => {
     sessionStorage.setItem("jwtToken", "stale-token");
     localStorage.setItem("jwtToken", "stale-token");

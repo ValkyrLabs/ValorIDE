@@ -39,7 +39,7 @@ describe("CompletionSummaryCard", () => {
     expect(
       screen.getByText(/Completion Report — Implement feature X/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/# Task: Implement feature X/)).toBeInTheDocument();
+    expect(screen.getByText(/Task: Implement feature X/)).toBeInTheDocument();
     expect(screen.getByText(/feature was implemented/i)).toBeInTheDocument();
   });
 
@@ -91,5 +91,45 @@ describe("CompletionSummaryCard", () => {
     expect(screen.getByText(/Completion Report — Feature X/)).toBeInTheDocument();
     expect(screen.getByText(/Executive Summary/)).toBeInTheDocument();
     expect(screen.getByText(/SHIPPED/)).toBeInTheDocument();
+  });
+
+  it("renders every required completion report invariant section immediately", () => {
+    render(
+      <MockExtensionStateProvider>
+        <CompletionSummaryCard
+          markdown={[
+            "# 🎯 Feature X — COMPLETE",
+            "",
+            "## 📊 Executive Summary",
+            "- **What was built:** Feature X",
+            "- **Status:** ✅ SHIPPED",
+            "",
+            "## 🔧 Implementation Details",
+            "- Files created/modified",
+            "",
+            "## ✅ Quality Gates",
+            "- Tests passing",
+            "",
+            "## 📈 Before/After Comparison",
+            "| Metric | Before | After |",
+            "|--------|--------|-------|",
+            "| Feature X | ❌ | ✅ |",
+            "",
+            "## 🚀 Ship Status",
+            "**Production-ready:** Yes",
+          ].join("\n")}
+          title={"Feature X"}
+        />
+      </MockExtensionStateProvider>,
+    );
+
+    expect(screen.getByText(/🎯 Feature X — COMPLETE/)).toBeInTheDocument();
+    expect(screen.getByText(/Executive Summary/)).toBeInTheDocument();
+    expect(screen.getByText(/Implementation Details/)).toBeInTheDocument();
+    expect(screen.getByText(/Quality Gates/)).toBeInTheDocument();
+    expect(screen.getByText(/Before\/After Comparison/)).toBeInTheDocument();
+    expect(screen.getByText(/Ship Status/)).toBeInTheDocument();
+    expect(screen.getByText("Metric")).toBeInTheDocument();
+    expect(screen.getByText("Production-ready:")).toBeInTheDocument();
   });
 });

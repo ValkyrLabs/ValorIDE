@@ -17,6 +17,7 @@ import SplitPane, {
 } from "./components/SplitPane";
 import {
   ExtensionStateContextProvider,
+  hasConfiguredApiProvider,
   useExtensionState,
 } from "./context/ExtensionStateContext";
 import { MothershipProvider } from "./context/MothershipContext";
@@ -45,6 +46,7 @@ import {
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
 import { CREDIT_INTENT_EVENT, CreditIntent } from "./types/creditIntent";
+import { useGetAccountBalanceQuery } from "./services/creditsApi";
 import {
   clearAccountBalancePrompt,
   clearCreditIntent,
@@ -140,9 +142,14 @@ const extractSwarmCommandInspectionPayload = (
 const AppContent = () => {
   const {
     didHydrateState,
+    authenticatedUser,
+    apiConfiguration,
     showWelcome,
     shouldShowAnnouncement,
     telemetrySetting,
+    userInfo,
+    jwtToken,
+    isLoggedIn,
     vscMachineId,
   } = useExtensionState();
   const dispatch = useDispatch();
@@ -217,6 +224,38 @@ const AppContent = () => {
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | undefined
   >(undefined);
+  const showLoggedOutShell = useCallback(() => {
+    setHasStoredAuth(false);
+    setForceShowWelcome(true);
+    setShowSettings(false);
+    setShowHistory(false);
+    setShowMcp(false);
+    setShowAccount(false);
+    setShowGeneratedFiles(false);
+    setShowServerConsole(false);
+    setShowApplicationProgress(false);
+    setBuildModePayload(undefined);
+    setShowFileExplorer(false);
+    setAccountInitialActiveTab("login");
+    setAccountInitialSwarmCommandResponse(undefined);
+    setServerConsoleNeedsAttention(false);
+    setCreditIntent(undefined);
+  }, []);
+  const hasBackendAuth = Boolean(
+    jwtToken || isLoggedIn || authenticatedUser || userInfo || hasStoredAuth,
+  );
+  const shouldValidateCreditBalancePrompt = Boolean(
+    showAccountBalance && hasBackendAuth && apiErrorCreditIntent,
+  );
+  const {
+    data: creditPromptBalance,
+    isLoading: isCreditPromptBalanceLoading,
+    isFetching: isCreditPromptBalanceFetching,
+    isSuccess: didLoadCreditPromptBalance,
+    error: creditPromptBalanceError,
+  } = useGetAccountBalanceQuery("me", {
+    skip: !shouldValidateCreditBalancePrompt,
+  });
 
   // Use the Mothership integration hook
   const {
@@ -234,6 +273,13 @@ const AppContent = () => {
   console.log(
     `🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`,
   );
+
+  useEffect(() => {
+    if (forceShowWelcome && hasConfiguredApiProvider(apiConfiguration)) {
+      setForceShowWelcome(false);
+      setShowFileExplorer(true);
+    }
+  }, [apiConfiguration, forceShowWelcome]);
 
   useEffect(() => {
     const cleanup = registerExternalLinkInterceptor();
@@ -263,21 +309,7 @@ const AppContent = () => {
           break;
 
         case "clearClientAuthState":
-          setHasStoredAuth(false);
-          setForceShowWelcome(true);
-          setShowSettings(false);
-          setShowHistory(false);
-          setShowMcp(false);
-          setShowAccount(false);
-          setShowGeneratedFiles(false);
-          setShowServerConsole(false);
-          setShowApplicationProgress(false);
-          setBuildModePayload(undefined);
-          setShowFileExplorer(false);
-          setAccountInitialActiveTab("login");
-          setAccountInitialSwarmCommandResponse(undefined);
-          setServerConsoleNeedsAttention(false);
-          setCreditIntent(undefined);
+          showLoggedOutShell();
           break;
 
         case "action":
@@ -543,10 +575,33 @@ const AppContent = () => {
           break;
       }
     },
-    [trackTaskStart, sendChatAction],
+    [trackTaskStart, sendChatAction, showLoggedOutShell],
   );
 
   useEvent("message", handleMessage);
+
+  useEffect(() => {
+    const handleAuthInvalidated = () => showLoggedOutShell();
+    const handleJwtTokenUpdated = (event: Event) => {
+      const token = (event as CustomEvent<{ token?: string | null }>).detail
+        ?.token;
+      if (token === null) {
+        showLoggedOutShell();
+      }
+    };
+
+    window.addEventListener("authSessionInvalidated", handleAuthInvalidated);
+    window.addEventListener("jwt-token-updated", handleJwtTokenUpdated);
+    window.addEventListener("jwtTokenChanged", handleJwtTokenUpdated);
+    return () => {
+      window.removeEventListener(
+        "authSessionInvalidated",
+        handleAuthInvalidated,
+      );
+      window.removeEventListener("jwt-token-updated", handleJwtTokenUpdated);
+      window.removeEventListener("jwtTokenChanged", handleJwtTokenUpdated);
+    };
+  }, [showLoggedOutShell]);
 
   useEffect(() => {
     const handleCreditIntent = (event: Event) => {
@@ -586,6 +641,35 @@ const AppContent = () => {
 
   useEffect(() => {
     if (!showAccountBalance) return;
+    if (!hasBackendAuth || !apiErrorCreditIntent) {
+      dispatch(clearAccountBalancePrompt());
+      if (!apiErrorCreditIntent) {
+        dispatch(clearCreditIntent());
+      }
+      return;
+    }
+
+    if (isCreditPromptBalanceLoading || isCreditPromptBalanceFetching) {
+      return;
+    }
+
+    if (
+      creditPromptBalanceError ||
+      !didLoadCreditPromptBalance ||
+      typeof creditPromptBalance?.currentBalance !== "number"
+    ) {
+      dispatch(clearAccountBalancePrompt());
+      return;
+    }
+
+    if (
+      creditPromptBalance.currentBalance >= apiErrorCreditIntent.requiredCredits
+    ) {
+      setCreditIntent(undefined);
+      dispatch(clearAccountBalancePrompt());
+      dispatch(clearCreditIntent());
+      return;
+    }
 
     setShowSettings(false);
     setShowHistory(false);
@@ -597,12 +681,36 @@ const AppContent = () => {
     setBuildModePayload(undefined);
     setShowFileExplorer(true);
     setAccountInitialActiveTab("account");
-    if (apiErrorCreditIntent) {
-      setCreditIntent(apiErrorCreditIntent);
-    }
+    setCreditIntent((current) => {
+      const nextCreditIntent = {
+        ...apiErrorCreditIntent,
+        currentBalance: creditPromptBalance.currentBalance,
+      };
+      if (
+        current?.actionName === nextCreditIntent.actionName &&
+        current?.currentBalance === nextCreditIntent.currentBalance &&
+        current?.originView === nextCreditIntent.originView &&
+        current?.requiredCredits === nextCreditIntent.requiredCredits &&
+        current?.resumeLabel === nextCreditIntent.resumeLabel &&
+        current?.resumeUrl === nextCreditIntent.resumeUrl
+      ) {
+        return current;
+      }
+      return nextCreditIntent;
+    });
 
     dispatch(clearAccountBalancePrompt());
-  }, [apiErrorCreditIntent, dispatch, showAccountBalance]);
+  }, [
+    apiErrorCreditIntent,
+    creditPromptBalance?.currentBalance,
+    creditPromptBalanceError,
+    didLoadCreditPromptBalance,
+    dispatch,
+    hasBackendAuth,
+    isCreditPromptBalanceFetching,
+    isCreditPromptBalanceLoading,
+    showAccountBalance,
+  ]);
 
   const handleFileSelect = useCallback((filePath: string) => {
     // Use openMention to open the selected file

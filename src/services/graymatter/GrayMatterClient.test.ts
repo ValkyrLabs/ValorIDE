@@ -133,6 +133,53 @@ describe("GrayMatterClient", () => {
     });
   });
 
+  it("merges live OpenAPI capabilities when the control surface omits MemoryEntry query endpoints", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/graymatter/control")
+          ? jsonResponse(200, {
+              suite: {
+                memoryLayer: "GrayMatter",
+                name: "Valhalla",
+              },
+              memory: {
+                primitives: ["MemoryEntry", "GrayMatter"],
+              },
+              endpoints: {
+                memory: {
+                  read: "/MemoryEntry/read",
+                  write: "/MemoryEntry/write",
+                },
+              },
+            })
+          : jsonResponse(200, {
+              paths: {
+                "/v1/GrayMatter/search": {},
+                "/v1/MemoryEntry": {},
+                "/v1/MemoryEntry/query": {},
+                "/v1/MemoryEntry/write": {},
+              },
+            }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(client.loadCapabilities()).resolves.toMatchObject({
+      grayMatter: true,
+      memoryEntry: true,
+      memoryQuery: true,
+      memoryRead: true,
+      memoryWrite: true,
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api-0.valkyrlabs.com/v1/api-docs",
+      expect.any(Object),
+    );
+  });
+
   it("discovers GrayMatter, MemoryEntry, Agent, and canonical swarm-ops paths even when OpenAPI includes the /v1 prefix", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async (url) =>

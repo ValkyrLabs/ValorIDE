@@ -6,6 +6,7 @@ import {
   GrayMatterRetrievalReceiptQuery,
 } from "@services/graymatter/GrayMatterClient";
 import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import type { TenantContext } from "@services/auth/tenantContext";
 
 export type GrayMatterReadStatus =
   | "disabled"
@@ -85,6 +86,7 @@ interface ReceiptMetadata {
 
 interface ContextReadResponse {
   metadata?: ReceiptMetadata;
+  usedReceipt?: boolean;
   value?: unknown;
   warning?: string;
 }
@@ -94,11 +96,17 @@ export interface CreateAgentContextSectionForTaskOptions
   baseUrl: string;
   fetch?: FetchLike;
   grayMatterSession?: GrayMatterSessionState;
+  tenantContext?: TenantContext;
   token?: string;
 }
 
-const DEFAULT_MAX_ENTRIES = 5;
+const DEFAULT_MAX_ENTRIES = 8;
 const DEFAULT_MAX_ENTRY_CHARS = 700;
+const GRAYMATTER_INVARIANT_QUERY_CONTEXT = [
+  "Required preflight memory: invariants, rules, instructions, decisions, methodology, preferences, prior session context, business truth, and organizational truth.",
+  "Named platform anchors: ValkyrAI, ThorAPI, AspectJ, RBAC, ACL, api-0, ValorIDE, GrayMatter.",
+  "Implementation anchors: generated ThorAPI TypeScript models, generated RTK Query services, project-specific commands, workflow invariants, and user preferences.",
+].join("\n");
 
 export class AgentContextAssembler {
   private readonly now: () => Date;
@@ -159,23 +167,43 @@ export class AgentContextAssembler {
         maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
         maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
       });
-      const status: GrayMatterReadStatus = citations.length ? "ready" : "empty";
+      const fallback =
+        citations.length === 0 && response.usedReceipt
+          ? await this.queryMemoryFallback(query, {
+              maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
+              maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
+            })
+          : undefined;
+      const effectiveCitations = fallback?.citations.length
+        ? fallback.citations
+        : citations;
+      const status: GrayMatterReadStatus = effectiveCitations.length
+        ? "ready"
+        : "empty";
       const read: GrayMatterTranscriptRead = {
         at: readAt,
-        citations: citations.map((citation) => `gm:${citation.id}`),
+        citations: effectiveCitations.map((citation) => `gm:${citation.id}`),
         query,
         status,
       };
       applyReceiptDetails(read, metadata, response.warning);
+      if (fallback?.warning) {
+        read.warning = read.warning
+          ? `${read.warning}; ${fallback.warning}`
+          : fallback.warning;
+      }
 
       return {
         grayMatter: {
-          citations,
+          citations: effectiveCitations,
           query,
           reads: [read],
           status,
         },
-        promptSection: formatGrayMatterPromptSection(status, citations),
+        promptSection: formatGrayMatterPromptSection(
+          status,
+          effectiveCitations,
+        ),
       };
     } catch (error) {
       const status = getReadFailureStatus(error);
@@ -234,6 +262,7 @@ export class AgentContextAssembler {
 
       return {
         metadata,
+        usedReceipt: true,
         value: receiptResponse,
       };
     } catch (error) {
@@ -243,12 +272,40 @@ export class AgentContextAssembler {
       };
     }
   }
+
+  private async queryMemoryFallback(
+    query: string,
+    options: { maxEntries: number; maxEntryChars: number },
+  ): Promise<
+    | { citations: GrayMatterContextCitation[]; warning?: string }
+    | undefined
+  > {
+    try {
+      const value = await this.options.grayMatter?.queryMemory({
+        limit: options.maxEntries,
+        query,
+      });
+      const citations = extractCitations(value, options);
+      return {
+        citations,
+        warning: citations.length
+          ? "receipt_empty_fallback:direct_memory_query_used"
+          : "receipt_empty_fallback:direct_memory_query_empty",
+      };
+    } catch (error) {
+      return {
+        citations: [],
+        warning: `receipt_empty_fallback_failed:${formatReadError(error)}`,
+      };
+    }
+  }
 }
 
 export const createAgentContextSectionForTask = async ({
   baseUrl,
   fetch,
   grayMatterSession,
+  tenantContext,
   token,
   ...input
 }: CreateAgentContextSectionForTaskOptions): Promise<string | undefined> => {
@@ -264,6 +321,7 @@ export const createAgentContextSectionForTask = async ({
     baseUrl,
     fetch,
     getAuthToken: () => token,
+    getTenantContext: () => tenantContext,
   });
   const context = await new AgentContextAssembler({
     grayMatter: client,
@@ -276,6 +334,7 @@ const buildGrayMatterQuery = (task: string, cwd?: string) =>
   [
     `ValorIDE task context: ${task.trim() || "Current task"}`,
     cwd ? `Workspace: ${cwd}` : undefined,
+    GRAYMATTER_INVARIANT_QUERY_CONTEXT,
   ]
     .filter(Boolean)
     .join("\n");

@@ -7,13 +7,11 @@ import { Application } from "@thorapi/model";
 import {
   useGetApplicationsQuery,
   useGenerateApplicationMutation,
-  useDeployApplicationMutation,
 } from "../../redux/services/ApplicationService";
 import { vscode } from "../../utils/vscode";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import { useExtensionState } from "../../context/ExtensionStateContext";
-import VSCodeButtonLink from "../common/VSCodeButtonLink";
-import { FaStar, FaUserFriends } from "react-icons/fa";
+import { FaCalendarAlt, FaUser, FaUserFriends } from "react-icons/fa";
 
 interface ApplicationsListProps {
   showTitle?: boolean;
@@ -38,11 +36,6 @@ const getValkyraiWebBaseUrl = () => {
 };
 
 export const getApplicationOpenUrl = (application: Application): string => {
-  const entrypointUrl = String(application.entrypointUrl || "").trim();
-  if (entrypointUrl) {
-    return entrypointUrl;
-  }
-
   const applicationId = String(application.id || "").trim();
   if (!applicationId) {
     return getValkyraiWebBaseUrl();
@@ -51,9 +44,31 @@ export const getApplicationOpenUrl = (application: Application): string => {
   return `${getValkyraiWebBaseUrl()}/application-detail/${encodeURIComponent(applicationId)}`;
 };
 
+export const getApplicationDeployUrl = (applicationId: string): string => {
+  const normalizedId = String(applicationId || "").trim();
+  if (!normalizedId) {
+    return getValkyraiWebBaseUrl();
+  }
+
+  return `${getValkyraiWebBaseUrl()}/deploy/${encodeURIComponent(normalizedId)}`;
+};
+
+const formatApplicationDate = (value: unknown): string | undefined => {
+  if (!value) return undefined;
+
+  const date = new Date(value as string | number | Date);
+  if (Number.isNaN(date.getTime())) return undefined;
+
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 const ApplicationsList: React.FC<ApplicationsListProps> = ({
   showTitle = true,
-  title = "Available Applications",
+  title = "Applications",
 }) => {
   const { userInfo, jwtToken, authenticatedPrincipal, authenticatedUser } =
     useExtensionState();
@@ -112,14 +127,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return { ownedApps: owned, sharedApps: shared };
   }, [applications, currentUserId]);
 
-  // Helper to check if app is owned by current user
-  const isOwnedByCurrentUser = (app: Application) => {
-    return currentUserId && app.ownerId === currentUserId;
-  };
-  const [generateApplication, { isLoading: isGenerating }] =
-    useGenerateApplicationMutation();
-  const [deployApplication, { isLoading: isDeploying }] =
-    useDeployApplicationMutation();
+  const [generateApplication] = useGenerateApplicationMutation();
   const [loadingStates, setLoadingStates] = useState<
     Record<
       string,
@@ -429,10 +437,9 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   const handleDeploy = (applicationId: string) => {
     if (!applicationId) return;
 
-    // Open File Explorer in a new tab - VSCode toast notification will be shown by the extension
     vscode.postMessage({
-      type: "openFileExplorerTab",
-      applicationId: applicationId,
+      type: "openInBrowser",
+      url: getApplicationDeployUrl(applicationId),
     });
   };
 
@@ -451,16 +458,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     }
 
     return (
-      <div className="application-loading-steps">
-        <div
-          className="loading-steps"
-          style={{
-            marginTop: "16px",
-            padding: "12px",
-            border: "1px solid var(--vscode-panel-border)",
-            borderRadius: "4px",
-          }}
-        >
+      <div className="application-loading-steps" aria-live="polite">
+        <div className="loading-steps">
           <div
             className="loading-step"
             style={{
@@ -638,6 +637,97 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   // Check if we have any completed applications to show their status
   const hasCompletedApplications = completedApplications.size > 0;
 
+  const renderApplicationCard = (
+    app: Application,
+    section: "owned" | "shared",
+  ) => {
+    const appId = String(app.id || "");
+    const isOwned = section === "owned";
+    const createdDate = formatApplicationDate(app.createdDate);
+
+    return (
+      <div
+        key={app.id || app.name || JSON.stringify(app)}
+        className="application-row"
+      >
+        <div
+          className={`application-card ${isOwned ? "application-card-owned" : ""}`}
+        >
+          <div className="application-card-content">
+            <div className="application-info">
+              <div className="application-heading-row">
+                <h3 className="application-name">
+                  {app.name || (app as any).title || app.id}
+                </h3>
+              </div>
+              <div className="application-marketplace-meta">
+                <span>
+                  <FaUser aria-hidden />
+                  {isOwned ? "You" : "Shared"}
+                </span>
+                {createdDate && (
+                  <span>
+                    <FaCalendarAlt aria-hidden />
+                    {createdDate}
+                  </span>
+                )}
+              </div>
+              {app.description && (
+                <div className="application-description">{app.description}</div>
+              )}
+              <div className="application-tags">
+                {app.type && (
+                  <span className="application-type">{app.type}</span>
+                )}
+                {app.status && (
+                  <span className={`application-status status-${app.status}`}>
+                    {app.status}
+                  </span>
+                )}
+              </div>
+
+              {app.id && (
+                <div className="application-buttons">
+                  <VSCodeButton
+                    appearance="secondary"
+                    aria-label="Open"
+                    role="button"
+                    onClick={() => handleApplicationSelect(app)}
+                  >
+                    Open
+                  </VSCodeButton>
+                  <VSCodeButton
+                    appearance="primary"
+                    aria-label="Generate"
+                    role="button"
+                    onClick={() => handleGenerate(appId)}
+                    disabled={loadingStates[appId]?.generating}
+                  >
+                    {loadingStates[appId]?.generating
+                      ? "Generating..."
+                      : "Generate"}
+                  </VSCodeButton>
+                  <VSCodeButton
+                    appearance="secondary"
+                    aria-label="Deploy"
+                    role="button"
+                    onClick={() => handleDeploy(appId)}
+                    disabled={loadingStates[appId]?.deploying}
+                  >
+                    {loadingStates[appId]?.deploying
+                      ? "Deploying..."
+                      : "Deploy"}
+                  </VSCodeButton>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {renderLoadingSteps(app)}
+      </div>
+    );
+  };
+
   return (
     <div className="applications-list">
       {renderHeader()}
@@ -646,223 +736,32 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       <div className="applications-container">
         {/* Owned Applications Section */}
         {ownedApps.length > 0 && (
-          <div
-            className="applications-section"
-            style={{ marginBottom: "24px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                marginBottom: "12px",
-                paddingBottom: "12px",
-                borderBottom: "2px solid #FFD700",
-              }}
-            >
-              <FaStar style={{ color: "#FFD700", fontSize: "16px" }} />
-              <h3
-                style={{
-                  margin: 0,
-                  color: "var(--vscode-foreground)",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                }}
-              >
-                My Applications
-              </h3>
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "var(--vscode-descriptionForeground)",
-                  marginLeft: "auto",
-                  fontWeight: 500,
-                }}
-              >
-                {ownedApps.length}
-              </span>
+          <section className="applications-section">
+            <div className="applications-section-header applications-section-header-owned">
+              <FaUser aria-hidden />
+              <h3>My Applications</h3>
+              <span>{ownedApps.length}</span>
             </div>
-            {ownedApps.map((app: any) => (
-              <div
-                key={app.id || app.name || JSON.stringify(app)}
-                className="application-card"
-                style={{
-                  borderLeft: "3px solid #FFD700",
-                  marginBottom: "12px",
-                }}
-              >
-                <div className="application-card-content">
-                  <div className="application-info">
-                    <div
-                      className="application-name"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <FaStar style={{ color: "#FFD700", fontSize: "14px" }} />
-                      {app.name || app.title || app.id}
-                    </div>
-                    {app.description && (
-                      <div className="application-description">
-                        {app.description}
-                      </div>
-                    )}
-                    <div className="application-meta">
-                      {app.type && (
-                        <span className="application-type">{app.type}</span>
-                      )}
-                      {app.status && (
-                        <span
-                          className={`application-status status-${app.status}`}
-                        >
-                          {app.status}
-                        </span>
-                      )}
-                    </div>
-
-                    {app.id && (
-                      <div className="application-buttons">
-                        <VSCodeButtonLink
-                          href={getApplicationOpenUrl(app)}
-                          appearance="secondary"
-                          className="w-full"
-                        >
-                          Open
-                        </VSCodeButtonLink>
-                        <VSCodeButton
-                          appearance="primary"
-                          onClick={() => handleGenerate(app.id)}
-                          disabled={loadingStates[app.id]?.generating}
-                        >
-                          {loadingStates[app.id]?.generating
-                            ? "Generating..."
-                            : "Generate"}
-                        </VSCodeButton>
-                        <VSCodeButton
-                          appearance="secondary"
-                          onClick={() => handleDeploy(app.id)}
-                          disabled={loadingStates[app.id]?.deploying}
-                        >
-                          {loadingStates[app.id]?.deploying
-                            ? "Deploying..."
-                            : "Deploy"}
-                        </VSCodeButton>
-                      </div>
-                    )}
-                  </div>
-                  {renderLoadingSteps(app)}
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="applications-section-list">
+              {ownedApps.map((app: any) => renderApplicationCard(app, "owned"))}
+            </div>
+          </section>
         )}
 
         {/* Shared Applications Section */}
         {sharedApps.length > 0 && (
-          <div className="applications-section">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                marginBottom: "12px",
-                paddingBottom: "12px",
-                borderBottom: "2px solid var(--vscode-descriptionForeground)",
-              }}
-            >
-              <FaUserFriends
-                style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  fontSize: "16px",
-                }}
-              />
-              <h3
-                style={{
-                  margin: 0,
-                  color: "var(--vscode-foreground)",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                }}
-              >
-                Shared Applications
-              </h3>
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "var(--vscode-descriptionForeground)",
-                  marginLeft: "auto",
-                  fontWeight: 500,
-                }}
-              >
-                {sharedApps.length}
-              </span>
+          <section className="applications-section">
+            <div className="applications-section-header">
+              <FaUserFriends aria-hidden />
+              <h3>Shared Applications</h3>
+              <span>{sharedApps.length}</span>
             </div>
-            {sharedApps.map((app: any) => (
-              <div
-                key={app.id || app.name || JSON.stringify(app)}
-                className="application-card"
-                style={{ marginBottom: "12px" }}
-              >
-                <div className="application-card-content">
-                  <div className="application-info">
-                    <div className="application-name">
-                      {app.name || app.title || app.id}
-                    </div>
-                    {app.description && (
-                      <div className="application-description">
-                        {app.description}
-                      </div>
-                    )}
-                    <div className="application-meta">
-                      {app.type && (
-                        <span className="application-type">{app.type}</span>
-                      )}
-                      {app.status && (
-                        <span
-                          className={`application-status status-${app.status}`}
-                        >
-                          {app.status}
-                        </span>
-                      )}
-                    </div>
-
-                    {app.id && (
-                      <div className="application-buttons">
-                        <VSCodeButtonLink
-                          href={getApplicationOpenUrl(app)}
-                          appearance="secondary"
-                          className="w-full"
-                        >
-                          Open
-                        </VSCodeButtonLink>
-                        <VSCodeButton
-                          appearance="primary"
-                          onClick={() => handleGenerate(app.id)}
-                          disabled={loadingStates[app.id]?.generating}
-                        >
-                          {loadingStates[app.id]?.generating
-                            ? "Generating..."
-                            : "Generate"}
-                        </VSCodeButton>
-                        <VSCodeButton
-                          appearance="secondary"
-                          onClick={() => handleDeploy(app.id)}
-                          disabled={loadingStates[app.id]?.deploying}
-                        >
-                          {loadingStates[app.id]?.deploying
-                            ? "Deploying..."
-                            : "Deploy"}
-                        </VSCodeButton>
-                      </div>
-                    )}
-                  </div>
-                  {renderLoadingSteps(app)}
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="applications-section-list">
+              {sharedApps.map((app: any) =>
+                renderApplicationCard(app, "shared"),
+              )}
+            </div>
+          </section>
         )}
       </div>
 

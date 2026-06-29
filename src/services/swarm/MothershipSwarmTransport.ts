@@ -19,6 +19,7 @@ export interface MothershipTopicBridge {
     listener: (payload: any) => void,
   ): unknown;
   sendAppTopic(topic: string, data: any): void;
+  sendCommandPayload?(data: any): void;
 }
 
 type PendingAck = {
@@ -45,6 +46,21 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
   }
 
   send(message: SwarmMessage): void {
+    if (
+      message.type === SwarmMessageType.ACK ||
+      message.type === SwarmMessageType.NACK
+    ) {
+      this.mothership.sendCommandPayload?.(message);
+      this.mothership.sendAppTopic(message.type, {
+        ackId: message.ackId,
+        commandId: message.ackId,
+        code: message.payload.data.code,
+        error: message.payload.data.error,
+        status: message.type === SwarmMessageType.ACK ? "ok" : "rejected",
+      });
+      return;
+    }
+
     this.mothership.sendAppTopic("swarm", message);
   }
 

@@ -38,6 +38,10 @@ import {
 } from '@thorapi/model';
 
 import { useAddConfirmPasswordResetRequestMutation } from '../../services/ConfirmPasswordResetRequestService';
+import {
+  PASSWORD_POLICY_DESCRIPTION,
+  buildPasswordValidation,
+} from '../../../../utils/passwordPolicy';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -69,7 +73,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
 
 const validationSchema = Yup.object().shape({
         token: Yup.string(),
-        newPassword: Yup.string(),
+        newPassword: buildPasswordValidation(),
         trashed: Yup.boolean(),
 });
 
@@ -227,6 +231,9 @@ const ConfirmPasswordResetRequestForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+                          <div className="form-text signup-password-policy">
+                            {PASSWORD_POLICY_DESCRIPTION}
+                          </div>
 
 
 
@@ -341,4 +348,3 @@ const ConfirmPasswordResetRequestForm: React.FC = () => {
 
 /* Export the generated form */
 export default ConfirmPasswordResetRequestForm;
-

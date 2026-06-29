@@ -76,6 +76,7 @@ export interface ApiHandlerOptions {
   geminiApiKey?: string;
   geminiBaseUrl?: string;
   openAiNativeApiKey?: string;
+  openAiNativeOAuthToken?: string;
   deepSeekApiKey?: string;
   requestyApiKey?: string;
   requestyModelId?: string;

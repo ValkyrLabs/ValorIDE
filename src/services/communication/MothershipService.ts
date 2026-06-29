@@ -4,11 +4,13 @@ import {
   WebsocketMessageToJSON,
   WebsocketMessageFromJSON,
 } from "@thorapi/model";
+import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
 import { EventEmitter } from "events";
 import {
   getValkyraiBasePath,
   getValkyraiWsBase,
 } from "@utils/serverValkyraiHost";
+import { validateSwarmMessage } from "@shared/swarm-protocol";
 
 export interface MothershipConnectionOptions {
   jwtToken: string;
@@ -23,6 +25,7 @@ export interface RemoteCommand {
   payload: any;
   sourceInstanceId: string;
   targetInstanceId?: string;
+  raw?: any;
 }
 
 /**
@@ -30,11 +33,11 @@ export interface RemoteCommand {
  * for real-time communication and remote control capabilities.
  */
 export class MothershipService extends EventEmitter {
-  private websocket: WebSocket | null = null;
+  private stompClient: Client | null = null;
+  private subscriptions: StompSubscription[] = [];
   private options: MothershipConnectionOptions;
   private connected = false;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
   private pingInterval: NodeJS.Timeout | null = null;
   private instanceId: string;
@@ -59,7 +62,7 @@ export class MothershipService extends EventEmitter {
   }
 
   public async connect(): Promise<void> {
-    if (this.connected && this.websocket?.readyState === WebSocket.OPEN) {
+    if (this.connected && this.stompClient?.connected) {
       return;
     }
 
@@ -67,86 +70,45 @@ export class MothershipService extends EventEmitter {
       const baseUrl =
         this.normalizeWsUrl(this.options.baseUrl) ??
         this.getDefaultWebsocketUrl();
-      const wsUrl = this.buildEndpointUrl(baseUrl, "chat");
+      const wsUrl = this.buildStompEndpointUrl(baseUrl);
 
       // Add JWT token as query parameter for authentication
       wsUrl.searchParams.set("token", this.options.jwtToken);
       wsUrl.searchParams.set("instanceId", this.instanceId);
 
-      this.websocket = new WebSocket(wsUrl.toString());
+      void this.stompClient?.deactivate();
+      this.subscriptions = [];
 
-      this.websocket.onopen = () => {
-        console.log("Mothership websocket connected");
-        this.connected = true;
-        this.reconnectAttempts = 0;
-        this.startPingInterval();
-        this.emit("connected");
+      this.stompClient = new Client({
+        brokerURL: wsUrl.toString(),
+        connectHeaders: this.buildAgentHeaders(),
+        debug: (message) => console.debug("Mothership STOMP:", message),
+        reconnectDelay: this.reconnectDelay,
+        onConnect: () => this.handleConnected(),
+        onDisconnect: (frame) => {
+          console.log("Mothership STOMP disconnected:", frame.headers.message);
+          this.handleDisconnected(frame);
+        },
+        onStompError: (frame) => {
+          const message = frame.headers.message || frame.body;
+          console.error("Mothership STOMP error:", message);
+          this.emit("error", new Error(message || "Mothership STOMP error"));
+        },
+        onWebSocketClose: (event) => {
+          console.log(
+            "Mothership websocket closed:",
+            event.code,
+            event.reason,
+          );
+          this.handleDisconnected(event);
+        },
+        onWebSocketError: (error) => {
+          console.error("Mothership websocket error:", error);
+          this.emit("error", error);
+        },
+      });
 
-        // Send initial registration message
-        this.sendMessage({
-          type: WebsocketMessageTypeEnum.SERVICE,
-          payload: JSON.stringify({
-            action: "register",
-            instanceId: this.instanceId,
-            userId: this.options.userId,
-            timestamp: Date.now(),
-          }),
-          time: new Date().toISOString(),
-          user: { id: this.options.userId || "anonymous" } as any,
-        });
-
-        // Announce presence and request roll call using BROADCAST payload envelope
-        try {
-          this.sendAppTopic("presence:join", {
-            id: this.instanceId,
-            online: true,
-          });
-          this.sendAppTopic("auth:ack", { id: this.instanceId });
-          this.sendAppTopic("presence:rollcall", { id: this.instanceId });
-          this.sendAppTopic("session:resume", {
-            id: this.instanceId,
-            lastProcessedSequence: this.lastProcessedSequence,
-            replayWindowSize: this.replayWindowSize,
-          });
-          this.emit("liveness", {
-            id: this.instanceId,
-            online: true,
-            timestamp: Date.now(),
-          });
-        } catch (e) {
-          console.warn("Failed to send presence/rollcall on connect:", e);
-        }
-      };
-
-      this.websocket.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          const message = WebsocketMessageFromJSON(data);
-          this.handleIncomingMessage(message);
-        } catch (error) {
-          console.error("Failed to parse mothership message:", error);
-        }
-      };
-
-      this.websocket.onclose = (event) => {
-        console.log("Mothership websocket closed:", event.code, event.reason);
-        this.connected = false;
-        this.stopPingInterval();
-        this.emit("disconnected", event);
-
-        // Attempt reconnection if not a normal closure
-        if (
-          event.code !== 1000 &&
-          this.reconnectAttempts < this.maxReconnectAttempts
-        ) {
-          this.scheduleReconnect();
-        }
-      };
-
-      this.websocket.onerror = (error) => {
-        console.error("Mothership websocket error:", error);
-        this.emit("error", error);
-      };
+      this.stompClient.activate();
     } catch (error) {
       console.error("Failed to connect to mothership:", error);
       this.emit("error", error);
@@ -192,36 +154,130 @@ export class MothershipService extends EventEmitter {
     }
   }
 
-  private buildEndpointUrl(baseUrl: string, endpoint: string): URL {
-    const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    const url = new URL(endpoint.replace(/^\/+/, ""), normalizedBase);
+  private buildStompEndpointUrl(baseUrl: string): URL {
+    const url = new URL(baseUrl);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+
+    let pathname = url.pathname.replace(/\/+$/, "");
+    if (pathname === "/v1" || pathname.endsWith("/v1")) {
+      pathname = pathname.slice(0, -3) || "";
+    }
+
+    if (/\/ws\/websocket$/i.test(pathname)) {
+      url.pathname = pathname;
+    } else if (/\/ws$/i.test(pathname)) {
+      url.pathname = `${pathname}/websocket`;
+    } else if (/\/chat$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/chat$/i, "/ws/websocket");
+    } else {
+      url.pathname = `${pathname}/ws/websocket`;
+    }
+
     return url;
   }
 
-  private scheduleReconnect(): void {
-    this.reconnectAttempts++;
-    const delay =
-      this.reconnectDelay *
-      Math.pow(2, Math.min(this.reconnectAttempts - 1, 4));
+  private buildAgentHeaders(): Record<string, string> {
+    return {
+      Authorization: `Bearer ${this.options.jwtToken}`,
+      "X-Agent-Instance-Id": this.instanceId,
+      "X-Agent-Version": "valoride",
+      "X-ValorIDE-Instance": this.instanceId,
+    };
+  }
 
-    console.log(
-      `Scheduling mothership reconnect attempt ${this.reconnectAttempts} in ${delay}ms`,
+  private handleConnected(): void {
+    console.log("Mothership STOMP connected");
+    this.connected = true;
+    this.reconnectAttempts = 0;
+    this.subscribeToMothershipTopics();
+    this.startPingInterval();
+    this.emit("connected");
+
+    // Send initial registration message.
+    this.sendMessage({
+      type: WebsocketMessageTypeEnum.SERVICE,
+      payload: JSON.stringify({
+        action: "register",
+        instanceId: this.instanceId,
+        userId: this.options.userId,
+        timestamp: Date.now(),
+      }),
+      time: new Date().toISOString(),
+      user: { id: this.options.userId || "anonymous" } as any,
+    });
+
+    try {
+      this.sendAppTopic("presence:join", {
+        id: this.instanceId,
+        online: true,
+      });
+      this.sendAppTopic("auth:ack", { id: this.instanceId });
+      this.sendAppTopic("presence:rollcall", { id: this.instanceId });
+      this.sendAppTopic("session:resume", {
+        id: this.instanceId,
+        lastProcessedSequence: this.lastProcessedSequence,
+        replayWindowSize: this.replayWindowSize,
+      });
+      this.emit("liveness", {
+        id: this.instanceId,
+        online: true,
+        timestamp: Date.now(),
+      });
+    } catch (e) {
+      console.warn("Failed to send presence/rollcall on connect:", e);
+    }
+  }
+
+  private subscribeToMothershipTopics(): void {
+    if (!this.stompClient?.connected) {
+      return;
+    }
+
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.subscriptions = [];
+
+    const headers = this.buildAgentHeaders();
+    const destinations = [
+      "/topic/messages",
+      "/topic/statuses",
+      "/topic/agent-commands",
+      `/queue/agents/${this.instanceId}/commands`,
+    ];
+
+    this.subscriptions = destinations.map((destination) =>
+      this.stompClient!.subscribe(
+        destination,
+        (message) => this.handleStompMessage(message),
+        headers,
+      ),
     );
+  }
 
-    setTimeout(() => {
-      if (!this.connected) {
-        this.connect().catch((error) => {
-          console.error("Mothership reconnect failed:", error);
-        });
-      }
-    }, delay);
+  private handleStompMessage(message: IMessage): void {
+    try {
+      const data = JSON.parse(message.body);
+      const websocketMessage = WebsocketMessageFromJSON(data);
+      this.handleIncomingMessage(websocketMessage);
+    } catch (error) {
+      console.error("Failed to parse mothership STOMP message:", error);
+    }
+  }
+
+  private handleDisconnected(event?: unknown): void {
+    const wasConnected = this.connected;
+    this.connected = false;
+    this.subscriptions = [];
+    this.stopPingInterval();
+
+    if (wasConnected) {
+      this.emit("disconnected", event);
+    }
   }
 
   private startPingInterval(): void {
     this.stopPingInterval();
     this.pingInterval = setInterval(() => {
-      if (this.websocket?.readyState === WebSocket.OPEN) {
+      if (this.stompClient?.connected) {
         this.sendMessage({
           type: WebsocketMessageTypeEnum.SERVICE,
           payload: JSON.stringify({ action: "ping" }),
@@ -408,12 +464,33 @@ export class MothershipService extends EventEmitter {
 
   private handleRemoteCommand(payload: any): void {
     try {
+      const commandPayload = payload?.command ?? payload?.message ?? payload;
+      const isSwarmCommand = validateSwarmMessage(commandPayload);
+      const innerPayload = isSwarmCommand
+        ? commandPayload.payload?.data
+        : commandPayload?.data ?? commandPayload?.payload ?? payload?.payload;
       const command: RemoteCommand = {
-        id: payload.id || Math.random().toString(36),
-        type: payload.type,
-        payload: payload.data || payload.payload,
-        sourceInstanceId: payload.sourceInstanceId,
-        targetInstanceId: payload.targetInstanceId,
+        id:
+          payload?.commandId ||
+          commandPayload?.commandId ||
+          commandPayload?.id ||
+          Math.random().toString(36),
+        type:
+          (isSwarmCommand
+            ? commandPayload.payload.action
+            : commandPayload?.action || commandPayload?.type || payload?.type) ||
+          "valor.execute",
+        payload: innerPayload,
+        sourceInstanceId:
+          commandPayload?.sourceInstanceId ||
+          commandPayload?.from?.instanceId ||
+          payload?.sourceInstanceId ||
+          "api-0",
+        targetInstanceId:
+          commandPayload?.targetInstanceId ||
+          commandPayload?.to?.instanceId ||
+          payload?.targetInstanceId,
+        raw: payload,
       };
 
       // Only process commands targeted at this instance or broadcast commands
@@ -432,11 +509,7 @@ export class MothershipService extends EventEmitter {
   }
 
   public sendMessage(message: Partial<WebsocketMessage>): void {
-    if (
-      !this.connected ||
-      !this.websocket ||
-      this.websocket.readyState !== WebSocket.OPEN
-    ) {
+    if (!this.connected || !this.stompClient?.connected) {
       console.warn("Cannot send message - mothership not connected");
       return;
     }
@@ -477,10 +550,23 @@ export class MothershipService extends EventEmitter {
       }
 
       const jsonMessage = WebsocketMessageToJSON(fullMessage);
-      this.websocket.send(JSON.stringify(jsonMessage));
+      this.stompClient.publish({
+        body: JSON.stringify(jsonMessage),
+        destination:
+          fullMessage.type === ("command" as any) ? "/app/command" : "/app/chat",
+        headers: this.buildAgentHeaders(),
+      });
     } catch (error) {
       console.error("Failed to send mothership message:", error);
     }
+  }
+
+  public sendCommandPayload(data: any): void {
+    this.sendMessage({
+      type: "command" as any,
+      payload: JSON.stringify(data),
+      time: new Date().toISOString(),
+    });
   }
 
   public sendValorIDEAction(taskId: string, action: string, data: any): void {
@@ -537,17 +623,17 @@ export class MothershipService extends EventEmitter {
   public disconnect(): void {
     this.stopPingInterval();
 
-    if (this.websocket) {
-      this.websocket.close(1000, "Client disconnect");
-      this.websocket = null;
-    }
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.subscriptions = [];
+    void this.stompClient?.deactivate();
+    this.stompClient = null;
 
     this.connected = false;
     this.emit("disconnected");
   }
 
   public isConnected(): boolean {
-    return this.connected && this.websocket?.readyState === WebSocket.OPEN;
+    return this.connected && Boolean(this.stompClient?.connected);
   }
 
   public getInstanceId(): string {

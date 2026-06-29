@@ -6,6 +6,10 @@ import CoolButton from "@valkyr/component-library/CoolButton";
 import { usePasswordResetConfirmMutation } from "../../redux/services/LoginService";
 import { FiLock } from "react-icons/fi";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import {
+  PASSWORD_POLICY_DESCRIPTION,
+  buildPasswordValidation,
+} from "../../utils/passwordPolicy";
 
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -14,9 +18,7 @@ const ResetPassword: React.FC = () => {
   const [resetConfirm, resetResult] = usePasswordResetConfirmMutation();
 
   const validationSchema = Yup.object().shape({
-    newPassword: Yup.string()
-      .min(8, "Minimum 8 characters")
-      .required("New password is required"),
+    newPassword: buildPasswordValidation(),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("newPassword"), undefined], "Passwords must match")
       .required("Confirm your password"),
@@ -74,6 +76,9 @@ const ResetPassword: React.FC = () => {
                           name="newPassword"
                           type="password"
                         />
+                        <div className="form-text">
+                          {PASSWORD_POLICY_DESCRIPTION}
+                        </div>
                         <div className="text-danger">
                           <ErrorMessage name="newPassword" />
                         </div>

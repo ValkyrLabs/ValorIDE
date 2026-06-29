@@ -1208,12 +1208,15 @@ label {
   }
 }
 .applications-list {
-  padding: 10px;
   color: var(--vscode-foreground);
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   height: 100%;
-  max-height: 400px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px;
+  width: 100%;
 }
 
 .applications-list ul {
@@ -1225,75 +1228,196 @@ label {
   max-height: 300px;
 }
 
+.applications-header h2 {
+  color: var(--vscode-foreground);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
 .applications-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-  flex-grow: 1;
+  flex: 1 1 auto;
+  gap: 10px;
+  justify-content: flex-start;
+  min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
-  max-height: 300px;
+  padding-right: 4px;
+  width: 100%;
+}
+
+.applications-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.applications-section-header {
+  align-items: center;
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border-bottom: 1px solid var(--vscode-panel-border);
+  color: var(--vscode-descriptionForeground);
+  display: flex;
+  gap: 8px;
+  padding: 10px 2px 9px;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.applications-section-header h3 {
+  color: var(--vscode-foreground);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.applications-section-header span {
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.applications-section-header-owned {
+  border-bottom-color: var(--vscode-panel-border);
+  color: var(--vscode-descriptionForeground);
+}
+
+.applications-section-list {
+  align-content: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.application-row {
+  align-items: stretch;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--vscode-panel-border) 55%, transparent);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  width: 100%;
 }
 
 .application-card {
-  border-radius: 8px;
-  padding: 16px;
-  background-color: var(--vscode-editor-background);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  flex: 1 1 360px;
+  min-width: 0;
+  padding: 14px 16px;
+  transition: background-color 0.16s ease;
+}
+
+.application-card:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.application-card-owned {
+  border-left: none;
 }
 
 .application-card-content {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .application-info {
   flex-grow: 1;
+  min-width: 0;
+}
+
+.application-heading-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .application-name {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  font-weight: 600;
   color: var(--vscode-foreground);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.application-marketplace-meta {
+  align-items: center;
+  color: var(--vscode-descriptionForeground);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 8px;
+  margin-top: 4px;
+  min-width: 0;
+}
+
+.application-marketplace-meta span {
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+  min-width: 0;
 }
 
 .application-description {
-  margin: 0 0 8px 0;
   color: var(--vscode-descriptionForeground);
   font-size: 14px;
+  line-height: 1.35;
+  margin: 12px 0 0;
 }
 
-.application-meta {
+.application-tags {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 6px;
   font-size: 12px;
+  margin-top: 12px;
 }
 
 .application-type {
-  background-color: #007bff;
-  color: white;
-  padding: 2px 8px;
+  background-color: transparent;
+  border: 1px solid var(--vscode-panel-border);
   border-radius: 4px;
+  color: var(--vscode-descriptionForeground);
+  padding: 1px 6px;
 }
 
 .application-status {
-  color: white;
-  padding: 2px 8px;
+  background-color: transparent;
+  border: 1px solid var(--vscode-panel-border);
   border-radius: 4px;
+  color: var(--vscode-descriptionForeground);
+  padding: 1px 6px;
 }
 
 .application-status.status-ready {
-  background-color: #28a745;
+  background-color: var(
+    --vscode-testing-iconPassed,
+    var(--vscode-charts-green)
+  );
 }
 
 .application-status.status-deployed {
-  background-color: #17a2b8;
+  background-color: var(--vscode-focusBorder);
 }
 
 .application-status.status-pending {
-  background-color: #ffc107;
-  color: #212529;
+  background-color: var(--vscode-editorWarning-foreground);
+  color: var(--vscode-editor-background);
 }
 
 .application-status:not(.status-ready):not(.status-deployed):not(
@@ -1323,43 +1447,40 @@ label {
   align-items: center;
   gap: 12px;
 }
-.application-info {
-  flex-grow: 1;
-}
-.application-name {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.application-description {
-  color: var(--vscode-descriptionForeground);
-  margin-bottom: 6px;
-  font-size: 0.9em;
-}
 .application-meta {
   display: flex;
   gap: 12px;
   font-size: 0.8em;
   color: var(--vscode-descriptionForeground);
 }
-.application-type,
-.application-status {
-  padding: 2px 6px;
-  border-radius: 3px;
-  background-color: var(--vscode-badge-background);
-  color: var(--vscode-badge-foreground);
-}
-
 .application-loading-steps {
   display: flex;
   flex-direction: column;
+  flex: 1 1 240px;
   gap: 8px;
-  width: 100%;
+  max-width: 360px;
+  min-width: 240px;
+  padding: 14px 16px 14px 0;
+  width: auto;
+}
+
+.application-loading-steps .loading-steps {
+  background: var(
+    --vscode-editorWidget-background,
+    var(--vscode-editor-background)
+  );
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 8px;
+  height: 100%;
+  min-width: 0;
+  padding: 12px;
 }
 
 .application-buttons {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: 14px;
   min-width: 120px;
 }
 
@@ -1367,17 +1488,87 @@ label {
   width: 100%;
 }
 
+.application-status.status-ready {
+  background-color: var(
+    --vscode-testing-iconPassed,
+    var(--vscode-charts-green)
+  );
+}
+
+.application-status.status-deployed {
+  background-color: var(--vscode-focusBorder);
+}
+
+.application-status.status-pending {
+  background-color: var(--vscode-editorWarning-foreground);
+  color: var(--vscode-editor-background);
+}
+
 @media (min-width: 768px) {
   .application-buttons {
     flex-direction: row;
     gap: 8px;
-    min-width: auto;
+    margin-top: 0;
+    min-width: 260px;
   }
 
   .application-buttons vscode-button {
     width: auto;
     min-width: 80px;
   }
+}
+
+@media (max-width: 680px) {
+  .application-loading-steps {
+    max-width: none;
+    min-width: 100%;
+    padding: 0 16px 14px;
+  }
+
+  .application-card-content {
+    flex-direction: column;
+  }
+
+  .application-buttons {
+    width: 100%;
+  }
+
+  .application-buttons vscode-button {
+    width: 100%;
+  }
+}
+
+.openapi-import-card {
+  background: var(
+    --vscode-editorWidget-background,
+    var(--vscode-editor-background)
+  );
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: var(--vscode-foreground);
+  margin-bottom: 16px;
+  padding: 16px;
+  width: 100%;
+}
+
+.openapi-import-card h3 {
+  color: var(--vscode-foreground);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.openapi-import-card .file-picker-controls > div {
+  flex-wrap: wrap;
+}
+
+.account-applications-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
 }
 
 .nav-link {

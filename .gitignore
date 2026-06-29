@@ -1,5 +1,7 @@
 node_modules
 dist
+out
+.vscode-test
 public
 
 # TypeScript source trees should not contain emitted JavaScript artifacts.

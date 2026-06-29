@@ -83,31 +83,19 @@ export default defineConfig({
       },
       {
         find: "@thorapi/model",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/model"),
       },
       {
         find: "@thorapi/src",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/src",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/src"),
       },
       {
         find: "@thorapi/redux",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/redux"),
       },
       {
         find: "@thorapi/api",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/api"),
       },
       {
         find: "@",

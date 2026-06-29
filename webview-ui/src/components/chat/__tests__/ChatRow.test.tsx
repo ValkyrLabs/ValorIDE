@@ -71,8 +71,14 @@ vi.mock("@thorapi/components/chat/TaskFeedbackButtons", () => ({
   default: () => null,
 }));
 
+vi.mock("@thorapi/utils/vscode", () => ({
+  vscode: {
+    postMessage: vi.fn(),
+  },
+}));
+
 describe("ChatRow Content - completion_result summary handling", () => {
-  it("does not render initial task prompt as message text when a summary exists", () => {
+  it("renders the initial task prompt inside the generated report when a thin summary exists", () => {
     const initialPrompt = "Write a unit test for this function";
 
     const message = {
@@ -102,8 +108,10 @@ describe("ChatRow Content - completion_result summary handling", () => {
       </ProviderAny>,
     );
 
-    // The initial prompt should not be shown as the message text
-    expect(screen.queryByText(initialPrompt)).toBeNull();
+    // The initial prompt is represented inside the generated report, not as a
+    // duplicated free-floating message above it.
+    expect(screen.getByText(initialPrompt)).toBeTruthy();
+    expect(screen.getByText(/What was built:/)).toBeTruthy();
 
     // The summary card title should be visible
     expect(
@@ -111,7 +119,7 @@ describe("ChatRow Content - completion_result summary handling", () => {
     ).toBeTruthy();
   });
 
-  it("hides the initial task prompt for an ask/completion_result message when a summary exists", () => {
+  it("renders the ask/completion_result task prompt inside the generated report when a thin summary exists", () => {
     const initialPrompt = "Write a unit test for this function";
 
     const message = {
@@ -141,8 +149,10 @@ describe("ChatRow Content - completion_result summary handling", () => {
       </ProviderAny>,
     );
 
-    // The initial prompt should not be shown as the message text
-    expect(screen.queryByText(initialPrompt)).toBeNull();
+    // The initial prompt is represented inside the generated report, not as a
+    // duplicated free-floating message above it.
+    expect(screen.getByText(initialPrompt)).toBeTruthy();
+    expect(screen.getByText(/What was built:/)).toBeTruthy();
   });
 
   it("does not duplicate result text outside the report when a summary exists", () => {
@@ -173,8 +183,9 @@ describe("ChatRow Content - completion_result summary handling", () => {
       </ProviderAny>,
     );
 
-    // The result text is represented by the summary markdown, not rendered twice.
-    expect(screen.queryByText(resultText)).toBeNull();
+    // The result text is represented inside the report, not rendered twice.
+    expect(screen.getByText(resultText)).toBeTruthy();
+    expect(screen.getByText(/What was built:/)).toBeTruthy();
 
     // The summary card title should also be visible
     expect(
@@ -210,6 +221,182 @@ describe("ChatRow Content - completion_result summary handling", () => {
     expect(screen.getByText(/Refactored models/)).toBeTruthy();
     expect(screen.getByText(/Implementation Details/)).toBeTruthy();
     expect(screen.getByText(`Completion Report — ${text}`)).toBeTruthy();
+  });
+
+  it("shows the full completion report invariant instead of only the compact card title", () => {
+    const title = "Fix the completion report";
+    const message = {
+      type: "say",
+      say: "completion_result",
+      ts: Date.now(),
+      text: "Completed the completion report fix.",
+      summaryMarkdown: [
+        "# 🎯 Fix the completion report — COMPLETE",
+        "",
+        "## 📊 Executive Summary",
+        "- **What was built:** Full report rendering",
+        "- **Status:** ✅ SHIPPED",
+        "",
+        "## 🔧 Implementation Details",
+        "- Updated ChatRow completion card",
+        "",
+        "## ✅ Quality Gates",
+        "- Tests passing",
+        "",
+        "## 📈 Before/After Comparison",
+        "| Metric | Before | After |",
+        "|--------|--------|-------|",
+        "| Completion report | ❌ Title-only | ✅ Full report |",
+        "",
+        "## 🚀 Ship Status",
+        "**Production-ready:** Yes",
+      ].join("\n"),
+      summaryTitle: title,
+      summaryCompletedAt: new Date().toISOString(),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText(`Completion Report — ${title}`)).toBeTruthy();
+    expect(screen.getByText(/Executive Summary/)).toBeTruthy();
+    expect(screen.getByText(/Implementation Details/)).toBeTruthy();
+    expect(screen.getByText(/Quality Gates/)).toBeTruthy();
+    expect(screen.getByText(/Before\/After Comparison/)).toBeTruthy();
+    expect(screen.getByText(/Ship Status/)).toBeTruthy();
+    expect(screen.getByText("Completion report")).toBeTruthy();
+  });
+});
+
+describe("ChatRow Content - command and GrayMatter UX", () => {
+  it("renders command rows as compact command previews without the old ValorIDE title", () => {
+    const message = {
+      type: "ask",
+      ask: "command",
+      ts: Date.now(),
+      text: "npm test -- --runInBandREQ_APP",
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText("Executing Command:")).toBeTruthy();
+    expect(screen.getByText("npm test -- --runInBand")).toBeTruthy();
+    expect(screen.queryByText(/ValorIDE executing command/i)).toBeNull();
+  });
+
+  it("renders GrayMatter context access with a green memory status", () => {
+    const message = {
+      type: "say",
+      say: "graymatter_context",
+      ts: Date.now(),
+      text: JSON.stringify({
+        citations: 2,
+        message: "GrayMatter injected 2 remembered context entries.",
+        status: "ready",
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText(/GrayMatter memory checked/)).toBeTruthy();
+    expect(
+      screen.getByText(/GrayMatter injected 2 remembered context entries/),
+    ).toBeTruthy();
+    expect(screen.getByText("ready")).toBeTruthy();
+  });
+
+  it("shows captured command output inside the command dropdown", () => {
+    const message = {
+      type: "say",
+      say: "command",
+      ts: Date.now(),
+      text: "npm test\nOutput:\nPASS src/core/task/index.test.ts",
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={{
+            type: "say",
+            say: "text",
+            text: "done",
+            ts: Date.now(),
+          }}
+          isLast={false}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText("Command Output")).toBeTruthy();
+    expect(
+      screen.getByText(/PASS src\/core\/task\/index.test.ts/),
+    ).toBeTruthy();
+  });
+
+  it("marks silent completed commands as completed with no output", () => {
+    const message = {
+      type: "say",
+      say: "command",
+      ts: Date.now(),
+      text: "git status --short",
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={{
+            type: "say",
+            say: "text",
+            text: "done",
+            ts: Date.now(),
+          }}
+          isLast={false}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText("Command completed with no output.")).toBeTruthy();
+    expect(screen.queryByText("No output yet")).toBeNull();
   });
 });
 
@@ -259,6 +446,58 @@ describe("ChatRow Content - follow-up questions", () => {
       "Generate Secure Intake",
       [],
     );
+  });
+
+  it("does not render a question shell when follow-up text is blank", () => {
+    const message = {
+      type: "ask",
+      ask: "followup",
+      ts: Date.now(),
+      text: "   \n\t",
+    } as any;
+
+    const { container } = render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.queryByText("ValorIDE has a question:")).toBeNull();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders option-only follow-ups as answerable prompts", () => {
+    const message = {
+      type: "ask",
+      ask: "followup",
+      ts: Date.now(),
+      text: JSON.stringify({ options: ["Continue", "Stop"] }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText("ValorIDE has a question:")).toBeTruthy();
+    expect(screen.getByText("Select an option to continue.")).toBeTruthy();
+    expect(screen.getByText("Continue")).toBeTruthy();
+    expect(screen.getByText("Stop")).toBeTruthy();
   });
 });
 
@@ -336,8 +575,9 @@ describe("ChatRow Content - command header", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("ValorIDE executing command:")).toBeTruthy();
+    expect(screen.getByText("Executing Command:")).toBeTruthy();
     expect(screen.getByText("ls -la")).toBeTruthy();
+    expect(screen.queryByText("ValorIDE executing command:")).toBeNull();
   });
 });
 
@@ -533,5 +773,43 @@ describe("ChatRow Content - reasoning severity indicator", () => {
       "color",
       "var(--vscode-notificationsWarningIcon-foreground, var(--vscode-charts-yellow))",
     );
+  });
+});
+
+describe("ChatRow Content - GrayMatter recovery", () => {
+  it("shows a sign-in action when GrayMatter is unauthenticated without recovery actions", async () => {
+    const { vscode } = await import("@thorapi/utils/vscode");
+    vi.mocked(vscode.postMessage).mockClear();
+    const message = {
+      type: "say",
+      say: "graymatter_context",
+      ts: Date.now(),
+      text: JSON.stringify({
+        message:
+          "GrayMatter memory context needs an active ValkyrAI session token before it can query memory.",
+        status: "unauthenticated",
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    const button = screen.getByRole("button", { name: "Sign in to ValkyrAI" });
+    fireEvent.click(button);
+
+    expect(vscode.postMessage).toHaveBeenCalledWith({
+      type: "showAccountViewClicked",
+      accountTab: "login",
+    });
   });
 });

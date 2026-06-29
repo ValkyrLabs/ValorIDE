@@ -42,6 +42,33 @@ test("ValorIDE keeps generated ThorAPI in the webview only", () => {
     /path\.join\(repoRoot,\s*"src",\s*"thorapi"\)/,
     "sync script must not recreate root src/thorapi",
   );
+
+  const viteConfig = readText("webview-ui/vite.config.ts");
+  assert.doesNotMatch(
+    viteConfig,
+    /ValkyrAI\/web\/typescript\/valkyr_labs_com\/src\/thorapi/,
+    "webview aliases must not point at the removed ValkyrAI external thorapi path",
+  );
+
+  const expectedThorapiAliases = new Map([
+    ["@thorapi/model", "./src/thorapi/model"],
+    ["@thorapi/src", "./src/thorapi/src"],
+    ["@thorapi/redux", "./src/thorapi/redux"],
+    ["@thorapi/api", "./src/thorapi/api"],
+  ]);
+
+  for (const [alias, target] of expectedThorapiAliases) {
+    assert.match(
+      viteConfig,
+      new RegExp(`find: "${alias}"`),
+      `${alias} should be declared in webview-ui/vite.config.ts`,
+    );
+    assert.match(
+      viteConfig,
+      new RegExp(`replacement: resolve\\(__dirname, "${target}"\\)`),
+      `${alias} should resolve to ${target}`,
+    );
+  }
 });
 
 test("account credits use the webview RTK Query client boundary", () => {

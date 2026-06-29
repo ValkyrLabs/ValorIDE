@@ -116,13 +116,24 @@ import {
   getLocalValorIDERules,
   refreshValorIDERulesToggles,
 } from "@core/context/instructions/user-instructions/valoride-rules";
-import { getGlobalState, getSecret } from "@core/storage/state";
+import {
+  getGlobalState,
+  getSecret,
+  updateGlobalState,
+} from "@core/storage/state";
 import { parseSlashCommands } from "@core/slash-commands";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
 import { createAgentContextSectionForTask } from "@services/agentic/AgentContextAssembler";
-import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import {
+  createGrayMatterSessionState,
+  type GrayMatterSessionState,
+} from "@services/graymatter/GrayMatterSessionService";
 import { getLLMPromptService } from "@services/llmPromptService";
+import {
+  extractTenantContext,
+  mergeTenantContext,
+} from "@services/auth/tenantContext";
 import type { SelectedPrompt } from "@services/llmPromptService";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
@@ -1956,6 +1967,7 @@ export class Task {
     let didContinue = false;
     let completed = false;
     let processError: Error | undefined;
+    let didEmitCommandOutputToChat = false;
 
     const CHUNK_LINE_LIMIT = 20;
     const CHUNK_BYTE_LIMIT = 2048;
@@ -1974,6 +1986,7 @@ export class Task {
     };
 
     const streamLine = (line: string) => {
+      didEmitCommandOutputToChat = true;
       this.say("command_output", line).catch((error) => {
         Logger.warn(
           `Failed to stream command output line: ${
@@ -2003,6 +2016,7 @@ export class Task {
         cancelFlushTimer();
         try {
           // Use a timeout to prevent indefinite blocking on long-running commands
+          didEmitCommandOutputToChat = true;
           const askPromise = this.ask("command_output", chunk);
           const timeoutPromise = new Promise<{
             response: string;
@@ -2132,6 +2146,10 @@ export class Task {
       fullOutput,
       command,
     );
+
+    if (filteredOutput.length > 0 && !didEmitCommandOutputToChat) {
+      await this.say("command_output", filteredOutput);
+    }
 
     if (processError) {
       return [
@@ -2266,24 +2284,162 @@ export class Task {
     await this.diffViewProvider.reset();
   }
 
+  private shouldRefreshGrayMatterSession(
+    token: string | undefined,
+    session: GrayMatterSessionState | undefined,
+  ): boolean {
+    if (!token) {
+      return false;
+    }
+
+    return (
+      !session ||
+      session.status === "unavailable" ||
+      (session.status === "ready" && !session.capabilities.memoryQuery)
+    );
+  }
+
+  private async readGrayMatterTenantContext() {
+    const [authenticatedPrincipal, userInfo, rawTenantContext] =
+      await Promise.all([
+        getGlobalState(this.context, "authenticatedPrincipal"),
+        getGlobalState(this.context, "userInfo"),
+        this.context.secrets.get("tenantContext"),
+      ]);
+    let tenantSecret = undefined;
+    if (rawTenantContext) {
+      try {
+        tenantSecret = JSON.parse(rawTenantContext);
+      } catch {
+        tenantSecret = undefined;
+      }
+    }
+
+    return mergeTenantContext(
+      extractTenantContext(authenticatedPrincipal),
+      extractTenantContext(userInfo),
+      tenantSecret,
+    );
+  }
+
+  private async refreshGrayMatterSessionForTask(
+    token: string | undefined,
+    session: GrayMatterSessionState | undefined,
+  ): Promise<GrayMatterSessionState | undefined> {
+    if (!this.shouldRefreshGrayMatterSession(token, session)) {
+      return session;
+    }
+
+    try {
+      const refreshed = await createGrayMatterSessionState({
+        baseUrl: getValkyraiBasePath(),
+        tenantContext: await this.readGrayMatterTenantContext(),
+        token,
+      });
+      await updateGlobalState(this.context, "grayMatterSession", refreshed);
+      return refreshed;
+    } catch (error) {
+      console.warn("Failed to refresh GrayMatter session for task:", error);
+      return session;
+    }
+  }
+
   private async buildAgentContextSection(): Promise<string | undefined> {
     try {
-      const [token, grayMatterSession] = await Promise.all([
-        getSecret(this.context, "jwtToken"),
-        getGlobalState(this.context, "grayMatterSession") as Promise<
-          GrayMatterSessionState | undefined
-        >,
-      ]);
+      const [jwtToken, legacyValorJwt, valkyraiJwt, cachedGrayMatterSession] =
+        await Promise.all([
+          getSecret(this.context, "jwtToken"),
+          this.context.secrets.get("valor_jwt_token"),
+          getSecret(this.context, "valkyraiJwt"),
+          getGlobalState(this.context, "grayMatterSession") as Promise<
+            GrayMatterSessionState | undefined
+          >,
+        ]);
+      const token = jwtToken || legacyValorJwt || valkyraiJwt;
+      const tenantContext = await this.readGrayMatterTenantContext();
 
-      return await createAgentContextSectionForTask({
+      const reportGrayMatterAccess = async (
+        payload: Record<string, unknown>,
+      ) => {
+        await this.say(
+          "graymatter_context",
+          JSON.stringify({
+            checkedAt: new Date().toISOString(),
+            ...payload,
+          }),
+          undefined,
+          false,
+        ).catch((error) => {
+          console.warn("Failed to report GrayMatter context access:", error);
+        });
+      };
+      const grayMatterSession = await this.refreshGrayMatterSessionForTask(
+        token,
+        cachedGrayMatterSession,
+      );
+
+      if (
+        !token ||
+        grayMatterSession?.status !== "ready" ||
+        !grayMatterSession.capabilities.memoryQuery
+      ) {
+        const message = !token
+          ? "GrayMatter memory context needs an active ValkyrAI session token before it can query memory."
+          : (grayMatterSession?.recovery?.message ??
+            (grayMatterSession?.status === "ready" &&
+            !grayMatterSession.capabilities.memoryQuery
+              ? "GrayMatter is authenticated, but memory query capability was not discovered for this backend session."
+              : "GrayMatter memory context is unavailable for this task."));
+        const status = !token
+          ? "unauthenticated"
+          : grayMatterSession?.status === "ready" &&
+              !grayMatterSession.capabilities.memoryQuery
+            ? "unavailable"
+            : (grayMatterSession?.status ?? "unavailable");
+        await reportGrayMatterAccess({
+          capabilities: grayMatterSession?.capabilities,
+          message,
+          recovery: grayMatterSession?.recovery,
+          status,
+        });
+        return undefined;
+      }
+
+      const section = await createAgentContextSectionForTask({
         baseUrl: getValkyraiBasePath(),
         cwd,
         grayMatterSession,
         task: this.getLatestTaskTextForGrayMatter(),
+        tenantContext,
         token,
       });
+
+      const citationCount = (section?.match(/\[gm:/g) ?? []).length;
+      await reportGrayMatterAccess({
+        citations: citationCount,
+        message:
+          citationCount > 0
+            ? `GrayMatter injected ${citationCount} remembered context entr${citationCount === 1 ? "y" : "ies"} into this task.`
+            : "GrayMatter checked memory before this task; no relevant memories were returned.",
+        status: citationCount > 0 ? "ready" : "empty",
+      });
+
+      return section;
     } catch (error) {
       console.warn("Failed to assemble GrayMatter agent context:", error);
+      await this.say(
+        "graymatter_context",
+        JSON.stringify({
+          checkedAt: new Date().toISOString(),
+          message:
+            error instanceof Error
+              ? error.message
+              : "GrayMatter context assembly failed.",
+          status: "unavailable",
+        }),
+        undefined,
+        false,
+      ).catch(() => {});
       return undefined;
     }
   }
@@ -4393,14 +4549,25 @@ export class Task {
           case "ask_followup_question": {
             const question: string | undefined = block.params.question;
             const optionsRaw: string | undefined = block.params.options;
+            const normalizedQuestion = removeClosingTag("question", question);
+            const questionText = normalizedQuestion?.trim();
+            const normalizedOptionsRaw = removeClosingTag(
+              "options",
+              optionsRaw,
+            );
+            const parsedOptions = parsePartialArrayString(
+              normalizedOptionsRaw || "[]",
+            );
             const sharedMessage = {
-              question: removeClosingTag("question", question),
-              options: parsePartialArrayString(
-                removeClosingTag("options", optionsRaw),
-              ),
+              question: questionText || "",
+              options: parsedOptions,
             } satisfies ValorIDEAskQuestion;
             try {
               if (block.partial) {
+                if (!questionText && parsedOptions.length === 0) {
+                  break;
+                }
+
                 await this.ask(
                   "followup",
                   JSON.stringify(sharedMessage),
@@ -4408,7 +4575,7 @@ export class Task {
                 ).catch(() => {});
                 break;
               } else {
-                if (!question) {
+                if (!questionText) {
                   this.consecutiveMistakeCount++;
                   pushToolResult(
                     await this.sayAndCreateMissingParamError(
@@ -4424,12 +4591,12 @@ export class Task {
                 if (this.autoApprovalSettings.enableNotifications) {
                   showSystemNotification({
                     subtitle: "ValorIDE has a question...",
-                    message: question.replace(/\n/g, " "),
+                    message: questionText.replace(/\n/g, " "),
                   });
                 }
 
                 // Store the number of options for telemetry
-                const options = parsePartialArrayString(optionsRaw || "[]");
+                const options = parsedOptions;
 
                 const { text, images } = await this.ask(
                   "followup",
@@ -5012,12 +5179,6 @@ export class Task {
                   "completion_result",
                   "",
                   false,
-                  {
-                    changesSummary: lastCompletionChangesSummary,
-                    summaryMarkdown,
-                    summaryTitle,
-                    summaryCompletedAt,
-                  },
                 );
                 // Halt the API Request spinner after task completion
                 getStatusBarService().update({
@@ -5490,6 +5651,17 @@ export class Task {
       const streamIterator = stream[Symbol.asyncIterator]();
       let assistantMessage = "";
       let reasoningMessage = "";
+      let didFinalizeReasoningMessage = false;
+      const finalizeReasoningMessage = async () => {
+        if (
+          reasoningMessage &&
+          !didFinalizeReasoningMessage &&
+          !this.abort
+        ) {
+          await this.say("reasoning", reasoningMessage, undefined, false);
+          didFinalizeReasoningMessage = true;
+        }
+      };
       this.isStreaming = true;
 
       // Update status bar: streaming started
@@ -5552,18 +5724,15 @@ export class Task {
               applyUsageChunk(chunk);
               break;
             case "reasoning":
-              // reasoning will always come before assistant message
               reasoningMessage += chunk.reasoning;
+              didFinalizeReasoningMessage = false;
               // fixes bug where cancelling task > aborts task > for loop may be in middle of streaming reasoning > say function throws error before we get a chance to properly clean up and cancel the task.
               if (!this.abort) {
                 await this.say("reasoning", reasoningMessage, undefined, true);
               }
               break;
             case "text":
-              if (reasoningMessage && assistantMessage.length === 0) {
-                // complete reasoning message
-                await this.say("reasoning", reasoningMessage, undefined, false);
-              }
+              await finalizeReasoningMessage();
               assistantMessage += chunk.text;
               // parse raw assistant message into content blocks
               const prevLength = this.assistantMessageContent.length;
@@ -5647,6 +5816,8 @@ export class Task {
       if (this.abort) {
         throw new Error("ValorIDE instance aborted");
       }
+
+      await finalizeReasoningMessage();
 
       this.didCompleteReadingStream = true;
       apiReqComplete = true;

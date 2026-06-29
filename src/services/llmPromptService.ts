@@ -465,27 +465,6 @@ export function createExtensionHostLLMDetailsService(
         clearTimeout(timeout);
       }
 
-      const controller = new AbortController();
-      const timeout = setTimeout(
-        () => controller.abort(),
-        LLM_DETAILS_QUERY_TIMEOUT_MS,
-      );
-
-      let response: Response;
-      try {
-        response = await fetch(endpoint.toString(), {
-          headers,
-          signal: controller.signal,
-        });
-      } catch (error) {
-        logger.appendLine(
-          `[LLMPromptService] ThorAPI query unavailable (${classifyLlmDetailsQueryError(error)}); using fallback prompt`,
-        );
-        return null;
-      } finally {
-        clearTimeout(timeout);
-      }
-
       if (response.status === 401 || response.status === 403) {
         logger.appendLine(
           `[LLMPromptService] ThorAPI query denied by RBAC (${response.status}); using fallback prompt`,

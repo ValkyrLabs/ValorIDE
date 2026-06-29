@@ -22,6 +22,10 @@ import {
 import { Principal } from "@thorapi/model";
 
 import { useAddPrincipalMutation } from "../../services/PrincipalService";
+import {
+  PASSWORD_POLICY_DESCRIPTION,
+  buildPasswordValidation,
+} from "../../../utils/passwordPolicy";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -56,12 +60,12 @@ const asNumber = (schema: Yup.NumberSchema) =>
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("username is required."),
-  password: Yup.string().required("password is required."),
+  password: buildPasswordValidation(),
   email: Yup.string()
     .email("Invalid email")
     .required("email is required.")
     .matches(
-      /^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/,
+      /^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/,
       "email must match pattern The main email address",
     ),
   firstName: Yup.string(),
@@ -74,7 +78,7 @@ const validationSchema = Yup.object().shape({
   residenceCountry: Yup.string(),
   stateIdentification: Yup.string().matches(
     /^\\d{10}$/,
-    "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID",
+    "stateIdentification must match pattern Driver&#39;s License or a 10 digit state government ID",
   ),
   residenceState: Yup.string(),
   phone: Yup.string().matches(
@@ -301,6 +305,9 @@ const PrincipalForm: React.FC = () => {
                       setFieldValue={setFieldValue}
                       setFieldTouched={setFieldTouched}
                     />
+                    <div className="form-text signup-password-policy">
+                      {PASSWORD_POLICY_DESCRIPTION}
+                    </div>
 
                     <ErrorMessage
                       className="error"

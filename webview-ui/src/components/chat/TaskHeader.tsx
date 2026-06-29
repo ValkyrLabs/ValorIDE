@@ -23,6 +23,7 @@ import {
   FaCopy,
   FaCheck,
   FaDollarSign,
+  FaStopCircle,
 } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
 import TaskThermometer from "@thorapi/components/TaskThermometer";
@@ -357,10 +358,16 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 
           <VSCodeButton
             appearance="icon"
+            title="End current task session"
+            aria-label="End current task session"
             onClick={onClose}
-            style={{ marginLeft: 6, flexShrink: 0 }}
+            style={{
+              marginLeft: 6,
+              flexShrink: 0,
+              color: "var(--vscode-errorForeground)",
+            }}
           >
-            <FaTimes />
+            <FaStopCircle />
           </VSCodeButton>
         </div>
         <TaskThermometer

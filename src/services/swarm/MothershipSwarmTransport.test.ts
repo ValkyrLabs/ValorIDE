@@ -11,6 +11,7 @@ const createMothership = () => ({
   on: jest.fn(),
   removeListener: jest.fn(),
   sendAppTopic: jest.fn(),
+  sendCommandPayload: jest.fn(),
 });
 
 describe("MothershipSwarmTransport", () => {
@@ -42,6 +43,33 @@ describe("MothershipSwarmTransport", () => {
       type: SwarmMessageType.ACK,
     });
     expect(mothership.sendAppTopic).toHaveBeenCalledWith("swarm", message);
+  });
+
+  it("publishes command ACKs through the mothership command channel", () => {
+    const mothership = createMothership();
+    const transport = new MothershipSwarmTransport(mothership);
+    const command = buildSwarmMessage(
+      SwarmMessageType.COMMAND,
+      { instanceId: "api-0", type: SwarmEntityType.SERVER },
+      { instanceId: "valoride-local-1", type: SwarmEntityType.AGENT },
+      "valor.execute",
+      { prompt: "start the task" },
+    );
+    const ack = buildAck(command, {
+      instanceId: "valoride-local-1",
+      type: SwarmEntityType.AGENT,
+    });
+
+    transport.send(ack);
+
+    expect(mothership.sendCommandPayload).toHaveBeenCalledWith(ack);
+    expect(mothership.sendAppTopic).toHaveBeenCalledWith("ack", {
+      ackId: command.id,
+      commandId: command.id,
+      code: undefined,
+      error: undefined,
+      status: "ok",
+    });
   });
 
   it("converts app-level mothership nacks into protocol NACKs", async () => {

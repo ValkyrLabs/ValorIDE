@@ -95,6 +95,114 @@ describe("OllamaHandler slow local model behavior", () => {
     });
   });
 
+  it("emits Ollama think tags as reasoning chunks instead of answer text", async () => {
+    const stream = {
+      [Symbol.asyncIterator]: async function* () {
+        yield {
+          message: {
+            content:
+              "<think>I should inspect the files first.</think>The answer is ready.",
+          },
+          done: true,
+          prompt_eval_count: 11,
+          eval_count: 7,
+        };
+      },
+    };
+
+    const chunks = await collectStream(stream);
+
+    expect(chunks).toEqual([
+      { type: "reasoning", reasoning: "I should inspect the files first." },
+      { type: "text", text: "The answer is ready." },
+      expect.objectContaining({
+        type: "usage",
+        inputTokens: 11,
+        outputTokens: 7,
+      }),
+    ]);
+  });
+
+  it("handles Ollama think tags split across streaming chunks", async () => {
+    const stream = {
+      [Symbol.asyncIterator]: async function* () {
+        yield { message: { content: "<thi" }, done: false };
+        yield { message: { content: "nk>Plan" }, done: false };
+        yield { message: { content: " carefully</thi" }, done: false };
+        yield { message: { content: "nk>Done" }, done: true };
+      },
+    };
+
+    const chunks = await collectStream(stream);
+
+    expect(chunks.filter((chunk) => chunk.type !== "usage")).toEqual([
+      { type: "reasoning", reasoning: "Plan carefully" },
+      { type: "text", text: "Done" },
+    ]);
+  });
+
+  it("also recognizes thinking tags used by some local models", async () => {
+    const stream = {
+      [Symbol.asyncIterator]: async function* () {
+        yield {
+          message: {
+            content: "<thinking>Working it out</thinking>Final response",
+          },
+          done: true,
+        };
+      },
+    };
+
+    const chunks = await collectStream(stream);
+
+    expect(chunks.filter((chunk) => chunk.type !== "usage")).toEqual([
+      { type: "reasoning", reasoning: "Working it out" },
+      { type: "text", text: "Final response" },
+    ]);
+  });
+
+  it("emits native Ollama message.thinking as reasoning chunks", async () => {
+    const stream = {
+      [Symbol.asyncIterator]: async function* () {
+        yield { message: { thinking: "Plan" }, done: false };
+        yield {
+          message: {
+            thinking: "Plan carefully",
+            content: "Final answer",
+          },
+          done: true,
+        };
+      },
+    };
+
+    const chunks = await collectStream(stream);
+
+    expect(chunks.filter((chunk) => chunk.type !== "usage")).toEqual([
+      { type: "reasoning", reasoning: "Plan" },
+      { type: "reasoning", reasoning: " carefully" },
+      { type: "text", text: "Final answer" },
+    ]);
+  });
+
+  it("emits top-level Ollama thinking fields used by alternate runtimes", async () => {
+    const stream = {
+      [Symbol.asyncIterator]: async function* () {
+        yield {
+          thinking: "Check tools",
+          message: { content: "Ready" },
+          done: true,
+        };
+      },
+    };
+
+    const chunks = await collectStream(stream);
+
+    expect(chunks.filter((chunk) => chunk.type !== "usage")).toEqual([
+      { type: "reasoning", reasoning: "Check tools" },
+      { type: "text", text: "Ready" },
+    ]);
+  });
+
   it("uses Gemma4 catalog context when no manual Ollama context is configured", () => {
     expect(getOllamaModelInfo("gemma4")).toMatchObject({
       contextWindow: 128000,

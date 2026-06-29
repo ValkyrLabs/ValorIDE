@@ -41,6 +41,7 @@ export interface WebviewMessage {
     | "refreshRequestyModels"
     | "refreshLLMDetails"
     | "refreshOpenAiModels"
+    | "openAiNativeOAuthLogin"
     | "refreshValorIDERules"
     | "testValkyraiHost"
     | "updateValkyraiHost"

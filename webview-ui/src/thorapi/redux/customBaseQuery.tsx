@@ -134,6 +134,75 @@ const argsToThorapiRequest = (args: any) => {
   };
 };
 
+const hasHeader = (
+  headers: Record<string, string> | undefined,
+  headerName: string,
+): boolean =>
+  Boolean(
+    headers &&
+      Object.keys(headers).some(
+        (key) => key.toLowerCase() === headerName.toLowerCase(),
+      ),
+  );
+
+const readStorageToken = (storage: Storage | undefined): string | null => {
+  if (!storage) {
+    return null;
+  }
+  for (const key of [
+    "jwtToken",
+    "authToken",
+    "jwtSession",
+    "auth_token",
+    "valoride_jwt",
+    "temp_auth_token",
+    "VALKYR_AUTH",
+  ]) {
+    try {
+      const token = storage.getItem(key)?.trim();
+      if (token) {
+        const bearerMatch = token.match(/^Bearer\s+(.+)$/i);
+        return bearerMatch ? bearerMatch[1]?.trim() || null : token;
+      }
+    } catch {
+      // no-op
+    }
+  }
+  return null;
+};
+
+const getBridgeJwtToken = (): string | null =>
+  getStoredJwtToken() ||
+  (typeof window !== "undefined"
+    ? readStorageToken(window.sessionStorage) ||
+      readStorageToken(window.localStorage)
+    : readStorageToken((globalThis as any).sessionStorage) ||
+      readStorageToken((globalThis as any).localStorage));
+
+const withStoredAuthHeaders = <
+  T extends { headers?: Record<string, string> },
+>(
+  request: T,
+): T => {
+  const token = getBridgeJwtToken();
+  if (!token) {
+    return request;
+  }
+
+  const headers = { ...(request.headers ?? {}) };
+  if (!hasHeader(headers, "authorization")) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  if (!hasHeader(headers, "jwtSession")) {
+    headers.jwtSession = token;
+  }
+
+  return {
+    ...request,
+    headers,
+  };
+};
+
 const shouldUseExtensionThorapiBridge = () =>
   typeof window !== "undefined" && vscode.isAvailable();
 
@@ -141,7 +210,7 @@ const extensionThorapiBaseQuery = async (
   args: any,
 ): Promise<ThorapiBridgeResult> => {
   const requestId = createThorapiRequestId();
-  const request = argsToThorapiRequest(args);
+  const request = withStoredAuthHeaders(argsToThorapiRequest(args));
 
   return new Promise<ThorapiBridgeResult>((resolve) => {
     let handleResponse: (event: MessageEvent) => void = () => undefined;

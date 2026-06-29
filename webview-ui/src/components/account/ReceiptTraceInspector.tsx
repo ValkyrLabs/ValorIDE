@@ -87,6 +87,40 @@ const getErrorText = (error: unknown): string => {
 const formatJson = (value: unknown): string =>
   JSON.stringify(sanitizeReceiptPayload(value), null, 2);
 
+const inferReceiptMode = (receiptRef: string): InspectorMode | undefined => {
+  const normalized = receiptRef.trim().toLowerCase();
+  if (!normalized) return undefined;
+  if (normalized.startsWith("{") || normalized.includes("swarm-command")) {
+    return "swarm";
+  }
+  if (
+    normalized.startsWith("cdr_") ||
+    normalized.startsWith("cdr-") ||
+    normalized.startsWith("credit-") ||
+    normalized.includes("creditdebit") ||
+    normalized.includes("credit-debit")
+  ) {
+    return "credit";
+  }
+  if (
+    normalized.startsWith("skillopt") ||
+    normalized.startsWith("skill-opt") ||
+    normalized.startsWith("route-") ||
+    normalized.includes("skillopt")
+  ) {
+    return "skillopt";
+  }
+  if (
+    normalized.startsWith("appgen") ||
+    normalized.startsWith("generation") ||
+    normalized.startsWith("gen-") ||
+    normalized.includes("generation")
+  ) {
+    return "generation";
+  }
+  return undefined;
+};
+
 const formatPercent = (value?: number): string | undefined => {
   if (value === undefined || value === null || Number.isNaN(value)) {
     return undefined;
@@ -745,6 +779,16 @@ const ReceiptTraceInspector = ({
   const [receiptRefInput, setReceiptRefInput] = useState("");
   const [submittedReceiptRef, setSubmittedReceiptRef] = useState("");
 
+  const submitReceiptLookup = () => {
+    const nextReceiptRef = receiptRefInput.trim();
+    if (!nextReceiptRef) return;
+    const inferredMode = inferReceiptMode(nextReceiptRef);
+    if (inferredMode && inferredMode !== mode) {
+      setMode(inferredMode);
+    }
+    setSubmittedReceiptRef(nextReceiptRef);
+  };
+
   useEffect(() => {
     if (!initialSwarmCommandResponse) return;
     const serialized =
@@ -876,7 +920,7 @@ const ReceiptTraceInspector = ({
         <VSCodeButton
           appearance="primary"
           disabled={!receiptRefInput.trim()}
-          onClick={() => setSubmittedReceiptRef(receiptRefInput.trim())}
+          onClick={submitReceiptLookup}
           title="Lookup receipt"
         >
           <FaSearch />

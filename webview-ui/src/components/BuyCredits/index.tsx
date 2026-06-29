@@ -222,10 +222,11 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
                 {
                   background: isProcessing
                     ? "linear-gradient(45deg, #666, #888)"
-                    : "linear-gradient(45deg, #06ffa5, #00d4ff)",
-                  border: "none",
+                    : "#0f5132",
+                  border: "1px solid #198754",
                   fontWeight: "bold",
-                  color: "#000",
+                  color: "#fff",
+                  width: "100%",
                 } as React.CSSProperties
               }
             >

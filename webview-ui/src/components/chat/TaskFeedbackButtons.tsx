@@ -1,20 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import styled from "styled-components";
 import RatingComponent from "../RatingComponent";
 import { RatingTargetTypeEnum } from "@thorapi/model/Rating";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { v4 as uuidv4 } from "uuid";
 
 interface TaskFeedbackButtonsProps {
   messageTs: number;
+  completedAt?: string;
+  reportMarkdown?: string;
+  reportTitle?: string;
+  routeReceiptRef?: string;
   isFromHistory?: boolean;
   style?: React.CSSProperties;
 }
 
 const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
   messageTs,
+  completedAt,
+  reportMarkdown,
+  reportTitle,
+  routeReceiptRef,
   isFromHistory = false,
   style,
 }) => {
+  const {
+    authenticatedUser,
+    currentTaskItem,
+    selectedLlmDetails,
+    vscMachineId,
+  } = useExtensionState();
   const [shouldShow, setShouldShow] = useState<boolean>(true);
+  const ratingContentId = useMemo(() => {
+    if (isUuid(currentTaskItem?.id)) {
+      return currentTaskItem.id;
+    }
+
+    return uuidv4();
+  }, [currentTaskItem?.id, messageTs]);
 
   // Check localStorage on mount to see if feedback was already given for this message
   useEffect(() => {
@@ -54,8 +77,33 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
     <Container style={style}>
       <ButtonsContainer>
         <RatingComponent
-          targetType={RatingTargetTypeEnum.HELPFULNESS}
-          contentId={String(messageTs)}
+          targetType={RatingTargetTypeEnum.AGENTTASK}
+          contentId={ratingContentId}
+          comments={reportMarkdown}
+          metadata={{
+            completedAt,
+            completionReportTitle: reportTitle,
+            currentTaskId: currentTaskItem?.id,
+            currentTaskText: currentTaskItem?.task,
+            llmDetailsId: selectedLlmDetails?.id,
+            llmDetailsName: selectedLlmDetails?.name,
+            llmDetailsProvider: selectedLlmDetails?.provider,
+            llmDetailsSource: selectedLlmDetails?.source,
+            machineId: vscMachineId,
+            reportKind: "task_completion_report",
+            skillOpticsSignal: true,
+            taskFeedbackContentId: ratingContentId,
+            taskFeedbackMessageTs: messageTs,
+            totalCost: currentTaskItem?.totalCost,
+          }}
+          raterId={
+            authenticatedUser?.id ??
+            authenticatedUser?.username ??
+            authenticatedUser?.email
+          }
+          routeReceiptRef={routeReceiptRef}
+          runId={currentTaskItem?.id ?? String(messageTs)}
+          sessionId={currentTaskItem?.id ?? String(messageTs)}
           showSlider={false}
           size="sm"
           onRatingSubmitted={handleRatingSubmitted}
@@ -81,5 +129,11 @@ const ButtonsContainer = styled.div`
     opacity: 1;
   }
 `;
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isUuid = (value?: string): value is string =>
+  typeof value === "string" && UUID_REGEX.test(value);
 
 export default TaskFeedbackButtons;

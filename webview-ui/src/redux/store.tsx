@@ -12,6 +12,7 @@ import { UsageTransactionService } from "@thorapi/redux/services/UsageTransactio
 import { PaymentTransactionService } from "@thorapi/redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
 import { RatingService } from "@thorapi/redux/services/RatingService";
+import { SkillOptRouteOutcomeRequestService } from "@thorapi/redux/services/SkillOptRouteOutcomeRequestService";
 import { UserPreferenceService } from "@thorapi/redux/services/UserPreferenceService";
 import { SalesOrderService } from "@thorapi/redux/services/SalesOrderService";
 import { CustomerService } from "@thorapi/redux/services/CustomerService";
@@ -45,6 +46,8 @@ const rootReducer = combineReducers({
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
   [DigitalProductService.reducerPath]: DigitalProductService.reducer,
   [RatingService.reducerPath]: RatingService.reducer,
+  [SkillOptRouteOutcomeRequestService.reducerPath]:
+    SkillOptRouteOutcomeRequestService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
   [SalesOrderService.reducerPath]: SalesOrderService.reducer,
   [CustomerService.reducerPath]: CustomerService.reducer,
@@ -72,6 +75,7 @@ const store = configureStore({
       .concat(PaymentTransactionService.middleware)
       .concat(DigitalProductService.middleware)
       .concat(RatingService.middleware)
+      .concat(SkillOptRouteOutcomeRequestService.middleware)
       .concat(UserPreferenceService.middleware)
       .concat(SalesOrderService.middleware)
       .concat(CustomerService.middleware)

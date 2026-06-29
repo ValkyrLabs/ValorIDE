@@ -10,6 +10,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { handleGrpcRequest } from "./grpc-handler";
 import { buildApiHandler } from "@api/index";
+import { startOpenAiNativeOAuthLogin } from "@api/providers/openai-native-auth";
 import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
 import { downloadTask } from "@integrations/misc/export-markdown";
@@ -1622,6 +1623,11 @@ export class Controller {
       // Clear all authentication-related secrets
       await storeSecret(this.context, "valorideApiKey", undefined);
       await storeSecret(this.context, "jwtToken", undefined);
+      await storeSecret(this.context, "valkyraiJwt", undefined);
+      await this.context.secrets.delete("refreshToken");
+      await this.context.secrets.delete("authState");
+      await this.context.secrets.delete("tenantContext");
+      await this.context.secrets.delete("graymatter-token");
 
       // Clear all authentication-related global state
       await updateGlobalState(this.context, "userInfo", undefined);
@@ -1631,7 +1637,10 @@ export class Controller {
         undefined,
       );
       await updateGlobalState(this.context, "isLoggedIn", false);
-      await this.context.secrets.delete("tenantContext");
+      await this.context.globalState.update(
+        "authPersistenceEnabled",
+        undefined,
+      );
       await updateGlobalState(this.context, "agenticState", undefined);
       await this.refreshGrayMatterSessionState(undefined);
 
@@ -2118,22 +2127,22 @@ export class Controller {
           message.authenticatedPrincipal,
         );
         if (customToken) {
-          await storeSecret(this.context, "jwtToken", customToken);
+          const startupAuthService = StartupAuthService.getInstance(
+            this.context,
+          );
+          await startupAuthService.handleSuccessfulLogin(
+            { jwtToken: customToken },
+            authenticatedPrincipal ?? message.authenticatedPrincipal ?? {},
+          );
         }
-        if (message.authenticatedPrincipal) {
+        if (authenticatedPrincipal) {
           await updateGlobalState(
             this.context,
             "authenticatedPrincipal",
-            message.authenticatedPrincipal,
+            authenticatedPrincipal,
           );
-          await updateGlobalState(
-            this.context,
-            "userInfo",
-            message.authenticatedPrincipal,
-          );
-          await this.storeTenantContextFromPayloads(
-            message.authenticatedPrincipal,
-          );
+          await updateGlobalState(this.context, "userInfo", authenticatedPrincipal);
+          await this.storeTenantContextFromPayloads(authenticatedPrincipal);
         }
         await updateGlobalState(
           this.context,
@@ -2254,6 +2263,9 @@ export class Controller {
           }
         }
         await this.postStateToWebview();
+        break;
+      case "openAiNativeOAuthLogin":
+        await this.handleOpenAiNativeOAuthLogin();
         break;
       case "autoApprovalSettings":
         if (message.autoApprovalSettings) {
@@ -4546,6 +4558,56 @@ export class Controller {
     return true;
   }
 
+  private async handleOpenAiNativeOAuthLogin(): Promise<void> {
+    try {
+      const result = await startOpenAiNativeOAuthLogin({
+        openAuthorizationUrl: async (url) => {
+          const opened = await openUrlWithSimpleBrowser(
+            url,
+            "OpenAI OAuth for ValorIDE",
+          );
+          if (!opened) {
+            throw new Error("Unable to open OpenAI OAuth URL.");
+          }
+        },
+      });
+
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      const updatedConfig: ApiConfiguration = {
+        ...apiConfiguration,
+        apiProvider: "openai-native",
+        openAiNativeApiKey: undefined,
+      };
+      await updateApiConfiguration(this.context, updatedConfig);
+      if (this.task) {
+        this.task.api = buildApiHandler(
+          await this.resolveTaskApiConfiguration(updatedConfig),
+        );
+      }
+      await this.postStateToWebview();
+      await this.postMessageToWebview({
+        type: "openAiNativeOAuthResult",
+        payload: {
+          accountId: result.accountId,
+          authPath: result.authPath,
+          expiresAt: result.expiresAt,
+          success: true,
+        },
+      });
+      vscode.window.showInformationMessage("OpenAI OAuth connected for ValorIDE.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      await this.postMessageToWebview({
+        type: "openAiNativeOAuthResult",
+        payload: {
+          error: message,
+          success: false,
+        },
+      });
+      vscode.window.showErrorMessage(`OpenAI OAuth failed: ${message}`);
+    }
+  }
+
   async handleAuthCallback(
     customToken: string,
     apiKey: string,
@@ -4614,7 +4676,7 @@ export class Controller {
   }
 
   private async refreshGrayMatterSessionState(token?: string) {
-    const resolvedToken = token || (await getSecret(this.context, "jwtToken"));
+    const resolvedToken = token || (await this.readStoredJwtToken());
     const tenantContext = await this.readStoredTenantContext();
     const grayMatterSession = await createGrayMatterSessionState({
       baseUrl: getValkyraiBasePath(),
@@ -5147,6 +5209,20 @@ export class Controller {
             axios.isAxiosError(error) && error.response?.status === 404;
 
           if (!isNotFound) {
+            if (sourceItem) {
+              console.warn(
+                "[downloadMcp] Service lookup failed; falling back to marketplace item metadata",
+                {
+                  identifier,
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : String(error ?? "Unknown error"),
+                },
+              );
+              break;
+            }
+
             throw error;
           }
         }
@@ -5250,6 +5326,12 @@ export class Controller {
           mcpService.requiresApiKey || sourceItem?.requiresApiKey,
         ),
       };
+      const manifestUrl =
+        mcpService.manifestUrl ||
+        sourceItem?.manifestUrl ||
+        mcpService.mcpManifestUrl ||
+        sourceItem?.apiBaseUrl ||
+        "";
 
       if (!mcpDetails.readmeContent) {
         mcpDetails.readmeContent = `# ${mcpDetails.name}\n\n${mcpDetails.description}\n\nAuthor: ${mcpDetails.author}`;
@@ -5267,9 +5349,14 @@ export class Controller {
 - Use "${mcpDetails.mcpId}" as the server name in valoride_mcp_settings.json.
 - Create the directory for the new MCP server before starting installation.
 - Make sure you read the user's existing valoride_mcp_settings.json file before editing it with this new mcp, to not overwrite any existing servers.
+- If a manifest URL is provided below, download and inspect it before editing settings.
 - Use commands aligned with the user's shell and operating system best practices.
 - The following README may contain instructions that conflict with the user's OS, in which case proceed thoughtfully.
 - Once installed, demonstrate the server's capabilities by using one of its tools.
+Marketplace install metadata:
+- manifestUrl: ${manifestUrl || "not provided"}
+- apiBaseUrl: ${sourceItem?.apiBaseUrl || mcpService.apiBaseUrl || "not provided"}
+
 Here is the project's README to help you get started:\n\n${mcpDetails.readmeContent}\n${mcpDetails.llmsInstallationContent}`;
 
       // Initialize task and show chat view
