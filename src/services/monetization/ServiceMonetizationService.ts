@@ -20,6 +20,10 @@ export interface ManagedMcpService {
   isMonetized: boolean;
   createdAt: string;
   updatedAt: string;
+  subscriptionCount?: number;
+  invocationCount?: number;
+  rating?: number;
+  verifiedPublisher?: boolean;
 }
 
 export interface CreatorEarnings {
