@@ -4,6 +4,7 @@ import {
   estimateMonthlyCreditSpend,
   getCreatorDisplayName,
   getEstimatedSpendLabel,
+  getMarketplacePopularityScore,
   getServicePricingSummary,
 } from "./monetizedServicesMarketplaceUtils";
 import { ManagedMcpService } from "@thorapi/services/monetization/ServiceMonetizationService";
@@ -62,5 +63,26 @@ describe("monetized service marketplace helpers", () => {
       "ValkyrAI billing ledger",
       "Creator support required",
     ]);
+  });
+
+  it("ranks popularity from real marketplace signals instead of recency alone", () => {
+    const olderPopularService = service({
+      updatedAt: "2026-05-01T00:00:00Z",
+      subscriptionCount: 12,
+      invocationCount: 900,
+      rating: 4.8,
+      verifiedPublisher: true,
+    });
+    const newerQuietService = service({
+      updatedAt: new Date().toISOString(),
+      subscriptionCount: 0,
+      invocationCount: 1,
+      rating: 5,
+      verifiedPublisher: false,
+    });
+
+    expect(getMarketplacePopularityScore(olderPopularService)).toBeGreaterThan(
+      getMarketplacePopularityScore(newerQuietService),
+    );
   });
 });

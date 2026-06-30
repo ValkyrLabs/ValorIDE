@@ -44,6 +44,24 @@ export function getEstimatedSpendLabel(
   return spend === null ? "Plan based" : `${spend} credits`;
 }
 
+export function getMarketplacePopularityScore(
+  service: ManagedMcpService,
+): number {
+  const subscriptions = Math.max(0, service.subscriptionCount ?? 0);
+  const invocations = Math.max(0, service.invocationCount ?? 0);
+  const rating = Math.max(0, Math.min(5, service.rating ?? 0));
+  const verifiedBoost = service.verifiedPublisher ? 50 : 0;
+  const recencyBoost = getRecencyBoost(service.updatedAt || service.createdAt);
+
+  return (
+    subscriptions * 100 +
+    invocations * 0.1 +
+    rating * 20 +
+    verifiedBoost +
+    recencyBoost
+  );
+}
+
 export function buildTrustSignals(service: ManagedMcpService): string[] {
   const signals = [
     service.status === "MONETIZED" ? "Monetized service" : "Published service",
@@ -53,4 +71,18 @@ export function buildTrustSignals(service: ManagedMcpService): string[] {
   ];
 
   return signals;
+}
+
+function getRecencyBoost(timestamp: string | undefined): number {
+  if (!timestamp) {
+    return 0;
+  }
+
+  const ageMs = Date.now() - new Date(timestamp).getTime();
+  if (!Number.isFinite(ageMs) || ageMs < 0) {
+    return 0;
+  }
+
+  const ageDays = ageMs / (1000 * 60 * 60 * 24);
+  return Math.max(0, 14 - Math.floor(ageDays));
 }

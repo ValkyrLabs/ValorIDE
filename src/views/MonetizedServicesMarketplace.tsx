@@ -8,6 +8,7 @@ import {
   buildTrustSignals,
   getEstimatedSpendLabel,
   getCreatorDisplayName,
+  getMarketplacePopularityScore,
   getServicePricingSummary,
 } from "./monetizedServicesMarketplaceUtils";
 import "./MonetizedServicesMarketplace.css";
@@ -86,7 +87,9 @@ export const MonetizedServicesMarketplace: React.FC = () => {
       case "price-low":
         return (a.costPerCall || 999) - (b.costPerCall || 999);
       case "popular":
-        return b.updatedAt.localeCompare(a.updatedAt);
+        return (
+          getMarketplacePopularityScore(b) - getMarketplacePopularityScore(a)
+        );
       default:
         return b.createdAt.localeCompare(a.createdAt);
     }
