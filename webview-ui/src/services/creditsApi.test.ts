@@ -1,14 +1,25 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("../redux/customBaseQuery", () => ({
+  __esModule: true,
+  default: vi.fn(),
+}));
+
 import {
+  buildValorIdeCheckoutUrls,
+  buildValorIdeCreditCartOrder,
   chooseBestBalance,
   getAccountBalancePath,
   getAccountBalanceSummaryPath,
+  getCheckoutUrl,
   isInsufficientFunds,
   mergeAccountBalance,
   normalizeAccountBalance,
+  normalizeCreditCheckoutDollars,
   resolveBalanceLookupAccountIds,
   resolvePrimaryBalanceAccountId,
   selectSyncedAccountBalance,
+  VALORIDE_CREDIT_PACKAGE,
 } from "./creditsApi";
 
 describe("creditsApi isInsufficientFunds", () => {
@@ -209,5 +220,36 @@ describe("creditsApi balance request resolution", () => {
       "acct-456",
       "me",
     ]);
+  });
+});
+
+describe("ValorIDE credit checkout helpers", () => {
+  it("rounds credit purchases to server-priced package quantities", () => {
+    expect(normalizeCreditCheckoutDollars(1)).toBe(
+      VALORIDE_CREDIT_PACKAGE.dollars,
+    );
+    expect(normalizeCreditCheckoutDollars(12)).toBe(10);
+    expect(normalizeCreditCheckoutDollars(13)).toBe(15);
+    expect(buildValorIdeCreditCartOrder(25)).toEqual({
+      lineItems: [
+        {
+          sku: VALORIDE_CREDIT_PACKAGE.sku,
+          quantity: 5,
+          type: "product",
+        },
+      ],
+    });
+  });
+
+  it("uses hosted checkout return URLs and accepts common session URL fields", () => {
+    expect(buildValorIdeCheckoutUrls()).toEqual({
+      successUrl:
+        "https://valkyrlabs.com/checkout/success?session_id={CHECKOUT_SESSION_ID}&source=valoride",
+      cancelUrl: "https://valkyrlabs.com/cart?source=valoride",
+    });
+    expect(getCheckoutUrl({ checkout_url: " https://checkout.stripe.com/a " }))
+      .toBe("https://checkout.stripe.com/a");
+    expect(getCheckoutUrl({ checkoutUrl: "https://checkout.stripe.com/b" }))
+      .toBe("https://checkout.stripe.com/b");
   });
 });
