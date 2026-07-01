@@ -52,20 +52,26 @@ describe("MonetizedServicesMarketplace helpers", () => {
     expect(estimateMonthlySpend(monthly)).toBe("$49/month before overages");
   });
 
-  it("sorts trust-ready services ahead of non-monetized services for popular view", () => {
-    const draft = service({
-      id: "draft",
-      isMonetized: false,
+  it("sorts services by real marketplace traction instead of updated recency", () => {
+    const freshButQuiet = service({
+      id: "fresh-quiet",
       updatedAt: "2026-05-05T00:00:00.000Z",
+      subscriberCount: 1,
+      invocationCount: 10,
+      averageRating: 3,
     });
-    const monetized = service({
-      id: "monetized",
-      isMonetized: true,
+    const provenService = service({
+      id: "proven",
       updatedAt: "2026-05-01T00:00:00.000Z",
+      subscriberCount: 25,
+      invocationCount: 300,
+      averageRating: 4.8,
     });
 
-    expect(sortMarketplaceServices([draft, monetized], "popular")[0].id).toBe(
-      "monetized",
+    expect(
+      sortMarketplaceServices([freshButQuiet, provenService], "popular")[0].id,
+    ).toBe(
+      "proven",
     );
   });
 });
