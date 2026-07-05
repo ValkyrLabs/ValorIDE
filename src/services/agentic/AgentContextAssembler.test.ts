@@ -201,6 +201,52 @@ describe("AgentContextAssembler", () => {
     );
   });
 
+  it("falls back to direct MemoryEntry scan when query paths return empty", async () => {
+    const listMemory = jest.fn(async () => ({
+      content: [
+        {
+          id: "memory-direct",
+          metadata: JSON.stringify({ title: "ThorAPI invariant" }),
+          tags: [{ name: "invariant" }, { name: "valoride" }],
+          text: "Use generated ThorAPI RTK Query clients before custom REST wrappers in ValorIDE.",
+          type: "decision",
+        },
+      ],
+    }));
+    const queryMemory = jest.fn(async () => ({ results: [] }));
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        items: [],
+        receiptId: "receipt-empty",
+        recommendedAction: "ANSWER",
+        retrievalStatus: "OK",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: { listMemory, queryMemory, retrieveMemoryWithReceipt },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      task: "Fix ValorIDE ThorAPI GrayMatter behavior",
+    });
+
+    expect(listMemory).toHaveBeenCalled();
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.citations[0]).toMatchObject({
+      id: "memory-direct",
+      tags: ["invariant", "valoride"],
+      title: "ThorAPI invariant",
+      type: "decision",
+    });
+    expect(context.grayMatter.reads[0]?.warning).toContain(
+      "direct_scan_fallback:memory_entry_list_used",
+    );
+    expect(context.promptSection).toContain("[gm:memory-direct] decision");
+    expect(context.promptSection).toContain("generated ThorAPI RTK Query");
+  });
+
   it("falls back to MemoryEntry query when receipt retrieval is unavailable", async () => {
     const queryMemory = jest.fn(async () => ({
       results: [

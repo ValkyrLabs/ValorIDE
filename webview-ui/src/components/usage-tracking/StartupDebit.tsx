@@ -2,6 +2,64 @@ import React, { useEffect } from "react";
 import { useRecordUsageTransactionMutation } from "@thorapi/services/creditsApi";
 import { readStoredPrincipal } from "@thorapi/utils/accessControl";
 
+const storageKey = (accountId: string, suffix: string) =>
+  `valoride.startupDebit.${accountId}.${suffix}`;
+
+const createStartupDebitIdempotencyKey = (accountId: string): string => {
+  const randomPart =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `auto-connect-${accountId}-${randomPart}`;
+};
+
+const readSessionValue = (key: string): string | null => {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writeSessionValue = (key: string, value: string): void => {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    /* ignore */
+  }
+};
+
+export const hasStartupDebitBeenSent = (accountId: string): boolean =>
+  readSessionValue(storageKey(accountId, "sent")) === "true";
+
+export const getOrCreateStartupDebitReceipt = (
+  accountId: string,
+): { idempotencyKey: string; spentAt: string } => {
+  const idempotencyStorageKey = storageKey(accountId, "idempotencyKey");
+  const spentAtStorageKey = storageKey(accountId, "spentAt");
+
+  const existingIdempotencyKey = readSessionValue(idempotencyStorageKey);
+  const existingSpentAt = readSessionValue(spentAtStorageKey);
+  if (existingIdempotencyKey && existingSpentAt) {
+    return {
+      idempotencyKey: existingIdempotencyKey,
+      spentAt: existingSpentAt,
+    };
+  }
+
+  const receipt = {
+    idempotencyKey: createStartupDebitIdempotencyKey(accountId),
+    spentAt: new Date().toISOString(),
+  };
+  writeSessionValue(idempotencyStorageKey, receipt.idempotencyKey);
+  writeSessionValue(spentAtStorageKey, receipt.spentAt);
+  return receipt;
+};
+
+export const markStartupDebitSent = (accountId: string): void => {
+  writeSessionValue(storageKey(accountId, "sent"), "true");
+};
+
 /**
  * Fires a one-time 1 credit debit when the webview starts up
  * and a JWT is already present (auto-login sessions).
@@ -11,17 +69,6 @@ const StartupDebit: React.FC = () => {
   const [recordUsageTransaction] = useRecordUsageTransactionMutation();
 
   useEffect(() => {
-    const alreadyCharged = (() => {
-      try {
-        return sessionStorage.getItem("valoride.startupDebit.sent") === "true";
-      } catch {
-        return false;
-      }
-    })();
-    if (alreadyCharged) {
-      return undefined;
-    }
-
     // Detect existing token at startup
     let token: string | null = null;
     try {
@@ -45,11 +92,15 @@ const StartupDebit: React.FC = () => {
     if (!accountId) {
       return undefined;
     }
+    if (hasStartupDebitBeenSent(accountId)) {
+      return undefined;
+    }
 
     const sendDebit = async () => {
       try {
+        const receipt = getOrCreateStartupDebitReceipt(accountId);
         const debit = {
-          spentAt: new Date().toISOString(),
+          spentAt: receipt.spentAt,
           credits: 1,
           modelProvider: "valoride",
           model: "auto-connect",
@@ -59,13 +110,9 @@ const StartupDebit: React.FC = () => {
         await recordUsageTransaction({
           accountId,
           usage: debit,
-          idempotencyKey: `auto-connect-${accountId}`,
+          idempotencyKey: receipt.idempotencyKey,
         }).unwrap();
-        try {
-          sessionStorage.setItem("valoride.startupDebit.sent", "true");
-        } catch {
-          /* ignore */
-        }
+        markStartupDebitSent(accountId);
       } catch (e) {
         // Log but do not disrupt UI
         console.warn("StartupDebit: failed to send auto-connect debit", e);

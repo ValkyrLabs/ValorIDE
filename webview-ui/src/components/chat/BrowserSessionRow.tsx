@@ -642,7 +642,7 @@ const BrowserSessionRowContent = ({
             <BrowserActionBox
               action={browserAction.action}
               coordinate={browserAction.coordinate}
-              text={browserAction.text}
+              text={browserAction.text ?? browserAction.url}
             />
           );
 

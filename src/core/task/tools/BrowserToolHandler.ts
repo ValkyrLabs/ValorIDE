@@ -7,6 +7,7 @@ import { AssistantMessageContent } from "@core/assistant-message";
 import { formatResponse } from "@core/prompts/responses";
 import {
   BrowserAction,
+  browserActions,
   ValorIDESayBrowserAction,
 } from "@shared/ExtensionMessage";
 
@@ -19,29 +20,63 @@ export class BrowserToolHandler extends BaseToolHandler {
       return { shouldContinue: false };
     }
 
-    const action = block.params.action as BrowserAction;
+    const action = this.removeClosingTag(
+      "action",
+      block.params.action,
+      partial,
+    ) as BrowserAction;
     const url = block.params.url;
     const coordinate = block.params.coordinate;
     const text = block.params.text;
 
     if (partial) {
-      if (this.context.shouldAutoApproveTool(block.name)) {
-        // partial streaming logic if needed
+      if (!action || !browserActions.includes(action)) {
+        return { shouldContinue: false };
+      }
+
+      if (action === "launch") {
+        const partialUrl = this.removeClosingTag("url", url, true);
+        if (this.context.shouldAutoApproveTool(block.name)) {
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "browser_action_launch",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "browser_action_launch",
+          );
+          await this.context.say(
+            "browser_action_launch",
+            partialUrl,
+            undefined,
+            true,
+          );
+        } else {
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "browser_action_launch",
+          );
+          await this.context
+            .ask("browser_action_launch", partialUrl, true)
+            .catch(() => {});
+        }
       } else {
         const browserActionParams: any = {
           action,
-          url,
           coordinate,
-          text,
+          text: this.removeClosingTag("text", text, true),
         };
-        await this.context
-          .ask("tool", JSON.stringify(browserActionParams), partial)
-          .catch(() => {});
+        await this.context.say(
+          "browser_action",
+          JSON.stringify(browserActionParams),
+          undefined,
+          true,
+        );
       }
       return { shouldContinue: false };
     }
 
-    if (!action) {
+    if (!action || !browserActions.includes(action)) {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
@@ -86,29 +121,51 @@ export class BrowserToolHandler extends BaseToolHandler {
 
     this.context.consecutiveMistakeCount = 0;
 
-    const browserActionParams: any = {
+    const browserActionParams = {
       action,
-      url,
       coordinate,
       text,
-    };
+      ...(action === "launch" ? { url, text: url } : {}),
+    } satisfies ValorIDESayBrowserAction;
     const message = JSON.stringify(browserActionParams);
 
-    if (this.context.shouldAutoApproveTool(block.name)) {
-      this.context.removeLastPartialMessageIfExistsWithType(
-        "ask",
-        "browser_action",
-      );
-      await this.context.say("browser_action", message, undefined, false);
-      this.context.consecutiveAutoApprovedRequestsCount++;
+    if (action === "launch") {
+      if (this.context.shouldAutoApproveTool(block.name)) {
+        await this.context.removeLastPartialMessageIfExistsWithType(
+          "ask",
+          "browser_action_launch",
+        );
+        await this.context.removeLastPartialMessageIfExistsWithType(
+          "say",
+          "browser_action_launch",
+        );
+        await this.context.removeLastPartialMessageIfExistsWithType(
+          "say",
+          "browser_action",
+        );
+        await this.context.say("browser_action_launch", url, undefined, false);
+        this.context.consecutiveAutoApprovedRequestsCount++;
+      } else {
+        await this.context.removeLastPartialMessageIfExistsWithType(
+          "ask",
+          "browser_action_launch",
+        );
+        const didApprove = await this.askApproval(
+          "browser_action_launch",
+          url,
+        );
+        if (!didApprove) {
+          return { shouldContinue: true, userRejected: true };
+        }
+      }
+      await this.context.say("browser_action_result", "");
     } else {
-      this.context.removeLastPartialMessageIfExistsWithType(
-        "say",
-        "browser_action",
-      );
-      const didApprove = await this.askApproval("tool", message);
-      if (!didApprove) {
-        return { shouldContinue: true, userRejected: true };
+      await this.context.say("browser_action", message, undefined, false);
+      if (!this.context.shouldAutoApproveTool(block.name)) {
+        const didApprove = await this.askApproval("tool", message);
+        if (!didApprove) {
+          return { shouldContinue: true, userRejected: true };
+        }
       }
     }
 
@@ -116,6 +173,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       let result: any;
       switch (action) {
         case "launch":
+          await this.context.browserSession.launchBrowser();
           result = await this.context.browserSession.navigateToUrl(url!);
           break;
         case "click":
@@ -139,6 +197,13 @@ export class BrowserToolHandler extends BaseToolHandler {
       let toolResponse: ToolResponse;
 
       const message = `Browser action '${action}' completed.\nLogs: ${result.logs || "none"}\nText: ${result.text || "none"}`;
+
+      if (action !== "close") {
+        await this.context.say(
+          "browser_action_result",
+          JSON.stringify(result),
+        );
+      }
 
       if (result.screenshot) {
         toolResponse = formatResponse.toolResult(message, [result.screenshot]);

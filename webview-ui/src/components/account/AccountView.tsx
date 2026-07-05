@@ -460,9 +460,13 @@ const AccountView = ({
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
   const swarmDetail =
-    typedAgenticState?.swarm?.instanceId ||
-    typedAgenticState?.swarm?.lastError ||
-    "No SWARM registration ACK yet.";
+    swarmStatus === "error" || swarmStatus === "rejected"
+      ? typedAgenticState?.swarm?.lastError ||
+        typedAgenticState?.swarm?.instanceId ||
+        "No SWARM registration ACK yet."
+      : typedAgenticState?.swarm?.instanceId ||
+        typedAgenticState?.swarm?.lastError ||
+        "No SWARM registration ACK yet.";
   const accountTabs = useMemo<
     Array<{
       key: Exclude<AccountTab, "login">;

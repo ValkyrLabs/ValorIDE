@@ -443,6 +443,17 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
 }) => {
   const [show, setShow] = useState(false);
   const triggerRef = useRef<HTMLSpanElement>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideDelayMs = 2000;
+
+  const clearHideTimer = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+  };
+
+  useEffect(() => () => clearHideTimer(), []);
 
   // Resolve the doc entry
   const docEntry: DocEntry | undefined =
@@ -499,17 +510,6 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
     </Popover>
   );
 
-  // Visibility control with delayed hide
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hideDelayMs = 2000;
-
-  const clearHideTimer = () => {
-    if (hideTimer.current) {
-      clearTimeout(hideTimer.current);
-      hideTimer.current = null;
-    }
-  };
-
   const handleShow = () => {
     clearHideTimer();
     setShow(true);
@@ -519,8 +519,6 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
     clearHideTimer();
     hideTimer.current = setTimeout(() => setShow(false), hideDelayMs);
   };
-
-  useEffect(() => () => clearHideTimer(), []);
 
   const overlay = (
     <Overlay target={triggerRef.current} show={show} placement={placement}>

@@ -18,6 +18,7 @@ export type GrayMatterReadStatus =
   | "unavailable";
 
 export interface GrayMatterReadableClient {
+  listMemory?: () => Promise<unknown>;
   queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
   retrieveMemoryWithReceipt?: (
     query: GrayMatterRetrievalReceiptQuery,
@@ -174,9 +175,18 @@ export class AgentContextAssembler {
               maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
             })
           : undefined;
+      const directScanFallback =
+        citations.length === 0 && !fallback?.citations.length
+          ? await this.listMemoryFallback(query, {
+              maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
+              maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
+            })
+          : undefined;
       const effectiveCitations = fallback?.citations.length
         ? fallback.citations
-        : citations;
+        : directScanFallback?.citations.length
+          ? directScanFallback.citations
+          : citations;
       const status: GrayMatterReadStatus = effectiveCitations.length
         ? "ready"
         : "empty";
@@ -191,6 +201,11 @@ export class AgentContextAssembler {
         read.warning = read.warning
           ? `${read.warning}; ${fallback.warning}`
           : fallback.warning;
+      }
+      if (directScanFallback?.warning) {
+        read.warning = read.warning
+          ? `${read.warning}; ${directScanFallback.warning}`
+          : directScanFallback.warning;
       }
 
       return {
@@ -299,6 +314,35 @@ export class AgentContextAssembler {
       };
     }
   }
+
+  private async listMemoryFallback(
+    query: string,
+    options: { maxEntries: number; maxEntryChars: number },
+  ): Promise<
+    | { citations: GrayMatterContextCitation[]; warning?: string }
+    | undefined
+  > {
+    if (!this.options.grayMatter?.listMemory) {
+      return undefined;
+    }
+
+    try {
+      const value = await this.options.grayMatter.listMemory();
+      const entries = rankDirectMemoryEntries(extractEntries(value), query);
+      const citations = extractCitations(entries, options);
+      return {
+        citations,
+        warning: citations.length
+          ? "direct_scan_fallback:memory_entry_list_used"
+          : "direct_scan_fallback:memory_entry_list_empty",
+      };
+    } catch (error) {
+      return {
+        citations: [],
+        warning: `direct_scan_fallback_failed:${formatReadError(error)}`,
+      };
+    }
+  }
 }
 
 export const createAgentContextSectionForTask = async ({
@@ -384,7 +428,7 @@ const extractCitations = (
 
 const extractEntries = (response: unknown): MemoryEntryLike[] => {
   if (Array.isArray(response)) {
-    return response.filter(isRecord);
+    return response.flatMap((entry) => normalizeEntryRecords(entry));
   }
 
   if (!isRecord(response)) {
@@ -393,18 +437,63 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
 
   const receipt = response.receipt;
   if (isRecord(receipt) && Array.isArray(receipt.items)) {
-    return receipt.items.filter(isRecord);
+    return receipt.items.flatMap((entry) => normalizeEntryRecords(entry));
   }
 
-  for (const key of ["results", "items", "data", "memoryEntries", "entries"]) {
+  for (const key of [
+    "results",
+    "items",
+    "data",
+    "content",
+    "records",
+    "memoryEntries",
+    "entries",
+  ]) {
     const candidate = response[key];
     if (Array.isArray(candidate)) {
-      return candidate.filter(isRecord);
+      return candidate.flatMap((entry) => normalizeEntryRecords(entry));
     }
   }
 
   return [];
 };
+
+const normalizeEntryRecords = (entry: unknown): MemoryEntryLike[] => {
+  if (!isRecord(entry)) {
+    return [];
+  }
+
+  for (const key of [
+    "memoryEntry",
+    "entry",
+    "record",
+    "source",
+    "entity",
+    "object",
+    "item",
+  ]) {
+    const nestedEntry = entry[key];
+    if (isRecord(nestedEntry)) {
+      return [mergeEntryWrapper(nestedEntry, entry)];
+    }
+  }
+
+  return [entry];
+};
+
+const mergeEntryWrapper = (
+  nestedEntry: MemoryEntryLike,
+  wrapper: MemoryEntryLike,
+): MemoryEntryLike => ({
+  ...wrapper,
+  ...nestedEntry,
+  id:
+    getStringField(nestedEntry, "id") ??
+    getStringField(wrapper, "memoryId") ??
+    getStringField(wrapper, "sourceId") ??
+    getStringField(wrapper, "entityId") ??
+    getStringField(wrapper, "id"),
+});
 
 const getCitationId = (entry: MemoryEntryLike) =>
   getStringField(entry, "id") ??
@@ -419,6 +508,102 @@ const getCitationContent = (entry: MemoryEntryLike) =>
   getStringField(entry, "textPreview") ??
   getStringField(entry, "text") ??
   getStringField(entry, "body");
+
+const rankDirectMemoryEntries = (
+  entries: MemoryEntryLike[],
+  query: string,
+): MemoryEntryLike[] => {
+  const terms = buildDirectScanTerms(query);
+  return entries
+    .map((entry) => ({
+      entry,
+      score: scoreDirectMemoryEntry(entry, terms),
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(({ entry }) => entry);
+};
+
+const buildDirectScanTerms = (query: string): string[] =>
+  Array.from(
+    new Set(
+      [
+        ...query
+          .split(/[^A-Za-z0-9_.-]+/)
+          .map((term) => term.trim().toLowerCase())
+          .filter((term) => term.length >= 3),
+        "invariant",
+        "rule",
+        "instruction",
+        "decision",
+        "thorapi",
+        "valkyrai",
+        "valoride",
+        "graymatter",
+        "rbac",
+        "acl",
+        "api-0",
+      ],
+    ),
+  );
+
+const scoreDirectMemoryEntry = (
+  entry: MemoryEntryLike,
+  terms: string[],
+): number => {
+  const haystack = getSearchableText(entry);
+  const tagNames = getStringArrayField(entry, "tags")?.map((tag) =>
+    tag.toLowerCase(),
+  );
+  const type = getStringField(entry, "type")?.toLowerCase();
+  let score = 0;
+
+  for (const term of terms) {
+    if (haystack.includes(term)) {
+      score += 1;
+    }
+  }
+
+  if (type === "decision") {
+    score += 3;
+  }
+
+  for (const tag of tagNames ?? []) {
+    if (
+      [
+        "invariant",
+        "rule",
+        "instruction",
+        "security",
+        "rbac",
+        "acl",
+        "thorapi",
+        "valkyrai",
+        "valoride",
+        "graymatter",
+      ].includes(tag)
+    ) {
+      score += 3;
+    }
+  }
+
+  return score;
+};
+
+const getSearchableText = (entry: MemoryEntryLike): string =>
+  [
+    getStringField(entry, "text"),
+    getStringField(entry, "content"),
+    getStringField(entry, "title"),
+    getStringField(entry, "summary"),
+    getStringField(entry, "description"),
+    getStringField(entry, "sourceChannel"),
+    getStringArrayField(entry, "tags")?.join(" "),
+    stringifyMetadata(entry),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 
 const getReadFailureStatus = (error: unknown): GrayMatterReadStatus => {
   if (error instanceof GrayMatterClientError) {
@@ -484,14 +669,51 @@ const getStringArrayField = (
   if (!Array.isArray(value)) {
     return undefined;
   }
-  const strings = value.filter(
-    (item): item is string => typeof item === "string" && Boolean(item.trim()),
-  );
+  const strings = value
+    .map((item) => {
+      if (typeof item === "string") {
+        return item.trim();
+      }
+      if (isRecord(item)) {
+        return (
+          getStringField(item, "name") ??
+          getStringField(item, "label") ??
+          getStringField(item, "id")
+        );
+      }
+      return undefined;
+    })
+    .filter((item): item is string => Boolean(item));
   return strings.length ? strings : undefined;
 };
 
+const parseMaybeJsonRecord = (value: unknown): MemoryEntryLike | undefined => {
+  if (isRecord(value)) {
+    return value;
+  }
+  if (typeof value !== "string" || !value.trim()) {
+    return undefined;
+  }
+  try {
+    const parsed = JSON.parse(value);
+    return isRecord(parsed) ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const stringifyMetadata = (record: MemoryEntryLike): string | undefined => {
+  const metadata = parseMaybeJsonRecord(record.metadata);
+  if (metadata) {
+    return Object.values(metadata)
+      .filter((value) => typeof value === "string" || typeof value === "number")
+      .join(" ");
+  }
+  return typeof record.metadata === "string" ? record.metadata : undefined;
+};
+
 const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
-  const metadata = record.metadata;
+  const metadata = parseMaybeJsonRecord(record.metadata);
   if (!isRecord(metadata)) {
     return undefined;
   }

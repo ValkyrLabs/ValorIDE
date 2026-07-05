@@ -78,6 +78,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     [apiConfiguration],
   );
   const contextWindow = selectedModelInfo?.contextWindow;
+  const usesCreditCost = apiConfiguration?.apiProvider === "valkyrai";
+  const formattedCost = usesCreditCost
+    ? `${totalCost?.toFixed(2)} credits`
+    : `$${totalCost?.toFixed(4)}`;
+  const costLabel = usesCreditCost ? "Credits:" : "Cost:";
+  const costTitle = usesCreditCost
+    ? "Credits used for this task"
+    : "API Cost for this task";
 
   // Open task header when checkpoint tracker error message is set
   const prevErrorMessageRef = useRef(checkpointTrackerErrorMessage);
@@ -333,9 +341,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
           {!isTaskExpanded && isCostAvailable && (
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <StatusBadge
-                label="Cost:"
-                value={`$${totalCost?.toFixed(4)}`}
-                title="API Cost for this task"
+                label={costLabel}
+                value={formattedCost}
+                title={costTitle}
                 style={{ fontSize: 14, padding: "2px 6px" }}
               />
               <VSCodeButton
@@ -608,8 +616,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                         gap: "4px",
                       }}
                     >
-                      <span style={{ fontWeight: "bold" }}>API Cost:</span>
-                      <span>${totalCost?.toFixed(4)}</span>
+                      <span style={{ fontWeight: "bold" }}>
+                        {usesCreditCost ? "Credits:" : "API Cost:"}
+                      </span>
+                      <span>{formattedCost}</span>
                     </div>
                   )}
                   <VSCodeButton

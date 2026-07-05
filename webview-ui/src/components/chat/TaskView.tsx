@@ -17,7 +17,6 @@ import {
 } from "@shared/ExtensionMessage";
 import { combineApiRequests } from "@shared/combineApiRequests";
 import {
-  COMMAND_OUTPUT_STRING,
   COMMAND_REQ_APP_STRING,
   combineCommandSequences,
 } from "@shared/combineCommandSequences";
@@ -334,29 +333,6 @@ const TaskView: React.FC<TaskViewProps> = ({
     },
     [groupedMessages, taskPhaseAnchors],
   );
-
-  useEffect(() => {
-    const last = modifiedMessages.at(-1);
-    if (!last) return;
-
-    const isCommandLike =
-      last.ask === "command" ||
-      last.say === "command" ||
-      last.ask === "command_output" ||
-      last.say === "command_output";
-
-    const hasRenderableOutput =
-      typeof last.text === "string" &&
-      (last.text.includes(COMMAND_OUTPUT_STRING) ||
-        last.ask === "command_output" ||
-        last.say === "command_output");
-
-    if (isCommandLike && hasRenderableOutput) {
-      setExpandedRows((prev) =>
-        prev[last.ts] ? prev : { ...prev, [last.ts]: true },
-      );
-    }
-  }, [modifiedMessages]);
 
   const buildMessageContext = useCallback(
     (messageOrGroup: ValorIDEMessage | ValorIDEMessage[]) => {

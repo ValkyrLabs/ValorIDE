@@ -275,14 +275,60 @@ describe("GrayMatterClient", () => {
     const [url, init] = fetchMock.mock.calls[0];
     const body = JSON.parse(init?.body as string);
 
-    expect(url).toBe("https://api.example.test/v1/MemoryEntry");
+    expect(url).toBe("https://api.example.test/v1/MemoryEntry/write");
     expect(init?.method).toBe("POST");
     expect(body).toEqual({
       content: "ValorIDE uses GrayMatter as primary durable memory.",
-      metadata: { source: "valoride" },
+      metadata: JSON.stringify({ source: "valoride" }),
       tags: ["valoride", "graymatter"],
+      text: "ValorIDE uses GrayMatter as primary durable memory.",
       type: "decision",
     });
+  });
+
+  it("queries durable memory with Codex plugin-compatible aliases", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { results: [] }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.queryMemory({
+      limit: 5,
+      query: "ValorIDE GrayMatter invariant",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+
+    expect(url).toBe("https://api.example.test/v1/MemoryEntry/query");
+    expect(init?.method).toBe("POST");
+    expect(body).toEqual({
+      limit: 5,
+      maxResults: 5,
+      q: "ValorIDE GrayMatter invariant",
+      query: "ValorIDE GrayMatter invariant",
+    });
+  });
+
+  it("can list MemoryEntry records for direct-scan fallback", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, [{ id: "memory-1" }]),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(client.listMemory()).resolves.toEqual([{ id: "memory-1" }]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.test/v1/MemoryEntry",
+      expect.any(Object),
+    );
   });
 
   it("creates Project records with ValorIDE as the source surface", async () => {

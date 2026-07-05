@@ -337,7 +337,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
     expect(screen.getByText("ready")).toBeTruthy();
   });
 
-  it("shows captured command output inside the command dropdown", () => {
+  it("keeps captured command output collapsed by default", () => {
     const message = {
       type: "say",
       say: "command",
@@ -363,10 +363,41 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("Command Output")).toBeTruthy();
+    expect(screen.getByText("Output:")).toBeTruthy();
     expect(
-      screen.getByText(/PASS src\/core\/task\/index.test.ts/),
-    ).toBeTruthy();
+      screen.queryByText(/PASS src\/core\/task\/index.test.ts/),
+    ).toBeNull();
+  });
+
+  it("shows the full command output when expanded", () => {
+    const message = {
+      type: "say",
+      say: "command",
+      ts: Date.now(),
+      text: 'curl -sL https://valkyrlabs.com\nOutput:\n<!doctype html>\n<html lang="en">',
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={{
+            type: "say",
+            say: "text",
+            text: "done",
+            ts: Date.now(),
+          }}
+          isLast={false}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText("Output:")).toBeTruthy();
+    expect(screen.getByText(/<!doctype html>/)).toBeTruthy();
+    expect(screen.getByText(/<html lang="en">/)).toBeTruthy();
   });
 
   it("marks silent completed commands as completed with no output", () => {
@@ -395,7 +426,9 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("Command completed with no output.")).toBeTruthy();
+    expect(
+      screen.queryByText("Command completed with no output."),
+    ).toBeNull();
     expect(screen.queryByText("No output yet")).toBeNull();
   });
 });

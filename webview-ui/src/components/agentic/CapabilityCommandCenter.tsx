@@ -92,8 +92,9 @@ const enabledCapabilityLabel = (grayMatterSession?: GrayMatterLike): string => {
 
 const mcpSummary = (
   servers?: McpServer[],
-): { label: string; tone: PillTone } => {
+): { detail: string; label: string; tone: PillTone } => {
   const list = Array.isArray(servers) ? servers : [];
+  const installed = list.filter((server) => !server.disabled).length;
   const connected = list.filter(
     (server) => !server.disabled && server.status === "connected",
   ).length;
@@ -101,10 +102,28 @@ const mcpSummary = (
     (server) => !server.disabled && server.status === "disconnected",
   );
   return {
-    label: `MCP ${connected}/${list.length}`,
-    tone: hasFailure ? "warn" : connected > 0 ? "ok" : "warn",
+    detail:
+      installed === 0
+        ? "No MCP servers installed yet; marketplace servers are available."
+        : `${connected} of ${installed} installed MCP servers healthy.`,
+    label: `MCP ${installed} installed / ${connected} healthy`,
+    tone: hasFailure ? "warn" : "ok",
   };
 };
+
+const isUnhelpfulErrorDetail = (value?: string): boolean =>
+  !value ||
+  value === "[object ErrorEvent]" ||
+  value === "[object Event]" ||
+  value === "[object Object]";
+
+const normalizeSwarmErrorDetail = (
+  value: string | undefined,
+  endpointHint = "/ws",
+): string =>
+  isUnhelpfulErrorDetail(value)
+    ? `WebSocket connection failed; verify the ValkyrAI ${endpointHint} STOMP endpoint and session token.`
+    : value!;
 
 const swarmSummary = (
   agenticState?: AgenticCapabilityCommandCenterState,
@@ -124,10 +143,17 @@ const swarmSummary = (
         : "warn";
   return {
     detail:
-      websocketState?.instanceId ??
-      swarm?.instanceId ??
-      swarm?.lastError ??
-      "No registration ACK",
+      status === "error" || status === "rejected"
+        ? normalizeSwarmErrorDetail(
+            swarm?.lastError ??
+              websocketState?.instanceId ??
+              swarm?.instanceId ??
+              "No registration ACK",
+          )
+        : (websocketState?.instanceId ??
+          swarm?.instanceId ??
+          swarm?.lastError ??
+          "No registration ACK"),
     label: `SWARM ${titleCaseStatus(status)}`,
     tone,
   };
@@ -421,8 +447,8 @@ const CapabilityCommandCenter = () => {
         <StatusPill
           detail={
             state.agenticState?.approvalPolicy
-              ? `approval: ${state.agenticState.approvalPolicy}`
-              : undefined
+              ? `${mcp.detail} Approval: ${state.agenticState.approvalPolicy}.`
+              : mcp.detail
           }
           icon={<FaPlug aria-hidden="true" />}
           title={mcp.label}

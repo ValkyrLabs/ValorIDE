@@ -72,12 +72,7 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
   const { principal: resolvedPrincipal } = useAccessControl(principalOverride);
   const [showBuyCredits, setShowBuyCredits] = useState(false);
 
-  // Must check for principal before calling hooks
   const principalId = resolvedPrincipal?.id;
-  if (!principalId) {
-    return null;
-  }
-
   // Convert to string if needed - creditsApi expects string accountId
   const accountId =
     typeof principalId === "string" ? principalId : String(principalId);
@@ -88,7 +83,11 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
     isLoading,
     error,
     refetch,
-  } = useGetAccountBalanceQuery(accountId);
+  } = useGetAccountBalanceQuery(accountId, { skip: !principalId });
+
+  if (!principalId) {
+    return null;
+  }
 
   // Get current balance from the account
   const currentBalance = accountBalance?.currentBalance || 0;

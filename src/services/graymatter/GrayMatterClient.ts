@@ -204,10 +204,14 @@ export class GrayMatterClient {
       typeof query === "string"
         ? {
             limit: 10,
+            maxResults: 10,
+            q: query,
             query,
           }
         : {
             limit: query.limit ?? 10,
+            maxResults: query.limit ?? 10,
+            q: query.query,
             query: query.query,
           };
 
@@ -215,6 +219,10 @@ export class GrayMatterClient {
       body: JSON.stringify(payload),
       method: "POST",
     });
+  }
+
+  async listMemory(): Promise<unknown> {
+    return this.request("/MemoryEntry");
   }
 
   async retrieveMemoryWithReceipt(
@@ -252,8 +260,19 @@ export class GrayMatterClient {
   }
 
   async writeMemory(input: GrayMatterMemoryInput): Promise<unknown> {
-    return this.request("/MemoryEntry", {
-      body: JSON.stringify(input),
+    const metadata =
+      input.metadata && Object.keys(input.metadata).length > 0
+        ? JSON.stringify(input.metadata)
+        : undefined;
+
+    return this.request("/MemoryEntry/write", {
+      body: JSON.stringify({
+        content: input.content,
+        text: input.content,
+        ...(metadata ? { metadata } : {}),
+        ...(input.tags ? { tags: input.tags } : {}),
+        type: input.type,
+      }),
       method: "POST",
     });
   }

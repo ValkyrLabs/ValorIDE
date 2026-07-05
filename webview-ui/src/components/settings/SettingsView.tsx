@@ -370,9 +370,13 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
         ? "error"
         : "warn";
   const swarmDetail =
-    typedAgenticState?.swarm?.instanceId ||
-    typedAgenticState?.swarm?.lastError ||
-    "No SWARM registration ACK yet.";
+    swarmStatus === "error" || swarmStatus === "rejected"
+      ? typedAgenticState?.swarm?.lastError ||
+        typedAgenticState?.swarm?.instanceId ||
+        "No SWARM registration ACK yet."
+      : typedAgenticState?.swarm?.instanceId ||
+        typedAgenticState?.swarm?.lastError ||
+        "No SWARM registration ACK yet.";
 
   return (
     <>

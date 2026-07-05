@@ -83,7 +83,7 @@ const Signup = (props) => {
             </Card.Header>
             <Card.Body>
               <h1>BETA Signup</h1>
-              {true && <Form />}
+              <Form />
             </Card.Body>
           </Card>
         </Col>

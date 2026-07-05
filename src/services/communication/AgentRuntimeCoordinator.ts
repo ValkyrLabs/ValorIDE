@@ -638,7 +638,9 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const data = message.payload.data ?? {};
     const text = this.extractRemoteTaskText(action, data);
     const images = Array.isArray(data.images)
-      ? data.images.filter((image): image is string => typeof image === "string")
+      ? data.images.filter(
+          (image): image is string => typeof image === "string",
+        )
       : undefined;
     const webview = WebviewProvider.getAllInstances()[0];
     if (!webview) {
@@ -663,7 +665,10 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     };
   }
 
-  private extractRemoteTaskText(action: string, data: Record<string, any>): string {
+  private extractRemoteTaskText(
+    action: string,
+    data: Record<string, any>,
+  ): string {
     const candidates = [
       data.text,
       data.prompt,
@@ -1001,7 +1006,24 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private errorMessage(error: unknown): string {
-    return error instanceof Error ? error.message : String(error);
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    if (error && typeof error === "object") {
+      const eventType =
+        "type" in error ? String((error as { type?: unknown }).type) : "";
+      if (
+        eventType ||
+        Object.prototype.toString.call(error) === "[object ErrorEvent]" ||
+        Object.prototype.toString.call(error) === "[object Event]"
+      ) {
+        return `WebSocket connection failed${eventType ? ` (${eventType})` : ""}; verify the ValkyrAI /ws STOMP endpoint and session token.`;
+      }
+    }
+    const fallback = String(error);
+    return fallback === "[object Object]" || fallback === "[object ErrorEvent]"
+      ? "WebSocket connection failed; verify the ValkyrAI /ws STOMP endpoint and session token."
+      : fallback;
   }
 
   private registerCommands(): void {

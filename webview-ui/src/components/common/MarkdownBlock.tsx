@@ -311,7 +311,6 @@ const rehypeSanitizeCode = () => {
         }
       } catch (e) {
         // Be defensive: don't let sanitizer throw and break rendering
-        // eslint-disable-next-line no-console
         console.warn("rehypeSanitizeCode encountered an unexpected node", e);
       }
     });
@@ -347,7 +346,6 @@ const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
           try {
             return plugin(options)(tree, file);
           } catch (e) {
-            // eslint-disable-next-line no-console
             console.warn("rehype-highlight failed, skipping highlighting", e);
           }
         };

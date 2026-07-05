@@ -49,7 +49,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
               <img
                 style={{ marginTop: "2em", marginBottom: "1em" }}
                 alt="Valkyr Labs"
-                src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
+                src="https://valkyrlabs.com/assets/VALKYR_LABS_INC_LOGO-7kbl90lk.png"
               />
             </a>
           </div>

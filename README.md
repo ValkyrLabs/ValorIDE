@@ -1,38 +1,162 @@
+Absolutely. Paste this in as README.md.
+
 ![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
 
-## Agentic Coder, Powered by ThorAPI ⚡ (Precision PSR Verified)
+# ValorIDE
 
-[English Documentation](https://valkyrlabs.comhttps://valkyrlabs.com/v1/Products/valoride/)
+## Agentic coding inside VS Code — with tools, terminal access, browser debugging, MCP, checkpoints, and ThorAPI code generation.
 
----
-
-| [**Download on VS Marketplace**](https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev) | [**Feature Requests**](https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop) | [**Getting Started**](https://valkyrlabs.com/v1/docs/Products/ValorIDE/getting-started-new-coders/getting-started-with-valoride) |
-| :--------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: |
-
-> ⚡ Feb 20 - NEW MODELS: Gemini 3.1-pro, Claude 4.6, OpenAI GPT-5.3-Codex, Moonshot Kimi2.5, and more!
-
-## What is Valor IDE?
-
-Valor IDE is your **agentic coding companion** inside VS Code.\
-Unlike traditional "autocomplete" assistants, Valor IDE can actually **use your CLI and Editor** — giving it hands-on power to build, debug, and ship your code alongside you.
-
-Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabilities**, Valor IDE is more than code completion:
-
-- It analyzes your project with **AST parsing, regex search, and source tree exploration**.
-- It edits files, fixes errors, installs dependencies, and runs commands.
-- It can **launch a browser**, click around, capture console logs/screenshots, and fix UI bugs.
-- It extends itself with the **Model Context Protocol (MCP)** to add brand-new tools.
-- Every action is **human-in-the-loop**: you approve edits and commands, keeping safety + control in your hands.
-
-**In short: Valor IDE is the future of coding—accessible, agentic, and always under your command.**
+ValorIDE is an agentic coding assistant for VS Code that can inspect your project, edit files, run terminal commands, use browser automation, call MCP tools, and generate full-stack application code through ThorAPI.
+Unlike autocomplete-only assistants, ValorIDE works through task loops: it gathers context, plans changes, executes approved actions, observes results, and iterates — while keeping you in control with diffs, approvals, checkpoints, rollback, and token/cost visibility.
+ValorIDE is built for real software projects: debugging, refactoring, code generation, workflow automation, and developer productivity without losing control of your codebase.
 
 ---
 
-## How It Works
+| [**Download on VS Marketplace**](https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev) | [**Getting Started**](https://valkyrlabs.com/v1/docs/Products/ValorIDE/getting-started-new-coders/getting-started-with-valoride) | [**Feature Requests**](https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop) |
+| :--------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 
+---
+
+> ⚡ **Latest:** SWARM Protocol, GrayMatter integration, MCP enhancements, ThorAPI project generation, improved browser automation, and expanded model/provider support.
+
+---
+
+## Why ValorIDE?
+
+ValorIDE helps developers move from prompt-based coding to controlled agentic development.
+
+- Build, debug, and refactor with an agent that can use your actual workspace
+- Generate full-stack Spring Boot + TypeScript/React applications from OpenAPI specs
+- Extend the assistant with MCP tools for Jira, AWS, PagerDuty, documentation, internal APIs, and more
+- Use hosted or local models across Anthropic, OpenAI, Google, Bedrock, Azure, Vertex, Ollama, LM Studio, and ValkyrAI
+- Keep control with human-in-the-loop approvals, checkpoints, rollback, and explicit project rules
+- Reduce AI coding chaos with deterministic generation, traceable actions, safer editing workflows, and token/cost visibility
+
+---
+
+## Core Workflow
+
+1. **Describe the task**
+   Ask ValorIDE to fix a bug, explain an error, refactor a module, generate a feature, wire an API, or convert a mockup into a working application.
+2. **ValorIDE gathers project context**
+   ValorIDE scans your workspace, reads relevant files, analyzes source structure, uses AST parsing and regex search, and builds a focused task context without flooding the model.
+3. **ValorIDE plans the work**
+   In Plan Mode, ValorIDE can reason through implementation options, architecture, files to change, tools to use, and validation steps before touching your workspace.
+4. **You approve actions**
+   ValorIDE uses human-in-the-loop controls for edits, commands, MCP tools, and risky operations. You stay in charge.
+5. **ValorIDE executes and observes**
+   ValorIDE edits files, runs commands, captures terminal output, launches browser sessions, reads errors, and iterates based on real feedback from your environment.
+6. **You review diffs and checkpoints**
+   Every change is reviewable. You can inspect diffs, compare checkpoints, revert safely, and continue from a known-good state.
+
+---
+
+## What ValorIDE Can Do
+
+### Understand Your Workspace
+
+ValorIDE can inspect your project like a real coding agent:
+
+- Source tree exploration
+- AST parsing with Tree-sitter
+- Regex-based file search
+- File and folder mentions
+- Terminal output references
+- Git diff and commit context
+- URL/document ingestion
+- Workspace warnings and errors
+- Project-specific rules through `.valoriderules`
+
+---
+
+### Create and Edit Files
+
+ValorIDE can generate and modify code directly inside VS Code:
+
+- Creates new files and folders
+- Applies edits through reviewable diffs
+- Fixes syntax, lint, compiler, and test failures
+- Tracks changes through VS Code timeline and checkpoints
+- Supports rollback and restoration when an approach does not work
+  ValorIDE is designed around explicit, reviewable edits — not invisible magic.
+
+---
+
+### Run Terminal Commands
+
+Using VS Code terminal integration, ValorIDE can:
+
+- Install dependencies
+- Run builds and tests
+- Start local dev servers
+- Execute scripts
+- Monitor long-running commands
+- React to compile errors and runtime output
+- Help diagnose environment issues
+  You approve command execution, and ValorIDE can use the output as feedback for the next step.
+
+---
+
+### Debug Web Apps with Browser Automation
+
+ValorIDE can use browser automation to help debug UI and runtime problems:
+
+- Launch browser sessions
+- Navigate pages
+- Click, type, scroll, and inspect behavior
+- Capture screenshots
+- Read console logs
+- Detect runtime errors
+- Connect to local Chrome sessions for authenticated debugging
+  This makes ValorIDE especially useful for fixing UI bugs that only appear when the app is actually running.
+
+---
+
+### Extend with MCP Tools
+
+ValorIDE supports the Model Context Protocol, allowing you to connect new tools and services to your agentic coding workflow.
+Example prompts:
+
+- `Add a tool that fetches Jira tickets`
+- `Add a tool that manages AWS EC2 instances`
+- `Add a tool that pulls PagerDuty incidents`
+- `Add a tool that searches internal docs`
+- `Add a tool that queries my project API`
+  Advanced MCP support includes:
+- MCP marketplace discovery
+- Remote MCP servers over SSE
+- Rich responses with previews and visualizations
+- Auto-approval settings for trusted tools
+- Project-specific toolchains
+  MCP lets ValorIDE grow with your stack instead of staying trapped inside a fixed assistant feature set.
+
+---
+
+## ThorAPI Full-Stack Generation
+
+ValorIDE integrates with ThorAPI, Valkyr Labs' OpenAPI-first generation engine.
+ThorAPI helps generate production-oriented application foundations from API specifications:
+
+- Java Spring Boot servers
+- TypeScript client libraries
+- TypeScript component libraries
+- React application scaffolding
+- CRUD controllers
+- API contracts
+- Generated models
+- Service templates
+- Auth, validation, and standard model fields
+- Custom codegen targets
+  ValorIDE can request generated projects, poll generation status, download completed stacks, and continue implementation inside your workspace.
+
+---
+
+## How ThorAPI Generation Works
+
+```text
                              ┌─────────────────────────────────────────────┐
                              │               ThorAPI.java                  │
-                             │  (service app / OpenAPI enhancement)        │
+                             │  service app / OpenAPI enhancement engine   │
                              └─────────────────────────────────────────────┘
                                                ▲
                                                │ orchestrates + enhances
@@ -41,372 +165,378 @@ Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabi
         │           INPUTS             │       │        │             SPEC FRAGMENTS                │
         ├──────────────────────────────┤       │        ├──────────────────────────────────────────┤
         │ api.yaml                     │       │        │ valkyrai/src/main/resources/openapi/     │
-        │  • Bare-bones OpenAPI        │       │        │   api_inc.hbs.yaml (Handlebars section)  │
-        │  • Lists COMPONENT NAMES     │       │        │  • Injected after all human edits        │
+        │  • Bare-bones OpenAPI        │       │        │   api_inc.hbs.yaml                       │
+        │  • Lists component names     │       │        │  • Injected after human edits            │
         │    to expose as CRUD APIs    │       │        └──────────────────────────────────────────┘
         │  • No properties, no paths   │       │
         ├──────────────────────────────┤       │
         │ api.hbs.yaml                 │       │
-        │  • FULL component schemas    │       │
-        │  • NO CRUD paths             │       │
+        │  • Full component schemas    │       │
+        │  • No CRUD paths             │       │
         │  • Master truth for models   │       │
         └──────────────────────────────┘       │
                                                │
                                                ▼
                               ┌─────────────────────────────────────────────┐
                               │         SPEC ASSEMBLY & MERGE               │
-                              │  1) Start with api.hbs.yaml (full models)   │
-                              │  2) Merge api.yaml to decide CRUD exposure  │
-                              │     - Components listed ⇒ CRUD controllers  │
-                              │     - Not listed ⇒ backend-only services    │
-                              │  3) Append api_inc.hbs.yaml (Handlebars)    │
+                              │  1. Start with api.hbs.yaml                 │
+                              │  2. Merge api.yaml to decide CRUD exposure  │
+                              │  3. Append api_inc.hbs.yaml                 │
                               └─────────────────────────────────────────────┘
                                                │
                                                │ writes
                                                ▼
                          ┌────────────────────────────────────────────────────┐
                          │ assembled.api.yaml.hbs                              │
-                         │  • Single master spec w/ Handlebars blocks         │
-                         │  • Human-editable YAML remains valid               │
+                         │  • Single master spec with template blocks          │
+                         │  • Human-editable YAML remains valid                │
                          └────────────────────────────────────────────────────┘
                                                │
-                                               │ enhance (add standard fields/annotations)
+                                               │ enhance
                                                ▼
                    ┌──────────────────────────────────────────────────────────────┐
                    │            THORAPI ENHANCEMENT PHASE                        │
                    │ Adds standard model surface:                                │
                    │   id, createdDate, lastModifiedDate, lastModifiedById, etc. │
-                   │ Applies custom annotations / x-thorapi metadata             │
+                   │ Applies custom annotations and x-thorapi metadata           │
                    └──────────────────────────────────────────────────────────────┘
                                                │
                                                │ outputs
                                                ▼
                  ┌───────────────────────────────────────────────────────────────┐
                  │ api-out.yaml                                                  │
-                 │  • FINAL enhanced OpenAPI spec                                │
-                 │  • Ready for codegen (consumed on EVERY Maven build)          │
+                 │  • Final enhanced OpenAPI spec                                │
+                 │  • Ready for codegen                                          │
                  └───────────────────────────────────────────────────────────────┘
                                                │
-                                               │ mvn clean install (ThorAPI templates)
+                                               │ build / generate
                                                ▼
      ┌──────────────────────────────┬──────────────────────────────┬───────────────────────────────┬──────────────────────────────┐
-     │  Java Spring Boot server     │  TypeScript Client Libs      │  TypeScript Component Libs    │  Other user-defined targets  │
-     │  • CRUD controllers (only    │  • Bound to ThorAPI server   │  • UI components wired to      │  • Any additional codegen     │
-     │    for comps listed in       │  • Used by apps/services      │    ThorAPI data sources        │    templates configured       │
-     │    api.yaml)                 │                              │                                │                              │
+     │  Java Spring Boot server     │  TypeScript client libs      │  TypeScript component libs    │  Custom generation targets   │
+     │  • CRUD controllers          │  • API-bound clients         │  • UI components wired to     │  • Project-specific output   │
+     │  • Generated models          │  • Shared API contracts      │    ThorAPI data sources       │  • Templates and extensions  │
+     │  • Validation/auth patterns  │                              │                                │                              │
      └──────────────────────────────┴──────────────────────────────┴───────────────────────────────┴──────────────────────────────┘
                                                │
-                                               │ injected into
+                                               │ used by
                                                ▼
                          ┌─────────────────────────────────────────────────┐
                          │ ValorIDE project                                │
-                         │  • Vibe Coder finishes the last mile            │
-                         │  • Uses generated artifacts + live ValkyrAI     │
-                         │    services to ship the app                     │
+                         │  • Agent completes implementation               │
+                         │  • Uses generated artifacts + live services     │
+                         │  • Developer reviews diffs and checkpoints      │
                          └─────────────────────────────────────────────────┘
 
-1. **Define a Task**
-   - Example: "Fix this bug" or "Convert this mockup into a working app."
-   - You can even add screenshots or errors from your workspace.
+ThorAPI gives ValorIDE a deterministic foundation for application generation, while ValorIDE handles agentic implementation, debugging, refinement, and last-mile development.
 
-2. **Valor IDE Gathers Context**
-   - Scans your project structure.
-   - Reads files and ASTs.
-   - Decides what's relevant without overwhelming the context window.
+⸻
 
-3. **Agentic Execution**
-   - Creates/edits files with diffs.
-   - Runs commands in your terminal and adapts to live output.
-   - For web projects, launches a headless browser to test/debug.
+GrayMatter Integration
 
-4. **Review & Approve**
-   - You see the diffs. You approve or revert.
-   - Valor IDE learns and continues until the task is complete.
+ValorIDE integrates with GrayMatter, Valkyr Labs’ durable agent memory and retrieval layer.
 
-> [!TIP]
-> Use the `CMD/CTRL + Shift + P` shortcut to open the command palette and type "ValorIDE: Open In New Tab" to open the extension as a tab in your editor. This lets you use ValorIDE side-by-side with your file explorer, and see how he changes your workspace more clearly.
+GrayMatter provides:
 
----
+* Durable project memory
+* Context-grounded retrieval
+* Shared object graphs
+* Workspace-aware knowledge
+* OpenAPI schema discovery
+* Agent memory entries
+* Retrieval receipts
+* RBAC-scoped access
+* Hosted and local workflow support
 
-## Core Features
+This allows agents to work with persistent project understanding instead of starting from scratch every session.
 
-### 🔗 Use Any API & Model
+⸻
 
-Valor IDE connects to model apis to perform AI-powered code generation and other tasks.
+Plan / Act Mode
 
-Valor integrates with almost any LLM model api including Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+ValorIDE separates thinking from doing.
 
-Valor also can connect to ValkyrAI models that you can customize and train to your specific environment, project, and business needs.
+Plan Mode
 
-It also tracks **token usage and costs** across entire task loops, so you always know your spend.
+Use Plan Mode to:
 
----
+* Analyze requirements
+* Brainstorm architecture
+* Compare implementation options
+* Generate Mermaid diagrams
+* Identify affected files
+* Plan tests and validation
+* Prepare a safe execution strategy
 
-### 🔗 Use Customized Models for Projects
+Act Mode
 
-Valor IDE integrates with ValkyrAI models that you can customize and configure for your specific needs.
+Use Act Mode to:
 
-Adjust the initial prompt with technical details specific to your project(s) and business(es) to save time and maximize efficiency and effectiveness.
+* Edit files
+* Run terminal commands
+* Use tools
+* Generate code
+* Debug runtime issues
+* Apply fixes
+* Validate the result
 
-Using Valor P2P you can configure a management Model and a work execution Model and run a supervised project right within your IDE.
+This separation helps keep agentic development structured and reviewable.
 
----
+⸻
 
-### 🛠️ Valhalla Suite / ThorAPI
+Checkpoints, Compare, and Restore
 
-Valor IDE integrates with the rest of the Valhalla Suite from Valkyr Labs -- ThorAPI generated backend apis, Typescript (and other) client libraries and components.
+ValorIDE snapshots your workspace as it works.
 
-**Full Application Generation:**
+With checkpoints, you can:
 
-- Generate complete applications from OpenAPI specifications
-- Poll generation status and download completed projects
-- Configurable ThorAPI output folders via `.valoride/config`
-- Seamless integration with generated Spring Boot backends and React frontends
+* Compare changes across steps
+* Restore previous versions
+* Try multiple approaches safely
+* Roll back failed changes
+* Keep a clear trail of agent activity
 
-ValkyrAI can be run as a service in your generated application stack, providing workflow automations, while built-in RBAC allows secure sharing of any object in the system.
+Checkpoints help make AI-assisted coding less risky, especially on larger tasks.
 
-Agentic reporting tracks **token usage and costs** across entire task loops, so you always know your spend and monetization features of the ValkyrLabs.com
+⸻
 
-### 🛠️ Valor P2P
+Context and Mentions
 
-P2P allows multiple Valor instances to communicate and orchestrate tasks together.
+ValorIDE supports rich context references in chat:
 
-It's an innovative and fun way to increase the power of Valor in your IDE.
+* @file — include a file
+* @folder — include a folder
+* @url — fetch a URL and convert docs to markdown
+* @terminal — reference terminal output
+* @git — include commits and working changes
+* @problems — include workspace warnings and errors
 
----
+Smart context management includes:
 
-### 💳 ValorIDE Account Management
+* Context window progress
+* Token usage visibility
+* File metadata tracking
+* Large-file handling
+* Binary detection
+* Sliding-window context support for long tasks
 
-For ValorIDE account users, the extension provides comprehensive billing and usage tracking:
+⸻
 
-- **Credit Balance Monitoring**: Real-time balance display and transaction history
-- **Usage Analytics**: Detailed breakdown of token usage and costs per task
-- **Payment History**: Complete transaction records and billing management
-- **ContentData Integration**: Access to enhanced content and data services
+Models and Providers
 
----
+ValorIDE can connect to hosted, cloud, and local models.
 
-### 💻 Run Terminal Commands
+Supported provider families include:
 
-With VS Code's new [Shell Integration API](https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api), Valor IDE can:
+* Anthropic
+* OpenAI
+* Google Gemini
+* AWS Bedrock
+* Azure OpenAI
+* Google Vertex AI
+* Ollama
+* LM Studio
+* ValkyrAI-hosted models
 
-- Install packages, run builds, deploy, and test.
-- Handle long-running servers with background monitoring.
-- React dynamically to compile errors and environment issues.
+ValorIDE can also support different models for different phases of work, such as one model for planning and another for execution.
 
----
+⸻
 
-### 📝 Create & Edit Files
+Valor P2P and SWARM Protocol
 
-- Edits appear in VS Code's diff view.
-- You can modify or reject changes instantly.
-- Valor IDE proactively fixes syntax/linter/compiler errors.
-- Every change is recorded in your file's **Timeline** for easy rollback.
+Valor P2P allows multiple ValorIDE instances to communicate and coordinate tasks.
 
----
+This enables experiments with:
 
-### 🌐 Enhanced Browser Automation
+* Multi-agent workflows
+* Manager/worker model patterns
+* Parallel implementation and validation
+* Peer discovery
+* WebSocket coordination
+* Shared task state
+* Supervised execution models
 
-With [Claude Sonnet's Computer Use](https://www.anthropic.com/news/3-5-models-and-computer-use):
+SWARM Protocol is designed to help multiple agents cooperate while still preserving developer oversight and control.
 
-- Launches a browser, clicks, types, scrolls.
-- Captures screenshots and console logs.
-- **Local Chrome Integration**: Connect to your existing Chrome browser for session-based debugging.
-- **Browser Discovery**: Automatically detect and connect to running Chrome instances.
-- Perfect for runtime debugging and fixing UI bugs.
+⸻
 
-[See Demo](https://x.com/sdrzn/status/1850880547825823989)
+Account Management and Usage Tracking
 
----
+For ValorIDE account users, the extension includes billing and usage visibility:
 
-### 🛠️ Extend with MCP
+* Credit balance monitoring
+* Transaction history
+* Token usage tracking
+* Cost breakdowns per task loop
+* Payment history
+* Usage analytics
+* ContentData integration
 
-Valor IDE can generate new **Model Context Protocol (MCP)** tools on the fly.\
-Example prompts:
+The goal is simple: you should know what the agent is doing and what it costs.
 
-- `add a tool that fetches Jira tickets`
-- `add a tool that manages AWS EC2s`
-- `add a tool that pulls PagerDuty incidents`
+⸻
 
-**Advanced MCP Features:**
+Developer Controls
 
-- **MCP Marketplace**: Discover and install curated MCP servers directly from the extension
-- **Remote MCP Servers**: Connect to MCP servers via Server-Sent Events (SSE)
-- **Rich Responses**: Automatic image previews, website thumbnails, and data visualizations
-- **Auto-Approval Settings**: Configure which MCP tools require approval
+ValorIDE includes project-level controls for safer agentic development.
 
-These tools become part of Valor IDE's toolkit, ready for future use.
+.valoriderules
 
----
+Use .valoriderules to define project-specific instructions, coding standards, architecture preferences, model behavior, and task rules.
 
-### 📂 Advanced Context & Mentions
+.valorideignore
 
-- `@url` → fetch a URL and convert docs to markdown.
-- `@problems` → pass workspace warnings/errors.
-- `@file` → add file contents.
-- `@folder` → add a whole folder's contents.
-- `@terminal` → reference active terminal contents.
-- `@git` → include git commits and working changes.
+Use .valorideignore to exclude files and folders from ValorIDE context and tool access.
 
-**Smart Context Management:**
+Supported patterns include:
 
-- **Context Window Progress**: Visual indicator showing token usage and cost impact
-- **File Context Tracking**: Automatic metadata tracking for optimized context
-- **Sliding Window Management**: Maintains context beyond 200k tokens for long tasks
+* Ignored folders
+* Ignored files
+* Binary and generated assets
+* Include overrides
+* Project-specific context boundaries
 
----
+These files help keep your agent aligned with your project instead of treating every repo the same.
 
-### 🎯 Plan/Act Mode Toggle
+⸻
 
-Switch between planning and execution modes:
+Precision Search and Replace
 
-- **Plan Mode**: Brainstorm and architect solutions with Valor IDE before implementation
-- **Act Mode**: Execute the planned solution with full tool access
-- **Mermaid Diagrams**: Visual representations of architecture and workflows in Plan mode
-- **Model Switching**: Use different models for planning vs. execution
+ValorIDE includes a Precision Search and Replace editing pipeline designed to make file edits safer and more reliable.
 
----
+The editing strategy can use:
 
-### ⏪ Checkpoints: Compare & Restore
+* AST-aware matching
+* Contextual matching
+* Byte-level fallback
+* Verification checks
+* Backup creation
+* Rollback support
+* Delta tracking
 
-- Snapshots your workspace at each task step.
-- Compare differences and restore versions safely.
-- Explore multiple approaches without losing progress.
-- **Visual Indicators**: Clear checkpoint markers in the chat interface
-- **Branch-per-Task**: Optimized storage with git-based checkpoint system
+This helps ValorIDE apply targeted edits without casually mangling your files like an overcaffeinated intern with regex privileges.
 
----
+⸻
 
-## Advanced Features
+Enhanced UI and UX
 
-### 🔧 Developer Tools
+ValorIDE includes a developer-focused interface inside VS Code:
 
-- **Tree-Sitter AST Parsing**: Deep code analysis for better understanding
-- **Advanced Search**: Regex-based file search across your entire project
-- **File Content Optimization**: Smart handling of large files and binary detection
-- **Output Filtering**: Configurable output processing for cleaner results
+* Drag and drop files or folders into chat
+* Favorite models
+* Rich Markdown rendering
+* Code blocks and diagrams
+* Task history search
+* Fuzzy filtering
+* Advanced auto-approval settings
+* Visual checkpoint markers
+* Connection and peer status indicators
+* Login and account status
+* Real-time usage information
 
-### ⚙️ Configuration & Customization
+Use CMD/CTRL + Shift + P, then run:
 
-- **`.valoriderules`**: Project-specific custom instructions and rules
-- **`.valorideignore`**: Exclude files and patterns from Valor IDE access
-- **Multiple Rule Files**: Support for `.valoriderules/` directory with multiple configuration files
-- **Advanced Settings**: Extended thinking budgets, reasoning effort controls, and model-specific options
+ValorIDE: Open In New Tab
 
-### 🚀 Enhanced UI/UX
+This opens ValorIDE as a full editor tab so you can work side-by-side with your file explorer and source code.
 
-- **Drag & Drop**: Add files and folders directly to chat
-- **Favorite Models**: Quick access to your preferred models
-- **Advanced Auto-Approval**: Granular control over which operations require approval
-- **Rich Markdown**: Full support for code blocks, diagrams, and formatted content
-- **Task History Search**: Fuzzy search and filtering of previous tasks
+⸻
 
----
+Example Tasks
 
-## Contributing
+Try asking ValorIDE:
 
-- Start with our [Contributing Guide](CONTRIBUTING.md).
-- Join the [Discord](https://discord.gg/valoride) → `#contributors` channel.
-- Check open positions on our [Careers Page](https://valkyrlabs.com/v1/join-us).
+Fix the failing tests and explain what changed.
+Refactor this service to separate persistence, validation, and API concerns.
+Generate a Spring Boot backend and React frontend from this OpenAPI spec.
+Use the browser to reproduce the UI bug, capture the console error, and fix it.
+Add an MCP tool that fetches Jira tickets for this project.
+Review this PR diff and identify likely regressions.
+Create a plan for adding RBAC to this API before making any edits.
 
-### Local Development
+⸻
 
-```bash
-# Clone the repo (requires git-lfs)
+Local Development
+
+# Clone the repo
 git clone https://github.com/valkyrlabs/valoride.git
-
 # Open in VS Code
 code valoride
-
 # Install dependencies
 npm run install:all
+# Launch extension
+# Press F5 or use Run → Start Debugging
 
-# Launch extension (F5 or Run → Start Debugging)
-```
+You may need the esbuild problem matchers⁠￼ extension if build issues occur.
 
-> ⚠️ You may need [esbuild problem matchers](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) if build issues occur.
+⸻
 
-### Creating a Pull Request
+Creating a Pull Request
 
-```bash
 # Create a changeset entry
 npm run changeset
+
+Follow the prompts for release type:
+
+* major
+* minor
+* patch
+
+Commit both your code changes and the generated .changeset file.
+
+Then push your branch and open a pull request. CI will run, and Changesetbot will handle versioning and release metadata.
+
+⸻
+
+Contributing
+
+We welcome feedback, bug reports, and feature requests.
+
+* Read the Contributing Guide⁠￼
+* Submit feature ideas in Feature Requests⁠￼
+* Visit the ValorIDE GitHub Repository⁠￼
+* Check open roles on the Valkyr Labs Careers Page⁠￼
+
+⸻
+
+Additional Resources
+
+* ValorIDE GitHub Repository⁠￼
+* ValorIDE Getting Started⁠￼
+* ThorAPI Documentation⁠￼
+* Model Context Protocol Documentation⁠￼
+
+⸻
+
+Changelog Highlights
+
+Recent
+
+* SWARM Protocol support
+* GrayMatter integration
+* Expanded MCP support
+* Improved ThorAPI generation workflows
+* Enhanced browser automation
+* Better token and cost visibility
+* Improved checkpoint and rollback workflows
+* Precision Search and Replace editing pipeline
+* WebSocket coordination and peer discovery
+* Expanded model/provider support
+
+Previous
+
+* Added language and behavior-specific directives for Java, TypeScript, ThorAPI usage, and task-completion workflows
+* Added Gemini provider support improvements
+* Improved .valorideignore handling
+* Improved terminal output processing
+* Improved command execution reliability
+* Enhanced MCP server integration
+* Added richer login and account management UX
+
+For full release details, see the repository changelog and release notes.
+
+⸻
+
+License
+
+Apache 2.0 © 2026 Valkyr Labs Inc.⁠￼
 ```
-
-Follow prompts for type (`major`, `minor`, `patch`) and description.\
-Commit both your changes + `.changeset` file.\
-Push → Open PR → CI runs → Changesetbot handles versioning + release.
-
----
-
-## CHANGES
-
-- 2025-10-07: Added language- and behavior-specific directives to the system prompt covering Java, TypeScript, ThorAPI usage, and task-completion rituals.
-
----
-
-## License
-
-[Apache 2.0 © 2025 Valkyr Labs Inc.](./LICENSE)
-
----
-
-### 🚀 Latest Developments
-
-**Updated: January 2, 2025 (P2P & WebSocket Integration Complete)**
-
-#### P2P Communication & WebSocket Integration
-
-- **WebSocket Mothership Integration**: Complete real-time communication system with ThorAPI/STOMP broker connectivity, featuring bidirectional message routing and auto-reconnect capabilities.
-
-- **P2P Peer Discovery**: VSCode inter-instance communication with real-time peer count tracking, ping/ack/nack protocol, and visual status indicators.
-
-- **Enhanced StatusBadge System**: Dual-panel status display showing WebSocket Mothership connection (left) and P2P peer status (right) with connection counts and visual feedback.
-
-- **BROADCAST Rollcall Protocol**: Automatic instance discovery on connection with rollcall request/response system for tracking connected ValorIDE instances across the network.
-
-#### Latest Features (v3.13.2)
-
-- **Gemini 2.5 Flash Support**: Added to Vertex and Gemini providers with caching support and thinking budget options.
-
-- **Enhanced .valorideignore**: Added `!include .file` directive support for more flexible file pattern management.
-
-- **Improved Model Support**: Added thinking budget support for Gemini models, fixed Azure API temperature handling, and enhanced DeepSeek model compatibility.
-
-- **Terminal & Output Improvements**: Fixed terminal output formatting issues, improved non-alphanumeric output handling, and enhanced command execution reliability.
-
-- **Browser Tool Enhancements**: Removed computer use restrictions, enabling browser automation through any image-supporting model.
-
-#### Core Tool Enhancements
-
-- **Precision Search and Replace Tool**: Advanced file editing capability featuring a three-layer strategy (AST → contextual → byte). This tool ensures reliable, atomic edits with built-in verification and rollback support. ✅ **Test Status: Verified** - Successfully tested with comprehensive error handling and delta tracking.
-
-- **Enhanced File Editing Pipeline**: Improved safety protocols with automatic backup creation, verification steps, and error recovery for all file modifications.
-
-#### Platform & Architecture
-
-- **Communication Service**: Enhanced inter-service communication with improved reliability, Redux integration, and comprehensive error handling.
-
-- **State Management**: Advanced state management with WebSocket-specific state handling, event listeners, and efficient update mechanisms.
-
-- **MCP Ecosystem**: Continued expansion of Model Context Protocol integration, enabling dynamic tool creation and enhanced agentic capabilities throughout the Valhalla Suite.
-
-#### Agent Telemetry & UX
-
-- **Streamlined Login Integration**: Clean, integrated authentication form with username/password handling and remember-me functionality.
-
-- **Real-time Status Tracking**: Enhanced connection monitoring with spinning indicators, tooltips, and detailed instance information.
-
-- **Performance Optimization**: Efficient event handling, connection pooling, and improved message routing for better overall performance.
-
----
-
-## Additional Resources
-
-- **ValorIDE GitHub Repository:** [https://github.com/valkyrlabs/valoride](https://github.com/valkyrlabs/valoride)
-
-- **ThorAPI Documentation:** [https://valkyrlabs.com/v1/docs/Products/ThorAPI](https://valkyrlabs.com/v1/docs/Products/ThorAPI)
-
-- **MCP Documentation:** [https://modelcontextprotocol.org/docs](https://modelcontextprotocol.org/docs)
-
-- **ValorIDE Documentation:** [docs/README.md](docs/README.md)

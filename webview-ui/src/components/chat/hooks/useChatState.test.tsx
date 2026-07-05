@@ -4,6 +4,7 @@ import { useChatState } from "./useChatState";
 
 const postMessage = vi.fn();
 const clearTask = vi.fn();
+const cancelTask = vi.fn();
 
 vi.mock("@thorapi/utils/vscode", () => ({
   vscode: {
@@ -13,6 +14,7 @@ vi.mock("@thorapi/utils/vscode", () => ({
 
 vi.mock("@thorapi/services/grpc-client", () => ({
   TaskServiceClient: {
+    cancelTask: (...args: unknown[]) => cancelTask(...args),
     clearTask: (...args: unknown[]) => clearTask(...args),
   },
 }));
@@ -20,25 +22,23 @@ vi.mock("@thorapi/services/grpc-client", () => ({
 describe("useChatState", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    cancelTask.mockResolvedValue(undefined);
     clearTask.mockResolvedValue(undefined);
   });
 
-  it("sends an explicit End Task instruction from the cancel control", () => {
+  it("cancels the current task from the cancel control without sending chat text", async () => {
     const { result } = renderHook(() =>
       useChatState({
         messages: [{ type: "ask", ask: "command", text: "npm test" } as any],
       }),
     );
 
-    act(() => {
-      result.current.handleCancelClick();
+    await act(async () => {
+      await result.current.handleCancelClick();
     });
 
-    expect(postMessage).toHaveBeenCalledWith({
-      type: "askResponse",
-      askResponse: "messageResponse",
-      text: "End this task now. Summarize the current state and stop without starting new work.",
-      images: [],
-    });
+    expect(clearTask).not.toHaveBeenCalled();
+    expect(cancelTask).toHaveBeenCalledWith({});
+    expect(postMessage).not.toHaveBeenCalled();
   });
 });

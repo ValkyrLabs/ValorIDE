@@ -95,16 +95,15 @@ export class MothershipService extends EventEmitter {
           this.emit("error", new Error(message || "Mothership STOMP error"));
         },
         onWebSocketClose: (event) => {
-          console.log(
-            "Mothership websocket closed:",
-            event.code,
-            event.reason,
-          );
+          console.log("Mothership websocket closed:", event.code, event.reason);
           this.handleDisconnected(event);
         },
         onWebSocketError: (error) => {
           console.error("Mothership websocket error:", error);
-          this.emit("error", error);
+          this.emit(
+            "error",
+            this.toConnectionError(error, wsUrl, "Mothership websocket error"),
+          );
         },
       });
 
@@ -156,7 +155,11 @@ export class MothershipService extends EventEmitter {
 
   private buildStompEndpointUrl(baseUrl: string): URL {
     const url = new URL(baseUrl);
-    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    if (url.protocol === "https:") {
+      url.protocol = "wss:";
+    } else if (url.protocol === "http:") {
+      url.protocol = "ws:";
+    }
 
     let pathname = url.pathname.replace(/\/+$/, "");
     if (pathname === "/v1" || pathname.endsWith("/v1")) {
@@ -164,16 +167,37 @@ export class MothershipService extends EventEmitter {
     }
 
     if (/\/ws\/websocket$/i.test(pathname)) {
-      url.pathname = pathname;
+      url.pathname = pathname.replace(/\/websocket$/i, "");
+    } else if (/\/chat\/websocket$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/websocket$/i, "");
+    } else if (/\/swarm\/websocket$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/websocket$/i, "");
     } else if (/\/ws$/i.test(pathname)) {
-      url.pathname = `${pathname}/websocket`;
+      url.pathname = pathname;
     } else if (/\/chat$/i.test(pathname)) {
-      url.pathname = pathname.replace(/\/chat$/i, "/ws/websocket");
+      url.pathname = pathname;
+    } else if (/\/swarm$/i.test(pathname)) {
+      url.pathname = pathname;
     } else {
-      url.pathname = `${pathname}/ws/websocket`;
+      url.pathname = `${pathname}/ws`;
     }
 
     return url;
+  }
+
+  private toConnectionError(error: unknown, url: URL, fallback: string): Error {
+    if (error instanceof Error && error.message) {
+      return error;
+    }
+
+    const target = `${url.origin}${url.pathname}`;
+    const detail =
+      error && typeof error === "object" && "type" in error
+        ? ` (${String((error as { type?: unknown }).type)})`
+        : "";
+    return new Error(
+      `${fallback}${detail}. Could not connect to ${target}; verify the ValkyrAI /ws STOMP endpoint is deployed and the session token is valid.`,
+    );
   }
 
   private buildAgentHeaders(): Record<string, string> {
@@ -468,7 +492,7 @@ export class MothershipService extends EventEmitter {
       const isSwarmCommand = validateSwarmMessage(commandPayload);
       const innerPayload = isSwarmCommand
         ? commandPayload.payload?.data
-        : commandPayload?.data ?? commandPayload?.payload ?? payload?.payload;
+        : (commandPayload?.data ?? commandPayload?.payload ?? payload?.payload);
       const command: RemoteCommand = {
         id:
           payload?.commandId ||
@@ -478,8 +502,9 @@ export class MothershipService extends EventEmitter {
         type:
           (isSwarmCommand
             ? commandPayload.payload.action
-            : commandPayload?.action || commandPayload?.type || payload?.type) ||
-          "valor.execute",
+            : commandPayload?.action ||
+              commandPayload?.type ||
+              payload?.type) || "valor.execute",
         payload: innerPayload,
         sourceInstanceId:
           commandPayload?.sourceInstanceId ||
@@ -553,7 +578,9 @@ export class MothershipService extends EventEmitter {
       this.stompClient.publish({
         body: JSON.stringify(jsonMessage),
         destination:
-          fullMessage.type === ("command" as any) ? "/app/command" : "/app/chat",
+          fullMessage.type === ("command" as any)
+            ? "/app/command"
+            : "/app/chat",
         headers: this.buildAgentHeaders(),
       });
     } catch (error) {

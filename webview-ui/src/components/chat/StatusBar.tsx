@@ -177,14 +177,12 @@ const StatusBar: React.FC<StatusBarProps> = ({
 				)}
 				
 				*/}
-        {true && (
-          <StatusBadge
-            label="Balance"
-            value={`$${netBalance.toFixed(2)}`}
-            kind={netBalance > 0 ? ("ok" as any) : ("error" as any)}
-            title="Current balance minus this session's live API cost"
-          />
-        )}
+        <StatusBadge
+          label="Balance"
+          value={`${netBalance.toFixed(0)} credits`}
+          kind={netBalance > 0 ? ("ok" as any) : ("error" as any)}
+          title="Current credit balance minus this session's live credit usage"
+        />
       </div>
     </div>
   );

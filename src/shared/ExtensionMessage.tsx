@@ -442,6 +442,7 @@ export interface ValorIDESayBrowserAction {
   action: BrowserAction;
   coordinate?: string;
   text?: string;
+  url?: string;
 }
 
 export type BrowserActionResult = {
@@ -490,6 +491,7 @@ export interface ValorIDEApiReqInfo {
   cacheWrites?: number;
   cacheReads?: number;
   cost?: number;
+  costUnit?: "usd" | "credits";
   isComplete?: boolean;
   usagePending?: boolean;
   cancelReason?: ValorIDEApiReqCancelReason;

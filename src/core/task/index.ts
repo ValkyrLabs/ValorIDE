@@ -5339,7 +5339,7 @@ export class Task {
         "mistake_limit_reached",
         this.api.getModel().id.includes("valoride")
           ? `This may indicate a failure in his thought process or inability to use a tool properly, which can be mitigated with some user guidance (e.g. "Try breaking down the task into smaller steps").`
-          : "ValorIDE uses complex prompts and iterative task execution that may be challenging for less capable models. For best results, it's recommended to use Claude 3.7 Sonnet for its advanced agentic coding capabilities.",
+          : "ValorIDE uses complex prompts and iterative task execution that may be challenging for less capable models.",
       );
       if (response === "messageResponse") {
         userContent.push(
@@ -5495,6 +5495,7 @@ export class Task {
       let inputTokens = 0;
       let outputTokens = 0;
       let totalCost: number | undefined;
+      let costUnit: ValorIDEApiReqInfo["costUnit"] | undefined;
       let apiReqComplete = false;
       let usagePending = false;
 
@@ -5537,6 +5538,7 @@ export class Task {
               cacheWriteTokens,
               cacheReadTokens,
             );
+          nextInfo.costUnit = costUnit;
         }
 
         this.valorideMessages[lastApiReqIndex].text = JSON.stringify({
@@ -5554,6 +5556,7 @@ export class Task {
         cacheWriteTokens += chunk.cacheWriteTokens ?? 0;
         cacheReadTokens += chunk.cacheReadTokens ?? 0;
         totalCost = chunk.totalCost;
+        costUnit = chunk.costUnit ?? costUnit;
         usagePending = false;
 
         // Update status bar with token usage
@@ -5653,11 +5656,7 @@ export class Task {
       let reasoningMessage = "";
       let didFinalizeReasoningMessage = false;
       const finalizeReasoningMessage = async () => {
-        if (
-          reasoningMessage &&
-          !didFinalizeReasoningMessage &&
-          !this.abort
-        ) {
+        if (reasoningMessage && !didFinalizeReasoningMessage && !this.abort) {
           await this.say("reasoning", reasoningMessage, undefined, false);
           didFinalizeReasoningMessage = true;
         }

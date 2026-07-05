@@ -1171,6 +1171,8 @@ export const ChatRowContent = ({
         const num = Number(value);
         return Number.isFinite(num) ? num : undefined;
       };
+      const costUnit: ValorIDEApiReqInfo["costUnit"] =
+        info.costUnit === "credits" ? "credits" : "usd";
       return {
         ...info,
         tokensIn: toNumber(info.tokensIn),
@@ -1178,6 +1180,7 @@ export const ChatRowContent = ({
         cacheWrites: toNumber(info.cacheWrites),
         cacheReads: toNumber(info.cacheReads),
         cost: toNumber(info.cost),
+        costUnit,
         isComplete: info.isComplete === true,
         usagePending: info.usagePending === true,
       };
@@ -1195,6 +1198,17 @@ export const ChatRowContent = ({
   );
   const formatUsageValue = (value: number | undefined) =>
     value == null ? "—" : value.toLocaleString();
+  const formatCostValue = (
+    value: number | undefined,
+    unit: ValorIDEApiReqInfo["costUnit"] | undefined,
+  ) => {
+    if (value == null) {
+      return "—";
+    }
+    return unit === "credits"
+      ? `${value.toFixed(2)} credits`
+      : `$${value.toFixed(4)}`;
+  };
 
   const apiRequestUsageAvailable = useMemo(() => {
     if (message.say !== "api_req_started" || !parsedApiReqInfo) {
@@ -2190,18 +2204,6 @@ export const ChatRowContent = ({
       isOutputOnly && command.length > 0 ? command : commandOutput;
     const normalizedOutput = resolvedOutput || "";
     const hasOutputContent = normalizedOutput.trim().length > 0;
-    const outputPreview = (() => {
-      const condensed = normalizedOutput
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0)
-        .slice(0, 2)
-        .join(" · ");
-      if (!condensed) return "";
-      return condensed.length > 140
-        ? `${condensed.slice(0, 137)}...`
-        : condensed;
-    })();
     const emptyOutputLabel = isCommandExecuting
       ? "Waiting for command output..."
       : "Command completed with no output.";
@@ -2276,23 +2278,27 @@ export const ChatRowContent = ({
                     flexWrap: "wrap",
                   }}
                 >
-                  <span>
-                    {isOutputOnly ? "Command Output" : "Command Output"}
-                  </span>
-                  {!isExpanded && (
-                    <span
-                      style={{
-                        color: "var(--vscode-descriptionForeground)",
-                        fontSize: "0.8em",
-                      }}
-                    >
-                      {outputPreview || emptyOutputLabel}
-                    </span>
-                  )}
+                  <span>Output:</span>
                 </span>
               </div>
               {isExpanded && (
-                <CodeBlock source={`${"```"}shell\n${outputBody}\n${"```"}`} />
+                <pre
+                  style={{
+                    margin: 0,
+                    padding: "10px",
+                    backgroundColor: CODE_BLOCK_BG_COLOR,
+                    color: "var(--vscode-editor-foreground, #fff)",
+                    fontFamily: "var(--vscode-editor-font-family)",
+                    fontSize:
+                      "var(--vscode-editor-font-size, var(--vscode-font-size, 12px))",
+                    lineHeight: 1.45,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    overflowX: "auto",
+                  }}
+                >
+                  {outputBody}
+                </pre>
               )}
             </div>
           )}
@@ -2446,7 +2452,7 @@ export const ChatRowContent = ({
                       opacity: cost != null && cost > 0 ? 1 : 0,
                     }}
                   >
-                    ${Number(cost || 0)?.toFixed(4)}
+                    {formatCostValue(cost, parsedApiReqInfo?.costUnit)}
                   </VSCodeBadge>
                 </div>
                 {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
@@ -2549,11 +2555,10 @@ export const ChatRowContent = ({
                       </div>
                       <div>
                         Cost:{" "}
-                        {cost != null
-                          ? `$${cost.toFixed(4)}`
-                          : apiReqInfo?.cost != null
-                            ? `$${apiReqInfo.cost.toFixed(4)}`
-                            : "—"}
+                        {formatCostValue(
+                          cost ?? apiReqInfo?.cost,
+                          apiReqInfo?.costUnit,
+                        )}
                       </div>
                     </div>
                   </div>

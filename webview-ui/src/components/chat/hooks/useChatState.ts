@@ -309,13 +309,8 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
     setEnableButtons(false);
   }, [enableButtons, valorideAsk]);
 
-  const handleCancelClick = useCallback(() => {
-    vscode.postMessage({
-      type: "askResponse",
-      askResponse: "messageResponse",
-      text: "End this task now. Summarize the current state and stop without starting new work.",
-      images: [],
-    });
+  const handleCancelClick = useCallback(async () => {
+    await TaskServiceClient.cancelTask({});
     setDidClickCancel(true);
     setEnableButtons(false);
   }, []);

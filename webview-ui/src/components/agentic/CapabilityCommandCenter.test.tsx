@@ -5,6 +5,7 @@ import CapabilityCommandCenter from "./CapabilityCommandCenter";
 
 const mockUseExtensionState = vi.fn();
 const mockUseGetMcpServersQuery = vi.fn();
+const mockUseMothershipOptional = vi.fn();
 const mockPostMessage = vi.fn();
 
 vi.mock("@thorapi/context/ExtensionStateContext", () => ({
@@ -12,7 +13,7 @@ vi.mock("@thorapi/context/ExtensionStateContext", () => ({
 }));
 
 vi.mock("@thorapi/context/MothershipContext", () => ({
-  useMothershipOptional: () => null,
+  useMothershipOptional: () => mockUseMothershipOptional(),
 }));
 
 vi.mock("@thorapi/redux/services/McpServerService", () => ({
@@ -29,7 +30,9 @@ describe("CapabilityCommandCenter", () => {
   beforeEach(() => {
     mockUseExtensionState.mockReset();
     mockUseGetMcpServersQuery.mockReset();
+    mockUseMothershipOptional.mockReset();
     mockUseGetMcpServersQuery.mockReturnValue({ data: undefined });
+    mockUseMothershipOptional.mockReturnValue(null);
     mockPostMessage.mockReset();
   });
 
@@ -110,7 +113,10 @@ describe("CapabilityCommandCenter", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("SWARM Online")).toBeInTheDocument();
     expect(screen.getByText("valoride-local-1")).toBeInTheDocument();
-    expect(screen.getByText("MCP 1/2")).toBeInTheDocument();
+    expect(screen.getByText("MCP 2 installed / 1 healthy")).toBeInTheDocument();
+    expect(
+      screen.getByText("1 of 2 installed MCP servers healthy. Approval: ask."),
+    ).toBeInTheDocument();
     expect(screen.getByText("terminal.execute")).toBeInTheDocument();
     expect(screen.getByText("completed in 1.0s")).toBeInTheDocument();
   });
@@ -141,7 +147,12 @@ describe("CapabilityCommandCenter", () => {
     expect(screen.queryByText("ollama / gemma4:26b")).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Sign in needed")).toBeInTheDocument();
     expect(screen.getByText("SWARM Offline")).toBeInTheDocument();
-    expect(screen.getByText("MCP 0/0")).toBeInTheDocument();
+    expect(screen.getByText("MCP 0 installed / 0 healthy")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "No MCP servers installed yet; marketplace servers are available.",
+      ),
+    ).toBeInTheDocument();
     expect(
       screen.queryByText("No recent remote commands"),
     ).not.toBeInTheDocument();
@@ -314,6 +325,10 @@ describe("CapabilityCommandCenter", () => {
   });
 
   it("summarizes SWARM failure and command details without exposing user identity", async () => {
+    mockUseMothershipOptional.mockReturnValue({
+      instanceId: "valoride-73b882-dwrwqq",
+      isConnected: true,
+    });
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {
         valkyraiHost: "https://api-0.valkyrlabs.com/v1",
@@ -359,10 +374,48 @@ describe("CapabilityCommandCenter", () => {
       screen.getByText("Registration rejected by policy"),
     ).toBeInTheDocument();
     expect(
+      screen.queryByText("valoride-73b882-dwrwqq"),
+    ).not.toBeInTheDocument();
+    expect(
       screen.getByText("Remote command · swarm.dispatch · approval required"),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Retry SWARM" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("normalizes opaque SWARM ErrorEvent details into an actionable websocket message", async () => {
+    mockUseExtensionState.mockReturnValue({
+      grayMatterSession: {
+        status: "ready",
+        capabilities: {
+          memoryQuery: true,
+        },
+      },
+      mcpServers: [],
+      agenticState: {
+        approvalPolicy: "local-confirmation-required",
+        swarm: {
+          status: "error",
+          lastError: "[object ErrorEvent]",
+        },
+        recentCommands: [],
+      },
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    expect(screen.getByText("SWARM Error")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "WebSocket connection failed; verify the ValkyrAI /ws STOMP endpoint and session token.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText("MCP 0 installed / 0 healthy")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "No MCP servers installed yet; marketplace servers are available. Approval: local-confirmation-required.",
+      ),
+    ).toBeInTheDocument();
   });
 });

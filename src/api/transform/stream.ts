@@ -21,6 +21,7 @@ export interface ApiStreamUsageChunk {
   cacheWriteTokens?: number;
   cacheReadTokens?: number;
   totalCost?: number; // openrouter
+  costUnit?: "usd" | "credits";
   provider?: string;
   modelId?: string;
   contextWindow?: number;
