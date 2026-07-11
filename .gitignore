@@ -3,12 +3,19 @@ dist
 out
 .vscode-test
 public
+system-prompts-and-models-of-ai-tools
 
 # TypeScript source trees should not contain emitted JavaScript artifacts.
 src/**/*.js
 src/**/*.js.map
 webview-ui/src/**/*.js
 webview-ui/src/**/*.js.map
+.valoride/*
+.vscode-test.mjs
+TL.md
+artifacts/
+memory/
+thorapi/
 
 *.vsix
 .worktrees/
