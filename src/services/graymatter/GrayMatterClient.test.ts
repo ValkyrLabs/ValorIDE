@@ -346,6 +346,36 @@ describe("GrayMatterClient", () => {
     expect(body.tenantId).toBeUndefined();
   });
 
+  it("plans through the content-free OmegaRAG planning contract", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { plan: { planId: "plan-1" }, steps: [] }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.planOmegaRetrieval({
+      budgets: { maxCredits: 2 },
+      idempotencyKey: "plan-1",
+      mode: "DEEP",
+      query: "what changed in the project",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe("https://api.example.test/v1/graymatter/omega/plan");
+    expect(body).toEqual({
+      budgets: { maxCredits: 2 },
+      idempotencyKey: "plan-1",
+      mode: "DEEP",
+      query: "what changed in the project",
+    });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+  });
+
   it("remembers through the canonical idempotent OmegaRAG formation contract", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(201, { memoryRef: "mem-1", receiptRef: "rr-1" }),
@@ -404,6 +434,47 @@ describe("GrayMatterClient", () => {
       memoryRef: "11111111-1111-4111-8111-111111111111",
       reason: "user requested deletion",
     });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+  });
+
+  it("reads an authorized redacted OmegaRAG trajectory", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { trajectory: { trajectoryId: "traj-1" }, steps: [] }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.getOmegaTrajectory("traj-1");
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.test/v1/graymatter/omega/trajectories/traj-1",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("evaluates an authorized OmegaRAG trajectory without client identity", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { evaluation: { evaluationId: "eval-1" }, replayed: false }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.evaluateOmegaRetrieval({
+      profile: "MEMORY_RECALL",
+      trajectoryId: "traj-1",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe("https://api.example.test/v1/graymatter/omega/evaluate");
+    expect(body).toEqual({ profile: "MEMORY_RECALL", trajectoryId: "traj-1" });
     expect(body.ownerId).toBeUndefined();
     expect(body.tenantId).toBeUndefined();
   });

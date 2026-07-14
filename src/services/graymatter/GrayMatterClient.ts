@@ -73,6 +73,23 @@ export interface GrayMatterOmegaRecallInput {
   query: string;
 }
 
+export type GrayMatterOmegaPlanInput = Omit<GrayMatterOmegaRecallInput, "includeEvaluator"> & {
+  includeEvaluator?: boolean;
+};
+
+export interface GrayMatterOmegaEvaluateInput {
+  profile?:
+    | "AUDIT"
+    | "BUSINESS_ANALYSIS"
+    | "CODE"
+    | "MEMORY_RECALL"
+    | "RESEARCH"
+    | "STANDARD"
+    | "WORKFLOW_ACTION"
+    | string;
+  trajectoryId: string;
+}
+
 export interface GrayMatterOmegaRememberInput {
   idempotencyKey: string;
   sourceChannel?: string;
@@ -308,6 +325,26 @@ export class GrayMatterClient {
     });
   }
 
+  async planOmegaRetrieval(
+    input: GrayMatterOmegaPlanInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/plan", {
+      body: JSON.stringify({
+        query: input.query,
+        ...(input.mode ? { mode: input.mode } : {}),
+        ...(input.idempotencyKey
+          ? { idempotencyKey: input.idempotencyKey }
+          : {}),
+        ...(input.asOf ? { asOf: input.asOf } : {}),
+        ...(input.budgets ? { budgets: input.budgets } : {}),
+        ...(input.includeEvaluator === undefined
+          ? {}
+          : { includeEvaluator: input.includeEvaluator }),
+      }),
+      method: "POST",
+    });
+  }
+
   async rememberOmegaMemory(
     input: GrayMatterOmegaRememberInput,
   ): Promise<unknown> {
@@ -332,6 +369,25 @@ export class GrayMatterClient {
         idempotencyKey: input.idempotencyKey,
         memoryRef: input.memoryRef,
         ...(input.reason ? { reason: input.reason } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
+  async getOmegaTrajectory(trajectoryId: string): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/trajectories/${encodeURIComponent(trajectoryId)}`,
+      { method: "GET" },
+    );
+  }
+
+  async evaluateOmegaRetrieval(
+    input: GrayMatterOmegaEvaluateInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/evaluate", {
+      body: JSON.stringify({
+        trajectoryId: input.trajectoryId,
+        ...(input.profile ? { profile: input.profile } : {}),
       }),
       method: "POST",
     });
