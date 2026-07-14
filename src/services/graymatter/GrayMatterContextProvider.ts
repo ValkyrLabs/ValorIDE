@@ -240,11 +240,10 @@ export class GrayMatterContextProvider {
       };
     } catch (error) {
       this.logger?.appendLine(
-        `[GrayMatterContextProvider] Receipt retrieval degraded for ${kind}; falling back to MemoryEntry/query: ${formatReadError(error)}`,
+        `[GrayMatterContextProvider] Receipt retrieval unavailable for ${kind}; omitting policy-required prompt context: ${formatReadError(error)}`,
       );
       return {
-        value: await withTimeout(config.queryMemory(query), timeoutMs),
-        warning: `receipt_fallback:${kind}`,
+        warning: `receipt_unavailable:${kind}`,
       };
     }
   }
