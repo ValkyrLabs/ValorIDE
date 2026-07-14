@@ -314,6 +314,66 @@ describe("GrayMatterClient", () => {
     });
   });
 
+  it("recalls through the receipt-backed OmegaRAG contract without client identity", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { receiptRef: "rr-1", trajectoryRef: "traj-1" }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.recallOmegaMemory({
+      budgets: { maxCredits: 2, maxContextTokens: 1200 },
+      idempotencyKey: "recall-1",
+      includeEvaluator: true,
+      mode: "BALANCED",
+      query: "what changed in the project",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe("https://api.example.test/v1/graymatter/omega/recall");
+    expect(body).toEqual({
+      budgets: { maxCredits: 2, maxContextTokens: 1200 },
+      idempotencyKey: "recall-1",
+      includeEvaluator: true,
+      mode: "BALANCED",
+      query: "what changed in the project",
+    });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+  });
+
+  it("forgets through the idempotent OmegaRAG deletion contract", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { deletionStatus: "deleted", replayed: false }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.forgetOmegaMemory({
+      idempotencyKey: "forget-1",
+      memoryRef: "11111111-1111-4111-8111-111111111111",
+      reason: "user requested deletion",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe("https://api.example.test/v1/graymatter/omega/forget");
+    expect(body).toEqual({
+      idempotencyKey: "forget-1",
+      memoryRef: "11111111-1111-4111-8111-111111111111",
+      reason: "user requested deletion",
+    });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+  });
+
   it("can list MemoryEntry records for direct-scan fallback", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, [{ id: "memory-1" }]),

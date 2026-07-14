@@ -64,6 +64,21 @@ export interface GrayMatterRetrievalReceiptQuery {
   workflowId?: string;
 }
 
+export interface GrayMatterOmegaRecallInput {
+  asOf?: string;
+  budgets?: Record<string, unknown>;
+  idempotencyKey?: string;
+  includeEvaluator?: boolean;
+  mode?: "AUDIT" | "BALANCED" | "DEEP" | "FAST" | "PRIVATE" | string;
+  query: string;
+}
+
+export interface GrayMatterOmegaForgetInput {
+  idempotencyKey: string;
+  memoryRef: string;
+  reason?: string;
+}
+
 export interface GrayMatterProjectInput {
   currentStage?: string;
   description?: string;
@@ -255,6 +270,44 @@ export class GrayMatterClient {
 
     return this.request("/graymatter-retrieval-receipts", {
       body: JSON.stringify(payload),
+      method: "POST",
+    });
+  }
+
+  async recallOmegaMemory(
+    input: string | GrayMatterOmegaRecallInput,
+  ): Promise<unknown> {
+    const payload =
+      typeof input === "string"
+        ? { query: input }
+        : {
+            query: input.query,
+            ...(input.mode ? { mode: input.mode } : {}),
+            ...(input.idempotencyKey
+              ? { idempotencyKey: input.idempotencyKey }
+              : {}),
+            ...(input.asOf ? { asOf: input.asOf } : {}),
+            ...(input.budgets ? { budgets: input.budgets } : {}),
+            ...(input.includeEvaluator === undefined
+              ? {}
+              : { includeEvaluator: input.includeEvaluator }),
+          };
+
+    return this.request("/graymatter/omega/recall", {
+      body: JSON.stringify(payload),
+      method: "POST",
+    });
+  }
+
+  async forgetOmegaMemory(
+    input: GrayMatterOmegaForgetInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/forget", {
+      body: JSON.stringify({
+        idempotencyKey: input.idempotencyKey,
+        memoryRef: input.memoryRef,
+        ...(input.reason ? { reason: input.reason } : {}),
+      }),
       method: "POST",
     });
   }
