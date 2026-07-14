@@ -522,6 +522,51 @@ describe("GrayMatterClient", () => {
     expect(body.rawAnswer).toBeUndefined();
   });
 
+  it("manages tenant-scoped OmegaRAG index jobs without client identity", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { job: { jobId: "job-1", state: "QUEUED" }, replayed: false }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.estimateOmegaIndexJob({ idempotencyKey: "estimate-1" });
+    await client.startOmegaIndexJob({
+      idempotencyKey: "index-1",
+      mode: "incremental",
+      targetTypes: ["MemoryEntry"],
+    });
+    await client.getOmegaIndexJob("job-1");
+    await client.cancelOmegaIndexJob("job-1");
+
+    const [estimateUrl, estimateInit] = fetchMock.mock.calls[0];
+    expect(estimateUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(JSON.parse(estimateInit?.body as string)).toEqual({
+      dryRun: true,
+      idempotencyKey: "estimate-1",
+      mode: "estimate",
+    });
+    const [startUrl, startInit] = fetchMock.mock.calls[1];
+    expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(JSON.parse(startInit?.body as string)).toEqual({
+      idempotencyKey: "index-1",
+      mode: "incremental",
+      targetTypes: ["MemoryEntry"],
+    });
+    expect(fetchMock.mock.calls[2][0]).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs/job-1",
+    );
+    expect(fetchMock.mock.calls[3][0]).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs/job-1/cancel",
+    );
+    for (const [, init] of fetchMock.mock.calls) {
+      expect(JSON.stringify(init?.body ?? "")).not.toContain("ownerId");
+      expect(JSON.stringify(init?.body ?? "")).not.toContain("tenantId");
+    }
+  });
+
   it("can list MemoryEntry records for direct-scan fallback", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, [{ id: "memory-1" }]),

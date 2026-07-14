@@ -117,6 +117,13 @@ export interface GrayMatterOmegaForgetInput {
   reason?: string;
 }
 
+export interface GrayMatterOmegaIndexJobInput {
+  dryRun?: boolean;
+  idempotencyKey?: string;
+  mode?: "cleanup" | "estimate" | "full" | "incremental" | "tombstone";
+  targetTypes?: string[];
+}
+
 export interface GrayMatterProjectInput {
   currentStage?: string;
   description?: string;
@@ -384,6 +391,42 @@ export class GrayMatterClient {
       }),
       method: "POST",
     });
+  }
+
+  async startOmegaIndexJob(
+    input: GrayMatterOmegaIndexJobInput = {},
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/index-jobs", {
+      body: JSON.stringify({
+        mode: input.mode ?? "full",
+        ...(input.dryRun === undefined ? {} : { dryRun: input.dryRun }),
+        ...(input.idempotencyKey
+          ? { idempotencyKey: input.idempotencyKey }
+          : {}),
+        ...(input.targetTypes ? { targetTypes: input.targetTypes } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
+  async estimateOmegaIndexJob(
+    input: Omit<GrayMatterOmegaIndexJobInput, "dryRun" | "mode"> = {},
+  ): Promise<unknown> {
+    return this.startOmegaIndexJob({ ...input, dryRun: true, mode: "estimate" });
+  }
+
+  async getOmegaIndexJob(jobId: string): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/index-jobs/${encodeURIComponent(jobId)}`,
+      { method: "GET" },
+    );
+  }
+
+  async cancelOmegaIndexJob(jobId: string): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/index-jobs/${encodeURIComponent(jobId)}/cancel`,
+      { method: "POST" },
+    );
   }
 
   async getOmegaTrajectory(trajectoryId: string): Promise<unknown> {
