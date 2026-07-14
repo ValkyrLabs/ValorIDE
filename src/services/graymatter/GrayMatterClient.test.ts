@@ -479,6 +479,49 @@ describe("GrayMatterClient", () => {
     expect(body.tenantId).toBeUndefined();
   });
 
+  it("records a content-free OmegaRAG trajectory outcome without client identity", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () =>
+        jsonResponse(200, {
+          trajectory: { trajectoryId: "traj-1", outcome: "success" },
+          replayed: false,
+        }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.recordOmegaTrajectoryOutcome({
+      actionRef: "action-1",
+      outcome: "success",
+      outcomeHash: "a".repeat(64),
+      ratingScore: 95,
+      testRef: "test-1",
+      trajectoryId: "traj-1",
+      workflowExecutionRef: "wf-1",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe(
+      "https://api.example.test/v1/graymatter/omega/trajectories/traj-1/outcome",
+    );
+    expect(init?.method).toBe("POST");
+    expect(body).toEqual({
+      actionRef: "action-1",
+      outcome: "success",
+      outcomeHash: "a".repeat(64),
+      ratingScore: 95,
+      testRef: "test-1",
+      workflowExecutionRef: "wf-1",
+    });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+    expect(body.rawAnswer).toBeUndefined();
+  });
+
   it("can list MemoryEntry records for direct-scan fallback", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, [{ id: "memory-1" }]),

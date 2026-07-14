@@ -90,6 +90,18 @@ export interface GrayMatterOmegaEvaluateInput {
   trajectoryId: string;
 }
 
+export interface GrayMatterOmegaOutcomeInput {
+  actionRef?: string;
+  correctionHash?: string;
+  outcome: "canceled" | "failure" | "partial" | "success";
+  outcomeHash?: string;
+  outcomeRef?: string;
+  ratingScore?: number;
+  testRef?: string;
+  trajectoryId: string;
+  workflowExecutionRef?: string;
+}
+
 export interface GrayMatterOmegaRememberInput {
   idempotencyKey: string;
   sourceChannel?: string;
@@ -391,6 +403,33 @@ export class GrayMatterClient {
       }),
       method: "POST",
     });
+  }
+
+  async recordOmegaTrajectoryOutcome(
+    input: GrayMatterOmegaOutcomeInput,
+  ): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/trajectories/${encodeURIComponent(input.trajectoryId)}/outcome`,
+      {
+        body: JSON.stringify({
+          outcome: input.outcome,
+          ...(input.outcomeRef ? { outcomeRef: input.outcomeRef } : {}),
+          ...(input.workflowExecutionRef
+            ? { workflowExecutionRef: input.workflowExecutionRef }
+            : {}),
+          ...(input.actionRef ? { actionRef: input.actionRef } : {}),
+          ...(input.testRef ? { testRef: input.testRef } : {}),
+          ...(input.ratingScore === undefined
+            ? {}
+            : { ratingScore: input.ratingScore }),
+          ...(input.correctionHash
+            ? { correctionHash: input.correctionHash }
+            : {}),
+          ...(input.outcomeHash ? { outcomeHash: input.outcomeHash } : {}),
+        }),
+        method: "POST",
+      },
+    );
   }
 
   async writeMemory(input: GrayMatterMemoryInput): Promise<unknown> {
