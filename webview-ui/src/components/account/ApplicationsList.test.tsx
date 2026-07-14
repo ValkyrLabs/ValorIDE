@@ -9,6 +9,12 @@ import ApplicationsList, {
 const mockRefetch = vi.fn();
 const mockUseGetApplicationsQuery = vi.fn();
 const mockPostMessage = vi.fn();
+let mockExtensionState: Record<string, unknown>;
+let mockAclAccess: {
+  permissions: string[];
+  isOwner: boolean;
+  isAdmin: boolean;
+};
 
 vi.mock("../../redux/services/ApplicationService", () => ({
   useGetApplicationsQuery: (...args: any[]) =>
@@ -18,11 +24,11 @@ vi.mock("../../redux/services/ApplicationService", () => ({
 }));
 
 vi.mock("../../context/ExtensionStateContext", () => ({
-  useExtensionState: () => ({
-    userInfo: null,
-    jwtToken: null,
-    authenticatedPrincipal: null,
-  }),
+  useExtensionState: () => mockExtensionState,
+}));
+
+vi.mock("../../redux/services/AclService", () => ({
+  useGetObjectPermissionsQuery: () => ({ data: mockAclAccess }),
 }));
 
 vi.mock("../../utils/vscode", () => ({
@@ -34,6 +40,13 @@ describe("ApplicationsList", () => {
     mockRefetch.mockReset();
     mockUseGetApplicationsQuery.mockReset();
     mockPostMessage.mockReset();
+    mockExtensionState = {
+      userInfo: null,
+      jwtToken: null,
+      authenticatedPrincipal: null,
+      authenticatedUser: null,
+    };
+    mockAclAccess = { permissions: [], isOwner: false, isAdmin: false };
     vi.unstubAllEnvs();
   });
 
@@ -82,8 +95,8 @@ describe("ApplicationsList", () => {
   });
 
   it("builds hosted deploy URLs", () => {
-    expect(getApplicationDeployUrl("app-1")).toBe(
-      "https://valkyrlabs.com/deploy/app-1",
+    expect(getApplicationDeployUrl("app-1", "Sample App", "sample-app")).toBe(
+      "https://valkyrlabs.com/dashboard?open=deployment&applicationId=app-1&applicationName=Sample+App&applicationSlug=sample-app",
     );
   });
 
@@ -114,7 +127,101 @@ describe("ApplicationsList", () => {
     });
     expect(mockPostMessage).toHaveBeenCalledWith({
       type: "openInBrowser",
-      url: "https://valkyrlabs.com/deploy/app-1",
+      url: "https://valkyrlabs.com/dashboard?open=deployment&applicationId=app-1&applicationName=Sample+App",
     });
+  });
+
+  it("opens an owned application in the Blueprint webview", () => {
+    mockExtensionState = {
+      authenticatedUser: { id: "owner-1" },
+      jwtToken: "token",
+    };
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          ownerId: "owner-1",
+          name: "Sample App",
+          slug: "sample-app",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+    fireEvent.click(screen.getByRole("button", { name: "Open Blueprint" }));
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "openOpenAPIEditor",
+      applicationId: "app-1",
+      applicationName: "Sample App",
+      deploymentUrl:
+        "https://valkyrlabs.com/dashboard?open=deployment&applicationId=app-1&applicationName=Sample+App&applicationSlug=sample-app",
+    });
+  });
+
+  it("publishes developer source for an owned application", () => {
+    mockExtensionState = {
+      authenticatedUser: { id: "owner-1" },
+      jwtToken: "token",
+    };
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          ownerId: "owner-1",
+          name: "Sample App",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+    fireEvent.click(screen.getByRole("button", { name: "Publish source" }));
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "publishApplicationSource",
+      applicationId: "app-1",
+      applicationName: "Sample App",
+    });
+    expect(
+      screen.getByText("Preparing developer source..."),
+    ).toBeInTheDocument();
+  });
+
+  it("allows an ACL write collaborator to publish source", () => {
+    mockExtensionState = {
+      authenticatedUser: { id: "collaborator-1" },
+      jwtToken: "token",
+    };
+    mockAclAccess = { permissions: ["WRITE"], isOwner: false, isAdmin: false };
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          ownerId: "owner-1",
+          name: "Shared App",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+
+    expect(
+      screen.getByRole("button", { name: "Publish source" }),
+    ).toBeInTheDocument();
   });
 });

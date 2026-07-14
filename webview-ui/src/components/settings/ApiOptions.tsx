@@ -485,7 +485,7 @@ const ApiOptions = ({
                 onClick={() => {
                   setOpenAiOAuthStatus({
                     kind: "pending",
-                    message: "Opening OpenAI sign-in in the editor...",
+                    message: "Opening OpenAI sign-in in your default browser...",
                   });
                   vscode.postMessage({ type: "openAiNativeOAuthLogin" });
                 }}

@@ -86,6 +86,8 @@ export interface ExtensionMessage {
     | "accountLoginResult"
     | "clearClientAuthState"
     | "streamToThorapiResult"
+    | "applicationSourcePublishProgress"
+    | "applicationSourcePublishResult"
     | "thorapiResponse"
     | "openFileExplorerResult"
     | "workspaceFiles"
@@ -221,6 +223,17 @@ export interface ExtensionMessage {
     readmePath?: string;
     step?: string;
     message?: string;
+  };
+  applicationId?: string;
+  sourcePublishStatus?: string;
+  sourcePublishResult?: {
+    success: boolean;
+    applicationId: string;
+    error?: string;
+    revisionRef?: string;
+    checksumSha256?: string;
+    sizeBytes?: number;
+    createdAt?: string;
   };
   files?: Array<{
     name: string;

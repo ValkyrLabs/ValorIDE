@@ -19,6 +19,7 @@ const baseExtensionState = {
 };
 let mockExtensionState: any = { ...baseExtensionState };
 let AccountView: typeof import("./AccountView").default;
+let resolveReceiptAccountId: typeof import("./AccountView").resolveReceiptAccountId;
 
 const clearTestStorage = (storage: Storage) => {
   if (typeof storage.clear === "function") {
@@ -513,7 +514,7 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
   });
 
-  it("uses explicit billing identifiers before falling back to authenticated me", () => {
+  it("keeps the visible balance on the authenticated me route when billing identifiers exist", () => {
     mockExtensionState = {
       ...baseExtensionState,
       authenticatedUser: {
@@ -533,7 +534,7 @@ describe("AccountView - Buy Credits button integration", () => {
     );
 
     expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
-      "customer-456",
+      "me",
       expect.objectContaining({ skip: false }),
     );
   });
@@ -617,6 +618,25 @@ describe("AccountView - Buy Credits button integration", () => {
     expect(history).toHaveAttribute("data-payments-count", "1");
     expect(mockUseGetUsageTransactionsQuery).not.toHaveBeenCalled();
     expect(mockUseGetPaymentTransactionsQuery).not.toHaveBeenCalled();
+  });
+});
+
+describe("AccountView receipt account resolution", () => {
+  beforeAll(async () => {
+    ({ resolveReceiptAccountId } = await import("./AccountView"));
+  });
+
+  it("uses a concrete balance customer UUID instead of the self balance alias", () => {
+    expect(
+      resolveReceiptAccountId(
+        "me",
+        "d6b9e24d-7c73-4d10-b7fa-5842d740b71c",
+      ),
+    ).toBe("d6b9e24d-7c73-4d10-b7fa-5842d740b71c");
+  });
+
+  it("does not send an unresolved account alias to UUID-only receipt routes", () => {
+    expect(resolveReceiptAccountId("me", "customer-456")).toBe("");
   });
 });
 

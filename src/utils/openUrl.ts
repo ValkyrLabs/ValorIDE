@@ -66,3 +66,25 @@ export async function openUrlWithSimpleBrowser(
     return false;
   }
 }
+
+/**
+ * Opens security-sensitive browser flows in the system browser. Embedded VS Code
+ * browser surfaces do not reliably support WebAuthn or platform passkeys.
+ */
+export async function openUrlExternally(
+  rawUrl: string,
+  deps: Pick<OpenUrlDeps, "env" | "Uri"> = DEFAULT_DEPS,
+): Promise<boolean> {
+  const normalized = normalizeUrl(rawUrl);
+  if (!normalized) {
+    return false;
+  }
+
+  try {
+    await deps.env.openExternal(deps.Uri.parse(normalized));
+    return true;
+  } catch (error) {
+    console.error("Failed to open external URL", normalized, error);
+    return false;
+  }
+}

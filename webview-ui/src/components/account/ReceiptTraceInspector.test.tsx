@@ -43,10 +43,21 @@ vi.mock("@thorapi/services/creditsApi", () => ({
 }));
 
 import ReceiptTraceInspector, {
+  hasReceiptAccountId,
   sanitizeReceiptPayload,
 } from "./ReceiptTraceInspector";
 
+const ACCOUNT_ID = "d6b9e24d-7c73-4d10-b7fa-5842d740b71c";
+
 describe("ReceiptTraceInspector", () => {
+  it("does not treat the self balance alias as a receipt account identifier", () => {
+    expect(hasReceiptAccountId("me")).toBe(false);
+    expect(hasReceiptAccountId("customer-456")).toBe(false);
+    expect(hasReceiptAccountId("d6b9e24d-7c73-4d10-b7fa-5842d740b71c")).toBe(
+      true,
+    );
+  });
+
   beforeEach(() => {
     querySpies.appGeneration.mockImplementation(
       () =>
@@ -58,7 +69,7 @@ describe("ReceiptTraceInspector", () => {
             generationRunRef: "run-1",
             traceId: "trace-generation-1",
             tenantId: "main",
-            accountId: "account-123",
+            accountId: ACCOUNT_ID,
             applicationId: "app-1",
             contextPageRef: "ctx-generation-1",
             skillOptRouteReceiptRef: "route-generation-1",
@@ -74,7 +85,7 @@ describe("ReceiptTraceInspector", () => {
               tenantId: "main",
               traceId: "trace-generation-1",
               status: "succeeded",
-              accountId: "account-123",
+              accountId: ACCOUNT_ID,
               applicationId: "app-1",
               contextPageRef: "ctx-generation-1",
               skillOptRouteReceiptRef: "route-generation-1",
@@ -95,7 +106,7 @@ describe("ReceiptTraceInspector", () => {
               tenantId: "main",
               traceId: "trace-generation-1",
               status: "completed",
-              accountId: "account-123",
+              accountId: ACCOUNT_ID,
               intentSummary: "Generate onboarding portal",
               applicationId: "app-1",
               specDraftRef: "draft-1",
@@ -110,7 +121,7 @@ describe("ReceiptTraceInspector", () => {
               traceId: "trace-generation-1",
               status: "succeeded",
               requestRef: "request-1",
-              accountId: "account-123",
+              accountId: ACCOUNT_ID,
               applicationId: "app-1",
               artifactSetRef: "artifact-set-1",
               buildRunRef: "build-1",
@@ -176,12 +187,12 @@ describe("ReceiptTraceInspector", () => {
             },
             creditDebitReceipt: {
               receiptRef: "credit-generation-1",
-              customerId: "account-123",
+              customerId: ACCOUNT_ID,
               reservationRef: "reservation-1",
               status: "settled",
               amountCredits: 32,
               idempotencyKey: "debit-1",
-              accountId: "account-123",
+              accountId: ACCOUNT_ID,
               tenantId: "main",
               traceId: "trace-generation-1",
               currentBalance: 68,
@@ -196,10 +207,10 @@ describe("ReceiptTraceInspector", () => {
             ...emptyQuery,
             data: {
               receiptRef: "cdr_gm_0f635915-ac93-4514-b4e5-332747906e65",
-              customerId: "account-123",
+              customerId: ACCOUNT_ID,
               status: "settled",
               amountCredits: 12,
-              accountId: "account-123",
+              accountId: ACCOUNT_ID,
               tenantId: "main",
               traceId: "trace-credit-1",
               currentBalance: 2000000,
@@ -263,15 +274,15 @@ describe("ReceiptTraceInspector", () => {
   });
 
   it("renders account-scoped recent receipt shortcuts", () => {
-    render(<ReceiptTraceInspector accountId="account-123" />);
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
 
-    expect(screen.getAllByText("account-123").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(ACCOUNT_ID).length).toBeGreaterThan(0);
     expect(screen.getByText("route-receipt-1")).toBeInTheDocument();
     expect(screen.getByText("credit-receipt-1")).toBeInTheDocument();
   });
 
   it("renders the generation receipt chain as readable lifecycle evidence", () => {
-    render(<ReceiptTraceInspector accountId="account-123" />);
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
 
     expect(screen.getByText("ThorAPI Maven generator")).toBeInTheDocument();
     expect(screen.getByText("Generate onboarding portal")).toBeInTheDocument();
@@ -292,7 +303,7 @@ describe("ReceiptTraceInspector", () => {
   });
 
   it("renders a first-class SkillOpt route explanation", () => {
-    render(<ReceiptTraceInspector accountId="account-123" />);
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
 
     fireEvent.click(screen.getAllByRole("button", { name: /SkillOpt/i })[0]);
 
@@ -314,7 +325,7 @@ describe("ReceiptTraceInspector", () => {
   });
 
   it("renders pasted SWARM command response evidence with trace refs", () => {
-    render(<ReceiptTraceInspector accountId="account-123" />);
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
 
     fireEvent.click(screen.getByRole("button", { name: /SWARM/i }));
     fireEvent.input(screen.getByPlaceholderText(/SwarmCommandResponse JSON/i), {
@@ -359,7 +370,7 @@ describe("ReceiptTraceInspector", () => {
   });
 
   it("routes credit receipt references to the credit trace endpoint", () => {
-    render(<ReceiptTraceInspector accountId="account-123" />);
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
 
     fireEvent.click(screen.getAllByRole("button", { name: /SkillOpt/i })[0]);
     fireEvent.input(screen.getByPlaceholderText("receiptRef"), {
@@ -371,7 +382,7 @@ describe("ReceiptTraceInspector", () => {
 
     expect(querySpies.creditDebit).toHaveBeenLastCalledWith(
       {
-        accountId: "account-123",
+        accountId: ACCOUNT_ID,
         receiptRef: "cdr_gm_0f635915-ac93-4514-b4e5-332747906e65",
       },
       { skip: false },

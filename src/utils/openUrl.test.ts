@@ -8,7 +8,11 @@ jest.mock(
   { virtual: true },
 );
 
-import { openUrlWithSimpleBrowser, normalizeUrl } from "./openUrl";
+import {
+  normalizeUrl,
+  openUrlExternally,
+  openUrlWithSimpleBrowser,
+} from "./openUrl";
 
 describe("openUrlWithSimpleBrowser", () => {
   const mockExecuteCommand = jest.fn();
@@ -66,5 +70,42 @@ describe("normalizeUrl", () => {
 
   it("returns null for javascript: urls", () => {
     expect(normalizeUrl("javascript:alert(1)")).toBeNull();
+  });
+});
+
+describe("openUrlExternally", () => {
+  const mockExecuteCommand = jest.fn();
+  const mockOpenExternal = jest.fn();
+  const deps = {
+    commands: { executeCommand: mockExecuteCommand },
+    env: { openExternal: mockOpenExternal },
+    Uri: { parse: (val: string) => `uri:${val}` },
+  } as any;
+
+  beforeEach(() => {
+    mockExecuteCommand.mockReset();
+    mockOpenExternal.mockReset();
+  });
+
+  it("uses the system browser without invoking the embedded browser", async () => {
+    mockOpenExternal.mockResolvedValueOnce(true);
+
+    const result = await openUrlExternally(
+      "https://auth.openai.com/oauth/authorize",
+      deps,
+    );
+
+    expect(result).toBe(true);
+    expect(mockOpenExternal).toHaveBeenCalledWith(
+      "uri:https://auth.openai.com/oauth/authorize",
+    );
+    expect(mockExecuteCommand).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid external URLs", async () => {
+    const result = await openUrlExternally("javascript:alert(1)", deps);
+
+    expect(result).toBe(false);
+    expect(mockOpenExternal).not.toHaveBeenCalled();
   });
 });

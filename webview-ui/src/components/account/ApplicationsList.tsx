@@ -8,15 +8,96 @@ import {
   useGetApplicationsQuery,
   useGenerateApplicationMutation,
 } from "../../redux/services/ApplicationService";
+import { useGetObjectPermissionsQuery } from "../../redux/services/AclService";
 import { vscode } from "../../utils/vscode";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import { useExtensionState } from "../../context/ExtensionStateContext";
-import { FaCalendarAlt, FaUser, FaUserFriends } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaCloudUploadAlt,
+  FaUser,
+  FaUserFriends,
+} from "react-icons/fa";
 
 interface ApplicationsListProps {
   showTitle?: boolean;
   title?: string;
 }
+
+interface ApplicationLoadingState {
+  generating: boolean;
+  deploying: boolean;
+  publishing?: boolean;
+  sourceStatus?: string;
+  steps: {
+    receiving: boolean;
+    processing: boolean;
+    extracting: boolean;
+    finalizing: boolean;
+  };
+}
+
+interface ApplicationWriteActionsProps {
+  application: Application;
+  isOwned: boolean;
+  loadingState?: ApplicationLoadingState;
+  onBlueprint: (application: Application) => void;
+  onPublishSource: (application: Application) => void;
+}
+
+const ApplicationWriteActions: React.FC<ApplicationWriteActionsProps> = ({
+  application,
+  isOwned,
+  loadingState,
+  onBlueprint,
+  onPublishSource,
+}) => {
+  const applicationId = String(application.id || "");
+  const { data: access } = useGetObjectPermissionsQuery(
+    {
+      objectType: "com.valkyrlabs.model.Application",
+      objectId: applicationId,
+    },
+    { skip: !applicationId },
+  );
+  const permissions = access?.permissions?.map((permission) =>
+    permission.toUpperCase(),
+  );
+  const canWrite =
+    isOwned ||
+    access?.isOwner ||
+    access?.isAdmin ||
+    permissions?.includes("WRITE") ||
+    permissions?.includes("ADMINISTRATION");
+
+  if (!canWrite) return null;
+
+  return (
+    <>
+      <VSCodeButton
+        appearance="secondary"
+        aria-label="Open Blueprint"
+        role="button"
+        onClick={() => onBlueprint(application)}
+      >
+        Blueprint
+      </VSCodeButton>
+      <VSCodeButton
+        appearance="secondary"
+        aria-label="Publish source"
+        role="button"
+        onClick={() => onPublishSource(application)}
+        disabled={loadingState?.publishing}
+        title="Publish developer source for the next deployment"
+      >
+        <span slot="start">
+          <FaCloudUploadAlt aria-hidden />
+        </span>
+        {loadingState?.publishing ? "Publishing..." : "Publish Source"}
+      </VSCodeButton>
+    </>
+  );
+};
 
 const DEFAULT_VALKYRAI_WEB_BASE_URL = "https://valkyrlabs.com";
 
@@ -44,13 +125,25 @@ export const getApplicationOpenUrl = (application: Application): string => {
   return `${getValkyraiWebBaseUrl()}/application-detail/${encodeURIComponent(applicationId)}`;
 };
 
-export const getApplicationDeployUrl = (applicationId: string): string => {
+export const getApplicationDeployUrl = (
+  applicationId: string,
+  applicationName?: string,
+  applicationSlug?: string,
+): string => {
   const normalizedId = String(applicationId || "").trim();
   if (!normalizedId) {
     return getValkyraiWebBaseUrl();
   }
 
-  return `${getValkyraiWebBaseUrl()}/deploy/${encodeURIComponent(normalizedId)}`;
+  const query = new URLSearchParams({
+    open: "deployment",
+    applicationId: normalizedId,
+  });
+  if (applicationName?.trim())
+    query.set("applicationName", applicationName.trim());
+  if (applicationSlug?.trim())
+    query.set("applicationSlug", applicationSlug.trim());
+  return `${getValkyraiWebBaseUrl()}/dashboard?${query.toString()}`;
 };
 
 const formatApplicationDate = (value: unknown): string | undefined => {
@@ -129,19 +222,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
 
   const [generateApplication] = useGenerateApplicationMutation();
   const [loadingStates, setLoadingStates] = useState<
-    Record<
-      string,
-      {
-        generating: boolean;
-        deploying: boolean;
-        steps: {
-          receiving: boolean;
-          processing: boolean;
-          extracting: boolean;
-          finalizing: boolean;
-        };
-      }
-    >
+    Record<string, ApplicationLoadingState>
   >({});
   const [showFileExplorer, setShowFileExplorer] = useState(false); // Start with cards view by default
   const [completedApplications, setCompletedApplications] = useState<
@@ -152,6 +233,39 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data;
+
+      if (message?.type === "applicationSourcePublishProgress") {
+        const applicationId = message.applicationId;
+        if (applicationId) {
+          setLoadingStates((prev) => ({
+            ...prev,
+            [applicationId]: {
+              ...prev[applicationId],
+              publishing: true,
+              sourceStatus:
+                message.sourcePublishStatus || "Publishing source...",
+            },
+          }));
+        }
+        return;
+      }
+
+      if (message?.type === "applicationSourcePublishResult") {
+        const result = message.sourcePublishResult;
+        if (result?.applicationId) {
+          setLoadingStates((prev) => ({
+            ...prev,
+            [result.applicationId]: {
+              ...prev[result.applicationId],
+              publishing: false,
+              sourceStatus: result.success
+                ? `Source ready: ${result.revisionRef}`
+                : result.error || "Source publish failed",
+            },
+          }));
+        }
+        return;
+      }
 
       // Only process relevant messages to prevent infinite loops
       if (!message || message.type !== "streamToThorapiResult") {
@@ -434,12 +548,50 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     }
   };
 
-  const handleDeploy = (applicationId: string) => {
+  const handleDeploy = (application: Application) => {
+    const applicationId = String(application.id || "");
     if (!applicationId) return;
 
     vscode.postMessage({
       type: "openInBrowser",
-      url: getApplicationDeployUrl(applicationId),
+      url: getApplicationDeployUrl(
+        applicationId,
+        application.name,
+        (application as any).slug,
+      ),
+    });
+  };
+
+  const handleBlueprint = (application: Application) => {
+    const applicationId = String(application.id || "");
+    if (!applicationId) return;
+    vscode.postMessage({
+      type: "openOpenAPIEditor",
+      applicationId,
+      applicationName: application.name || applicationId,
+      deploymentUrl: getApplicationDeployUrl(
+        applicationId,
+        application.name,
+        (application as any).slug,
+      ),
+    });
+  };
+
+  const handlePublishSource = (application: Application) => {
+    const applicationId = String(application.id || "");
+    if (!applicationId) return;
+    setLoadingStates((prev) => ({
+      ...prev,
+      [applicationId]: {
+        ...prev[applicationId],
+        publishing: true,
+        sourceStatus: "Preparing developer source...",
+      },
+    }));
+    vscode.postMessage({
+      type: "publishApplicationSource",
+      applicationId,
+      applicationName: application.name || applicationId,
     });
   };
 
@@ -696,6 +848,13 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                   >
                     Open
                   </VSCodeButton>
+                  <ApplicationWriteActions
+                    application={app}
+                    isOwned={isOwned}
+                    loadingState={loadingStates[appId]}
+                    onBlueprint={handleBlueprint}
+                    onPublishSource={handlePublishSource}
+                  />
                   <VSCodeButton
                     appearance="primary"
                     aria-label="Generate"
@@ -711,13 +870,26 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     appearance="secondary"
                     aria-label="Deploy"
                     role="button"
-                    onClick={() => handleDeploy(appId)}
+                    onClick={() => handleDeploy(app)}
                     disabled={loadingStates[appId]?.deploying}
                   >
                     {loadingStates[appId]?.deploying
                       ? "Deploying..."
                       : "Deploy"}
                   </VSCodeButton>
+                </div>
+              )}
+              {loadingStates[appId]?.sourceStatus && (
+                <div
+                  aria-live="polite"
+                  style={{
+                    color: "var(--vscode-descriptionForeground)",
+                    fontSize: 12,
+                    marginTop: 8,
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {loadingStates[appId]?.sourceStatus}
                 </div>
               )}
             </div>

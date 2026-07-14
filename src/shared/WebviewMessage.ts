@@ -110,6 +110,7 @@ export interface WebviewMessage {
     | "uploadOpenAPISpec"
     | "uploadOpenAPISpecResult"
     | "openOpenAPIEditor"
+    | "publishApplicationSource"
     | "openFile"
     | "trackFunnelEvent"
     | "remoteCodingSessionCommand"
@@ -201,6 +202,7 @@ export interface WebviewMessage {
   blobData?: string; // Base64 encoded blob data
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
+  deploymentUrl?: string;
   mimeType?: string;
   // For addGeneratedToProject
   folderName?: string; // Folder name for project integration

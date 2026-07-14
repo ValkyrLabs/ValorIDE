@@ -1,7 +1,11 @@
 import * as vscode from "vscode";
+import axios from "axios";
 import { getTheme } from "@integrations/theme/getTheme";
 import { getNonce } from "@core/webview/getNonce";
 import { getUri } from "@core/webview/getUri";
+import { getSecret } from "@core/storage/state";
+import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import {
   getValkyraiBasePath,
   normalizeValkyraiHost,
@@ -36,16 +40,26 @@ const deriveValkyraiOrigins = (basePath: string) => {
 export class OpenAPIEditorPanel {
   static readonly viewType = "valoride.openapi.editor";
   private static currentPanel: vscode.WebviewPanel | undefined;
+  private static currentApplicationId: string | undefined;
 
-  static open(context: vscode.ExtensionContext): void {
-    if (OpenAPIEditorPanel.currentPanel) {
+  static open(
+    context: vscode.ExtensionContext,
+    options: OpenAPIEditorOptions = {},
+  ): void {
+    if (
+      OpenAPIEditorPanel.currentPanel &&
+      OpenAPIEditorPanel.currentApplicationId === options.applicationId
+    ) {
       OpenAPIEditorPanel.currentPanel.reveal(vscode.ViewColumn.Active);
       return;
     }
+    OpenAPIEditorPanel.currentPanel?.dispose();
 
     const panel = vscode.window.createWebviewPanel(
       OpenAPIEditorPanel.viewType,
-      "OpenAPI Editor",
+      options.applicationName
+        ? `Blueprint - ${options.applicationName}`
+        : "Blueprint",
       vscode.ViewColumn.Active,
       {
         enableScripts: true,
@@ -55,14 +69,42 @@ export class OpenAPIEditorPanel {
     );
 
     OpenAPIEditorPanel.currentPanel = panel;
-    panel.webview.html = renderOpenAPIEditorPanel(context, panel.webview);
+    OpenAPIEditorPanel.currentApplicationId = options.applicationId;
+    panel.webview.html = renderOpenAPIEditorPanel(
+      context,
+      panel.webview,
+      options,
+    );
 
-    panel.webview.onDidReceiveMessage((message) => {
+    panel.webview.onDidReceiveMessage(async (message) => {
       if (message?.type === "requestTheme") {
-        panel.webview.postMessage({
+        await panel.webview.postMessage({
           type: "theme",
           text: JSON.stringify(getTheme()),
         });
+        return;
+      }
+      if (message?.type === "blueprintLoad") {
+        await handleBlueprintLoad(context, panel, options);
+        return;
+      }
+      if (message?.type === "blueprintSave") {
+        await handleBlueprintSave(context, panel, options, message);
+        return;
+      }
+      if (message?.type === "blueprintOpenDeployment") {
+        if (!options.deploymentUrl) {
+          await panel.webview.postMessage({
+            type: "blueprintError",
+            error: "This Application does not have a deployment route.",
+          });
+          return;
+        }
+        await openUrlWithSimpleBrowser(
+          options.deploymentUrl,
+          `${options.applicationName || "Application"} deployment`,
+        );
+        return;
       }
       if (message?.type === "webviewError") {
         console.error("OpenAPI editor webview error:", message);
@@ -71,13 +113,155 @@ export class OpenAPIEditorPanel {
 
     panel.onDidDispose(() => {
       OpenAPIEditorPanel.currentPanel = undefined;
+      OpenAPIEditorPanel.currentApplicationId = undefined;
     });
   }
 }
 
+export interface OpenAPIEditorOptions {
+  applicationId?: string;
+  applicationName?: string;
+  deploymentUrl?: string;
+}
+
+interface BlueprintDocument {
+  applicationId: string;
+  applicationName?: string;
+  specId: string;
+  filename: string;
+  etag: string;
+  specification: Record<string, unknown>;
+  lastModifiedDate?: string;
+}
+
+const blueprintEndpoint = (applicationId: string) =>
+  `${getValkyraiBasePath()}/thorapi/applications/${encodeURIComponent(applicationId)}/openapi`;
+
+const requireJwt = async (context: vscode.ExtensionContext) => {
+  const jwtToken = await getSecret(context, "jwtToken");
+  if (!jwtToken) {
+    throw new Error(
+      "Sign in to ValorIDE before opening an Application Blueprint.",
+    );
+  }
+  return jwtToken;
+};
+
+const authHeaders = (jwtToken: string) => ({
+  Authorization: `Bearer ${jwtToken}`,
+  jwtSession: jwtToken,
+});
+
+const errorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    const body = error.response?.data as
+      | { message?: string; error?: string }
+      | string
+      | undefined;
+    if (typeof body === "string" && body.trim()) return body;
+    if (body && typeof body !== "string") {
+      return body.message || body.error || error.message;
+    }
+    return error.message;
+  }
+  return error instanceof Error ? error.message : String(error);
+};
+
+const handleBlueprintLoad = async (
+  context: vscode.ExtensionContext,
+  panel: vscode.WebviewPanel,
+  options: OpenAPIEditorOptions,
+) => {
+  if (!options.applicationId) {
+    await panel.webview.postMessage({
+      type: "blueprintError",
+      error:
+        "Open Blueprint from a ValkyrAI Application to load its canonical spec.",
+    });
+    return;
+  }
+  try {
+    const jwtToken = await requireJwt(context);
+    const response = await axios.get<BlueprintDocument>(
+      blueprintEndpoint(options.applicationId),
+      { headers: authHeaders(jwtToken), timeout: 60_000 },
+    );
+    await panel.webview.postMessage({
+      type: "blueprintLoaded",
+      document: response.data,
+    });
+  } catch (error) {
+    await panel.webview.postMessage({
+      type: "blueprintError",
+      error: errorMessage(error),
+    });
+  }
+};
+
+const handleBlueprintSave = async (
+  context: vscode.ExtensionContext,
+  panel: vscode.WebviewPanel,
+  options: OpenAPIEditorOptions,
+  message: {
+    specification?: Record<string, unknown>;
+    filename?: string;
+    expectedEtag?: string;
+    regenerate?: boolean;
+  },
+) => {
+  if (!options.applicationId || !message.specification) {
+    await panel.webview.postMessage({
+      type: "blueprintError",
+      error: "Application id and OpenAPI specification are required.",
+    });
+    return;
+  }
+  try {
+    const jwtToken = await requireJwt(context);
+    const response = await axios.put<BlueprintDocument>(
+      blueprintEndpoint(options.applicationId),
+      {
+        specification: message.specification,
+        filename: message.filename,
+        expectedEtag: message.expectedEtag,
+      },
+      { headers: authHeaders(jwtToken), timeout: 60_000 },
+    );
+    await panel.webview.postMessage({
+      type: "blueprintSaved",
+      document: response.data,
+      regenerating: Boolean(message.regenerate),
+    });
+
+    if (message.regenerate) {
+      const artifact = await downloadApplicationArtifact({
+        applicationId: options.applicationId,
+        applicationName: options.applicationName,
+        jwtToken,
+        onProgress: async (status) => {
+          await panel.webview.postMessage({
+            type: "blueprintProgress",
+            status,
+          });
+        },
+      });
+      await panel.webview.postMessage({
+        type: "blueprintGenerated",
+        artifact,
+      });
+    }
+  } catch (error) {
+    await panel.webview.postMessage({
+      type: "blueprintError",
+      error: errorMessage(error),
+    });
+  }
+};
+
 const renderOpenAPIEditorPanel = (
   context: vscode.ExtensionContext,
   webview: vscode.Webview,
+  options: OpenAPIEditorOptions,
 ): string => {
   const stylesUri = getUri(webview, context.extensionUri, [
     "dist",
@@ -124,6 +308,7 @@ const renderOpenAPIEditorPanel = (
       try {
         window.__valorideWebviewMode = "openapi-editor";
         window.__valorideValkyraiBasePath = ${JSON.stringify(valkyraiBasePath)};
+        window.__valorideBlueprint = ${JSON.stringify(options)};
       } catch {}
     </script>
     <script type="module" nonce="${nonce}" src="${scriptUri}"></script>

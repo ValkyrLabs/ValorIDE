@@ -2,6 +2,8 @@
 
 This directory contains architectural documentation for the ValorIDE VSCode extension.
 
+- [ValkyrAI application lifecycle](./valkyrai-application-lifecycle.md) defines the Blueprint, generated artifact, and direct deployment ownership boundaries.
+
 ## Extension Architecture Diagram
 
 The [extension-architecture.mmd](./extension-architecture.mmd) file contains a Mermaid diagram showing the high-level architecture of the ValorIDE extension. The diagram illustrates:

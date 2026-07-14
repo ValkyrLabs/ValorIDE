@@ -44,6 +44,14 @@ type ReceiptTraceInspectorProps = {
   onConsumeInitialSwarmCommandResponse?: () => void;
 };
 
+const RECEIPT_ACCOUNT_ID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Receipt routes have a UUID accountId contract; `me` is balance-route only. */
+export const hasReceiptAccountId = (accountId: string): boolean => {
+  return RECEIPT_ACCOUNT_ID_PATTERN.test(accountId.trim());
+};
+
 const SENSITIVE_FIELD_PATTERN =
   /(authorization|jwt|password|secret|session|token|api[_-]?key|csrf|credential)/i;
 
@@ -803,7 +811,7 @@ const ReceiptTraceInspector = ({
 
   const receiptRef = submittedReceiptRef.trim();
   const hasReceiptRef = receiptRef.length > 0;
-  const hasAccountId = accountId.trim().length > 0;
+  const hasAccountId = hasReceiptAccountId(accountId);
 
   const appGenerationTrace = useGetAppGenerationTraceQuery(receiptRef, {
     skip: mode !== "generation" || !hasReceiptRef,

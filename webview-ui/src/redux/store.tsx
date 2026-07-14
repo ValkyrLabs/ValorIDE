@@ -5,6 +5,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { AuthService } from "./services/AuthService";
 import { LogoutService } from "./services/LogoutService";
 import { ApplicationService } from "./services/ApplicationService";
+import { AclService } from "./services/AclService";
 import { PrincipalService } from "./services/PrincipalService";
 import { ThorHostingService } from "./services/ThorHostingService";
 import { BalanceResponseService } from "@thorapi/redux/services/BalanceResponseService";
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   [AuthService.reducerPath]: AuthService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
   [ApplicationService.reducerPath]: ApplicationService.reducer,
+  [AclService.reducerPath]: AclService.reducer,
   [PrincipalService.reducerPath]: PrincipalService.reducer,
   [ThorHostingService.reducerPath]: ThorHostingService.reducer,
   [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
@@ -69,6 +71,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(middlewares as Middleware[]) // add the custom middlewares
+      .concat(AclService.middleware)
       .concat(ThorHostingService.middleware)
       .concat(BalanceResponseService.middleware)
       .concat(UsageTransactionService.middleware)

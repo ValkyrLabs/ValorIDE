@@ -141,6 +141,24 @@ const resolveCreditAccountKey = (principal?: Record<string, any> | null) => {
   );
 };
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Receipt endpoints are account-addressed generated routes and require a real
+ * account UUID. The balance endpoint intentionally accepts the authenticated
+ * `me` alias, so never forward that convenience alias to receipt queries.
+ */
+export const resolveReceiptAccountId = (...values: unknown[]): string => {
+  for (const value of values) {
+    const candidate = firstNonEmptyString(value);
+    if (candidate && UUID_PATTERN.test(candidate)) {
+      return candidate;
+    }
+  }
+  return "";
+};
+
 const hasUnmeteredAccountAccess = (
   principal?: Record<string, any> | null,
   balance?: Record<string, any> | null,
@@ -260,7 +278,7 @@ const AccountView = ({
   const accountId =
     resolveCreditAccountKey(resolvedPrincipal as Record<string, any>) ||
     (hasBackendAuth ? "me" : "");
-  const balanceAccountId = accountId || (hasBackendAuth ? "me" : "");
+  const balanceAccountId = hasBackendAuth ? "me" : accountId;
   const {
     data: creditBalanceData,
     isLoading: isCreditBalanceLoading,
@@ -270,6 +288,10 @@ const AccountView = ({
   } = useGetCreditAccountBalanceQuery(balanceAccountId, {
     skip: !balanceAccountId || !hasBackendAuth,
   });
+  const receiptAccountId = resolveReceiptAccountId(
+    accountId,
+    creditBalanceData?.customerId,
+  );
 
   const lastBalanceRefreshKeyRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -733,7 +755,7 @@ const AccountView = ({
       ) : activeTab === "receipts" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           <ReceiptTraceInspector
-            accountId={accountId}
+            accountId={receiptAccountId}
             initialSwarmCommandResponse={initialSwarmCommandResponse}
             onConsumeInitialSwarmCommandResponse={
               onConsumeInitialSwarmCommandResponse

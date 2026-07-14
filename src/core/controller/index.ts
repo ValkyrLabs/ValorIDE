@@ -33,6 +33,7 @@ import { searchWorkspaceFiles } from "@services/search/file-search";
 import { OpenAPIEditorPanel } from "../../views/openapi/OpenAPIEditorPanel";
 import { TerminalManager } from "@integrations/terminal/TerminalManager";
 import { PathAccess } from "@services/access/PathAccess";
+import { publishApplicationSource } from "@services/applicationSourcePublish";
 
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
@@ -84,7 +85,7 @@ import {
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
-import { openUrlWithSimpleBrowser } from "@utils/openUrl";
+import { openUrlExternally, openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import {
   getValkyraiBasePath,
@@ -2464,8 +2465,64 @@ export class Controller {
         }
         break;
       case "openOpenAPIEditor":
-        OpenAPIEditorPanel.open(this.context);
+        OpenAPIEditorPanel.open(this.context, {
+          applicationId: message.applicationId,
+          applicationName: message.applicationName,
+          deploymentUrl: message.deploymentUrl,
+        });
         break;
+      case "publishApplicationSource": {
+        const sourceApplicationId = message.applicationId;
+        if (!sourceApplicationId) {
+          await this.postMessageToWebview({
+            type: "applicationSourcePublishResult",
+            sourcePublishResult: {
+              success: false,
+              applicationId: "",
+              error: "Application id is required to publish source.",
+            },
+          });
+          break;
+        }
+        try {
+          const sourceResult = await publishApplicationSource({
+            context: this.context,
+            applicationId: sourceApplicationId,
+            applicationName: message.applicationName,
+            onProgress: async (sourcePublishStatus) => {
+              await this.postMessageToWebview({
+                type: "applicationSourcePublishProgress",
+                applicationId: sourceApplicationId,
+                sourcePublishStatus,
+              });
+            },
+          });
+          await this.postMessageToWebview({
+            type: "applicationSourcePublishResult",
+            sourcePublishResult: {
+              success: true,
+              applicationId: sourceApplicationId,
+              revisionRef: sourceResult.revisionRef,
+              checksumSha256: sourceResult.checksumSha256,
+              sizeBytes: sourceResult.sizeBytes,
+              createdAt: sourceResult.createdAt,
+            },
+          });
+          vscode.window.showInformationMessage(
+            `Published ${message.applicationName || "Application"} source revision. Deployments will use it automatically.`,
+          );
+        } catch (error) {
+          await this.postMessageToWebview({
+            type: "applicationSourcePublishResult",
+            sourcePublishResult: {
+              success: false,
+              applicationId: sourceApplicationId,
+              error: error instanceof Error ? error.message : String(error),
+            },
+          });
+        }
+        break;
+      }
       case "fetchOpenGraphData":
         this.fetchOpenGraphData(message.text!);
         break;
@@ -4562,13 +4619,13 @@ export class Controller {
     try {
       const result = await startOpenAiNativeOAuthLogin({
         openAuthorizationUrl: async (url) => {
-          const opened = await openUrlWithSimpleBrowser(
-            url,
-            "OpenAI OAuth for ValorIDE",
-          );
+          const opened = await openUrlExternally(url);
           if (!opened) {
-            throw new Error("Unable to open OpenAI OAuth URL.");
+            throw new Error("Unable to open your default browser for OpenAI OAuth.");
           }
+          vscode.window.showInformationMessage(
+            "OpenAI sign-in opened in your default browser. Complete it there; ValorIDE will connect automatically.",
+          );
         },
       });
 
