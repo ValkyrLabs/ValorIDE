@@ -346,6 +346,40 @@ describe("GrayMatterClient", () => {
     expect(body.tenantId).toBeUndefined();
   });
 
+  it("remembers through the canonical idempotent OmegaRAG formation contract", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(201, { memoryRef: "mem-1", receiptRef: "rr-1" }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.rememberOmegaMemory({
+      idempotencyKey: "remember-1",
+      sourceChannel: "valoride",
+      tags: ["decision", "omega"],
+      text: "The retrieval contract is receipt-backed.",
+      title: "Omega decision",
+      type: "decision",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+    expect(url).toBe("https://api.example.test/v1/graymatter/omega/remember");
+    expect(body).toEqual({
+      idempotencyKey: "remember-1",
+      sourceChannel: "valoride",
+      tags: ["decision", "omega"],
+      text: "The retrieval contract is receipt-backed.",
+      title: "Omega decision",
+      type: "decision",
+    });
+    expect(body.ownerId).toBeUndefined();
+    expect(body.tenantId).toBeUndefined();
+  });
+
   it("forgets through the idempotent OmegaRAG deletion contract", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, { deletionStatus: "deleted", replayed: false }),

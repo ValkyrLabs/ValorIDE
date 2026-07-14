@@ -73,6 +73,15 @@ export interface GrayMatterOmegaRecallInput {
   query: string;
 }
 
+export interface GrayMatterOmegaRememberInput {
+  idempotencyKey: string;
+  sourceChannel?: string;
+  tags?: string[];
+  text: string;
+  title?: string;
+  type?: GrayMatterMemoryType;
+}
+
 export interface GrayMatterOmegaForgetInput {
   idempotencyKey: string;
   memoryRef: string;
@@ -295,6 +304,22 @@ export class GrayMatterClient {
 
     return this.request("/graymatter/omega/recall", {
       body: JSON.stringify(payload),
+      method: "POST",
+    });
+  }
+
+  async rememberOmegaMemory(
+    input: GrayMatterOmegaRememberInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/remember", {
+      body: JSON.stringify({
+        idempotencyKey: input.idempotencyKey,
+        text: input.text,
+        ...(input.type ? { type: input.type } : {}),
+        ...(input.title ? { title: input.title } : {}),
+        ...(input.tags ? { tags: input.tags } : {}),
+        ...(input.sourceChannel ? { sourceChannel: input.sourceChannel } : {}),
+      }),
       method: "POST",
     });
   }
