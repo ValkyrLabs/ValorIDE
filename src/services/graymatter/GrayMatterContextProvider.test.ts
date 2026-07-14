@@ -16,56 +16,21 @@ const baseConfig = (
 });
 
 describe("GrayMatterContextProvider", () => {
-  it("formats scoped memories as a Remembered Context block", async () => {
-    const provider = new GrayMatterContextProvider(undefined, () => 1000);
-    const queryMemory = jest
-      .fn()
-      .mockResolvedValueOnce({
-        results: [
-          {
-            content: "Rule: Use generated ThorAPI services for ACL behavior.",
-            id: "invariant-1",
-            tags: ["scope:organization", "invariant", "acl", "thorapi"],
-            type: "decision",
-          },
-        ],
-      })
-      .mockResolvedValueOnce({
-        results: [
-          {
-            content: "Use Zod for validation and never Yup.",
-            id: "project-1",
-            tags: ["scope:project", "project:abc"],
-            type: "decision",
-          },
-          {
-            content: "Prefer terse responses.",
-            id: "user-1",
-            tags: ["scope:user"],
-            type: "preference",
-          },
-        ],
-      });
+  it("omits prompt context rather than direct-querying when receipt retrieval is unavailable", async () => {
+    const appendLine = jest.fn();
+    const provider = new GrayMatterContextProvider({ appendLine }, () => 1000);
+    const queryMemory = jest.fn();
 
     const result = await provider.getContextForPrompt(
       "React form validation",
       baseConfig(queryMemory),
     );
 
-    expect(queryMemory).toHaveBeenNthCalledWith(1, {
-      limit: 12,
-      query: expect.stringContaining("invariant decision methodology"),
-    });
-    expect(queryMemory).toHaveBeenNthCalledWith(2, {
-      limit: 24,
-      query: "React form validation",
-    });
-    expect(result?.formattedBlock).toContain("## Remembered Context");
-    expect(result?.formattedBlock).toContain("[gm:invariant-1] decision");
-    expect(result?.formattedBlock).toContain("### project");
-    expect(result?.formattedBlock).toContain("[gm:project-1] decision");
-    expect(result?.formattedBlock).toContain("### user");
-    expect(result?.fromScopes).toEqual(["organization", "project", "user"]);
+    expect(result).toBeNull();
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(appendLine).toHaveBeenCalledWith(
+      expect.stringContaining("direct memory query is not authorized"),
+    );
   });
 
   it("prefers retrieval receipts and keeps receipt ids for audit metadata", async () => {
@@ -140,19 +105,10 @@ describe("GrayMatterContextProvider", () => {
     expect(result?.retrievalTraceIds).toEqual(["gm_trace_1", "gm_trace_2"]);
   });
 
-  it("falls back to MemoryEntry query when receipt retrieval is unavailable", async () => {
+  it("omits prompt context when receipt retrieval fails", async () => {
     const appendLine = jest.fn();
     const provider = new GrayMatterContextProvider({ appendLine }, () => 1000);
-    const queryMemory = jest.fn(async () => ({
-      results: [
-        {
-          content: "Use MemoryEntry/query only as degraded fallback.",
-          id: "fallback-1",
-          tags: ["scope:project"],
-          type: "decision",
-        },
-      ],
-    }));
+    const queryMemory = jest.fn();
     const retrieveMemoryWithReceipt = jest.fn(async () => {
       throw new Error("receipt endpoint unavailable");
     });
@@ -163,14 +119,10 @@ describe("GrayMatterContextProvider", () => {
     );
 
     expect(retrieveMemoryWithReceipt).toHaveBeenCalledTimes(2);
-    expect(queryMemory).toHaveBeenCalledTimes(2);
-    expect(result?.formattedBlock).toContain("[gm:fallback-1] decision");
-    expect(result?.retrievalWarnings).toEqual([
-      "receipt_fallback:invariant",
-      "receipt_fallback:context",
-    ]);
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(result).toBeNull();
     expect(appendLine).toHaveBeenCalledWith(
-      expect.stringContaining("Receipt retrieval degraded"),
+      expect.stringContaining("Receipt retrieval unavailable"),
     );
   });
 
@@ -255,26 +207,33 @@ describe("GrayMatterContextProvider", () => {
       tags: ["scope:project", "invariant", "generated-code"],
       type: "decision",
     };
-    const queryMemory = jest
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest
       .fn()
-      .mockResolvedValueOnce({ results: [invariant] })
       .mockResolvedValueOnce({
-        results: [
-          invariant,
-          {
-            content: "Use Vitest for webview tests.",
-            id: "project-2",
-            tags: ["scope:project"],
-            type: "context",
-          },
-        ],
+        receipt: { answerPolicy: "ALLOW_ANSWER", items: [invariant] },
+      })
+      .mockResolvedValueOnce({
+        receipt: {
+          answerPolicy: "ALLOW_ANSWER",
+          items: [
+            invariant,
+            {
+              content: "Use Vitest for webview tests.",
+              id: "project-2",
+              tags: ["scope:project"],
+              type: "context",
+            },
+          ],
+        },
       });
 
     const result = await provider.getContextForPrompt(
       "generated clients",
-      baseConfig(queryMemory),
+      baseConfig(queryMemory, retrieveMemoryWithReceipt),
     );
 
+    expect(queryMemory).not.toHaveBeenCalled();
     expect(result?.entriesUsed).toBe(2);
     expect(result?.formattedBlock.match(/invariant-1/g)?.length).toBe(1);
     expect(result?.formattedBlock.indexOf("invariant-1")).toBeLessThan(
@@ -288,7 +247,7 @@ describe("GrayMatterContextProvider", () => {
 
     const result = await provider.getContextForPrompt(
       "anything",
-      baseConfig(async () => {
+      baseConfig(jest.fn(), async () => {
         throw new Error("network down");
       }),
     );

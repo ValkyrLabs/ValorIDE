@@ -204,6 +204,7 @@ export class LLMContextInjector {
           enabled: grayMatterConfig.enabled,
           maxTokens: grayMatterConfig.maxTokens,
           queryMemory: grayMatterConfig.queryMemory,
+          retrieveMemoryWithReceipt: grayMatterConfig.retrieveMemoryWithReceipt,
           scopes: grayMatterConfig.scopes,
           seedQuery: grayMatterConfig.seedQuery,
           timeoutMs: grayMatterConfig.timeoutMs,

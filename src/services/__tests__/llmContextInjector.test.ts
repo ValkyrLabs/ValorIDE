@@ -120,10 +120,36 @@ describe("LLMContextInjector", () => {
     expect(typeof partialPrompt).toBe("string");
   });
 
+  it("preserves the receipt-backed retriever when injecting GrayMatter context", async () => {
+    let receivedConfig: { retrieveMemoryWithReceipt?: unknown } | undefined;
+    const receiptRetriever = async () => ({ receipt: { items: [] } });
+    const provider = {
+      getContextForPrompt: async (_seedQuery: string, config: unknown) => {
+        receivedConfig = config as { retrieveMemoryWithReceipt?: unknown };
+        return null;
+      },
+    } as unknown as GrayMatterContextProvider;
+    injector = new LLMContextInjector(mockLogger, provider);
+
+    await injector.generateSystemPromptAsync({
+      grayMatter: {
+        enabled: true,
+        maxTokens: 400,
+        queryMemory: async () => ({ results: [] }),
+        retrieveMemoryWithReceipt: receiptRetriever,
+        scopes: ["project", "organization", "user"],
+        timeoutMs: 3000,
+      },
+    });
+
+    expect(receivedConfig?.retrieveMemoryWithReceipt).toBe(receiptRetriever);
+  });
+
   it("does not replace the built-in prompt when a SYSTEM LLMDetails prompt is active", () => {
     injector = new LLMContextInjector(mockLogger);
     (injector as any).promptService = {
-      getSystemPrompt: () => "BUILT-IN VALORIDE PROMPT: use tools and completion reports.",
+      getSystemPrompt: () =>
+        "BUILT-IN VALORIDE PROMPT: use tools and completion reports.",
     };
     (injector as any).llmPromptService = {
       getSelectedPrompt: () => ({

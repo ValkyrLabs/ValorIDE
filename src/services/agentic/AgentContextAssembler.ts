@@ -168,57 +168,23 @@ export class AgentContextAssembler {
         maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
         maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
       });
-      const fallback =
-        citations.length === 0 && response.usedReceipt
-          ? await this.queryMemoryFallback(query, {
-              maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
-              maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
-            })
-          : undefined;
-      const directScanFallback =
-        citations.length === 0 && !fallback?.citations.length
-          ? await this.listMemoryFallback(query, {
-              maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
-              maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
-            })
-          : undefined;
-      const effectiveCitations = fallback?.citations.length
-        ? fallback.citations
-        : directScanFallback?.citations.length
-          ? directScanFallback.citations
-          : citations;
-      const status: GrayMatterReadStatus = effectiveCitations.length
-        ? "ready"
-        : "empty";
+      const status: GrayMatterReadStatus = citations.length ? "ready" : "empty";
       const read: GrayMatterTranscriptRead = {
         at: readAt,
-        citations: effectiveCitations.map((citation) => `gm:${citation.id}`),
+        citations: citations.map((citation) => `gm:${citation.id}`),
         query,
         status,
       };
       applyReceiptDetails(read, metadata, response.warning);
-      if (fallback?.warning) {
-        read.warning = read.warning
-          ? `${read.warning}; ${fallback.warning}`
-          : fallback.warning;
-      }
-      if (directScanFallback?.warning) {
-        read.warning = read.warning
-          ? `${read.warning}; ${directScanFallback.warning}`
-          : directScanFallback.warning;
-      }
 
       return {
         grayMatter: {
-          citations: effectiveCitations,
+          citations,
           query,
           reads: [read],
           status,
         },
-        promptSection: formatGrayMatterPromptSection(
-          status,
-          effectiveCitations,
-        ),
+        promptSection: formatGrayMatterPromptSection(status, citations),
       };
     } catch (error) {
       const status = getReadFailureStatus(error);
@@ -251,7 +217,8 @@ export class AgentContextAssembler {
     const grayMatter = this.options.grayMatter;
     if (!grayMatter?.retrieveMemoryWithReceipt) {
       return {
-        value: await grayMatter?.queryMemory(query),
+        warning:
+          "receipt_backed_retrieval_unavailable:direct_memory_query_not_authorized",
       };
     }
 
@@ -281,66 +248,7 @@ export class AgentContextAssembler {
         value: receiptResponse,
       };
     } catch (error) {
-      return {
-        value: await grayMatter.queryMemory(query),
-        warning: `receipt_fallback:${formatReadError(error)}`,
-      };
-    }
-  }
-
-  private async queryMemoryFallback(
-    query: string,
-    options: { maxEntries: number; maxEntryChars: number },
-  ): Promise<
-    | { citations: GrayMatterContextCitation[]; warning?: string }
-    | undefined
-  > {
-    try {
-      const value = await this.options.grayMatter?.queryMemory({
-        limit: options.maxEntries,
-        query,
-      });
-      const citations = extractCitations(value, options);
-      return {
-        citations,
-        warning: citations.length
-          ? "receipt_empty_fallback:direct_memory_query_used"
-          : "receipt_empty_fallback:direct_memory_query_empty",
-      };
-    } catch (error) {
-      return {
-        citations: [],
-        warning: `receipt_empty_fallback_failed:${formatReadError(error)}`,
-      };
-    }
-  }
-
-  private async listMemoryFallback(
-    query: string,
-    options: { maxEntries: number; maxEntryChars: number },
-  ): Promise<
-    | { citations: GrayMatterContextCitation[]; warning?: string }
-    | undefined
-  > {
-    if (!this.options.grayMatter?.listMemory) {
-      return undefined;
-    }
-
-    try {
-      const value = await this.options.grayMatter.listMemory();
-      const entries = rankDirectMemoryEntries(extractEntries(value), query);
-      const citations = extractCitations(entries, options);
-      return {
-        citations,
-        warning: citations.length
-          ? "direct_scan_fallback:memory_entry_list_used"
-          : "direct_scan_fallback:memory_entry_list_empty",
-      };
-    } catch (error) {
-      return {
-        citations: [],
-        warning: `direct_scan_fallback_failed:${formatReadError(error)}`,
-      };
+      throw error;
     }
   }
 }
@@ -509,102 +417,6 @@ const getCitationContent = (entry: MemoryEntryLike) =>
   getStringField(entry, "text") ??
   getStringField(entry, "body");
 
-const rankDirectMemoryEntries = (
-  entries: MemoryEntryLike[],
-  query: string,
-): MemoryEntryLike[] => {
-  const terms = buildDirectScanTerms(query);
-  return entries
-    .map((entry) => ({
-      entry,
-      score: scoreDirectMemoryEntry(entry, terms),
-    }))
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map(({ entry }) => entry);
-};
-
-const buildDirectScanTerms = (query: string): string[] =>
-  Array.from(
-    new Set(
-      [
-        ...query
-          .split(/[^A-Za-z0-9_.-]+/)
-          .map((term) => term.trim().toLowerCase())
-          .filter((term) => term.length >= 3),
-        "invariant",
-        "rule",
-        "instruction",
-        "decision",
-        "thorapi",
-        "valkyrai",
-        "valoride",
-        "graymatter",
-        "rbac",
-        "acl",
-        "api-0",
-      ],
-    ),
-  );
-
-const scoreDirectMemoryEntry = (
-  entry: MemoryEntryLike,
-  terms: string[],
-): number => {
-  const haystack = getSearchableText(entry);
-  const tagNames = getStringArrayField(entry, "tags")?.map((tag) =>
-    tag.toLowerCase(),
-  );
-  const type = getStringField(entry, "type")?.toLowerCase();
-  let score = 0;
-
-  for (const term of terms) {
-    if (haystack.includes(term)) {
-      score += 1;
-    }
-  }
-
-  if (type === "decision") {
-    score += 3;
-  }
-
-  for (const tag of tagNames ?? []) {
-    if (
-      [
-        "invariant",
-        "rule",
-        "instruction",
-        "security",
-        "rbac",
-        "acl",
-        "thorapi",
-        "valkyrai",
-        "valoride",
-        "graymatter",
-      ].includes(tag)
-    ) {
-      score += 3;
-    }
-  }
-
-  return score;
-};
-
-const getSearchableText = (entry: MemoryEntryLike): string =>
-  [
-    getStringField(entry, "text"),
-    getStringField(entry, "content"),
-    getStringField(entry, "title"),
-    getStringField(entry, "summary"),
-    getStringField(entry, "description"),
-    getStringField(entry, "sourceChannel"),
-    getStringArrayField(entry, "tags")?.join(" "),
-    stringifyMetadata(entry),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
 const getReadFailureStatus = (error: unknown): GrayMatterReadStatus => {
   if (error instanceof GrayMatterClientError) {
     return mapGrayMatterErrorKind(error.kind);
@@ -702,16 +514,6 @@ const parseMaybeJsonRecord = (value: unknown): MemoryEntryLike | undefined => {
   }
 };
 
-const stringifyMetadata = (record: MemoryEntryLike): string | undefined => {
-  const metadata = parseMaybeJsonRecord(record.metadata);
-  if (metadata) {
-    return Object.values(metadata)
-      .filter((value) => typeof value === "string" || typeof value === "number")
-      .join(" ");
-  }
-  return typeof record.metadata === "string" ? record.metadata : undefined;
-};
-
 const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
   const metadata = parseMaybeJsonRecord(record.metadata);
   if (!isRecord(metadata)) {
@@ -733,7 +535,9 @@ const extractReceiptMetadata = (
   }
 
   const metadata: ReceiptMetadata = {
-    answerAllowed: policy ? getBooleanField(policy, "answerAllowed") : undefined,
+    answerAllowed: policy
+      ? getBooleanField(policy, "answerAllowed")
+      : undefined,
     answerPolicy:
       getStringField(policy ?? {}, "answerPolicy") ??
       getStringField(receipt ?? {}, "answerPolicy"),
@@ -924,7 +728,9 @@ const receiptPolicyWarning = (
 };
 
 const uniqueStrings = (values: Array<string | undefined>) =>
-  Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+  Array.from(
+    new Set(values.filter((value): value is string => Boolean(value))),
+  );
 
 const applyReceiptDetails = (
   read: GrayMatterTranscriptRead,

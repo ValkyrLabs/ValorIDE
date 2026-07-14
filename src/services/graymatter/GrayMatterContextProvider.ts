@@ -146,7 +146,9 @@ export class GrayMatterContextProvider {
         .map((response) => response.warning)
         .filter((warning): warning is string => Boolean(warning));
 
-      const entries = dedupeEntries(responses.flatMap((response) => extractEntries(response.value)))
+      const entries = dedupeEntries(
+        responses.flatMap((response) => extractEntries(response.value)),
+      )
         .map(normalizeEntry)
         .filter((entry): entry is MemoryEntryForPrompt => Boolean(entry))
         .filter((entry) => config.scopes.includes(entry.scope))
@@ -203,9 +205,9 @@ export class GrayMatterContextProvider {
     timeoutMs: number;
   }): Promise<RetrievalResponse> {
     if (!config.retrieveMemoryWithReceipt) {
-      return {
-        value: await withTimeout(config.queryMemory(query), timeoutMs),
-      };
+      throw new Error(
+        "Receipt-backed GrayMatter retrieval is unavailable; direct memory query is not authorized for prompt context.",
+      );
     }
 
     try {
@@ -240,12 +242,9 @@ export class GrayMatterContextProvider {
       };
     } catch (error) {
       this.logger?.appendLine(
-        `[GrayMatterContextProvider] Receipt retrieval degraded for ${kind}; falling back to MemoryEntry/query: ${formatReadError(error)}`,
+        `[GrayMatterContextProvider] Receipt retrieval unavailable for ${kind}; omitting prompt context: ${formatReadError(error)}`,
       );
-      return {
-        value: await withTimeout(config.queryMemory(query), timeoutMs),
-        warning: `receipt_fallback:${kind}`,
-      };
+      throw error;
     }
   }
 }
@@ -331,7 +330,11 @@ const normalizeEntry = (
   return {
     content: redactSensitive(content),
     id,
-    invariant: isInvariantEntry(getString(entry, "type") ?? "context", tags, content),
+    invariant: isInvariantEntry(
+      getString(entry, "type") ?? "context",
+      tags,
+      content,
+    ),
     scope: getScope(tags),
     tags,
     title:
@@ -488,7 +491,9 @@ const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
   return getString(metadata, "title");
 };
 
-const extractReceiptMetadata = (response: unknown): ReceiptMetadata | undefined => {
+const extractReceiptMetadata = (
+  response: unknown,
+): ReceiptMetadata | undefined => {
   if (!isRecord(response)) {
     return undefined;
   }
@@ -514,10 +519,11 @@ const extractReceiptMetadata = (response: unknown): ReceiptMetadata | undefined 
     retrievalStatus:
       getString(policy ?? {}, "retrievalStatus") ??
       getString(receipt ?? {}, "retrievalStatus"),
-    requiredActions: policy ? getStringArray(policy, "requiredActions") : undefined,
+    requiredActions: policy
+      ? getStringArray(policy, "requiredActions")
+      : undefined,
     traceId:
-      getString(policy ?? {}, "traceId") ??
-      getString(receipt ?? {}, "traceId"),
+      getString(policy ?? {}, "traceId") ?? getString(receipt ?? {}, "traceId"),
     warning: policy ? getString(policy, "warning") : undefined,
   };
 
@@ -598,7 +604,9 @@ const receiptPolicyBlocks = (metadata?: ReceiptMetadata): boolean => {
   );
 };
 
-const receiptPolicyWarning = (metadata?: ReceiptMetadata): string | undefined => {
+const receiptPolicyWarning = (
+  metadata?: ReceiptMetadata,
+): string | undefined => {
   if (!metadata) {
     return undefined;
   }
@@ -676,7 +684,9 @@ const receiptPolicyWarning = (metadata?: ReceiptMetadata): string | undefined =>
 };
 
 const uniqueStrings = (values: Array<string | undefined>) =>
-  Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+  Array.from(
+    new Set(values.filter((value): value is string => Boolean(value))),
+  );
 
 const estimateTokens = (value: string) => Math.ceil(value.length / 4);
 
