@@ -124,6 +124,20 @@ export interface GrayMatterOmegaIndexJobInput {
   targetTypes?: string[];
 }
 
+/**
+ * Identity-free request for a durable asynchronous OmegaRAG retrieval run.
+ * api-0 derives the principal, tenant, and generated ACL scope; it persists a
+ * normalized query hash rather than this query text.
+ */
+export interface GrayMatterOmegaRetrievalRunInput {
+  asOf?: string;
+  budgets?: Record<string, unknown>;
+  idempotencyKey: string;
+  includeEvaluator?: boolean;
+  mode?: "AUDIT" | "BALANCED" | "DEEP" | "FAST" | "PRIVATE" | string;
+  query: string;
+}
+
 export interface GrayMatterProjectInput {
   currentStage?: string;
   description?: string;
@@ -426,6 +440,55 @@ export class GrayMatterClient {
     return this.request(
       `/graymatter/omega/index-jobs/${encodeURIComponent(jobId)}/cancel`,
       { method: "POST" },
+    );
+  }
+
+  async startOmegaRetrievalRun(
+    input: GrayMatterOmegaRetrievalRunInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter/omega/runs", {
+      body: JSON.stringify({
+        query: input.query,
+        idempotencyKey: input.idempotencyKey,
+        ...(input.mode ? { mode: input.mode } : {}),
+        ...(input.asOf ? { asOf: input.asOf } : {}),
+        ...(input.budgets ? { budgets: input.budgets } : {}),
+        ...(input.includeEvaluator === undefined
+          ? {}
+          : { includeEvaluator: input.includeEvaluator }),
+      }),
+      method: "POST",
+    });
+  }
+
+  async getOmegaRetrievalRun(runId: string): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/runs/${encodeURIComponent(runId)}`,
+      { method: "GET" },
+    );
+  }
+
+  async cancelOmegaRetrievalRun(runId: string): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/runs/${encodeURIComponent(runId)}/cancel`,
+      { method: "POST" },
+    );
+  }
+
+  /**
+   * Resumption requires query material again. api-0 verifies it against the
+   * durable hash and never trusts a client-provided owner or tenant.
+   */
+  async resumeOmegaRetrievalRun(
+    runId: string,
+    query: string,
+  ): Promise<unknown> {
+    return this.request(
+      `/graymatter/omega/runs/${encodeURIComponent(runId)}/resume`,
+      {
+        body: JSON.stringify({ query }),
+        method: "POST",
+      },
     );
   }
 

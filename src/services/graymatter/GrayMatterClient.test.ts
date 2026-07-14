@@ -567,6 +567,56 @@ describe("GrayMatterClient", () => {
     }
   });
 
+  it("manages a content-free resumable OmegaRAG retrieval run without client identity", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(202, { run: { runId: "run-1", state: "QUEUED" }, replayed: false }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.startOmegaRetrievalRun({
+      budgets: { maxCredits: 2, maxGraphHops: 3 },
+      idempotencyKey: "run-1",
+      includeEvaluator: true,
+      mode: "DEEP",
+      query: "what changed in the project",
+    });
+    await client.getOmegaRetrievalRun("run-1");
+    await client.cancelOmegaRetrievalRun("run-1");
+    await client.resumeOmegaRetrievalRun("run-1", "what changed in the project");
+
+    const [startUrl, startInit] = fetchMock.mock.calls[0];
+    expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/runs");
+    expect(JSON.parse(startInit?.body as string)).toEqual({
+      budgets: { maxCredits: 2, maxGraphHops: 3 },
+      idempotencyKey: "run-1",
+      includeEvaluator: true,
+      mode: "DEEP",
+      query: "what changed in the project",
+    });
+    expect(fetchMock.mock.calls[1][0]).toBe(
+      "https://api.example.test/v1/graymatter/omega/runs/run-1",
+    );
+    expect(fetchMock.mock.calls[1][1]).toEqual(expect.objectContaining({ method: "GET" }));
+    expect(fetchMock.mock.calls[2][0]).toBe(
+      "https://api.example.test/v1/graymatter/omega/runs/run-1/cancel",
+    );
+    expect(fetchMock.mock.calls[2][1]).toEqual(expect.objectContaining({ method: "POST" }));
+    expect(fetchMock.mock.calls[3][0]).toBe(
+      "https://api.example.test/v1/graymatter/omega/runs/run-1/resume",
+    );
+    expect(JSON.parse(fetchMock.mock.calls[3][1]?.body as string)).toEqual({
+      query: "what changed in the project",
+    });
+    for (const [, init] of fetchMock.mock.calls) {
+      expect(JSON.stringify(init?.body ?? "")).not.toContain("ownerId");
+      expect(JSON.stringify(init?.body ?? "")).not.toContain("tenantId");
+    }
+  });
+
   it("can list MemoryEntry records for direct-scan fallback", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, [{ id: "memory-1" }]),
