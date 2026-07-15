@@ -56,6 +56,98 @@ export interface PaymentTransaction {
   description?: string;
 }
 
+export interface CreateCartOrderLineArgs {
+  productId?: string;
+  sku?: string;
+  quantity?: number;
+  lineItemAmount?: number;
+  type?: string;
+}
+
+export interface CreateCartOrderArgs {
+  subtotalAmount?: number;
+  totalAmount?: number;
+  taxAmount?: number;
+  lineItems: CreateCartOrderLineArgs[];
+}
+
+export interface CreateCartOrderResponse {
+  id?: string;
+  orderId?: string;
+  lineItemCount?: number;
+  error?: string;
+  [key: string]: any;
+}
+
+export interface CreateCheckoutSessionArgs {
+  orderId: string;
+  successUrl: string;
+  cancelUrl: string;
+  currency?: string;
+  mode?: "payment" | "subscription";
+  idempotencyKey?: string;
+  amountCents?: never;
+  itemName?: never;
+  productType?: never;
+  sku?: never;
+  termMonths?: never;
+  creditsAmountCents?: never;
+}
+
+export interface CreateCheckoutSessionResponse {
+  session_id?: string;
+  checkout_url?: string;
+  checkoutUrl?: string;
+  url?: string;
+  error?: string;
+  [key: string]: any;
+}
+
+export const VALORIDE_CREDIT_PACKAGE = {
+  sku: "prod_ThB4xwTOkam2P3",
+  dollars: 5,
+  credits: 500,
+} as const;
+
+export const normalizeCreditCheckoutDollars = (dollars: number): number => {
+  if (!Number.isFinite(dollars)) {
+    return VALORIDE_CREDIT_PACKAGE.dollars;
+  }
+  return Math.max(
+    VALORIDE_CREDIT_PACKAGE.dollars,
+    Math.round(dollars / VALORIDE_CREDIT_PACKAGE.dollars) *
+      VALORIDE_CREDIT_PACKAGE.dollars,
+  );
+};
+
+export const buildValorIdeCreditCartOrder = (
+  dollars: number,
+): CreateCartOrderArgs => {
+  const normalizedDollars = normalizeCreditCheckoutDollars(dollars);
+  return {
+    lineItems: [
+      {
+        sku: VALORIDE_CREDIT_PACKAGE.sku,
+        quantity: normalizedDollars / VALORIDE_CREDIT_PACKAGE.dollars,
+        type: "product",
+      },
+    ],
+  };
+};
+
+export const buildValorIdeCheckoutUrls = () => ({
+  successUrl:
+    "https://valkyrlabs.com/checkout/success?session_id={CHECKOUT_SESSION_ID}&source=valoride",
+  cancelUrl: "https://valkyrlabs.com/cart?source=valoride",
+});
+
+export const getCheckoutUrl = (
+  payload: CreateCheckoutSessionResponse,
+): string | undefined => {
+  const url = payload.checkout_url ?? payload.checkoutUrl ?? payload.url;
+  return typeof url === "string" && url.trim() ? url.trim() : undefined;
+};
+
 const finiteNumber = (...values: unknown[]): number | undefined => {
   for (const value of values) {
     const numeric =
@@ -373,8 +465,59 @@ export const creditsApi = createApi({
     "Receipts",
     "AppGeneration",
     "GrayMatter",
+    "Checkout",
   ],
   endpoints: (builder) => ({
+    createCartOrder: builder.mutation<
+      CreateCartOrderResponse,
+      CreateCartOrderArgs
+    >({
+      query: (body) => ({
+        url: "checkout/cart-order",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      }),
+      invalidatesTags: [],
+    }),
+
+    createCheckoutSession: builder.mutation<
+      CreateCheckoutSessionResponse,
+      CreateCheckoutSessionArgs
+    >({
+      query: ({
+        orderId,
+        successUrl,
+        cancelUrl,
+        currency,
+        mode,
+        idempotencyKey,
+      }) => {
+        const body: Record<string, string> = {
+          orderId,
+          successUrl,
+          cancelUrl,
+        };
+        if (currency) {
+          body.currency = currency;
+        }
+        if (mode) {
+          body.mode = mode;
+        }
+
+        return {
+          url: "checkout/create-session",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+          },
+          body,
+        };
+      },
+      invalidatesTags: [{ type: "Checkout", id: "SESSION" }],
+    }),
+
     /**
      * GET /v1/credits/{accountId}/balance
      * This is the SOURCE OF TRUTH for credit balance
@@ -706,6 +849,8 @@ export const creditsApi = createApi({
 export const {
   useGetAccountBalanceQuery,
   useLazyGetAccountBalanceQuery,
+  useCreateCartOrderMutation,
+  useCreateCheckoutSessionMutation,
   useRecordUsageTransactionMutation,
   useRecordPaymentTransactionMutation,
   useCreateAppGenerationRequestMutation,
