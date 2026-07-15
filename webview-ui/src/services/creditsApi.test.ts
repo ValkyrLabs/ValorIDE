@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   chooseBestBalance,
+  creditsApi,
   getAccountBalancePath,
   getAccountBalanceSummaryPath,
   isInsufficientFunds,
@@ -10,6 +11,13 @@ import {
   resolvePrimaryBalanceAccountId,
   selectSyncedAccountBalance,
 } from "./creditsApi";
+
+describe("creditsApi Omega replay contract", () => {
+  it("exposes the exact inspection mutation and trajectory query through the registered API", () => {
+    expect(creditsApi.endpoints.executeOmegaSupersessionRead).toBeDefined();
+    expect(creditsApi.endpoints.getOmegaRetrievalTrajectory).toBeDefined();
+  });
+});
 
 describe("creditsApi isInsufficientFunds", () => {
   it("detects INSUFFICIENT_CREDITS errors", () => {

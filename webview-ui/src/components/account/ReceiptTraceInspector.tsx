@@ -32,8 +32,9 @@ import {
   FaSearch,
   FaServer,
 } from "react-icons/fa";
+import OmegaTraversalReplayPanel from "./OmegaTraversalReplayPanel";
 
-type InspectorMode = "generation" | "skillopt" | "credit" | "swarm";
+type InspectorMode = "generation" | "skillopt" | "credit" | "swarm" | "omega";
 
 type ReceiptTraceInspectorProps = {
   accountId: string;
@@ -851,8 +852,8 @@ const ReceiptTraceInspector = ({
   const activeResult = useMemo(() => {
     if (mode === "generation") return appGenerationTrace;
     if (mode === "skillopt") return skilloptReceipt;
-    if (mode === "swarm") return undefined;
-    return creditDebitReceipt;
+    if (mode === "credit") return creditDebitReceipt;
+    return undefined;
   }, [appGenerationTrace, creditDebitReceipt, mode, skilloptReceipt]);
 
   const currentPayload = mode === "swarm" ? swarmTrace : activeResult?.data;
@@ -911,33 +912,40 @@ const ReceiptTraceInspector = ({
         <ModeButton active={mode === "swarm"} onClick={() => setMode("swarm")}>
           SWARM
         </ModeButton>
+        <ModeButton active={mode === "omega"} onClick={() => setMode("omega")}>
+          Omega replay
+        </ModeButton>
       </div>
 
-      <div className="receipt-trace-lookup">
-        <VSCodeTextField
-          value={receiptRefInput}
-          placeholder={
-            mode === "swarm"
-              ? "receiptRef or SwarmCommandResponse JSON"
-              : "receiptRef"
-          }
-          onInput={(event) =>
-            setReceiptRefInput((event.target as HTMLInputElement).value)
-          }
-        />
-        <VSCodeButton
-          appearance="primary"
-          disabled={!receiptRefInput.trim()}
-          onClick={submitReceiptLookup}
-          title="Lookup receipt"
-        >
-          <FaSearch />
-        </VSCodeButton>
-      </div>
+      {mode !== "omega" ? (
+        <div className="receipt-trace-lookup">
+          <VSCodeTextField
+            value={receiptRefInput}
+            placeholder={
+              mode === "swarm"
+                ? "receiptRef or SwarmCommandResponse JSON"
+                : "receiptRef"
+            }
+            onInput={(event) =>
+              setReceiptRefInput((event.target as HTMLInputElement).value)
+            }
+          />
+          <VSCodeButton
+            appearance="primary"
+            disabled={!receiptRefInput.trim()}
+            onClick={submitReceiptLookup}
+            title="Lookup receipt"
+          >
+            <FaSearch />
+          </VSCodeButton>
+        </div>
+      ) : null}
 
-      {!hasAccountId && mode !== "generation" && (
+      {!hasAccountId && (mode === "skillopt" || mode === "credit") && (
         <div className="receipt-trace-alert">Account scope is required.</div>
       )}
+
+      {mode === "omega" ? <OmegaTraversalReplayPanel /> : null}
 
       {isLoading && (
         <div className="receipt-trace-alert">Loading receipt...</div>

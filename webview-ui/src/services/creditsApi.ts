@@ -56,6 +56,69 @@ export interface PaymentTransaction {
   description?: string;
 }
 
+export type OmegaTemporalInstant = Date | string;
+
+export interface OmegaSupersessionReadRequest {
+  planId: string;
+  query: string;
+  parentSearchReceiptRef: string;
+  selectedSourceRef: string;
+  asOf?: string;
+  maxEdges?: number;
+}
+
+export interface OmegaSupersessionEdge {
+  edgeRef: string;
+  fromType: string;
+  fromRef: string;
+  toType: string;
+  toRef: string;
+  relationType: string;
+  confidence: number;
+  recordedAt: OmegaTemporalInstant;
+  validFrom?: OmegaTemporalInstant;
+  validTo?: OmegaTemporalInstant;
+  recordedFrom?: OmegaTemporalInstant;
+  recordedTo?: OmegaTemporalInstant;
+}
+
+export interface OmegaSupersessionReadResponse {
+  tool: string;
+  planRef: string;
+  parentSearchReceiptRef: string;
+  searchTraceId: string;
+  searchTrajectoryRef: string;
+  inspectionStepSequence: number;
+  selectedSourceRef: string;
+  asOf: OmegaTemporalInstant;
+  temporalBasis: string;
+  edges: OmegaSupersessionEdge[];
+  edgeCount: number;
+  completeWithinReceipt: boolean;
+  policyFlags: string[];
+  observedAt: OmegaTemporalInstant;
+}
+
+export interface OmegaRetrievalTrajectoryStep {
+  trajectoryId: string;
+  traceId: string;
+  sequenceNumber: number;
+  tool?: string;
+  operation?: string;
+  status: string;
+  requestHash?: string;
+}
+
+export interface OmegaRetrievalTrajectoryResponse {
+  trajectory: {
+    trajectoryId: string;
+    traceId: string;
+    receiptRef: string;
+    planRef: string;
+  };
+  steps: OmegaRetrievalTrajectoryStep[];
+}
+
 const finiteNumber = (...values: unknown[]): number | undefined => {
   for (const value of values) {
     const numeric =
@@ -373,6 +436,7 @@ export const creditsApi = createApi({
     "Receipts",
     "AppGeneration",
     "GrayMatter",
+    "OmegaReplay",
   ],
   endpoints: (builder) => ({
     /**
@@ -699,6 +763,28 @@ export const creditsApi = createApi({
         { type: "Receipts", id: `credit-debit-list:${accountId}` },
       ],
     }),
+
+    executeOmegaSupersessionRead: builder.mutation<
+      OmegaSupersessionReadResponse,
+      OmegaSupersessionReadRequest
+    >({
+      query: (request) => ({
+        url: "graymatter/omega/tools/supersession-read",
+        method: "POST",
+        body: request,
+      }),
+    }),
+
+    getOmegaRetrievalTrajectory: builder.query<
+      OmegaRetrievalTrajectoryResponse,
+      string
+    >({
+      query: (trajectoryId) =>
+        `graymatter/omega/trajectories/${encodeURIComponent(trajectoryId)}`,
+      providesTags: (result, error, trajectoryId) => [
+        { type: "OmegaReplay", id: trajectoryId },
+      ],
+    }),
   }),
 });
 
@@ -721,6 +807,8 @@ export const {
   useListSkilloptRouteReceiptsQuery,
   useGetCreditDebitReceiptByReceiptRefQuery,
   useListCreditDebitReceiptsQuery,
+  useExecuteOmegaSupersessionReadMutation,
+  useLazyGetOmegaRetrievalTrajectoryQuery,
 } = creditsApi;
 
 /**
