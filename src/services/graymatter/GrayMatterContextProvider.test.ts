@@ -140,7 +140,7 @@ describe("GrayMatterContextProvider", () => {
     expect(result?.retrievalTraceIds).toEqual(["gm_trace_1", "gm_trace_2"]);
   });
 
-  it("falls back to MemoryEntry query when receipt retrieval is unavailable", async () => {
+  it("does not silently fall back to MemoryEntry query when receipt retrieval is unavailable", async () => {
     const appendLine = jest.fn();
     const provider = new GrayMatterContextProvider({ appendLine }, () => 1000);
     const queryMemory = jest.fn(async () => ({
@@ -163,14 +163,10 @@ describe("GrayMatterContextProvider", () => {
     );
 
     expect(retrieveMemoryWithReceipt).toHaveBeenCalledTimes(2);
-    expect(queryMemory).toHaveBeenCalledTimes(2);
-    expect(result?.formattedBlock).toContain("[gm:fallback-1] decision");
-    expect(result?.retrievalWarnings).toEqual([
-      "receipt_fallback:invariant",
-      "receipt_fallback:context",
-    ]);
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(result).toBeNull();
     expect(appendLine).toHaveBeenCalledWith(
-      expect.stringContaining("Receipt retrieval degraded"),
+      expect.stringContaining("omitting policy-required prompt context"),
     );
   });
 
