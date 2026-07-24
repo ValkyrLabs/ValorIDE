@@ -4,7 +4,7 @@
 
 import { promises as fs } from "fs";
 import { parse as parseYaml } from "yaml";
-import { WorkspaceManifest } from "../types";
+import type { WorkspaceManifest } from "../types.js";
 import { join } from "path";
 
 export class WorkspaceManifestParser {

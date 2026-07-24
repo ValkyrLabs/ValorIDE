@@ -93,12 +93,16 @@ const receiptBoundGraph = (
   const columns = Math.max(1, Math.min(5, identities.size));
   const rows = Math.max(1, Math.ceil(identities.size / columns));
   const horizontalGap = 720 / (columns + 1);
-  const nodes = [...identities.entries()].map(([ref, type], index) => ({
-    ref,
-    type,
-    x: Math.round(horizontalGap * ((index % columns) + 1)),
-    y: 70 + Math.floor(index / columns) * 120,
-  }));
+  const nodes: VisualNode[] = [];
+  identities.forEach((type, ref) => {
+    const index = nodes.length;
+    nodes.push({
+      ref,
+      type,
+      x: Math.round(horizontalGap * ((index % columns) + 1)),
+      y: 70 + Math.floor(index / columns) * 120,
+    });
+  });
   return { nodes, height: Math.max(150, rows * 120) };
 };
 

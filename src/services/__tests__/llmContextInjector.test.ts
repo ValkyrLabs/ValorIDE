@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { LLMContextInjector } from "../llmContextInjector";
 import { PromptService } from "../promptService";
 import { MemoryBankLoader } from "../memoryBankLoader";
+import { GrayMatterContextProvider } from "../graymatter/GrayMatterContextProvider";
 
 /**
  * LLMContextInjector Tests — Verify unified prompt generation

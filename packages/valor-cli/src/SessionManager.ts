@@ -7,7 +7,7 @@ import { promises as fs } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 import { v4 as uuidv4 } from "uuid";
-import { SessionConfig, InstanceInfo } from "./types";
+import type { SessionConfig, InstanceInfo } from "./types.js";
 
 export class SessionManager {
   private sessionsDir: string;

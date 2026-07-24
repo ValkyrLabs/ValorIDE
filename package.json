@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.936",
+  "version": "3.20.945",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -76,6 +76,12 @@
           "type": "tree",
           "id": "valoride-dev.ProjectsView",
           "name": "Projects",
+          "icon": "assets/icons/icon.svg"
+        },
+        {
+          "type": "tree",
+          "id": "valoride-dev.WorkflowProjectsView",
+          "name": "Workflows",
           "icon": "assets/icons/icon.svg"
         }
       ]
@@ -212,6 +218,18 @@
         "title": "Copy Folder Path",
         "category": "ValorIDE",
         "icon": "$(clippy)"
+      },
+      {
+        "command": "valoride.workflows.openProject",
+        "title": "Open Workflow as Project",
+        "category": "ValorIDE",
+        "icon": "$(type-hierarchy-sub)"
+      },
+      {
+        "command": "valoride.workflows.refresh",
+        "title": "Refresh Workflows",
+        "category": "ValorIDE",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {

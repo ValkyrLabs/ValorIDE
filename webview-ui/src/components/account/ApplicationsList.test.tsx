@@ -11,7 +11,7 @@ const mockUseGetApplicationsQuery = vi.fn();
 const mockPostMessage = vi.fn();
 let mockExtensionState: Record<string, unknown>;
 let mockAclAccess: {
-  permissions: string[];
+  permissions: unknown;
   isOwner: boolean;
   isAdmin: boolean;
 };
@@ -223,5 +223,40 @@ describe("ApplicationsList", () => {
     expect(
       screen.getByRole("button", { name: "Publish source" }),
     ).toBeInTheDocument();
+  });
+
+  it("fails closed when ACL permissions are not an array", () => {
+    mockExtensionState = {
+      authenticatedUser: { id: "collaborator-1" },
+      jwtToken: "token",
+    };
+    mockAclAccess = {
+      permissions: { WRITE: true },
+      isOwner: false,
+      isAdmin: false,
+    };
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          ownerId: "owner-1",
+          name: "Shared App",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+
+    expect(
+      screen.queryByRole("button", { name: "Open Blueprint" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Publish source" }),
+    ).not.toBeInTheDocument();
   });
 });

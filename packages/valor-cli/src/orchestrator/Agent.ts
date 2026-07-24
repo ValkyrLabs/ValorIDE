@@ -2,7 +2,7 @@
  * Base Agent class for role-scoped agentic work
  */
 
-import { AgentRole, AgentLedgerEntry } from "../types";
+import type { AgentRole, AgentLedgerEntry } from "../types.js";
 
 export abstract class Agent {
   protected role: AgentRole;

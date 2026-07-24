@@ -4,6 +4,34 @@ import { resolveThorapiFolderPath } from "@utils/thorapi";
 
 const BASE_URL = "https://api-0.valkyrlabs.com";
 
+function normalizeApplicationsResponse(response: unknown): Application[] {
+  if (Array.isArray(response)) {
+    return response as Application[];
+  }
+
+  if (!response || typeof response !== "object") {
+    return [];
+  }
+
+  const payload = response as Record<string, unknown>;
+  const embedded = payload._embedded;
+  const embeddedList =
+    embedded && typeof embedded === "object" && !Array.isArray(embedded)
+      ? Object.values(embedded as Record<string, unknown>).find(Array.isArray)
+      : undefined;
+  const list = [
+    payload.applications,
+    payload.content,
+    payload.data,
+    payload.items,
+    payload.records,
+    payload.results,
+    embeddedList,
+  ].find(Array.isArray);
+
+  return Array.isArray(list) ? (list as Application[]) : [];
+}
+
 export async function getApps(jwt: string): Promise<Application[]> {
   const res = await fetch(`${BASE_URL}/api/apps`, {
     headers: {
@@ -12,7 +40,7 @@ export async function getApps(jwt: string): Promise<Application[]> {
     },
   });
   if (!res.ok) throw new Error(`Failed to fetch apps: ${res.statusText}`);
-  return res.json();
+  return normalizeApplicationsResponse(await res.json());
 }
 
 export async function generateApp(jwt: string, appId: string): Promise<void> {

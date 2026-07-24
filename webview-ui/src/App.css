@@ -1482,6 +1482,7 @@ label {
   gap: 8px;
   margin-top: 14px;
   min-width: 120px;
+  width: 100%;
 }
 
 .application-buttons vscode-button {
@@ -1502,20 +1503,6 @@ label {
 .application-status.status-pending {
   background-color: var(--vscode-editorWarning-foreground);
   color: var(--vscode-editor-background);
-}
-
-@media (min-width: 768px) {
-  .application-buttons {
-    flex-direction: row;
-    gap: 8px;
-    margin-top: 0;
-    min-width: 260px;
-  }
-
-  .application-buttons vscode-button {
-    width: auto;
-    min-width: 80px;
-  }
 }
 
 @media (max-width: 680px) {

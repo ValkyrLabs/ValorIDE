@@ -4,6 +4,7 @@ import {
   resolveThorapiFolderPath,
   thorapiSettingChanged,
 } from "@utils/thorapi";
+import { resolveProjectCommandUri } from "./projectCommandUri";
 
 type Project = {
   name: string;
@@ -106,11 +107,8 @@ export function registerProjectsView(
     }),
   );
 
-  const getUriArg = (arg?: vscode.Uri) => {
-    if (arg) return arg;
-    const sel = view.selection?.[0];
-    return sel?.uri;
-  };
+  const getUriArg = (arg?: unknown) =>
+    resolveProjectCommandUri(arg, view.selection?.[0]);
 
   context.subscriptions.push(
     vscode.commands.registerCommand("valoride.projects.refresh", () =>
@@ -119,8 +117,8 @@ export function registerProjectsView(
     // Build selected project based on detected tool
     vscode.commands.registerCommand(
       "valoride.projects.build",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (!u) return;
         await runProjectTask(u, "build");
       },
@@ -128,24 +126,24 @@ export function registerProjectsView(
     // Run selected project based on detected tool
     vscode.commands.registerCommand(
       "valoride.projects.run",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (!u) return;
         await runProjectTask(u, "run");
       },
     ),
     vscode.commands.registerCommand(
       "valoride.projects.openInWindow",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (u)
           await vscode.commands.executeCommand("vscode.openFolder", u, true);
       },
     ),
     vscode.commands.registerCommand(
       "valoride.projects.openTerminal",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (u) {
           const term = vscode.window.createTerminal({
             cwd: u.fsPath,
@@ -157,15 +155,15 @@ export function registerProjectsView(
     ),
     vscode.commands.registerCommand(
       "valoride.projects.reveal",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (u) await vscode.commands.executeCommand("revealInExplorer", u);
       },
     ),
     vscode.commands.registerCommand(
       "valoride.projects.openReadme",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (!u) return;
         const candidates = ["README.md", "readme.md", "README", "README.txt"];
         for (const filename of candidates) {
@@ -188,8 +186,8 @@ export function registerProjectsView(
     ),
     vscode.commands.registerCommand(
       "valoride.projects.copyPath",
-      async (uri?: vscode.Uri) => {
-        const u = getUriArg(uri);
+      async (target?: unknown) => {
+        const u = getUriArg(target);
         if (u) await vscode.env.clipboard.writeText(u.fsPath);
       },
     ),

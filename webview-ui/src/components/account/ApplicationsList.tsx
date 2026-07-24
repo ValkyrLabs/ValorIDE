@@ -60,9 +60,14 @@ const ApplicationWriteActions: React.FC<ApplicationWriteActionsProps> = ({
     },
     { skip: !applicationId },
   );
-  const permissions = access?.permissions?.map((permission) =>
-    permission.toUpperCase(),
-  );
+  const permissions = Array.isArray(access?.permissions)
+    ? access.permissions
+        .filter(
+          (permission): permission is string =>
+            typeof permission === "string",
+        )
+        .map((permission) => permission.toUpperCase())
+    : [];
   const canWrite =
     isOwned ||
     access?.isOwner ||

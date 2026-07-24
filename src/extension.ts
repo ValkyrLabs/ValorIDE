@@ -287,6 +287,17 @@ export function activate(context: vscode.ExtensionContext) {
       Logger.log(`Projects view registration failed: ${String(e)}`);
     });
 
+  // Project authenticated workflow definitions, fixtures, traces, and secured
+  // artifact metadata into one read-only developer filesystem. Execution and
+  // mutation remain in ValkyrAI's governed workflow services.
+  void import("./integrations/workflows/WorkflowProjectProvider")
+    .then(({ registerWorkflowProjects }) => {
+      registerWorkflowProjects(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Workflow project registration failed: ${String(e)}`);
+    });
+
   // Initialize test mode and set dev mode context
   context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
   vscode.commands.executeCommand(

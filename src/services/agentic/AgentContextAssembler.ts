@@ -222,34 +222,30 @@ export class AgentContextAssembler {
       };
     }
 
-    try {
-      const receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
-        includeEvaluator: false,
-        includeItems: true,
-        includeText: true,
-        qualityProfile: "DEFAULT",
-        query: query.query,
-        retrievalMode: "HYBRID",
-        topK: query.limit ?? DEFAULT_MAX_ENTRIES,
-      });
-      const metadata = extractReceiptMetadata(receiptResponse);
-      const policyWarning = receiptPolicyWarning(metadata);
+    const receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
+      includeEvaluator: false,
+      includeItems: true,
+      includeText: true,
+      qualityProfile: "DEFAULT",
+      query: query.query,
+      retrievalMode: "HYBRID",
+      topK: query.limit ?? DEFAULT_MAX_ENTRIES,
+    });
+    const metadata = extractReceiptMetadata(receiptResponse);
+    const policyWarning = receiptPolicyWarning(metadata);
 
-      if (receiptPolicyBlocks(metadata)) {
-        return {
-          metadata,
-          warning: policyWarning,
-        };
-      }
-
+    if (receiptPolicyBlocks(metadata)) {
       return {
         metadata,
-        usedReceipt: true,
-        value: receiptResponse,
+        warning: policyWarning,
       };
-    } catch (error) {
-      throw error;
     }
+
+    return {
+      metadata,
+      usedReceipt: true,
+      value: receiptResponse,
+    };
   }
 }
 

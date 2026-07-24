@@ -4,7 +4,7 @@
 
 import { promises as fs } from "fs";
 import { join } from "path";
-import { WorkspaceManifest, CheckpointInfo } from "../types";
+import type { WorkspaceManifest, CheckpointInfo } from "../types.js";
 
 export class CheckpointDriver {
   private manifest: WorkspaceManifest;

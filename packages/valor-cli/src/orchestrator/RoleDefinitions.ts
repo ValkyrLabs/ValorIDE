@@ -2,7 +2,7 @@
  * Role Definitions - System prompts and configuration for each agent role
  */
 
-import { AgentRole } from "../types";
+import type { AgentRole } from "../types.js";
 
 export const ROLE_DEFINITIONS: Record<string, AgentRole> = {
   planner: {

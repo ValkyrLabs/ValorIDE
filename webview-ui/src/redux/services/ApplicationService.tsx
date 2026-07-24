@@ -1,6 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Application } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery"; // Import the custom base query
+import {
+  applicationTagsFor,
+  normalizeApplicationResponse,
+} from "./applicationResponse";
 
 type ApplicationResponse = Application[];
 
@@ -16,10 +20,11 @@ export const ApplicationService = createApi({
     >({
       query: ({ page, limit = 20 }) =>
         `Application?page=${page}&limit=${limit}`,
+      transformResponse: normalizeApplicationResponse,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
+              ...applicationTagsFor(result),
               { type: "Application", id: `PAGE_${page}` },
             ]
           : [],
@@ -31,10 +36,11 @@ export const ApplicationService = createApi({
         url: `Application`,
         method: "GET",
       }),
+      transformResponse: normalizeApplicationResponse,
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
+              ...applicationTagsFor(result),
               { type: "Application", id: "LIST" },
             ]
           : [{ type: "Application", id: "LIST" }],
