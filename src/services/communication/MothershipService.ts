@@ -33,7 +33,6 @@ export interface RemoteCommand {
  * for real-time communication and remote control capabilities.
  */
 export class MothershipService extends EventEmitter {
-  private static readonly CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS = 10_000;
   private stompClient: Client | null = null;
   private subscriptions: StompSubscription[] = [];
   private options: MothershipConnectionOptions;
@@ -85,9 +84,7 @@ export class MothershipService extends EventEmitter {
         connectHeaders: this.buildAgentHeaders(),
         debug: (message) => console.debug("Mothership STOMP:", message),
         reconnectDelay: this.reconnectDelay,
-        onConnect: () => {
-          void this.handleConnected();
-        },
+        onConnect: () => this.handleConnected(),
         onDisconnect: (frame) => {
           console.log("Mothership STOMP disconnected:", frame.headers.message);
           this.handleDisconnected(frame);
@@ -212,20 +209,11 @@ export class MothershipService extends EventEmitter {
     };
   }
 
-  private async handleConnected(): Promise<void> {
+  private handleConnected(): void {
     console.log("Mothership STOMP connected");
     this.connected = true;
     this.reconnectAttempts = 0;
-    try {
-      await this.subscribeToMothershipTopics();
-    } catch (error) {
-      this.connected = false;
-      this.emit("error", error);
-      return;
-    }
-    if (!this.stompClient?.connected) {
-      return;
-    }
+    this.subscribeToMothershipTopics();
     this.startPingInterval();
     this.emit("connected");
 
@@ -264,55 +252,30 @@ export class MothershipService extends EventEmitter {
     }
   }
 
-  private async subscribeToMothershipTopics(): Promise<void> {
+  private subscribeToMothershipTopics(): void {
     if (!this.stompClient?.connected) {
-      throw new Error(
-        "Cannot subscribe to mothership topics before STOMP is connected",
-      );
+      return;
     }
 
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     this.subscriptions = [];
 
     const headers = this.buildAgentHeaders();
-    const controlDestination = "/user/queue/swarm-control";
     const destinations = [
       "/topic/messages",
       "/topic/statuses",
       "/topic/agent-commands",
-      controlDestination,
+      "/user/queue/swarm-control",
       `/queue/agents/${this.instanceId}/commands`,
     ];
 
-    const receiptId = `swarm-control-${this.instanceId}-${Date.now()}`;
-    const controlReady = new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(
-          new Error(
-            `Mothership SWARM control subscription was not acknowledged within ${MothershipService.CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS}ms`,
-          ),
-        );
-      }, MothershipService.CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS);
-
-      this.stompClient!.watchForReceipt(receiptId, () => {
-        clearTimeout(timeout);
-        resolve();
-      });
-    });
-
-    this.subscriptions = destinations.map((destination) => {
-      const subscriptionHeaders =
-        destination === controlDestination
-          ? { ...headers, receipt: receiptId }
-          : headers;
-      return this.stompClient!.subscribe(
+    this.subscriptions = destinations.map((destination) =>
+      this.stompClient!.subscribe(
         destination,
         (message) => this.handleStompMessage(message),
-        subscriptionHeaders,
-      );
-    });
-
-    await controlReady;
+        headers,
+      ),
+    );
   }
 
   private handleStompMessage(message: IMessage): void {

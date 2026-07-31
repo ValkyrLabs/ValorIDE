@@ -68,59 +68,22 @@ describe("MothershipService", () => {
     );
   });
 
-  it("subscribes to the authenticated session-scoped SWARM control reply queue", async () => {
+  it("subscribes to the authenticated session-scoped SWARM control reply queue", () => {
     const svc: any = new MothershipService({
       jwtToken: "token",
       userId: "user-1",
       instanceId: "valoride-target",
     } as any);
     const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }));
-    const watchForReceipt = vi.fn((_receiptId, callback) => callback());
-    svc.stompClient = { connected: true, subscribe, watchForReceipt };
+    svc.stompClient = { connected: true, subscribe };
 
-    await svc.subscribeToMothershipTopics();
+    svc.subscribeToMothershipTopics();
 
     expect(subscribe).toHaveBeenCalledWith(
       "/user/queue/swarm-control",
       expect.any(Function),
-      expect.objectContaining({
-        receipt: expect.stringContaining("swarm-control-valoride-target-"),
-      }),
+      expect.any(Object),
     );
-  });
-
-  it("does not announce mothership readiness until the SWARM reply subscription is broker-confirmed", async () => {
-    const svc: any = new MothershipService({
-      jwtToken: "token",
-      userId: "user-1",
-      instanceId: "valoride-target",
-    } as any);
-    const publish = vi.fn();
-    const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }));
-    let confirmSubscription: (() => void) | undefined;
-    const watchForReceipt = vi.fn((_receiptId, callback) => {
-      confirmSubscription = callback;
-    });
-    svc.stompClient = {
-      connected: true,
-      publish,
-      subscribe,
-      watchForReceipt,
-    };
-    const connected = vi.fn();
-    svc.on("connected", connected);
-
-    const connectPromise = svc.handleConnected();
-    await Promise.resolve();
-
-    expect(connected).not.toHaveBeenCalled();
-    expect(publish).not.toHaveBeenCalled();
-
-    confirmSubscription?.();
-    await connectPromise;
-
-    expect(connected).toHaveBeenCalledOnce();
-    expect(publish).toHaveBeenCalled();
   });
 
   it("publishes registration to the dedicated SWARM control endpoint", () => {

@@ -26,10 +26,13 @@ export interface MothershipTopicBridge {
 type PendingAck = {
   message: SwarmMessage;
   resolve: (message: SwarmMessage) => void;
+  retryTimers: Array<ReturnType<typeof setTimeout>>;
   timeout: ReturnType<typeof setTimeout>;
 };
 
 const DEFAULT_ACK_TIMEOUT_MS = 30_000;
+const REGISTRATION_ACK_TIMEOUT_MS = 60_000;
+const REGISTRATION_RETRY_DELAYS_MS = [1_000, 5_000, 15_000] as const;
 
 export class MothershipSwarmTransport implements SwarmNodeTransport {
   private readonly pending = new Map<string, PendingAck>();
@@ -76,24 +79,43 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
 
   sendAndWaitForAck(
     message: SwarmMessage,
-    timeoutMs = DEFAULT_ACK_TIMEOUT_MS,
+    timeoutMs?: number,
   ): Promise<SwarmMessage> {
     return new Promise((resolve) => {
+      const action = String(message.payload?.action ?? "").toLowerCase();
+      const isRegistration = action === "register";
+      const effectiveTimeoutMs =
+        timeoutMs ??
+        (isRegistration
+          ? REGISTRATION_ACK_TIMEOUT_MS
+          : DEFAULT_ACK_TIMEOUT_MS);
       const timeout = setTimeout(() => {
         this.resolvePending(
           message.id,
           buildNack(
             message,
             this.serverEntity,
-            `Timeout waiting for SWARM ack/nack (${timeoutMs}ms)`,
+            `Timeout waiting for SWARM ack/nack (${effectiveTimeoutMs}ms)`,
             "ERR_ACK_TIMEOUT",
           ),
         );
-      }, timeoutMs);
+      }, effectiveTimeoutMs);
+      const retryTimers = isRegistration
+        ? REGISTRATION_RETRY_DELAYS_MS.filter(
+            (delay) => delay < effectiveTimeoutMs,
+          ).map((delay) =>
+            setTimeout(() => {
+              if (this.pending.has(message.id)) {
+                this.send(message);
+              }
+            }, delay),
+          )
+        : [];
 
       this.pending.set(message.id, {
         message,
         resolve,
+        retryTimers,
         timeout,
       });
       this.send(message);
@@ -106,6 +128,7 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
 
     for (const pending of this.pending.values()) {
       clearTimeout(pending.timeout);
+      pending.retryTimers.forEach((timer) => clearTimeout(timer));
       pending.resolve(
         buildNack(
           pending.message,
@@ -179,6 +202,7 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
     }
 
     clearTimeout(pending.timeout);
+    pending.retryTimers.forEach((timer) => clearTimeout(timer));
     this.pending.delete(messageId);
     pending.resolve(response);
   }
