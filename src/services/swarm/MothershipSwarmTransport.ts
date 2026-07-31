@@ -19,6 +19,7 @@ export interface MothershipTopicBridge {
     listener: (payload: any) => void,
   ): unknown;
   sendAppTopic(topic: string, data: any): void;
+  sendSwarmControlPayload?(data: any): void;
   sendCommandPayload?(data: any): void;
 }
 
@@ -58,6 +59,15 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
         error: message.payload.data.error,
         status: message.type === SwarmMessageType.ACK ? "ok" : "rejected",
       });
+      return;
+    }
+
+    const action = String(message.payload?.action ?? "").toLowerCase();
+    if (
+      (action === "register" || action === "heartbeat") &&
+      this.mothership.sendSwarmControlPayload
+    ) {
+      this.mothership.sendSwarmControlPayload(message);
       return;
     }
 

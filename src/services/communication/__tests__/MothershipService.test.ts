@@ -68,6 +68,93 @@ describe("MothershipService", () => {
     );
   });
 
+  it("subscribes to the authenticated session-scoped SWARM control reply queue", async () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }));
+    const watchForReceipt = vi.fn((_receiptId, callback) => callback());
+    svc.stompClient = { connected: true, subscribe, watchForReceipt };
+
+    await svc.subscribeToMothershipTopics();
+
+    expect(subscribe).toHaveBeenCalledWith(
+      "/user/queue/swarm-control",
+      expect.any(Function),
+      expect.objectContaining({
+        receipt: expect.stringContaining("swarm-control-valoride-target-"),
+      }),
+    );
+  });
+
+  it("does not announce mothership readiness until the SWARM reply subscription is broker-confirmed", async () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }));
+    let confirmSubscription: (() => void) | undefined;
+    const watchForReceipt = vi.fn((_receiptId, callback) => {
+      confirmSubscription = callback;
+    });
+    svc.stompClient = {
+      connected: true,
+      publish,
+      subscribe,
+      watchForReceipt,
+    };
+    const connected = vi.fn();
+    svc.on("connected", connected);
+
+    const connectPromise = svc.handleConnected();
+    await Promise.resolve();
+
+    expect(connected).not.toHaveBeenCalled();
+    expect(publish).not.toHaveBeenCalled();
+
+    confirmSubscription?.();
+    await connectPromise;
+
+    expect(connected).toHaveBeenCalledOnce();
+    expect(publish).toHaveBeenCalled();
+  });
+
+  it("publishes registration to the dedicated SWARM control endpoint", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = { connected: true, publish };
+    svc.connected = true;
+
+    svc.sendSwarmControlPayload({
+      id: "register-1",
+      payload: { action: "register" },
+    });
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        destination: "/app/swarm/control",
+      }),
+    );
+    const body = JSON.parse(publish.mock.calls[0][0].body);
+    const envelope = JSON.parse(body.payload);
+    expect(envelope).toMatchObject({
+      topic: "swarm",
+      payload: {
+        id: "register-1",
+        payload: { action: "register" },
+      },
+      senderId: "valoride-target",
+    });
+  });
+
   it("normalizes generated uppercase COMMAND envelopes without dropping the action or instruction", () => {
     const svc: any = new MothershipService({
       jwtToken: "token",

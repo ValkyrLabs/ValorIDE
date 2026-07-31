@@ -11,11 +11,12 @@ const createMothership = () => ({
   on: jest.fn(),
   removeListener: jest.fn(),
   sendAppTopic: jest.fn(),
+  sendSwarmControlPayload: jest.fn(),
   sendCommandPayload: jest.fn(),
 });
 
 describe("MothershipSwarmTransport", () => {
-  it("sends SWARM messages over the mothership app topic and resolves protocol ACKs", async () => {
+  it("sends registration over the session-scoped SWARM control channel and resolves protocol ACKs", async () => {
     const mothership = createMothership();
     const transport = new MothershipSwarmTransport(mothership);
     const message = buildSwarmMessage(
@@ -42,7 +43,8 @@ describe("MothershipSwarmTransport", () => {
       ackId: message.id,
       type: SwarmMessageType.ACK,
     });
-    expect(mothership.sendAppTopic).toHaveBeenCalledWith("swarm", message);
+    expect(mothership.sendSwarmControlPayload).toHaveBeenCalledWith(message);
+    expect(mothership.sendAppTopic).not.toHaveBeenCalledWith("swarm", message);
   });
 
   it("publishes command ACKs through the mothership command channel", () => {

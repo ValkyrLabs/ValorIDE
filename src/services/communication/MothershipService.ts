@@ -33,6 +33,7 @@ export interface RemoteCommand {
  * for real-time communication and remote control capabilities.
  */
 export class MothershipService extends EventEmitter {
+  private static readonly CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS = 10_000;
   private stompClient: Client | null = null;
   private subscriptions: StompSubscription[] = [];
   private options: MothershipConnectionOptions;
@@ -84,7 +85,9 @@ export class MothershipService extends EventEmitter {
         connectHeaders: this.buildAgentHeaders(),
         debug: (message) => console.debug("Mothership STOMP:", message),
         reconnectDelay: this.reconnectDelay,
-        onConnect: () => this.handleConnected(),
+        onConnect: () => {
+          void this.handleConnected();
+        },
         onDisconnect: (frame) => {
           console.log("Mothership STOMP disconnected:", frame.headers.message);
           this.handleDisconnected(frame);
@@ -209,11 +212,20 @@ export class MothershipService extends EventEmitter {
     };
   }
 
-  private handleConnected(): void {
+  private async handleConnected(): Promise<void> {
     console.log("Mothership STOMP connected");
     this.connected = true;
     this.reconnectAttempts = 0;
-    this.subscribeToMothershipTopics();
+    try {
+      await this.subscribeToMothershipTopics();
+    } catch (error) {
+      this.connected = false;
+      this.emit("error", error);
+      return;
+    }
+    if (!this.stompClient?.connected) {
+      return;
+    }
     this.startPingInterval();
     this.emit("connected");
 
@@ -252,29 +264,55 @@ export class MothershipService extends EventEmitter {
     }
   }
 
-  private subscribeToMothershipTopics(): void {
+  private async subscribeToMothershipTopics(): Promise<void> {
     if (!this.stompClient?.connected) {
-      return;
+      throw new Error(
+        "Cannot subscribe to mothership topics before STOMP is connected",
+      );
     }
 
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     this.subscriptions = [];
 
     const headers = this.buildAgentHeaders();
+    const controlDestination = "/user/queue/swarm-control";
     const destinations = [
       "/topic/messages",
       "/topic/statuses",
       "/topic/agent-commands",
+      controlDestination,
       `/queue/agents/${this.instanceId}/commands`,
     ];
 
-    this.subscriptions = destinations.map((destination) =>
-      this.stompClient!.subscribe(
+    const receiptId = `swarm-control-${this.instanceId}-${Date.now()}`;
+    const controlReady = new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(
+          new Error(
+            `Mothership SWARM control subscription was not acknowledged within ${MothershipService.CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS}ms`,
+          ),
+        );
+      }, MothershipService.CONTROL_SUBSCRIPTION_READY_TIMEOUT_MS);
+
+      this.stompClient!.watchForReceipt(receiptId, () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+
+    this.subscriptions = destinations.map((destination) => {
+      const subscriptionHeaders =
+        destination === controlDestination
+          ? { ...headers, receipt: receiptId }
+          : headers;
+      return this.stompClient!.subscribe(
         destination,
         (message) => this.handleStompMessage(message),
-        headers,
-      ),
-    );
+        subscriptionHeaders,
+      );
+    });
+
+    await controlReady;
   }
 
   private handleStompMessage(message: IMessage): void {
@@ -549,7 +587,10 @@ export class MothershipService extends EventEmitter {
     }
   }
 
-  public sendMessage(message: Partial<WebsocketMessage>): void {
+  public sendMessage(
+    message: Partial<WebsocketMessage>,
+    destination?: string,
+  ): void {
     if (!this.connected || !this.stompClient?.connected) {
       console.warn("Cannot send message - mothership not connected");
       return;
@@ -594,9 +635,10 @@ export class MothershipService extends EventEmitter {
       this.stompClient.publish({
         body: JSON.stringify(jsonMessage),
         destination:
-          fullMessage.type === ("command" as any)
+          destination ??
+          (fullMessage.type === ("command" as any)
             ? "/app/command"
-            : "/app/chat",
+            : "/app/chat"),
         headers: this.buildAgentHeaders(),
       });
     } catch (error) {
@@ -610,6 +652,25 @@ export class MothershipService extends EventEmitter {
       payload: JSON.stringify(data),
       time: new Date().toISOString(),
     });
+  }
+
+  public sendSwarmControlPayload(data: any): void {
+    const envelope = {
+      topic: "swarm",
+      payload: data,
+      senderId: this.instanceId,
+      messageId: Math.random().toString(36).slice(2, 12),
+      sequence: ++this.outboundSequence,
+      timestamp: Date.now(),
+    };
+    this.sendMessage(
+      {
+        type: WebsocketMessageTypeEnum.BROADCAST,
+        payload: JSON.stringify(envelope),
+        time: new Date().toISOString(),
+      },
+      "/app/swarm/control",
+    );
   }
 
   public sendValorIDEAction(taskId: string, action: string, data: any): void {
