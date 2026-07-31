@@ -489,10 +489,15 @@ export class MothershipService extends EventEmitter {
   private handleRemoteCommand(payload: any): void {
     try {
       const commandPayload = payload?.command ?? payload?.message ?? payload;
-      const isSwarmCommand = validateSwarmMessage(commandPayload);
-      const innerPayload = isSwarmCommand
+      const generatedCommandEnvelope =
+        String(commandPayload?.type ?? "").toLowerCase() === "command" &&
+        typeof commandPayload?.payload?.action === "string";
+      const isSwarmCommand =
+        validateSwarmMessage(commandPayload) || generatedCommandEnvelope;
+      const innerPayloadRaw = isSwarmCommand
         ? commandPayload.payload?.data
         : (commandPayload?.data ?? commandPayload?.payload ?? payload?.payload);
+      const innerPayload = this.parseRemoteCommandPayload(innerPayloadRaw);
       const command: RemoteCommand = {
         id:
           payload?.commandId ||
@@ -530,6 +535,17 @@ export class MothershipService extends EventEmitter {
       this.emit("remoteCommand", command);
     } catch (error) {
       console.error("Error processing remote command:", error);
+    }
+  }
+
+  private parseRemoteCommandPayload(payload: any): any {
+    if (typeof payload !== "string") {
+      return payload;
+    }
+    try {
+      return JSON.parse(payload);
+    } catch {
+      return payload;
     }
   }
 

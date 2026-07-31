@@ -95,6 +95,7 @@ const EXECUTABLE_SWARM_ACTIONS = new Set([
   "code.execute",
   "deploy-application",
   "execute",
+  "filesystem.write",
   "ide.execute",
   "new-task",
   "newtask",
@@ -670,6 +671,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     data: Record<string, any>,
   ): string {
     const candidates = [
+      data.instruction,
       data.text,
       data.prompt,
       data.message,

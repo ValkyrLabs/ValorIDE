@@ -67,4 +67,40 @@ describe("MothershipService", () => {
       }),
     );
   });
+
+  it("normalizes generated uppercase COMMAND envelopes without dropping the action or instruction", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const received = vi.fn();
+    svc.on("remoteCommand", received);
+
+    svc.handleRemoteCommand({
+      commandId: "command-1",
+      type: "COMMAND",
+      from: { instanceId: "api-0", type: "server" },
+      to: { instanceId: "valoride-target", type: "agent" },
+      payload: {
+        action: "filesystem.write",
+        data: JSON.stringify({
+          instruction: "Write Hello World and open the file.",
+        }),
+      },
+    });
+
+    expect(received).toHaveBeenCalledOnce();
+    expect(received).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "command-1",
+        type: "filesystem.write",
+        sourceInstanceId: "api-0",
+        targetInstanceId: "valoride-target",
+        payload: {
+          instruction: "Write Hello World and open the file.",
+        },
+      }),
+    );
+  });
 });
