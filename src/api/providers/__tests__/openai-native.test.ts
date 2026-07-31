@@ -1,4 +1,7 @@
-import { extractOpenAiResponsesReasoningText } from "../openai-native-events";
+import {
+  extractOpenAiResponsesReasoningText,
+  takeOpenAiResponsesEventsThroughCompletion,
+} from "../openai-native-events";
 
 describe("OpenAI native Responses reasoning summaries", () => {
   it("extracts streamed reasoning summary text deltas", () => {
@@ -34,5 +37,56 @@ describe("OpenAI native Responses reasoning summaries", () => {
         },
       } as any),
     ).toBe("Found the Responses API stream path.");
+  });
+});
+
+describe("OpenAI native Responses terminal events", () => {
+  it("ends the ValorIDE stream immediately after response.completed", async () => {
+    let consumedAfterCompletion = false;
+
+    async function* responseEvents() {
+      yield {
+        type: "response.output_text.delta",
+        delta: "Done",
+      };
+      yield {
+        type: "response.completed",
+        response: {
+          usage: {
+            input_tokens: 4,
+            output_tokens: 1,
+          },
+        },
+      };
+      consumedAfterCompletion = true;
+      yield {
+        type: "error",
+        message: "The terminal event should have stopped iteration.",
+      };
+    }
+
+    const events = [];
+    for await (const event of takeOpenAiResponsesEventsThroughCompletion(
+      responseEvents(),
+    )) {
+      events.push(event);
+    }
+
+    expect(consumedAfterCompletion).toBe(false);
+    expect(events).toEqual([
+      {
+        type: "response.output_text.delta",
+        delta: "Done",
+      },
+      {
+        type: "response.completed",
+        response: {
+          usage: {
+            input_tokens: 4,
+            output_tokens: 1,
+          },
+        },
+      },
+    ]);
   });
 });
