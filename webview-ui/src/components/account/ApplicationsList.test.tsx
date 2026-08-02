@@ -1,6 +1,12 @@
 import React from "react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
 import ApplicationsList, {
   getApplicationDeployUrl,
   getApplicationOpenUrl,
@@ -8,6 +14,7 @@ import ApplicationsList, {
 
 const mockRefetch = vi.fn();
 const mockUseGetApplicationsQuery = vi.fn();
+const mockGenerateApplication = vi.fn();
 const mockPostMessage = vi.fn();
 let mockExtensionState: Record<string, unknown>;
 let mockAclAccess: {
@@ -19,7 +26,10 @@ let mockAclAccess: {
 vi.mock("../../redux/services/ApplicationService", () => ({
   useGetApplicationsQuery: (...args: any[]) =>
     mockUseGetApplicationsQuery(...args),
-  useGenerateApplicationMutation: () => [vi.fn(), { isLoading: false }],
+  useGenerateApplicationMutation: () => [
+    mockGenerateApplication,
+    { isLoading: false },
+  ],
   useDeployApplicationMutation: () => [vi.fn(), { isLoading: false }],
 }));
 
@@ -39,6 +49,7 @@ describe("ApplicationsList", () => {
   beforeEach(() => {
     mockRefetch.mockReset();
     mockUseGetApplicationsQuery.mockReset();
+    mockGenerateApplication.mockReset();
     mockPostMessage.mockReset();
     mockExtensionState = {
       userInfo: null,
@@ -258,5 +269,106 @@ describe("ApplicationsList", () => {
     expect(
       screen.queryByRole("button", { name: "Publish source" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("keeps the generation checklist open with the transport failure", async () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          name: "Sample App",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+    mockGenerateApplication.mockReturnValue({
+      unwrap: vi.fn().mockRejectedValue({
+        status: "TIMEOUT_ERROR",
+        error: "ThorAPI request timed out after 600000 ms.",
+      }),
+    });
+
+    render(<ApplicationsList />);
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+
+    expect(
+      await screen.findByRole("alert", {
+        name: "Application generation failed",
+      }),
+    ).toHaveTextContent("ThorAPI request timed out after 600000 ms.");
+    expect(screen.getByText("Receiving Application")).toBeInTheDocument();
+    expect(screen.getByText("Processing Data")).toBeInTheDocument();
+    expect(screen.getByText("Extracting Files")).toBeInTheDocument();
+    expect(screen.getByText("Finalizing Setup")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
+  });
+
+  it("keeps extension extraction failures visible after the archive arrives", async () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [
+        {
+          id: "app-1",
+          name: "Sample App",
+          status: "ready",
+        },
+      ],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+    mockGenerateApplication.mockReturnValue({
+      unwrap: vi.fn().mockResolvedValue({
+        filename: "sample.zip",
+        mimeType: "application/zip",
+        blob: {
+          type: "application/zip",
+          arrayBuffer: vi
+            .fn()
+            .mockResolvedValue(new TextEncoder().encode("zip-data").buffer),
+        },
+      }),
+    });
+
+    render(<ApplicationsList />);
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+
+    await waitFor(() =>
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "streamToThorapi",
+          applicationId: "app-1",
+          filename: "sample.zip",
+        }),
+      ),
+    );
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              success: false,
+              applicationId: "app-1",
+              error: "Failed to extract archive: invalid central directory",
+              step: "error",
+            },
+          },
+        }),
+      );
+    });
+
+    expect(
+      await screen.findByRole("alert", {
+        name: "Application generation failed",
+      }),
+    ).toHaveTextContent("Failed to extract archive: invalid central directory");
+    expect(screen.getByText("Extracting Files")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
   });
 });

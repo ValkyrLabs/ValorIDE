@@ -4904,7 +4904,12 @@ export class Controller {
         headers,
         responseType:
           request.responseType === "arraybuffer" ? "arraybuffer" : "json",
-        timeout: 30000,
+        timeout:
+          typeof request.timeoutMs === "number" &&
+          Number.isFinite(request.timeoutMs) &&
+          request.timeoutMs > 0
+            ? Math.min(Math.round(request.timeoutMs), 10 * 60_000)
+            : 30_000,
         validateStatus: () => true,
       });
       const responseHeaders = Object.fromEntries(

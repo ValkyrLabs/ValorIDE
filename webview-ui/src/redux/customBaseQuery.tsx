@@ -81,6 +81,16 @@ type ThorapiBridgeResult =
       };
     };
 
+const DEFAULT_THORAPI_BRIDGE_TIMEOUT_MS = 30_000;
+const MAX_THORAPI_BRIDGE_TIMEOUT_MS = 10 * 60_000;
+
+const normalizeThorapiBridgeTimeoutMs = (value: unknown): number => {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    return DEFAULT_THORAPI_BRIDGE_TIMEOUT_MS;
+  }
+  return Math.min(Math.round(value), MAX_THORAPI_BRIDGE_TIMEOUT_MS);
+};
+
 const createRequestId = () => {
   if (
     typeof crypto !== "undefined" &&
@@ -138,6 +148,7 @@ const argsToThorapiRequest = (args: any) => {
     responseType: hasCustomResponseHandler(args)
       ? ("arraybuffer" as const)
       : undefined,
+    timeoutMs: normalizeThorapiBridgeTimeoutMs(args?.timeoutMs),
   };
 };
 
@@ -235,6 +246,7 @@ const extensionThorapiBaseQuery = async (
 ): Promise<ThorapiBridgeResult> => {
   const requestId = createRequestId();
   const request = withStoredAuthHeaders(argsToThorapiRequest(args));
+  const timeoutMs = normalizeThorapiBridgeTimeoutMs(request.timeoutMs);
 
   return new Promise<ThorapiBridgeResult>((resolve) => {
     let handleResponse: (event: MessageEvent) => void = () => undefined;
@@ -243,10 +255,10 @@ const extensionThorapiBaseQuery = async (
       resolve({
         error: {
           status: "TIMEOUT_ERROR",
-          error: "ThorAPI request timed out.",
+          error: `ThorAPI request timed out after ${timeoutMs} ms.`,
         },
       });
-    }, 30000);
+    }, timeoutMs);
 
     handleResponse = (event: MessageEvent) => {
       const message = event.data;

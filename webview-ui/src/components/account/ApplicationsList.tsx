@@ -24,11 +24,47 @@ interface ApplicationsListProps {
   title?: string;
 }
 
+type ApplicationGenerationStep =
+  | "receiving"
+  | "processing"
+  | "extracting"
+  | "finalizing";
+
+const GENERATION_STEPS: Array<{
+  id: ApplicationGenerationStep;
+  label: string;
+  description: string;
+}> = [
+  {
+    id: "receiving",
+    label: "Receiving Application",
+    description: "Downloading application payload...",
+  },
+  {
+    id: "processing",
+    label: "Processing Data",
+    description: "Analyzing application structure...",
+  },
+  {
+    id: "extracting",
+    label: "Extracting Files",
+    description: "Creating project structure...",
+  },
+  {
+    id: "finalizing",
+    label: "Finalizing Setup",
+    description: "Preparing development environment...",
+  },
+];
+
 interface ApplicationLoadingState {
   generating: boolean;
   deploying: boolean;
   publishing?: boolean;
   sourceStatus?: string;
+  currentStep?: ApplicationGenerationStep;
+  statusMessage?: string;
+  error?: string;
   steps: {
     receiving: boolean;
     processing: boolean;
@@ -36,6 +72,52 @@ interface ApplicationLoadingState {
     finalizing: boolean;
   };
 }
+
+const isGenerationStep = (value: unknown): value is ApplicationGenerationStep =>
+  GENERATION_STEPS.some((step) => step.id === value);
+
+const generationStepLabel = (
+  value: ApplicationGenerationStep | undefined,
+): string =>
+  GENERATION_STEPS.find((step) => step.id === value)?.label || "generation";
+
+const stepsCompletedBefore = (
+  currentStep: ApplicationGenerationStep,
+): ApplicationLoadingState["steps"] => {
+  const currentIndex = GENERATION_STEPS.findIndex(
+    (step) => step.id === currentStep,
+  );
+  return Object.fromEntries(
+    GENERATION_STEPS.map((step, index) => [step.id, index < currentIndex]),
+  ) as ApplicationLoadingState["steps"];
+};
+
+export const formatApplicationGenerationError = (value: unknown): string => {
+  if (value instanceof Error && value.message.trim()) {
+    return value.message;
+  }
+  if (value && typeof value === "object") {
+    const candidate = value as {
+      error?: unknown;
+      data?: unknown;
+      status?: unknown;
+    };
+    const data = candidate.data as
+      | { message?: unknown; error?: unknown }
+      | string
+      | undefined;
+    const message =
+      candidate.error ||
+      (typeof data === "string" ? data : data?.message || data?.error);
+    if (message) {
+      return String(message);
+    }
+    if (candidate.status) {
+      return `Generation request failed (${String(candidate.status)}).`;
+    }
+  }
+  return "Unknown error occurred";
+};
 
 interface ApplicationWriteActionsProps {
   application: Application;
@@ -281,9 +363,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         "ApplicationsList: Processing streamToThorapiResult:",
         message.streamToThorapiResult,
       );
-      const { success, applicationId, error } = message.streamToThorapiResult;
+      const {
+        success,
+        applicationId,
+        error,
+        step,
+        message: progressMessage,
+      } = message.streamToThorapiResult;
 
-      if (success && applicationId) {
+      if (!applicationId) {
+        return;
+      }
+
+      if (success && step === "completed") {
         console.log(
           "ApplicationsList: Success! Completing steps for:",
           applicationId,
@@ -294,6 +386,9 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
           [applicationId]: {
             ...prev[applicationId],
             generating: false,
+            currentStep: "finalizing",
+            statusMessage: progressMessage,
+            error: undefined,
             steps: {
               receiving: true,
               processing: true,
@@ -308,23 +403,47 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
           (prev) => new Set([...Array.from(prev), applicationId]),
         );
         setShowFileExplorer(true);
-      } else if (error && applicationId) {
+      } else if (success && isGenerationStep(step)) {
+        setLoadingStates((prev) => {
+          const completedSteps = stepsCompletedBefore(step);
+          const existingSteps = prev[applicationId]?.steps;
+          return {
+            ...prev,
+            [applicationId]: {
+              ...prev[applicationId],
+              generating: true,
+              currentStep: step,
+              statusMessage: progressMessage,
+              error: undefined,
+              steps: {
+                receiving:
+                  Boolean(existingSteps?.receiving) || completedSteps.receiving,
+                processing:
+                  Boolean(existingSteps?.processing) ||
+                  completedSteps.processing,
+                extracting:
+                  Boolean(existingSteps?.extracting) ||
+                  completedSteps.extracting,
+                finalizing:
+                  Boolean(existingSteps?.finalizing) ||
+                  completedSteps.finalizing,
+              },
+            },
+          };
+        });
+      } else if (error || success === false) {
         console.error(
           "ApplicationsList: Error in streamToThorapiResult:",
-          error,
+          error || "Unknown stream failure",
         );
-        // Handle error case
         setLoadingStates((prev) => ({
           ...prev,
           [applicationId]: {
             ...prev[applicationId],
             generating: false,
-            steps: {
-              receiving: false,
-              processing: false,
-              extracting: false,
-              finalizing: false,
-            },
+            currentStep: prev[applicationId]?.currentStep || "finalizing",
+            statusMessage: undefined,
+            error: error || "Failed to stream generated application.",
           },
         }));
       }
@@ -433,6 +552,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
 
   const handleGenerate = async (applicationId: string) => {
     if (!applicationId) return;
+    let currentStep: ApplicationGenerationStep = "receiving";
 
     // Find the application to get its name
     const application = applications?.find((app) => app.id === applicationId);
@@ -444,6 +564,9 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       [applicationId]: {
         ...prev[applicationId],
         generating: true,
+        currentStep,
+        statusMessage: "Generating and downloading application payload...",
+        error: undefined,
         steps: {
           receiving: false,
           processing: false,
@@ -454,15 +577,6 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     }));
 
     try {
-      // Step 1: Receiving Application - Start immediately
-      setLoadingStates((prev) => ({
-        ...prev,
-        [applicationId]: {
-          ...prev[applicationId],
-          steps: { ...prev[applicationId]?.steps, receiving: true },
-        },
-      }));
-
       // Make the actual API call
       const result = await generateApplication(applicationId).unwrap();
       console.log("ApplicationsList: API result:", result);
@@ -476,21 +590,15 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         extractedFilename,
       );
 
-      // Step 2: Processing Data - Mark as complete after API call
+      // The archive has arrived; process it for the extension-host handoff.
+      currentStep = "processing";
       setLoadingStates((prev) => ({
         ...prev,
         [applicationId]: {
           ...prev[applicationId],
-          steps: { ...prev[applicationId]?.steps, processing: true },
-        },
-      }));
-
-      // Step 3: Extracting Files - Start file processing
-      setLoadingStates((prev) => ({
-        ...prev,
-        [applicationId]: {
-          ...prev[applicationId],
-          steps: { ...prev[applicationId]?.steps, extracting: true },
+          currentStep,
+          statusMessage: "Preparing generated archive for extraction...",
+          steps: { ...prev[applicationId]?.steps, receiving: true },
         },
       }));
 
@@ -503,12 +611,14 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       }
       const base64String = btoa(binaryString);
 
-      // Step 4: Finalizing Setup - Start file writing
+      currentStep = "extracting";
       setLoadingStates((prev) => ({
         ...prev,
         [applicationId]: {
           ...prev[applicationId],
-          steps: { ...prev[applicationId]?.steps, finalizing: true },
+          currentStep,
+          statusMessage: "Handing generated archive to ValorIDE...",
+          steps: { ...prev[applicationId]?.steps, processing: true },
         },
       }));
 
@@ -531,23 +641,18 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       // Note: We'll complete the final step when we receive the streamToThorapiResult message
     } catch (error) {
       console.error("Generate failed:", error);
-      // Show error feedback
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = formatApplicationGenerationError(error);
       console.error(`Generate failed for ${applicationId}: ${errorMessage}`);
 
-      // Reset loading state on error
+      // Keep the checklist and completed steps visible for inspection/retry.
       setLoadingStates((prev) => ({
         ...prev,
         [applicationId]: {
           ...prev[applicationId],
           generating: false,
-          steps: {
-            receiving: false,
-            processing: false,
-            extracting: false,
-            finalizing: false,
-          },
+          currentStep,
+          statusMessage: undefined,
+          error: errorMessage,
         },
       }));
     }
@@ -608,7 +713,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         loadingStates[app.id]?.steps?.receiving ||
         loadingStates[app.id]?.steps?.processing ||
         loadingStates[app.id]?.steps?.extracting ||
-        loadingStates[app.id]?.steps?.finalizing
+        loadingStates[app.id]?.steps?.finalizing ||
+        loadingStates[app.id]?.error
       )
     ) {
       return null;
@@ -634,10 +740,31 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
               >
                 ✅
               </span>
-            ) : (
+            ) : loadingStates[app.id]?.error &&
+              loadingStates[app.id]?.currentStep === "receiving" ? (
+              <span
+                aria-label="Failed"
+                style={{
+                  color: "var(--vscode-errorForeground)",
+                  marginRight: "8px",
+                }}
+              >
+                ❌
+              </span>
+            ) : loadingStates[app.id]?.generating &&
+              loadingStates[app.id]?.currentStep === "receiving" ? (
               <VSCodeProgressRing
                 style={{ width: "16px", height: "16px", marginRight: "8px" }}
               />
+            ) : (
+              <span
+                style={{
+                  color: "var(--vscode-descriptionForeground)",
+                  marginRight: "8px",
+                }}
+              >
+                ⏳
+              </span>
             )}
             <span>Receiving Application</span>
             {!loadingStates[app.id]?.steps?.receiving && (
@@ -665,7 +792,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
               >
                 ✅
               </span>
-            ) : loadingStates[app.id]?.steps?.receiving ? (
+            ) : loadingStates[app.id]?.error &&
+              loadingStates[app.id]?.currentStep === "processing" ? (
+              <span
+                aria-label="Failed"
+                style={{
+                  color: "var(--vscode-errorForeground)",
+                  marginRight: "8px",
+                }}
+              >
+                ❌
+              </span>
+            ) : loadingStates[app.id]?.steps?.receiving &&
+              loadingStates[app.id]?.generating ? (
               <VSCodeProgressRing
                 style={{ width: "16px", height: "16px", marginRight: "8px" }}
               />
@@ -706,7 +845,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
               >
                 ✅
               </span>
-            ) : loadingStates[app.id]?.steps?.processing ? (
+            ) : loadingStates[app.id]?.error &&
+              loadingStates[app.id]?.currentStep === "extracting" ? (
+              <span
+                aria-label="Failed"
+                style={{
+                  color: "var(--vscode-errorForeground)",
+                  marginRight: "8px",
+                }}
+              >
+                ❌
+              </span>
+            ) : loadingStates[app.id]?.steps?.processing &&
+              loadingStates[app.id]?.generating ? (
               <VSCodeProgressRing
                 style={{ width: "16px", height: "16px", marginRight: "8px" }}
               />
@@ -747,7 +898,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
               >
                 ✅
               </span>
-            ) : loadingStates[app.id]?.steps?.extracting ? (
+            ) : loadingStates[app.id]?.error &&
+              loadingStates[app.id]?.currentStep === "finalizing" ? (
+              <span
+                aria-label="Failed"
+                style={{
+                  color: "var(--vscode-errorForeground)",
+                  marginRight: "8px",
+                }}
+              >
+                ❌
+              </span>
+            ) : loadingStates[app.id]?.steps?.extracting &&
+              loadingStates[app.id]?.generating ? (
               <VSCodeProgressRing
                 style={{ width: "16px", height: "16px", marginRight: "8px" }}
               />
@@ -771,9 +934,25 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                 </span>
               )}
           </div>
-          {loadingStates[app.id]?.generating ? (
+          {loadingStates[app.id]?.error ? (
+            <div
+              role="alert"
+              aria-label="Application generation failed"
+              style={{
+                marginTop: "12px",
+                fontSize: "12px",
+                color: "var(--vscode-errorForeground)",
+                overflowWrap: "anywhere",
+              }}
+            >
+              ❌ Generation failed during{" "}
+              {generationStepLabel(loadingStates[app.id]?.currentStep)}:{" "}
+              {loadingStates[app.id]?.error}
+            </div>
+          ) : loadingStates[app.id]?.generating ? (
             <div style={{ marginTop: "12px", fontSize: "12px", opacity: 0.8 }}>
-              Please wait while your application is being generated...
+              {loadingStates[app.id]?.statusMessage ||
+                "Please wait while your application is being generated..."}
             </div>
           ) : (
             <div

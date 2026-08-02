@@ -230,6 +230,7 @@ export interface WebviewMessage {
     params?: Record<string, unknown>;
     headers?: Record<string, string>;
     responseType?: "json" | "arraybuffer";
+    timeoutMs?: number;
   };
 }
 

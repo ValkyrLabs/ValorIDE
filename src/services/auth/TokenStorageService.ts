@@ -241,7 +241,22 @@ export class TokenStorageService {
    * Get individual token from secure storage
    */
   async getJwtToken(): Promise<string | undefined> {
-    return await this.context.secrets.get("jwtToken");
+    const directToken = await this.context.secrets.get("jwtToken");
+    if (directToken) {
+      return directToken;
+    }
+
+    // Account authentication stores one canonical authState alongside the
+    // convenience jwtToken slot. Recover from that state so extension-host
+    // commands cannot report "sign in" while the Account webview is already
+    // authenticated. Repairing the convenience slot keeps later reads cheap.
+    const authState = await this.getStoredAuthTokens();
+    const recoveredToken = authState?.tokens?.jwtToken;
+    if (recoveredToken) {
+      await this.context.secrets.store("jwtToken", recoveredToken);
+      Logger.log("Recovered JWT token from stored authentication state");
+    }
+    return recoveredToken;
   }
 
   async getApiKey(): Promise<string | undefined> {
