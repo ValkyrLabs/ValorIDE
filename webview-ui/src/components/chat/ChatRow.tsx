@@ -2591,19 +2591,30 @@ export const ChatRowContent = ({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 8,
-                border: `1px solid ${
-                  isReady
-                    ? "color-mix(in srgb, var(--vscode-charts-green) 55%, transparent)"
-                    : "color-mix(in srgb, var(--vscode-editorWarning-foreground) 55%, transparent)"
-                }`,
-                borderRadius: 8,
-                padding: 10,
-                background:
-                  "color-mix(in srgb, var(--vscode-editorWidget-background) 82%, transparent)",
+                gap: isExpanded ? 6 : 0,
+                border: "none",
+                padding: "2px 0",
+                background: "transparent",
               }}
             >
-              <div style={headerStyle}>
+              <div
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                onClick={onToggleExpand}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onToggleExpand();
+                  }
+                }}
+                style={{ ...headerStyle, cursor: "pointer", minHeight: 20 }}
+              >
+                {isExpanded ? (
+                  <FaChevronDown size={10} />
+                ) : (
+                  <FaChevronRight size={10} />
+                )}
                 <FaBolt
                   color={
                     isReady
@@ -2631,34 +2642,47 @@ export const ChatRowContent = ({
                   {status}
                 </span>
               </div>
-              {recoveryMessage && (
+              {isExpanded && (
                 <div
                   style={{
-                    color: "var(--vscode-foreground)",
-                    fontSize: 12,
-                    lineHeight: 1.35,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                    paddingLeft: 18,
                   }}
                 >
-                  {recoveryMessage}
-                </div>
-              )}
-              {actions.length > 0 && (
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {actions.map((action) => (
-                    <VSCodeButton
-                      key={action.id || action.label}
-                      appearance={action.primary ? "primary" : "secondary"}
-                      onClick={() =>
-                        vscode.postMessage({
-                          type: "showAccountViewClicked",
-                          accountTab:
-                            action.id === "buy_credits" ? "credits" : "login",
-                        } as any)
-                      }
+                  {recoveryMessage && (
+                    <div
+                      style={{
+                        color: "var(--vscode-foreground)",
+                        fontSize: 12,
+                        lineHeight: 1.35,
+                      }}
                     >
-                      {action.label || "Open account"}
-                    </VSCodeButton>
-                  ))}
+                      {recoveryMessage}
+                    </div>
+                  )}
+                  {actions.length > 0 && (
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {actions.map((action) => (
+                        <VSCodeButton
+                          key={action.id || action.label}
+                          appearance={action.primary ? "primary" : "secondary"}
+                          onClick={() =>
+                            vscode.postMessage({
+                              type: "showAccountViewClicked",
+                              accountTab:
+                                action.id === "buy_credits"
+                                  ? "credits"
+                                  : "login",
+                            } as any)
+                          }
+                        >
+                          {action.label || "Open account"}
+                        </VSCodeButton>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

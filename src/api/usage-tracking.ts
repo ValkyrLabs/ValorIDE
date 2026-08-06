@@ -80,12 +80,27 @@ export function getModelPricing(
     Record<string, { inputCost: number; outputCost: number }>
   > = {
     openai: {
+      "gpt-5.6-sol": { inputCost: 0.000005, outputCost: 0.00003 },
+      "gpt-5.6-terra": { inputCost: 0.0000025, outputCost: 0.000015 },
+      "gpt-5.6-luna": { inputCost: 0.000001, outputCost: 0.000006 },
       "gpt-5.5": { inputCost: 0.000005, outputCost: 0.00003 },
       "gpt-5.4": { inputCost: 0.0000025, outputCost: 0.000015 },
       "gpt-5.4-mini": { inputCost: 0.00000075, outputCost: 0.0000045 },
       "gpt-5.4-nano": { inputCost: 0.0000002, outputCost: 0.00000125 },
     },
     anthropic: {
+      "claude-fable-5": {
+        inputCost: 0.00001,
+        outputCost: 0.00005,
+      },
+      "claude-opus-5": {
+        inputCost: 0.000005,
+        outputCost: 0.000025,
+      },
+      "claude-sonnet-5": {
+        inputCost: 0.000003,
+        outputCost: 0.000015,
+      },
       "claude-opus-4-8": {
         inputCost: 0.000005,
         outputCost: 0.000025,

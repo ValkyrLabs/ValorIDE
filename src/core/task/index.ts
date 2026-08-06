@@ -124,7 +124,7 @@ import {
 import { parseSlashCommands } from "@core/slash-commands";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
-import { createAgentContextSectionForTask } from "@services/agentic/AgentContextAssembler";
+import { createAgentContextForTask } from "@services/agentic/AgentContextAssembler";
 import {
   createGrayMatterSessionState,
   type GrayMatterSessionState,
@@ -227,7 +227,9 @@ export class Task {
   abandoned = false;
   private diffViewProvider: DiffViewProvider;
   private checkpointTracker?: CheckpointTracker;
+  private checkpointTrackerInitialization?: Promise<void>;
   checkpointTrackerErrorMessage?: string;
+  private agentContextSectionPromise?: Promise<string | undefined>;
   conversationHistoryDeletedRange?: [number, number];
   isInitialized = false;
   isAwaitingPlanResponse = false;
@@ -337,6 +339,11 @@ export class Task {
       this.taskId = Date.now().toString();
     } else {
       throw new Error("Either historyItem or task/images must be provided");
+    }
+
+    if (!historyItem) {
+      this.checkpointTrackerInitialization =
+        this.initializeCheckpointTrackerForChat();
     }
 
     // Initialize file context tracker
@@ -2344,7 +2351,49 @@ export class Task {
     }
   }
 
-  private async buildAgentContextSection(): Promise<string | undefined> {
+  private initializeCheckpointTrackerForChat(): Promise<void> {
+    if (this.checkpointTracker || this.checkpointTrackerErrorMessage) {
+      return Promise.resolve();
+    }
+    if (this.checkpointTrackerInitialization) {
+      return this.checkpointTrackerInitialization;
+    }
+
+    this.checkpointTrackerInitialization = (async () => {
+      try {
+        this.checkpointTracker = await pTimeout(
+          CheckpointTracker.create(
+            this.taskId,
+            this.context.globalStorageUri.fsPath,
+          ),
+          {
+            milliseconds: 15_000,
+            message:
+              "Checkpoints taking too long to initialize. Consider re-opening ValorIDE in a project that uses git, or disabling checkpoints.",
+          },
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to initialize checkpoint tracker:", errorMessage);
+        this.checkpointTrackerErrorMessage = errorMessage;
+      }
+    })();
+
+    return this.checkpointTrackerInitialization;
+  }
+
+  private buildAgentContextSection(
+    taskText = this.getLatestTaskTextForGrayMatter(),
+  ): Promise<string | undefined> {
+    this.agentContextSectionPromise ??=
+      this.assembleAgentContextSection(taskText);
+    return this.agentContextSectionPromise;
+  }
+
+  private async assembleAgentContextSection(
+    taskText: string,
+  ): Promise<string | undefined> {
     try {
       const [jwtToken, legacyValorJwt, valkyraiJwt, cachedGrayMatterSession] =
         await Promise.all([
@@ -2381,18 +2430,21 @@ export class Task {
       if (
         !token ||
         grayMatterSession?.status !== "ready" ||
-        !grayMatterSession.capabilities.memoryQuery
+        (!grayMatterSession.capabilities.memoryRead &&
+          !grayMatterSession.capabilities.memoryQuery)
       ) {
         const message = !token
           ? "GrayMatter memory context needs an active ValkyrAI session token before it can query memory."
           : (grayMatterSession?.recovery?.message ??
             (grayMatterSession?.status === "ready" &&
+            !grayMatterSession.capabilities.memoryRead &&
             !grayMatterSession.capabilities.memoryQuery
-              ? "GrayMatter is authenticated, but memory query capability was not discovered for this backend session."
+              ? "GrayMatter is authenticated, but memory read capability was not discovered for this backend session."
               : "GrayMatter memory context is unavailable for this task."));
         const status = !token
           ? "unauthenticated"
           : grayMatterSession?.status === "ready" &&
+              !grayMatterSession.capabilities.memoryRead &&
               !grayMatterSession.capabilities.memoryQuery
             ? "unavailable"
             : (grayMatterSession?.status ?? "unavailable");
@@ -2405,26 +2457,30 @@ export class Task {
         return undefined;
       }
 
-      const section = await createAgentContextSectionForTask({
+      const context = await createAgentContextForTask({
         baseUrl: getValkyraiBasePath(),
         cwd,
         grayMatterSession,
-        task: this.getLatestTaskTextForGrayMatter(),
+        task: taskText,
         tenantContext,
         token,
       });
 
-      const citationCount = (section?.match(/\[gm:/g) ?? []).length;
+      const citationCount = context?.grayMatter.citations.length ?? 0;
+      const status = context?.grayMatter.status ?? "unavailable";
       await reportGrayMatterAccess({
         citations: citationCount,
         message:
           citationCount > 0
             ? `GrayMatter injected ${citationCount} remembered context entr${citationCount === 1 ? "y" : "ies"} into this task.`
-            : "GrayMatter checked memory before this task; no relevant memories were returned.",
-        status: citationCount > 0 ? "ready" : "empty",
+            : status === "empty"
+              ? "GrayMatter checked memory before this task; no relevant memories were returned."
+              : (context?.grayMatter.error ??
+                "GrayMatter memory retrieval is unavailable; continuing without memory context."),
+        status,
       });
 
-      return section;
+      return context?.promptSection || undefined;
     } catch (error) {
       console.warn("Failed to assemble GrayMatter agent context:", error);
       await this.say(
@@ -2484,16 +2540,12 @@ export class Task {
   }
 
   async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
-    const waitForMcpConnection = async () => {
-      await pWaitFor(() => this.mcpHub.isConnecting !== true, {
-        timeout: 10_000,
-      }).catch(() => {
-        console.error("MCP servers failed to connect in time");
-      });
-    };
-
     while (true) {
-      await waitForMcpConnection();
+      if (this.mcpHub.isConnecting === true) {
+        console.info(
+          "MCP servers are still connecting; starting the model stream with currently available tools.",
+        );
+      }
 
       const disableBrowserTool =
         vscode.workspace
@@ -5324,6 +5376,18 @@ export class Task {
       });
     }
 
+    const thor_taskText = userContent
+      .filter(
+        (block): block is Anthropic.TextBlockParam => block.type === "text",
+      )
+      .map((block) => block.text)
+      .join("\n")
+      .trim()
+      .slice(0, 8_000);
+    void this.buildAgentContextSection(
+      thor_taskText || this.getLatestTaskTextForGrayMatter(),
+    );
+
     if (this.consecutiveMistakeCount >= 3) {
       if (
         this.autoApprovalSettings.enabled &&
@@ -5419,29 +5483,8 @@ export class Task {
       }),
     );
 
-    // use this opportunity to initialize the checkpoint tracker (can be expensive to initialize in the constructor)
-    // FIXME: right now we're letting users init checkpoints for old tasks, but this could be a problem if opening a task in the wrong workspace
-    // isNewTask &&
-    if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
-      try {
-        this.checkpointTracker = await pTimeout(
-          CheckpointTracker.create(
-            this.taskId,
-            this.context.globalStorageUri.fsPath,
-          ),
-          {
-            milliseconds: 15_000,
-            message:
-              "Checkpoints taking too long to initialize. Consider re-opening ValorIDE in a project that uses git, or disabling checkpoints.",
-          },
-        );
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        console.error("Failed to initialize checkpoint tracker:", errorMessage);
-        this.checkpointTrackerErrorMessage = errorMessage; // will be displayed right away since we saveValorIDEMessages next which posts state to webview
-      }
-    }
+    // Await the tracker that was prewarmed when the task was constructed.
+    await this.initializeCheckpointTrackerForChat();
 
     // Now that checkpoint tracker is initialized, update the dummy checkpoint_created message with the commit hash. (This is necessary since we use the API request loading as an opportunity to initialize the checkpoint tracker, which can take some time)
     if (isFirstRequest) {
@@ -6012,26 +6055,8 @@ export class Task {
     const inactiveTerminals = this.terminalManager.getTerminals(false);
     // const allTerminals = [...busyTerminals, ...inactiveTerminals]
 
-    if (busyTerminals.length > 0 && this.didEditFile) {
-      //  || this.didEditFile
-      await setTimeoutPromise(300); // delay after saving file to let terminals catch up
-    }
-
-    // let terminalWasBusy = false
-    if (busyTerminals.length > 0) {
-      // wait for terminals to cool down
-      // terminalWasBusy = allTerminals.some((t) => this.terminalManager.isProcessHot(t.id))
-      await pWaitFor(
-        () =>
-          busyTerminals.every((t) => !this.terminalManager.isProcessHot(t.id)),
-        {
-          interval: 100,
-          timeout: 15_000,
-        },
-      ).catch(() => {});
-    }
-
-    // we want to get diagnostics AFTER terminal cools down for a few reasons: terminal could be scaffolding a project, dev servers (compilers like webpack) will first re-compile and then send diagnostics, etc
+    // Snapshot terminal output immediately. Long-running dev servers are expected
+    // to remain hot and must never hold the next agent/tool turn hostage.
     /*
     let diagnosticsDetails = ""
     const diagnostics = await this.diagnosticsMonitor.getCurrentDiagnostics(this.didEditFile || terminalWasBusy) // if valoride ran a command (ie npm install) or edited the workspace then wait a bit for updated diagnostics

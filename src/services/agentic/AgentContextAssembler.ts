@@ -134,10 +134,13 @@ export class AgentContextAssembler {
     const readAt = this.now().toISOString();
 
     try {
-      const response = await this.retrieveContext({
-        limit: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
-        query,
-      });
+      const response = await this.retrieveContext(
+        {
+          limit: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
+          query,
+        },
+        input,
+      );
       const metadata = response.metadata;
       if (response.warning && !response.value) {
         const status: GrayMatterReadStatus = "unavailable";
@@ -213,12 +216,34 @@ export class AgentContextAssembler {
 
   private async retrieveContext(
     query: GrayMatterMemoryQuery,
+    input: AssembleAgentContextInput,
   ): Promise<ContextReadResponse> {
     const grayMatter = this.options.grayMatter;
+
+    if (grayMatter?.listMemory) {
+      try {
+        const listedMemory = await grayMatter.listMemory();
+        const relevantEntries = rankRelevantMemoryEntries(listedMemory, input);
+        if (relevantEntries.length || !grayMatter.retrieveMemoryWithReceipt) {
+          return { value: relevantEntries };
+        }
+      } catch (error) {
+        if (
+          error instanceof GrayMatterClientError &&
+          error.kind !== "unavailable"
+        ) {
+          throw error;
+        }
+        if (!grayMatter.retrieveMemoryWithReceipt) {
+          throw error;
+        }
+      }
+    }
+
     if (!grayMatter?.retrieveMemoryWithReceipt) {
       return {
         warning:
-          "receipt_backed_retrieval_unavailable:direct_memory_query_not_authorized",
+          "graymatter_acl_scoped_memory_read_unavailable:direct_query_not_authorized",
       };
     }
 
@@ -250,17 +275,27 @@ export class AgentContextAssembler {
 }
 
 export const createAgentContextSectionForTask = async ({
+  ...options
+}: CreateAgentContextSectionForTaskOptions): Promise<string | undefined> => {
+  const context = await createAgentContextForTask(options);
+  return context?.promptSection || undefined;
+};
+
+export const createAgentContextForTask = async ({
   baseUrl,
   fetch,
   grayMatterSession,
   tenantContext,
   token,
   ...input
-}: CreateAgentContextSectionForTaskOptions): Promise<string | undefined> => {
+}: CreateAgentContextSectionForTaskOptions): Promise<
+  AgentContextAssembly | undefined
+> => {
   if (
     !token ||
     grayMatterSession?.status !== "ready" ||
-    !grayMatterSession.capabilities.memoryQuery
+    (!grayMatterSession.capabilities.memoryRead &&
+      !grayMatterSession.capabilities.memoryQuery)
   ) {
     return undefined;
   }
@@ -270,12 +305,11 @@ export const createAgentContextSectionForTask = async ({
     fetch,
     getAuthToken: () => token,
     getTenantContext: () => tenantContext,
+    requestTimeoutMs: 1_500,
   });
-  const context = await new AgentContextAssembler({
+  return new AgentContextAssembler({
     grayMatter: client,
   }).assemble(input);
-
-  return context.promptSection || undefined;
 };
 
 const buildGrayMatterQuery = (task: string, cwd?: string) =>
@@ -360,6 +394,76 @@ const extractEntries = (response: unknown): MemoryEntryLike[] => {
   }
 
   return [];
+};
+
+const INVARIANT_MARKERS = new Set([
+  "acl",
+  "decision",
+  "instruction",
+  "invariant",
+  "methodology",
+  "preference",
+  "rbac",
+  "rule",
+  "security",
+  "standard",
+]);
+
+const tokenizeForRelevance = (value: string) =>
+  new Set(
+    value
+      .toLowerCase()
+      .split(/[^a-z0-9_-]+/)
+      .map((token) => token.trim())
+      .filter((token) => token.length >= 4),
+  );
+
+const rankRelevantMemoryEntries = (
+  response: unknown,
+  input: AssembleAgentContextInput,
+): MemoryEntryLike[] => {
+  const thor_taskTokens = tokenizeForRelevance(
+    `${input.task} ${input.cwd ?? ""} valoride graymatter`,
+  );
+
+  return extractEntries(response)
+    .map((entry, index) => {
+      const thor_tags = getStringArrayField(entry, "tags") ?? [];
+      const thor_type = getStringField(entry, "type") ?? "";
+      const thor_title =
+        getStringField(entry, "title") ??
+        getStringField(entry, "name") ??
+        getMetadataTitle(entry) ??
+        "";
+      const thor_content = getCitationContent(entry) ?? "";
+      const thor_searchable =
+        `${thor_type} ${thor_title} ${thor_tags.join(" ")} ${thor_content}`.toLowerCase();
+      const thor_entryTokens = tokenizeForRelevance(thor_searchable);
+      const thor_invariantScore = Array.from(INVARIANT_MARKERS).some(
+        (marker) =>
+          thor_type.toLowerCase() === marker ||
+          thor_tags.some((tag) => tag.toLowerCase().includes(marker)),
+      )
+        ? 50
+        : 0;
+      const thor_taskScore = Array.from(thor_taskTokens).reduce(
+        (score, token) => score + (thor_entryTokens.has(token) ? 8 : 0),
+        0,
+      );
+      const thor_workspaceScore = thor_searchable.includes("valoride") ? 12 : 0;
+
+      return {
+        entry,
+        index,
+        score: thor_invariantScore + thor_taskScore + thor_workspaceScore,
+      };
+    })
+    .filter(
+      ({ entry, score }) => score > 0 && Boolean(getCitationContent(entry)),
+    )
+    .sort((left, right) => right.score - left.score || left.index - right.index)
+    .slice(0, input.maxEntries ?? DEFAULT_MAX_ENTRIES)
+    .map(({ entry }) => entry);
 };
 
 const normalizeEntryRecords = (entry: unknown): MemoryEntryLike[] => {

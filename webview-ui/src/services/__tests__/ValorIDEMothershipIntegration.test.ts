@@ -23,6 +23,46 @@ describe("ValorIDEMothershipIntegration", () => {
     await expect(integration.sendChatAction(action)).resolves.toBeUndefined();
   });
 
+  it("sends progress content through the existing chat_message command lane", async () => {
+    const sendMessage = vi.fn((_message: unknown) => true);
+    const fakeMothership: any = {
+      on: vi.fn(),
+      off: vi.fn(),
+      isConnected: () => true,
+      getInstanceId: () => "test-instance",
+      sendMessage,
+      sendRemoteCommand: vi.fn(),
+    };
+    const integration = new ValorIDEMothershipIntegration(fakeMothership);
+
+    await integration.sendChatAction({
+      type: "chat_message",
+      content: "Updating src/App.tsx.",
+      messageId: "valoride-progress:3:action-start",
+      taskId: "task-1",
+      metadata: {
+        progressKind: "action-start",
+        source: "valoride-task-progress",
+      },
+    });
+
+    expect(sendMessage).toHaveBeenCalledTimes(1);
+    const sent = sendMessage.mock.calls[0][0] as { payload?: string };
+    const payload = JSON.parse(sent.payload ?? "{}");
+    expect(payload).toMatchObject({
+      command: "chat_message",
+      taskId: "task-1",
+      data: {
+        content: "Updating src/App.tsx.",
+        messageId: "valoride-progress:3:action-start",
+        metadata: {
+          progressKind: "action-start",
+          source: "valoride-task-progress",
+        },
+      },
+    });
+  });
+
   it("does not queue api_data actions while disconnected", async () => {
     const fakeMothership: any = {
       on: vi.fn(),

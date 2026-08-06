@@ -145,8 +145,44 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 // Anthropic
 // https://platform.claude.com/docs/en/about-claude/models/overview
 export type AnthropicModelId = keyof typeof anthropicModels;
-export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-6";
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-5";
 export const anthropicModels = {
+  "claude-fable-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 10.0,
+    outputPrice: 50.0,
+    cacheWritesPrice: 12.5,
+    cacheReadsPrice: 1.0,
+    description:
+      "Claude Fable 5 - Anthropic's highest-capability model for long-running autonomous agents.",
+  },
+  "claude-opus-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
+    description:
+      "Claude Opus 5 - Anthropic's recommended model for complex agentic coding and enterprise work.",
+  },
+  "claude-sonnet-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 5 - Anthropic's latest fast, balanced model for coding and agent workflows.",
+  },
   "claude-opus-4-8": {
     maxTokens: 128_000,
     contextWindow: 1_000_000,
@@ -266,7 +302,7 @@ export const bedrockModels = {
 
 // OpenRouter
 // https://openrouter.ai/models?order=newest&supported_parameters=tools
-export const openRouterDefaultModelId = "anthropic/claude-sonnet-4.6"; // will always exist in openRouterModels
+export const openRouterDefaultModelId = "anthropic/claude-sonnet-5"; // will always exist in openRouterModels
 export const openRouterDefaultModelInfo: ModelInfo = {
   maxTokens: 128_000,
   contextWindow: 1_000_000,
@@ -278,11 +314,14 @@ export const openRouterDefaultModelInfo: ModelInfo = {
   cacheWritesPrice: 3.75,
   cacheReadsPrice: 0.3,
   description:
-    "Claude Sonnet 4.6 is the current balanced Claude model for speed, intelligence, coding, and agent workflows.",
+    "Claude Sonnet 5 is Anthropic's latest balanced model for speed, intelligence, coding, and agent workflows.",
 };
 
 // Kimi (Moonshot) models available via OpenRouter and partner routers
 export const kimiOpenRouterModelIds = [
+  "moonshotai/kimi-k3",
+  "moonshotai/kimi-k2.7-code",
+  "moonshotai/kimi-k2.5",
   "moonshotai/kimi-k2",
   "moonshotai/kimi-k2:exacto",
   "moonshotai/kimi-k2-instruct",
@@ -299,6 +338,19 @@ export const kimiOpenRouterModelIds = [
 // Moonshot AI Studio
 // https://platform.moonshot.ai/docs/pricing/chat
 export const moonshotModels = {
+  "kimi-k3": {
+    maxTokens: 128_000,
+    contextWindow: 1_048_576,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    temperature: 1.0,
+    description:
+      "Kimi K3 multimodal reasoning model with 1M context for large repositories and long-horizon agent work.",
+  },
   "kimi-k2.5": {
     maxTokens: 32_768,
     contextWindow: 262_144,
@@ -379,8 +431,7 @@ export const moonshotModels = {
   },
 } as const satisfies Record<string, OpenAiCompatibleModelInfo>;
 export type MoonshotModelId = keyof typeof moonshotModels;
-export const moonshotDefaultModelId =
-  "kimi-k2-0905-preview" satisfies MoonshotModelId;
+export const moonshotDefaultModelId = "kimi-k3" satisfies MoonshotModelId;
 
 // MiniMax API (M2.7)
 // https://platform.minimax.io/docs/api-reference/text-openai-api
@@ -816,6 +867,17 @@ export const ollamaModelPresets = {
     description:
       "Gemma4 E4B local model: balanced 128K-context multimodal Gemma4 variant.",
   },
+  "gemma4:12b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 12B local workstation model with 256K context and multimodal input.",
+  },
   "gemma4:26b": {
     maxTokens: 8192,
     contextWindow: 256_000,
@@ -825,7 +887,7 @@ export const ollamaModelPresets = {
     outputPrice: 0,
     temperature: 1,
     description:
-      "Gemma4 26B local model: 256K context MoE variant for high-quality local agent work.",
+      "Gemma4 26B A4B local model: 256K context MoE variant for high-quality local agent work.",
   },
   "gemma4:31b": {
     maxTokens: 8192,
@@ -844,8 +906,41 @@ export type OllamaModelPresetId = keyof typeof ollamaModelPresets;
 // OpenAI Native
 // https://developers.openai.com/api/docs/models
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
-export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.5";
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.6-sol";
 export const openAiNativeModels = {
+  "gpt-5.6-sol": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.6 Sol - OpenAI's frontier model for complex professional and agentic work.",
+  },
+  "gpt-5.6-terra": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.5,
+    outputPrice: 15.0,
+    cacheReadsPrice: 0.25,
+    description:
+      "GPT-5.6 Terra - balanced GPT-5.6 model for coding, reasoning, and agent workflows.",
+  },
+  "gpt-5.6-luna": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.0,
+    outputPrice: 6.0,
+    cacheReadsPrice: 0.1,
+    description:
+      "GPT-5.6 Luna - fast, efficient GPT-5.6 model for high-throughput agent tasks.",
+  },
   "gpt-5.5": {
     maxTokens: 128_000,
     contextWindow: 1_000_000,

@@ -316,7 +316,8 @@ describe("GrayMatterClient", () => {
 
   it("recalls through the receipt-backed OmegaRAG contract without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { receiptRef: "rr-1", trajectoryRef: "traj-1" }),
+      async () =>
+        jsonResponse(200, { receiptRef: "rr-1", trajectoryRef: "traj-1" }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -412,7 +413,8 @@ describe("GrayMatterClient", () => {
 
   it("forgets through the idempotent OmegaRAG deletion contract", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { deletionStatus: "deleted", replayed: false }),
+      async () =>
+        jsonResponse(200, { deletionStatus: "deleted", replayed: false }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -440,7 +442,11 @@ describe("GrayMatterClient", () => {
 
   it("reads an authorized redacted OmegaRAG trajectory", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { trajectory: { trajectoryId: "traj-1" }, steps: [] }),
+      async () =>
+        jsonResponse(200, {
+          trajectory: { trajectoryId: "traj-1" },
+          steps: [],
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -458,7 +464,11 @@ describe("GrayMatterClient", () => {
 
   it("evaluates an authorized OmegaRAG trajectory without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { evaluation: { evaluationId: "eval-1" }, replayed: false }),
+      async () =>
+        jsonResponse(200, {
+          evaluation: { evaluationId: "eval-1" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -524,7 +534,11 @@ describe("GrayMatterClient", () => {
 
   it("manages tenant-scoped OmegaRAG index jobs without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { job: { jobId: "job-1", state: "QUEUED" }, replayed: false }),
+      async () =>
+        jsonResponse(200, {
+          job: { jobId: "job-1", state: "QUEUED" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -542,14 +556,18 @@ describe("GrayMatterClient", () => {
     await client.cancelOmegaIndexJob("job-1");
 
     const [estimateUrl, estimateInit] = fetchMock.mock.calls[0];
-    expect(estimateUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(estimateUrl).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs",
+    );
     expect(JSON.parse(estimateInit?.body as string)).toEqual({
       dryRun: true,
       idempotencyKey: "estimate-1",
       mode: "estimate",
     });
     const [startUrl, startInit] = fetchMock.mock.calls[1];
-    expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(startUrl).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs",
+    );
     expect(JSON.parse(startInit?.body as string)).toEqual({
       idempotencyKey: "index-1",
       mode: "incremental",
@@ -569,7 +587,11 @@ describe("GrayMatterClient", () => {
 
   it("manages a content-free resumable OmegaRAG retrieval run without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(202, { run: { runId: "run-1", state: "QUEUED" }, replayed: false }),
+      async () =>
+        jsonResponse(202, {
+          run: { runId: "run-1", state: "QUEUED" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -586,7 +608,10 @@ describe("GrayMatterClient", () => {
     });
     await client.getOmegaRetrievalRun("run-1");
     await client.cancelOmegaRetrievalRun("run-1");
-    await client.resumeOmegaRetrievalRun("run-1", "what changed in the project");
+    await client.resumeOmegaRetrievalRun(
+      "run-1",
+      "what changed in the project",
+    );
 
     const [startUrl, startInit] = fetchMock.mock.calls[0];
     expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/runs");
@@ -600,11 +625,15 @@ describe("GrayMatterClient", () => {
     expect(fetchMock.mock.calls[1][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1",
     );
-    expect(fetchMock.mock.calls[1][1]).toEqual(expect.objectContaining({ method: "GET" }));
+    expect(fetchMock.mock.calls[1][1]).toEqual(
+      expect.objectContaining({ method: "GET" }),
+    );
     expect(fetchMock.mock.calls[2][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1/cancel",
     );
-    expect(fetchMock.mock.calls[2][1]).toEqual(expect.objectContaining({ method: "POST" }));
+    expect(fetchMock.mock.calls[2][1]).toEqual(
+      expect.objectContaining({ method: "POST" }),
+    );
     expect(fetchMock.mock.calls[3][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1/resume",
     );
@@ -736,6 +765,30 @@ describe("GrayMatterClient", () => {
       query: "ValorIDE invariants",
       retrievalMode: "HYBRID",
       topK: 12,
+    });
+  });
+
+  it("aborts memory reads that exceed the chat latency budget", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (_url, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new Error("aborted"));
+          });
+        }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+      requestTimeoutMs: 5,
+    });
+
+    await expect(client.listMemory()).rejects.toMatchObject<
+      Partial<GrayMatterClientError>
+    >({
+      kind: "unavailable",
+      message: "GrayMatter request exceeded the 5ms chat latency budget.",
     });
   });
 });

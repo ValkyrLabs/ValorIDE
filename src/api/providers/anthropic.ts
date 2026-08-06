@@ -59,8 +59,16 @@ export class AnthropicHandler implements ApiHandler {
       (modelId.includes("3-7") || modelId.includes("4-")) && budget_tokens !== 0
         ? true
         : false;
+    const adaptiveThinkingModel = [
+      "claude-fable-5",
+      "claude-opus-5",
+      "claude-sonnet-5",
+    ].includes(modelId);
 
     switch (modelId) {
+      case "claude-fable-5":
+      case "claude-opus-5":
+      case "claude-sonnet-5":
       case "claude-opus-4-8":
       case "claude-sonnet-4-6":
       case "claude-haiku-4-5-20251001": {
@@ -84,7 +92,7 @@ export class AnthropicHandler implements ApiHandler {
             max_tokens: model.info.maxTokens || 8192,
             // "Thinking isn’t compatible with temperature, top_p, or top_k modifications as well as forced tool use."
             // (https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking#important-considerations-when-using-extended-thinking)
-            temperature: reasoningOn ? undefined : 0,
+            temperature: reasoningOn || adaptiveThinkingModel ? undefined : 0,
             system: [
               {
                 text: systemPrompt,
@@ -134,6 +142,9 @@ export class AnthropicHandler implements ApiHandler {
             // https://github.com/anthropics/anthropic-sdk-typescript?tab=readme-ov-file#default-headers
             // https://github.com/anthropics/anthropic-sdk-typescript/commit/c920b77fc67bd839bfeb6716ceab9d7c9bbe7393
             switch (modelId) {
+              case "claude-fable-5":
+              case "claude-opus-5":
+              case "claude-sonnet-5":
               case "claude-opus-4-8":
               case "claude-sonnet-4-6":
               case "claude-haiku-4-5-20251001":

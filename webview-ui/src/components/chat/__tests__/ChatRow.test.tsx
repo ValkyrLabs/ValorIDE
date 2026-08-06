@@ -99,7 +99,7 @@ describe("ChatRow Content - completion_result summary handling", () => {
       >
         <ChatRowContent
           message={message}
-          isExpanded={true}
+          isExpanded={false}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -291,7 +291,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       <ProviderAny>
         <ChatRowContent
           message={message}
-          isExpanded={false}
+          isExpanded={true}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -321,7 +321,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       <ProviderAny>
         <ChatRowContent
           message={message}
-          isExpanded={false}
+          isExpanded={true}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -426,9 +426,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       </ProviderAny>,
     );
 
-    expect(
-      screen.queryByText("Command completed with no output."),
-    ).toBeNull();
+    expect(screen.queryByText("Command completed with no output.")).toBeNull();
     expect(screen.queryByText("No output yet")).toBeNull();
   });
 });
@@ -810,6 +808,44 @@ describe("ChatRow Content - reasoning severity indicator", () => {
 });
 
 describe("ChatRow Content - GrayMatter recovery", () => {
+  it("renders the borderless GrayMatter row collapsed by default", () => {
+    const onToggleExpand = vi.fn();
+    const message = {
+      type: "say",
+      say: "graymatter_context",
+      ts: Date.now(),
+      text: JSON.stringify({
+        message: "GrayMatter injected 3 remembered context entries.",
+        status: "ready",
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={onToggleExpand}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    const header = screen.getByRole("button", {
+      name: /GrayMatter memory checked/i,
+    });
+    expect(header).toHaveAttribute("aria-expanded", "false");
+    expect(header.parentElement).toHaveStyle({ border: "none" });
+    expect(
+      screen.queryByText("GrayMatter injected 3 remembered context entries."),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(header);
+    expect(onToggleExpand).toHaveBeenCalledTimes(1);
+  });
+
   it("shows a sign-in action when GrayMatter is unauthenticated without recovery actions", async () => {
     const { vscode } = await import("@thorapi/utils/vscode");
     vi.mocked(vscode.postMessage).mockClear();

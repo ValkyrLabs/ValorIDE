@@ -24,7 +24,7 @@ const FORBIDDEN_RULES = [
 const ALLOWED_RUNTIME_ENTRY_PATTERNS = [
   /^\[Content_Types\]\.xml$/,
   /^extension\.vsixmanifest$/,
-  /^extension\/(package\.json|README\.md|LICENSE)$/,
+  /^extension\/(package\.json|README\.md|LICENSE(?:\.txt)?)$/i,
   /^extension\/dist\//,
   /^extension\/assets\/icons\//,
   /^extension\/assets\/valorIde\.acorn$/,

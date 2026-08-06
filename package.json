@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.954",
+  "version": "3.20.958",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -581,7 +581,7 @@
     "build-prod": "build --mode prod",
     "package:staging": "npm run build:webview:staging && npm run check-types && npm run lint && node esbuild.js --production",
     "package:prod": "npm run build:webview:prod && npm run check-types && npm run lint && node esbuild.js --production",
-    "v": "NODE_OPTIONS= node increment-version.js && NODE_OPTIONS= vsce package --no-yarn --no-dependencies",
+    "v": "NODE_OPTIONS= node increment-version.js && NODE_OPTIONS= npx --yes @vscode/vsce@3.9.2 package --no-yarn --no-dependencies",
     "vscode:prepublish": "npm run package",
     "compile": "npm run check-types && npm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
@@ -641,7 +641,8 @@
   },
   "files": [
     "dist/",
-    "assets/",
+    "assets/icons/",
+    "assets/valorIde.acorn",
     "package.json",
     "README.md",
     "LICENSE"

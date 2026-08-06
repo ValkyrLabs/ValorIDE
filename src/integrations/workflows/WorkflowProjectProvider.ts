@@ -2,6 +2,7 @@ import axios from "axios";
 import * as vscode from "vscode";
 import { TokenStorageService } from "../../services/auth/TokenStorageService";
 import { getValkyraiBasePath } from "../../utils/serverValkyraiHost";
+import { collectWorkflowPages } from "./workflowCollection";
 import { workflowStudioWebviewHtml } from "./workflowStudioWebview";
 
 type WorkflowListItem = {
@@ -9,24 +10,6 @@ type WorkflowListItem = {
   name?: string;
   description?: string;
   status?: string;
-};
-
-const collection = (value: unknown): Record<string, any>[] => {
-  if (Array.isArray(value)) return value as Record<string, any>[];
-  if (!value || typeof value !== "object") return [];
-  const record = value as Record<string, any>;
-  const embedded =
-    record._embedded && typeof record._embedded === "object"
-      ? Object.values(record._embedded).find(Array.isArray)
-      : undefined;
-  const found = [
-    record.content,
-    record.items,
-    record.results,
-    record.workflows,
-    embedded,
-  ].find(Array.isArray);
-  return Array.isArray(found) ? found : [];
 };
 
 class WorkflowEngineeringClient {
@@ -51,8 +34,10 @@ class WorkflowEngineeringClient {
   }
 
   async listWorkflows(): Promise<WorkflowListItem[]> {
-    const response = await this.get<unknown>("Workflow");
-    return collection(response)
+    const workflows = await collectWorkflowPages((page, size) =>
+      this.get<unknown>(`Workflow?page=${page}&size=${size}`),
+    );
+    return workflows
       .filter((workflow) => workflow.id)
       .map((workflow) => ({
         id: String(workflow.id),

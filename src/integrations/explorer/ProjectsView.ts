@@ -1,10 +1,21 @@
 import * as vscode from "vscode";
+import { randomBytes } from "crypto";
 import * as path from "path";
 import {
   resolveThorapiFolderPath,
   thorapiSettingChanged,
 } from "@utils/thorapi";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveProjectCommandUri } from "./projectCommandUri";
+import {
+  commandWithJavaHome,
+  discoverProjectRuntime,
+  findAvailablePort,
+  findCompatibleJavaHome,
+  localProjectUrl,
+  ProjectTarget,
+  waitForUrl,
+} from "./projectRuntime";
 
 type Project = {
   name: string;
@@ -120,7 +131,7 @@ export function registerProjectsView(
       async (target?: unknown) => {
         const u = getUriArg(target);
         if (!u) return;
-        await runProjectTask(u, "build");
+        await runProjectTask(u, "build", output);
       },
     ),
     // Run selected project based on detected tool
@@ -129,7 +140,7 @@ export function registerProjectsView(
       async (target?: unknown) => {
         const u = getUriArg(target);
         if (!u) return;
-        await runProjectTask(u, "run");
+        await runProjectTask(u, "run", output);
       },
     ),
     vscode.commands.registerCommand(
@@ -203,90 +214,223 @@ async function pathExists(uri: vscode.Uri): Promise<boolean> {
   }
 }
 
-type Tool = "maven" | "gradle" | "node";
 type Task = "build" | "run";
 
-async function detectTools(uri: vscode.Uri): Promise<Tool[]> {
-  const tools: Tool[] = [];
-  const hasPom = await pathExists(vscode.Uri.joinPath(uri, "pom.xml"));
-  const hasMvnw = await pathExists(vscode.Uri.joinPath(uri, "mvnw"));
-  if (hasPom || hasMvnw) tools.push("maven");
+const javaEnvironment = (javaHome: string) => ({
+  JAVA_HOME: javaHome,
+  PATH: `${path.join(javaHome, "bin")}${path.delimiter}${process.env.PATH || ""}`,
+});
 
-  const hasGradle =
-    (await pathExists(vscode.Uri.joinPath(uri, "gradlew"))) ||
-    (await pathExists(vscode.Uri.joinPath(uri, "build.gradle"))) ||
-    (await pathExists(vscode.Uri.joinPath(uri, "build.gradle.kts")));
-  if (hasGradle) tools.push("gradle");
-
-  const hasPkg = await pathExists(vscode.Uri.joinPath(uri, "package.json"));
-  if (hasPkg) tools.push("node");
-
-  return tools;
-}
-
-async function preferTool(uri: vscode.Uri): Promise<Tool | undefined> {
-  const tools = await detectTools(uri);
-  // Prefer Maven > Gradle > Node for backend servers
-  if (tools.includes("maven")) return "maven";
-  if (tools.includes("gradle")) return "gradle";
-  if (tools.includes("node")) return "node";
-  return undefined;
-}
-
-async function runProjectTask(uri: vscode.Uri, task: Task) {
-  const tool = await preferTool(uri);
-  if (!tool) {
-    vscode.window.showWarningMessage(
-      `No supported build tool detected in ${uri.fsPath}. Expected Maven/Gradle/Node.`,
-    );
-    return;
-  }
-
-  const termName = `${path.basename(uri.fsPath)}: ${task}`;
-  const term = vscode.window.createTerminal({
-    cwd: uri.fsPath,
-    name: termName,
+const createProjectTerminal = (
+  target: ProjectTarget,
+  name: string,
+  env?: Record<string, string>,
+) =>
+  vscode.window.createTerminal({
+    cwd: target.directory,
+    name,
+    env,
   });
-  term.show();
 
-  const run = (cmd: string) => term.sendText(cmd, true);
-
-  if (tool === "maven") {
-    const hasWrapper = await pathExists(vscode.Uri.joinPath(uri, "mvnw"));
-    const mvn = hasWrapper ? "./mvnw" : "mvn";
-    if (task === "build") {
-      run(`${mvn} -q -DskipTests clean package`);
-    } else {
-      run(`${mvn} -q spring-boot:run`);
-    }
-    return;
-  }
-
-  if (tool === "gradle") {
-    const hasWrapper = await pathExists(vscode.Uri.joinPath(uri, "gradlew"));
-    const gradle = hasWrapper ? "./gradlew" : "gradle";
-    if (task === "build") {
-      run(`${gradle} build -x test`);
-    } else {
-      // Try bootRun if Spring Boot plugin is present, otherwise run default run task
-      run(`${gradle} bootRun`);
-    }
-    return;
-  }
-
-  if (tool === "node") {
-    // Prefer pnpm > yarn > npm based on lockfiles
-    const hasPnpm = await pathExists(
-      vscode.Uri.joinPath(uri, "pnpm-lock.yaml"),
+async function projectCommand(
+  target: ProjectTarget,
+  task: Task,
+  javaHome?: string,
+) {
+  let thor_command: string;
+  if (target.tool === "maven") {
+    const hasWrapper = await pathExists(
+      vscode.Uri.file(path.join(target.directory, "mvnw")),
     );
-    const hasYarn = await pathExists(vscode.Uri.joinPath(uri, "yarn.lock"));
-    const pm = hasPnpm ? "pnpm" : hasYarn ? "yarn" : "npm";
-    if (task === "build") {
-      run(`${pm} install`);
-      run(pm === "npm" ? `${pm} run build` : `${pm} build`);
-    } else {
-      run(pm === "npm" ? `${pm} run start` : `${pm} start`);
-    }
+    const mvn = hasWrapper ? "./mvnw" : "mvn";
+    thor_command =
+      task === "build"
+        ? `${mvn} -DskipTests clean package`
+        : `${mvn} spring-boot:run`;
+  } else if (target.tool === "gradle") {
+    const hasWrapper = await pathExists(
+      vscode.Uri.file(path.join(target.directory, "gradlew")),
+    );
+    const gradle = hasWrapper ? "./gradlew" : "gradle";
+    thor_command =
+      task === "build" ? `${gradle} build -x test` : `${gradle} bootRun`;
+  } else {
+    thor_command =
+      task === "build"
+        ? "npm install && npm run build"
+        : "npm install && npm run start";
+  }
+
+  return javaHome && target.tool !== "node"
+    ? commandWithJavaHome(thor_command, javaHome)
+    : thor_command;
+}
+
+async function requireCompatibleJava(layoutName: string) {
+  const java = await findCompatibleJavaHome();
+  if (!java) {
+    throw new Error(
+      `${layoutName} requires JDK 17-23, but ValorIDE could not find one. Install JDK 21 or configure JAVA_HOME.`,
+    );
+  }
+  return java;
+}
+
+async function buildProject(uri: vscode.Uri, output: vscode.OutputChannel) {
+  const layout = await discoverProjectRuntime(uri.fsPath);
+  const targets = [layout.backend, layout.frontend].filter(
+    (target): target is ProjectTarget => Boolean(target),
+  );
+  if (targets.length === 0) {
+    vscode.window.showWarningMessage(
+      `No supported build tool detected in ${uri.fsPath} or its generated backend/UI source roots. Expected Maven, Gradle, or Node.`,
+    );
     return;
+  }
+
+  const needsJava = targets.some((target) => target.tool !== "node");
+  const java = needsJava
+    ? await requireCompatibleJava(path.basename(uri.fsPath))
+    : undefined;
+  if (java) {
+    output.appendLine(
+      `[Projects] Building with JDK ${java.major} from ${java.home}`,
+    );
+  }
+
+  for (const target of targets) {
+    const role = target === layout.backend ? "backend" : "ui";
+    const terminal = createProjectTerminal(
+      target,
+      `${path.basename(uri.fsPath)}: build ${role}`,
+      target.tool === "node" || !java ? undefined : javaEnvironment(java.home),
+    );
+    terminal.show(false);
+    terminal.sendText(
+      await projectCommand(
+        target,
+        "build",
+        target.tool === "node" ? undefined : java?.home,
+      ),
+      true,
+    );
+  }
+}
+
+async function runProject(uri: vscode.Uri, output: vscode.OutputChannel) {
+  const layout = await discoverProjectRuntime(uri.fsPath);
+  if (!layout.backend && !layout.frontend) {
+    vscode.window.showWarningMessage(
+      `No supported build tool detected in ${uri.fsPath} or its generated backend/UI source roots. Expected Maven, Gradle, or Node.`,
+    );
+    return;
+  }
+
+  const projectName = path.basename(uri.fsPath);
+  const splitGeneratedApp = Boolean(layout.backend && layout.frontend);
+  let backendPort: number | undefined;
+  let frontendPort: number | undefined;
+  let localPassword: string | undefined;
+
+  if (layout.backend) {
+    const java = await requireCompatibleJava(projectName);
+    backendPort = await findAvailablePort(8080);
+    localPassword = splitGeneratedApp
+      ? randomBytes(24).toString("base64url")
+      : undefined;
+    const jwtSecret = randomBytes(48).toString("base64");
+    const databaseName = projectName
+      .replace(/[^a-z0-9]+/gi, "_")
+      .replace(/^_+|_+$/g, "")
+      .toLowerCase();
+    const backendEnv: Record<string, string> = {
+      ...javaEnvironment(java.home),
+      SERVER_PORT: String(backendPort),
+    };
+    if (splitGeneratedApp && localPassword) {
+      Object.assign(backendEnv, {
+        SPRING_DATASOURCE_URL: `jdbc:h2:mem:${databaseName || "valoride_app"};MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`,
+        SPRING_DATASOURCE_USERNAME: "sa",
+        SPRING_DATASOURCE_PASSWORD: "",
+        SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.h2.Driver",
+        SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.H2Dialect",
+        VALKYR_BOOTSTRAP_ADMIN_PASSWORD: localPassword,
+        VALKYRAI_GENERATED_RUNTIME_LOCAL_LOGIN_ENABLED: "true",
+        JWT_SECRET: jwtSecret,
+      });
+    }
+    output.appendLine(
+      `[Projects] Starting backend with JDK ${java.major} on http://127.0.0.1:${backendPort}`,
+    );
+    const terminal = createProjectTerminal(
+      layout.backend,
+      `${projectName}: backend`,
+      backendEnv,
+    );
+    terminal.show(false);
+    terminal.sendText(
+      await projectCommand(layout.backend, "run", java.home),
+      true,
+    );
+  }
+
+  if (layout.frontend) {
+    frontendPort = await findAvailablePort(5173);
+    const frontendEnv: Record<string, string> = {
+      VITE_PORT: String(frontendPort),
+    };
+    if (backendPort) {
+      frontendEnv.VITE_API_PROXY_TARGET = `http://127.0.0.1:${backendPort}`;
+    }
+    const terminal = createProjectTerminal(
+      layout.frontend,
+      `${projectName}: ui`,
+      frontendEnv,
+    );
+    terminal.show(false);
+    terminal.sendText(await projectCommand(layout.frontend, "run"), true);
+  }
+
+  if (localPassword) {
+    void vscode.window
+      .showInformationMessage(
+        `Local app credentials — Username: super  Password: ${localPassword}`,
+        "Copy Password",
+      )
+      .then(async (selection) => {
+        if (selection === "Copy Password") {
+          await vscode.env.clipboard.writeText(localPassword!);
+        }
+      });
+  }
+
+  if (frontendPort) {
+    const url = localProjectUrl(frontendPort);
+    output.appendLine(`[Projects] Waiting for generated UI at ${url}`);
+    if (await waitForUrl(url)) {
+      await openUrlWithSimpleBrowser(url, `${projectName} — Local App`);
+    } else {
+      void vscode.window.showErrorMessage(
+        `${projectName} UI did not become ready at ${url}. Check the backend and UI terminals.`,
+      );
+    }
+  }
+}
+
+async function runProjectTask(
+  uri: vscode.Uri,
+  task: Task,
+  output: vscode.OutputChannel,
+) {
+  try {
+    if (task === "build") {
+      await buildProject(uri, output);
+    } else {
+      await runProject(uri, output);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    output.appendLine(`[Projects] ${task} failed: ${message}`);
+    void vscode.window.showErrorMessage(`Project ${task} failed: ${message}`);
   }
 }

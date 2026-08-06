@@ -73,7 +73,7 @@ describe("AgentContextAssembler", () => {
       expect.objectContaining({
         citations: [],
         warning:
-          "receipt_backed_retrieval_unavailable:direct_memory_query_not_authorized",
+          "graymatter_acl_scoped_memory_read_unavailable:direct_query_not_authorized",
       }),
     );
     expect(context.promptSection).not.toContain("secret-token");
@@ -173,7 +173,7 @@ describe("AgentContextAssembler", () => {
     expect(context.grayMatter.reads[0]?.warning).toBeUndefined();
   });
 
-  it("does not direct-scan MemoryEntry when a receipt has no items", async () => {
+  it("uses the ACL-scoped MemoryEntry list before the slower receipt path", async () => {
     const listMemory = jest.fn(async () => ({
       content: [
         {
@@ -204,10 +204,13 @@ describe("AgentContextAssembler", () => {
       task: "Fix ValorIDE ThorAPI GrayMatter behavior",
     });
 
-    expect(listMemory).not.toHaveBeenCalled();
+    expect(listMemory).toHaveBeenCalledTimes(1);
+    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
     expect(queryMemory).not.toHaveBeenCalled();
-    expect(context.grayMatter.status).toBe("empty");
-    expect(context.grayMatter.citations).toEqual([]);
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.citations).toEqual([
+      expect.objectContaining({ id: "memory-direct" }),
+    ]);
   });
 
   it("reports receipt unavailability without direct-querying memory", async () => {
@@ -406,28 +409,13 @@ describe("AgentContextAssembler", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api-0.valkyrlabs.com/v1/graymatter-retrieval-receipts",
+      "https://api-0.valkyrlabs.com/v1/MemoryEntry",
       expect.objectContaining({
-        method: "POST",
+        headers: expect.objectContaining({
+          authorization: "Bearer session-token",
+        }),
       }),
     );
-    const receiptBody = JSON.parse(
-      (fetchMock.mock.calls[0]?.[1]?.body as string) ?? "{}",
-    );
-    expect(receiptBody).toEqual(
-      expect.objectContaining({
-        includeEvaluator: false,
-        includeItems: true,
-        includeText: true,
-        qualityProfile: "DEFAULT",
-        query: expect.stringContaining(
-          "ValorIDE task context: Implement GrayMatter prompt injection\nWorkspace: /repo",
-        ),
-        retrievalMode: "HYBRID",
-        topK: 8,
-      }),
-    );
-    expect(receiptBody.query).toContain("invariants, rules, instructions");
     expect(section).toContain("[gm:memory-1] decision");
     expect(section).toContain("Use server-side RBAC");
   });
@@ -478,6 +466,7 @@ describe("AgentContextAssembler", () => {
         capabilities: {
           ...readySession.capabilities,
           memoryQuery: false,
+          memoryRead: false,
         },
       },
       task: "Implement GrayMatter prompt injection",

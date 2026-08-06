@@ -56,27 +56,27 @@ export interface OpenRouterModelPickerProps {
 }
 
 // Featured models for ValorIDE provider
-const kimiFeaturedId = kimiOpenRouterModelIds[0] || "moonshotai/kimi-k2";
+const kimiFeaturedId = kimiOpenRouterModelIds[0] || "moonshotai/kimi-k3";
 const featuredModels = [
   {
-    id: "anthropic/claude-sonnet-4.6",
-    description: "Current Claude Sonnet for agentic coding",
+    id: "anthropic/claude-opus-5",
+    description: "Claude 5 for complex agentic coding",
     label: "Best",
   },
   {
-    id: "openai/gpt-5.5",
-    description: "Current OpenAI flagship for coding and reasoning",
+    id: "openai/gpt-5.6-sol",
+    description: "GPT-5.6 frontier coding and reasoning",
     label: "Flagship",
   },
   {
-    id: "google/gemini-3-pro-preview",
-    description: "Gemini 3 Pro preview with 1M context",
-    label: "Trending",
+    id: "google/gemma-4-26b-a4b-it",
+    description: "Gemma 4 MoE with fast native tool calling",
+    label: "Open",
   },
   {
     id: kimiFeaturedId,
-    description: "Kimi K2 reasoning model (Moonshot)",
-    label: "Kimi 2",
+    description: "Kimi K3 for long-horizon agent workflows",
+    label: "Kimi 3",
   },
 ];
 
@@ -401,9 +401,9 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
             If you're unsure which model to choose, ValorIDE works best with{" "}
             <VSCodeLink
               style={{ display: "inline", fontSize: "inherit" }}
-              onClick={() => handleModelChange("anthropic/claude-sonnet-4.6")}
+              onClick={() => handleModelChange("anthropic/claude-sonnet-5")}
             >
-              anthropic/claude-sonnet-4.6.
+              anthropic/claude-sonnet-5.
             </VSCodeLink>
             You can also try searching "free" for no-cost options currently
             available.

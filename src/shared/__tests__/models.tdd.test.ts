@@ -7,6 +7,7 @@ import {
   geminiModels,
   moonshotDefaultModelId,
   moonshotModels,
+  ollamaModelPresets,
   openAiNativeDefaultModelId,
   openAiNativeModels,
   openRouterDefaultModelId,
@@ -18,8 +19,11 @@ import {
 
 describe("model catalog defaults", () => {
   it("only exposes current official Claude API models for Anthropic", () => {
-    expect(anthropicDefaultModelId).toBe("claude-sonnet-4-6");
+    expect(anthropicDefaultModelId).toBe("claude-sonnet-5");
     expect(Object.keys(anthropicModels)).toEqual([
+      "claude-fable-5",
+      "claude-opus-5",
+      "claude-sonnet-5",
       "claude-opus-4-8",
       "claude-sonnet-4-6",
       "claude-haiku-4-5-20251001",
@@ -33,17 +37,20 @@ describe("model catalog defaults", () => {
     expect(anthropicModels["claude-sonnet-4-6"]?.maxTokens).toBe(128_000);
   });
 
-  it("only exposes current official OpenAI native GPT-5.5/GPT-5.4 models", () => {
-    expect(openAiNativeDefaultModelId).toBe("gpt-5.5");
+  it("exposes the current OpenAI native GPT-5.6 family", () => {
+    expect(openAiNativeDefaultModelId).toBe("gpt-5.6-sol");
     expect(Object.keys(openAiNativeModels)).toEqual([
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
       "gpt-5.5",
       "gpt-5.4",
       "gpt-5.4-mini",
       "gpt-5.4-nano",
     ]);
-    expect(openAiNativeModels["gpt-5.5"]?.contextWindow).toBe(1_000_000);
-    expect(openAiNativeModels["gpt-5.5"]?.inputPrice).toBe(5);
-    expect(openAiNativeModels["gpt-5.5"]?.outputPrice).toBe(30);
+    expect(openAiNativeModels["gpt-5.6-sol"]?.contextWindow).toBe(1_050_000);
+    expect(openAiNativeModels["gpt-5.6-sol"]?.inputPrice).toBe(5);
+    expect(openAiNativeModels["gpt-5.6-sol"]?.outputPrice).toBe(30);
     expect(openAiNativeModels["gpt-5.4"]?.contextWindow).toBe(1_000_000);
     expect(openAiNativeModels["gpt-5.4-mini"]?.contextWindow).toBe(400_000);
     expect(openAiNativeModels["gpt-5.4-nano"]?.inputPrice).toBe(0.2);
@@ -65,7 +72,7 @@ describe("model catalog defaults", () => {
   });
 
   it("defaults OpenRouter to current Claude Sonnet", () => {
-    expect(openRouterDefaultModelId).toBe("anthropic/claude-sonnet-4.6");
+    expect(openRouterDefaultModelId).toBe("anthropic/claude-sonnet-5");
   });
 
   it("uses current Claude SKUs for cloud Anthropic providers", () => {
@@ -92,21 +99,33 @@ describe("model catalog defaults", () => {
     expect(vertexModels).not.toHaveProperty("claude-3-7-sonnet@20250219");
   });
 
-  it("defaults Moonshot to Kimi K2 0905 preview", () => {
-    expect(moonshotDefaultModelId).toBe("kimi-k2-0905-preview");
-    expect(moonshotModels["kimi-k2-0905-preview"]).toBeDefined();
-    expect(moonshotModels["kimi-k2-0905-preview"]?.supportsPromptCache).toBe(
-      true,
-    );
+  it("defaults Moonshot to Kimi K3", () => {
+    expect(moonshotDefaultModelId).toBe("kimi-k3");
+    expect(moonshotModels["kimi-k3"]?.contextWindow).toBe(1_048_576);
+    expect(moonshotModels["kimi-k3"]?.supportsPromptCache).toBe(true);
     expect(moonshotModels["kimi-k2.5"]).toBeDefined();
     expect(moonshotModels["kimi-k2.5"]?.supportsImages).toBe(true);
   });
 
-  it("surfaces Kimi K2 models for OpenRouter users", () => {
+  it("surfaces current Kimi models for OpenRouter users", () => {
     expect(kimiOpenRouterModelIds).toEqual(
       expect.arrayContaining([
+        "moonshotai/kimi-k3",
+        "moonshotai/kimi-k2.7-code",
         "moonshotai/kimi-k2",
         "moonshotai/kimi-k2-instruct-0905",
+      ]),
+    );
+  });
+
+  it("includes every current Gemma 4 Ollama workstation size", () => {
+    expect(Object.keys(ollamaModelPresets)).toEqual(
+      expect.arrayContaining([
+        "gemma4:e2b",
+        "gemma4:e4b",
+        "gemma4:12b",
+        "gemma4:26b",
+        "gemma4:31b",
       ]),
     );
   });

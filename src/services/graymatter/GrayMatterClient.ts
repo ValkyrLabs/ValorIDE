@@ -30,6 +30,7 @@ export interface GrayMatterClientOptions {
     | Promise<TenantContext | undefined>
     | TenantContext
     | undefined;
+  requestTimeoutMs?: number;
 }
 
 export interface GrayMatterMemoryInput {
@@ -73,7 +74,10 @@ export interface GrayMatterOmegaRecallInput {
   query: string;
 }
 
-export type GrayMatterOmegaPlanInput = Omit<GrayMatterOmegaRecallInput, "includeEvaluator"> & {
+export type GrayMatterOmegaPlanInput = Omit<
+  GrayMatterOmegaRecallInput,
+  "includeEvaluator"
+> & {
   includeEvaluator?: boolean;
 };
 
@@ -358,9 +362,7 @@ export class GrayMatterClient {
     });
   }
 
-  async planOmegaRetrieval(
-    input: GrayMatterOmegaPlanInput,
-  ): Promise<unknown> {
+  async planOmegaRetrieval(input: GrayMatterOmegaPlanInput): Promise<unknown> {
     return this.request("/graymatter/omega/plan", {
       body: JSON.stringify({
         query: input.query,
@@ -394,9 +396,7 @@ export class GrayMatterClient {
     });
   }
 
-  async forgetOmegaMemory(
-    input: GrayMatterOmegaForgetInput,
-  ): Promise<unknown> {
+  async forgetOmegaMemory(input: GrayMatterOmegaForgetInput): Promise<unknown> {
     return this.request("/graymatter/omega/forget", {
       body: JSON.stringify({
         idempotencyKey: input.idempotencyKey,
@@ -426,7 +426,11 @@ export class GrayMatterClient {
   async estimateOmegaIndexJob(
     input: Omit<GrayMatterOmegaIndexJobInput, "dryRun" | "mode"> = {},
   ): Promise<unknown> {
-    return this.startOmegaIndexJob({ ...input, dryRun: true, mode: "estimate" });
+    return this.startOmegaIndexJob({
+      ...input,
+      dryRun: true,
+      mode: "estimate",
+    });
   }
 
   async getOmegaIndexJob(jobId: string): Promise<unknown> {
@@ -462,10 +466,9 @@ export class GrayMatterClient {
   }
 
   async getOmegaRetrievalRun(runId: string): Promise<unknown> {
-    return this.request(
-      `/graymatter/omega/runs/${encodeURIComponent(runId)}`,
-      { method: "GET" },
-    );
+    return this.request(`/graymatter/omega/runs/${encodeURIComponent(runId)}`, {
+      method: "GET",
+    });
   }
 
   async cancelOmegaRetrievalRun(runId: string): Promise<unknown> {
@@ -600,10 +603,32 @@ export class GrayMatterClient {
     }
     applyHeaderRecord(headers, buildTenantHeaders(tenantContext));
 
-    const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-      ...init,
-      headers,
-    });
+    const thor_timeoutMs = this.options.requestTimeoutMs;
+    const thor_abortController =
+      thor_timeoutMs && !init.signal ? new AbortController() : undefined;
+    const thor_timeout = thor_abortController
+      ? setTimeout(() => thor_abortController.abort(), thor_timeoutMs)
+      : undefined;
+    let response: Response;
+    try {
+      response = await this.fetchImpl(`${this.baseUrl}${path}`, {
+        ...init,
+        headers,
+        signal: init.signal ?? thor_abortController?.signal,
+      });
+    } catch (error) {
+      if (thor_abortController?.signal.aborted) {
+        throw new GrayMatterClientError(
+          `GrayMatter request exceeded the ${thor_timeoutMs}ms chat latency budget.`,
+          "unavailable",
+        );
+      }
+      throw error;
+    } finally {
+      if (thor_timeout) {
+        clearTimeout(thor_timeout);
+      }
+    }
 
     if (!response.ok) {
       throw await this.toClientError(response);
