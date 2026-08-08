@@ -101,4 +101,28 @@ describe("OpenAPIEditorStandalone", () => {
       type: "blueprintOpenDeployment",
     });
   });
+
+  it("opens the prepared generated project after download", async () => {
+    render(<OpenAPIEditorStandalone />);
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        data: {
+          type: "blueprintGenerated",
+          artifact: {
+            extractedPath: "/workspace/thorapi/v1.Sample",
+            projectWorkspacePath:
+              "/workspace/thorapi/v1.Sample/.valoride/project.code-workspace",
+          },
+        },
+      }),
+    );
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Open generated project" }),
+    );
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "blueprintOpenProject",
+    });
+  });
 });

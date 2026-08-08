@@ -16,6 +16,29 @@ const jsonResponse = (status: number, body: unknown): Response =>
   }) as unknown as Response;
 
 describe("GrayMatterSessionService", () => {
+  it("bounds capability discovery for the chat startup path", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (_url, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () =>
+            reject(new Error("aborted")),
+          );
+        }),
+    );
+
+    await expect(
+      createGrayMatterSessionState({
+        baseUrl: "https://api-0.valkyrlabs.com",
+        fetch: fetchMock,
+        requestTimeoutMs: 5,
+        token: "jwt-token",
+      }),
+    ).resolves.toMatchObject({
+      error: "GrayMatter request exceeded the 5ms chat latency budget.",
+      status: "unavailable",
+    });
+  });
+
   it("loads the Valhalla GrayMatter control surface when api-0 exposes it", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>

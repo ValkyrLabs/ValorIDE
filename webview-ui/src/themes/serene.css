@@ -1,0 +1,808 @@
+/**
+ * Shared serene presentation layer.
+ *
+ * Theme-specific styles still provide their semantic variants, while this
+ * final layer normalizes density, motion, geometry, and surfaces. VS Code
+ * workbench variables remain the first choice so the webview belongs inside
+ * the user's selected editor theme.
+ */
+
+:root {
+  color-scheme: dark;
+
+  --serene-radius-sm: 3px;
+  --serene-radius-md: 5px;
+  --serene-control-height: 28px;
+  --serene-space-1: 0.25rem;
+  --serene-space-2: 0.5rem;
+  --serene-space-3: 0.75rem;
+
+  --serene-background: var(--vscode-editor-background, #1f2225);
+  --serene-surface: var(
+    --vscode-editorWidget-background,
+    var(--vscode-sideBar-background, #25282c)
+  );
+  --serene-surface-raised: var(
+    --vscode-dropdown-background,
+    var(--vscode-editorWidget-background, #292d31)
+  );
+  --serene-foreground: var(--vscode-foreground, #d4d7da);
+  --serene-muted: var(--vscode-descriptionForeground, #a4a9ae);
+  --serene-border: var(
+    --vscode-widget-border,
+    var(--vscode-panel-border, #3f4449)
+  );
+  --serene-hover: var(--vscode-list-hoverBackground, #2d3237);
+  --serene-selection: var(--vscode-list-activeSelectionBackground, #3a4b55);
+  --serene-selection-foreground: var(
+    --vscode-list-activeSelectionForeground,
+    #f2f4f5
+  );
+  --serene-accent: var(--vscode-textLink-foreground, #6f9bad);
+  --serene-focus: var(--vscode-focusBorder, #6f9bad);
+
+  /* Bootstrap-compatible tokens consumed throughout the existing UI. */
+  --bs-primary: var(--serene-accent);
+  --bs-primary-rgb: 111, 155, 173;
+  --bs-secondary: var(--serene-muted);
+  --bs-secondary-rgb: 164, 169, 174;
+  --bs-body-bg: var(--serene-background);
+  --bs-body-color: var(--serene-foreground);
+  --bs-emphasis-color: var(--serene-foreground);
+  --bs-secondary-color: var(--serene-muted);
+  --bs-secondary-bg: var(--serene-surface);
+  --bs-tertiary-color: var(--serene-muted);
+  --bs-tertiary-bg: var(--serene-surface);
+  --bs-border-color: var(--serene-border);
+  --bs-primary-bg-subtle: var(--serene-selection);
+  --bs-secondary-bg-subtle: var(--serene-hover);
+  --bs-info-bg-subtle: var(--serene-hover);
+  --bs-primary-text-emphasis: var(--serene-foreground);
+  --bs-secondary-text-emphasis: var(--serene-foreground);
+  --bs-info-text-emphasis: var(--serene-foreground);
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--serene-foreground);
+  --bs-table-border-color: var(--serene-border);
+  --bs-table-accent-bg: var(--serene-surface);
+  --bs-table-striped-bg: transparent;
+  --bs-table-hover-bg: var(--serene-hover);
+  --bs-table-hover-color: var(--serene-foreground);
+
+  /* Legacy Valkyr tokens map to calm, solid workbench surfaces. */
+  --accent-color: var(--serene-accent);
+  --text-color: var(--serene-foreground);
+  --dark-secondary-bg: var(--serene-surface);
+  --glass-bg: var(--serene-surface);
+  --glass-border: var(--serene-border);
+  --backdrop-blur: none;
+  --lcars-gradient-primary: var(--vscode-button-background, #45636f);
+  --lcars-gradient-secondary: var(--vscode-button-secondaryBackground, #3f474d);
+  --lcars-gradient-accent: var(--vscode-button-background, #45636f);
+  --valkyr-border-radius: var(--serene-radius-md);
+  --dark-border-radius: var(--serene-radius-md);
+  --fun-border-radius: var(--serene-radius-md);
+  --valkyr-shadow: none;
+  --dark-shadow: none;
+  --fun-shadow: none;
+  --valkyr-glow: none;
+  --dark-glow: none;
+  --fun-glow: none;
+}
+
+body.vscode-light,
+body.vscode-high-contrast-light {
+  color-scheme: light;
+}
+
+body.vscode-dark,
+body.vscode-high-contrast {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  background: var(--serene-background);
+  color: var(--serene-foreground);
+  font-family: var(
+    --vscode-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif
+  );
+  font-size: var(--vscode-font-size, 13px);
+}
+
+body {
+  line-height: 1.35;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  color: inherit;
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+a,
+.btn-link,
+.text-accent {
+  color: var(--serene-accent);
+}
+
+a:hover,
+.btn-link:hover {
+  color: var(--vscode-textLink-activeForeground, var(--serene-accent));
+  filter: none;
+}
+
+button,
+input,
+select,
+textarea,
+.btn,
+.form-control,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.form-control,
+.form-select,
+.input-group-text,
+.dropdown-toggle {
+  border-radius: var(--serene-radius-sm);
+  min-height: var(--serene-control-height);
+}
+
+.btn {
+  border-width: 1px;
+  box-shadow: none;
+  font-weight: 500;
+  letter-spacing: normal;
+  padding: var(--serene-space-1) var(--serene-space-2);
+  text-transform: none;
+  transition:
+    background-color 100ms ease,
+    border-color 100ms ease,
+    color 100ms ease;
+}
+
+.btn::before,
+.card::before {
+  content: none;
+  display: none;
+}
+
+.btn:hover,
+.btn:active,
+.card:hover,
+.list-group-item:hover {
+  animation: none;
+  filter: none;
+  transform: none;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active {
+  background: var(--vscode-button-background, #45636f);
+  border-color: var(--vscode-button-border, transparent);
+  color: var(--vscode-button-foreground, #ffffff);
+}
+
+.btn-primary:hover {
+  background: var(--vscode-button-hoverBackground, #527482);
+}
+
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary {
+  background: var(--vscode-button-secondaryBackground, transparent);
+  border-color: var(--serene-border);
+  color: var(--vscode-button-secondaryForeground, var(--serene-foreground));
+}
+
+.btn-secondary:hover,
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover {
+  background: var(
+    --vscode-button-secondaryHoverBackground,
+    var(--serene-hover)
+  );
+  border-color: var(--serene-focus);
+  color: var(--serene-foreground);
+}
+
+.card,
+.accordion-item,
+.list-group-item,
+.sheet-cell {
+  background: var(--serene-surface);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+  color: var(--serene-foreground);
+}
+
+.card {
+  backdrop-filter: none;
+}
+
+.card-header,
+.card-footer,
+.accordion-button {
+  background: transparent;
+  border-color: var(--serene-border);
+  color: var(--serene-foreground);
+}
+
+.card-header,
+.card-footer {
+  padding: var(--serene-space-2) var(--serene-space-3);
+}
+
+.card-body {
+  background: transparent;
+  color: var(--serene-foreground);
+  padding: var(--serene-space-3);
+}
+
+.card-title {
+  color: var(--serene-foreground);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.dropdown-menu,
+.popover,
+.modal-content,
+.offcanvas,
+.toast {
+  background: var(--serene-surface-raised);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  color: var(--serene-foreground);
+}
+
+.dropdown-item {
+  color: var(--serene-foreground);
+  padding: var(--serene-space-1) var(--serene-space-2);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.active {
+  background: var(--serene-hover);
+  color: var(--serene-foreground);
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+  background: var(--vscode-input-background, var(--serene-surface));
+  border: 1px solid var(--vscode-input-border, var(--serene-border));
+  color: var(--vscode-input-foreground, var(--serene-foreground));
+  padding: var(--serene-space-1) var(--serene-space-2);
+}
+
+.form-control::placeholder,
+textarea::placeholder,
+input::placeholder {
+  color: var(--vscode-input-placeholderForeground, var(--serene-muted));
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--serene-border);
+  gap: 2px;
+}
+
+.nav-tabs .nav-link {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--serene-radius-sm) var(--serene-radius-sm) 0 0;
+  color: var(--serene-muted);
+  padding: var(--serene-space-1) var(--serene-space-2);
+  text-transform: none;
+}
+
+.nav-tabs .nav-link:hover {
+  background: var(--serene-hover);
+  border-color: transparent;
+  color: var(--serene-foreground);
+}
+
+.nav-tabs .nav-link.active {
+  background: var(--vscode-tab-activeBackground, var(--serene-background));
+  border-color: var(--serene-border) var(--serene-border)
+    var(--vscode-tab-activeBackground, var(--serene-background));
+  color: var(--vscode-tab-activeForeground, var(--serene-foreground));
+}
+
+.table,
+.sheet-table {
+  color: var(--serene-foreground);
+}
+
+.table > :not(caption) > * > *,
+.sheet-table th,
+.sheet-table td {
+  border-color: var(--serene-border);
+  padding: var(--serene-space-2);
+}
+
+.badge,
+.tag,
+.ant-tag {
+  background: var(--serene-hover);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-sm);
+  color: var(--serene-foreground);
+  font-weight: 500;
+}
+
+.progress {
+  background: var(--serene-hover);
+  border-radius: var(--serene-radius-sm);
+  height: 4px;
+}
+
+.progress-bar {
+  background: var(--serene-accent);
+}
+
+.alert {
+  background: var(--serene-surface);
+  border-color: var(--serene-border);
+  border-left-width: 2px;
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+  color: var(--serene-foreground);
+  padding: var(--serene-space-2) var(--serene-space-3);
+}
+
+/* Ant Design appears beside Bootstrap in account and build surfaces. */
+.ant-btn,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker,
+.ant-collapse,
+.ant-collapse-item,
+.ant-card,
+.ant-modal-content,
+.ant-dropdown-menu {
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+}
+
+.ant-card,
+.ant-collapse,
+.ant-modal-content,
+.ant-dropdown-menu {
+  background: var(--serene-surface);
+  border-color: var(--serene-border);
+  color: var(--serene-foreground);
+}
+
+.ant-card .ant-card-head {
+  min-height: 34px;
+  padding: 0 var(--serene-space-3);
+}
+
+.ant-card .ant-card-body {
+  padding: var(--serene-space-3);
+}
+
+.ant-btn {
+  box-shadow: none;
+  min-height: var(--serene-control-height);
+}
+
+/* Normalize high-energy legacy surfaces without editing each component. */
+button {
+  width: auto;
+}
+
+.glow-button,
+.glow-button.happy,
+.glow-button.waiting,
+.glow-button.sad,
+.chat-text-area,
+.chat-text-area.happy,
+.chat-text-area.waiting,
+.chat-text-area.sad,
+.chat-text-area.stubborn {
+  animation: none;
+  border: 1px solid var(--vscode-input-border, var(--serene-border));
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+}
+
+.chat-text-area {
+  background: var(--vscode-input-background, var(--serene-background));
+  line-height: 1.45;
+  padding: var(--serene-space-2) 28px var(--serene-space-2)
+    var(--serene-space-2);
+}
+
+.chat-text-area.waiting,
+.glow-button.waiting {
+  border-color: var(--vscode-editorWarning-foreground, var(--serene-border));
+}
+
+.chat-text-area.sad,
+.glow-button.sad {
+  border-color: var(--vscode-errorForeground, var(--serene-border));
+}
+
+.aurora-input,
+.aurora-button {
+  background: var(--vscode-input-background, var(--serene-surface));
+  border: 1px solid var(--vscode-input-border, var(--serene-border));
+  border-radius: var(--serene-radius-sm);
+  box-shadow: none;
+  color: var(--serene-foreground);
+  padding: var(--serene-space-1) var(--serene-space-2);
+}
+
+.aurora-input:focus,
+.aurora-button:hover:not(:disabled) {
+  background: var(--serene-hover);
+  border-color: var(--serene-focus);
+  box-shadow: none;
+  transform: none;
+}
+
+.aurora-modal .modal-content {
+  background: var(--serene-surface-raised);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.account-view-root {
+  background: var(--serene-background);
+  backdrop-filter: none;
+}
+
+.account-view-root::after {
+  content: none;
+  display: none;
+}
+
+.account-logo svg {
+  filter: none;
+}
+
+.history-preview-item {
+  background: var(--serene-surface);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+  margin: var(--serene-space-2) 0;
+  padding: var(--serene-space-2) var(--serene-space-3);
+}
+
+.history-preview-item:hover {
+  background: var(--serene-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.lcars-account-tab-container {
+  background: var(--serene-surface);
+  border-color: var(--serene-border);
+  border-radius: var(--serene-radius-md) var(--serene-radius-md) 0 0;
+}
+
+.lcars-account-tabs {
+  gap: 2px;
+  min-height: 36px;
+  padding: 4px 6px 0;
+}
+
+.lcars-account-tab-link {
+  background: transparent;
+  border-color: transparent;
+  border-radius: var(--serene-radius-sm) var(--serene-radius-sm) 0 0;
+  gap: 5px;
+  min-height: 30px;
+  min-width: 0;
+  padding: 4px 8px;
+  text-transform: none;
+}
+
+.lcars-account-tab-link::before {
+  content: none;
+  display: none;
+}
+
+.lcars-account-tab-link:hover {
+  background: var(--serene-hover);
+  border-color: transparent;
+  transform: none;
+}
+
+.lcars-account-tab-link.active {
+  background: var(--vscode-tab-activeBackground, var(--serene-background));
+  border-color: var(--serene-border);
+  font-weight: 600;
+}
+
+.lcars-account-tab-link.active::after {
+  background: var(--serene-accent);
+  border-radius: 0;
+  box-shadow: none;
+  height: 1px;
+  left: 8px;
+  right: 8px;
+}
+
+.lcars-account-tab-link.needs-attention,
+.nav-link.needs-attention {
+  animation: none;
+}
+
+.account-content {
+  border-color: var(--serene-border);
+  border-radius: 0 0 var(--serene-radius-md) var(--serene-radius-md);
+  padding: var(--serene-space-2);
+}
+
+.server-console,
+.server-console.connection-happy,
+.server-console.connection-waiting,
+.server-console.connection-sad {
+  animation: none;
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+  margin: var(--serene-space-2);
+  width: auto;
+}
+
+.server-console.connection-waiting {
+  border-color: var(--vscode-editorWarning-foreground, var(--serene-border));
+}
+
+.server-console.connection-sad {
+  border-color: var(--vscode-errorForeground, var(--serene-border));
+}
+
+.server-console::before {
+  content: none;
+  display: none;
+}
+
+.console-header,
+.server-console .card-header {
+  background: var(--serene-surface);
+  backdrop-filter: none;
+  border-color: var(--serene-border);
+}
+
+.console-title,
+.connection-status {
+  color: var(--serene-foreground);
+  letter-spacing: normal;
+  text-shadow: none;
+  text-transform: none;
+}
+
+.server-console .control-btn,
+.server-console .send-btn {
+  background: var(--vscode-button-secondaryBackground, transparent) !important;
+  border: 1px solid var(--serene-border) !important;
+  box-shadow: none;
+  color: var(--serene-foreground) !important;
+}
+
+.server-console .control-btn:hover,
+.server-console .send-btn:hover:not(:disabled) {
+  background: var(--serene-hover) !important;
+  box-shadow: none;
+  transform: none;
+}
+
+.server-console .messages-container {
+  padding: var(--serene-space-2);
+}
+
+.server-console .message-row {
+  animation: none;
+  background: transparent;
+  border-left: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-sm);
+  gap: var(--serene-space-2);
+  margin-bottom: var(--serene-space-1);
+  padding: var(--serene-space-1) var(--serene-space-2);
+}
+
+.server-console .message-row:hover {
+  background: var(--serene-hover);
+  border-left-color: var(--serene-border);
+}
+
+.server-console .message-badge {
+  background: var(--serene-hover) !important;
+  border: 1px solid var(--serene-border) !important;
+  border-radius: var(--serene-radius-sm);
+  color: var(--serene-foreground) !important;
+  text-transform: none;
+}
+
+.server-console .message-content,
+.server-console .message-time,
+.server-console .empty-state {
+  color: var(--serene-muted);
+}
+
+.server-console .message-input {
+  background: var(
+    --vscode-input-background,
+    var(--serene-background)
+  ) !important;
+  border: 1px solid var(--vscode-input-border, var(--serene-border)) !important;
+  box-shadow: none !important;
+  color: var(--vscode-input-foreground, var(--serene-foreground)) !important;
+}
+
+.server-console .message-input:focus {
+  background: var(
+    --vscode-input-background,
+    var(--serene-background)
+  ) !important;
+  border-color: var(--serene-focus) !important;
+  box-shadow: none !important;
+}
+
+.flipboard-container,
+.flipboard-loading,
+.flipboard-empty,
+.contentflip-canvas {
+  background: var(--serene-surface);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+  color: var(--serene-foreground);
+}
+
+.flipboard-controls,
+.flipboard-info,
+.contentflip-footer {
+  animation: none;
+  background: var(--serene-surface-raised);
+  backdrop-filter: none;
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+}
+
+.flipboard-controls {
+  gap: var(--serene-space-2);
+  padding: var(--serene-space-2);
+}
+
+.flipboard-nav-btn {
+  background: transparent;
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-sm);
+  color: var(--serene-foreground);
+  height: 30px;
+  width: 30px;
+}
+
+.flipboard-nav-btn:hover:not(:disabled) {
+  background: var(--serene-hover);
+  border-color: var(--serene-focus);
+  box-shadow: none;
+  transform: none;
+}
+
+.indicator {
+  background: var(--serene-border);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.indicator:hover,
+.indicator.active {
+  background: var(--serene-accent);
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.flipboard-info h2,
+.flipboard-status,
+.flipboard-category,
+.flipboard-count {
+  color: var(--serene-foreground);
+  text-shadow: none;
+}
+
+.contentflip-canvas::before {
+  content: none;
+  display: none;
+}
+
+.floating-toolbar {
+  background: var(--serene-surface-raised);
+  border: 1px solid var(--serene-border);
+  border-radius: var(--serene-radius-md);
+  box-shadow: none;
+}
+
+.floating-toolbar svg {
+  color: var(--serene-muted);
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [tabindex]
+):focus-visible {
+  outline: 2px solid var(--serene-focus);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .btn,
+  .card,
+  .form-control,
+  .form-select,
+  .dropdown-menu,
+  .modal-content,
+  .nav-tabs .nav-link.active {
+    border-color: currentColor;
+  }
+}
+
+@media (forced-colors: active) {
+  .btn,
+  .card,
+  .form-control,
+  .form-select,
+  .dropdown-menu,
+  .modal-content {
+    border-color: CanvasText;
+  }
+
+  :where(a, button, input, select, textarea, [role="button"]):focus-visible {
+    outline-color: Highlight;
+  }
+}

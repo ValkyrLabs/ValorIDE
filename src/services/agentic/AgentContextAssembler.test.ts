@@ -249,6 +249,43 @@ describe("AgentContextAssembler", () => {
     );
   });
 
+  it("shares one task-start latency budget across memory fallbacks", async () => {
+    jest.useFakeTimers();
+    try {
+      const listMemory = jest.fn(() => new Promise<unknown>(() => undefined));
+      const retrieveMemoryWithReceipt = jest.fn(async () => ({
+        receipt: {
+          answerPolicy: "ALLOW_ANSWER",
+          items: [],
+          retrievalStatus: "OK",
+        },
+      }));
+      const assembler = new AgentContextAssembler({
+        grayMatter: {
+          listMemory,
+          queryMemory: jest.fn(),
+          retrieveMemoryWithReceipt,
+        },
+        latencyBudgetMs: 100,
+        monotonicNow: () => Date.now(),
+        now: () => new Date("2026-05-13T12:00:00.000Z"),
+      });
+
+      const contextPromise = assembler.assemble({
+        task: "Start an agentic task without blocking on memory transport",
+      });
+      jest.advanceTimersByTime(100);
+      const context = await contextPromise;
+
+      expect(listMemory).toHaveBeenCalledTimes(1);
+      expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+      expect(context.grayMatter.status).toBe("unavailable");
+      expect(context.grayMatter.error).toContain("task-start latency budget");
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("suppresses receipt-backed context when policy requires retry", async () => {
     const queryMemory = jest.fn();
     const retrieveMemoryWithReceipt = jest.fn(async () => ({

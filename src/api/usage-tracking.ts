@@ -1,5 +1,6 @@
 import { WebviewProvider } from "../core/webview";
 import { UsageTrackingService } from "../services/usage-tracking/UsageTrackingService";
+import type { UsageTrackingScope } from "../services/usage-tracking/UsageTrackingService";
 
 /**
  * Utility function to track API usage from API providers
@@ -11,17 +12,37 @@ export async function trackApiUsage(
   outputTokens: number,
   costPerInputToken?: number,
   costPerOutputToken?: number,
+  scope?: UsageTrackingScope,
 ): Promise<void> {
+  const webviewProvider = WebviewProvider.getVisibleInstance();
+  if (!webviewProvider) {
+    console.warn("No visible webview instance available for usage tracking");
+    return;
+  }
+
+  await trackApiUsageWithService(
+    webviewProvider.getUsageTrackingService(),
+    provider,
+    model,
+    inputTokens,
+    outputTokens,
+    costPerInputToken,
+    costPerOutputToken,
+    scope,
+  );
+}
+
+const trackApiUsageWithService = async (
+  usageTrackingService: UsageTrackingService,
+  provider: string,
+  model: string,
+  inputTokens: number,
+  outputTokens: number,
+  costPerInputToken?: number,
+  costPerOutputToken?: number,
+  scope?: UsageTrackingScope,
+): Promise<void> => {
   try {
-    // Get the visible webview instance to access the usage tracking service
-    const webviewProvider = WebviewProvider.getVisibleInstance();
-    if (!webviewProvider) {
-      console.warn("No visible webview instance available for usage tracking");
-      return;
-    }
-
-    const usageTrackingService = webviewProvider.getUsageTrackingService();
-
     // Calculate credits based on provider and model
     let credits = 0;
 
@@ -33,6 +54,7 @@ export async function trackApiUsage(
           outputTokens,
           costPerInputToken,
           costPerOutputToken,
+          scope,
         );
         return;
 
@@ -43,6 +65,7 @@ export async function trackApiUsage(
           outputTokens,
           costPerInputToken,
           costPerOutputToken,
+          scope,
         );
         return;
 
@@ -58,6 +81,7 @@ export async function trackApiUsage(
           inputTokens,
           outputTokens,
           credits,
+          scope,
         );
         break;
     }
@@ -65,7 +89,7 @@ export async function trackApiUsage(
     console.error("Failed to track API usage:", error);
     // Don't throw - usage tracking should not break the main functionality
   }
-}
+};
 
 /**
  * Get pricing information for different models
@@ -144,6 +168,7 @@ export async function trackApiUsageWithPricing(
   model: string,
   inputTokens: number,
   outputTokens: number,
+  scope?: UsageTrackingScope,
 ): Promise<void> {
   const pricing = getModelPricing(provider, model);
   await trackApiUsage(
@@ -153,5 +178,31 @@ export async function trackApiUsageWithPricing(
     outputTokens,
     pricing.inputCost,
     pricing.outputCost,
+    scope,
+  );
+}
+
+/**
+ * Tracks against the service that owned the completed turn. Background work
+ * must not re-resolve whichever account/webview happens to be visible later.
+ */
+export async function trackApiUsageWithPricingForService(
+  usageTrackingService: UsageTrackingService,
+  provider: string,
+  model: string,
+  inputTokens: number,
+  outputTokens: number,
+  scope?: UsageTrackingScope,
+): Promise<void> {
+  const pricing = getModelPricing(provider, model);
+  await trackApiUsageWithService(
+    usageTrackingService,
+    provider,
+    model,
+    inputTokens,
+    outputTokens,
+    pricing.inputCost,
+    pricing.outputCost,
+    scope,
   );
 }

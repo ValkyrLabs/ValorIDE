@@ -87,7 +87,10 @@ export function registerProjectExplorerIntegrations(
         {
           label: "Open in New Window",
           action: () =>
-            vscode.commands.executeCommand("vscode.openFolder", uri, true),
+            vscode.commands.executeCommand(
+              "valoride.projects.openInWindow",
+              uri,
+            ),
         },
         {
           label: "Open Integrated Terminal Here",

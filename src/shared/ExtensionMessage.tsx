@@ -221,6 +221,8 @@ export interface ExtensionMessage {
     filename?: string;
     extractedPath?: string;
     readmePath?: string;
+    projectWorkspacePath?: string;
+    configuredModules?: string[];
     step?: string;
     message?: string;
   };

@@ -112,6 +112,8 @@ export interface WebviewMessage {
     | "openOpenAPIEditor"
     | "publishApplicationSource"
     | "openFile"
+    | "openGeneratedProject"
+    | "openGeneratedFile"
     | "trackFunnelEvent"
     | "remoteCodingSessionCommand"
     | "valorBuildModeLaunchTask"

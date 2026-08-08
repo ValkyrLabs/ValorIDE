@@ -34,6 +34,7 @@ import { OpenAPIEditorPanel } from "../../views/openapi/OpenAPIEditorPanel";
 import { TerminalManager } from "@integrations/terminal/TerminalManager";
 import { PathAccess } from "@services/access/PathAccess";
 import { publishApplicationSource } from "@services/applicationSourcePublish";
+import { prepareGeneratedProjectForEditor } from "@services/generatedProjectEditorSetup";
 
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
@@ -1960,6 +1961,76 @@ export class Controller {
         if (relPath) {
           const absPath = path.join(cwd, relPath);
           await handleFileServiceRequest(this, "openFile", { value: absPath });
+        }
+        break;
+      }
+      case "openGeneratedProject": {
+        try {
+          const requestedPath = message.text?.trim();
+          if (!requestedPath) throw new Error("Project path is required.");
+          const thorapiRoot = await fs.realpath(
+            path.resolve(resolveThorapiFolderPath(cwd)),
+          );
+          const candidate = await fs.realpath(path.resolve(requestedPath));
+          const relative = path.relative(thorapiRoot, candidate);
+          if (relative.startsWith("..") || path.isAbsolute(relative)) {
+            throw new Error("Generated project is outside the ThorAPI folder.");
+          }
+          const stat = await fs.stat(candidate);
+          let projectRoot: string;
+          if (stat.isDirectory()) {
+            projectRoot = candidate;
+          } else if (
+            stat.isFile() &&
+            path.basename(candidate) === "project.code-workspace" &&
+            path.basename(path.dirname(candidate)) === ".valoride"
+          ) {
+            projectRoot = path.dirname(path.dirname(candidate));
+          } else {
+            throw new Error("Generated project workspace is invalid.");
+          }
+          // Regenerate the workspace from the contained project root instead
+          // of trusting workspace JSON supplied by an extracted archive.
+          const workspaceFile = (
+            await prepareGeneratedProjectForEditor(projectRoot)
+          ).workspaceFile;
+          await vscode.commands.executeCommand(
+            "vscode.openFolder",
+            vscode.Uri.file(workspaceFile),
+            true,
+          );
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `Unable to open generated project: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        }
+        break;
+      }
+      case "openGeneratedFile": {
+        try {
+          const requestedPath = message.text?.trim();
+          if (!requestedPath) throw new Error("File path is required.");
+          const thorapiRoot = await fs.realpath(
+            path.resolve(resolveThorapiFolderPath(cwd)),
+          );
+          const candidate = await fs.realpath(path.resolve(requestedPath));
+          const relative = path.relative(thorapiRoot, candidate);
+          if (relative.startsWith("..") || path.isAbsolute(relative)) {
+            throw new Error("Generated file is outside the ThorAPI folder.");
+          }
+          const stat = await fs.stat(candidate);
+          if (!stat.isFile()) throw new Error("Generated file was not found.");
+          await vscode.window.showTextDocument(vscode.Uri.file(candidate), {
+            preview: false,
+          });
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `Unable to open generated file: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
         }
         break;
       }
@@ -4176,6 +4247,9 @@ export class Controller {
 
           let extractedPath: string | undefined;
           let readmePath: string | undefined;
+          let projectWorkspacePath: string | undefined;
+          let configuredModules: string[] | undefined;
+          let editorSetupError: string | undefined;
 
           if (looksLikeZip) {
             await sendProgress("extracting", "Extracting project files...");
@@ -4199,7 +4273,27 @@ export class Controller {
               readmePath = await this.findReadmeFile(extractedPath);
               await sendProgress(
                 "finalizing",
-                `Extracted to ${getReadablePath(extractedPath)}`,
+                "Registering generated clients and Java libraries for autocomplete...",
+              );
+              try {
+                const editorSetup =
+                  await prepareGeneratedProjectForEditor(extractedPath);
+                projectWorkspacePath = editorSetup.workspaceFile;
+                configuredModules = editorSetup.modules;
+              } catch (setupError) {
+                editorSetupError =
+                  setupError instanceof Error
+                    ? setupError.message
+                    : String(setupError);
+                console.warn(
+                  `Generated project editor setup failed: ${editorSetupError}`,
+                );
+              }
+              await sendProgress(
+                "finalizing",
+                editorSetupError
+                  ? `Extracted to ${getReadablePath(extractedPath)}; editor setup will retry when opened.`
+                  : `Extracted to ${getReadablePath(extractedPath)}`,
               );
             }
 
@@ -4228,9 +4322,13 @@ export class Controller {
               filename: finalFilename,
               extractedPath,
               readmePath,
+              projectWorkspacePath,
+              configuredModules,
               step: "completed",
               message: looksLikeZip
-                ? "Application extracted successfully."
+                ? editorSetupError
+                  ? "Application extracted. Open Project will retry editor dependency setup."
+                  : "Application extracted; Java and TypeScript autocomplete are configured."
                 : "Application saved successfully.",
             },
           });

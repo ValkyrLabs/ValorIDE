@@ -3,7 +3,7 @@ import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { FiCloud, FiDownload, FiSave } from "react-icons/fi";
+import { FiCloud, FiDownload, FiFolder, FiSave } from "react-icons/fi";
 import OpenAPIVisualEditor from "./OpenAPIVisualEditor";
 import { createEmptyOpenAPISpec } from "@thorapi/utils/OpenAPISpecUtils";
 import { vscode } from "@thorapi/utils/vscode";
@@ -32,6 +32,7 @@ const OpenAPIEditorStandalone = () => {
     bootstrap.applicationId ? "Loading canonical Blueprint..." : "Local draft",
   );
   const [error, setError] = useState<string>();
+  const [projectWorkspacePath, setProjectWorkspacePath] = useState<string>();
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -62,6 +63,7 @@ const OpenAPIEditorStandalone = () => {
         setStatus(message.status || "Working...");
       } else if (message?.type === "blueprintGenerated") {
         setBusy(false);
+        setProjectWorkspacePath(message.artifact?.projectWorkspacePath);
         setStatus(
           `Artifacts downloaded to ${message.artifact?.extractedPath || "thorapi"}`,
         );
@@ -195,6 +197,22 @@ const OpenAPIEditorStandalone = () => {
             </span>
             Deploy
           </VSCodeButton>
+          {projectWorkspacePath && (
+            <VSCodeButton
+              appearance="secondary"
+              role="button"
+              aria-label="Open generated project"
+              onClick={() =>
+                vscode.postMessage({ type: "blueprintOpenProject" } as any)
+              }
+              title="Open the generated project with Java and TypeScript autocomplete"
+            >
+              <span slot="start">
+                <FiFolder aria-hidden />
+              </span>
+              Open Project
+            </VSCodeButton>
+          )}
         </div>
       </div>
       <div style={{ minHeight: 0, flex: 1 }}>

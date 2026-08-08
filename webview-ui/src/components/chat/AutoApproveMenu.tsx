@@ -331,7 +331,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
           }}
         />
         <CollapsibleSection
-          isHovered={isHoveringCollapsibleSection}
+          $isHovered={isHoveringCollapsibleSection}
           style={{ cursor: "pointer" }}
           onClick={() => {
             // to prevent this from counteracting parent
@@ -531,12 +531,12 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
   );
 };
 
-const CollapsibleSection = styled.div<{ isHovered?: boolean }>`
+const CollapsibleSection = styled.div<{ $isHovered?: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
   color: ${(props) =>
-    props.isHovered
+    props.$isHovered
       ? getAsVar(VSC_FOREGROUND)
       : getAsVar(VSC_DESCRIPTION_FOREGROUND)};
   flex: 1;

@@ -371,4 +371,41 @@ describe("ApplicationsList", () => {
     expect(screen.getByText("Extracting Files")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
   });
+
+  it("opens the prepared workspace after generation completes", async () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [{ id: "app-1", name: "Sample App", status: "ready" }],
+      error: undefined,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+
+    render(<ApplicationsList />);
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              success: true,
+              applicationId: "app-1",
+              step: "completed",
+              extractedPath: "/workspace/thorapi/v1.Sample",
+              projectWorkspacePath:
+                "/workspace/thorapi/v1.Sample/.valoride/project.code-workspace",
+            },
+          },
+        }),
+      );
+    });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Open generated project" }),
+    );
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      type: "openGeneratedProject",
+      text: "/workspace/thorapi/v1.Sample/.valoride/project.code-workspace",
+    });
+  });
 });

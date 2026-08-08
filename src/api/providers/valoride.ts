@@ -97,13 +97,9 @@ export class ValorIDEHandler implements ApiHandler {
       }
     }
 
-    // Fallback to generation endpoint if usage chunk not returned
-    if (!didOutputUsage) {
-      const apiStreamUsage = await this.getApiStreamUsage();
-      if (apiStreamUsage) {
-        yield apiStreamUsage;
-      }
-    }
+    // Do not hold the agent loop open while the eventually-consistent
+    // generation endpoint catches up. Task owns the existing background
+    // getApiStreamUsage fallback and updates accounting when it arrives.
   }
 
   async getApiStreamUsage(): Promise<ApiStreamUsageChunk | undefined> {

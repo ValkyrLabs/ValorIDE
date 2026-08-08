@@ -1,6 +1,11 @@
 import * as vscode from "vscode";
 import { UsageTrackingData } from "../../shared/UsageTransaction";
 
+export interface UsageTrackingScope {
+  accountId?: string;
+  idempotencyKey?: string;
+}
+
 /**
  * Service for tracking API usage and charges, sending data to backend server
  * via the webview's RTQ system
@@ -49,7 +54,10 @@ export class UsageTrackingService {
   /**
    * Track API usage by sending a usage transaction to the backend
    */
-  public async trackUsage(usageData: UsageTrackingData): Promise<boolean> {
+  public async trackUsage(
+    usageData: UsageTrackingData,
+    scope: UsageTrackingScope = {},
+  ): Promise<boolean> {
     if (!this.webview) {
       console.warn(
         "UsageTrackingService: No webview available for tracking usage",
@@ -57,7 +65,7 @@ export class UsageTrackingService {
       return false;
     }
 
-    const transactionId = this.generateTransactionId();
+    const transactionId = scope.idempotencyKey || this.generateTransactionId();
     const usageTransaction = {
       spentAt: new Date(),
       credits: usageData.credits,
@@ -74,6 +82,7 @@ export class UsageTrackingService {
         action: "track_usage",
         data: {
           transactionId,
+          accountId: scope.accountId,
           usageTransaction,
         },
       });
@@ -116,18 +125,22 @@ export class UsageTrackingService {
     completionTokens: number,
     costPerPromptToken: number = 0.00001, // Default pricing, should be configurable
     costPerCompletionToken: number = 0.00002,
+    scope?: UsageTrackingScope,
   ): Promise<boolean> {
     const credits =
       promptTokens * costPerPromptToken +
       completionTokens * costPerCompletionToken;
 
-    return this.trackUsage({
-      modelProvider: "openai",
-      model,
-      promptTokens,
-      completionTokens,
-      credits,
-    });
+    return this.trackUsage(
+      {
+        modelProvider: "openai",
+        model,
+        promptTokens,
+        completionTokens,
+        credits,
+      },
+      scope,
+    );
   }
 
   /**
@@ -139,18 +152,22 @@ export class UsageTrackingService {
     completionTokens: number,
     costPerPromptToken: number = 0.000008, // Default pricing for Claude
     costPerCompletionToken: number = 0.000024,
+    scope?: UsageTrackingScope,
   ): Promise<boolean> {
     const credits =
       promptTokens * costPerPromptToken +
       completionTokens * costPerCompletionToken;
 
-    return this.trackUsage({
-      modelProvider: "anthropic",
-      model,
-      promptTokens,
-      completionTokens,
-      credits,
-    });
+    return this.trackUsage(
+      {
+        modelProvider: "anthropic",
+        model,
+        promptTokens,
+        completionTokens,
+        credits,
+      },
+      scope,
+    );
   }
 
   /**
@@ -162,14 +179,18 @@ export class UsageTrackingService {
     promptTokens: number,
     completionTokens: number,
     credits: number,
+    scope?: UsageTrackingScope,
   ): Promise<boolean> {
-    return this.trackUsage({
-      modelProvider: provider,
-      model,
-      promptTokens,
-      completionTokens,
-      credits,
-    });
+    return this.trackUsage(
+      {
+        modelProvider: provider,
+        model,
+        promptTokens,
+        completionTokens,
+        credits,
+      },
+      scope,
+    );
   }
 
   /**

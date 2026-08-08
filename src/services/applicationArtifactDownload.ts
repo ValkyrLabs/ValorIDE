@@ -5,6 +5,7 @@ import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
+import { prepareGeneratedProjectForEditor } from "./generatedProjectEditorSetup";
 
 export interface ApplicationArtifactDownloadRequest {
   applicationId: string;
@@ -16,6 +17,8 @@ export interface ApplicationArtifactDownloadRequest {
 export interface ApplicationArtifactDownloadResult {
   extractedPath: string;
   filename: string;
+  projectWorkspacePath: string;
+  configuredModules: string[];
 }
 
 const filenameFromDisposition = (
@@ -102,9 +105,18 @@ export async function downloadApplicationArtifact({
       "utf8",
     );
     await onProgress?.(
+      "Registering Java and TypeScript dependencies for editor autocomplete...",
+    );
+    const editorSetup = await prepareGeneratedProjectForEditor(extractedPath);
+    await onProgress?.(
       `Downloaded to ${getReadablePath(workspaceRoot, extractedPath)}`,
     );
-    return { extractedPath, filename };
+    return {
+      extractedPath,
+      filename,
+      projectWorkspacePath: editorSetup.workspaceFile,
+      configuredModules: editorSetup.modules,
+    };
   } finally {
     await fs.unlink(archivePath).catch(() => undefined);
   }

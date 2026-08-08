@@ -6,6 +6,7 @@ import {
   getAppDownloadUrl,
 } from "../services/appService";
 import { Application } from "@thorapi/model/Application";
+import { prepareGeneratedProjectForEditor } from "@services/generatedProjectEditorSetup";
 
 const JWT_SECRET_KEYS = ["jwtToken", "valor_jwt_token"] as const;
 
@@ -137,17 +138,18 @@ async function handleGenerateApp(
         targetDir,
         app.name || "unknown-app",
       );
+      const editorSetup = await prepareGeneratedProjectForEditor(extractedPath);
       vscode.window.showInformationMessage(
-        `App "${app.name}" downloaded and extracted to ${extractedPath}.`,
+        `App "${app.name}" downloaded with ${editorSetup.modules.length} editor module${editorSetup.modules.length === 1 ? "" : "s"} configured.`,
       );
       const open = await vscode.window.showInformationMessage(
         `Open "${app.name}" in a new VS Code window?`,
-        "Open Folder",
+        "Open Project",
       );
-      if (open === "Open Folder") {
+      if (open === "Open Project") {
         vscode.commands.executeCommand(
           "vscode.openFolder",
-          vscode.Uri.file(extractedPath),
+          vscode.Uri.file(editorSetup.workspaceFile),
           true,
         );
       }
@@ -187,9 +189,10 @@ async function handleOpenAppFolder(app: Application) {
     return bTime - aTime;
   });
   const targetDir = require("path").join(baseDir, candidates[0]);
+  const editorSetup = await prepareGeneratedProjectForEditor(targetDir);
   vscode.commands.executeCommand(
     "vscode.openFolder",
-    vscode.Uri.file(targetDir),
+    vscode.Uri.file(editorSetup.workspaceFile),
     true,
   );
 }

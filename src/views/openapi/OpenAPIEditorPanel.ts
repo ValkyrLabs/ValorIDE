@@ -70,6 +70,7 @@ export class OpenAPIEditorPanel {
 
     OpenAPIEditorPanel.currentPanel = panel;
     OpenAPIEditorPanel.currentApplicationId = options.applicationId;
+    let generatedProjectWorkspacePath: string | undefined;
     panel.webview.html = renderOpenAPIEditorPanel(
       context,
       panel.webview,
@@ -89,7 +90,29 @@ export class OpenAPIEditorPanel {
         return;
       }
       if (message?.type === "blueprintSave") {
-        await handleBlueprintSave(context, panel, options, message);
+        const artifact = await handleBlueprintSave(
+          context,
+          panel,
+          options,
+          message,
+        );
+        generatedProjectWorkspacePath =
+          artifact?.projectWorkspacePath ?? generatedProjectWorkspacePath;
+        return;
+      }
+      if (message?.type === "blueprintOpenProject") {
+        if (!generatedProjectWorkspacePath) {
+          await panel.webview.postMessage({
+            type: "blueprintError",
+            error: "Generate and download the Application before opening it.",
+          });
+          return;
+        }
+        await vscode.commands.executeCommand(
+          "vscode.openFolder",
+          vscode.Uri.file(generatedProjectWorkspacePath),
+          true,
+        );
         return;
       }
       if (message?.type === "blueprintOpenDeployment") {
@@ -214,7 +237,7 @@ const handleBlueprintSave = async (
       type: "blueprintError",
       error: "Application id and OpenAPI specification are required.",
     });
-    return;
+    return undefined;
   }
   try {
     const jwtToken = await requireJwt(context);
@@ -249,6 +272,7 @@ const handleBlueprintSave = async (
         type: "blueprintGenerated",
         artifact,
       });
+      return artifact;
     }
   } catch (error) {
     await panel.webview.postMessage({
@@ -256,6 +280,7 @@ const handleBlueprintSave = async (
       error: errorMessage(error),
     });
   }
+  return undefined;
 };
 
 const renderOpenAPIEditorPanel = (

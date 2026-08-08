@@ -22,7 +22,9 @@ export const UsageTrackingHandler: React.FC = () => {
   const accountId =
     authenticatedUser?.id !== undefined && authenticatedUser?.id !== null
       ? String(authenticatedUser.id)
-      : (authenticatedUser as any)?.username || (authenticatedUser as any)?.email || "";
+      : (authenticatedUser as any)?.username ||
+        (authenticatedUser as any)?.email ||
+        "";
 
   // Use the custom credits API endpoint for actual credit balance
   // GET /v1/credits/{accountId}/balance
@@ -93,6 +95,7 @@ export const UsageTrackingHandler: React.FC = () => {
 
   const handleTrackUsage = async (data: {
     transactionId: string;
+    accountId?: string;
     usageTransaction: Partial<UsageTransaction>;
   }) => {
     try {
@@ -101,11 +104,15 @@ export const UsageTrackingHandler: React.FC = () => {
       if (!token) {
         throw new Error("Missing JWT token");
       }
-      if (!accountId) {
+      const transactionAccountId = data.accountId || accountId;
+      if (!transactionAccountId) {
         throw new Error("Missing account id");
       }
+      if (data.accountId && accountId && data.accountId !== accountId) {
+        throw new Error("Usage account changed before submission");
+      }
       const result = await recordUsageTransaction({
-        accountId,
+        accountId: transactionAccountId,
         usage: data.usageTransaction as any,
         idempotencyKey: data.transactionId,
       }).unwrap();

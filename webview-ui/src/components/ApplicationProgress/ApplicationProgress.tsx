@@ -4,6 +4,7 @@ import {
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import "./ApplicationProgress.css";
 
 interface ProgressStep {
@@ -61,6 +62,7 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
     filePath?: string;
     extractedPath?: string;
     readmePath?: string;
+    projectWorkspacePath?: string;
   }>({});
 
   useEffect(() => {
@@ -92,6 +94,7 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
       filePath,
       extractedPath,
       readmePath,
+      projectWorkspacePath,
     } = result;
 
     if (error) {
@@ -107,7 +110,12 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
 
     if (success && step === "completed") {
       setIsComplete(true);
-      setResultDetails({ filePath, extractedPath, readmePath });
+      setResultDetails({
+        filePath,
+        extractedPath,
+        readmePath,
+        projectWorkspacePath,
+      });
       setSteps((prev) => prev.map((s) => ({ ...s, status: "completed" })));
       return;
     }
@@ -151,28 +159,22 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
   };
 
   const handleOpenFolder = () => {
-    if (resultDetails.extractedPath) {
-      // Send message to extension to open the folder
-      window.postMessage(
-        {
-          type: "openFolder",
-          path: resultDetails.extractedPath,
-        },
-        "*",
-      );
+    const projectPath =
+      resultDetails.projectWorkspacePath || resultDetails.extractedPath;
+    if (projectPath) {
+      vscode.postMessage({
+        type: "openGeneratedProject",
+        text: projectPath,
+      });
     }
   };
 
   const handleOpenReadme = () => {
     if (resultDetails.readmePath) {
-      // Send message to extension to open the README
-      window.postMessage(
-        {
-          type: "openFile",
-          path: resultDetails.readmePath,
-        },
-        "*",
-      );
+      vscode.postMessage({
+        type: "openGeneratedFile",
+        text: resultDetails.readmePath,
+      });
     }
   };
 
@@ -206,13 +208,23 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
               </p>
 
               <div className="result-actions">
-                {resultDetails.extractedPath && (
-                  <VSCodeButton appearance="primary" onClick={handleOpenFolder}>
-                    Open Project Folder
+                {(resultDetails.projectWorkspacePath ||
+                  resultDetails.extractedPath) && (
+                  <VSCodeButton
+                    appearance="primary"
+                    role="button"
+                    aria-label="Open Project"
+                    onClick={handleOpenFolder}
+                  >
+                    Open Project
                   </VSCodeButton>
                 )}
                 {resultDetails.readmePath && (
-                  <VSCodeButton onClick={handleOpenReadme}>
+                  <VSCodeButton
+                    role="button"
+                    aria-label="View Documentation"
+                    onClick={handleOpenReadme}
+                  >
                     View Documentation
                   </VSCodeButton>
                 )}

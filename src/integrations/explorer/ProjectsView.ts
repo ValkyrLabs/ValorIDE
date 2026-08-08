@@ -6,6 +6,7 @@ import {
   thorapiSettingChanged,
 } from "@utils/thorapi";
 import { openUrlWithSimpleBrowser } from "@utils/openUrl";
+import { prepareGeneratedProjectForEditor } from "@services/generatedProjectEditorSetup";
 import { resolveProjectCommandUri } from "./projectCommandUri";
 import {
   commandWithJavaHome,
@@ -147,8 +148,14 @@ export function registerProjectsView(
       "valoride.projects.openInWindow",
       async (target?: unknown) => {
         const u = getUriArg(target);
-        if (u)
-          await vscode.commands.executeCommand("vscode.openFolder", u, true);
+        if (u) {
+          const editorSetup = await prepareGeneratedProjectForEditor(u.fsPath);
+          await vscode.commands.executeCommand(
+            "vscode.openFolder",
+            vscode.Uri.file(editorSetup.workspaceFile),
+            true,
+          );
+        }
       },
     ),
     vscode.commands.registerCommand(

@@ -21,6 +21,34 @@ function basenameNoExt(filename: string): string {
   return idx > 0 ? base.slice(0, idx) : base;
 }
 
+export function resolveZipEntryPath(
+  extractDir: string,
+  entryName: string,
+): string {
+  const normalizedName = entryName.replace(/\\/g, "/");
+  if (
+    !normalizedName ||
+    normalizedName.includes("\0") ||
+    normalizedName.startsWith("/") ||
+    /^[A-Za-z]:\//.test(normalizedName)
+  ) {
+    throw new Error(`Unsafe ZIP entry path: ${entryName}`);
+  }
+  const segments = normalizedName
+    .split("/")
+    .filter((segment) => segment !== "");
+  if (segments.some((segment) => segment === "..")) {
+    throw new Error(`Unsafe ZIP entry path: ${entryName}`);
+  }
+  const resolvedRoot = path.resolve(extractDir);
+  const resolvedEntry = path.resolve(resolvedRoot, ...segments);
+  const relative = path.relative(resolvedRoot, resolvedEntry);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error(`Unsafe ZIP entry path: ${entryName}`);
+  }
+  return resolvedEntry;
+}
+
 function deriveVersionedFolderName(opts: {
   filename?: string;
   url?: string;
@@ -100,9 +128,12 @@ export async function downloadAndExtractZip(
   // Extract zip using adm-zip
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries();
+  const validatedEntries = zipEntries.map((entry) => ({
+    entry,
+    entryPath: resolveZipEntryPath(extractDir, entry.entryName),
+  }));
 
-  for (const entry of zipEntries) {
-    const entryPath = path.join(extractDir, entry.entryName);
+  for (const { entry, entryPath } of validatedEntries) {
     if (entry.isDirectory) {
       await vscode.workspace.fs.createDirectory(vscode.Uri.file(entryPath));
     } else {
@@ -144,9 +175,12 @@ export async function extractLocalZip(
   // Extract zip using adm-zip
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries();
+  const validatedEntries = zipEntries.map((entry) => ({
+    entry,
+    entryPath: resolveZipEntryPath(extractDir, entry.entryName),
+  }));
 
-  for (const entry of zipEntries) {
-    const entryPath = path.join(extractDir, entry.entryName);
+  for (const { entry, entryPath } of validatedEntries) {
     if (entry.isDirectory) {
       await vscode.workspace.fs.createDirectory(vscode.Uri.file(entryPath));
     } else {

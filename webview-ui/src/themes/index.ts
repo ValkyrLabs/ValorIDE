@@ -46,6 +46,18 @@ const themeStylesheets: Record<ThemeName, string> = {
 
 const componentOverridesHref = new URL("./components.css", import.meta.url)
   .href;
+const sereneOverridesHref = new URL("./serene.css", import.meta.url).href;
+
+const sharedStylesheets = [
+  {
+    id: "valkyr-theme-overrides",
+    href: componentOverridesHref,
+  },
+  {
+    id: "valkyr-theme-serene",
+    href: sereneOverridesHref,
+  },
+] as const;
 
 // Theme switcher class
 export class ThemeSwitcher {
@@ -121,13 +133,16 @@ export class ThemeSwitcher {
     if (typeof themeName === "string" && themeName !== normalized) {
       this.removeLegacyThemeStylesheet(themeName);
     }
-    this.ensureComponentOverrides();
-
     // Remove previous theme stylesheet
     this.removeThemeStylesheet(this.currentTheme);
 
     // Load new theme stylesheet
     this.loadThemeStylesheet(normalized);
+
+    // Theme styles are intentionally loaded before the shared component and
+    // density layers. Re-appending those layers keeps their precedence stable
+    // when a user switches themes at runtime.
+    this.ensureSharedStylesheets();
 
     // Update data attribute for CSS targeting
     document.documentElement.setAttribute("data-theme", normalized);
@@ -205,18 +220,17 @@ export class ThemeSwitcher {
     }
   }
 
-  private ensureComponentOverrides(): void {
-    const overridesId = "valkyr-theme-overrides";
-    if (document.getElementById(overridesId)) {
-      return;
-    }
+  private ensureSharedStylesheets(): void {
+    sharedStylesheets.forEach(({ id, href }) => {
+      document.getElementById(id)?.remove();
 
-    const link = document.createElement("link");
-    link.id = overridesId;
-    link.rel = "stylesheet";
-    link.type = "text/css";
-    link.href = componentOverridesHref;
-    document.head.appendChild(link);
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = href;
+      document.head.appendChild(link);
+    });
   }
 
   onThemeChange(callback: (theme: ThemeName) => void): () => void {

@@ -82,6 +82,11 @@ import "./themes/valkyr/bootstrap.css";
 import "./App.css";
 import "./index.css";
 import "antd/dist/reset.css";
+// Keep the shared layers in the primary webview stylesheet as well as the
+// runtime theme switcher. VS Code webviews serve the bundle through a custom
+// URI, so this guarantees the baseline presentation without a network fetch.
+import "./themes/components.css";
+import "./themes/serene.css";
 
 import type { ProviderProps } from "react-redux";
 import { Provider } from "react-redux";

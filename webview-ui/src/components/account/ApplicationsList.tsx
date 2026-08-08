@@ -65,6 +65,8 @@ interface ApplicationLoadingState {
   currentStep?: ApplicationGenerationStep;
   statusMessage?: string;
   error?: string;
+  extractedPath?: string;
+  projectWorkspacePath?: string;
   steps: {
     receiving: boolean;
     processing: boolean;
@@ -369,6 +371,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         error,
         step,
         message: progressMessage,
+        extractedPath,
+        projectWorkspacePath,
       } = message.streamToThorapiResult;
 
       if (!applicationId) {
@@ -389,6 +393,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
             currentStep: "finalizing",
             statusMessage: progressMessage,
             error: undefined,
+            extractedPath,
+            projectWorkspacePath,
             steps: {
               receiving: true,
               processing: true,
@@ -1044,7 +1050,9 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     aria-label="Generate"
                     role="button"
                     onClick={() => handleGenerate(appId)}
-                    disabled={loadingStates[appId]?.generating}
+                    disabled={
+                      loadingStates[appId]?.generating ? true : undefined
+                    }
                   >
                     {loadingStates[appId]?.generating
                       ? "Generating..."
@@ -1061,6 +1069,24 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                       ? "Deploying..."
                       : "Deploy"}
                   </VSCodeButton>
+                  {(loadingStates[appId]?.projectWorkspacePath ||
+                    loadingStates[appId]?.extractedPath) && (
+                    <VSCodeButton
+                      appearance="secondary"
+                      aria-label="Open generated project"
+                      role="button"
+                      onClick={() =>
+                        vscode.postMessage({
+                          type: "openGeneratedProject",
+                          text:
+                            loadingStates[appId]?.projectWorkspacePath ||
+                            loadingStates[appId]?.extractedPath,
+                        })
+                      }
+                    >
+                      Open Project
+                    </VSCodeButton>
+                  )}
                 </div>
               )}
               {loadingStates[appId]?.sourceStatus && (
