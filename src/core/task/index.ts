@@ -167,6 +167,11 @@ import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
 import { resolveCommandRequiresApproval } from "./tools/commandApproval";
 import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
+import {
+  classifyTaskCompletion,
+  type TaskTerminalEvent,
+  type TaskTerminalListener,
+} from "@shared/TaskLifecycle";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -200,6 +205,8 @@ export class Task {
   private cancelTask: () => Promise<void>;
   private toolRelayService?: ToolRelayService;
   private communicationService?: CommunicationService;
+  private readonly terminalListener?: TaskTerminalListener;
+  private terminalReported = false;
 
   readonly taskId: string;
   api: ApiHandler;
@@ -302,6 +309,7 @@ export class Task {
     historyItem?: HistoryItem,
     communicationService?: CommunicationService,
     thorapi_project?: string,
+    terminalListener?: TaskTerminalListener,
   ) {
     this.context = context;
     this.mcpHub = mcpHub;
@@ -311,6 +319,7 @@ export class Task {
     this.postMessageToWebview = postMessageToWebview;
     this.reinitExistingTaskFromId = reinitExistingTaskFromId;
     this.cancelTask = cancelTask;
+    this.terminalListener = terminalListener;
     this.valorideIgnoreController = new ValorIDEIgnoreController(cwd);
     this.valorideIgnoreController.initialize().catch((error) => {
       console.error("Failed to initialize ValorIDEIgnoreController:", error);
@@ -1744,6 +1753,19 @@ export class Task {
       if (didEndLoop) {
         // For now a task never 'completes'. This will only happen if the user hits max requests and denies resetting the count.
         //this.say("task_completed", `Task completed. Total API usage cost: ${totalCost}`)
+        await this.reportTerminal({
+          confidence: "EXPLICIT",
+          error: {
+            code: "ERR_TASK_LOOP_ENDED",
+            message:
+              "The task loop ended without an explicit completion result.",
+            retryable: true,
+          },
+          kind: "blocked",
+          source: "runtime-envelope",
+          summary:
+            "Task stopped before ValorIDE produced an explicit completion result.",
+        });
         break;
       } else {
         // this.say(
@@ -1762,13 +1784,46 @@ export class Task {
   }
 
   async abortTask() {
-    this.abort = true; // will stop any autonomously running promises
+    this.abort = true; // stop autonomously running promises before publishing asynchronous lifecycle work
+    await this.reportTerminal({
+      confidence: "EXPLICIT",
+      error: {
+        code: "ERR_TASK_ABORTED",
+        message:
+          "The task was aborted before a durable terminal result was confirmed.",
+        retryable: true,
+      },
+      kind: "outcome-uncertain",
+      source: "runtime-envelope",
+      summary:
+        "Task aborted before a durable success, failure, or blocker was confirmed.",
+    });
     this.terminalManager.disposeAll();
     this.urlContentFetcher.closeBrowser();
     await this.browserSession.dispose();
     this.valorideIgnoreController.dispose();
     this.fileContextTracker.dispose();
     await this.diffViewProvider.revertChanges(); // need to await for when we want to make sure directories/files are reverted before re-starting the task from a checkpoint
+  }
+
+  private async reportTerminal(
+    event: Omit<TaskTerminalEvent, "completedAt" | "taskId">,
+  ): Promise<void> {
+    if (this.terminalReported || !this.terminalListener) {
+      return;
+    }
+    this.terminalReported = true;
+    try {
+      await this.terminalListener({
+        ...event,
+        completedAt: new Date().toISOString(),
+        taskId: this.taskId,
+      });
+    } catch (error) {
+      Logger.log(
+        `Failed to publish terminal task lifecycle event for ${this.taskId}: ${String(error)}`,
+      );
+    }
   }
 
   // Checkpoints
@@ -5227,6 +5282,20 @@ export class Task {
                     partialMessage: lastCompletionResultMessage,
                   });
                 }
+                const checkpointHash =
+                  lastCompletionResultMessage?.lastCheckpointHash?.trim();
+                const machineEvidenceRefs =
+                  checkpointHash &&
+                  lastCompletionChangesSummary &&
+                  lastCompletionChangesSummary.totalFiles > 0
+                    ? [`valoride-checkpoint:${checkpointHash}`]
+                    : [];
+                await this.reportTerminal(
+                  classifyTaskCompletion({
+                    evidenceRefs: machineEvidenceRefs,
+                    summary: result,
+                  }),
+                );
                 const { response, text, images } = await this.ask(
                   "completion_result",
                   "",
@@ -5822,8 +5891,19 @@ export class Task {
       } catch (error) {
         // abandoned happens when extension is no longer waiting for the valoride instance to finish aborting (error is thrown here when any function in the for loop throws due to this.abort)
         if (!this.abandoned) {
-          this.abortTask(); // if the stream failed, there's various states the task could be in (i.e. could have streamed some tools the user may have executed), so we just resort to replicating a cancel task
           const errorMessage = this.formatErrorWithStatusCode(error);
+          await this.reportTerminal({
+            confidence: "EXPLICIT",
+            error: {
+              code: "ERR_TASK_STREAM_FAILED",
+              message: errorMessage,
+              retryable: true,
+            },
+            kind: "failed",
+            source: "runtime-envelope",
+            summary: "ValorIDE task streaming failed before completion.",
+          });
+          void this.abortTask(); // if the stream failed, there's various states the task could be in (i.e. could have streamed some tools the user may have executed), so we just resort to replicating a cancel task
 
           await abortStream("streaming_failed", errorMessage);
           await this.reinitExistingTaskFromId(this.taskId);
@@ -5965,6 +6045,17 @@ export class Task {
       return didEndLoop; // will always be false for now
     } catch (error) {
       // this should never happen since the only thing that can throw an error is the attemptApiRequest, which is wrapped in a try catch that sends an ask where if noButtonClicked, will clear current task and destroy this instance. However to avoid unhandled promise rejection, we will end this loop which will end execution of this instance (see startTask)
+      await this.reportTerminal({
+        confidence: "EXPLICIT",
+        error: {
+          code: "ERR_TASK_EXECUTION_FAILED",
+          message: error instanceof Error ? error.message : String(error),
+          retryable: true,
+        },
+        kind: "failed",
+        source: "runtime-envelope",
+        summary: "ValorIDE task execution failed before completion.",
+      });
       return true; // needs to be true so parent loop knows to end task
     }
   }

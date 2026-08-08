@@ -66,6 +66,7 @@ import {
   Platform,
 } from "@shared/ExtensionMessage";
 import { HistoryItem } from "@shared/HistoryItem";
+import type { TaskTerminalEvent } from "@shared/TaskLifecycle";
 import {
   McpDownloadResponse,
   McpMarketplaceCatalog,
@@ -439,6 +440,9 @@ export class Controller {
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
   private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
   private readonly buildModeTerminalManager = new TerminalManager();
+  private readonly taskTerminalEmitter =
+    new vscode.EventEmitter<TaskTerminalEvent>();
+  public readonly onTaskTerminal = this.taskTerminalEmitter.event;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -500,6 +504,7 @@ export class Controller {
       this.outputChannel.appendLine(`Error clearing task: ${error}`);
       console.error("Error clearing task:", error);
     }
+    this.taskTerminalEmitter.dispose();
 
     // Dispose all disposables with individual error handling
     while (this.disposables.length) {
@@ -1713,6 +1718,9 @@ export class Controller {
       task,
       images,
       historyItem,
+      undefined,
+      undefined,
+      (event) => this.taskTerminalEmitter.fire(event),
     );
   }
 
@@ -2142,7 +2150,11 @@ export class Controller {
             "authenticatedPrincipal",
             authenticatedPrincipal,
           );
-          await updateGlobalState(this.context, "userInfo", authenticatedPrincipal);
+          await updateGlobalState(
+            this.context,
+            "userInfo",
+            authenticatedPrincipal,
+          );
           await this.storeTenantContextFromPayloads(authenticatedPrincipal);
         }
         await updateGlobalState(
@@ -4621,7 +4633,9 @@ export class Controller {
         openAuthorizationUrl: async (url) => {
           const opened = await openUrlExternally(url);
           if (!opened) {
-            throw new Error("Unable to open your default browser for OpenAI OAuth.");
+            throw new Error(
+              "Unable to open your default browser for OpenAI OAuth.",
+            );
           }
           vscode.window.showInformationMessage(
             "OpenAI sign-in opened in your default browser. Complete it there; ValorIDE will connect automatically.",
@@ -4651,7 +4665,9 @@ export class Controller {
           success: true,
         },
       });
-      vscode.window.showInformationMessage("OpenAI OAuth connected for ValorIDE.");
+      vscode.window.showInformationMessage(
+        "OpenAI OAuth connected for ValorIDE.",
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       await this.postMessageToWebview({
@@ -4814,8 +4830,7 @@ export class Controller {
       const jwtToken = await this.readStoredJwtToken();
       const { authenticatedPrincipal, userInfo, agenticState } =
         await getAllExtensionState(this.context);
-      const currentAgenticState =
-        createAgenticCommandCenterState(agenticState);
+      const currentAgenticState = createAgenticCommandCenterState(agenticState);
 
       if (!jwtToken) {
         const nextAgenticState = updateSwarmState(currentAgenticState, {
@@ -5193,8 +5208,7 @@ export class Controller {
         const lowerAliases = aliases.map((alias) => alias.toLowerCase());
         if (
           lowerAliases.some(
-            (alias) =>
-              alias === "graymatter" || alias.includes("graymatter"),
+            (alias) => alias === "graymatter" || alias.includes("graymatter"),
           )
         ) {
           aliases.push("graymatter-memory");
