@@ -344,7 +344,6 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return;
     }
     if (!force && this.capabilityCache) {
-      this.mothership.sendAppTopic("capabilities", this.capabilityCache);
       return;
     }
 
@@ -393,7 +392,6 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     };
 
     this.capabilityCache = envelope;
-    this.mothership.sendAppTopic("capabilities", envelope);
   }
 
   private getTrackedRepositories(): string[] {

@@ -19,6 +19,7 @@ import {
 } from "@shared/swarm-protocol";
 import { extractSwarmInboundCommandContext } from "../swarm/SwarmRuntimeOutcome";
 
+// Load only after Jest registers the webview and ESM-only dependency mocks above.
 const AgentRuntimeCoordinator = require("./AgentRuntimeCoordinator").default;
 
 const localInstanceId = "valoride-agent-1";

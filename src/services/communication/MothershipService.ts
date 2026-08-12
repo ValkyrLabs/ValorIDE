@@ -166,20 +166,16 @@ export class MothershipService extends EventEmitter {
       pathname = pathname.slice(0, -3) || "";
     }
 
-    if (/\/ws\/websocket$/i.test(pathname)) {
-      url.pathname = pathname.replace(/\/websocket$/i, "");
-    } else if (/\/chat\/websocket$/i.test(pathname)) {
-      url.pathname = pathname.replace(/\/websocket$/i, "");
+    if (/\/(ws|chat)\/websocket$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/(ws|chat)\/websocket$/i, "/swarm");
     } else if (/\/swarm\/websocket$/i.test(pathname)) {
       url.pathname = pathname.replace(/\/websocket$/i, "");
-    } else if (/\/ws$/i.test(pathname)) {
-      url.pathname = pathname;
-    } else if (/\/chat$/i.test(pathname)) {
-      url.pathname = pathname;
+    } else if (/\/(ws|chat)$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/(ws|chat)$/i, "/swarm");
     } else if (/\/swarm$/i.test(pathname)) {
       url.pathname = pathname;
     } else {
-      url.pathname = `${pathname}/ws`;
+      url.pathname = `${pathname}/swarm`;
     }
 
     return url;
@@ -214,42 +210,7 @@ export class MothershipService extends EventEmitter {
     this.connected = true;
     this.reconnectAttempts = 0;
     this.subscribeToMothershipTopics();
-    this.startPingInterval();
     this.emit("connected");
-
-    // Send initial registration message.
-    this.sendMessage({
-      type: WebsocketMessageTypeEnum.SERVICE,
-      payload: JSON.stringify({
-        action: "register",
-        instanceId: this.instanceId,
-        userId: this.options.userId,
-        timestamp: Date.now(),
-      }),
-      time: new Date().toISOString(),
-      user: { id: this.options.userId || "anonymous" } as any,
-    });
-
-    try {
-      this.sendAppTopic("presence:join", {
-        id: this.instanceId,
-        online: true,
-      });
-      this.sendAppTopic("auth:ack", { id: this.instanceId });
-      this.sendAppTopic("presence:rollcall", { id: this.instanceId });
-      this.sendAppTopic("session:resume", {
-        id: this.instanceId,
-        lastProcessedSequence: this.lastProcessedSequence,
-        replayWindowSize: this.replayWindowSize,
-      });
-      this.emit("liveness", {
-        id: this.instanceId,
-        online: true,
-        timestamp: Date.now(),
-      });
-    } catch (e) {
-      console.warn("Failed to send presence/rollcall on connect:", e);
-    }
   }
 
   private subscribeToMothershipTopics(): void {
@@ -262,9 +223,6 @@ export class MothershipService extends EventEmitter {
 
     const headers = this.buildAgentHeaders();
     const destinations = [
-      "/topic/messages",
-      "/topic/statuses",
-      "/topic/agent-commands",
       "/user/queue/swarm-control",
       `/queue/agents/${this.instanceId}/commands`,
     ];
@@ -297,19 +255,6 @@ export class MothershipService extends EventEmitter {
     if (wasConnected) {
       this.emit("disconnected", event);
     }
-  }
-
-  private startPingInterval(): void {
-    this.stopPingInterval();
-    this.pingInterval = setInterval(() => {
-      if (this.stompClient?.connected) {
-        this.sendMessage({
-          type: WebsocketMessageTypeEnum.SERVICE,
-          payload: JSON.stringify({ action: "ping" }),
-          time: new Date().toISOString(),
-        });
-      }
-    }, 30000); // Ping every 30 seconds
   }
 
   private stopPingInterval(): void {
@@ -672,6 +617,12 @@ export class MothershipService extends EventEmitter {
     data: any,
     type: WebsocketMessageTypeEnum = WebsocketMessageTypeEnum.BROADCAST,
   ): void {
+    if (topic !== "swarm") {
+      console.warn(
+        `Skipped unsupported legacy mothership topic ${topic}; use the canonical SWARM control or command-response path`,
+      );
+      return;
+    }
     const envelope = {
       topic,
       payload: data,
@@ -680,11 +631,14 @@ export class MothershipService extends EventEmitter {
       sequence: ++this.outboundSequence,
       timestamp: Date.now(),
     };
-    this.sendMessage({
-      type,
-      payload: JSON.stringify(envelope),
-      time: new Date().toISOString(),
-    });
+    this.sendMessage(
+      {
+        type,
+        payload: JSON.stringify(envelope),
+        time: new Date().toISOString(),
+      },
+      "/app/swarm/control",
+    );
   }
 
   public disconnect(): void {

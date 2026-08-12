@@ -1,7 +1,3 @@
-Absolutely. Paste this in as README.md.
-
-![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
-
 # ValorIDE
 
 ## Agentic coding inside VS Code — with tools, terminal access, browser debugging, MCP, checkpoints, and ThorAPI code generation.

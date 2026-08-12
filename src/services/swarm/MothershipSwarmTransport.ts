@@ -55,13 +55,6 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
       message.type === SwarmMessageType.NACK
     ) {
       this.mothership.sendCommandPayload?.(message);
-      this.mothership.sendAppTopic(message.type, {
-        ackId: message.ackId,
-        commandId: message.ackId,
-        code: message.payload.data.code,
-        error: message.payload.data.error,
-        status: message.type === SwarmMessageType.ACK ? "ok" : "rejected",
-      });
       return;
     }
 
@@ -74,6 +67,10 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
       return;
     }
 
+    if (this.mothership.sendSwarmControlPayload) {
+      this.mothership.sendSwarmControlPayload(message);
+      return;
+    }
     this.mothership.sendAppTopic("swarm", message);
   }
 

@@ -25,9 +25,31 @@ export interface CapabilityDescriptor {
   metadata?: Record<string, unknown>;
 }
 
+export type SwarmNodeClass = "agentic-runtime" | "model-only";
+
+export type LocalInferenceProviderKind = "lm-studio" | "ollama";
+
+export interface LocalInferenceProviderDescriptor {
+  endpoint: string;
+  kind: LocalInferenceProviderKind;
+  model: string;
+  operations: Array<
+    | "inference.cancel"
+    | "inference.chat"
+    | "inference.stream"
+    | "inference.structured-output"
+    | "models.list"
+  >;
+  protocol: "valkyr-local-inference-provider/v1";
+}
+
 export interface CapabilitySnapshotInput {
   approvalPolicy?: string;
   instanceId: string;
+  nodeContract?: {
+    nodeClass: SwarmNodeClass;
+    protocol: "valkyr-swarm-node/v1";
+  };
   principal?: {
     principalId?: string;
     username?: string;

@@ -87,6 +87,10 @@ describe("SwarmNodeService", () => {
 
     expect(sent.payload.data.announcement).toMatchObject({
       approvalPolicy: "local-confirmation-required",
+      nodeContract: {
+        nodeClass: "agentic-runtime",
+        protocol: "valkyr-swarm-node/v1",
+      },
       principal: {
         principalId: "principal-1",
         username: "super",
@@ -153,5 +157,70 @@ describe("SwarmNodeService", () => {
       code: "ERR_COMMAND_FAILED",
       error: "User approval is required",
     });
+  });
+
+  for (const { label, target } of [
+    {
+      label: "broadcast",
+      target: { type: SwarmEntityType.BROADCAST },
+    },
+    {
+      label: "missing instance id",
+      target: { type: SwarmEntityType.AGENT },
+    },
+    {
+      label: "another node",
+      target: {
+        instanceId: "valoride-local-2",
+        type: SwarmEntityType.AGENT,
+      },
+    },
+  ]) {
+    it(`rejects ${label} commands instead of executing them`, async () => {
+      const service = createService({
+        sendAndWaitForAck: jest.fn(),
+      });
+      const command = buildSwarmMessage(
+        SwarmMessageType.COMMAND,
+        { instanceId: "api-0", type: SwarmEntityType.SERVER },
+        target,
+        "terminal.execute",
+        { command: "pwd" },
+      );
+      const executor = jest.fn();
+
+      const response = await service.handleInboundCommand(command, executor);
+
+      expect(executor).not.toHaveBeenCalled();
+      expect(response.type).toBe(SwarmMessageType.NACK);
+      expect(response.payload.data).toMatchObject({
+        code: "ERR_WRONG_TARGET",
+      });
+    });
+  }
+
+  it("registers ValorIDE only as an agentic runtime even when a local model is selected", async () => {
+    const transport = {
+      sendAndWaitForAck: jest.fn(async (message) =>
+        buildAck(message, {
+          instanceId: "api-0",
+          type: SwarmEntityType.SERVER,
+        }),
+      ),
+    };
+    const service = createService(transport, {
+      selectedModelId: "local-model",
+    });
+
+    await service.register();
+    const announcement =
+      transport.sendAndWaitForAck.mock.calls[0][0].payload.data.announcement;
+
+    expect(announcement.nodeContract).toEqual({
+      nodeClass: "agentic-runtime",
+      protocol: "valkyr-swarm-node/v1",
+    });
+    expect(announcement.selectedModelId).toBe("local-model");
+    expect(announcement.localInferenceProvider).toBeUndefined();
   });
 });

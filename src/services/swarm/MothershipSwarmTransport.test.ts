@@ -65,13 +65,7 @@ describe("MothershipSwarmTransport", () => {
     transport.send(ack);
 
     expect(mothership.sendCommandPayload).toHaveBeenCalledWith(ack);
-    expect(mothership.sendAppTopic).toHaveBeenCalledWith("ack", {
-      ackId: command.id,
-      commandId: command.id,
-      code: undefined,
-      error: undefined,
-      status: "ok",
-    });
+    expect(mothership.sendAppTopic).not.toHaveBeenCalled();
   });
 
   it("retries idempotent registration until the application-level ACK arrives", async () => {

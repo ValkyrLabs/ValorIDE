@@ -8,7 +8,7 @@ vi.mock("@utils/serverValkyraiHost", () => ({
 }));
 
 describe("MothershipService", () => {
-  it("uses the native STOMP /ws endpoint instead of the SockJS transport path", () => {
+  it("uses the canonical native STOMP /swarm endpoint", () => {
     const svc: any = new MothershipService({
       jwtToken: "token",
       userId: "user-1",
@@ -16,15 +16,15 @@ describe("MothershipService", () => {
 
     expect(
       svc.buildStompEndpointUrl("https://api-0.valkyrlabs.com/v1").toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/ws");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
     expect(
       svc
         .buildStompEndpointUrl("wss://api-0.valkyrlabs.com/ws/websocket")
         .toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/ws");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
     expect(
       svc.buildStompEndpointUrl("wss://api-0.valkyrlabs.com/chat").toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/chat");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
   });
 
   it("turns opaque websocket ErrorEvents into actionable connection errors", () => {
@@ -84,6 +84,42 @@ describe("MothershipService", () => {
       expect.any(Function),
       expect.any(Object),
     );
+    expect(subscribe).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not publish legacy chat messages during the canonical SWARM handshake", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = {
+      connected: true,
+      publish,
+      subscribe: vi.fn(() => ({ unsubscribe: vi.fn() })),
+    };
+    const connected = vi.fn();
+    svc.on("connected", connected);
+
+    svc.handleConnected();
+
+    expect(connected).toHaveBeenCalledOnce();
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it("drops unsupported legacy app topics instead of poisoning the SWARM socket", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = { connected: true, publish };
+    svc.connected = true;
+
+    svc.sendAppTopic("presence:join", { id: "valoride-target" });
+
+    expect(publish).not.toHaveBeenCalled();
   });
 
   it("publishes registration to the dedicated SWARM control endpoint", () => {

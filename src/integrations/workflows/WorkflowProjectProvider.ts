@@ -79,6 +79,8 @@ class WorkflowEngineeringClient {
 const openWorkflowStudioPanel = (
   launchUrl: string,
   workflow: WorkflowListItem,
+  refreshHandoff: () => Promise<string>,
+  output: vscode.OutputChannel,
 ) => {
   const workflowName = workflow.name || workflow.description || workflow.id;
   const panel = vscode.window.createWebviewPanel(
@@ -91,7 +93,38 @@ const openWorkflowStudioPanel = (
       localResourceRoots: [],
     },
   );
-  panel.webview.html = workflowStudioWebviewHtml(launchUrl, workflowName);
+  const render = (url: string) => {
+    panel.webview.html = workflowStudioWebviewHtml(url, workflowName);
+  };
+  render(launchUrl);
+
+  let retrying = false;
+  panel.webview.onDidReceiveMessage(async (message: unknown) => {
+    if (
+      retrying ||
+      !message ||
+      typeof message !== "object" ||
+      (message as { type?: string }).type !== "valoride.workflowStudio.retry"
+    ) {
+      return;
+    }
+    retrying = true;
+    try {
+      render(await refreshHandoff());
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to create a new Workflow Studio session.";
+      output.appendLine(`[WorkflowStudio] Retry failed: ${errorMessage}`);
+      await panel.webview.postMessage({
+        type: "valoride.workflowStudio.retryFailed",
+        message: errorMessage,
+      });
+    } finally {
+      retrying = false;
+    }
+  });
 };
 
 class WorkflowTreeItem extends vscode.TreeItem {
@@ -172,7 +205,12 @@ export function registerWorkflowProjects(
       async () => {
         try {
           const launchUrl = await client.createStudioHandoff(workflow!.id);
-          openWorkflowStudioPanel(launchUrl, workflow!);
+          openWorkflowStudioPanel(
+            launchUrl,
+            workflow!,
+            () => client.createStudioHandoff(workflow!.id),
+            output,
+          );
         } catch (error) {
           const message =
             error instanceof Error

@@ -78,6 +78,10 @@ export class SwarmNodeService {
           approvalPolicy:
             this.options.approvalPolicy ?? "local-confirmation-required",
           instanceId: this.options.instance.instanceId,
+          nodeContract: {
+            nodeClass: "agentic-runtime",
+            protocol: "valkyr-swarm-node/v1",
+          },
           principal: {
             principalId: this.options.instance.principalId,
             username: this.options.instance.username,
@@ -182,12 +186,9 @@ export class SwarmNodeService {
   }
 
   private isAddressedToThisNode(message: SwarmMessage): boolean {
-    if (message.to.type === SwarmEntityType.BROADCAST) {
-      return true;
-    }
-
     return (
-      !message.to.instanceId ||
+      message.to.type === SwarmEntityType.AGENT &&
+      Boolean(message.to.instanceId) &&
       message.to.instanceId === this.options.instance.instanceId
     );
   }
