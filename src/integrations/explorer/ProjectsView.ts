@@ -11,11 +11,14 @@ import {
   commandWithJavaHome,
   discoverProjectRuntime,
   findAvailablePort,
-  findCompatibleJavaHome,
   localProjectUrl,
   ProjectTarget,
   waitForUrl,
 } from "./projectRuntime";
+import {
+  ManagedNodeRuntime,
+  ManagedProjectRuntimes,
+} from "./ManagedProjectRuntimes";
 
 type Project = {
   name: string;
@@ -105,11 +108,19 @@ export function registerProjectsView(
   output: vscode.OutputChannel,
 ) {
   const provider = new ProjectsTreeDataProvider(output);
+  const runtimes = new ManagedProjectRuntimes(context, output);
   const view = vscode.window.createTreeView("valoride-dev.ProjectsView", {
     treeDataProvider: provider,
     showCollapseAll: false,
   });
   context.subscriptions.push(view);
+  if (vscode.extensions.getExtension("redhat.java")) {
+    void runtimes.ensureJava().catch((error) => {
+      output.appendLine(
+        `[Runtime] Automatic JDK setup failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    });
+  }
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (thorapiSettingChanged(event)) {
@@ -131,7 +142,7 @@ export function registerProjectsView(
       async (target?: unknown) => {
         const u = getUriArg(target);
         if (!u) return;
-        await runProjectTask(u, "build", output);
+        await runProjectTask(u, "build", output, runtimes);
       },
     ),
     // Run selected project based on detected tool
@@ -140,7 +151,7 @@ export function registerProjectsView(
       async (target?: unknown) => {
         const u = getUriArg(target);
         if (!u) return;
-        await runProjectTask(u, "run", output);
+        await runProjectTask(u, "run", output, runtimes);
       },
     ),
     vscode.commands.registerCommand(
@@ -221,6 +232,11 @@ const javaEnvironment = (javaHome: string) => ({
   PATH: `${path.join(javaHome, "bin")}${path.delimiter}${process.env.PATH || ""}`,
 });
 
+const nodeEnvironment = (node?: ManagedNodeRuntime) =>
+  node?.home
+    ? { PATH: `${node.bin}${path.delimiter}${process.env.PATH || ""}` }
+    : undefined;
+
 const createProjectTerminal = (
   target: ProjectTarget,
   name: string,
@@ -266,17 +282,24 @@ async function projectCommand(
     : thor_command;
 }
 
-async function requireCompatibleJava(layoutName: string) {
-  const java = await findCompatibleJavaHome();
-  if (!java) {
+async function requireCompatibleJava(
+  layoutName: string,
+  runtimes: ManagedProjectRuntimes,
+) {
+  try {
+    return await runtimes.ensureJava();
+  } catch (error) {
     throw new Error(
-      `${layoutName} requires JDK 17-23, but ValorIDE could not find one. Install JDK 21 or configure JAVA_HOME.`,
+      `${layoutName} requires JDK 17-23, and ValorIDE could not install Eclipse Temurin 21: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
-  return java;
 }
 
-async function buildProject(uri: vscode.Uri, output: vscode.OutputChannel) {
+async function buildProject(
+  uri: vscode.Uri,
+  output: vscode.OutputChannel,
+  runtimes: ManagedProjectRuntimes,
+) {
   const layout = await discoverProjectRuntime(uri.fsPath);
   const targets = [layout.backend, layout.frontend].filter(
     (target): target is ProjectTarget => Boolean(target),
@@ -289,9 +312,11 @@ async function buildProject(uri: vscode.Uri, output: vscode.OutputChannel) {
   }
 
   const needsJava = targets.some((target) => target.tool !== "node");
+  const needsNode = targets.some((target) => target.tool === "node");
   const java = needsJava
-    ? await requireCompatibleJava(path.basename(uri.fsPath))
+    ? await requireCompatibleJava(path.basename(uri.fsPath), runtimes)
     : undefined;
+  const node = needsNode ? await runtimes.ensureNode() : undefined;
   if (java) {
     output.appendLine(
       `[Projects] Building with JDK ${java.major} from ${java.home}`,
@@ -303,7 +328,11 @@ async function buildProject(uri: vscode.Uri, output: vscode.OutputChannel) {
     const terminal = createProjectTerminal(
       target,
       `${path.basename(uri.fsPath)}: build ${role}`,
-      target.tool === "node" || !java ? undefined : javaEnvironment(java.home),
+      target.tool === "node"
+        ? nodeEnvironment(node)
+        : java
+          ? javaEnvironment(java.home)
+          : undefined,
     );
     terminal.show(false);
     terminal.sendText(
@@ -317,7 +346,11 @@ async function buildProject(uri: vscode.Uri, output: vscode.OutputChannel) {
   }
 }
 
-async function runProject(uri: vscode.Uri, output: vscode.OutputChannel) {
+async function runProject(
+  uri: vscode.Uri,
+  output: vscode.OutputChannel,
+  runtimes: ManagedProjectRuntimes,
+) {
   const layout = await discoverProjectRuntime(uri.fsPath);
   if (!layout.backend && !layout.frontend) {
     vscode.window.showWarningMessage(
@@ -331,9 +364,10 @@ async function runProject(uri: vscode.Uri, output: vscode.OutputChannel) {
   let backendPort: number | undefined;
   let frontendPort: number | undefined;
   let localPassword: string | undefined;
+  const node = layout.frontend ? await runtimes.ensureNode() : undefined;
 
   if (layout.backend) {
-    const java = await requireCompatibleJava(projectName);
+    const java = await requireCompatibleJava(projectName, runtimes);
     backendPort = await findAvailablePort(8080);
     localPassword = splitGeneratedApp
       ? randomBytes(24).toString("base64url")
@@ -378,6 +412,7 @@ async function runProject(uri: vscode.Uri, output: vscode.OutputChannel) {
     frontendPort = await findAvailablePort(5173);
     const frontendEnv: Record<string, string> = {
       VITE_PORT: String(frontendPort),
+      ...nodeEnvironment(node),
     };
     if (backendPort) {
       frontendEnv.VITE_API_PROXY_TARGET = `http://127.0.0.1:${backendPort}`;
@@ -421,12 +456,13 @@ async function runProjectTask(
   uri: vscode.Uri,
   task: Task,
   output: vscode.OutputChannel,
+  runtimes: ManagedProjectRuntimes,
 ) {
   try {
     if (task === "build") {
-      await buildProject(uri, output);
+      await buildProject(uri, output, runtimes);
     } else {
-      await runProject(uri, output);
+      await runProject(uri, output, runtimes);
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

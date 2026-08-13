@@ -1005,7 +1005,13 @@ export class McpHub {
           settingsPath,
           JSON.stringify(updatedConfig, null, 2),
         );
-        await this.updateServerConnections(config.mcpServers);
+        const parsedServers = Object.fromEntries(
+          Object.entries(config.mcpServers).map(([name, value]) => [
+            name,
+            ServerConfigSchema.parse(value),
+          ]),
+        );
+        await this.updateServerConnections(parsedServers);
         vscode.window.showInformationMessage(
           `Deleted ${serverName} MCP server`,
         );

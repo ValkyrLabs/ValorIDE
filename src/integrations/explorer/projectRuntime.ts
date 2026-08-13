@@ -190,9 +190,15 @@ const scanForJavaHomes = async (
   }
 };
 
-const javaHomeCandidates = async () => {
+const javaHomeCandidates = async (additionalRoots: string[] = []) => {
   const candidates = new Set<string>();
   if (process.env.JAVA_HOME) candidates.add(process.env.JAVA_HOME);
+
+  for (const root of additionalRoots) {
+    for (const candidate of await scanForJavaHomes(root, 6)) {
+      candidates.add(candidate);
+    }
+  }
 
   for (const root of [
     "/Library/Java/JavaVirtualMachines",
@@ -230,11 +236,11 @@ const javaHomeCandidates = async () => {
   return [...candidates];
 };
 
-export async function findCompatibleJavaHome(): Promise<
-  { home: string; major: number } | undefined
-> {
+export async function findCompatibleJavaHome(
+  additionalRoots: string[] = [],
+): Promise<{ home: string; major: number } | undefined> {
   const compatible: { home: string; major: number }[] = [];
-  for (const home of await javaHomeCandidates()) {
+  for (const home of await javaHomeCandidates(additionalRoots)) {
     if (!(await exists(path.join(home, "bin", "javac")))) {
       continue;
     }
