@@ -159,7 +159,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private agenticState: AgenticCapabilityCommandCenterState =
     createAgenticCommandCenterState({
-      approvalPolicy: "local-confirmation-required",
+      approvalPolicy: "server-policy",
     });
   private isInitialized = false;
 
@@ -431,7 +431,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       status: "registering",
     });
     this.swarmNode = new SwarmNodeService({
-      approvalPolicy: "local-confirmation-required",
+      approvalPolicy: "server-policy",
       capabilities: this.capabilityRegistry,
       instance: {
         instanceId: this.instanceId,

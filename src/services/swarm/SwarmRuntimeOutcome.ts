@@ -52,6 +52,7 @@ export interface SwarmCanonicalApprovalProof {
 export interface SwarmCommandCorrelation {
   action: string;
   actionDigest?: string;
+  approvalRequired: boolean;
   approvalRef?: string;
   checkpointId?: string;
   commandId: string;
@@ -215,11 +216,19 @@ export const normalizeServerStampedSwarmMessage = (
     metadataSources,
     sources,
   );
+  const approvalRequiredBinding = resolveExactServerBooleanBinding(
+    "approvalRequired",
+    metadata,
+    metadataSources,
+    sources,
+  );
   metadata.actionDigest = actionBinding.value;
   metadata.scopeDigest = scopeBinding.value;
+  metadata.approvalRequired = approvalRequiredBinding.value;
   const conflicts = [
     ...(actionBinding.conflict ? ["actionDigest"] : []),
     ...(scopeBinding.conflict ? ["scopeDigest"] : []),
+    ...(approvalRequiredBinding.conflict ? ["approvalRequired"] : []),
   ];
   if (conflicts.length > 0) {
     metadata.bindingConflict = conflicts;
@@ -277,6 +286,8 @@ export const extractSwarmInboundCommandContext = (
     correlation: compactObject({
       action: message.payload.action,
       actionDigest,
+      // Missing stamps from older servers retain the previous fail-closed behavior.
+      approvalRequired: readBoolean(metadata.approvalRequired) ?? true,
       approvalRef: approvalProof?.approvalRef,
       checkpointId: readString(metadata.checkpointId),
       commandId: message.id,
@@ -313,12 +324,32 @@ export const authorizeCanonicalSwarmApproval = (
       status: "WAITING_APPROVAL",
     };
   }
+  if (
+    message.from.type !== SwarmEntityType.SERVER &&
+    message.from.type !== SwarmEntityType.WORKFLOW
+  ) {
+    return {
+      approved: false,
+      approvalRef: approvalProof?.approvalRef,
+      code: "ERR_APPROVAL_PROOF_SOURCE",
+      reason:
+        "Canonical approval proof must be delivered by the server action plane.",
+      status: "WAITING_APPROVAL",
+    };
+  }
+  if (!correlation.approvalRequired && !approvalProof) {
+    return {
+      approved: true,
+      reason:
+        "Server policy authorized this exact bound SWARM command without human approval.",
+    };
+  }
   if (!approvalProof) {
     return {
       approved: false,
       code: "ERR_APPROVAL_REQUIRED",
       reason:
-        "Canonical Workflow approval proof is required for swarm.command.",
+        "Server policy requires canonical approval proof for this SWARM command.",
       status: "WAITING_APPROVAL",
     };
   }
@@ -329,19 +360,6 @@ export const authorizeCanonicalSwarmApproval = (
       code: "ERR_APPROVAL_REJECTED",
       reason: `Workflow approval ${approvalProof.approvalRef} was denied.`,
       status: "BLOCKED",
-    };
-  }
-  if (
-    message.from.type !== SwarmEntityType.SERVER &&
-    message.from.type !== SwarmEntityType.WORKFLOW
-  ) {
-    return {
-      approved: false,
-      approvalRef: approvalProof.approvalRef,
-      code: "ERR_APPROVAL_PROOF_SOURCE",
-      reason:
-        "Canonical approval proof must be delivered by the server action plane.",
-      status: "WAITING_APPROVAL",
     };
   }
   if (
@@ -705,6 +723,23 @@ const resolveExactServerBinding = (
     : { conflict: false, value: distinct[0] };
 };
 
+const resolveExactServerBooleanBinding = (
+  field: "approvalRequired",
+  currentMetadata: Record<string, any>,
+  metadataSources: any[],
+  sources: any[],
+): { conflict: boolean; value?: boolean } => {
+  const values = [
+    currentMetadata[field],
+    ...metadataSources.map((source) => source?.[field]),
+    ...sources.map((source) => source?.[field]),
+  ].filter((value): value is boolean => typeof value === "boolean");
+  const distinct = Array.from(new Set(values));
+  return distinct.length > 1
+    ? { conflict: true }
+    : { conflict: false, value: distinct[0] };
+};
+
 const firstDefined = (values: unknown[]): unknown =>
   values.find((value) => value !== undefined && value !== null);
 
@@ -755,6 +790,9 @@ const cloneRecord = <T>(
 
 const readString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim() ? value : undefined;
+
+const readBoolean = (value: unknown): boolean | undefined =>
+  typeof value === "boolean" ? value : undefined;
 
 const isRecord = (value: unknown): value is Record<string, any> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);

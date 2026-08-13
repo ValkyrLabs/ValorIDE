@@ -47,6 +47,7 @@ const makeCommand = (metadata: Record<string, unknown> = {}): SwarmMessage => ({
     data: { instruction: "Run the governed task" },
     metadata: {
       actionDigest,
+      approvalRequired: true,
       approvalProof,
       checkpointId: "checkpoint-waiting-approval",
       commandId: "command-1",
@@ -132,6 +133,44 @@ describe("SWARM runtime terminal outcomes", () => {
       approved: false,
       code: "ERR_GOVERNED_BINDING_REQUIRED",
       status: "WAITING_APPROVAL",
+    });
+  });
+
+  it("accepts a server-bound direct command when policy says approval is not required", () => {
+    const direct = makeCommand({
+      approvalProof: undefined,
+      approvalRequired: false,
+      checkpointId: undefined,
+      workflowExecutionRef: undefined,
+      workflowVersionId: undefined,
+    });
+    const directContext = extractSwarmInboundCommandContext(
+      direct,
+      localInstanceId,
+    );
+
+    expect(directContext.correlation.approvalRequired).toBe(false);
+    expect(
+      authorizeCanonicalSwarmApproval(direct, directContext),
+    ).toMatchObject({
+      approved: true,
+    });
+
+    const untrusted = {
+      ...direct,
+      from: {
+        instanceId: "untrusted-agent",
+        type: SwarmEntityType.AGENT,
+      },
+    };
+    expect(
+      authorizeCanonicalSwarmApproval(
+        untrusted,
+        extractSwarmInboundCommandContext(untrusted, localInstanceId),
+      ),
+    ).toMatchObject({
+      approved: false,
+      code: "ERR_APPROVAL_PROOF_SOURCE",
     });
   });
 

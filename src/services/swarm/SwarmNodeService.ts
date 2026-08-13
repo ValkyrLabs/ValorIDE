@@ -75,8 +75,7 @@ export class SwarmNodeService {
       "register",
       {
         announcement: this.options.capabilities.toSwarmAnnouncement({
-          approvalPolicy:
-            this.options.approvalPolicy ?? "local-confirmation-required",
+          approvalPolicy: this.options.approvalPolicy ?? "server-policy",
           instanceId: this.options.instance.instanceId,
           nodeContract: {
             nodeClass: "agentic-runtime",
