@@ -4,11 +4,15 @@ import {
 } from "../agentic/CapabilityRegistry";
 import {
   buildAck,
+  buildNack,
   buildSwarmMessage,
   SwarmEntityType,
   SwarmMessageType,
 } from "@shared/swarm-protocol";
-import { SwarmNodeService } from "./SwarmNodeService";
+import {
+  SwarmNodeHeartbeatError,
+  SwarmNodeService,
+} from "./SwarmNodeService";
 
 const createService = (
   transport: { sendAndWaitForAck: jest.Mock },
@@ -103,6 +107,46 @@ describe("SwarmNodeService", () => {
         folders: ["/workspace/app"],
       },
     });
+  });
+
+  it("marks a heartbeat complete only after the mothership acknowledges it", async () => {
+    const transport = {
+      sendAndWaitForAck: jest.fn(async (message) =>
+        buildAck(message, {
+          instanceId: "api-0",
+          type: SwarmEntityType.SERVER,
+        }),
+      ),
+    };
+    const service = createService(transport);
+
+    const ack = await service.heartbeat({ status: "online" });
+    const sent = transport.sendAndWaitForAck.mock.calls[0][0];
+
+    expect(sent.payload.action).toBe("heartbeat");
+    expect(sent.payload.data).toMatchObject({
+      instanceId: "valoride-local-1",
+      status: "online",
+    });
+    expect(ack.type).toBe(SwarmMessageType.ACK);
+  });
+
+  it("surfaces a heartbeat nack instead of reporting the node online", async () => {
+    const transport = {
+      sendAndWaitForAck: jest.fn(async (message) =>
+        buildNack(
+          message,
+          { instanceId: "api-0", type: SwarmEntityType.SERVER },
+          "registration expired",
+          "ERR_REGISTRATION_EXPIRED",
+        ),
+      ),
+    };
+    const service = createService(transport);
+
+    await expect(service.heartbeat()).rejects.toBeInstanceOf(
+      SwarmNodeHeartbeatError,
+    );
   });
 
   it("turns successful inbound commands into ack responses", async () => {

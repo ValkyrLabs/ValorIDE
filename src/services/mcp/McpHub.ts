@@ -32,6 +32,7 @@ import { GlobalFileNames } from "@core/storage/disk";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { appendMcpServerLog, markMcpServerStatus } from "./McpDiagnostics";
+import { scopeGrayMatterMcpArguments } from "@services/graymatter/GrayMatterMcpScope";
 
 // Default timeout for internal MCP data requests in milliseconds; is not the same as the user facing timeout stored as DEFAULT_MCP_TIMEOUT_SECONDS
 const DEFAULT_REQUEST_TIMEOUT_MS = 5000;
@@ -790,6 +791,12 @@ export class McpHub {
     toolName: string,
     toolArguments?: Record<string, unknown>,
   ): Promise<McpToolCallResponse> {
+    const scopedToolArguments = scopeGrayMatterMcpArguments(
+      serverName,
+      toolName,
+      toolArguments,
+      vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath),
+    );
     const connection = this.connections.find(
       (conn) => conn.server.name === serverName,
     );
@@ -820,7 +827,7 @@ export class McpHub {
         method: "tools/call",
         params: {
           name: toolName,
-          arguments: toolArguments,
+          arguments: scopedToolArguments,
         },
       },
       CallToolResultSchema,

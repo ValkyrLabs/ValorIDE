@@ -55,6 +55,13 @@ export class SwarmNodeRegistrationError extends Error {
   }
 }
 
+export class SwarmNodeHeartbeatError extends Error {
+  constructor(readonly response: SwarmMessage) {
+    super(response.payload.data.error ?? "SWARM heartbeat was rejected.");
+    this.name = "SwarmNodeHeartbeatError";
+  }
+}
+
 export class SwarmNodeService {
   private readonly server: SwarmEntity;
 
@@ -118,12 +125,11 @@ export class SwarmNodeService {
     return response;
   }
 
-  async heartbeat(data: Record<string, unknown> = {}): Promise<void> {
-    if (!this.options.transport.send) {
-      return;
-    }
-
-    await this.options.transport.send(
+  async heartbeat(
+    data: Record<string, unknown> = {},
+    timeoutMs?: number,
+  ): Promise<SwarmMessage> {
+    const response = await this.options.transport.sendAndWaitForAck(
       buildSwarmMessage(
         SwarmMessageType.EVENT,
         this.agentEntity(),
@@ -134,7 +140,14 @@ export class SwarmNodeService {
           instanceId: this.options.instance.instanceId,
         },
       ),
+      timeoutMs,
     );
+
+    if (response.type === SwarmMessageType.NACK) {
+      throw new SwarmNodeHeartbeatError(response);
+    }
+
+    return response;
   }
 
   async handleInboundCommand(

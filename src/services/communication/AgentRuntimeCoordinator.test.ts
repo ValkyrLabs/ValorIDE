@@ -22,7 +22,13 @@ import { extractSwarmInboundCommandContext } from "../swarm/SwarmRuntimeOutcome"
 // This suite uses the repository's esbuild Jest transform, which does not hoist
 // jest.mock calls. Keep the coordinator load after the webview and ESM-only
 // dependency mocks above so the focused contract lane stays isolated.
-const AgentRuntimeCoordinator = require("./AgentRuntimeCoordinator").default;
+let AgentRuntimeCoordinator: typeof import("./AgentRuntimeCoordinator").default;
+
+beforeAll(async () => {
+  ({ default: AgentRuntimeCoordinator } = await import(
+    "./AgentRuntimeCoordinator"
+  ));
+});
 
 const localInstanceId = "valoride-agent-1";
 const actionDigest = `sha256:${"a".repeat(64)}`;

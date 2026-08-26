@@ -1,5 +1,6 @@
 import {
   createGrayMatterSessionState,
+  degradeGrayMatterSession,
   defaultGrayMatterCapabilities,
 } from "./GrayMatterSessionService";
 
@@ -16,6 +17,33 @@ const jsonResponse = (status: number, body: unknown): Response =>
   }) as unknown as Response;
 
 describe("GrayMatterSessionService", () => {
+  it("invalidates cached ready capabilities after a live request is denied", () => {
+    expect(
+      degradeGrayMatterSession(
+        {
+          baseUrl: "https://api-0.valkyrlabs.com/v1",
+          capabilities: {
+            ...defaultGrayMatterCapabilities,
+            grayMatter: true,
+            memoryQuery: true,
+            memoryRead: true,
+          },
+          checkedAt: "2026-05-13T12:00:00.000Z",
+          status: "ready",
+        },
+        "forbidden",
+        "Access temporarily restricted",
+        () => new Date("2026-05-13T12:05:00.000Z"),
+      ),
+    ).toMatchObject({
+      capabilities: defaultGrayMatterCapabilities,
+      checkedAt: "2026-05-13T12:05:00.000Z",
+      error: "Access temporarily restricted",
+      recovery: { reason: "forbidden", retryable: true },
+      status: "forbidden",
+    });
+  });
+
   it("loads the Valhalla GrayMatter control surface when api-0 exposes it", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>

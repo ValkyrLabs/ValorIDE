@@ -24,6 +24,7 @@ import {
 } from "../agentic/AgenticStateModel";
 import { MothershipSwarmTransport } from "../swarm/MothershipSwarmTransport";
 import {
+  SwarmNodeHeartbeatError,
   SwarmNodeRegistrationError,
   SwarmNodeService,
 } from "../swarm/SwarmNodeService";
@@ -157,6 +158,9 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private swarmTransport: MothershipSwarmTransport | null = null;
   private mothershipBaseUrl: string | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
+  private registrationRetryTimer: NodeJS.Timeout | null = null;
+  private registrationRetryAttempt = 0;
+  private registrationInFlight: Promise<void> | null = null;
   private agenticState: AgenticCapabilityCommandCenterState =
     createAgenticCommandCenterState({
       approvalPolicy: "server-policy",
@@ -236,6 +240,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private disposeMothershipConnection(): void {
+    this.clearRegistrationRetry();
     if (this.mothership) {
       try {
         this.swarmTransport?.dispose();
@@ -408,6 +413,21 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private async registerSwarmNode(): Promise<void> {
+    if (this.registrationInFlight) {
+      return this.registrationInFlight;
+    }
+    const registration = this.performSwarmRegistration();
+    this.registrationInFlight = registration;
+    try {
+      await registration;
+    } finally {
+      if (this.registrationInFlight === registration) {
+        this.registrationInFlight = null;
+      }
+    }
+  }
+
+  private async performSwarmRegistration(): Promise<void> {
     if (
       !this.mothership ||
       !this.mothership.isConnected() ||
@@ -457,6 +477,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         lastError: undefined,
         status: "online",
       });
+      this.clearRegistrationRetry();
       this.startHeartbeat();
     } catch (error) {
       Logger.log(`ValorIDE SWARM registration failed: ${String(error)}`);
@@ -468,6 +489,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         status:
           error instanceof SwarmNodeRegistrationError ? "rejected" : "error",
       });
+      this.scheduleSwarmReregistration();
     }
   }
 
@@ -1365,8 +1387,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
 
   private startHeartbeat(): void {
     this.stopHeartbeat();
-    this.sendHeartbeat();
-    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 30000);
+    void this.sendHeartbeat();
+    this.heartbeatInterval = setInterval(
+      () => void this.sendHeartbeat(),
+      30000,
+    );
   }
 
   private stopHeartbeat(): void {
@@ -1376,33 +1401,61 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
   }
 
-  private sendHeartbeat(): void {
+  private async sendHeartbeat(): Promise<void> {
     if (!this.swarmNode) {
       return;
     }
     const active = this.firstActiveAssignment();
-    this.swarmNode
-      .heartbeat({
+    try {
+      await this.swarmNode.heartbeat({
         activeTaskId: active?.taskId,
         projectId: active?.projectId,
         status: active ? "busy" : "online",
-      })
-      .then(() => {
-        this.setSwarmState({
-          activeTaskId: active?.taskId,
-          instanceId: this.instanceId ?? undefined,
-          lastHeartbeatAt: new Date().toISOString(),
-          projectId: active?.projectId,
-          status: active ? "busy" : "online",
-        });
-      })
-      .catch((error) => {
-        this.setSwarmState({
-          instanceId: this.instanceId ?? undefined,
-          lastError: this.errorMessage(error),
-          status: "error",
-        });
       });
+      this.setSwarmState({
+        activeTaskId: active?.taskId,
+        instanceId: this.instanceId ?? undefined,
+        lastError: undefined,
+        lastHeartbeatAt: new Date().toISOString(),
+        projectId: active?.projectId,
+        status: active ? "busy" : "online",
+      });
+    } catch (error) {
+      this.stopHeartbeat();
+      this.setSwarmState({
+        instanceId: this.instanceId ?? undefined,
+        lastError: this.errorMessage(error),
+        status: error instanceof SwarmNodeHeartbeatError ? "rejected" : "error",
+      });
+      this.scheduleSwarmReregistration();
+    }
+  }
+
+  private scheduleSwarmReregistration(): void {
+    if (
+      this.registrationRetryTimer ||
+      !this.mothership ||
+      !this.mothership.isConnected()
+    ) {
+      return;
+    }
+    const delayMs = Math.min(
+      30_000,
+      1_000 * 2 ** Math.min(this.registrationRetryAttempt, 5),
+    );
+    this.registrationRetryAttempt += 1;
+    this.registrationRetryTimer = setTimeout(() => {
+      this.registrationRetryTimer = null;
+      void this.registerSwarmNode();
+    }, delayMs);
+  }
+
+  private clearRegistrationRetry(): void {
+    if (this.registrationRetryTimer) {
+      clearTimeout(this.registrationRetryTimer);
+      this.registrationRetryTimer = null;
+    }
+    this.registrationRetryAttempt = 0;
   }
 
   private firstActiveAssignment(): TaskAssignment | undefined {

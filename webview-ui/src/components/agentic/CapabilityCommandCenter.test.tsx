@@ -158,6 +158,25 @@ describe("CapabilityCommandCenter", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("does not call a websocket transport connection SWARM online", () => {
+    mockUseMothershipOptional.mockReturnValue({
+      instanceId: "valoride-unregistered",
+      isConnected: true,
+    });
+    mockUseExtensionState.mockReturnValue({
+      grayMatterSession: { status: "ready", capabilities: {} },
+      mcpServers: [],
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    expect(screen.getByText("SWARM Registering")).toBeInTheDocument();
+    expect(
+      screen.getByText("Transport connected; awaiting registration ACK"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("SWARM Online")).not.toBeInTheDocument();
+  });
+
   it("turns GrayMatter quota blocks into recharge, upgrade, and usage recovery actions", async () => {
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {

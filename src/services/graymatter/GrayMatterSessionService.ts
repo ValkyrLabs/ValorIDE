@@ -27,6 +27,20 @@ export interface CreateGrayMatterSessionStateOptions {
   token?: string;
 }
 
+export const degradeGrayMatterSession = (
+  session: GrayMatterSessionState,
+  status: Exclude<GrayMatterSessionStatus, "ready">,
+  error: string,
+  now = () => new Date(),
+): GrayMatterSessionState => ({
+  baseUrl: session.baseUrl,
+  capabilities: defaultGrayMatterCapabilities,
+  checkedAt: now().toISOString(),
+  error,
+  recovery: buildGrayMatterRecovery(status, session.baseUrl),
+  status,
+});
+
 export const buildGrayMatterRecovery = (
   status: GrayMatterSessionStatus,
   backendBaseUrl: string,
@@ -130,10 +144,7 @@ export const createGrayMatterSessionState = async ({
       capabilities: defaultGrayMatterCapabilities,
       checkedAt,
       error: "GrayMatter authentication is required.",
-      recovery: buildGrayMatterRecovery(
-        "unauthenticated",
-        normalizedBaseUrl,
-      ),
+      recovery: buildGrayMatterRecovery("unauthenticated", normalizedBaseUrl),
       status: "unauthenticated",
     };
   }

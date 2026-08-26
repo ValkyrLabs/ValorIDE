@@ -97,6 +97,7 @@ import { getContextWindowInfo } from "@core/context/context-management/context-w
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
 import { validateMcpToolCall } from "@core/task/mcpToolValidation";
+import { scopeGrayMatterMcpArguments } from "@services/graymatter/GrayMatterMcpScope";
 import {
   checkIsAnthropicContextWindowError,
   checkIsOpenRouterContextWindowError,
@@ -127,6 +128,7 @@ import { McpHub } from "@services/mcp/McpHub";
 import { createAgentContextForTask } from "@services/agentic/AgentContextAssembler";
 import {
   createGrayMatterSessionState,
+  degradeGrayMatterSession,
   type GrayMatterSessionState,
 } from "@services/graymatter/GrayMatterSessionService";
 import { getLLMPromptService } from "@services/llmPromptService";
@@ -2356,8 +2358,8 @@ export class Task {
 
     return (
       !session ||
-      session.status === "unavailable" ||
-      (session.status === "ready" && !session.capabilities.memoryQuery)
+      session.status !== "ready" ||
+      !session.capabilities.memoryQuery
     );
   }
 
@@ -2523,6 +2525,29 @@ export class Task {
 
       const citationCount = context?.grayMatter.citations.length ?? 0;
       const status = context?.grayMatter.status ?? "unavailable";
+      if (
+        grayMatterSession &&
+        (status === "forbidden" ||
+          status === "quota" ||
+          status === "unauthenticated" ||
+          status === "unavailable")
+      ) {
+        const degradedSession = degradeGrayMatterSession(
+          grayMatterSession,
+          status,
+          context?.grayMatter.error ?? "GrayMatter memory retrieval failed.",
+        );
+        await updateGlobalState(
+          this.context,
+          "grayMatterSession",
+          degradedSession,
+        );
+        getStatusBarService().updateGrayMatterStatus(
+          degradedSession.status,
+          degradedSession.error,
+        );
+        await this.postStateToWebview();
+      }
       await reportGrayMatterAccess({
         citations: citationCount,
         message:
@@ -4406,6 +4431,14 @@ export class Task {
                     break;
                   }
                 }
+                parsedArguments = scopeGrayMatterMcpArguments(
+                  server_name,
+                  tool_name,
+                  parsedArguments,
+                  vscode.workspace.workspaceFolders?.map(
+                    (folder) => folder.uri.fsPath,
+                  ),
+                );
                 const connectedServers = this.mcpHub
                   .getServers()
                   .filter(
@@ -4433,7 +4466,9 @@ export class Task {
                   type: "use_mcp_tool",
                   serverName: server_name,
                   toolName: tool_name,
-                  arguments: mcp_arguments,
+                  arguments: parsedArguments
+                    ? JSON.stringify(parsedArguments)
+                    : mcp_arguments,
                 } satisfies ValorIDEAskUseMcpServer);
 
                 const isToolAutoApproved = validation.tool.autoApprove;
