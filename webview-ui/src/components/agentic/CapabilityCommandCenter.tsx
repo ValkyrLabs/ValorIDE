@@ -314,6 +314,19 @@ const GrayMatterQuotaRecovery = ({
       url: quotaRecoveryUrl(path, state, grayMatterSession, latestCommand),
     });
   };
+  const retryBlockedAction = () => {
+    trackRecoveryAction(
+      grayMatterSession?.status,
+      "retry_after_recharge",
+      "graymatter",
+    );
+    vscode.postMessage({
+      type: "retryGrayMatterBlockedAction",
+      resumeCommandId: context.commandId,
+      resumeCapabilityId: context.capabilityId,
+      resumeActionLabel: context.label,
+    });
+  };
 
   return (
     <div className="capability-command-center__quota" role="alert">
@@ -351,6 +364,11 @@ const GrayMatterQuotaRecovery = ({
         >
           View usage
         </button>
+        {context.commandId ? (
+          <button type="button" onClick={retryBlockedAction}>
+            Retry after recharge
+          </button>
+        ) : null}
       </div>
     </div>
   );
