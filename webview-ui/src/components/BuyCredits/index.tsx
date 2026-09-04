@@ -26,16 +26,17 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
   } | null>(null);
 
   // RTK Query mutations
-  const [createCreditCheckoutSession] = useCreateCreditCheckoutSessionMutation();
+  const [createCreditCheckoutSession] =
+    useCreateCreditCheckoutSessionMutation();
 
   const trackCheckoutEvent = (
     state: "started" | "opened" | "failed" | "refresh_requested",
     extra: Record<string, unknown> = {},
   ) => {
     vscode.postMessage({
-      type: "creditCheckoutEvent",
-      telemetryEvent: `valoride_credit_checkout_${state}`,
-      telemetryProperties: {
+      type: "trackFunnelEvent",
+      event: `valoride_credit_checkout_${state}`,
+      payload: {
         amountCents: Math.round(amount * 100),
         creditsAmountCents: Math.round(amount * 100),
         currency: "usd",
@@ -62,39 +63,6 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
   const handlePurchase = async () => {
     if (!authenticatedPrincipal || amount < 1) {
       setMessage({ type: "error", text: "Please enter a valid amount" });
-      return;
-    }
-
-    // Get the account ID from the principal
-    // Try multiple possible field names since it might be serialized differently
-    let accountId =
-      authenticatedPrincipal.id ||
-      authenticatedPrincipal.principalId ||
-      authenticatedPrincipal.ownerId ||
-      authenticatedPrincipal.userId;
-
-    // If still not found, try to extract from JWT token
-    if (!accountId) {
-      const token = sessionStorage.getItem("jwtToken");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          accountId = payload.sub || payload.userId || payload.principalId;
-        } catch (e) {
-          // Failed to parse JWT
-        }
-      }
-    }
-
-    if (!accountId) {
-      console.error(
-        "Could not determine account ID. Principal:",
-        authenticatedPrincipal,
-      );
-      setMessage({
-        type: "error",
-        text: "Unable to determine account ID. Please log in again.",
-      });
       return;
     }
 

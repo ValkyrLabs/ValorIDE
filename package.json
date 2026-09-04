@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.968",
+  "version": "3.20.970",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -459,12 +459,6 @@
           "default": 2000,
           "minimum": 200,
           "markdownDescription": "Maximum tokens allocated to GrayMatter remembered context in system prompts."
-        },
-        "valoride.graymatter.queryTimeoutMs": {
-          "type": "number",
-          "default": 3000,
-          "minimum": 250,
-          "markdownDescription": "Timeout in milliseconds for GrayMatter context queries."
         },
         "valoride.hooks.enabled": {
           "type": "boolean",

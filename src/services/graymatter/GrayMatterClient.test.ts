@@ -19,6 +19,82 @@ const headerValue = (
   (headers as Record<string, string> | undefined)?.[name.toLowerCase()];
 
 describe("GrayMatterClient", () => {
+  it("compiles and projects a bounded Bifrost ContextPage", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/context_page/compile")
+          ? jsonResponse(200, {
+              contextPageRef: "context-page-1",
+              traceId: "trace-1",
+              tokenEstimate: 512,
+            })
+          : jsonResponse(200, {
+              contextPageRef: "context-page-1",
+              prompt: "compressed invariant context",
+              promptHash: "prompt-hash-1",
+              sourceHash: "source-hash-1",
+              tokenEstimate: 128,
+            }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(
+      client.compileContextPage({
+        taskIntent: "optimize local model context",
+        tokenBudget: 640,
+        includeProcedures: true,
+        includeRatings: true,
+        filters: { workspace: "ValorIDE" },
+      }),
+    ).resolves.toMatchObject({
+      contextPageRef: "context-page-1",
+      traceId: "trace-1",
+    });
+    await expect(
+      client.compileContextPagePrompt({
+        contextPageRef: "context-page-1",
+        surface: "code",
+        task: "optimize local model context",
+        maxTokens: 640,
+      }),
+    ).resolves.toMatchObject({
+      prompt: "compressed invariant context",
+      promptHash: "prompt-hash-1",
+    });
+
+    expect(fetchMock.mock.calls).toEqual([
+      [
+        "https://api-0.valkyrlabs.com/v1/graymatter_ops/context_page/compile",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            taskIntent: "optimize local model context",
+            tokenBudget: 640,
+            includeProcedures: true,
+            includeRatings: true,
+            filters: { workspace: "ValorIDE" },
+          }),
+        }),
+      ],
+      [
+        "https://api-0.valkyrlabs.com/v1/graymatter_ops/context_page/prompt",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            contextPageRef: "context-page-1",
+            surface: "code",
+            task: "optimize local model context",
+            maxTokens: 640,
+          }),
+        }),
+      ],
+    ]);
+  });
+
   it("loads RBAC-scoped GrayMatter capabilities from the Valhalla control surface", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>
@@ -768,7 +844,19 @@ describe("GrayMatterClient", () => {
     });
   });
 
-  it("aborts memory reads that exceed the chat latency budget", async () => {
+  it("uses the shared Valkyr Labs RTK Query timeout for memory reads", async () => {
+    const realSetTimeout = global.setTimeout;
+    const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation(((
+      callback: (...args: unknown[]) => void,
+      delay?: number,
+      ...args: unknown[]
+    ) => {
+      if (delay === 30_000) {
+        queueMicrotask(() => callback(...args));
+        return {} as NodeJS.Timeout;
+      }
+      return realSetTimeout(callback, delay, ...args);
+    }) as typeof setTimeout);
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async (_url, init) =>
         new Promise<Response>((_resolve, reject) => {
@@ -781,14 +869,14 @@ describe("GrayMatterClient", () => {
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
       getAuthToken: async () => "session-token",
-      requestTimeoutMs: 5,
     });
 
     await expect(client.listMemory()).rejects.toMatchObject<
       Partial<GrayMatterClientError>
     >({
       kind: "unavailable",
-      message: "GrayMatter request exceeded the 5ms chat latency budget.",
+      message: "Valkyr Labs API request timed out after 30000 ms.",
     });
+    setTimeoutSpy.mockRestore();
   });
 });

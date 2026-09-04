@@ -27,7 +27,7 @@ const createMockStorage = (): Storage => {
   } as Storage;
 };
 
-describe("customBaseQuery binary bridge timeout", () => {
+describe("customBaseQuery shared bridge timeout", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.unstubAllGlobals();
@@ -50,7 +50,8 @@ describe("customBaseQuery binary bridge timeout", () => {
     vi.unstubAllGlobals();
   });
 
-  it("forwards an explicit long timeout for binary generation responses", async () => {
+  it("does not forward endpoint-specific timeout overrides", async () => {
+    const timeoutSpy = vi.spyOn(window, "setTimeout");
     sessionStorage.setItem("jwtToken", "session-token");
     const postMessage = vi.fn((message: any) => {
       window.dispatchEvent(
@@ -95,10 +96,12 @@ describe("customBaseQuery binary bridge timeout", () => {
     );
 
     const request = postMessage.mock.calls[0][0].thorapiRequest;
-    expect(request.timeoutMs).toBe(600_000);
+    expect(request.timeoutMs).toBeUndefined();
     expect(request.responseType).toBe("arraybuffer");
+    expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 30_000);
     expect(result).toEqual({
       data: { filename: "sample.zip", body: "zip-data" },
     });
+    timeoutSpy.mockRestore();
   });
 });

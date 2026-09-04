@@ -1,9 +1,8 @@
 import { composeRuntimeSystemPrompt } from "./runtimePrompt";
 import type { SelectedPrompt } from "@services/llmPromptService";
+import { estimateTextTokens } from "@core/context/context-management/ContextEfficiency";
 
-const selectedPrompt = (
-  mode: SelectedPrompt["mode"],
-): SelectedPrompt => ({
+const selectedPrompt = (mode: SelectedPrompt["mode"]): SelectedPrompt => ({
   source: "thorapi",
   llmDetailsId: "llm-details-1",
   name: "GrayMatter Vibe Coding",
@@ -53,5 +52,30 @@ describe("composeRuntimeSystemPrompt", () => {
     expect(composeRuntimeSystemPrompt("BUILT-IN ONLY", null)).toBe(
       "BUILT-IN ONLY",
     );
+  });
+
+  it("extractively compacts duplicate LlmDetails guidance for small models", () => {
+    const prompt = composeRuntimeSystemPrompt(
+      "BUILT-IN PROMPT: use tools first and preserve tenant ACL security.",
+      {
+        ...selectedPrompt("SYSTEM"),
+        prompt: [
+          "# Persona",
+          "You are an excellent coding agent.",
+          "# Security",
+          "Preserve tenant RBAC and generated ACL checks.",
+          "# Irrelevant verbosity",
+          "word ".repeat(4_000),
+        ].join("\n"),
+      },
+      { compact: true, maxSelectedPromptTokens: 80, task: "tenant ACL fix" },
+    );
+
+    expect(prompt).toContain("Selected LlmDetails guidance");
+    expect(prompt).toContain("Preserve tenant RBAC");
+    expect(prompt).toContain("BUILT-IN PROMPT");
+    expect(prompt.length).toBeLessThan(2_000);
+    const selectedSection = prompt.split("BUILT-IN PROMPT")[0];
+    expect(estimateTextTokens(selectedSection)).toBeLessThan(120);
   });
 });

@@ -3,6 +3,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { getAllExtensionState, getSecret } from "@core/storage/state";
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
 /**
  * LLMPromptService — ThorAPI-FIRST prompt loading
@@ -60,8 +61,6 @@ export interface LLMDetailsPromptCandidate {
 export interface LLMDetailsPromptService {
   query(input: LLMDetailsQuery): Promise<LLMDetailsPromptCandidate | null>;
 }
-
-const LLM_DETAILS_QUERY_TIMEOUT_MS = 5000;
 
 export class LLMPromptService {
   private workspaceRoot: string;
@@ -444,25 +443,18 @@ export function createExtensionHostLLMDetailsService(
         headers.jwtSession = authToken;
       }
 
-      const controller = new AbortController();
-      const timeout = setTimeout(
-        () => controller.abort(),
-        LLM_DETAILS_QUERY_TIMEOUT_MS,
-      );
-
-      let response: Response;
+      let response;
       try {
-        response = await fetch(endpoint.toString(), {
+        response = await getValkyrLabsRtkApiClient().request<unknown>({
+          url: endpoint.toString(),
           headers,
-          signal: controller.signal,
+          acceptHttpErrors: true,
         });
       } catch (error) {
         logger.appendLine(
           `[LLMPromptService] ThorAPI query unavailable (${classifyLlmDetailsQueryError(error)}); using fallback prompt`,
         );
         return null;
-      } finally {
-        clearTimeout(timeout);
       }
 
       if (response.status === 401 || response.status === 403) {
@@ -471,12 +463,11 @@ export function createExtensionHostLLMDetailsService(
         );
         return null;
       }
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         throw new Error(`LlmDetails query failed with HTTP ${response.status}`);
       }
 
-      const payload = await response.json();
-      return selectBestLlmDetailsPrompt(payload, input.tags);
+      return selectBestLlmDetailsPrompt(response.data, input.tags);
     },
   };
 }

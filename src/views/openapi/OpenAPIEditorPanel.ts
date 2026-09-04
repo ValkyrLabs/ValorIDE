@@ -1,10 +1,13 @@
 import * as vscode from "vscode";
-import axios from "axios";
 import { getTheme } from "@integrations/theme/getTheme";
 import { getNonce } from "@core/webview/getNonce";
 import { getUri } from "@core/webview/getUri";
 import { getSecret } from "@core/storage/state";
 import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "@services/valkyrai/ValkyrLabsRtkApi";
 import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import {
   getValkyraiBasePath,
@@ -153,8 +156,8 @@ const authHeaders = (jwtToken: string) => ({
 });
 
 const errorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const body = error.response?.data as
+  if (error instanceof ValkyrLabsApiError) {
+    const body = error.data as
       | { message?: string; error?: string }
       | string
       | undefined;
@@ -182,10 +185,11 @@ const handleBlueprintLoad = async (
   }
   try {
     const jwtToken = await requireJwt(context);
-    const response = await axios.get<BlueprintDocument>(
-      blueprintEndpoint(options.applicationId),
-      { headers: authHeaders(jwtToken), timeout: 60_000 },
-    );
+    const response =
+      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
+        url: blueprintEndpoint(options.applicationId),
+        headers: authHeaders(jwtToken),
+      });
     await panel.webview.postMessage({
       type: "blueprintLoaded",
       document: response.data,
@@ -218,15 +222,17 @@ const handleBlueprintSave = async (
   }
   try {
     const jwtToken = await requireJwt(context);
-    const response = await axios.put<BlueprintDocument>(
-      blueprintEndpoint(options.applicationId),
-      {
-        specification: message.specification,
-        filename: message.filename,
-        expectedEtag: message.expectedEtag,
-      },
-      { headers: authHeaders(jwtToken), timeout: 60_000 },
-    );
+    const response =
+      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
+        url: blueprintEndpoint(options.applicationId),
+        method: "PUT",
+        json: {
+          specification: message.specification,
+          filename: message.filename,
+          expectedEtag: message.expectedEtag,
+        },
+        headers: authHeaders(jwtToken),
+      });
     await panel.webview.postMessage({
       type: "blueprintSaved",
       document: response.data,

@@ -103,6 +103,13 @@ import {
   checkIsOpenRouterContextWindowError,
 } from "@core/context/context-management/context-error-handling";
 import { ContextManager } from "@core/context/context-management/ContextManager";
+import {
+  estimateTextTokens,
+  measurePromptTokens,
+  promptContextTokens,
+  resolveContextEfficiencyProfile,
+  type ContextEfficiencyProfile,
+} from "@core/context/context-management/ContextEfficiency";
 import { loadMcpDocumentation } from "@core/prompts/loadMcpDocumentation";
 import {
   ensureRulesDirectoryExists,
@@ -125,7 +132,10 @@ import {
 import { parseSlashCommands } from "@core/slash-commands";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
-import { createAgentContextForTask } from "@services/agentic/AgentContextAssembler";
+import {
+  createAgentContextForTask,
+  type AgentContextAssembly,
+} from "@services/agentic/AgentContextAssembler";
 import {
   createGrayMatterSessionState,
   degradeGrayMatterSession,
@@ -239,6 +249,7 @@ export class Task {
   private checkpointTrackerInitialization?: Promise<void>;
   checkpointTrackerErrorMessage?: string;
   private agentContextSectionPromise?: Promise<string | undefined>;
+  private agentContextTelemetry?: AgentContextAssembly["bifrost"];
   conversationHistoryDeletedRange?: [number, number];
   isInitialized = false;
   isAwaitingPlanResponse = false;
@@ -2518,10 +2529,15 @@ export class Task {
         baseUrl: getValkyraiBasePath(),
         cwd,
         grayMatterSession,
+        maxEntries: 8,
+        maxEntryChars: 700,
         task: taskText,
         tenantContext,
         token,
+        tokenBudget: this.getContextEfficiencyProfile().grayMatterTokenBudget,
       });
+
+      this.agentContextTelemetry = context?.bifrost;
 
       const citationCount = context?.grayMatter.citations.length ?? 0;
       const status = context?.grayMatter.status ?? "unavailable";
@@ -2619,6 +2635,15 @@ export class Task {
     return "Current ValorIDE task";
   }
 
+  private getContextEfficiencyProfile(
+    selectedPrompt = getSelectedRuntimePrompt(),
+  ): ContextEfficiencyProfile {
+    return resolveContextEfficiencyProfile(this.api.getModel(), {
+      name: selectedPrompt?.name || this.api.getModel().id,
+      tags: selectedPrompt?.tags ?? [],
+    });
+  }
+
   async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
     while (true) {
       if (this.mcpHub.isConnecting === true) {
@@ -2634,7 +2659,13 @@ export class Task {
       const modelSupportsBrowserUse =
         this.api.getModel().info.supportsImages ?? false;
       const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool;
-      const agentContextSection = await this.buildAgentContextSection();
+      const taskIntent = this.getLatestTaskTextForGrayMatter();
+      const selectedRuntimePrompt = getSelectedRuntimePrompt();
+      const contextProfile = this.getContextEfficiencyProfile(
+        selectedRuntimePrompt,
+      );
+      const agentContextSection =
+        await this.buildAgentContextSection(taskIntent);
 
       const fallbackSystemPrompt = await SYSTEM_PROMPT(
         cwd,
@@ -2644,11 +2675,17 @@ export class Task {
         this.browserSettings,
         this.chatSettings ?? DEFAULT_CHAT_SETTINGS,
         agentContextSection,
+        contextProfile,
+        taskIntent,
       );
-      const selectedRuntimePrompt = getSelectedRuntimePrompt();
       let systemPrompt = composeRuntimeSystemPrompt(
         fallbackSystemPrompt,
         selectedRuntimePrompt,
+        {
+          compact: contextProfile.mode === "compact",
+          maxSelectedPromptTokens: contextProfile.selectedPromptTokenBudget,
+          task: taskIntent,
+        },
       );
 
       const settingsCustomInstructions = this.customInstructions?.trim();
@@ -2711,11 +2748,54 @@ export class Task {
           this.conversationHistoryDeletedRange,
           previousApiReqIndex,
           await ensureTaskDirectoryExists(this.getContext(), this.taskId),
+          {
+            inputTokenBudget: contextProfile.inputTokenBudget,
+            systemPromptTokens: estimateTextTokens(systemPrompt),
+          },
         );
 
       if (contextManagementMetadata.updatedConversationHistoryDeletedRange) {
         this.conversationHistoryDeletedRange =
           contextManagementMetadata.conversationHistoryDeletedRange;
+        await this.saveValorIDEMessagesAndUpdateHistory();
+      }
+
+      const promptMetrics = measurePromptTokens(
+        systemPrompt,
+        contextManagementMetadata.truncatedConversationHistory,
+        agentContextSection,
+      );
+      const currentApiReqIndex = findLastIndex(
+        this.valorideMessages,
+        (message) => message.say === "api_req_started",
+      );
+      const currentApiReq = this.valorideMessages[currentApiReqIndex];
+      if (currentApiReq?.text) {
+        const currentInfo = JSON.parse(
+          currentApiReq.text,
+        ) as ValorIDEApiReqInfo;
+        currentApiReq.text = JSON.stringify({
+          ...currentInfo,
+          bifrostCompilerVersion: this.agentContextTelemetry?.compilerVersion,
+          bifrostContextHash: this.agentContextTelemetry?.contextHash,
+          bifrostContextPageRef: this.agentContextTelemetry?.contextPageRef,
+          bifrostIncludedItemCount:
+            this.agentContextTelemetry?.includedItemCount,
+          bifrostLineageHash: this.agentContextTelemetry?.lineageHash,
+          bifrostPromptHash: this.agentContextTelemetry?.promptHash,
+          bifrostRetrievalReceiptRef:
+            this.agentContextTelemetry?.retrievalReceiptRef,
+          bifrostSourceHashCount: this.agentContextTelemetry?.sourceHashCount,
+          bifrostTraceId: this.agentContextTelemetry?.traceId,
+          contextInputBudget: contextProfile.inputTokenBudget,
+          contextMode: contextProfile.mode,
+          contextPolicyReason: contextProfile.reason,
+          contextWindow: contextProfile.contextWindow,
+          conversationTokensEstimated: promptMetrics.conversationTokens,
+          estimatedTokensIn: promptMetrics.totalInputTokens,
+          grayMatterTokensEstimated: promptMetrics.grayMatterTokens,
+          systemPromptTokensEstimated: promptMetrics.systemPromptTokens,
+        } satisfies ValorIDEApiReqInfo);
         await this.saveValorIDEMessagesAndUpdateHistory();
       }
 
@@ -5665,6 +5745,9 @@ export class Task {
         );
         const nextInfo: ValorIDEApiReqInfo = {
           ...existingInfo,
+          estimatedTokensOut: hasUsageDetails()
+            ? undefined
+            : estimateTextTokens(assistantMessage),
           isComplete: apiReqComplete || undefined,
           usagePending: usagePending && !hasUsageDetails() ? true : undefined,
           cancelReason,
@@ -6309,15 +6392,8 @@ export class Task {
         return 0;
       }
       try {
-        const { tokensIn, tokensOut, cacheWrites, cacheReads } = JSON.parse(
-          msg.text,
-        );
-        return (
-          (tokensIn || 0) +
-          (tokensOut || 0) +
-          (cacheWrites || 0) +
-          (cacheReads || 0)
-        );
+        const info = JSON.parse(msg.text) as ValorIDEApiReqInfo;
+        return promptContextTokens(info);
       } catch (e) {
         return 0;
       }

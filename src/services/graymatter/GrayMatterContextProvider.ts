@@ -17,7 +17,6 @@ export interface GrayMatterContextConfig {
   ) => Promise<unknown>;
   scopes: GrayMatterMemoryScope[];
   seedQuery?: string;
-  timeoutMs: number;
 }
 
 export interface GrayMatterContextResult {
@@ -64,7 +63,6 @@ interface RetrievalResponse {
 }
 
 const DEFAULT_MAX_TOKENS = 2000;
-const DEFAULT_TIMEOUT_MS = 3000;
 const INVARIANT_QUERY_SUFFIX =
   "invariant decision methodology security rbac acl ThorAPI AspectJ generated-code vaix vai testing GrayMatter ValorIDE ValkyrAI";
 const SCOPE_ORDER: GrayMatterMemoryScope[] = [
@@ -92,7 +90,6 @@ export class GrayMatterContextProvider {
       seedQuery ||
       "ValorIDE session context"
     ).trim();
-    const timeoutMs = config.timeoutMs || DEFAULT_TIMEOUT_MS;
     const maxTokens = config.maxTokens || DEFAULT_MAX_TOKENS;
     const start = this.now();
 
@@ -106,7 +103,6 @@ export class GrayMatterContextProvider {
             limit: 12,
             query: invariantQuery,
           },
-          timeoutMs,
         }),
         this.retrieveContext({
           config,
@@ -115,7 +111,6 @@ export class GrayMatterContextProvider {
             limit: 24,
             query,
           },
-          timeoutMs,
         }),
       ]);
 
@@ -197,12 +192,10 @@ export class GrayMatterContextProvider {
     config,
     kind,
     query,
-    timeoutMs,
   }: {
     config: GrayMatterContextConfig;
     kind: RetrievalKind;
     query: GrayMatterMemoryQuery;
-    timeoutMs: number;
   }): Promise<RetrievalResponse> {
     if (!config.retrieveMemoryWithReceipt) {
       throw new Error(
@@ -211,18 +204,15 @@ export class GrayMatterContextProvider {
     }
 
     try {
-      const receiptResponse = await withTimeout(
-        config.retrieveMemoryWithReceipt({
-          includeEvaluator: false,
-          includeItems: true,
-          includeText: true,
-          qualityProfile: "DEFAULT",
-          query: query.query,
-          retrievalMode: "HYBRID",
-          topK: query.limit ?? 10,
-        }),
-        timeoutMs,
-      );
+      const receiptResponse = await config.retrieveMemoryWithReceipt({
+        includeEvaluator: false,
+        includeItems: true,
+        includeText: true,
+        qualityProfile: "DEFAULT",
+        query: query.query,
+        retrievalMode: "HYBRID",
+        topK: query.limit ?? 10,
+      });
       const metadata = extractReceiptMetadata(receiptResponse);
       const policyWarning = receiptPolicyWarning(metadata);
 
@@ -262,29 +252,7 @@ export const getGrayMatterContextConfigFromSettings = (
     retrieveMemoryWithReceipt,
     scopes: ["project", "organization", "user"],
     seedQuery,
-    timeoutMs: config.get<number>("queryTimeoutMs", DEFAULT_TIMEOUT_MS),
   };
-};
-
-const withTimeout = async <T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-): Promise<T> => {
-  let timeout: NodeJS.Timeout | undefined;
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    timeout = setTimeout(
-      () => reject(new Error("GrayMatter context query timed out.")),
-      timeoutMs,
-    );
-  });
-
-  try {
-    return await Promise.race([promise, timeoutPromise]);
-  } finally {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-  }
 };
 
 const extractEntries = (response: unknown): MemoryEntryLike[] => {

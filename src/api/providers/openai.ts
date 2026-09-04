@@ -16,6 +16,7 @@ import type { Headers } from "openai/core";
 import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
 
 export class OpenAiHandler implements ApiHandler {
+  readonly provider = "openai";
   private options: ApiHandlerOptions;
   private client: OpenAI;
 

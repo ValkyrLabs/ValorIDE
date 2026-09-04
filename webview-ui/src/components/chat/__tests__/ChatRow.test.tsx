@@ -676,6 +676,40 @@ describe("ChatRow Content - api request spinner handling", () => {
     expect(screen.queryByText("API Request...")).toBeNull();
   });
 
+  it("shows clearly labeled estimates when a local provider omits usage", () => {
+    const apiRequestMessage = {
+      type: "say",
+      say: "api_req_started",
+      ts: Date.now(),
+      text: JSON.stringify({
+        contextInputBudget: 13762,
+        contextMode: "compact",
+        conversationTokensEstimated: 1234,
+        estimatedTokensIn: 2345,
+        estimatedTokensOut: 456,
+        request: "POST /v1/chat",
+        systemPromptTokensEstimated: 1111,
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={apiRequestMessage}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={apiRequestMessage}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText(/In:\s*≈2,345 tokens/)).toBeTruthy();
+    expect(screen.getByText(/Out:\s*≈456 tokens/)).toBeTruthy();
+    expect(screen.getByText(/Context: compact/)).toBeTruthy();
+  });
+
   it("clears the spinner once task completion is shown even without usage details", () => {
     const apiRequestMessage = {
       type: "say",

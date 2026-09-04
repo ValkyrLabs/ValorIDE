@@ -8,8 +8,6 @@ import {
 
 type ApplicationResponse = Application[];
 
-export const APPLICATION_GENERATION_TIMEOUT_MS = 10 * 60_000;
-
 export const ApplicationService = createApi({
   reducerPath: "CustomApplication", // Unique path to avoid conflicts with ThorAPI ApplicationService
   baseQuery: customBaseQuery,
@@ -41,10 +39,7 @@ export const ApplicationService = createApi({
       transformResponse: normalizeApplicationResponse,
       providesTags: (result) =>
         result
-          ? [
-              ...applicationTagsFor(result),
-              { type: "Application", id: "LIST" },
-            ]
+          ? [...applicationTagsFor(result), { type: "Application", id: "LIST" }]
           : [{ type: "Application", id: "LIST" }],
       // Keep data for 5 minutes to retain across tab switches
       keepUnusedDataFor: 300,
@@ -58,7 +53,6 @@ export const ApplicationService = createApi({
       query: (applicationId) => ({
         url: `thorapi/generate/${applicationId}`,
         method: "POST",
-        timeoutMs: APPLICATION_GENERATION_TIMEOUT_MS,
         responseHandler: async (response) => {
           const blob = await response.blob();
           const contentType =

@@ -5,6 +5,7 @@ import {
 } from "../../utils/valkyraiHost";
 import { getStoredJwtToken } from "../../utils/authTokenStorage";
 import { vscode } from "../../utils/vscode";
+import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
 
 const LOCAL_SWARM_API_BASE = "http://localhost:8080/v1/swarm";
 
@@ -199,7 +200,7 @@ export const requestSwarmJson = async <T = any>(
           statusText: "ThorAPI request timed out.",
           data: undefined as T,
         });
-      }, 30000);
+      }, VALKYR_LABS_API_TIMEOUT_MS);
 
       handleResponse = (event: MessageEvent) => {
         const message = event.data;
@@ -217,9 +218,7 @@ export const requestSwarmJson = async <T = any>(
           ok: Boolean(response.ok),
           status: response.status ?? 0,
           statusText:
-            response.statusText ||
-            response.error ||
-            "ThorAPI request failed.",
+            response.statusText || response.error || "ThorAPI request failed.",
           data: response.data as T,
         });
       };

@@ -27,6 +27,7 @@ import { MoonshotHandler } from "./providers/moonshot";
 import { MinimaxHandler } from "./providers/minimax";
 
 export interface ApiHandler {
+  readonly provider?: string;
   createMessage(
     systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],

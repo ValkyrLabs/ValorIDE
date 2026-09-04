@@ -7,11 +7,15 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
-import { applyCsrfHeader, shouldAttachCsrfToken } from "@thorapi/utils/csrfToken";
+import {
+  applyCsrfHeader,
+  shouldAttachCsrfToken,
+} from "@thorapi/utils/csrfToken";
 import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import { refreshCsrfToken } from "@thorapi/utils/authFetch";
 import { applyTenantHeaders } from "@thorapi/utils/tenantContext";
 import { vscode } from "@thorapi/utils/vscode";
+import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
 
 const getRequestPath = (arg: unknown): string => {
   const url = typeof arg === "string" ? arg : (arg as { url?: string })?.url;
@@ -58,6 +62,7 @@ const buildBaseQuery = () =>
   fetchBaseQuery({
     baseUrl: getValkyraiHost(),
     credentials: "include",
+    timeout: VALKYR_LABS_API_TIMEOUT_MS,
     prepareHeaders: (headers, { arg }) => {
       const token = getStoredJwtToken();
       if (token && !isLoginRequest(arg)) {
@@ -80,16 +85,6 @@ type ThorapiBridgeResult =
         error?: string;
       };
     };
-
-const DEFAULT_THORAPI_BRIDGE_TIMEOUT_MS = 30_000;
-const MAX_THORAPI_BRIDGE_TIMEOUT_MS = 10 * 60_000;
-
-const normalizeThorapiBridgeTimeoutMs = (value: unknown): number => {
-  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
-    return DEFAULT_THORAPI_BRIDGE_TIMEOUT_MS;
-  }
-  return Math.min(Math.round(value), MAX_THORAPI_BRIDGE_TIMEOUT_MS);
-};
 
 const createRequestId = () => {
   if (
@@ -148,7 +143,6 @@ const argsToThorapiRequest = (args: any) => {
     responseType: hasCustomResponseHandler(args)
       ? ("arraybuffer" as const)
       : undefined,
-    timeoutMs: normalizeThorapiBridgeTimeoutMs(args?.timeoutMs),
   };
 };
 
@@ -246,7 +240,7 @@ const extensionThorapiBaseQuery = async (
 ): Promise<ThorapiBridgeResult> => {
   const requestId = createRequestId();
   const request = withStoredAuthHeaders(argsToThorapiRequest(args));
-  const timeoutMs = normalizeThorapiBridgeTimeoutMs(request.timeoutMs);
+  const timeoutMs = VALKYR_LABS_API_TIMEOUT_MS;
 
   return new Promise<ThorapiBridgeResult>((resolve) => {
     let handleResponse: (event: MessageEvent) => void = () => undefined;

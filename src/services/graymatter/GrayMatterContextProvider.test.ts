@@ -12,7 +12,6 @@ const baseConfig = (
   queryMemory,
   retrieveMemoryWithReceipt,
   scopes: ["project", "organization", "user"],
-  timeoutMs: 3000,
 });
 
 describe("GrayMatterContextProvider", () => {

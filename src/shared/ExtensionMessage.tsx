@@ -498,7 +498,25 @@ export interface ValorIDEP2PChatMessage {
 }
 
 export interface ValorIDEApiReqInfo {
+  bifrostCompilerVersion?: string;
+  bifrostContextHash?: string;
+  bifrostContextPageRef?: string;
+  bifrostIncludedItemCount?: number;
+  bifrostLineageHash?: string;
+  bifrostPromptHash?: string;
+  bifrostRetrievalReceiptRef?: string;
+  bifrostSourceHashCount?: number;
+  bifrostTraceId?: string;
+  contextInputBudget?: number;
+  contextMode?: "compact" | "standard";
+  contextPolicyReason?: string;
+  contextWindow?: number;
+  conversationTokensEstimated?: number;
+  estimatedTokensIn?: number;
+  estimatedTokensOut?: number;
+  grayMatterTokensEstimated?: number;
   request?: string;
+  systemPromptTokensEstimated?: number;
   tokensIn?: number;
   tokensOut?: number;
   cacheWrites?: number;

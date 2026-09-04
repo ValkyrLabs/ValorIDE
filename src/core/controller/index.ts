@@ -21,7 +21,7 @@ import {
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
-import { buildOpenApiImportConfig } from "./openApiImport";
+import { buildOpenApiHeaders } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -38,6 +38,10 @@ import { publishApplicationSource } from "@services/applicationSourcePublish";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "@services/valkyrai/ValkyrLabsRtkApi";
 import { initializeAgentRuntimeCoordinator } from "@services/communication/AgentRuntimeCoordinator";
 import {
   buildTenantHeaders,
@@ -424,6 +428,22 @@ const summarizeBuildModeWorkflowOutput = (
   }
   return `Output keys: ${keys.join(", ")}.`;
 };
+
+const describeLlmDetailsForRouting = (
+  details: Pick<
+    LlmDetailsSummary,
+    "description" | "name" | "provider" | "tags" | "version"
+  >,
+): string | undefined =>
+  [
+    details.name,
+    details.provider,
+    details.version,
+    details.description,
+    ...(details.tags ?? []),
+  ]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .join(" ") || undefined;
 
 export class Controller {
   private postMessage: (
@@ -1750,6 +1770,18 @@ export class Controller {
         apiProvider: "valkyrai",
         apiModelId: selectedServiceId,
         valkyraiServiceId: selectedServiceId,
+        valkyraiModelInfo:
+          apiConfiguration.valkyraiModelInfo ||
+          (selectedLlmDetails
+            ? {
+                contextWindow: selectedLlmDetails.contextWindow,
+                description: describeLlmDetailsForRouting(selectedLlmDetails),
+                maxTokens: selectedLlmDetails.maxTokens,
+                supportsImages: selectedLlmDetails.supportsImages,
+                supportsPromptCache:
+                  selectedLlmDetails.supportsPromptCache ?? false,
+              }
+            : undefined),
       };
     }
 
@@ -2702,7 +2734,6 @@ export class Controller {
         break;
       // case "openMcpMarketplaceServerDetails": {
       // 	if (message.text) {
-      // 		const response = await fetch(`https://api-0.valkyrlabs.com/v1/McpMarketplace/${message.mcpId}`)
       // 		const details: McpDownloadResponse = await response.json()
 
       // 		if (details.readmeContent) {
@@ -2964,6 +2995,13 @@ export class Controller {
             apiProvider: "valkyrai",
             apiModelId: selected.id,
             valkyraiServiceId: selected.id,
+            valkyraiModelInfo: {
+              contextWindow: selected.contextWindow,
+              description: describeLlmDetailsForRouting(selected),
+              maxTokens: selected.maxTokens,
+              supportsImages: selected.supportsImages,
+              supportsPromptCache: selected.supportsPromptCache ?? false,
+            },
           };
           await updateApiConfiguration(this.context, updatedApiConfiguration);
           if (this.task) {
@@ -2976,6 +3014,7 @@ export class Controller {
           let normalizedSelection: SelectedLlmDetails | undefined;
           if (promptText) {
             normalizedSelection = {
+              contextWindow: selected.contextWindow,
               id: selected.id,
               name: selected.name || selected.id,
               description: selected.description,
@@ -2983,9 +3022,12 @@ export class Controller {
               ratingScore: selected.ratingScore,
               promptType: selected.promptType ?? "SYSTEM",
               initialPrompt: promptText,
+              maxTokens: selected.maxTokens,
               prompt: promptText,
               mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
               source: "thorapi",
+              supportsImages: selected.supportsImages,
+              supportsPromptCache: selected.supportsPromptCache,
               updatedAt: Date.now(),
             };
 
@@ -4057,22 +4099,23 @@ export class Controller {
           // Get JWT token for ThorAPI call
           const jwtToken =
             providedJwt || (await getSecret(this.context, "jwtToken"));
-          const axiosConfig = buildOpenApiImportConfig(filename, jwtToken);
+          const importHeaders = buildOpenApiHeaders(filename, jwtToken);
 
           // Call ThorAPI /v1/thorapi/specs/import endpoint
           const apiBaseUrl = getValkyraiBasePath();
           const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
 
           try {
-            const response = await axios.post(
-              importUrl,
-              {
+            const response = await getValkyrLabsRtkApiClient().request<any>({
+              url: importUrl,
+              method: "POST",
+              json: {
                 filename: filename,
                 content: fileContent,
                 fileType: isJson ? "json" : "yaml",
               },
-              axiosConfig,
-            );
+              headers: importHeaders,
+            });
 
             if (response.data?.success === true || response.status === 200) {
               await this.postMessageToWebview({
@@ -4091,13 +4134,11 @@ export class Controller {
             }
           } catch (apiError) {
             let errorMsg = "Failed to import to ThorAPI";
-            if (axios.isAxiosError(apiError)) {
-              if (apiError.response?.status === 401) {
+            if (apiError instanceof ValkyrLabsApiError) {
+              if (apiError.status === 401) {
                 errorMsg = "Authentication failed. Please log in.";
-              } else if (apiError.response?.status === 400) {
-                errorMsg = `Invalid OpenAPI: ${apiError.response.data?.error || "validation failed"}`;
-              } else if (apiError.code === "ECONNREFUSED") {
-                errorMsg = `Cannot reach ThorAPI at ${importUrl}`;
+              } else if (apiError.status === 400) {
+                errorMsg = `Invalid OpenAPI: ${(apiError.data as any)?.error || "validation failed"}`;
               } else if (apiError.message) {
                 errorMsg = apiError.message;
               }
@@ -4911,33 +4952,19 @@ export class Controller {
         headers.jwtSession = token;
       }
 
-      const response = await axios.request({
+      const response = await getValkyrLabsRtkApiClient().request({
         url: this.resolveThorapiWebviewUrl(request.url),
         method: request.method || "GET",
-        data: request.body,
+        ...(request.body === undefined ? {} : { json: request.body }),
         params: request.params,
         headers,
         responseType:
-          request.responseType === "arraybuffer" ? "arraybuffer" : "json",
-        timeout:
-          typeof request.timeoutMs === "number" &&
-          Number.isFinite(request.timeoutMs) &&
-          request.timeoutMs > 0
-            ? Math.min(Math.round(request.timeoutMs), 10 * 60_000)
-            : 30_000,
-        validateStatus: () => true,
+          request.responseType === "arraybuffer" ? "arrayBuffer" : "json",
+        acceptHttpErrors: true,
       });
-      const responseHeaders = Object.fromEntries(
-        Object.entries(response.headers).map(([key, value]) => [
-          key,
-          Array.isArray(value) ? value.join(", ") : String(value),
-        ]),
-      );
       const responseBuffer =
         request.responseType === "arraybuffer"
-          ? Buffer.isBuffer(response.data)
-            ? response.data
-            : Buffer.from(response.data)
+          ? Buffer.from(response.data as ArrayBuffer)
           : undefined;
 
       await this.postMessageToWebview({
@@ -4949,18 +4976,16 @@ export class Controller {
           statusText: response.statusText,
           data:
             request.responseType === "arraybuffer" ? undefined : response.data,
-          headers: responseHeaders,
+          headers: response.headers,
           bodyBase64: responseBuffer?.toString("base64"),
         },
       });
     } catch (error) {
-      const status = axios.isAxiosError(error)
-        ? error.response?.status
+      const status = error instanceof ValkyrLabsApiError
+        && typeof error.status === "number"
+        ? error.status
         : undefined;
-      const statusText = axios.isAxiosError(error)
-        ? error.response?.statusText
-        : undefined;
-      const data = axios.isAxiosError(error) ? error.response?.data : undefined;
+      const data = error instanceof ValkyrLabsApiError ? error.data : undefined;
       const errorMessage =
         error instanceof Error ? error.message : "ThorAPI request failed";
 
@@ -4970,7 +4995,7 @@ export class Controller {
           requestId,
           ok: false,
           status,
-          statusText,
+          statusText: undefined,
           data,
           error: errorMessage,
         },
@@ -5009,16 +5034,16 @@ export class Controller {
 
       for (const endpoint of endpoints) {
         try {
-          const response = await axios.get(endpoint, {
+          const response = await getValkyrLabsRtkApiClient().request({
+            url: endpoint,
             headers,
-            timeout: 10000,
           });
           responseData = response.data;
           lastError = undefined;
           break;
         } catch (error) {
           lastError = error;
-          if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+          if (!(error instanceof ValkyrLabsApiError) || error.status !== 404) {
             throw error;
           }
         }
@@ -5102,23 +5127,23 @@ export class Controller {
     } catch (error) {
       let errorMessage = "Failed to fetch MCP marketplace";
 
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ECONNABORTED") {
+      if (error instanceof ValkyrLabsApiError) {
+        if (error.status === "TIMEOUT_ERROR") {
           errorMessage = "MCP marketplace request timed out. Please try again.";
-        } else if (error.response?.status === 404) {
+        } else if (error.status === 404) {
           errorMessage =
             "MCP marketplace service is not available (404). Please check if the service is running.";
-        } else if (error.response?.status === 500) {
+        } else if (error.status === 500) {
           errorMessage =
             "MCP marketplace service encountered an internal error. Please try again later.";
-        } else if (error.response?.status === 503) {
+        } else if (error.status === 503) {
           errorMessage =
             "MCP marketplace service is temporarily unavailable. Please try again later.";
-        } else if (!error.response && error.request) {
+        } else if (error.status === "FETCH_ERROR") {
           errorMessage =
             "Cannot connect to MCP marketplace service. Please check your network connection.";
-        } else if (error.response) {
-          errorMessage = `MCP marketplace service returned error ${error.response.status}: ${error.response.statusText}`;
+        } else {
+          errorMessage = `MCP marketplace service returned error ${error.status}`;
         }
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -5261,13 +5286,10 @@ export class Controller {
       }
 
       const getServiceByIdentifier = async (identifier: string) =>
-        axios.get<any>(
-          `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
-          {
+        getValkyrLabsRtkApiClient().request<any>({
+          url: `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
             headers,
-            timeout: 10000,
-          },
-        );
+        });
 
       let response: any;
       let resolvedServiceId = serviceIdentifiers[0] || mcpId;
@@ -5282,7 +5304,7 @@ export class Controller {
         } catch (error) {
           lastLookupError = error;
           const isNotFound =
-            axios.isAxiosError(error) && error.response?.status === 404;
+            error instanceof ValkyrLabsApiError && error.status === 404;
 
           if (!isNotFound) {
             if (sourceItem) {
@@ -5308,13 +5330,11 @@ export class Controller {
         // Fallback: resolve marketplace item IDs to a concrete service identifier
         // (slug, id, or name) then retry /mcp/services/{slug}.
         try {
-          const serviceListResponse = await axios.get<any>(
-            `${getValkyraiBasePath()}/mcp/services`,
-            {
+          const serviceListResponse = await getValkyrLabsRtkApiClient()
+            .request<any>({
+              url: `${getValkyraiBasePath()}/mcp/services`,
               headers,
-              timeout: 10000,
-            },
-          );
+            });
 
           const services = Array.isArray(serviceListResponse.data)
             ? serviceListResponse.data
@@ -5445,14 +5465,14 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       console.error("Failed to download MCP:", error);
       let errorMessage = "Failed to download MCP";
 
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ECONNABORTED") {
+      if (error instanceof ValkyrLabsApiError) {
+        if (error.status === "TIMEOUT_ERROR") {
           errorMessage = "Request timed out. Please try again.";
-        } else if (error.response?.status === 404) {
+        } else if (error.status === 404) {
           errorMessage = "MCP server not found in marketplace.";
-        } else if (error.response?.status === 500) {
+        } else if (error.status === 500) {
           errorMessage = "Internal server error. Please try again later.";
-        } else if (!error.response && error.request) {
+        } else if (error.status === "FETCH_ERROR") {
           errorMessage =
             "Network error. Please check your internet connection.";
         }
@@ -5754,7 +5774,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         headers["jwtSession"] = authToken;
       }
 
-      const response = await axios.get(endpoint, { headers });
+      const response = await getValkyrLabsRtkApiClient().request<any>({
+        url: endpoint,
+        headers,
+      });
 
       if (Array.isArray(response.data)) {
         // Transform ValkyrAI LLMDetails to ModelInfo format
@@ -5773,6 +5796,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
             };
             models[llmDetail.id] = modelInfo;
             llmDetailsList.push({
+              contextWindow: llmDetail.contextWindow,
               id: llmDetail.id,
               name: llmDetail.name || llmDetail.provider || llmDetail.id,
               description: llmDetail.description,
@@ -5780,12 +5804,15 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                 | "SYSTEM"
                 | "APPEND",
               initialPrompt: llmDetail.initialPrompt,
+              maxTokens: llmDetail.maxTokens,
               tags: Array.isArray(llmDetail.tags) ? llmDetail.tags : [],
               ratingScore:
                 typeof llmDetail.ratingScore === "number"
                   ? llmDetail.ratingScore
                   : undefined,
               provider: llmDetail.provider,
+              supportsImages: llmDetail.supportsImages,
+              supportsPromptCache: llmDetail.supportsPromptCache,
               version: llmDetail.version,
               lastModifiedDate: llmDetail.lastModifiedDate,
             });
@@ -5796,7 +5823,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         console.error("Invalid response from ValkyrAI LLMDetails endpoint");
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (error instanceof ValkyrLabsApiError && error.status === 401) {
         lastError =
           "Authentication required for ValkyrAI LLMDetails. Sign in again or provide a ValkyrAI JWT.";
         console.warn(
@@ -5829,12 +5856,15 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     ];
     for (const endpoint of endpoints) {
       try {
-        await axios.get(endpoint, { timeout: 5000 });
+        await getValkyrLabsRtkApiClient().request({ url: endpoint });
         success = true;
         errorMessage = undefined;
         break;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
+        if (
+          error instanceof ValkyrLabsApiError
+          && typeof error.status === "number"
+        ) {
           success = true;
           errorMessage = undefined;
           break;
@@ -5891,9 +5921,11 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         headers["jwtSession"] = jwtToken;
       }
 
-      await axios.post(`${host}/swarm/sessions`, sessionMessage, {
+      await getValkyrLabsRtkApiClient().request({
+        url: `${host}/swarm/sessions`,
+        method: "POST",
+        json: sessionMessage,
         headers,
-        timeout: 5000,
       });
       console.log(`[SWARM] ValorIDE session registered with ${host}`);
 

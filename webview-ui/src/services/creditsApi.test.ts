@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildCreditCheckoutRequest,
   chooseBestBalance,
   creditsApi,
   getAccountBalancePath,
@@ -11,6 +12,31 @@ import {
   resolvePrimaryBalanceAccountId,
   selectSyncedAccountBalance,
 } from "./creditsApi";
+
+describe("creditsApi checkout contract", () => {
+  it("sends the idempotency key as a header and keeps credit booking server-side", () => {
+    expect(
+      buildCreditCheckoutRequest({
+        amountCents: 1000,
+        cancelUrl: "https://valkyrlabs.com/buy-credits",
+        creditsAmountCents: 1000,
+        currency: "usd",
+        idempotencyKey: "checkout-key",
+        itemName: "ValorIDE $10 Credit Top-up",
+        productType: "credits",
+        sku: "valoride-credits-usd-10",
+        successUrl: "https://valkyrlabs.com/checkout/success",
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        url: "checkout/create-session",
+        method: "POST",
+        headers: { "Idempotency-Key": "checkout-key" },
+        body: expect.not.objectContaining({ idempotencyKey: "checkout-key" }),
+      }),
+    );
+  });
+});
 
 describe("creditsApi Omega replay contract", () => {
   it("exposes the exact inspection mutation and trajectory query through the registered API", () => {

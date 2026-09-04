@@ -1176,6 +1176,8 @@ export const ChatRowContent = ({
       return {
         ...info,
         tokensIn: toNumber(info.tokensIn),
+        estimatedTokensIn: toNumber(info.estimatedTokensIn),
+        estimatedTokensOut: toNumber(info.estimatedTokensOut),
         tokensOut: toNumber(info.tokensOut),
         cacheWrites: toNumber(info.cacheWrites),
         cacheReads: toNumber(info.cacheReads),
@@ -1219,6 +1221,8 @@ export const ChatRowContent = ({
       parsedApiReqInfo.usagePending === true ||
       parsedApiReqInfo.isComplete === true ||
       typeof parsedApiReqInfo.tokensIn === "number" ||
+      typeof parsedApiReqInfo.estimatedTokensIn === "number" ||
+      typeof parsedApiReqInfo.estimatedTokensOut === "number" ||
       typeof parsedApiReqInfo.tokensOut === "number" ||
       typeof parsedApiReqInfo.cacheWrites === "number" ||
       typeof parsedApiReqInfo.cacheReads === "number"
@@ -2541,10 +2545,23 @@ export const ChatRowContent = ({
                         <div>Usage: pending</div>
                       )}
                       <div>
-                        In: {formatUsageValue(apiReqInfo?.tokensIn)} tokens
+                        In:{" "}
+                        {apiReqInfo?.tokensIn == null &&
+                        apiReqInfo?.estimatedTokensIn != null
+                          ? "≈"
+                          : ""}
+                        {formatUsageValue(
+                          apiReqInfo?.tokensIn ?? apiReqInfo?.estimatedTokensIn,
+                        )}{" "}
+                        tokens
                       </div>
                       <div>
-                        Out: {formatUsageValue(apiReqInfo?.tokensOut)} tokens
+                        Out: {apiReqInfo?.tokensOut == null ? "≈" : ""}
+                        {formatUsageValue(
+                          apiReqInfo?.tokensOut ??
+                            apiReqInfo?.estimatedTokensOut,
+                        )}{" "}
+                        tokens
                       </div>
                       <div>
                         Cache writes:{" "}
@@ -2560,6 +2577,21 @@ export const ChatRowContent = ({
                           apiReqInfo?.costUnit,
                         )}
                       </div>
+                      {apiReqInfo?.contextMode && (
+                        <div>
+                          Context: {apiReqInfo.contextMode} · {"≈"}
+                          {formatUsageValue(
+                            apiReqInfo.systemPromptTokensEstimated,
+                          )}{" "}
+                          system + {"≈"}
+                          {formatUsageValue(
+                            apiReqInfo.conversationTokensEstimated,
+                          )}{" "}
+                          history /{" "}
+                          {formatUsageValue(apiReqInfo.contextInputBudget)}{" "}
+                          budget
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
-import fetch from "node-fetch";
 import { Application } from "@thorapi/model/Application";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
 const BASE_URL = "https://api-0.valkyrlabs.com";
 
@@ -33,57 +33,54 @@ function normalizeApplicationsResponse(response: unknown): Application[] {
 }
 
 export async function getApps(jwt: string): Promise<Application[]> {
-  const res = await fetch(`${BASE_URL}/api/apps`, {
+  const response = await getValkyrLabsRtkApiClient().request<unknown>({
+    url: `${BASE_URL}/api/apps`,
     headers: {
       Authorization: `Bearer ${jwt}`,
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) throw new Error(`Failed to fetch apps: ${res.statusText}`);
-  return normalizeApplicationsResponse(await res.json());
+  return normalizeApplicationsResponse(response.data);
 }
 
 export async function generateApp(jwt: string, appId: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/apps/${appId}/generate`, {
+  await getValkyrLabsRtkApiClient().request({
+    url: `${BASE_URL}/api/apps/${appId}/generate`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt}`,
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok)
-    throw new Error(`Failed to trigger code generation: ${res.statusText}`);
 }
 
 export async function pollAppStatus(
   jwt: string,
   appId: string,
 ): Promise<"pending" | "completed" | "failed"> {
-  const res = await fetch(`${BASE_URL}/api/apps/${appId}/status`, {
+  const response = await getValkyrLabsRtkApiClient().request<any>({
+    url: `${BASE_URL}/api/apps/${appId}/status`,
     headers: {
       Authorization: `Bearer ${jwt}`,
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) throw new Error(`Failed to fetch app status: ${res.statusText}`);
-  const data = await res.json();
-  return data.status;
+  return response.data.status;
 }
 
 export async function getAppDownloadUrl(
   jwt: string,
   appId: string,
 ): Promise<string> {
-  const res = await fetch(`${BASE_URL}/api/apps/${appId}/download`, {
+  const response = await getValkyrLabsRtkApiClient().request<any>({
+    url: `${BASE_URL}/api/apps/${appId}/download`,
     headers: {
       Authorization: `Bearer ${jwt}`,
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) throw new Error(`Failed to get download URL: ${res.statusText}`);
   // If the API returns a signed URL as JSON: { url: "..." }
-  const data = await res.json();
-  return data.url;
+  return response.data.url;
 }
 
 // --- ValorIDE: ThorAPI output folder config utility ---

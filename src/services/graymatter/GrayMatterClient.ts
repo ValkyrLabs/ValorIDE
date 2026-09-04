@@ -5,6 +5,12 @@ import type {
 } from "@shared/GrayMatterSession";
 import { buildTenantHeaders } from "../auth/tenantContext";
 import type { TenantContext } from "../auth/tenantContext";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+  ValkyrLabsFetch,
+  ValkyrLabsRtkApiClient,
+} from "../valkyrai/ValkyrLabsRtkApi";
 
 export type { GrayMatterCapabilities, GrayMatterControlSurface };
 
@@ -24,13 +30,12 @@ export type GrayMatterErrorKind =
 
 export interface GrayMatterClientOptions {
   baseUrl: string;
-  fetch?: FetchLike;
+  fetch?: ValkyrLabsFetch;
   getAuthToken: () => Promise<string | undefined> | string | undefined;
   getTenantContext?: () =>
     | Promise<TenantContext | undefined>
     | TenantContext
     | undefined;
-  requestTimeoutMs?: number;
 }
 
 export interface GrayMatterMemoryInput {
@@ -63,6 +68,22 @@ export interface GrayMatterRetrievalReceiptQuery {
   tenantId?: string;
   topK?: number;
   workflowId?: string;
+}
+
+export interface GrayMatterContextPageCompileInput {
+  filters?: Record<string, unknown>;
+  includeProcedures?: boolean;
+  includeRatings?: boolean;
+  taskIntent: string;
+  tokenBudget?: number;
+  traceId?: string;
+}
+
+export interface GrayMatterContextPagePromptInput {
+  contextPageRef: string;
+  maxTokens?: number;
+  surface: "action" | "audit" | "chat" | "code" | "research" | "workflow";
+  task?: string;
 }
 
 export interface GrayMatterOmegaRecallInput {
@@ -155,7 +176,6 @@ export interface GrayMatterProjectInput {
   workspacePath?: string;
 }
 
-type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 type HeaderRecord = Record<string, string>;
 
 interface OpenApiLike {
@@ -180,11 +200,11 @@ export class GrayMatterClientError extends Error {
 
 export class GrayMatterClient {
   private readonly baseUrl: string;
-  private readonly fetchImpl: FetchLike;
+  private readonly api: ValkyrLabsRtkApiClient;
 
   constructor(private readonly options: GrayMatterClientOptions) {
     this.baseUrl = normalizeValkyraiHost(options.baseUrl);
-    this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.api = getValkyrLabsRtkApiClient(options.fetch);
   }
 
   async loadDiscovery(): Promise<GrayMatterDiscovery> {
@@ -541,6 +561,40 @@ export class GrayMatterClient {
     );
   }
 
+  async compileContextPage(
+    input: GrayMatterContextPageCompileInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter_ops/context_page/compile", {
+      body: JSON.stringify({
+        taskIntent: input.taskIntent,
+        ...(input.tokenBudget ? { tokenBudget: input.tokenBudget } : {}),
+        ...(input.traceId ? { traceId: input.traceId } : {}),
+        ...(input.includeProcedures === undefined
+          ? {}
+          : { includeProcedures: input.includeProcedures }),
+        ...(input.includeRatings === undefined
+          ? {}
+          : { includeRatings: input.includeRatings }),
+        ...(input.filters ? { filters: input.filters } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
+  async compileContextPagePrompt(
+    input: GrayMatterContextPagePromptInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter_ops/context_page/prompt", {
+      body: JSON.stringify({
+        contextPageRef: input.contextPageRef,
+        surface: input.surface,
+        ...(input.task ? { task: input.task } : {}),
+        ...(input.maxTokens ? { maxTokens: input.maxTokens } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
   async writeMemory(input: GrayMatterMemoryInput): Promise<unknown> {
     const metadata =
       input.metadata && Object.keys(input.metadata).length > 0
@@ -603,98 +657,69 @@ export class GrayMatterClient {
     }
     applyHeaderRecord(headers, buildTenantHeaders(tenantContext));
 
-    const thor_timeoutMs = this.options.requestTimeoutMs;
-    const thor_abortController =
-      thor_timeoutMs && !init.signal ? new AbortController() : undefined;
-    const thor_timeout = thor_abortController
-      ? setTimeout(() => thor_abortController.abort(), thor_timeoutMs)
-      : undefined;
-    let response: Response;
     try {
-      response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-        ...init,
+      const response = await this.api.request<T>({
+        body: init.body,
         headers,
-        signal: init.signal ?? thor_abortController?.signal,
+        method: init.method,
+        url: `${this.baseUrl}${path}`,
       });
+      return response.data;
     } catch (error) {
-      if (thor_abortController?.signal.aborted) {
-        throw new GrayMatterClientError(
-          `GrayMatter request exceeded the ${thor_timeoutMs}ms chat latency budget.`,
-          "unavailable",
-        );
+      if (error instanceof ValkyrLabsApiError) {
+        throw this.toClientError(error);
       }
       throw error;
-    } finally {
-      if (thor_timeout) {
-        clearTimeout(thor_timeout);
-      }
     }
-
-    if (!response.ok) {
-      throw await this.toClientError(response);
-    }
-
-    const contentType = getHeaderValue(response.headers, "content-type") ?? "";
-    if (contentType.includes("application/json")) {
-      return (await response.json()) as T;
-    }
-
-    return (await response.text()) as T;
   }
 
-  private async toClientError(
-    response: Response,
-  ): Promise<GrayMatterClientError> {
-    const message = await this.readErrorMessage(response);
+  private toClientError(error: ValkyrLabsApiError): GrayMatterClientError {
+    const message = readApiErrorMessage(error.data) || error.message;
+    const status = typeof error.status === "number" ? error.status : undefined;
 
-    switch (response.status) {
+    switch (status) {
       case 401:
         return new GrayMatterClientError(
           message || "GrayMatter authentication is required.",
           "unauthenticated",
-          response.status,
+          status,
         );
       case 402:
         return new GrayMatterClientError(
           message || "ValorIDE account credits are required.",
           "quota",
-          response.status,
+          status,
         );
       case 403:
         return new GrayMatterClientError(
           message || "GrayMatter access was denied by RBAC or tenant context.",
           "forbidden",
-          response.status,
+          status,
         );
       default:
         return new GrayMatterClientError(
           message || "GrayMatter is unavailable.",
           "unavailable",
-          response.status,
+          status,
         );
     }
   }
-
-  private async readErrorMessage(response: Response): Promise<string> {
-    try {
-      const contentType =
-        getHeaderValue(response.headers, "content-type") ?? "";
-      if (contentType.includes("application/json")) {
-        const body = await response.json();
-        if (typeof body?.message === "string") {
-          return body.message;
-        }
-        if (typeof body?.error === "string") {
-          return body.error;
-        }
-      }
-
-      return await response.text();
-    } catch {
-      return "";
-    }
-  }
 }
+
+const readApiErrorMessage = (data: unknown): string => {
+  if (typeof data === "string") {
+    return data;
+  }
+  if (!data || typeof data !== "object") {
+    return "";
+  }
+  const body = data as Record<string, unknown>;
+  return typeof body.message === "string"
+    ? body.message
+    : typeof body.error === "string"
+      ? body.error
+      : "";
+};
 
 const toHeaderRecord = (headers?: HeadersInit): HeaderRecord => {
   const record: HeaderRecord = {};
@@ -741,18 +766,6 @@ const applyHeaderRecord = (
     }
   }
   return headers;
-};
-
-const getHeaderValue = (headers: Response["headers"], name: string) => {
-  const anyHeaders = headers as unknown as {
-    get?: (headerName: string) => string | null;
-  } & HeaderRecord;
-
-  if (typeof anyHeaders.get === "function") {
-    return anyHeaders.get(name);
-  }
-
-  return anyHeaders[name.toLowerCase()] ?? anyHeaders[name];
 };
 
 const capabilitiesFromControlSurface = (

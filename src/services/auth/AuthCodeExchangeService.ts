@@ -1,5 +1,5 @@
-import axios from "axios";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { getValkyrLabsRtkApiClient } from "../valkyrai/ValkyrLabsRtkApi";
 import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 
 export interface AuthCodeExchangeResult {
@@ -17,11 +17,11 @@ export class AuthCodeExchangeService {
     state: string,
   ): Promise<AuthCodeExchangeResult> {
     const baseUrl = getValkyraiBasePath();
-    const response = await axios.post(
-      `${baseUrl}/auth/valoride/code-exchange`,
-      { code, state },
-      { timeout: 10000 },
-    );
+    const response = await getValkyrLabsRtkApiClient().request<any>({
+      url: `${baseUrl}/auth/valoride/code-exchange`,
+      method: "POST",
+      json: { code, state },
+    });
 
     const data = response.data || {};
     const jwtToken = readString(data.jwtToken) || readString(data.token);

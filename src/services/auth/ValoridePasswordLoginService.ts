@@ -1,7 +1,10 @@
-import axios, { AxiosError, AxiosResponseHeaders } from "axios";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 import { Logger } from "../logging/Logger";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "../valkyrai/ValkyrLabsRtkApi";
 import {
   buildAuthTokensFromResponse,
   extractAuthenticatedUser,
@@ -19,7 +22,9 @@ export interface PasswordLoginResult {
 
 const XSRF_HEADER_NAME = "X-XSRF-TOKEN";
 
-const extractSetCookieHeader = (headers: AxiosResponseHeaders | any): string => {
+const extractSetCookieHeader = (
+  headers: Record<string, string> | any,
+): string => {
   const raw = headers?.["set-cookie"];
   if (Array.isArray(raw)) {
     return raw.map((cookie) => String(cookie).split(";")[0]).join("; ");
@@ -27,28 +32,27 @@ const extractSetCookieHeader = (headers: AxiosResponseHeaders | any): string => 
   return raw ? String(raw).split(";")[0] : "";
 };
 
-const extractCsrfToken = (headers: AxiosResponseHeaders | any, body: any) =>
+const extractCsrfToken = (headers: Record<string, string> | any, body: any) =>
   headers?.["x-xsrf-token"] ||
   headers?.["x-csrf-token"] ||
   body?.token ||
   body?.csrfToken;
 
 const extractErrorMessage = (error: unknown): string => {
-  if (!axios.isAxiosError(error)) {
+  if (!(error instanceof ValkyrLabsApiError)) {
     return error instanceof Error ? error.message : String(error);
   }
 
-  const axiosError = error as AxiosError<any>;
-  const data = axiosError.response?.data;
+  const data = error.data as any;
   const message =
     typeof data === "string"
       ? data
-      : data?.message || data?.error || axiosError.message;
+      : data?.message || data?.error || error.message;
   return String(message || "Login failed.");
 };
 
 const getCaseInsensitiveHeader = (
-  headers: AxiosResponseHeaders | any,
+  headers: Record<string, string> | any,
   key: string,
 ) => {
   if (!headers) {
@@ -83,7 +87,7 @@ const describeObjectKeys = (value: unknown): string => {
     : shownKeys.join(", ");
 };
 
-const describeCookieNames = (headers: AxiosResponseHeaders | any): string => {
+const describeCookieNames = (headers: Record<string, string> | any): string => {
   const rawSetCookie = getCaseInsensitiveHeader(headers, "set-cookie");
   const cookies = Array.isArray(rawSetCookie)
     ? rawSetCookie
@@ -106,7 +110,7 @@ const describeCookieNames = (headers: AxiosResponseHeaders | any): string => {
 const describeAuthResponse = (
   responseStatus: number,
   body: unknown,
-  headers: AxiosResponseHeaders | any,
+  headers: Record<string, string> | any,
 ) => {
   const headerNames = headers ? Object.keys(headers).sort() : [];
   const bodyKeys = describeObjectKeys(body);
@@ -138,30 +142,25 @@ export class ValoridePasswordLoginService {
     password,
   }: PasswordLoginCredentials): Promise<PasswordLoginResult> {
     const baseUrl = getValkyraiBasePath().replace(/\/+$/, "");
-    const csrfResponse = await axios.get(`${baseUrl}/auth/csrf`, {
+    const client = getValkyrLabsRtkApiClient();
+    const csrfResponse = await client.request<any>({
+      url: `${baseUrl}/auth/csrf`,
       headers: { Accept: "application/json" },
-      timeout: 10000,
     });
-    const csrfToken = extractCsrfToken(
-      csrfResponse.headers,
-      csrfResponse.data,
-    );
+    const csrfToken = extractCsrfToken(csrfResponse.headers, csrfResponse.data);
     const cookieHeader = extractSetCookieHeader(csrfResponse.headers);
 
     try {
-      const response = await axios.post(
-        `${baseUrl}/auth/login`,
-        { username, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            ...(csrfToken ? { [XSRF_HEADER_NAME]: csrfToken } : {}),
-            ...(cookieHeader ? { Cookie: cookieHeader } : {}),
-          },
-          timeout: 15000,
+      const response = await client.request<any>({
+        url: `${baseUrl}/auth/login`,
+        method: "POST",
+        json: { username, password },
+        headers: {
+          Accept: "application/json",
+          ...(csrfToken ? { [XSRF_HEADER_NAME]: csrfToken } : {}),
+          ...(cookieHeader ? { Cookie: cookieHeader } : {}),
         },
-      );
+      });
 
       const tokens = buildAuthTokensFromResponse(
         response.data,

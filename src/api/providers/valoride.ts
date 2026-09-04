@@ -9,7 +9,7 @@ import {
 } from "@shared/api";
 import { createOpenRouterStream } from "../transform/openrouter-stream";
 import { ApiStream, ApiStreamUsageChunk } from "../transform/stream";
-import axios from "axios";
+import { getValkyrLabsRtkApiClient } from "@services/valkyrai/ValkyrLabsRtkApi";
 import { OpenRouterErrorResponse } from "./types";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
@@ -109,15 +109,13 @@ export class ValorIDEHandler implements ApiHandler {
   async getApiStreamUsage(): Promise<ApiStreamUsageChunk | undefined> {
     if (this.lastGenerationId) {
       try {
-        const response = await axios.get(
-          `https://api-0.valkyrlabs.com/v1/generation?id=${this.lastGenerationId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.options.valorideApiKey}`,
-            },
-            timeout: 15_000, // this request hangs sometimes
+        const response = await getValkyrLabsRtkApiClient().request<any>({
+          url: "https://api-0.valkyrlabs.com/v1/generation",
+          params: { id: this.lastGenerationId },
+          headers: {
+            Authorization: `Bearer ${this.options.valorideApiKey}`,
           },
-        );
+        });
 
         const generation = response.data;
         return {

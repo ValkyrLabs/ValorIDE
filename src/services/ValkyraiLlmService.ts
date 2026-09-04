@@ -15,6 +15,8 @@
  *   // response.content -> "The capital of France is Paris."
  */
 
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
+
 export interface ValkyraiLlmRequest {
   host: string; // Valkyrai server base URL, e.g., http://localhost:8080
   serviceId: string; // UUID of the LLM provider
@@ -84,45 +86,28 @@ export async function callValkyraiLlm(
     headers["jwtSession"] = jwt;
   }
 
-  const body = JSON.stringify({
-    role: "user",
-    content: prompt,
-  });
-
-  let res: Response;
+  let response;
   try {
-    res = await fetch(url, {
+    response = await getValkyrLabsRtkApiClient().request<any>({
+      url,
       method: "POST",
       headers,
-      body,
+      json: { role: "user", content: prompt },
+      acceptHttpErrors: true,
     });
   } catch (err: any) {
     throw new ValkyraiLlmServiceError(`Network error: ${err?.message || err}`);
   }
 
-  if (!res.ok) {
-    let errorMsg = `Valkyrai LLM API error: ${res.status} ${res.statusText}`;
-    try {
-      const errorJson = await res.json();
-      if (errorJson?.error) {
-        errorMsg += ` - ${errorJson.error}`;
-      }
-    } catch {
-      // ignore JSON parse error
+  if (response.status < 200 || response.status >= 300) {
+    let errorMsg = `Valkyrai LLM API error: ${response.status} ${response.statusText}`;
+    if (response.data?.error) {
+      errorMsg += ` - ${response.data.error}`;
     }
-    throw new ValkyraiLlmServiceError(errorMsg, res.status);
+    throw new ValkyraiLlmServiceError(errorMsg, response.status);
   }
 
-  let data: any;
-  try {
-    data = await res.json();
-  } catch (err: any) {
-    throw new ValkyraiLlmServiceError(
-      `Failed to parse response JSON: ${err?.message || err}`,
-    );
-  }
-
-  const normalized = normalizeValkyraiLlmResponse(data);
+  const normalized = normalizeValkyraiLlmResponse(response.data);
   if (!normalized.content) {
     throw new ValkyraiLlmServiceError(
       "Invalid response from Valkyrai LLM API: missing 'content'",
@@ -154,14 +139,15 @@ export async function* callValkyraiLlmStream(
 
   let res: Response;
   try {
-    res = await fetch(url, {
+    const response = await getValkyrLabsRtkApiClient().request<Response>({
+      url,
       method: "POST",
       headers,
-      body: JSON.stringify({
-        role: "user",
-        content: prompt,
-      }),
+      json: { role: "user", content: prompt },
+      responseType: "raw",
+      acceptHttpErrors: true,
     });
+    res = response.data;
   } catch (err: any) {
     throw new ValkyraiLlmServiceError(`Network error: ${err?.message || err}`);
   }

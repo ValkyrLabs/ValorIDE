@@ -1,10 +1,10 @@
-import axios from "axios";
 import fs from "fs/promises";
 import * as path from "path";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
 export interface ApplicationArtifactDownloadRequest {
   applicationId: string;
@@ -49,18 +49,15 @@ export async function downloadApplicationArtifact({
   await onProgress?.(
     "Generating the canonical application artifact in ValkyrAI...",
   );
-  const response = await axios.post<ArrayBuffer>(
-    `${getValkyraiBasePath()}/thorapi/generate/${encodeURIComponent(applicationId)}`,
-    undefined,
-    {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        jwtSession: jwtToken,
-      },
-      responseType: "arraybuffer",
-      timeout: 10 * 60_000,
+  const response = await getValkyrLabsRtkApiClient().request<ArrayBuffer>({
+    url: `${getValkyraiBasePath()}/thorapi/generate/${encodeURIComponent(applicationId)}`,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      jwtSession: jwtToken,
     },
-  );
+    responseType: "arrayBuffer",
+  });
 
   const archive = Buffer.from(response.data);
   if (!isZipBuffer(archive)) {

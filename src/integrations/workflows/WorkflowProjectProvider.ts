@@ -1,6 +1,6 @@
-import axios from "axios";
 import * as vscode from "vscode";
 import { TokenStorageService } from "../../services/auth/TokenStorageService";
+import { getValkyrLabsRtkApiClient } from "../../services/valkyrai/ValkyrLabsRtkApi";
 import { getValkyraiBasePath } from "../../utils/serverValkyraiHost";
 import { collectWorkflowPages } from "./workflowCollection";
 import { workflowStudioWebviewHtml } from "./workflowStudioWebview";
@@ -23,12 +23,12 @@ class WorkflowEngineeringClient {
       throw new Error("Sign in to ValorIDE before opening workflow projects.");
     }
     const base = getValkyraiBasePath().replace(/\/+$/, "");
-    const response = await axios.get<T>(`${base}/${path.replace(/^\/+/, "")}`, {
+    const response = await getValkyrLabsRtkApiClient().request<T>({
+      url: `${base}/${path.replace(/^\/+/, "")}`,
       headers: {
         Authorization: `Bearer ${token}`,
         jwtSession: token,
       },
-      timeout: 30_000,
     });
     return response.data;
   }
@@ -55,17 +55,17 @@ class WorkflowEngineeringClient {
       throw new Error("Sign in to ValorIDE before opening Workflow Studio.");
     }
     const base = getValkyraiBasePath().replace(/\/+$/, "");
-    const response = await axios.post<{ ticket?: string }>(
-      `${base}/auth/valoride/webview-ticket`,
-      { workflowId },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          jwtSession: token,
-        },
-        timeout: 30_000,
+    const response = await getValkyrLabsRtkApiClient().request<{
+      ticket?: string;
+    }>({
+      url: `${base}/auth/valoride/webview-ticket`,
+      method: "POST",
+      json: { workflowId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        jwtSession: token,
       },
-    );
+    });
     if (!response.data?.ticket) {
       throw new Error("ValkyrAI did not return a Workflow Studio handoff.");
     }

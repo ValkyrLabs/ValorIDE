@@ -104,6 +104,7 @@ export interface ApiHandlerOptions {
   valkyraiJwt?: string; // optional bearer
   valkyraiSessionJwt?: string; // active ValorIDE login bearer fallback, not persisted
   valkyraiServiceId?: string; // selected LlmDetails.id
+  valkyraiModelInfo?: ModelInfo; // selected LlmDetails runtime budget/profile
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {

@@ -35,6 +35,142 @@ const readySession = {
 } as const;
 
 describe("AgentContextAssembler", () => {
+  it("prefers a bounded Bifrost ContextPage prompt with source lineage", async () => {
+    const queryMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn();
+    const compileContextPage = jest.fn(async () => ({
+      contextPage: {
+        pageRef: "context-page-1",
+        traceId: "trace-1",
+        tokenEstimate: 320,
+        retrievalReceipt: { receiptId: "receipt-1" },
+        items: [
+          {
+            itemRef: "item-1",
+            sourceId: "memory-1",
+            sourceType: "memory",
+            summary: "Preserve generated ACL behavior.",
+          },
+        ],
+      },
+    }));
+    const compileContextPagePrompt = jest.fn(async () => ({
+      compilerVersion: "bifrost-1",
+      contextHash: "b".repeat(64),
+      contextPageRef: "context-page-1",
+      contextTokenEstimate: 72,
+      includedItemRefs: ["item-1"],
+      lineageHash: "c".repeat(64),
+      prompt: "BIFROST: preserve ACL; hydrate exact source only when needed.",
+      promptHash: "a".repeat(64),
+      retrievalReceiptRef: "receipt-1",
+      sourceHashes: ["d".repeat(64)],
+      tokenEstimate: 96,
+      traceId: "trace-1",
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage,
+        compileContextPagePrompt,
+        queryMemory,
+        retrieveMemoryWithReceipt,
+      },
+      now: () => new Date("2026-05-13T12:00:00.000Z"),
+    });
+
+    const context = await assembler.assemble({
+      cwd: "/repo",
+      task: "Fix context efficiency",
+      tokenBudget: 640,
+    });
+
+    expect(compileContextPage).toHaveBeenCalledWith(
+      expect.objectContaining({ tokenBudget: 640 }),
+    );
+    expect(compileContextPagePrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contextPageRef: "context-page-1",
+        maxTokens: 640,
+        surface: "code",
+      }),
+    );
+    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+    expect(queryMemory).not.toHaveBeenCalled();
+    expect(context.promptSection).toContain("BIFROST");
+    expect(context.bifrost).toEqual(
+      expect.objectContaining({
+        compilerVersion: "bifrost-1",
+        contextHash: "b".repeat(64),
+        contextPageRef: "context-page-1",
+        contextTokenEstimate: 72,
+        includedItemCount: 1,
+        lineageHash: "c".repeat(64),
+        promptTokenEstimate: 96,
+        retrievalReceiptRef: "receipt-1",
+        sourceHashCount: 1,
+        traceId: "trace-1",
+      }),
+    );
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({
+        citations: ["gm:item-1"],
+        receiptIds: ["receipt-1"],
+      }),
+    );
+  });
+
+  it("fails fast after a Bifrost timeout instead of multiplying retrieval latency", async () => {
+    const retrieveMemoryWithReceipt = jest.fn();
+    const assembler = new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage: jest.fn(async () => {
+          throw new GrayMatterClientError(
+            "GrayMatter request exceeded the chat latency budget.",
+            "unavailable",
+          );
+        }),
+        compileContextPagePrompt: jest.fn(),
+        queryMemory: jest.fn(),
+        retrieveMemoryWithReceipt,
+      },
+    });
+
+    const context = await assembler.assemble({ task: "Keep first token fast" });
+
+    expect(context.grayMatter.status).toBe("unavailable");
+    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+  });
+
+  it("uses receipt retrieval only when an older server lacks ContextPage routes", async () => {
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        items: [],
+        receiptId: "receipt-fallback",
+        retrievalStatus: "OK",
+      },
+    }));
+    const assembler = new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage: jest.fn(async () => {
+          throw new GrayMatterClientError(
+            "ContextPage route not found.",
+            "unavailable",
+            404,
+          );
+        }),
+        compileContextPagePrompt: jest.fn(),
+        queryMemory: jest.fn(),
+        retrieveMemoryWithReceipt,
+      },
+    });
+
+    const context = await assembler.assemble({ task: "Legacy server" });
+
+    expect(context.grayMatter.status).toBe("empty");
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalledTimes(1);
+  });
+
   it("does not form prompt context from a direct memory query without a receipt", async () => {
     const queryMemory = jest.fn(async () => ({
       results: [
@@ -386,17 +522,19 @@ describe("AgentContextAssembler", () => {
 
   it("creates a task prompt section only when the session can query GrayMatter", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () =>
-        jsonResponse(200, {
-          results: [
-            {
-              content: "Use server-side RBAC for GrayMatter access.",
-              id: "memory-1",
-              tags: ["security"],
-              type: "decision",
-            },
-          ],
-        }),
+      async (url) =>
+        url.endsWith("/graymatter_ops/context_page/compile")
+          ? jsonResponse(404, { message: "Not found" })
+          : jsonResponse(200, {
+              results: [
+                {
+                  content: "Use server-side RBAC for GrayMatter access.",
+                  id: "memory-1",
+                  tags: ["security"],
+                  type: "decision",
+                },
+              ],
+            }),
     );
 
     const section = await createAgentContextSectionForTask({

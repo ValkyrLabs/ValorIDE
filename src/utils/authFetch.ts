@@ -4,10 +4,19 @@ import {
   rememberCsrfToken,
   shouldAttachCsrfToken,
 } from "./csrfToken";
+import { getValkyrLabsRtkApiClient } from "@services/valkyrai/ValkyrLabsRtkApi";
 
 type HeadersLike = HeadersInit | undefined;
 
 export interface AuthRequestInit extends RequestInit {}
+
+export interface AuthFetchResponse {
+  headers: Headers;
+  json(): Promise<unknown>;
+  ok: boolean;
+  status: number;
+  text(): Promise<string>;
+}
 
 const apiBasePath = (
   process.env.VALORIDE_API_BASE_PATH ||
@@ -34,7 +43,7 @@ const resolveUrl = (input: string): string => {
 
 export const refreshCsrfToken = async (): Promise<string | undefined> => {
   try {
-    const response = await fetch(resolveUrl("/auth/csrf"), {
+    const response = await request(resolveUrl("/auth/csrf"), {
       method: "GET",
       credentials: "include",
       headers: {
@@ -66,7 +75,7 @@ export const refreshCsrfToken = async (): Promise<string | undefined> => {
 export const authFetch = async (
   input: string,
   init: AuthRequestInit = {},
-): Promise<Response> => {
+): Promise<AuthFetchResponse> => {
   const callerHeaders = toHeaders(init.headers);
   const callerProvidedCsrf = callerHeaders.has(CSRF_HEADER_NAME);
   const url = resolveUrl(input);
@@ -81,7 +90,7 @@ export const authFetch = async (
     };
   };
 
-  const response = await fetch(url, buildInit());
+  const response = await request(url, buildInit());
   if (
     response.status === 403 &&
     shouldAttachCsrfToken(init.method) &&
@@ -89,8 +98,32 @@ export const authFetch = async (
   ) {
     const refreshed = await refreshCsrfToken();
     if (refreshed) {
-      return fetch(url, buildInit());
+      return request(url, buildInit());
     }
   }
   return response;
+};
+
+const request = async (
+  url: string,
+  init: RequestInit,
+): Promise<AuthFetchResponse> => {
+  const response = await getValkyrLabsRtkApiClient().request<string>({
+    url,
+    method: init.method,
+    body: init.body,
+    headers: init.headers,
+    credentials: init.credentials,
+    responseType: "text",
+    acceptHttpErrors: true,
+  });
+  const headers = new Headers(response.headers);
+  const text = typeof response.data === "string" ? response.data : "";
+  return {
+    headers,
+    ok: response.status >= 200 && response.status < 300,
+    status: response.status,
+    text: async () => text,
+    json: async () => JSON.parse(text),
+  };
 };

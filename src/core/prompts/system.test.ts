@@ -65,4 +65,45 @@ describe("SYSTEM_PROMPT", () => {
     expect(prompt).toContain("[gm:memory-1] decision");
     expect(prompt).toContain("Use generated ThorAPI services.");
   });
+
+  it("uses the lean Bifrost contract and a ranked MCP inventory for compact models", async () => {
+    const hub = {
+      getServers: () => [
+        {
+          name: "graymatter",
+          status: "connected",
+          tools: Array.from({ length: 30 }, (_, index) => ({
+            name: index === 29 ? "memory_context_compile" : `tool_${index}`,
+          })),
+        },
+      ],
+      isConnecting: false,
+    } as any;
+    const prompt = await SYSTEM_PROMPT(
+      "/tmp",
+      false,
+      hub,
+      "/tmp/thorapi",
+      DEFAULT_BROWSER_SETTINGS,
+      { mode: "act" },
+      "BIFROST COMPILED CONTEXT",
+      {
+        contextWindow: 32_768,
+        grayMatterTokenBudget: 640,
+        inputTokenBudget: 13_762,
+        mcpToolNameBudget: 4,
+        mode: "compact",
+        modelKey: "qwen 27b",
+        reason: "local-or-open-weight-model",
+        selectedPromptTokenBudget: 800,
+      },
+      "compile memory context",
+    );
+    expect(prompt).toContain("ValorIDE agent contract (Bifrost compact)");
+    expect(prompt).toContain("graymatter.memory_context_compile");
+    expect(prompt).toContain("26 less-relevant names omitted");
+    expect(prompt).toContain("BIFROST COMPILED CONTEXT");
+    expect(prompt).not.toContain("§8 COMPLETE TOOL REFERENCE");
+    expect(prompt.length).toBeLessThan(7_000);
+  });
 });

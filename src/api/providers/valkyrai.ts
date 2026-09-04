@@ -227,7 +227,7 @@ export class ValkyraiHandler implements ApiHandler {
     // Expose selected service id as the model id for UI purposes
     return {
       id: this.options.valkyraiServiceId || this.options.apiModelId || "",
-      info: openAiModelInfoSaneDefaults,
+      info: this.options.valkyraiModelInfo ?? openAiModelInfoSaneDefaults,
     };
   }
 }

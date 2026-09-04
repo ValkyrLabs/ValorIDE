@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import axios from "axios";
 import { Logger } from "../logging/Logger";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { getValkyrLabsRtkApiClient } from "../valkyrai/ValkyrLabsRtkApi";
 import { buildAuthTokensFromResponse } from "./authResponse";
 import { extractTenantContext } from "./tenantContext";
 
@@ -147,11 +147,11 @@ export class TokenStorageService {
     try {
       // Make a test API call to validate the JWT token
       const baseUrl = getValkyraiBasePath();
-      const response = await axios.get(`${baseUrl}/auth/validate`, {
+      const response = await getValkyrLabsRtkApiClient().request<any>({
+        url: `${baseUrl}/auth/validate`,
         headers: {
           Authorization: `Bearer ${tokens.jwtToken}`,
         },
-        timeout: 10000,
       });
 
       if (response.status === 200 && response.data.valid) {
@@ -174,15 +174,11 @@ export class TokenStorageService {
   async refreshTokens(refreshToken: string): Promise<AuthTokens | null> {
     try {
       const baseUrl = getValkyraiBasePath();
-      const response = await axios.post(
-        `${baseUrl}/auth/refresh`,
-        {
-          refreshToken,
-        },
-        {
-          timeout: 10000,
-        },
-      );
+      const response = await getValkyrLabsRtkApiClient().request<any>({
+        url: `${baseUrl}/auth/refresh`,
+        method: "POST",
+        json: { refreshToken },
+      });
 
       const newTokens = buildAuthTokensFromResponse(
         response.data,

@@ -416,6 +416,39 @@ export interface BalanceResponse {
   message?: string;
 }
 
+export interface CreateCreditCheckoutSessionRequest {
+  amountCents: number;
+  cancelUrl: string;
+  creditsAmountCents: number;
+  currency: string;
+  idempotencyKey: string;
+  itemName: string;
+  mode?: "payment" | "subscription";
+  orderId?: string;
+  productType: "credits";
+  sku: string;
+  successUrl: string;
+}
+
+export interface CreateCreditCheckoutSessionResponse {
+  checkout_url?: string;
+  error?: string;
+  session_id?: string;
+  url?: string;
+}
+
+export const buildCreditCheckoutRequest = ({
+  idempotencyKey,
+  ...body
+}: CreateCreditCheckoutSessionRequest) => ({
+  url: "checkout/create-session",
+  method: "POST" as const,
+  body,
+  headers: {
+    "Idempotency-Key": idempotencyKey,
+  },
+});
+
 // Error response
 export interface ErrorResponse {
   error: string;
@@ -615,6 +648,25 @@ export const creditsApi = createApi({
       ],
     }),
 
+    /**
+     * POST /v1/checkout/create-session
+     * Starts hosted Stripe Checkout. Credits are posted only by the backend
+     * webhook after payment; this mutation never books credits directly.
+     */
+    createCreditCheckoutSession: builder.mutation<
+      CreateCreditCheckoutSessionResponse,
+      CreateCreditCheckoutSessionRequest
+    >({
+      query: buildCreditCheckoutRequest,
+      invalidatesTags: (result, error) =>
+        result?.checkout_url && !error
+          ? [
+              { type: "AccountBalance", id: "me" },
+              { type: "Credits", id: "BALANCE" },
+            ]
+          : [],
+    }),
+
     getAppGenerationTrace: builder.query<AppGenerationTraceResponse, string>({
       query: (receiptRef) =>
         `app_generation_ops/traces/${encodeURIComponent(receiptRef)}`,
@@ -794,6 +846,7 @@ export const {
   useLazyGetAccountBalanceQuery,
   useRecordUsageTransactionMutation,
   useRecordPaymentTransactionMutation,
+  useCreateCreditCheckoutSessionMutation,
   useCreateAppGenerationRequestMutation,
   useCompileContextPageMutation,
   useGetAppGenerationRequestQuery,

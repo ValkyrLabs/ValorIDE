@@ -1,6 +1,8 @@
 import {
   GrayMatterClient,
   GrayMatterClientError,
+  GrayMatterContextPageCompileInput,
+  GrayMatterContextPagePromptInput,
   GrayMatterErrorKind,
   GrayMatterMemoryQuery,
   GrayMatterRetrievalReceiptQuery,
@@ -18,6 +20,12 @@ export type GrayMatterReadStatus =
   | "unavailable";
 
 export interface GrayMatterReadableClient {
+  compileContextPage?: (
+    input: GrayMatterContextPageCompileInput,
+  ) => Promise<unknown>;
+  compileContextPagePrompt?: (
+    input: GrayMatterContextPagePromptInput,
+  ) => Promise<unknown>;
   listMemory?: () => Promise<unknown>;
   queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
   retrieveMemoryWithReceipt?: (
@@ -53,6 +61,19 @@ export interface AgentGrayMatterContext {
 }
 
 export interface AgentContextAssembly {
+  bifrost?: {
+    compilerVersion?: string;
+    contextHash?: string;
+    contextPageRef: string;
+    contextTokenEstimate?: number;
+    includedItemCount?: number;
+    lineageHash?: string;
+    promptHash?: string;
+    promptTokenEstimate?: number;
+    retrievalReceiptRef?: string;
+    sourceHashCount?: number;
+    traceId?: string;
+  };
   grayMatter: AgentGrayMatterContext;
   promptSection: string;
 }
@@ -67,6 +88,7 @@ export interface AssembleAgentContextInput {
   maxEntries?: number;
   maxEntryChars?: number;
   task: string;
+  tokenBudget?: number;
 }
 
 type MemoryEntryLike = Record<string, unknown>;
@@ -134,6 +156,9 @@ export class AgentContextAssembler {
     const readAt = this.now().toISOString();
 
     try {
+      const bifrost = await this.compileBifrostContext(input, query, readAt);
+      if (bifrost) return bifrost;
+
       const response = await this.retrieveContext(
         {
           limit: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
@@ -211,6 +236,112 @@ export class AgentContextAssembler {
         },
         promptSection: formatGrayMatterPromptSection(status, [], message),
       };
+    }
+  }
+
+  private async compileBifrostContext(
+    input: AssembleAgentContextInput,
+    query: string,
+    readAt: string,
+  ): Promise<AgentContextAssembly | undefined> {
+    const grayMatter = this.options.grayMatter;
+    if (
+      !grayMatter?.compileContextPage ||
+      !grayMatter.compileContextPagePrompt
+    ) {
+      return undefined;
+    }
+
+    try {
+      const tokenBudget = Math.max(128, input.tokenBudget ?? 2_000);
+      const compiled = await grayMatter.compileContextPage({
+        filters: {
+          sourceSurface: "valoride",
+          ...(input.cwd ? { workspacePath: input.cwd } : {}),
+        },
+        includeProcedures: true,
+        includeRatings: true,
+        taskIntent: input.task.slice(0, 12_000),
+        tokenBudget,
+      });
+      const compiledRecord = isRecord(compiled) ? compiled : {};
+      const page = getRecordField(compiledRecord, "contextPage");
+      const contextPageRef =
+        getStringField(page ?? {}, "pageRef") ??
+        getStringField(page ?? {}, "traceId") ??
+        getStringField(compiledRecord, "contextPageRef");
+      if (!contextPageRef) return undefined;
+
+      const projected = await grayMatter.compileContextPagePrompt({
+        contextPageRef,
+        maxTokens: tokenBudget,
+        surface: "code",
+        task: input.task.slice(0, 12_000),
+      });
+      const projectedRecord = isRecord(projected) ? projected : {};
+      const prompt = getStringField(projectedRecord, "prompt");
+      if (!prompt) return undefined;
+
+      const citations = extractContextPageCitations(page, {
+        maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
+        maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
+      });
+      const receipt = getRecordField(page ?? {}, "retrievalReceipt");
+      const receiptId =
+        getStringField(receipt ?? {}, "receiptId") ??
+        getStringField(receipt ?? {}, "id");
+      const traceId =
+        getStringField(projectedRecord, "traceId") ??
+        getStringField(page ?? {}, "traceId");
+      const read: GrayMatterTranscriptRead = {
+        at: readAt,
+        citations: citations.map((citation) => `gm:${citation.id}`),
+        query,
+        receiptIds: receiptId ? [receiptId] : undefined,
+        status: "ready",
+        traceIds: traceId ? [traceId] : undefined,
+      };
+
+      return {
+        bifrost: {
+          compilerVersion: getStringField(projectedRecord, "compilerVersion"),
+          contextHash: getStringField(projectedRecord, "contextHash"),
+          contextPageRef,
+          contextTokenEstimate:
+            getNumberField(projectedRecord, "contextTokenEstimate") ??
+            getNumberField(page ?? {}, "tokenEstimate"),
+          includedItemCount: getStringArrayField(
+            projectedRecord,
+            "includedItemRefs",
+          )?.length,
+          lineageHash: getStringField(projectedRecord, "lineageHash"),
+          promptHash: getStringField(projectedRecord, "promptHash"),
+          promptTokenEstimate: getNumberField(projectedRecord, "tokenEstimate"),
+          retrievalReceiptRef:
+            getStringField(projectedRecord, "retrievalReceiptRef") ?? receiptId,
+          sourceHashCount: getStringArrayField(projectedRecord, "sourceHashes")
+            ?.length,
+          traceId,
+        },
+        grayMatter: {
+          citations,
+          query,
+          reads: [read],
+          status: "ready",
+        },
+        promptSection: prompt,
+      };
+    } catch (error) {
+      // ContextPage may not be deployed on older GrayMatter servers. Receipt-
+      // backed retrieval remains the compatible, policy-checked fallback.
+      if (
+        error instanceof GrayMatterClientError &&
+        error.kind === "unavailable" &&
+        (error.status === 404 || error.status === 405)
+      ) {
+        return undefined;
+      }
+      throw error;
     }
   }
 
@@ -305,10 +436,17 @@ export const createAgentContextForTask = async ({
     fetch,
     getAuthToken: () => token,
     getTenantContext: () => tenantContext,
-    requestTimeoutMs: 1_500,
   });
   return new AgentContextAssembler({
-    grayMatter: client,
+    grayMatter: {
+      compileContextPage: (input) => client.compileContextPage(input),
+      compileContextPagePrompt: (input) =>
+        client.compileContextPagePrompt(input),
+      listMemory: () => client.listMemory(),
+      queryMemory: (query) => client.queryMemory(query),
+      retrieveMemoryWithReceipt: (query) =>
+        client.retrieveMemoryWithReceipt(query),
+    },
   }).assemble(input);
 };
 
@@ -361,6 +499,28 @@ const extractCitations = (
     }
   }
 
+  return citations;
+};
+
+const extractContextPageCitations = (
+  page: MemoryEntryLike | undefined,
+  options: { maxEntries: number; maxEntryChars: number },
+): GrayMatterContextCitation[] => {
+  if (!page || !Array.isArray(page.items)) return [];
+  const citations: GrayMatterContextCitation[] = [];
+  for (const rawItem of page.items) {
+    if (!isRecord(rawItem)) continue;
+    const id =
+      getStringField(rawItem, "itemRef") ?? getStringField(rawItem, "sourceId");
+    const excerpt = getStringField(rawItem, "summary");
+    if (!id || !excerpt) continue;
+    citations.push({
+      excerpt: truncate(redactSensitive(excerpt), options.maxEntryChars),
+      id,
+      type: getStringField(rawItem, "sourceType") ?? "context",
+    });
+    if (citations.length >= options.maxEntries) break;
+  }
   return citations;
 };
 
@@ -571,6 +731,24 @@ const getStringField = (
 ): string | undefined => {
   const value = record[key];
   return typeof value === "string" && value.trim() ? value : undefined;
+};
+
+const getNumberField = (
+  record: MemoryEntryLike,
+  key: string,
+): number | undefined => {
+  const value = record[key];
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
+};
+
+const getRecordField = (
+  record: MemoryEntryLike,
+  key: string,
+): MemoryEntryLike | undefined => {
+  const value = record[key];
+  return isRecord(value) ? value : undefined;
 };
 
 const getStringArrayField = (

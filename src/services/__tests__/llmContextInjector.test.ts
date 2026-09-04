@@ -139,7 +139,6 @@ describe("LLMContextInjector", () => {
         queryMemory: async () => ({ results: [] }),
         retrieveMemoryWithReceipt: receiptRetriever,
         scopes: ["project", "organization", "user"],
-        timeoutMs: 3000,
       },
     });
 

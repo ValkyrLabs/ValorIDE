@@ -172,16 +172,13 @@ const ChatView = ({
         try {
           const {
             tokensIn,
-            tokensOut,
             cacheWrites,
             cacheReads,
+            estimatedTokensIn,
           }: ValorIDEApiReqInfo = JSON.parse(msg.text);
-          return (
-            (tokensIn || 0) +
-            (tokensOut || 0) +
-            (cacheWrites || 0) +
-            (cacheReads || 0)
-          );
+          const measured =
+            (tokensIn || 0) + (cacheWrites || 0) + (cacheReads || 0);
+          return measured > 0 ? measured : estimatedTokensIn || 0;
         } catch (e) {
           // Malformed or unexpected payload
           return 0;
