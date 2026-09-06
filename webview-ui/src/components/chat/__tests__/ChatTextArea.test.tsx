@@ -6,6 +6,7 @@ const mockUseExtensionState = vi.fn();
 const mockUseMetaKeyDetection = vi.fn();
 const mockUseShortcut = vi.fn();
 const mockUseWindowSize = vi.fn();
+const mockGlowingTextAreaRender = vi.fn();
 
 vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   useExtensionState: () => mockUseExtensionState(),
@@ -126,9 +127,17 @@ vi.mock("@vscode/webview-ui-toolkit/react", () => ({
 }));
 
 vi.mock("@thorapi/components/chat/GlowingTextArea", () => ({
-  default: React.forwardRef<HTMLTextAreaElement, any>((props, ref) => (
-    <textarea ref={ref} {...props} />
-  )),
+  default: React.forwardRef<HTMLTextAreaElement, any>((props, ref) => {
+    mockGlowingTextAreaRender();
+    const {
+      borderState: _borderState,
+      isStubborn: _isStubborn,
+      isExtendedThinking: _isExtendedThinking,
+      onHeightChange: _onHeightChange,
+      ...textAreaProps
+    } = props;
+    return <textarea ref={ref} {...textAreaProps} />;
+  }),
 }));
 
 import ChatTextArea from "../ChatTextArea";
@@ -149,6 +158,7 @@ class MockFileReader {
 
 describe("ChatTextArea drag and drop", () => {
   beforeEach(() => {
+    mockGlowingTextAreaRender.mockClear();
     mockUseExtensionState.mockReturnValue({
       filePaths: [],
       chatSettings: { mode: "act", stubbornMode: false },
@@ -210,5 +220,49 @@ describe("ChatTextArea drag and drop", () => {
         "data:image/png;base64,ZmFrZS1pbWFnZS1kYXRh",
       );
     });
+  });
+
+  it("does not rerender the input runtime for token-only message updates", () => {
+    const baseContext = {
+      filePaths: [],
+      chatSettings: { mode: "act", stubbornMode: false },
+      apiConfiguration: {},
+      openRouterModels: [],
+      platform: "web",
+      valorideMessages: [
+        { ts: 1, type: "say", say: "api_req_started", text: "{}" },
+      ],
+    };
+    mockUseExtensionState.mockReturnValue(baseContext);
+
+    const stableProps = {
+      inputValue: "draft remains stable",
+      setInputValue: vi.fn(),
+      textAreaDisabled: false,
+      placeholderText: "Type a message...",
+      selectedImages: [] as string[],
+      setSelectedImages: vi.fn(),
+      onSend: vi.fn(),
+      onSelectImages: vi.fn(),
+      shouldDisableImages: false,
+    };
+    const { rerender } = render(<ChatTextArea {...stableProps} />);
+    const rendersBeforePartial = mockGlowingTextAreaRender.mock.calls.length;
+
+    mockUseExtensionState.mockReturnValue({
+      ...baseContext,
+      valorideMessages: [
+        ...baseContext.valorideMessages,
+        { ts: 2, type: "say", say: "text", text: "streamed token" },
+      ],
+    });
+    rerender(<ChatTextArea {...stableProps} />);
+
+    expect(mockGlowingTextAreaRender).toHaveBeenCalledTimes(
+      rendersBeforePartial,
+    );
+    expect(screen.getByTestId("chat-input")).toHaveValue(
+      "draft remains stable",
+    );
   });
 });

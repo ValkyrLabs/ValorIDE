@@ -1,5 +1,6 @@
 import type {
   ExtensionMessage,
+  TaskProgressCorrelation,
   ValorIDEAskUseMcpServer,
   ValorIDEMessage,
   ValorIDESayBrowserAction,
@@ -15,6 +16,7 @@ export type TaskProgressKind =
 
 export interface TaskProgressChatUpdate {
   content: string;
+  correlation?: TaskProgressCorrelation;
   eventKey: string;
   kind: TaskProgressKind;
   messageTs: number;
@@ -41,6 +43,7 @@ interface ClassifiedUpdate
 export class TaskProgressChatRelay {
   private activeAction?: ActiveAction;
   private currentTaskId?: string;
+  private progressCorrelation?: TaskProgressCorrelation;
   private emittedKeys = new Set<string>();
   private initialized = false;
   private messageSignatures = new Map<number, string>();
@@ -53,9 +56,14 @@ export class TaskProgressChatRelay {
     if (message.type === "state" && message.state) {
       const messages = message.state.valorideMessages ?? [];
       const taskId =
+        message.state.currentTaskId ??
         message.state.currentTaskItem?.id ??
         (messages[0]?.ts ? String(messages[0].ts) : undefined);
-      return this.acceptSnapshot(messages, taskId);
+      return this.acceptSnapshot(
+        messages,
+        taskId,
+        message.state.taskProgressCorrelation,
+      );
     }
 
     if (message.type === "partialMessage" && message.partialMessage) {
@@ -71,6 +79,7 @@ export class TaskProgressChatRelay {
   acceptSnapshot(
     messages: ValorIDEMessage[],
     taskId?: string,
+    progressCorrelation?: TaskProgressCorrelation,
   ): TaskProgressChatUpdate[] {
     if (!taskId && messages.length === 0) {
       return [];
@@ -78,6 +87,17 @@ export class TaskProgressChatRelay {
 
     if (taskId !== this.currentTaskId) {
       this.reset(taskId);
+    }
+    this.progressCorrelation =
+      progressCorrelation?.localTaskId === taskId
+        ? progressCorrelation
+        : undefined;
+
+    // A new Task posts an empty state before its first message. Keep the
+    // canonical identity without treating that empty frame as the history
+    // hydration watermark.
+    if (messages.length === 0) {
+      return [];
     }
 
     // Hydration and task creation post a complete snapshot first. Establish a
@@ -114,8 +134,12 @@ export class TaskProgressChatRelay {
         const { eventSuffix: _eventSuffix, ...publicUpdate } = update;
         updates.push({
           ...publicUpdate,
+          correlation: this.progressCorrelation,
           eventKey,
-          taskId: this.currentTaskId,
+          taskId:
+            this.progressCorrelation?.taskId ??
+            this.progressCorrelation?.sessionId ??
+            this.currentTaskId,
         });
       }
     }
@@ -367,6 +391,7 @@ export class TaskProgressChatRelay {
     this.activeAction = undefined;
     this.apiCycleCount = 0;
     this.currentTaskId = taskId;
+    this.progressCorrelation = undefined;
     this.emittedKeys.clear();
     this.initialized = false;
     this.messageSignatures.clear();

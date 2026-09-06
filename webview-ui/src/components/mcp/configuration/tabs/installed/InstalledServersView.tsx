@@ -12,7 +12,6 @@ import {
   isRetryableError,
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { VscRefresh, VscServer } from "react-icons/vsc";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
@@ -33,7 +32,6 @@ const InstalledServersView = () => {
 
   return (
     <>
-      <SystemAlerts />
       <div style={{ padding: "16px 20px" }}>
         <div
           style={{

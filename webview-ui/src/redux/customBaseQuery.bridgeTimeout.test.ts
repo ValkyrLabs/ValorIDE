@@ -98,7 +98,10 @@ describe("customBaseQuery shared bridge timeout", () => {
     const request = postMessage.mock.calls[0][0].thorapiRequest;
     expect(request.timeoutMs).toBeUndefined();
     expect(request.responseType).toBe("arraybuffer");
-    expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 30_000);
+    expect(timeoutSpy).toHaveBeenCalledWith(
+      expect.any(Function),
+      16 * 60_000,
+    );
     expect(result).toEqual({
       data: { filename: "sample.zip", body: "zip-data" },
     });

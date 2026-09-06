@@ -41,7 +41,11 @@ describe("ValorIDEMothershipIntegration", () => {
       messageId: "valoride-progress:3:action-start",
       taskId: "task-1",
       metadata: {
+        commandId: "command-1",
+        correlationId: "correlation-1",
+        localTaskId: "local-task-1",
         progressKind: "action-start",
+        sessionId: "session-1",
         source: "valoride-task-progress",
       },
     });
@@ -56,7 +60,11 @@ describe("ValorIDEMothershipIntegration", () => {
         content: "Updating src/App.tsx.",
         messageId: "valoride-progress:3:action-start",
         metadata: {
+          commandId: "command-1",
+          correlationId: "correlation-1",
+          localTaskId: "local-task-1",
           progressKind: "action-start",
+          sessionId: "session-1",
           source: "valoride-task-progress",
         },
       },
@@ -102,7 +110,9 @@ describe("ValorIDEMothershipIntegration", () => {
       } as any);
     }
 
-    const queue = (integration as any).actionQueue as Array<{ content?: string }>;
+    const queue = (integration as any).actionQueue as Array<{
+      content?: string;
+    }>;
     expect(queue).toHaveLength(200);
     expect(queue[0]?.content).toBe("msg-50");
     expect(queue[199]?.content).toBe("msg-249");

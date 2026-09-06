@@ -105,11 +105,19 @@ export function deriveTaskProgress(messages: ValorIDEMessage[]): TaskProgress {
   for (const msg of messages) {
     const candidate = phaseFromMessage(msg);
     if (candidate) {
-      phase = candidate;
       anchors[candidate] = msg.ts;
+      if (
+        candidate === "DONE" ||
+        phase === "DONE" ||
+        PHASE_PRIORITY[candidate] >= PHASE_PRIORITY[phase]
+      ) {
+        phase = candidate;
+      }
       ratio = phaseToIndex(candidate) / (TASK_PHASES.length - 1 || 1);
     }
   }
+
+  ratio = phaseToIndex(phase) / (TASK_PHASES.length - 1 || 1);
 
   return {
     phase,

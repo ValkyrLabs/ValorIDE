@@ -57,4 +57,20 @@ describe("deriveTaskProgress", () => {
     expect(progress.phase).toBe("ACT");
     expect(progress.confidence).toBe("warning");
   });
+
+  it("does not move backward when a later event belongs to an earlier phase", () => {
+    const nextMessage = makeMessages();
+    const messages: ValorIDEMessage[] = [
+      nextMessage({ say: "command", text: "npm test" }),
+      nextMessage({ say: "command_output", text: "tests passed" }),
+      nextMessage({ say: "tool", text: "read final report" }),
+    ];
+
+    const progress = deriveTaskProgress(messages);
+
+    expect(progress.phase).toBe("RUN");
+    expect(progress.ratio).toBe(
+      phaseToIndex("RUN") / (TASK_PHASES.length - 1 || 1),
+    );
+  });
 });

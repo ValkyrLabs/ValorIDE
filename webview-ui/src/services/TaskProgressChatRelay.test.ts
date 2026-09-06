@@ -99,9 +99,7 @@ describe("TaskProgressChatRelay", () => {
       say: "command_output",
       text: "thousands of noisy test output tokens",
     };
-    expect(relay.acceptSnapshot([task, command, output], "task-3")).toEqual(
-      [],
-    );
+    expect(relay.acceptSnapshot([task, command, output], "task-3")).toEqual([]);
 
     const nextTurn: ValorIDEMessage = {
       ts: 6,
@@ -225,5 +223,63 @@ describe("TaskProgressChatRelay", () => {
         "task-new",
       ),
     ).toEqual([]);
+  });
+
+  it("targets progress at the originating SWARM task without resetting during history persistence", () => {
+    const relay = new TaskProgressChatRelay();
+    const correlation = {
+      commandId: "command-1",
+      correlationId: "correlation-1",
+      localTaskId: "local-task-1",
+      sessionId: "codex-session-1",
+      taskId: "codex-task-1",
+    };
+
+    expect(
+      relay.acceptExtensionMessage({
+        type: "state",
+        state: {
+          currentTaskId: "local-task-1",
+          taskProgressCorrelation: correlation,
+          valorideMessages: [],
+        } as any,
+      }),
+    ).toEqual([]);
+
+    const task = taskMessage();
+    expect(
+      relay.acceptExtensionMessage({
+        type: "state",
+        state: {
+          currentTaskId: "local-task-1",
+          taskProgressCorrelation: correlation,
+          valorideMessages: [task],
+        } as any,
+      }),
+    ).toEqual([]);
+
+    const apiStarted: ValorIDEMessage = {
+      ts: 2,
+      type: "say",
+      say: "api_req_started",
+      text: "{}",
+    };
+    expect(
+      relay.acceptExtensionMessage({
+        type: "state",
+        state: {
+          currentTaskId: "local-task-1",
+          currentTaskItem: { id: "local-task-1" },
+          taskProgressCorrelation: correlation,
+          valorideMessages: [task, apiStarted],
+        } as any,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        content: "Analyzing the task.",
+        correlation,
+        taskId: "codex-task-1",
+      }),
+    ]);
   });
 });

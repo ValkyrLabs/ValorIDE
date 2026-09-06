@@ -307,9 +307,13 @@ const AppContent = () => {
           messageId: `valoride-progress:${update.eventKey}`,
           taskId: update.taskId,
           metadata: {
+            commandId: update.correlation?.commandId,
+            correlationId: update.correlation?.correlationId,
+            localTaskId: update.correlation?.localTaskId,
             messageTs: update.messageTs,
             phase: update.phase,
             progressKind: update.kind,
+            sessionId: update.correlation?.sessionId,
             source: "valoride-task-progress",
             timestamp: Date.now(),
           },
@@ -543,14 +547,9 @@ const AppContent = () => {
           break;
 
         case "partialMessage":
-          // Track partial messages (streaming)
-          sendChatAction({
-            type: "api_data",
-            metadata: {
-              action: "partial_message",
-              timestamp: Date.now(),
-            },
-          });
+          // Partial tokens are rendered locally. Meaningful phase/tool transitions
+          // are relayed separately by TaskProgressChatRelay, so forwarding every
+          // token here only amplifies transport and webview repaint pressure.
           break;
 
         case "serverConsoleNewMessage":
