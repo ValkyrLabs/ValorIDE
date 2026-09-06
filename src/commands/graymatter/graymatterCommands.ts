@@ -9,6 +9,7 @@ import {
 import {
   buildGrayMatterRecovery,
   createGrayMatterSessionState,
+  reconcileGrayMatterSessionRefresh,
 } from "@services/graymatter/GrayMatterSessionService";
 import { getStatusBarService } from "@services/StatusBarService";
 import { GrayMatterMemoryPanel } from "../../views/graymatter/GrayMatterMemoryPanel";
@@ -38,13 +39,20 @@ export const registerGrayMatterCommands = (
 export const refreshGrayMatterStatus = async (
   context: vscode.ExtensionContext,
 ): Promise<void> => {
+  const previous = (await getGlobalState(
+    context,
+    "grayMatterSession",
+  )) as import("@shared/GrayMatterSession").GrayMatterSessionState | undefined;
   const token = await getSecret(context, "jwtToken");
   const tenantContext = await readStoredTenantContext(context);
-  const session = await createGrayMatterSessionState({
-    baseUrl: getValkyraiBasePath(),
-    token,
-    tenantContext,
-  });
+  const session = reconcileGrayMatterSessionRefresh(
+    previous,
+    await createGrayMatterSessionState({
+      baseUrl: getValkyraiBasePath(),
+      token,
+      tenantContext,
+    }),
+  );
   await updateGlobalState(context, "grayMatterSession", session);
   getStatusBarService().updateGrayMatterStatus(session.status, session.error);
 };

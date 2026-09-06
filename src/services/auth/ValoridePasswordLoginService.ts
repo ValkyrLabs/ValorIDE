@@ -8,6 +8,7 @@ import {
 import {
   buildAuthTokensFromResponse,
   extractAuthenticatedUser,
+  withAuthResponseCookies,
 } from "./authResponse";
 
 export interface PasswordLoginCredentials {
@@ -23,7 +24,7 @@ export interface PasswordLoginResult {
 const XSRF_HEADER_NAME = "X-XSRF-TOKEN";
 
 const extractSetCookieHeader = (
-  headers: Record<string, string> | any,
+  headers: Record<string, string | string[]>,
 ): string => {
   const raw = headers?.["set-cookie"];
   if (Array.isArray(raw)) {
@@ -32,9 +33,15 @@ const extractSetCookieHeader = (
   return raw ? String(raw).split(";")[0] : "";
 };
 
-const extractCsrfToken = (headers: Record<string, string> | any, body: any) =>
-  headers?.["x-xsrf-token"] ||
-  headers?.["x-csrf-token"] ||
+const firstHeaderValue = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
+const extractCsrfToken = (
+  headers: Record<string, string | string[]>,
+  body: any,
+) =>
+  firstHeaderValue(headers?.["x-xsrf-token"]) ||
+  firstHeaderValue(headers?.["x-csrf-token"]) ||
   body?.token ||
   body?.csrfToken;
 
@@ -52,7 +59,7 @@ const extractErrorMessage = (error: unknown): string => {
 };
 
 const getCaseInsensitiveHeader = (
-  headers: Record<string, string> | any,
+  headers: Record<string, string | string[]>,
   key: string,
 ) => {
   if (!headers) {
@@ -87,7 +94,9 @@ const describeObjectKeys = (value: unknown): string => {
     : shownKeys.join(", ");
 };
 
-const describeCookieNames = (headers: Record<string, string> | any): string => {
+const describeCookieNames = (
+  headers: Record<string, string | string[]>,
+): string => {
   const rawSetCookie = getCaseInsensitiveHeader(headers, "set-cookie");
   const cookies = Array.isArray(rawSetCookie)
     ? rawSetCookie
@@ -110,7 +119,7 @@ const describeCookieNames = (headers: Record<string, string> | any): string => {
 const describeAuthResponse = (
   responseStatus: number,
   body: unknown,
-  headers: Record<string, string> | any,
+  headers: Record<string, string | string[]>,
 ) => {
   const headerNames = headers ? Object.keys(headers).sort() : [];
   const bodyKeys = describeObjectKeys(body);
@@ -147,8 +156,12 @@ export class ValoridePasswordLoginService {
       url: `${baseUrl}/auth/csrf`,
       headers: { Accept: "application/json" },
     });
-    const csrfToken = extractCsrfToken(csrfResponse.headers, csrfResponse.data);
-    const cookieHeader = extractSetCookieHeader(csrfResponse.headers);
+    const csrfHeaders = withAuthResponseCookies(
+      csrfResponse.headers,
+      csrfResponse.setCookies,
+    );
+    const csrfToken = extractCsrfToken(csrfHeaders, csrfResponse.data);
+    const cookieHeader = extractSetCookieHeader(csrfHeaders);
 
     try {
       const response = await client.request<any>({
@@ -162,15 +175,16 @@ export class ValoridePasswordLoginService {
         },
       });
 
-      const tokens = buildAuthTokensFromResponse(
-        response.data,
+      const authHeaders = withAuthResponseCookies(
         response.headers,
+        response.setCookies,
       );
+      const tokens = buildAuthTokensFromResponse(response.data, authHeaders);
       if (!tokens) {
         const diagnostics = describeAuthResponse(
           response.status,
           response.data,
-          response.headers,
+          authHeaders,
         );
         Logger.warn(`Password login response missing JWT. ${diagnostics}`);
         throw new Error(

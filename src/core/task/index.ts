@@ -139,6 +139,7 @@ import {
 import {
   createGrayMatterSessionState,
   degradeGrayMatterSession,
+  reconcileGrayMatterSessionRefresh,
   type GrayMatterSessionState,
 } from "@services/graymatter/GrayMatterSessionService";
 import { getLLMPromptService } from "@services/llmPromptService";
@@ -2405,18 +2406,29 @@ export class Task {
       return session;
     }
 
-    try {
-      const refreshed = await createGrayMatterSessionState({
-        baseUrl: getValkyraiBasePath(),
-        tenantContext: await this.readGrayMatterTenantContext(),
-        token,
-      });
+    const refresh = async () => {
+      const refreshed = reconcileGrayMatterSessionRefresh(
+        session,
+        await createGrayMatterSessionState({
+          baseUrl: getValkyraiBasePath(),
+          tenantContext: await this.readGrayMatterTenantContext(),
+          token,
+        }),
+      );
       await updateGlobalState(this.context, "grayMatterSession", refreshed);
       return refreshed;
-    } catch (error) {
-      console.warn("Failed to refresh GrayMatter session for task:", error);
-      return session;
-    }
+    };
+
+    // Capability discovery must never consume the task's transport budget.
+    // Actual memory calls remain authenticated and server-authorized; this only
+    // prevents a recovering backend from blocking unrelated task execution.
+    void refresh().catch((error) => {
+      console.warn(
+        "Failed to refresh the GrayMatter session in the background:",
+        error,
+      );
+    });
+    return session;
   }
 
   private initializeCheckpointTrackerForChat(): Promise<void> {

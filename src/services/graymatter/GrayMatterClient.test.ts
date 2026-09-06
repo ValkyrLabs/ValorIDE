@@ -851,7 +851,7 @@ describe("GrayMatterClient", () => {
       delay?: number,
       ...args: unknown[]
     ) => {
-      if (delay === 30_000) {
+      if (delay === 16 * 60_000) {
         queueMicrotask(() => callback(...args));
         return {} as NodeJS.Timeout;
       }
@@ -875,7 +875,7 @@ describe("GrayMatterClient", () => {
       Partial<GrayMatterClientError>
     >({
       kind: "unavailable",
-      message: "Valkyr Labs API request timed out after 30000 ms.",
+      message: "Valkyr Labs API request timed out after 960000 ms.",
     });
     setTimeoutSpy.mockRestore();
   });

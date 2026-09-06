@@ -22,6 +22,7 @@ export interface ValkyrLabsApiRequest {
 export interface ValkyrLabsApiResponse<T = unknown> {
   data: T;
   headers: Record<string, string>;
+  setCookies?: string[];
   status: number;
   statusText: string;
 }
@@ -51,14 +52,35 @@ export interface ValkyrLabsRtkApiClient {
   ): Promise<ValkyrLabsApiResponse<T>>;
 }
 
-const headersToRecord = (headers: Response["headers"]) => {
+const readResponseHeaders = (
+  headers: Response["headers"],
+): { headers: Record<string, string>; setCookies: string[] } => {
   const record: Record<string, string> = {};
+  let setCookies: string[] = [];
   if (headers && typeof headers.forEach === "function") {
     headers.forEach((value, key) => {
-      record[key] = value;
+      const normalizedKey = key.toLowerCase();
+      if (normalizedKey === "set-cookie") {
+        setCookies.push(value);
+        return;
+      }
+      record[normalizedKey] = value;
     });
   }
-  return record;
+
+  // Node/Undici exposes one entry per Set-Cookie. Never collapse these values:
+  // ValkyrAI returns the live VALKYR_AUTH cookie followed by legacy-scope
+  // expirations, and retaining only the final header discards the JWT.
+  const getSetCookie = (
+    headers as Response["headers"] & { getSetCookie?: () => string[] }
+  )?.getSetCookie;
+  if (typeof getSetCookie === "function") {
+    const nativeSetCookies = getSetCookie.call(headers).filter(Boolean);
+    if (nativeSetCookies.length > 0) {
+      setCookies = nativeSetCookies;
+    }
+  }
+  return { headers: record, setCookies };
 };
 
 const parseResponseBody = async (
@@ -165,6 +187,7 @@ const createValkyrLabsBaseQuery =
         signal: abortController.signal,
       });
       const data = await parseResponseBody(response, request.responseType);
+      const responseHeaders = readResponseHeaders(response.headers);
 
       if (!response.ok && !request.acceptHttpErrors) {
         return {
@@ -178,7 +201,8 @@ const createValkyrLabsBaseQuery =
       return {
         data: {
           data,
-          headers: headersToRecord(response.headers),
+          headers: responseHeaders.headers,
+          setCookies: responseHeaders.setCookies,
           status: response.status,
           statusText: response.statusText,
         },

@@ -49,7 +49,10 @@ import {
   mergeTenantContext,
 } from "@services/auth/tenantContext";
 import { ValoridePasswordLoginService } from "@services/auth/ValoridePasswordLoginService";
-import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import {
+  createGrayMatterSessionState,
+  reconcileGrayMatterSessionRefresh,
+} from "@services/graymatter/GrayMatterSessionService";
 import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
 import { GrayMatterClient } from "@services/graymatter/GrayMatterClient";
 import { createGrayMatterMemoryService } from "@services/graymatter/GrayMatterMemoryQueueStorage";
@@ -68,6 +71,7 @@ import {
   ExtensionState,
   Invoke,
   Platform,
+  TaskProgressCorrelation,
 } from "@shared/ExtensionMessage";
 import { HistoryItem } from "@shared/HistoryItem";
 import type { TaskTerminalEvent } from "@shared/TaskLifecycle";
@@ -463,6 +467,7 @@ export class Controller {
   private readonly taskTerminalEmitter =
     new vscode.EventEmitter<TaskTerminalEvent>();
   public readonly onTaskTerminal = this.taskTerminalEmitter.event;
+  private taskProgressCorrelation?: TaskProgressCorrelation;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -1695,8 +1700,14 @@ export class Controller {
     await updateGlobalState(this.context, "userInfo", info);
   }
 
-  async initTask(task?: string, images?: string[], historyItem?: HistoryItem) {
+  async initTask(
+    task?: string,
+    images?: string[],
+    historyItem?: HistoryItem,
+    taskProgressCorrelation?: Omit<TaskProgressCorrelation, "localTaskId">,
+  ) {
     await this.clearTask(); // ensures that an existing task doesn't exist before starting a new one, although this shouldn't be possible since user must clear task before starting a new one
+    this.taskProgressCorrelation = undefined;
     const {
       apiConfiguration,
       customInstructions,
@@ -1742,6 +1753,12 @@ export class Controller {
       undefined,
       (event) => this.taskTerminalEmitter.fire(event),
     );
+    if (taskProgressCorrelation) {
+      this.taskProgressCorrelation = {
+        ...taskProgressCorrelation,
+        localTaskId: this.task.taskId,
+      };
+    }
   }
 
   async reinitExistingTaskFromId(taskId: string) {
@@ -4790,13 +4807,20 @@ export class Controller {
   }
 
   private async refreshGrayMatterSessionState(token?: string) {
+    const previous = (await getGlobalState(
+      this.context,
+      "grayMatterSession",
+    )) as import("@shared/GrayMatterSession").GrayMatterSessionState | undefined;
     const resolvedToken = token || (await this.readStoredJwtToken());
     const tenantContext = await this.readStoredTenantContext();
-    const grayMatterSession = await createGrayMatterSessionState({
-      baseUrl: getValkyraiBasePath(),
-      tenantContext,
-      token: resolvedToken,
-    });
+    const grayMatterSession = reconcileGrayMatterSessionRefresh(
+      previous,
+      await createGrayMatterSessionState({
+        baseUrl: getValkyraiBasePath(),
+        tenantContext,
+        token: resolvedToken,
+      }),
+    );
     await updateGlobalState(
       this.context,
       "grayMatterSession",
@@ -6420,6 +6444,11 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       currentTaskItem: this.task?.taskId
         ? (taskHistory || []).find((item) => item.id === this.task?.taskId)
         : undefined,
+      currentTaskId: this.task?.taskId,
+      taskProgressCorrelation:
+        this.taskProgressCorrelation?.localTaskId === this.task?.taskId
+          ? this.taskProgressCorrelation
+          : undefined,
       checkpointTrackerErrorMessage: this.task?.checkpointTrackerErrorMessage,
       valorideMessages: this.task?.valorideMessages || [],
       taskHistory: (taskHistory || [])

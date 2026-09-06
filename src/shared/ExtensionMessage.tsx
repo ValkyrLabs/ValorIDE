@@ -297,6 +297,14 @@ export interface UserInfo {
   password: string; // Make password optional
 }
 
+export interface TaskProgressCorrelation {
+  commandId: string;
+  correlationId: string;
+  localTaskId: string;
+  sessionId: string;
+  taskId?: string;
+}
+
 export interface ExtensionState {
   apiConfiguration?: ApiConfiguration;
   autoApprovalSettings: AutoApprovalSettings;
@@ -307,7 +315,9 @@ export interface ExtensionState {
   chatSettings: ChatSettings;
   checkpointTrackerErrorMessage?: string;
   valorideMessages: ValorIDEMessage[];
+  currentTaskId?: string;
   currentTaskItem?: HistoryItem;
+  taskProgressCorrelation?: TaskProgressCorrelation;
   customInstructions?: string;
   mcpMarketplaceEnabled?: boolean;
   planActSeparateModelsSetting: boolean;

@@ -40,6 +40,25 @@ export class LmStudioHandler implements ApiHandler {
       });
       for await (const chunk of stream) {
         const delta = chunk.choices[0]?.delta;
+        const reasoningDelta = delta as
+          | {
+              reasoning?: unknown;
+              reasoning_content?: unknown;
+            }
+          | undefined;
+        const reasoning =
+          typeof reasoningDelta?.reasoning === "string" &&
+          reasoningDelta.reasoning.length > 0
+            ? reasoningDelta.reasoning
+            : typeof reasoningDelta?.reasoning_content === "string"
+              ? reasoningDelta.reasoning_content
+              : undefined;
+        if (reasoning) {
+          yield {
+            type: "reasoning",
+            reasoning,
+          };
+        }
         if (delta?.content) {
           yield {
             type: "text",

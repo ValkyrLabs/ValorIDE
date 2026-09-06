@@ -4,6 +4,7 @@ import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 import {
   buildAuthTokensFromResponse,
   extractAuthenticatedUser,
+  withAuthResponseCookies,
 } from "./authResponse";
 
 export interface AuthCodeExchangeResult {
@@ -23,7 +24,10 @@ export class ValorideAuthCodeExchangeService {
       json: { code, state },
     });
 
-    const tokens = buildAuthTokensFromResponse(response.data, response.headers);
+    const tokens = buildAuthTokensFromResponse(
+      response.data,
+      withAuthResponseCookies(response.headers, response.setCookies),
+    );
     if (!tokens) {
       throw new Error(
         "ValorIDE auth code exchange response did not include a JWT token",

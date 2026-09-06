@@ -19,8 +19,8 @@ describe("ValkyrLabsRtkApi", () => {
       text: async () => JSON.stringify(body),
     }) as unknown as Response;
 
-  it("uses the one 30 second Valkyr Labs request deadline", () => {
-    expect(VALKYR_LABS_API_TIMEOUT_MS).toBe(30_000);
+  it("uses one deadline longer than the bounded ThorAPI generator window", () => {
+    expect(VALKYR_LABS_API_TIMEOUT_MS).toBe(16 * 60_000);
   });
 
   it("serializes JSON and query parameters through RTK Query", async () => {
@@ -56,6 +56,36 @@ describe("ValkyrLabsRtkApi", () => {
         data: { error: "unavailable" },
       }),
     );
+  });
+
+  it("preserves repeated Set-Cookie values for authentication consumers", async () => {
+    const setCookies = [
+      "VALKYR_AUTH=issued.jwt.token; Path=/; Domain=.valkyrlabs.com; HttpOnly; Secure",
+      "VALKYR_AUTH=; Path=/; Max-Age=0; HttpOnly; Secure",
+      "VALKYR_AUTH=; Path=/v1; Domain=.valkyrlabs.com; Max-Age=0; HttpOnly; Secure",
+    ];
+    const response = jsonResponse(200, {
+      authenticatedPrincipal: { username: "super" },
+    });
+    const responseHeaders = response.headers as Headers & {
+      getSetCookie: () => string[];
+    };
+    responseHeaders.forEach = (callback) => {
+      callback("application/json", "content-type", responseHeaders);
+      setCookies.forEach((cookie) =>
+        callback(cookie, "set-cookie", responseHeaders),
+      );
+    };
+    responseHeaders.getSetCookie = () => setCookies;
+
+    const client = getValkyrLabsRtkApiClient(async () => response);
+    const result = await client.request({
+      url: "https://api-0.valkyrlabs.com/v1/auth/login",
+      method: "POST",
+    });
+
+    expect(result.setCookies).toEqual(setCookies);
+    expect(result.headers["set-cookie"]).toBeUndefined();
   });
 });
 

@@ -908,7 +908,12 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       instanceId: this.instanceId ?? undefined,
       status: "busy",
     });
-    await webview.controller.initTask(text, images);
+    await webview.controller.initTask(text, images, undefined, {
+      commandId: context.correlation.commandId,
+      correlationId: context.correlation.correlationId,
+      sessionId: context.correlation.sessionId,
+      taskId: context.correlation.taskId,
+    });
     const localTaskId = webview.controller.task?.taskId;
     if (!localTaskId) {
       throw new Error(

@@ -41,6 +41,24 @@ export const degradeGrayMatterSession = (
   status,
 });
 
+/**
+ * Keep a previously authorized capability snapshot during a transient transport
+ * outage. Authentication, quota, and authorization failures must still replace
+ * the prior state immediately.
+ */
+export const reconcileGrayMatterSessionRefresh = (
+  previous: GrayMatterSessionState | undefined,
+  refreshed: GrayMatterSessionState,
+): GrayMatterSessionState => {
+  if (previous?.status === "ready" && refreshed.status === "unavailable") {
+    return {
+      ...previous,
+      checkedAt: refreshed.checkedAt,
+    };
+  }
+  return refreshed;
+};
+
 export const buildGrayMatterRecovery = (
   status: GrayMatterSessionStatus,
   backendBaseUrl: string,

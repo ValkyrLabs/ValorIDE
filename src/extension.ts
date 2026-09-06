@@ -23,6 +23,8 @@ import {
   summarizeAuthCallback,
 } from "./security/authCallback";
 import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
+import { applicationDeepLinkOptions } from "./services/applicationDeepLink";
+import { OpenAPIEditorPanel } from "./views/openapi/OpenAPIEditorPanel";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -195,6 +197,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (authResult.success) {
         Logger.log("Successfully restored authentication from stored tokens");
+        await refreshGrayMatterStatus(context);
         // Notify the webview that authentication was restored
         sidebarWebview.controller.postMessageToWebview({
           type: "loginSuccess",
@@ -207,7 +210,12 @@ export function activate(context: vscode.ExtensionContext) {
         Logger.log(
           `Authentication restoration failed: ${authResult.error || "Unknown error"}`,
         );
+        // Reconcile stale pre-login capability/auth state after restoration.
+        // A newer interactive login wins inside StartupAuthService, and its
+        // own messages will contain the current authenticated state.
+        await refreshGrayMatterStatus(context);
       }
+      await sidebarWebview.controller.postStateToWebview();
     } catch (error) {
       Logger.log(`Error during startup authentication restoration: ${error}`);
     }
@@ -582,6 +590,21 @@ export function activate(context: vscode.ExtensionContext) {
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
+    if (path === "/application") {
+      const thor_options = applicationDeepLinkOptions(
+        new URLSearchParams(uri.query),
+      );
+      if (!thor_options) {
+        await vscode.window.showErrorMessage(
+          "This application link is invalid. Open a Blueprint from your ValkyrAI applications.",
+        );
+        return;
+      }
+      // The existing editor re-resolves the Blueprint through the authenticated
+      // RTK transport. A link never starts generation, a command, or deployment.
+      OpenAPIEditorPanel.open(context, thor_options);
+      return;
+    }
     const query = parseAuthCallbackQuery(uri.query);
     Logger.log(
       "URI callback received: " + buildAuthCallbackDiagnostics(path, query),
@@ -626,6 +649,7 @@ export function activate(context: vscode.ExtensionContext) {
             exchange.tokens,
             exchange.user,
           );
+          await refreshGrayMatterStatus(context);
 
           if (exchange.tokens.apiKey) {
             await visibleWebview?.controller.handleAuthCallback(
@@ -671,6 +695,7 @@ export function activate(context: vscode.ExtensionContext) {
               },
               legacyCredentials.authenticatedPrincipal,
             );
+            await refreshGrayMatterStatus(context);
 
             await visibleWebview?.controller.handleAuthCallback(
               legacyCredentials.token,

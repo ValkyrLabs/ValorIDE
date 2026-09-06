@@ -2,6 +2,7 @@ import {
   createGrayMatterSessionState,
   degradeGrayMatterSession,
   defaultGrayMatterCapabilities,
+  reconcileGrayMatterSessionRefresh,
 } from "./GrayMatterSessionService";
 
 const jsonResponse = (status: number, body: unknown): Response =>
@@ -17,6 +18,55 @@ const jsonResponse = (status: number, body: unknown): Response =>
   }) as unknown as Response;
 
 describe("GrayMatterSessionService", () => {
+  it("preserves the last ready session across a transient transport timeout", () => {
+    const previous = {
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      capabilities: {
+        ...defaultGrayMatterCapabilities,
+        grayMatter: true,
+        memoryQuery: true,
+        memoryRead: true,
+      },
+      checkedAt: "2026-09-03T12:00:00.000Z",
+      status: "ready" as const,
+    };
+    const refreshed = degradeGrayMatterSession(
+      previous,
+      "unavailable",
+      "Valkyr Labs API request timed out after 960000 ms.",
+      () => new Date("2026-09-03T12:05:00.000Z"),
+    );
+
+    expect(reconcileGrayMatterSessionRefresh(previous, refreshed)).toEqual({
+      ...previous,
+      checkedAt: "2026-09-03T12:05:00.000Z",
+    });
+  });
+
+  for (const status of ["forbidden", "quota", "unauthenticated"] as const) {
+    it(`does not preserve stale readiness after a ${status} response`, () => {
+      const previous = {
+        baseUrl: "https://api-0.valkyrlabs.com/v1",
+        capabilities: {
+          ...defaultGrayMatterCapabilities,
+          grayMatter: true,
+        },
+        checkedAt: "2026-09-03T12:00:00.000Z",
+        status: "ready" as const,
+      };
+      const refreshed = degradeGrayMatterSession(
+        previous,
+        status,
+        status,
+        () => new Date("2026-09-03T12:05:00.000Z"),
+      );
+
+      expect(reconcileGrayMatterSessionRefresh(previous, refreshed)).toBe(
+        refreshed,
+      );
+    });
+  }
+
   it("invalidates cached ready capabilities after a live request is denied", () => {
     expect(
       degradeGrayMatterSession(

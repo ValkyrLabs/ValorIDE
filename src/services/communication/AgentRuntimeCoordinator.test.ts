@@ -25,9 +25,9 @@ import { extractSwarmInboundCommandContext } from "../swarm/SwarmRuntimeOutcome"
 let AgentRuntimeCoordinator: typeof import("./AgentRuntimeCoordinator").default;
 
 beforeAll(async () => {
-  ({ default: AgentRuntimeCoordinator } = await import(
-    "./AgentRuntimeCoordinator"
-  ));
+  const loaded = await import("./AgentRuntimeCoordinator");
+  AgentRuntimeCoordinator = ((loaded.default as any)?.default ??
+    loaded.default) as typeof AgentRuntimeCoordinator;
 });
 
 const localInstanceId = "valoride-agent-1";
@@ -191,6 +191,53 @@ describe("AgentRuntimeCoordinator governed SWARM routing", () => {
         source: "runtime-envelope",
         status: "SUCCEEDED",
       }),
+    );
+  });
+
+  it("binds a local task to the originating SWARM task chat before progress streams", async () => {
+    const coordinator = new AgentRuntimeCoordinator(context) as any;
+    coordinator.instanceId = localInstanceId;
+    coordinator.persistOutcomeHandoffs = jest.fn(async () => undefined);
+    coordinator.setSwarmState = jest.fn();
+
+    const message = makeCommand({ taskId: "originating-task-1" });
+    const inboundContext = extractSwarmInboundCommandContext(
+      message,
+      localInstanceId,
+    );
+    coordinator.outcomeHandoffLedger.accept(
+      inboundContext.correlation,
+      "2026-08-08T01:02:03.000Z",
+    );
+
+    const controller: any = {
+      initTask: jest.fn(async () => {
+        controller.task = { taskId: "local-task-1" };
+      }),
+      onTaskTerminal: jest.fn(() => ({ dispose: jest.fn() })),
+      task: undefined,
+    };
+    const { WebviewProvider } = jest.requireMock("../../core/webview") as {
+      WebviewProvider: { getAllInstances: jest.Mock };
+    };
+    jest
+      .mocked(WebviewProvider.getAllInstances)
+      .mockReturnValue([{ controller } as any]);
+
+    await coordinator.startInboundSwarmTask({
+      payload: { context: inboundContext, message },
+    });
+
+    expect(controller.initTask).toHaveBeenCalledWith(
+      "Run the governed task",
+      undefined,
+      undefined,
+      {
+        commandId: "command-1",
+        correlationId: "correlation-1",
+        sessionId: "session-1",
+        taskId: "originating-task-1",
+      },
     );
   });
 });

@@ -17,6 +17,7 @@ export class StartupAuthService {
   private static instance: StartupAuthService;
   private context: vscode.ExtensionContext;
   private tokenStorage: TokenStorageService;
+  private authRevision = 0;
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -41,6 +42,7 @@ export class StartupAuthService {
    * Attempt to restore authentication from stored tokens
    */
   async restoreAuthentication(): Promise<AuthRestorationResult> {
+    const restoreRevision = this.authRevision;
     try {
       Logger.log("Attempting to restore authentication from stored tokens...");
 
@@ -56,6 +58,9 @@ export class StartupAuthService {
       const storedAuth = await this.tokenStorage.getStoredAuthTokens();
       if (!storedAuth) {
         Logger.log("No stored authentication tokens found");
+        if (restoreRevision === this.authRevision) {
+          await this.clearExtensionAuthProjection();
+        }
         return { success: false, error: "No stored tokens" };
       }
 
@@ -65,6 +70,12 @@ export class StartupAuthService {
       const validation = await this.tokenStorage.validateTokens(
         storedAuth.tokens,
       );
+      if (restoreRevision !== this.authRevision) {
+        Logger.log(
+          "Authentication restoration superseded by a newer account action",
+        );
+        return { success: false, error: "Superseded by newer login" };
+      }
       if (!validation.valid) {
         // Try to refresh tokens if we have a refresh token
         if (storedAuth.tokens.refreshToken) {
@@ -72,6 +83,13 @@ export class StartupAuthService {
           const refreshedTokens = await this.tokenStorage.refreshTokens(
             storedAuth.tokens.refreshToken,
           );
+
+          if (restoreRevision !== this.authRevision) {
+            Logger.log(
+              "Authentication refresh superseded by a newer account action",
+            );
+            return { success: false, error: "Superseded by newer login" };
+          }
 
           if (refreshedTokens) {
             Logger.log("Tokens refreshed successfully");
@@ -96,10 +114,22 @@ export class StartupAuthService {
           }
         }
 
+        if (!validation.definitive) {
+          Logger.log(
+            "Token validation was unavailable; preserving stored authentication for retry",
+          );
+          return {
+            success: false,
+            error: validation.error || "Token validation unavailable",
+          };
+        }
+
         Logger.log(
           "Token validation failed and refresh not possible, clearing stored tokens",
         );
+        this.authRevision += 1;
         await this.tokenStorage.clearStoredTokens();
+        await this.clearExtensionAuthState();
         return { success: false, error: "Invalid tokens" };
       }
 
@@ -121,11 +151,13 @@ export class StartupAuthService {
         error instanceof Error ? error.message : String(error);
       Logger.log(`Error during authentication restoration: ${errorMessage}`);
 
-      // Clear potentially corrupted tokens
-      try {
-        await this.tokenStorage.clearStoredTokens();
-      } catch (clearError) {
-        Logger.log(`Error clearing tokens: ${clearError}`);
+      // A delayed startup attempt must never erase a newer interactive login.
+      // Transport and server failures are also not proof that the stored JWT
+      // is invalid, so preserve it for the next authenticated request.
+      if (restoreRevision !== this.authRevision) {
+        Logger.log(
+          "Authentication restoration error ignored because a newer account action completed",
+        );
       }
 
       return { success: false, error: errorMessage };
@@ -168,6 +200,7 @@ export class StartupAuthService {
    */
   async handleSuccessfulLogin(tokens: any, user: any): Promise<void> {
     try {
+      this.authRevision += 1;
       await this.tokenStorage.storeAuthTokens(tokens, user);
       await this.updateExtensionAuthState(tokens, user);
       Logger.log("Successful login handled and tokens stored");
@@ -182,24 +215,28 @@ export class StartupAuthService {
    */
   async handleLogout(): Promise<void> {
     try {
+      this.authRevision += 1;
       await this.tokenStorage.clearStoredTokens();
-
-      // Clear extension state
-      await updateGlobalState(this.context, "userInfo", undefined);
-      await updateGlobalState(
-        this.context,
-        "authenticatedPrincipal",
-        undefined,
-      );
-      await updateGlobalState(this.context, "isLoggedIn", false);
-      await storeSecret(this.context, "jwtToken", undefined);
-      await storeSecret(this.context, "valorideApiKey", undefined);
+      await this.clearExtensionAuthState();
 
       Logger.log("Logout handled and all tokens cleared");
     } catch (error) {
       Logger.log(`Error handling logout: ${error}`);
       throw error;
     }
+  }
+
+  private async clearExtensionAuthState(): Promise<void> {
+    await this.clearExtensionAuthProjection();
+    await storeSecret(this.context, "jwtToken", undefined);
+    await storeSecret(this.context, "valorideApiKey", undefined);
+  }
+
+  private async clearExtensionAuthProjection(): Promise<void> {
+    await updateGlobalState(this.context, "userInfo", undefined);
+    await updateGlobalState(this.context, "authenticatedPrincipal", undefined);
+    await updateGlobalState(this.context, "isLoggedIn", false);
+    await updateGlobalState(this.context, "grayMatterSession", undefined);
   }
 
   /**

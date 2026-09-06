@@ -55,6 +55,21 @@ describe("authResponse", () => {
     ).toBe("valkyr-cookie-token");
   });
 
+  it("keeps the issued Valkyr token when later cookies expire legacy scopes", () => {
+    expect(
+      extractAuthToken(
+        { authenticatedPrincipal: { username: "super" } },
+        {
+          "set-cookie": [
+            "VALKYR_AUTH=issued.jwt.token; Path=/; Domain=.valkyrlabs.com; HttpOnly; Secure",
+            "VALKYR_AUTH=; Path=/; Max-Age=0; HttpOnly; Secure",
+            "VALKYR_AUTH=; Path=/v1; Domain=.valkyrlabs.com; Max-Age=0; HttpOnly; Secure",
+          ],
+        },
+      ),
+    ).toBe("issued.jwt.token");
+  });
+
   it("extracts JWT tokens from combined auth cookie headers", () => {
     expect(
       extractAuthToken(
