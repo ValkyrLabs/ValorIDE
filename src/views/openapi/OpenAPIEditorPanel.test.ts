@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { it } from "@jest/globals";
 import { OpenAPIEditorPanel } from "./OpenAPIEditorPanel";
 import { getSecret } from "@core/storage/state";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
@@ -49,11 +50,9 @@ beforeEach(() => {
   jest.clearAllMocks();
   (getValkyraiBasePath as jest.Mock).mockReturnValue(backend);
   (getSecret as jest.Mock).mockResolvedValue("original-session");
-  transport = jest
-    .fn()
-    .mockResolvedValue({
-      data: { specification: { private: "original specification" } },
-    });
+  transport = jest.fn().mockResolvedValue({
+    data: { specification: { private: "original specification" } },
+  });
   (getValkyrLabsRtkApiClient as jest.Mock).mockReturnValue({
     request: transport,
   });
