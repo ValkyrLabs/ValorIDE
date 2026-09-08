@@ -171,7 +171,8 @@ export function parseAssistantMessage(assistantMessage: string) {
           currentTextContent.content = currentTextContent.content
             .slice(0, -toolUseOpeningTag.slice(0, -1).length)
             .trim();
-          contentBlocks.push(currentTextContent);
+          if (currentTextContent.content)
+            contentBlocks.push(currentTextContent);
           currentTextContent = undefined;
         }
 
@@ -205,7 +206,7 @@ export function parseAssistantMessage(assistantMessage: string) {
   }
 
   // Note: it doesn't matter if check for currentToolUse or currentTextContent, only one of them will be defined since only one can be partial at a time
-  if (currentTextContent) {
+  if (currentTextContent?.content) {
     // stream did not complete text content, add it as partial
     contentBlocks.push(currentTextContent);
   }

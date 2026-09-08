@@ -80,6 +80,7 @@ export class FileToolHandler extends BaseToolHandler {
       );
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: formatResponse.toolError(message),
       };
     };
@@ -92,6 +93,7 @@ export class FileToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "precision_search_and_replace",
           relPath ? "edits" : "path",
@@ -112,6 +114,7 @@ export class FileToolHandler extends BaseToolHandler {
       const message = error instanceof Error ? error.message : String(error);
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: formatResponse.toolError(
           `Invalid JSON for 'edits' parameter: ${message}`,
         ),
@@ -122,6 +125,7 @@ export class FileToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "precision_search_and_replace",
           "edits",
@@ -207,6 +211,7 @@ export class FileToolHandler extends BaseToolHandler {
         const message = error instanceof Error ? error.message : String(error);
         return {
           shouldContinue: true,
+          outcome: "failed" as const,
           toolResponse: formatResponse.toolError(
             `Invalid JSON for 'options' parameter: ${message}`,
           ),
@@ -222,6 +227,7 @@ export class FileToolHandler extends BaseToolHandler {
       );
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: formatResponse.toolError(errorText),
       };
     }
@@ -286,6 +292,7 @@ export class FileToolHandler extends BaseToolHandler {
 
         return {
           shouldContinue: true,
+          outcome: "failed" as const,
           toolResponse: formatResponse.toolError(withReport(failureMessage)),
         };
       };
@@ -311,6 +318,7 @@ export class FileToolHandler extends BaseToolHandler {
 
         return {
           shouldContinue: true,
+          outcome: "succeeded" as const,
           toolResponse: formatResponse.toolResult(withReport(dryRunMessage)),
         };
       }
@@ -327,6 +335,7 @@ export class FileToolHandler extends BaseToolHandler {
         );
         return {
           shouldContinue: true,
+          outcome: "unknown" as const,
           toolResponse: formatResponse.toolResult(withReport(noMatchMessage)),
         };
       }
@@ -350,6 +359,10 @@ export class FileToolHandler extends BaseToolHandler {
 
       return {
         shouldContinue: true,
+        outcome:
+          result.editsApplied === result.editsRequested
+            ? ("succeeded" as const)
+            : ("partial" as const),
         toolResponse: formatResponse.toolResult(
           withReport(
             `PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`,
@@ -359,6 +372,7 @@ export class FileToolHandler extends BaseToolHandler {
     } catch (err) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError(
           "precision search & replace",
           err as Error,
@@ -394,6 +408,7 @@ export class FileToolHandler extends BaseToolHandler {
             : "diff";
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.context.sayAndCreateMissingParamError(
           block.name,
           missingParam,
@@ -405,6 +420,7 @@ export class FileToolHandler extends BaseToolHandler {
     if (generatedArtifactError) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: formatResponse.toolError(generatedArtifactError),
       };
     }
@@ -418,6 +434,7 @@ export class FileToolHandler extends BaseToolHandler {
       );
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: formatResponse.toolError(errorText),
       };
     }
@@ -479,7 +496,11 @@ export class FileToolHandler extends BaseToolHandler {
 
           await this.context.diffViewProvider.revertChanges();
           await this.context.diffViewProvider.reset();
-          return { shouldContinue: true, toolResponse };
+          return {
+            shouldContinue: true,
+            outcome: "failed" as const,
+            toolResponse,
+          };
         }
       } else if (content) {
         newContent = content;
@@ -537,6 +558,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               block.name,
               "path",
@@ -547,6 +569,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "replace_in_file",
               "diff",
@@ -557,6 +580,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "write_to_file",
               "content",
@@ -632,6 +656,7 @@ export class FileToolHandler extends BaseToolHandler {
             await this.context.diffViewProvider.revertChanges();
             return {
               shouldContinue: true,
+              outcome: "rejected" as const,
               toolResponse: `The user denied this operation. ${fileDeniedNote}`,
               userRejected: true,
             };
@@ -705,13 +730,18 @@ export class FileToolHandler extends BaseToolHandler {
         await this.context.diffViewProvider.reset();
         await this.context.saveCheckpoint();
 
-        return { shouldContinue: true, toolResponse };
+        return {
+          shouldContinue: true,
+          outcome: "succeeded" as const,
+          toolResponse,
+        };
       }
     } catch (error) {
       await this.context.diffViewProvider.revertChanges();
       await this.context.diffViewProvider.reset();
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError("writing file", error as Error),
       };
     }
@@ -769,6 +799,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "read_file",
               "path",
@@ -785,6 +816,7 @@ export class FileToolHandler extends BaseToolHandler {
           );
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: formatResponse.toolError(errorText),
           };
         }
@@ -831,7 +863,11 @@ export class FileToolHandler extends BaseToolHandler {
               false,
               false,
             );
-            return { shouldContinue: true, userRejected: true };
+            return {
+              shouldContinue: true,
+              outcome: "rejected" as const,
+              userRejected: true,
+            };
           }
           telemetryService.captureToolUsage(
             this.context.taskId,
@@ -850,11 +886,16 @@ export class FileToolHandler extends BaseToolHandler {
           "read_tool",
         );
 
-        return { shouldContinue: true, toolResponse: content };
+        return {
+          shouldContinue: true,
+          outcome: "succeeded" as const,
+          toolResponse: content,
+        };
       }
     } catch (error) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError("reading file", error as Error),
       };
     }
@@ -916,6 +957,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "list_files",
               "path",
@@ -933,6 +975,7 @@ export class FileToolHandler extends BaseToolHandler {
           );
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: formatResponse.toolError(errorText),
           };
         }
@@ -1006,7 +1049,11 @@ export class FileToolHandler extends BaseToolHandler {
               false,
               false,
             );
-            return { shouldContinue: true, userRejected: true };
+            return {
+              shouldContinue: true,
+              outcome: "rejected" as const,
+              userRejected: true,
+            };
           }
           telemetryService.captureToolUsage(
             this.context.taskId,
@@ -1016,11 +1063,16 @@ export class FileToolHandler extends BaseToolHandler {
           );
         }
 
-        return { shouldContinue: true, toolResponse: result };
+        return {
+          shouldContinue: true,
+          outcome: "succeeded" as const,
+          toolResponse: result,
+        };
       }
     } catch (error) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError("listing files", error as Error),
       };
     }
@@ -1073,6 +1125,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "list_code_definition_names",
               "path",
@@ -1091,6 +1144,7 @@ export class FileToolHandler extends BaseToolHandler {
           );
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: formatResponse.toolError(errorText),
           };
         }
@@ -1146,7 +1200,11 @@ export class FileToolHandler extends BaseToolHandler {
               false,
               false,
             );
-            return { shouldContinue: true, userRejected: true };
+            return {
+              shouldContinue: true,
+              outcome: "rejected" as const,
+              userRejected: true,
+            };
           }
           telemetryService.captureToolUsage(
             this.context.taskId,
@@ -1156,11 +1214,16 @@ export class FileToolHandler extends BaseToolHandler {
           );
         }
 
-        return { shouldContinue: true, toolResponse: result };
+        return {
+          shouldContinue: true,
+          outcome: "succeeded" as const,
+          toolResponse: result,
+        };
       }
     } catch (error) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError(
           "parsing source code definitions",
           error as Error,
@@ -1220,6 +1283,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "search_files",
               "path",
@@ -1238,6 +1302,7 @@ export class FileToolHandler extends BaseToolHandler {
           );
           return {
             shouldContinue: true,
+            outcome: "failed" as const,
             toolResponse: formatResponse.toolError(errorText),
           };
         }
@@ -1301,7 +1366,11 @@ export class FileToolHandler extends BaseToolHandler {
               false,
               false,
             );
-            return { shouldContinue: true, userRejected: true };
+            return {
+              shouldContinue: true,
+              outcome: "rejected" as const,
+              userRejected: true,
+            };
           }
           telemetryService.captureToolUsage(
             this.context.taskId,
@@ -1311,11 +1380,16 @@ export class FileToolHandler extends BaseToolHandler {
           );
         }
 
-        return { shouldContinue: true, toolResponse: results };
+        return {
+          shouldContinue: true,
+          outcome: "succeeded" as const,
+          toolResponse: results,
+        };
       }
     } catch (error) {
       return {
         shouldContinue: true,
+        outcome: "failed" as const,
         toolResponse: await this.handleError("searching files", error as Error),
       };
     }

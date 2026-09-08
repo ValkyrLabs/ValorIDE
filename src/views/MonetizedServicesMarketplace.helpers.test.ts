@@ -31,7 +31,13 @@ describe("MonetizedServicesMarketplace helpers", () => {
       "By: verified-builder",
     );
     expect(getCreatorLabel(service({ createdBy: "   " }))).toBe(
-      "By: verified creator",
+      "By: Creator not provided",
+    );
+    expect(getCreatorLabel(service({ creatorName: " Aster Labs " }))).toBe(
+      "By: Aster Labs",
+    );
+    expect(getCreatorLabel(service({ createdBy: "Creator" }))).toBe(
+      "By: Creator not provided",
     );
   });
 

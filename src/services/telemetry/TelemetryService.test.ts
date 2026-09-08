@@ -1,14 +1,14 @@
-const posthogCapture = jest.fn();
-const posthogOptIn = jest.fn();
-const posthogOptOut = jest.fn();
-const posthogShutdown = jest.fn();
+const mockPosthogCapture = jest.fn();
+const mockPosthogOptIn = jest.fn();
+const mockPosthogOptOut = jest.fn();
+const mockPosthogShutdown = jest.fn();
 
 jest.mock("posthog-node", () => ({
   PostHog: jest.fn(() => ({
-    capture: posthogCapture,
-    optIn: posthogOptIn,
-    optOut: posthogOptOut,
-    shutdown: posthogShutdown,
+    capture: mockPosthogCapture,
+    optIn: mockPosthogOptIn,
+    optOut: mockPosthogOptOut,
+    shutdown: mockPosthogShutdown,
   })),
 }));
 
@@ -28,7 +28,7 @@ describe("TelemetryService", () => {
 
     telemetryService.captureTaskCreated("task-1", "openai");
 
-    expect(posthogOptIn).not.toHaveBeenCalled();
-    expect(posthogCapture).not.toHaveBeenCalled();
+    expect(mockPosthogOptIn).not.toHaveBeenCalled();
+    expect(mockPosthogCapture).not.toHaveBeenCalled();
   });
 });

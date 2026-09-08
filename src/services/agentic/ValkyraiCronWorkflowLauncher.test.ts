@@ -1,7 +1,7 @@
-const authFetchMock = jest.fn();
+const mockAuthFetch = jest.fn();
 
 jest.mock("@utils/authFetch", () => ({
-  authFetch: (...args: Parameters<typeof fetch>) => authFetchMock(...args),
+  authFetch: (...args: Parameters<typeof fetch>) => mockAuthFetch(...args),
 }));
 
 jest.mock("@utils/serverValkyraiHost", () => ({
@@ -11,18 +11,15 @@ jest.mock("@utils/serverValkyraiHost", () => ({
   ),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { launchValkyraiCronWorkflowSchedule } = require(
-  "./ValkyraiCronWorkflowLauncher",
-) as typeof import("./ValkyraiCronWorkflowLauncher");
+import { launchValkyraiCronWorkflowSchedule } from "./ValkyraiCronWorkflowLauncher";
 
 describe("launchValkyraiCronWorkflowSchedule", () => {
   beforeEach(() => {
-    authFetchMock.mockReset();
+    mockAuthFetch.mockReset();
   });
 
   it("delegates schedule activation to the ValkyrAI cron workflow endpoint", async () => {
-    authFetchMock.mockResolvedValue({
+    mockAuthFetch.mockResolvedValue({
       json: jest.fn(async () => ({
         inSync: true,
         quartzCron: "0 0 7 * * ?",
@@ -45,7 +42,7 @@ describe("launchValkyraiCronWorkflowSchedule", () => {
       workflowRef: "workflow:workflow-123",
     });
 
-    expect(authFetchMock).toHaveBeenCalledWith(
+    expect(mockAuthFetch).toHaveBeenCalledWith(
       "https://api-0.valkyrlabs.com/v1/vaiworkflow/workflow-123/schedule",
       {
         body: JSON.stringify({
@@ -68,7 +65,7 @@ describe("launchValkyraiCronWorkflowSchedule", () => {
   });
 
   it("surfaces ValkyrAI cron workflow schedule failures with workflow context", async () => {
-    authFetchMock.mockResolvedValue({
+    mockAuthFetch.mockResolvedValue({
       ok: false,
       status: 409,
       text: jest.fn(async () => "cron expression is invalid"),

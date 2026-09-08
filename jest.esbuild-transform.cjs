@@ -1,4 +1,5 @@
 const { transformSync } = require("esbuild");
+const babel = require("@babel/core");
 
 module.exports = {
   process(source, filename) {
@@ -12,11 +13,21 @@ module.exports = {
       target: "es2020",
       sourcemap: "inline",
       jsx: "automatic",
+      sourcefile: filename,
+      supported: { "dynamic-import": false },
+    });
+
+    // Jest's mock factories must register before the compiled require calls.
+    const hoisted = babel.transformSync(result.code, {
+      filename,
+      configFile: false,
+      babelrc: false,
+      plugins: [require.resolve("babel-plugin-jest-hoist")],
+      sourceMaps: "inline",
     });
 
     return {
-      code: result.code,
-      map: result.map,
+      code: hoisted.code,
     };
   },
 };

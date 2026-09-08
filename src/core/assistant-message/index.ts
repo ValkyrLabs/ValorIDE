@@ -20,6 +20,7 @@ export const toolUseNames = [
   "list_code_definition_names",
   "browser_action",
   "use_mcp_tool",
+  "use_procedure",
   "access_mcp_resource",
   "ask_followup_question",
   "plan_mode_respond",

@@ -1,7 +1,7 @@
 export interface FileProcessingConfig {
   maxFileSize: number; // Default: 50KB (51200 bytes)
   chunkSize: number; // Default: 5KB (5120 bytes)
-  streamingDelay: number; // Default: 16ms (60fps)
+  streamingDelay: number; // Default: 50ms (20fps)
   enableProgressiveLoading: boolean; // Default: true
   warnLargeFiles: boolean; // Default: true
   largeFileThreshold: number; // Default: 20KB (20480 bytes)
@@ -77,7 +77,7 @@ export interface ValorIDEAdvancedSettings {
 export const DEFAULT_FILE_PROCESSING_CONFIG: FileProcessingConfig = {
   maxFileSize: 512000, // 500KB
   chunkSize: 5120, // 5KB
-  streamingDelay: 16, // 60fps
+  streamingDelay: 50, // 20fps; keeps editor work bounded during fast local streams
   enableProgressiveLoading: true,
   warnLargeFiles: true,
   largeFileThreshold: 20480, // 20KB

@@ -91,6 +91,7 @@ export class LLMContextInjector {
   generateSystemPrompt(config?: Partial<InjectionConfig>): string {
     const mergedConfig = { ...this.defaultConfig, ...config };
     const sections: string[] = [];
+    const configured = this.promptService?.getAllConfigs();
 
     this.logger.appendLine(
       "[LLMContextInjector] Generating unified system prompt...",
@@ -109,7 +110,11 @@ export class LLMContextInjector {
       }
 
       // Layer 1: Base system prompt (§0–§10), never replaced by LLMDetails.
-      if (mergedConfig.includeSystemPrompt && this.promptService) {
+      if (
+        mergedConfig.includeSystemPrompt &&
+        this.promptService &&
+        configured?.systemPrompt
+      ) {
         const systemText = this.promptService.getSystemPrompt();
         sections.push(
           selectedPrompt?.mode === "SYSTEM"
@@ -124,8 +129,8 @@ export class LLMContextInjector {
       }
 
       // Layer 2: ThorAPI catalog
-      if (mergedConfig.includeThorAPICatalog && this.promptService) {
-        const catalog = this.promptService.getThorAPICatalog();
+      if (mergedConfig.includeThorAPICatalog && configured?.thorapiCatalog) {
+        const catalog = configured.thorapiCatalog;
         const catalogSection = this.formatThorAPICatalogSection(catalog);
         sections.push(catalogSection);
         this.logger.appendLine(
@@ -134,8 +139,8 @@ export class LLMContextInjector {
       }
 
       // Layer 3: Swarm rules
-      if (mergedConfig.includeSwarmRules && this.promptService) {
-        const swarmRules = this.promptService.getSwarmRules();
+      if (mergedConfig.includeSwarmRules && configured?.swarmRules) {
+        const swarmRules = configured.swarmRules;
         const swarmSection = this.formatSwarmRulesSection(swarmRules);
         sections.push(swarmSection);
         this.logger.appendLine(
@@ -159,7 +164,8 @@ export class LLMContextInjector {
       if (
         mergedConfig.includeLLMDetailsOverride &&
         selectedPrompt &&
-        selectedPrompt.mode === "APPEND" &&
+        (selectedPrompt.mode === "APPEND" ||
+          (mergedConfig.includeSystemPrompt && !configured?.systemPrompt)) &&
         selectedPrompt.prompt
       ) {
         sections.push(this.formatCustomPromptSection(selectedPrompt));
@@ -261,6 +267,7 @@ export class LLMContextInjector {
 
   private generateBaseSections(mergedConfig: InjectionConfig): string[] {
     const sections: string[] = [];
+    const configured = this.promptService?.getAllConfigs();
 
     let selectedPrompt: ReturnType<LLMPromptService["getSelectedPrompt"]> =
       null;
@@ -273,7 +280,11 @@ export class LLMContextInjector {
       }
     }
 
-    if (mergedConfig.includeSystemPrompt && this.promptService) {
+    if (
+      mergedConfig.includeSystemPrompt &&
+      this.promptService &&
+      configured?.systemPrompt
+    ) {
       const systemText = this.promptService.getSystemPrompt();
       sections.push(
         selectedPrompt?.mode === "SYSTEM"
@@ -282,18 +293,14 @@ export class LLMContextInjector {
       );
     }
 
-    if (mergedConfig.includeThorAPICatalog && this.promptService) {
+    if (mergedConfig.includeThorAPICatalog && configured?.thorapiCatalog) {
       sections.push(
-        this.formatThorAPICatalogSection(
-          this.promptService.getThorAPICatalog(),
-        ),
+        this.formatThorAPICatalogSection(configured.thorapiCatalog),
       );
     }
 
-    if (mergedConfig.includeSwarmRules && this.promptService) {
-      sections.push(
-        this.formatSwarmRulesSection(this.promptService.getSwarmRules()),
-      );
+    if (mergedConfig.includeSwarmRules && configured?.swarmRules) {
+      sections.push(this.formatSwarmRulesSection(configured.swarmRules));
     }
 
     if (mergedConfig.includeMemoryBank && this.memoryBankLoader) {
@@ -306,7 +313,8 @@ export class LLMContextInjector {
     if (
       mergedConfig.includeLLMDetailsOverride &&
       selectedPrompt &&
-      selectedPrompt.mode === "APPEND" &&
+      (selectedPrompt.mode === "APPEND" ||
+        (mergedConfig.includeSystemPrompt && !configured?.systemPrompt)) &&
       selectedPrompt.prompt
     ) {
       sections.push(this.formatCustomPromptSection(selectedPrompt));

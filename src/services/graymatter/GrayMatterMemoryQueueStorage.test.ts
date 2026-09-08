@@ -17,6 +17,23 @@ const createContext = (initial?: unknown) => {
 };
 
 describe("GrayMatterMemoryQueueStorage", () => {
+  it("retains the verification-only phase and exact receipt across storage reload", async () => {
+    const pending: PendingGrayMatterWrite = {
+      content: "Uncertain write; do not replay",
+      type: "context",
+      idempotencyKey: "old-attempt",
+      queuedAt: "2026-09-07T17:00:00Z",
+      phase: "verification_required",
+      memoryId: "883e5d08-fde8-4c68-8b34-c9238a116863",
+      lastErrorKind: "unverified",
+    };
+    const context = createContext();
+    await savePendingGrayMatterWrites(context, [pending]);
+    await expect(loadPendingGrayMatterWrites(context)).resolves.toEqual([
+      pending,
+    ]);
+  });
+
   it("loads valid queued writes from durable extension state", async () => {
     const queued: PendingGrayMatterWrite = {
       content: "Replay after restart.",

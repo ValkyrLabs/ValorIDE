@@ -96,8 +96,6 @@ import { addUserInstructions, SYSTEM_PROMPT } from "@core/prompts/system";
 import { getContextWindowInfo } from "@core/context/context-management/context-window-utils";
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
-import { validateMcpToolCall } from "@core/task/mcpToolValidation";
-import { scopeGrayMatterMcpArguments } from "@services/graymatter/GrayMatterMcpScope";
 import {
   checkIsAnthropicContextWindowError,
   checkIsOpenRouterContextWindowError,
@@ -177,6 +175,8 @@ import { ToolExecutionEngine } from "./ToolExecutionEngine";
 import { getStatusBarService } from "@services/StatusBarService";
 import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { TokenStorageService } from "@services/auth/TokenStorageService";
+import { createSessionBoundProcedureClient } from "@services/workflow/ValkyrProcedureClient";
 import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
 import { resolveCommandRequiresApproval } from "./tools/commandApproval";
 import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
@@ -248,6 +248,7 @@ export class Task {
   private diffViewProvider: DiffViewProvider;
   private checkpointTracker?: CheckpointTracker;
   private checkpointTrackerInitialization?: Promise<void>;
+  private checkpointCapture?: Promise<void>;
   checkpointTrackerErrorMessage?: string;
   private agentContextSectionPromise?: Promise<string | undefined>;
   private agentContextTelemetry?: AgentContextAssembly["bifrost"];
@@ -1842,7 +1843,22 @@ export class Task {
 
   // Checkpoints
 
-  async saveCheckpoint(isAttemptCompletionMessage: boolean = false) {
+  async saveCheckpoint(
+    isAttemptCompletionMessage: boolean = false,
+    waitForCapture: boolean = false,
+  ) {
+    if (waitForCapture) {
+      await this.initializeCheckpointTrackerForChat();
+      if (this.checkpointTrackerErrorMessage)
+        throw new Error("Checkpoint initialization failed.");
+      const pending = this.checkpointCapture;
+      try {
+        await pending;
+      } finally {
+        if (this.checkpointCapture === pending)
+          this.checkpointCapture = undefined;
+      }
+    }
     // Set isCheckpointCheckedOut to false for all checkpoint_created messages
     this.valorideMessages.forEach((message) => {
       if (message.say === "checkpoint_created") {
@@ -1853,22 +1869,33 @@ export class Task {
     if (!isAttemptCompletionMessage) {
       // ensure we aren't creating a duplicate checkpoint
       const lastMessage = this.valorideMessages.at(-1);
-      if (lastMessage?.say === "checkpoint_created") {
+      if (
+        lastMessage?.say === "checkpoint_created" &&
+        (!waitForCapture || lastMessage.lastCheckpointHash)
+      ) {
         return;
       }
 
       // For non-attempt completion we just say checkpoints
-      await this.say("checkpoint_created");
-      this.checkpointTracker?.commit().then(async (commitHash) => {
-        const lastCheckpointMessage = findLast(
-          this.valorideMessages,
-          (m) => m.say === "checkpoint_created",
-        );
-        if (lastCheckpointMessage) {
-          lastCheckpointMessage.lastCheckpointHash = commitHash;
-          await this.saveValorIDEMessagesAndUpdateHistory();
+      if (lastMessage?.say !== "checkpoint_created")
+        await this.say("checkpoint_created");
+      this.checkpointCapture = CheckpointHandler.captureCheckpoint(
+        this.checkpointTracker,
+        findLast(this.valorideMessages, (m) => m.say === "checkpoint_created"),
+        this.saveValorIDEMessagesAndUpdateHistory.bind(this),
+      );
+      if (waitForCapture) {
+        const pending = this.checkpointCapture;
+        try {
+          await pending;
+        } finally {
+          if (this.checkpointCapture === pending)
+            this.checkpointCapture = undefined;
         }
-      }); // silently fails for now
+      } else
+        void this.checkpointCapture.catch(() => {
+          /* Awaiting callers retain the rejected barrier. */
+        });
 
       //
     } else {
@@ -2277,6 +2304,14 @@ export class Task {
   }
 
   // Check if the tool should be auto-approved based on the settings
+  public async getProcedureClient() {
+    return createSessionBoundProcedureClient({
+      getBaseUrl: getValkyraiBasePath,
+      getAuthToken: () =>
+        TokenStorageService.getInstance(this.context).getJwtToken(),
+    });
+  }
+
   // Returns bool for most tools, and tuple for tools with nested settings
   shouldAutoApproveTool(toolName: ToolUseName): boolean | [boolean, boolean] {
     if (this.autoApprovalSettings.enabled) {
@@ -2305,6 +2340,8 @@ export class Task {
         case "access_mcp_resource":
         case "use_mcp_tool":
           return this.autoApprovalSettings.actions.useMcp;
+        case "use_procedure":
+          return this.autoApprovalSettings.actions.useProcedures ?? false;
       }
     }
     return false;
@@ -4431,351 +4468,6 @@ export class Task {
               }
             } catch (error) {
               await handleError("executing command", error);
-
-              break;
-            }
-          }
-          case "use_mcp_tool": {
-            const server_name: string | undefined = block.params.server_name;
-            const tool_name: string | undefined = block.params.tool_name;
-            const mcp_arguments: string | undefined = block.params.arguments;
-            try {
-              if (block.partial) {
-                const partialMessage = JSON.stringify({
-                  type: "use_mcp_tool",
-                  serverName: removeClosingTag("server_name", server_name),
-                  toolName: removeClosingTag("tool_name", tool_name),
-                  arguments: removeClosingTag("arguments", mcp_arguments),
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    partialMessage,
-                    undefined,
-                    block.partial,
-                  );
-                } else {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  await this.ask(
-                    "use_mcp_server",
-                    partialMessage,
-                    block.partial,
-                  ).catch(() => {});
-                }
-
-                break;
-              } else {
-                if (!server_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "use_mcp_tool",
-                      "server_name",
-                    ),
-                  );
-
-                  break;
-                }
-                if (!tool_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "use_mcp_tool",
-                      "tool_name",
-                    ),
-                  );
-
-                  break;
-                }
-                // arguments are optional, but if they are provided they must be valid JSON
-                // if (!mcp_arguments) {
-                // 	this.consecutiveMistakeCount++
-                // 	pushToolResult(await this.sayAndCreateMissingParamError("use_mcp_tool", "arguments"))
-                // 	break
-                // }
-                let parsedArguments: Record<string, unknown> | undefined;
-                if (mcp_arguments) {
-                  try {
-                    parsedArguments = JSON.parse(mcp_arguments);
-                  } catch (error) {
-                    this.consecutiveMistakeCount++;
-                    await this.say(
-                      "error",
-                      `ValorIDE tried to use ${tool_name} with an invalid JSON argument. Retrying...`,
-                    );
-                    pushToolResult(
-                      formatResponse.toolError(
-                        formatResponse.invalidMcpToolArgumentError(
-                          server_name,
-                          tool_name,
-                        ),
-                      ),
-                    );
-
-                    break;
-                  }
-                }
-                parsedArguments = scopeGrayMatterMcpArguments(
-                  server_name,
-                  tool_name,
-                  parsedArguments,
-                  vscode.workspace.workspaceFolders?.map(
-                    (folder) => folder.uri.fsPath,
-                  ),
-                );
-                const connectedServers = this.mcpHub
-                  .getServers()
-                  .filter(
-                    (server) =>
-                      server.status === "connected" && !server.disabled,
-                  );
-                const validation = validateMcpToolCall(
-                  connectedServers,
-                  server_name,
-                  tool_name,
-                  parsedArguments,
-                );
-                if ("error" in validation) {
-                  this.consecutiveMistakeCount++;
-                  await this.say(
-                    "error",
-                    `Invalid MCP tool call. ${validation.error} Retrying...`,
-                  );
-                  pushToolResult(formatResponse.toolError(validation.error));
-                  break;
-                }
-
-                this.consecutiveMistakeCount = 0;
-                const completeMessage = JSON.stringify({
-                  type: "use_mcp_tool",
-                  serverName: server_name,
-                  toolName: tool_name,
-                  arguments: parsedArguments
-                    ? JSON.stringify(parsedArguments)
-                    : mcp_arguments,
-                } satisfies ValorIDEAskUseMcpServer);
-
-                const isToolAutoApproved = validation.tool.autoApprove;
-
-                if (
-                  this.shouldAutoApproveTool(block.name) &&
-                  isToolAutoApproved
-                ) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    completeMessage,
-                    undefined,
-                    false,
-                  );
-                  this.consecutiveAutoApprovedRequestsCount++;
-                } else {
-                  showNotificationForApprovalIfAutoApprovalEnabled(
-                    `MCP: ${tool_name} (${server_name})`,
-                  );
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  const didApprove = await askApproval(
-                    "use_mcp_server",
-                    completeMessage,
-                  );
-                  if (!didApprove) {
-                    break;
-                  }
-                }
-
-                // now execute the tool
-                await this.say("mcp_server_request_started"); // same as browser_action_result
-                const toolResult = await this.mcpHub.callTool(
-                  server_name,
-                  tool_name,
-                  parsedArguments,
-                );
-
-                // TODO: add progress indicator
-
-                const toolResultImages =
-                  toolResult?.content
-                    .filter((item) => item.type === "image")
-                    .map(
-                      (item) => `data:${item.mimeType};base64,${item.data}`,
-                    ) || [];
-                let toolResultText =
-                  (toolResult?.isError ? "Error:\n" : "") +
-                    toolResult?.content
-                      .map((item) => {
-                        if (item.type === "text") {
-                          return item.text;
-                        }
-                        if (item.type === "resource") {
-                          const { blob, ...rest } = item.resource;
-                          return JSON.stringify(rest, null, 2);
-                        }
-                        return "";
-                      })
-                      .filter(Boolean)
-                      .join("\n\n") || "(No response)";
-                // webview extracts images from the text response to display in the UI
-                const toolResultToDisplay =
-                  toolResultText +
-                  toolResultImages?.map((image) => `\n\n${image}`).join("");
-                await this.say("mcp_server_response", toolResultToDisplay);
-
-                // MCP's might return images to display to the user, but the model may not support them
-                const supportsImages =
-                  this.api.getModel().info.supportsImages ?? false;
-                if (toolResultImages.length > 0 && !supportsImages) {
-                  toolResultText += `\n\n[${toolResultImages.length} images were provided in the response, and while they are displayed to the user, you do not have the ability to view them.]`;
-                }
-
-                // only passes in images if model supports them
-                pushToolResult(
-                  formatResponse.toolResult(
-                    toolResultText,
-                    supportsImages ? toolResultImages : undefined,
-                  ),
-                );
-
-                await this.saveCheckpoint();
-
-                break;
-              }
-            } catch (error) {
-              await handleError("executing MCP tool", error);
-
-              break;
-            }
-          }
-          case "access_mcp_resource": {
-            const server_name: string | undefined = block.params.server_name;
-            const uri: string | undefined = block.params.uri;
-            try {
-              if (block.partial) {
-                const partialMessage = JSON.stringify({
-                  type: "access_mcp_resource",
-                  serverName: removeClosingTag("server_name", server_name),
-                  uri: removeClosingTag("uri", uri),
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    partialMessage,
-                    undefined,
-                    block.partial,
-                  );
-                } else {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  await this.ask(
-                    "use_mcp_server",
-                    partialMessage,
-                    block.partial,
-                  ).catch(() => {});
-                }
-
-                break;
-              } else {
-                if (!server_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "access_mcp_resource",
-                      "server_name",
-                    ),
-                  );
-
-                  break;
-                }
-                if (!uri) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "access_mcp_resource",
-                      "uri",
-                    ),
-                  );
-
-                  break;
-                }
-                this.consecutiveMistakeCount = 0;
-                const completeMessage = JSON.stringify({
-                  type: "access_mcp_resource",
-                  serverName: server_name,
-                  uri,
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    completeMessage,
-                    undefined,
-                    false,
-                  );
-                  this.consecutiveAutoApprovedRequestsCount++;
-                } else {
-                  showNotificationForApprovalIfAutoApprovalEnabled(
-                    `Accessing: ${uri} (${server_name})`,
-                  );
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  const didApprove = await askApproval(
-                    "use_mcp_server",
-                    completeMessage,
-                  );
-                  if (!didApprove) {
-                    break;
-                  }
-                }
-
-                // now execute the tool
-                await this.say("mcp_server_request_started");
-                const resourceResult = await this.mcpHub.readResource(
-                  server_name,
-                  uri,
-                );
-                const resourceResultPretty =
-                  resourceResult?.contents
-                    .map((item) => {
-                      if (item.text) {
-                        return item.text;
-                      }
-                      return "";
-                    })
-                    .filter(Boolean)
-                    .join("\n\n") || "(Empty response)";
-                await this.say("mcp_server_response", resourceResultPretty);
-                pushToolResult(formatResponse.toolResult(resourceResultPretty));
-
-                break;
-              }
-            } catch (error) {
-              await handleError("accessing MCP resource", error);
 
               break;
             }

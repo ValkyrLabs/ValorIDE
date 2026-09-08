@@ -302,7 +302,6 @@ export const MonetizedServicesMarketplace: React.FC = () => {
 
                                 <div className="creator-info">
                                     <span className="creator-label">{getCreatorLabel(service)}</span>
-                                    <span className="creator-label">By: {funnel.creatorDisplayName}</span>
                                     <span className="created-date">
                                         {new Date(service.createdAt).toLocaleDateString()}
                                     </span>

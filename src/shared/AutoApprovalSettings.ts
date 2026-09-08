@@ -13,6 +13,7 @@ export interface AutoApprovalSettings {
     executeAllCommands?: boolean; // Execute all commands
     useBrowser: boolean; // Use browser
     useMcp: boolean; // Use MCP servers
+    useProcedures?: boolean; // Use ValkyrAI procedures; server approval floors remain authoritative
   };
   // Global settings
   maxRequests: number; // Maximum number of auto-approved requests
@@ -31,6 +32,7 @@ export const DEFAULT_AUTO_APPROVAL_SETTINGS: AutoApprovalSettings = {
     executeAllCommands: false,
     useBrowser: false,
     useMcp: false,
+    useProcedures: false,
   },
   maxRequests: 20,
   enableNotifications: false,

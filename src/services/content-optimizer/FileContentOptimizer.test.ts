@@ -191,48 +191,6 @@ Line 3
     });
   });
 
-  describe("summarizeRepetitiveOutput", () => {
-    it("should summarize repeated lines", () => {
-      const content = `
-Different line
-Same line
-Same line
-Same line
-Another different line
-      `;
-
-      // Access private method for testing
-      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(
-        content,
-      );
-
-      result.should.containEql("Different line");
-      result.should.containEql("Same line");
-      result.should.containEql("[Previous line repeated 2 times]");
-      result.should.containEql("Another different line");
-    });
-
-    it("should handle empty lines correctly", () => {
-      const content = `
-Line 1
-
-Line 2
-Line 2
-
-Line 3
-      `;
-
-      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(
-        content,
-      );
-
-      result.should.containEql("Line 1");
-      result.should.containEql("Line 2");
-      result.should.containEql("[Previous line repeated 1 times]");
-      result.should.containEql("Line 3");
-    });
-  });
-
   describe("isSourceCodeFile", () => {
     it("should identify source code files correctly", () => {
       const isSourceCode = (FileContentOptimizer as any).isSourceCodeFile;

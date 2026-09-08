@@ -39,6 +39,7 @@ import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
 import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolManager, ToolContext } from "./tools";
+import type { ToolExecutionOutcome } from "./tools/BaseToolHandler";
 import { Logger } from "@services/logging/Logger";
 import { ValorIDEHookService } from "@core/hooks/ValorIDEHookService";
 
@@ -83,20 +84,31 @@ export class ToolExecutionEngine {
       workspaceTracker: this.task.workspaceTracker,
       checkpointTracker: this.task.checkpointTracker,
       api: this.task.api,
+      getProcedureClient: this.task.getProcedureClient?.bind(this.task),
+      getChatMode: () => this.task.chatSettings?.mode,
+      isTaskActive: () => !this.task.abort && !this.task.abandoned,
+      recordAutoApprovedRequest: () => {
+        this.task.consecutiveAutoApprovedRequestsCount++;
+      },
 
       // State
       taskId: this.task.taskId,
       cwd: this.cwd,
       autoApprovalSettings: this.task.autoApprovalSettings,
       didEditFile: this.task.didEditFile,
-      consecutiveMistakeCount: this.task.consecutiveMistakeCount,
+      get consecutiveMistakeCount() {
+        return task.consecutiveMistakeCount;
+      },
+      set consecutiveMistakeCount(value: number) {
+        task.consecutiveMistakeCount = value;
+      },
       consecutiveAutoApprovedRequestsCount:
         this.task.consecutiveAutoApprovedRequestsCount,
 
       // Callbacks
       say: this.task.say.bind(this.task),
       ask: this.task.ask.bind(this.task),
-      saveCheckpoint: this.task.saveCheckpoint.bind(this.task),
+      saveCheckpoint: () => this.task.saveCheckpoint(false, true),
       shouldAutoApproveTool: this.task.shouldAutoApproveTool.bind(this.task),
       shouldAutoApproveToolWithPath:
         this.task.shouldAutoApproveToolWithPath.bind(this.task),
@@ -208,7 +220,25 @@ export class ToolExecutionEngine {
     };
 
     let effectiveBlock = block;
+    if (
+      !block.partial &&
+      block.name === "use_procedure" &&
+      this.task.chatSettings?.mode !== "act"
+    ) {
+      const result = await this.executeSpecificTool(
+        block,
+        pushToolResult,
+        handleError,
+        removeClosingTag,
+        toolDescription,
+        handleFeedback,
+      );
+      return { ...result, handled: result.handled ?? false };
+    }
     if (!block.partial) {
+      if (this.hookService.findHookScripts("PreToolUse").length > 0) {
+        await this.task.saveCheckpoint(false, true);
+      }
       const preHookControl = await this.hookService.runPreToolUse(
         block.name,
         block.params,
@@ -273,7 +303,8 @@ export class ToolExecutionEngine {
         result: serializeToolResponse(
           userMessageContent.slice(resultStartIndex),
         ),
-        success: result.handled === true && result.didRejectTool !== true,
+        outcome: result.outcome ?? "unknown",
+        success: result.outcome === "succeeded",
         executionTimeMs,
       });
       appendHookContext(postHookControl?.context);
@@ -299,6 +330,7 @@ export class ToolExecutionEngine {
     toolDescription: () => string,
     handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void,
   ): Promise<{
+    outcome?: ToolExecutionOutcome;
     shouldContinue: boolean;
     didRejectTool: boolean;
     didAlreadyUseTool: boolean;
@@ -320,13 +352,26 @@ export class ToolExecutionEngine {
           pushToolResult(result.toolResponse);
         }
         if (result.feedback) {
-          await handleFeedback(result.feedback);
+          try {
+            await handleFeedback(result.feedback);
+          } catch {
+            // The operation has already returned. A feedback-card failure cannot
+            // turn that observed result into an execution failure or prompt replay.
+            pushToolResult(
+              "Feedback display could not be verified. The tool result is preserved. Do not repeat the operation to repair the display.",
+            );
+          }
         }
         Logger.info(
           `[ToolExecutionEngine] Tool manager handled ${block.name} shouldContinue=${result.shouldContinue} userRejected=${result.userRejected} didAlreadyUse=${result.didAlreadyUseTool}`,
         );
 
         return {
+          outcome:
+            result.outcome ??
+            (result.didRejectTool || result.userRejected
+              ? "rejected"
+              : "unknown"),
           shouldContinue: true,
           didRejectTool: result.didRejectTool || result.userRejected || false,
           didAlreadyUseTool: result.didAlreadyUseTool || false,
@@ -350,6 +395,7 @@ export class ToolExecutionEngine {
         `[ToolExecutionEngine] Error executing ${block.name}: ${(error as Error).message}`,
       );
       return {
+        outcome: "failed",
         shouldContinue: false,
         didRejectTool: false,
         didAlreadyUseTool: true,

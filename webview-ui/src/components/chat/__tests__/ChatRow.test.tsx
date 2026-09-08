@@ -78,6 +78,41 @@ vi.mock("@thorapi/utils/vscode", () => ({
 }));
 
 describe("ChatRow Content - completion_result summary handling", () => {
+  it("renders native procedure results in the existing tool row without reporting an unfinished workflow as complete", () => {
+    const message = {
+      type: "say",
+      say: "tool",
+      ts: Date.now(),
+      text: JSON.stringify({
+        tool: "useProcedure",
+        content: JSON.stringify({
+          phase: "result",
+          action: "execute",
+          result: {
+            status: "procedure_started",
+            procedureRef: "procedure:case:v1",
+            workflow: { id: "execution-42", state: "WAITING_FOR_APPROVAL" },
+          },
+        }),
+      }),
+    } as any;
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+    expect(screen.getByText("Waiting for approval")).toBeTruthy();
+    expect(screen.getByText("execution-42")).toBeTruthy();
+    expect(screen.queryByText("Completed")).toBeNull();
+  });
+
   it("renders the initial task prompt inside the generated report when a thin summary exists", () => {
     const initialPrompt = "Write a unit test for this function";
 
@@ -914,5 +949,33 @@ describe("ChatRow Content - GrayMatter recovery", () => {
       type: "showAccountViewClicked",
       accountTab: "login",
     });
+  });
+});
+
+describe("MCP uncertain outcome rendering", () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it("shows the terminal recovery guidance in the existing response row", async () => {
+    vi.stubGlobal("localStorage", { getItem: () => "plain", setItem: vi.fn() });
+    const message = {
+      ts: 1,
+      type: "say",
+      say: "mcp_server_response",
+      text: "Outcome unknown\n\nInspect the server's state. Do not repeat the action automatically.",
+    } as any;
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+    expect(await screen.findByText(/Outcome unknown/)).toBeTruthy();
+    expect(screen.getByText(/Do not repeat/)).toBeTruthy();
+    expect(screen.queryByText("Completed")).toBeNull();
   });
 });

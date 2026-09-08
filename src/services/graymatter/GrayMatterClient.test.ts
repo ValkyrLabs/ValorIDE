@@ -1,4 +1,5 @@
 import { GrayMatterClient, GrayMatterClientError } from "./GrayMatterClient";
+import { createHash } from "node:crypto";
 
 const jsonResponse = (status: number, body: unknown): Response =>
   ({
@@ -17,6 +18,154 @@ const headerValue = (
   name: string,
 ): string | undefined =>
   (headers as Record<string, string> | undefined)?.[name.toLowerCase()];
+
+describe("verified GrayMatter writes", () => {
+  const id = "883e5d08-fde8-4c68-8b34-c9238a116863";
+  const input = {
+    content: "Decision: preserve verified outcomes.",
+    type: "decision" as const,
+  };
+  const saved = { id, type: "decision", text: "preserve verified outcomes." };
+
+  it("reads back the exact normalized record before returning a bounded verification receipt", async () => {
+    const fetch = jest.fn(async () =>
+      jsonResponse(200, { ...saved, secretField: "private-server-data" }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch,
+      getAuthToken: () => "token",
+    });
+    const result = await client.writeMemory(input);
+    expect(result).toMatchObject({
+      id,
+      type: "decision",
+      verification: {
+        status: "verified",
+        purpose: "write_verification",
+        contentHash: createHash("sha256").update(saved.text).digest("hex"),
+        inputContentHash: createHash("sha256")
+          .update(input.content)
+          .digest("hex"),
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain("private-server-data");
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls[1]).toMatchObject([
+      `https://api.example.test/v1/MemoryEntry/${id}`,
+      { method: "GET" },
+    ]);
+  });
+
+  for (const [label, status, body] of [
+    ["skipped", 202, undefined],
+    ["missing identity", 200, {}],
+    ["invalid identity", 200, { ...saved, id: "not-a-uuid" }],
+    ["wrong type", 200, { ...saved, type: "todo" }],
+  ] as const) {
+    it(`does not report a ${label} write as durable`, async () => {
+      const fetch = jest.fn(async () => jsonResponse(status, body));
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => "token",
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+      });
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+  }
+
+  for (const [label, status, body] of [
+    [
+      "identity mismatch",
+      200,
+      { ...saved, id: "11111111-1111-4111-8111-111111111111" },
+    ],
+    ["text mismatch", 200, { ...saved, text: "a different memory" }],
+    ["type mismatch", 200, { ...saved, type: "context" }],
+    ["denied", 403, { message: "private-server-data" }],
+    ["missing", 404, { message: "private-server-data" }],
+    ["accepted without completion", 202, saved],
+  ] as const) {
+    it(`preserves an unverified reference after ${label} readback without another POST`, async () => {
+      const fetch = jest
+        .fn<Promise<Response>, [string, RequestInit?]>()
+        .mockResolvedValueOnce(jsonResponse(200, saved))
+        .mockResolvedValueOnce(jsonResponse(status, body));
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => "token",
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+        memoryId: id,
+      });
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(
+        fetch.mock.calls.filter(([, init]) => init?.method === "POST"),
+      ).toHaveLength(1);
+    });
+  }
+
+  for (const boundary of [
+    "token-after-write",
+    "tenant-after-write",
+    "token-after-read",
+  ] as const) {
+    it(`rejects ${boundary} session drift`, async () => {
+      let token = "original",
+        tenantId = "tenant-a",
+        calls = 0;
+      const fetch = jest.fn(async () => {
+        calls++;
+        if (
+          boundary === "token-after-write" ||
+          (boundary === "token-after-read" && calls === 2)
+        )
+          token = "changed";
+        if (boundary === "tenant-after-write") tenantId = "tenant-b";
+        return jsonResponse(200, saved);
+      });
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => token,
+        getTenantContext: () => ({ tenantId }),
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+        memoryId: id,
+      });
+      expect(fetch).toHaveBeenCalledTimes(
+        boundary === "token-after-read" ? 2 : 1,
+      );
+    });
+  }
+
+  it("requires a session before writing and keeps unknown transport outcomes unverified", async () => {
+    const fetch = jest.fn(async () => {
+      throw new Error("private-transport-data");
+    });
+    const options = { baseUrl: "https://api.example.test/v1", fetch };
+    await expect(
+      new GrayMatterClient({
+        ...options,
+        getAuthToken: () => undefined,
+      }).writeMemory(input),
+    ).rejects.toMatchObject({ kind: "unauthenticated" });
+    expect(fetch).not.toHaveBeenCalled();
+    await expect(
+      new GrayMatterClient({
+        ...options,
+        getAuthToken: () => "token",
+      }).writeMemory(input),
+    ).rejects.toMatchObject({ kind: "unverified" });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe("GrayMatterClient", () => {
   it("compiles and projects a bounded Bifrost ContextPage", async () => {
@@ -329,10 +478,11 @@ describe("GrayMatterClient", () => {
 
   it("writes durable memory records with an explicit GrayMatter memory type", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () =>
-        jsonResponse(201, {
-          id: "memory-1",
+      async (_url, init) =>
+        jsonResponse(init?.method === "POST" ? 201 : 200, {
+          id: "883e5d08-fde8-4c68-8b34-c9238a116863",
           type: "decision",
+          text: "ValorIDE uses GrayMatter as primary durable memory.",
         }),
     );
     const client = new GrayMatterClient({

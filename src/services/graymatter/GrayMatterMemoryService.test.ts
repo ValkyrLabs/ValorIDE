@@ -1,11 +1,113 @@
-import { GrayMatterClientError } from "./GrayMatterClient";
+import {
+  GrayMatterClientError,
+  type GrayMatterMemoryInput,
+} from "./GrayMatterClient";
+import { createHash } from "node:crypto";
 import { GrayMatterMemoryService } from "./GrayMatterMemoryService";
 
+const verifiedReceipt = (
+  content: string,
+  type: GrayMatterMemoryInput["type"],
+  id = "883e5d08-fde8-4c68-8b34-c9238a116863",
+) => ({
+  id,
+  type,
+  verification: {
+    status: "verified",
+    purpose: "write_verification",
+    contentHash: createHash("sha256").update(content).digest("hex"),
+    inputContentHash: createHash("sha256").update(content).digest("hex"),
+  },
+});
+
 describe("GrayMatterMemoryService", () => {
+  it("does not accept a verification receipt for another input", async () => {
+    const service = new GrayMatterMemoryService({
+      writeMemory: async () => verifiedReceipt("Different input", "decision"),
+    });
+    expect(
+      await service.writeMemory({ content: "Current input", type: "decision" }),
+    ).toMatchObject({ status: "unverified" });
+  });
+
+  it("retains verification-required records after restart without sending them to a new session", async () => {
+    const writeMemory = jest.fn();
+    const pending = {
+      content: "Uncertain prior write",
+      type: "context" as const,
+      phase: "verification_required" as const,
+      memoryId: "883e5d08-fde8-4c68-8b34-c9238a116863",
+      idempotencyKey: "old-attempt",
+      queuedAt: "2026-09-07T17:00:00Z",
+    };
+    const service = new GrayMatterMemoryService({
+      writeMemory,
+      loadPendingWrites: async () => [pending],
+    });
+    await service.replayPendingWrites();
+    expect(writeMemory).not.toHaveBeenCalled();
+    expect(service.getPendingWrites()).toEqual([pending]);
+  });
+  it("holds unverified write acknowledgements for review and never replays their POST", async () => {
+    const id = "883e5d08-fde8-4c68-8b34-c9238a116863";
+    const writeMemory = jest.fn(async () => ({ id }));
+    const savePendingWrites = jest.fn(async () => undefined);
+    const service = new GrayMatterMemoryService({
+      writeMemory,
+      savePendingWrites,
+    });
+    expect(
+      await service.writeMemory({
+        content: "Preserve this evidence.",
+        type: "decision",
+      }),
+    ).toMatchObject({ status: "unverified", memoryId: id });
+    expect(service.getPendingWrites()).toEqual([
+      expect.objectContaining({ phase: "verification_required", memoryId: id }),
+    ]);
+    await service.replayPendingWrites();
+    expect(writeMemory).toHaveBeenCalledTimes(1);
+    expect(service.getPendingWrites()).toHaveLength(1);
+    expect(savePendingWrites).toHaveBeenLastCalledWith([
+      expect.objectContaining({ phase: "verification_required" }),
+    ]);
+  });
+
+  it("retains a queued attempt whose acknowledgement cannot establish durable success", async () => {
+    const writeMemory = jest.fn(async () => undefined);
+    const service = new GrayMatterMemoryService({
+      writeMemory,
+      loadPendingWrites: async () => [
+        {
+          content: "Queued evidence.",
+          type: "context",
+          idempotencyKey: "existing-key",
+          queuedAt: "2026-09-07T17:00:00Z",
+        },
+      ],
+    });
+    await service.replayPendingWrites();
+    await service.replayPendingWrites();
+    expect(writeMemory).toHaveBeenCalledTimes(1);
+    expect(service.getPendingWrites()).toEqual([
+      expect.objectContaining({ phase: "verification_required" }),
+    ]);
+    expect(
+      service
+        .getTranscriptSummary()
+        .writes.every((write) => write.status !== "written"),
+    ).toBe(true);
+  });
+
   it("reports successful durable memory writes in the task transcript summary", async () => {
     const service = new GrayMatterMemoryService({
       now: () => new Date("2026-05-13T12:00:00.000Z"),
-      writeMemory: jest.fn(async () => ({ id: "memory-1" })),
+      writeMemory: jest.fn(async () =>
+        verifiedReceipt(
+          "Prefer generated ThorAPI services before custom REST wrappers.",
+          "decision",
+        ),
+      ),
     });
 
     const result = await service.writeMemory({
@@ -15,7 +117,7 @@ describe("GrayMatterMemoryService", () => {
     });
 
     expect(result).toMatchObject({
-      memoryId: "memory-1",
+      memoryId: "883e5d08-fde8-4c68-8b34-c9238a116863",
       status: "written",
       type: "decision",
     });
@@ -26,7 +128,7 @@ describe("GrayMatterMemoryService", () => {
       writes: [
         {
           at: "2026-05-13T12:00:00.000Z",
-          id: "memory-1",
+          id: "883e5d08-fde8-4c68-8b34-c9238a116863",
           status: "written",
           tags: ["thorapi", "standards"],
           type: "decision",
@@ -107,7 +209,7 @@ describe("GrayMatterMemoryService", () => {
   it("loads queued writes from storage and replays them once", async () => {
     const writeMemory = jest
       .fn()
-      .mockResolvedValueOnce({ id: "memory-2" });
+      .mockResolvedValueOnce(verifiedReceipt("Queued while offline.", "todo"));
     const savePendingWrites = jest.fn(async () => undefined);
     const service = new GrayMatterMemoryService({
       loadPendingWrites: async () => [
@@ -190,7 +292,9 @@ describe("GrayMatterMemoryService", () => {
       type: "context",
     });
 
-    expect(service.getPendingWrites()[0]?.metadata).toEqual({ source: "valoride" });
+    expect(service.getPendingWrites()[0]?.metadata).toEqual({
+      source: "valoride",
+    });
     expect(savePendingWrites).toHaveBeenCalledWith([
       expect.objectContaining({
         metadata: { source: "valoride" },

@@ -13,6 +13,11 @@ import {
   FileProcessingConfig,
   DEFAULT_FILE_PROCESSING_CONFIG,
 } from "@shared/AdvancedSettings";
+import {
+  calculateMinimalTextChange,
+  getCompletedLineSnapshot,
+  shouldRenderPartialSnapshot,
+} from "./StreamedDiffUpdate";
 
 export const DIFF_VIEW_URI_SCHEME = "valoride-diff";
 
@@ -27,7 +32,8 @@ export class DiffViewProvider {
   private activeDiffEditor?: vscode.TextEditor;
   private fadedOverlayController?: DecorationController;
   private activeLineController?: DecorationController;
-  private streamedLines: string[] = [];
+  private renderedContent = "";
+  private lastStreamRenderAt = 0;
   private preDiagnostics: [vscode.Uri, vscode.Diagnostic[]][] = [];
   private fileEncoding: string = "utf8";
   private fileProcessingConfig: FileProcessingConfig;
@@ -184,7 +190,8 @@ export class DiffViewProvider {
       this.activeDiffEditor.document.lineCount,
     );
     this.scrollEditorToLine(0); // will this crash for new files?
-    this.streamedLines = [];
+    this.renderedContent = this.activeDiffEditor.document.getText();
+    this.lastStreamRenderAt = 0;
   }
 
   async update(accumulatedContent: string, isFinal: boolean) {
@@ -205,11 +212,6 @@ export class DiffViewProvider {
     }
 
     this.newContent = accumulatedContent;
-    let accumulatedLines = accumulatedContent.split("\n");
-    if (!isFinal) {
-      accumulatedLines.pop(); // remove the last partial line only if it's not the final update
-    }
-    const diffLines = accumulatedLines.slice(this.streamedLines.length);
 
     const diffEditor = this.activeDiffEditor;
     const document = diffEditor?.document;
@@ -217,88 +219,60 @@ export class DiffViewProvider {
       throw new Error("User closed text editor, unable to edit file...");
     }
 
-    // Place cursor at the beginning of the diff editor to keep it out of the way of the stream animation
-    const beginningOfDocument = new vscode.Position(0, 0);
-    diffEditor.selection = new vscode.Selection(
-      beginningOfDocument,
-      beginningOfDocument,
-    );
-
-    // Instead of animating each line, we'll update in larger chunks
-    const currentLine = this.streamedLines.length + diffLines.length - 1;
-    if (currentLine >= 0) {
-      // Only proceed if we have new lines
-
-      // Decide what snapshot of the content should appear in the editor right now.
-      const upToCurrentLines = accumulatedLines.slice(0, currentLine + 1);
-      let contentSnapshot: string;
-      if (isFinal) {
-        contentSnapshot = accumulatedContent;
-        const originalHadTrailingNewline =
-          this.originalContent?.endsWith("\n") ?? false;
-        if (originalHadTrailingNewline && !contentSnapshot.endsWith("\n")) {
-          contentSnapshot += "\n";
-          accumulatedContent = contentSnapshot;
-        }
-      } else {
-        contentSnapshot = upToCurrentLines.join("\n");
-        if (upToCurrentLines.length > 0) {
-          contentSnapshot += "\n";
-        }
+    let contentSnapshot: string;
+    if (isFinal) {
+      contentSnapshot = accumulatedContent;
+      const originalHadTrailingNewline =
+        this.originalContent?.endsWith("\n") ?? false;
+      if (originalHadTrailingNewline && !contentSnapshot.endsWith("\n")) {
+        contentSnapshot += "\n";
+        accumulatedContent = contentSnapshot;
       }
+    } else {
+      const completedSnapshot = getCompletedLineSnapshot(accumulatedContent);
+      if (completedSnapshot === undefined) {
+        return;
+      }
+      contentSnapshot = completedSnapshot;
 
-      await this.replaceDocumentContent(document, contentSnapshot);
+      const now = Date.now();
+      if (
+        !shouldRenderPartialSnapshot({
+          chunkSize: this.fileProcessingConfig.chunkSize,
+          currentContent: this.renderedContent,
+          lastRenderAt: this.lastStreamRenderAt,
+          minimumIntervalMs: this.fileProcessingConfig.streamingDelay,
+          nextContent: contentSnapshot,
+          now,
+        })
+      ) {
+        return;
+      }
+      this.lastStreamRenderAt = now;
+    }
 
-      // Update decorations for the entire changed section
+    await this.replaceDocumentContent(document, contentSnapshot);
+    this.renderedContent = contentSnapshot;
+
+    const documentEndLine = document.positionAt(contentSnapshot.length).line;
+    const currentLine = contentSnapshot
+      ? contentSnapshot.endsWith("\n")
+        ? Math.max(0, documentEndLine - 1)
+        : documentEndLine
+      : -1;
+    if (currentLine >= 0) {
       this.activeLineController.setActiveLine(currentLine);
       this.fadedOverlayController.updateOverlayAfterLine(
         currentLine,
         document.lineCount,
       );
-
-      // Scroll to the last changed line
-      if (diffLines.length <= 5) {
-        // For small changes, just jump directly to the line
-        this.scrollEditorToLine(currentLine);
-      } else {
-        // For larger changes, create a quick scrolling animation
-        const startLine = this.streamedLines.length;
-        const endLine = currentLine;
-        const totalLines = endLine - startLine;
-        const numSteps = 10; // Adjust this number to control animation speed
-        const stepSize = Math.max(1, Math.floor(totalLines / numSteps));
-
-        // Create and await the smooth scrolling animation
-        for (let line = startLine; line <= endLine; line += stepSize) {
-          this.activeDiffEditor?.revealRange(
-            new vscode.Range(line, 0, line, 0),
-            vscode.TextEditorRevealType.InCenter,
-          );
-          await new Promise((resolve) => setTimeout(resolve, 16)); // ~60fps
-        }
-        // Ensure we end at the final line
-        this.scrollEditorToLine(currentLine);
-      }
+      // One reveal per rendered batch keeps the view useful without inserting
+      // an awaited animation into the model stream's critical path.
+      this.scrollEditorToLine(currentLine);
     }
 
-    // Update the streamedLines with the new accumulated content snapshot
-    if (isFinal) {
-      accumulatedLines = accumulatedContent.split("\n");
-      this.streamedLines = accumulatedLines;
-    } else {
-      this.streamedLines = accumulatedLines;
-    }
     this.newContent = accumulatedContent;
     if (isFinal) {
-      // Handle any remaining lines if the new content is shorter than the original
-      if (this.streamedLines.length < document.lineCount) {
-        const edit = new vscode.WorkspaceEdit();
-        edit.delete(
-          document.uri,
-          new vscode.Range(this.streamedLines.length, 0, document.lineCount, 0),
-        );
-        await vscode.workspace.applyEdit(edit);
-      }
       // Add empty last line if original content had one
       const hasEmptyLastLine = this.originalContent?.endsWith("\n");
       if (hasEmptyLastLine) {
@@ -469,15 +443,17 @@ export class DiffViewProvider {
     document: vscode.TextDocument,
     content: string,
   ): Promise<void> {
-    const fullRange = document.validateRange(
-      new vscode.Range(
-        new vscode.Position(0, 0),
-        new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
-      ),
+    const change = calculateMinimalTextChange(document.getText(), content);
+    if (!change) {
+      return;
+    }
+    const changedRange = new vscode.Range(
+      document.positionAt(change.startOffset),
+      document.positionAt(change.endOffset),
     );
 
     const edit = new vscode.WorkspaceEdit();
-    edit.replace(document.uri, fullRange, content);
+    edit.replace(document.uri, changedRange, change.text);
     const applied = await vscode.workspace.applyEdit(edit);
     if (applied) {
       return;
@@ -490,7 +466,7 @@ export class DiffViewProvider {
 
     const fallbackApplied = await editor.edit(
       (editBuilder) => {
-        editBuilder.replace(fullRange, content);
+        editBuilder.replace(changedRange, change.text);
       },
       { undoStopBefore: false, undoStopAfter: false },
     );
@@ -604,7 +580,8 @@ export class DiffViewProvider {
     this.activeDiffEditor = undefined;
     this.fadedOverlayController = undefined;
     this.activeLineController = undefined;
-    this.streamedLines = [];
+    this.renderedContent = "";
+    this.lastStreamRenderAt = 0;
     this.preDiagnostics = [];
   }
 }

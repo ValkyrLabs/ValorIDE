@@ -50,6 +50,26 @@ describe("BrowserToolHandler", () => {
     };
   };
 
+  it("reports a completed browser close even when its existing API returns void", async () => {
+    const { context } = createContext();
+    context.browserSession.closeBrowser.mockResolvedValue(undefined as any);
+    const result = await new BrowserToolHandler(context as any).execute(
+      {
+        type: "tool_use",
+        name: "browser_action",
+        partial: false,
+        params: { action: "close" },
+      },
+      false,
+    );
+    expect(result).toMatchObject({
+      outcome: "succeeded",
+      didAlreadyUseTool: true,
+    });
+    expect(context.browserSession.closeBrowser).toHaveBeenCalledTimes(1);
+    expect(context.say).not.toHaveBeenCalledWith("error", expect.anything());
+  });
+
   it("launches the browser before navigating and emits browser result state", async () => {
     const { calls, context } = createContext();
     const handler = new BrowserToolHandler(context as any);
@@ -70,6 +90,7 @@ describe("BrowserToolHandler", () => {
     );
 
     expect(result.shouldContinue).toBe(true);
+    expect(result.outcome).toBe("succeeded");
     expect(context.browserSession.launchBrowser).toHaveBeenCalledTimes(1);
     expect(context.browserSession.navigateToUrl).toHaveBeenCalledWith(
       "https://www.google.com/search?q=Valkyr+Labs+Inc",
@@ -94,11 +115,7 @@ describe("BrowserToolHandler", () => {
     expect(
       context.removeLastPartialMessageIfExistsWithType,
     ).toHaveBeenCalledWith("say", "browser_action");
-    expect(context.say).toHaveBeenNthCalledWith(
-      2,
-      "browser_action_result",
-      "",
-    );
+    expect(context.say).toHaveBeenNthCalledWith(2, "browser_action_result", "");
     expect(context.say).toHaveBeenNthCalledWith(
       3,
       "browser_action_result",

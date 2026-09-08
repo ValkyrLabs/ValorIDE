@@ -88,6 +88,13 @@ const ACTION_METADATA: {
     description:
       "Allows ValorIDE to use configured MCP servers which may modify filesystem or interact with APIs.",
   },
+  {
+    id: "useProcedures",
+    label: "Use Valkyr procedures",
+    shortName: "Procedures",
+    description:
+      "Allows procedure discovery, invocation and status checks on your selected backend. Pause, resume and cancel still ask for your approval. ValkyrAI enforces permissions and required human approvals.",
+  },
 ];
 
 const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {

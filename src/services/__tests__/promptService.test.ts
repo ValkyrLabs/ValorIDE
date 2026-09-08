@@ -1,19 +1,184 @@
-import { describe, it, expect, beforeAll, vi } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
+import { tmpdir } from "os";
 import { PromptService } from "../promptService";
+import { LLMContextInjector } from "../llmContextInjector";
 
 // Mock vscode output channel
 const mockLogger = {
   appendLine: vi.fn(),
 };
 
+describe("optional workspace prompt configuration", () => {
+  const withWorkspace = async (
+    test: (root: string, service: PromptService) => Promise<void>,
+  ) => {
+    const root = fs.mkdtempSync(path.join(tmpdir(), "valoride-empty-prompts-"));
+    try {
+      await test(root, new PromptService(root, mockLogger as any));
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  };
+
+  it("starts in an empty workspace without creating config or inventing capabilities", async () => {
+    await withWorkspace(async (root, service) => {
+      await service.initialize();
+      expect(service.getAllConfigs()).toEqual({
+        systemPrompt: null,
+        thorapiCatalog: null,
+        swarmRules: null,
+      });
+      expect(fs.readdirSync(root)).toEqual([]);
+      const injector = new LLMContextInjector(mockLogger as any);
+      (injector as any).promptService = service;
+      expect(injector.generateSystemPrompt()).toBe("");
+      expect(await injector.generateSystemPromptAsync()).toBe("");
+    });
+  });
+
+  it("loads a supplied system layer without requiring unrelated catalog or swarm files", async () => {
+    await withWorkspace(async (root, service) => {
+      fs.mkdirSync(service.getPromptDir(), { recursive: true });
+      fs.writeFileSync(
+        path.join(service.getPromptDir(), "system.json"),
+        JSON.stringify({
+          version: "test",
+          sections: [
+            {
+              section: "rules",
+              title: "Project instructions",
+              content: "Preserve the project-specific instruction.",
+            },
+          ],
+        }),
+      );
+      await service.initialize();
+      expect(service.getSystemPrompt()).toContain(
+        "Preserve the project-specific instruction.",
+      );
+      expect(service.getAllConfigs().thorapiCatalog).toBeNull();
+      const injector = new LLMContextInjector(mockLogger as any);
+      (injector as any).promptService = service;
+      expect(await injector.generateSystemPromptAsync()).toBe(
+        injector.generateSystemPrompt(),
+      );
+      expect(injector.generateSystemPrompt()).not.toContain(
+        "WORKER AGENTS AVAILABLE",
+      );
+      expect(fs.readdirSync(root)).toEqual([".valoride"]);
+    });
+  });
+
+  it("retains an explicit SYSTEM selection when no optional project system layer exists", async () => {
+    await withWorkspace(async (_root, service) => {
+      await service.initialize();
+      const injector = new LLMContextInjector(mockLogger as any);
+      (injector as any).promptService = service;
+      (injector as any).llmPromptService = {
+        getSelectedPrompt: () => ({
+          source: "thorapi",
+          name: "Approved prompt",
+          prompt: "Keep this selected instruction.",
+          mode: "SYSTEM",
+          tags: [],
+          stackSpecific: false,
+        }),
+      };
+      expect(injector.generateSystemPrompt()).toContain(
+        "Keep this selected instruction.",
+      );
+      expect(await injector.generateSystemPromptAsync()).toBe(
+        injector.generateSystemPrompt(),
+      );
+    });
+  });
+
+  it.each(["{", JSON.stringify({ sections: "invalid" })])(
+    "rejects a present malformed system config: %s",
+    async (content) => {
+      await withWorkspace(async (_root, service) => {
+        fs.mkdirSync(service.getPromptDir(), { recursive: true });
+        fs.writeFileSync(
+          path.join(service.getPromptDir(), "system.json"),
+          content,
+        );
+        fs.writeFileSync(
+          path.join(service.getPromptDir(), "thorapi-catalog.json"),
+          JSON.stringify({ services: [], models: [] }),
+        );
+        fs.writeFileSync(
+          path.join(service.getPromptDir(), "swarm-rules.json"),
+          JSON.stringify({
+            supervisor_agent: {},
+            worker_agents: [],
+            message_types: {},
+          }),
+        );
+        await expect(service.initialize()).rejects.toThrow();
+      });
+    },
+  );
+});
+
 describe("PromptService", () => {
   let promptService: PromptService;
-  const workspaceRoot = process.cwd();
+  let workspaceRoot: string;
 
   beforeAll(() => {
+    workspaceRoot = fs.mkdtempSync(
+      path.join(tmpdir(), "valoride-prompts-test-"),
+    );
+    const directory = path.join(workspaceRoot, ".valoride", "prompts");
+    fs.mkdirSync(directory, { recursive: true });
+    const fixtureMetadata = {
+      version: "test-1",
+      timestamp: "2026-09-07",
+      description: "Isolated prompt loader fixture",
+    };
+    fs.writeFileSync(
+      path.join(directory, "system.json"),
+      JSON.stringify({
+        ...fixtureMetadata,
+        sections: Array.from({ length: 11 }, (_, i) => ({
+          section: `§${i}`,
+          title: `Section ${i}`,
+          content: "TOOL-FIRST fixture instruction for prompt loading.",
+        })),
+      }),
+    );
+    fs.writeFileSync(
+      path.join(directory, "thorapi-catalog.json"),
+      JSON.stringify({
+        ...fixtureMetadata,
+        services: [
+          {
+            name: "ApplicationService",
+            operations: [{ method: "GET", endpoint: "/Application" }],
+          },
+        ],
+        models: [],
+      }),
+    );
+    fs.writeFileSync(
+      path.join(directory, "swarm-rules.json"),
+      JSON.stringify({
+        ...fixtureMetadata,
+        supervisor_agent: { role: "supervisor" },
+        worker_agents: [
+          "PSR_SPECIALIST",
+          "BROWSER_AUTOMATION",
+          "CLI_TEST_RUNNER",
+        ].map((name) => ({ name })),
+        message_types: {},
+      }),
+    );
     promptService = new PromptService(workspaceRoot, mockLogger as any);
+  });
+
+  afterAll(() => {
+    fs.rmSync(workspaceRoot, { recursive: true, force: true });
   });
 
   it("should verify prompt files exist", () => {

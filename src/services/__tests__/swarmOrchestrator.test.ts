@@ -224,6 +224,7 @@ describe("SwarmOrchestrator", () => {
         payload: {},
         createdAt: Date.now(),
       };
+      await orchestrator.routeTask(task1);
       await orchestrator.routeTask(task2);
 
       const queue = orchestrator.getTaskQueue();

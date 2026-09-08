@@ -41,6 +41,7 @@ describe("AgentContextAssembler", () => {
     const compileContextPage = jest.fn(async () => ({
       contextPage: {
         pageRef: "context-page-1",
+        status: "ready",
         traceId: "trace-1",
         tokenEstimate: 320,
         retrievalReceipt: { receiptId: "receipt-1" },
@@ -116,6 +117,83 @@ describe("AgentContextAssembler", () => {
         citations: ["gm:item-1"],
         receiptIds: ["receipt-1"],
       }),
+    );
+  });
+
+  it("falls back when ContextPage reports an application-level failure", async () => {
+    const compileContextPagePrompt = jest.fn();
+    const listMemory = jest.fn(async () => [
+      {
+        id: "memory-fallback",
+        tags: ["graymatter", "valoride"],
+        text: "Preserve the GrayMatter receipt and authorization boundary.",
+        type: "decision",
+      },
+    ]);
+    const retrieveMemoryWithReceipt = jest.fn();
+    const assembler = new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage: jest.fn(async () => ({
+          contextPage: {
+            items: [],
+            pageRef: "context-page-failed",
+            retrievalReceipt: {
+              answerPolicy: "REQUIRE_RETRY",
+              receiptId: "receipt-failed",
+              recommendedAction: "RETRY_WITH_EXPANDED_QUERY",
+              retrievalStatus: "LOW_CONFIDENCE",
+            },
+            status: "failed",
+          },
+        })),
+        compileContextPagePrompt,
+        listMemory,
+        queryMemory: jest.fn(),
+        retrieveMemoryWithReceipt,
+      },
+    });
+
+    const context = await assembler.assemble({
+      task: "Fix ValorIDE GrayMatter retrieval",
+    });
+
+    expect(compileContextPagePrompt).not.toHaveBeenCalled();
+    expect(listMemory).toHaveBeenCalledTimes(1);
+    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+    expect(context.bifrost).toBeUndefined();
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.grayMatter.citations).toEqual([
+      expect.objectContaining({ id: "memory-fallback" }),
+    ]);
+  });
+
+  it("does not report a successfully projected empty ContextPage as ready memory", async () => {
+    const assembler = new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage: jest.fn(async () => ({
+          contextPage: {
+            items: [],
+            pageRef: "context-page-empty",
+            retrievalReceipt: { receiptId: "receipt-empty" },
+            status: "ready",
+          },
+        })),
+        compileContextPagePrompt: jest.fn(async () => ({
+          contextPageRef: "context-page-empty",
+          includedItemRefs: [],
+          prompt: "Authorized context is empty.",
+          retrievalReceiptRef: "receipt-empty",
+        })),
+        queryMemory: jest.fn(),
+      },
+    });
+
+    const context = await assembler.assemble({ task: "A novel task" });
+
+    expect(context.grayMatter.status).toBe("empty");
+    expect(context.grayMatter.citations).toEqual([]);
+    expect(context.grayMatter.reads[0]).toEqual(
+      expect.objectContaining({ status: "empty" }),
     );
   });
 

@@ -11,7 +11,7 @@ import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
  * PRIORITY ORDER:
  * 1. ThorAPI LLMDetails service (PRIMARY) - query by task intent + project stack
  * 2. src/assets/prompts/system.json (fallback) - base system prompt
- * 3. Fail gracefully with error message
+ * 3. No optional selection; the Task engine retains its built-in system prompt.
  *
  * STACK-AWARE LOADING:
  * - Detect project stack (Java/Spring, Python/Flask, Node.js, etc.)
@@ -108,7 +108,7 @@ export class LLMPromptService {
         );
       } else {
         this.logger.appendLine(
-          "[LLMPromptService] ❌ No prompt available (ThorAPI failed, fallback missing)",
+          "[LLMPromptService] No optional prompt selected; using the built-in ValorIDE system prompt",
         );
       }
     } catch (error) {
@@ -292,9 +292,6 @@ export class LLMPromptService {
       );
 
       if (!fallbackPath) {
-        this.logger.appendLine(
-          "[LLMPromptService] Fallback prompt not found in expected locations",
-        );
         return;
       }
 
@@ -508,9 +505,7 @@ export function selectBestLlmDetailsPrompt(
     }))
     .sort(
       (a, b) =>
-        b.tagScore - a.tagScore ||
-        b.rating - a.rating ||
-        b.recency - a.recency,
+        b.tagScore - a.tagScore || b.rating - a.rating || b.recency - a.recency,
     )[0].candidate;
 }
 
@@ -532,9 +527,7 @@ function extractLlmDetails(payload: unknown): LLMDetailsPromptCandidate[] {
 function getPromptBody(candidate: LLMDetailsPromptCandidate): string | null {
   const prompt =
     candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
-  return typeof prompt === "string" && prompt.trim().length > 0
-    ? prompt
-    : null;
+  return typeof prompt === "string" && prompt.trim().length > 0 ? prompt : null;
 }
 
 function classifyLlmDetailsQueryError(error: unknown): string {
@@ -553,9 +546,7 @@ function normalizePromptMode(mode: unknown): "SYSTEM" | "APPEND" {
 
 function normalizeTags(tags: unknown): string[] {
   if (Array.isArray(tags)) {
-    return tags
-      .map((tag) => `${tag}`.trim())
-      .filter((tag) => tag.length > 0);
+    return tags.map((tag) => `${tag}`.trim()).filter((tag) => tag.length > 0);
   }
   if (typeof tags === "string") {
     return tags

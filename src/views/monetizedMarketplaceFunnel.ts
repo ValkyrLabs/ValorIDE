@@ -13,6 +13,7 @@ export interface MarketplaceServiceSummary {
   id: string;
   applicationId?: string;
   createdBy?: string;
+  creatorName?: string;
   pricingModel: MarketplacePricingModel;
   costPerCall?: number;
   costPerMonth?: number;
@@ -38,7 +39,7 @@ export interface MarketplaceFunnelCopy {
   detailHref: string | null;
 }
 
-const CREATED_BY_FALLBACK = "Verified Valkyr creator";
+const CREATED_BY_FALLBACK = "Creator not provided";
 
 const scoreFields: Array<keyof MarketplaceServiceSummary> = [
   "subscriberCount",
@@ -58,7 +59,14 @@ function timeValue(value: string | undefined): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export function getCreatorDisplayName(service: { createdBy?: string }): string {
+export function getCreatorDisplayName(service: {
+  createdBy?: string;
+  creatorName?: string;
+}): string {
+  const displayName = service.creatorName?.trim();
+  if (displayName) {
+    return displayName;
+  }
   const creator = service.createdBy?.trim();
   if (!creator || creator.toLowerCase() === "creator") {
     return CREATED_BY_FALLBACK;

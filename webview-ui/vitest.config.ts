@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
+    // Bound concurrent module transforms during full-stack builds; keep test deadlines unchanged.
+    maxWorkers: 2,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
   },

@@ -1,23 +1,31 @@
 import {
   GrayMatterClientError,
-  GrayMatterErrorKind,
   GrayMatterMemoryInput,
+  GrayMatterMemoryWriteErrorKind,
+  GrayMatterMemoryWriteUnverifiedError,
+  requireVerifiedMemoryWrite,
 } from "./GrayMatterClient";
 
-export type GrayMatterWriteStatus = "failed" | "queued" | "written";
+export type GrayMatterWriteStatus =
+  | "failed"
+  | "queued"
+  | "written"
+  | "unverified";
 
 export interface PendingGrayMatterWrite extends GrayMatterMemoryInput {
   attempts?: number;
   idempotencyKey: string;
   lastError?: string;
-  lastErrorKind?: GrayMatterErrorKind;
+  lastErrorKind?: GrayMatterMemoryWriteErrorKind;
   lastTriedAt?: string;
   queuedAt: string;
+  phase?: "verification_required";
+  memoryId?: string;
 }
 
 export interface GrayMatterMemoryWriteResult {
   error?: string;
-  errorKind?: GrayMatterErrorKind;
+  errorKind?: GrayMatterMemoryWriteErrorKind;
   memoryId?: string;
   status: GrayMatterWriteStatus;
   type: GrayMatterMemoryInput["type"];
@@ -79,7 +87,7 @@ export class GrayMatterMemoryService {
 
     try {
       const response = await this.options.writeMemory(input);
-      const memoryId = getMemoryId(response);
+      const memoryId = requireVerifiedMemoryWrite(response, input).id;
       this.writes.push({
         at,
         id: memoryId,
@@ -94,24 +102,46 @@ export class GrayMatterMemoryService {
       };
     } catch (error) {
       const clientError =
-        error instanceof GrayMatterClientError ? error : undefined;
+        error instanceof GrayMatterClientError ||
+        error instanceof GrayMatterMemoryWriteUnverifiedError
+          ? error
+          : undefined;
       const message =
         error instanceof Error ? error.message : "GrayMatter write failed.";
       const shouldQueue = isRetryableKind(clientError?.kind);
-      const status: GrayMatterWriteStatus = shouldQueue ? "queued" : "failed";
+      const unverified = clientError?.kind === "unverified";
+      const memoryId =
+        error instanceof GrayMatterMemoryWriteUnverifiedError
+          ? error.memoryId
+          : undefined;
+      const status: GrayMatterWriteStatus = unverified
+        ? "unverified"
+        : shouldQueue
+          ? "queued"
+          : "failed";
 
-      if (shouldQueue) {
-        this.pendingWrites.push(sanitizePendingWrite({
-          ...input,
-          attempts: 0,
-          idempotencyKey: createIdempotencyKey(input, at),
-          queuedAt: at,
-        }));
+      if (shouldQueue || unverified) {
+        this.pendingWrites.push(
+          sanitizePendingWrite({
+            ...input,
+            attempts: 0,
+            idempotencyKey: createIdempotencyKey(input, at),
+            queuedAt: at,
+            ...(unverified
+              ? {
+                  phase: "verification_required" as const,
+                  memoryId,
+                  lastErrorKind: "unverified" as const,
+                }
+              : {}),
+          }),
+        );
         await this.persistPendingWrites();
       }
 
       this.writes.push({
         at,
+        ...(memoryId ? { id: memoryId } : {}),
         error: message,
         status,
         tags: input.tags,
@@ -121,6 +151,7 @@ export class GrayMatterMemoryService {
       return {
         error: message,
         errorKind: clientError?.kind ?? "unavailable",
+        ...(memoryId ? { memoryId } : {}),
         status,
         type: input.type,
       };
@@ -141,6 +172,13 @@ export class GrayMatterMemoryService {
     this.pendingWrites.length = 0;
 
     for (const write of snapshot) {
+      if (
+        write.phase === "verification_required" ||
+        write.lastErrorKind === "unverified"
+      ) {
+        this.pendingWrites.push(write);
+        continue;
+      }
       const replayInput: GrayMatterMemoryInput = {
         content: write.content,
         metadata: write.metadata,
@@ -151,29 +189,39 @@ export class GrayMatterMemoryService {
 
       try {
         const response = await this.options.writeMemory(replayInput);
+        const receipt = requireVerifiedMemoryWrite(response, replayInput);
         this.writes.push({
           at,
-          id: getMemoryId(response),
+          id: receipt.id,
           status: "written",
           tags: write.tags,
           type: write.type,
         });
       } catch (error) {
         const clientError =
-          error instanceof GrayMatterClientError ? error : undefined;
+          error instanceof GrayMatterClientError ||
+          error instanceof GrayMatterMemoryWriteUnverifiedError
+            ? error
+            : undefined;
         const message =
           error instanceof Error ? error.message : "GrayMatter write failed.";
         const shouldQueue = isRetryableKind(clientError?.kind);
+        const unverified = clientError?.kind === "unverified";
+        const memoryId =
+          error instanceof GrayMatterMemoryWriteUnverifiedError
+            ? error.memoryId
+            : undefined;
 
         this.writes.push({
           at,
           error: message,
-          status: shouldQueue ? "queued" : "failed",
+          ...(memoryId ? { id: memoryId } : {}),
+          status: unverified ? "unverified" : shouldQueue ? "queued" : "failed",
           tags: write.tags,
           type: write.type,
         });
 
-        if (shouldQueue) {
+        if (shouldQueue || unverified) {
           this.pendingWrites.push(
             sanitizePendingWrite({
               ...write,
@@ -181,6 +229,9 @@ export class GrayMatterMemoryService {
               lastError: message,
               lastErrorKind: clientError?.kind ?? "unavailable",
               lastTriedAt: at,
+              ...(unverified
+                ? { phase: "verification_required" as const, memoryId }
+                : {}),
             }),
           );
         }
@@ -202,7 +253,8 @@ export class GrayMatterMemoryService {
   }
 }
 
-const SENSITIVE_METADATA_KEY = /(secret|token|password|api[-_]?key|authorization)/iu;
+const SENSITIVE_METADATA_KEY =
+  /(secret|token|password|api[-_]?key|authorization)/iu;
 
 const sanitizePendingWrite = (
   write: PendingGrayMatterWrite,
@@ -229,16 +281,8 @@ const sanitizeMetadata = (
   return sanitized;
 };
 
-const isRetryableKind = (kind?: GrayMatterErrorKind) =>
+const isRetryableKind = (kind?: GrayMatterMemoryWriteErrorKind) =>
   kind === "unavailable" || kind === "quota" || kind === "unauthenticated";
 
 const createIdempotencyKey = (input: GrayMatterMemoryInput, at: string) =>
   `${input.type}:${at}:${input.content.slice(0, 48)}`;
-
-const getMemoryId = (response: unknown): string | undefined => {
-  if (!response || typeof response !== "object") {
-    return undefined;
-  }
-  const candidate = (response as { id?: unknown }).id;
-  return typeof candidate === "string" ? candidate : undefined;
-};

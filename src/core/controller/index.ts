@@ -83,6 +83,7 @@ import {
 } from "@shared/mcp";
 import type { McpToolCallResponse } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { openWorkflowStudioTarget } from "@integrations/workflows/workflowStudioNavigation";
 import {
   validateAdvancedSettings,
   DEFAULT_ADVANCED_SETTINGS,
@@ -2525,6 +2526,18 @@ export class Controller {
           await openUrlWithSimpleBrowser(message.url);
         }
         break;
+      case "openWorkflowStudio": {
+        try {
+          await openWorkflowStudioTarget(message.workflowStudioTarget);
+        } catch (error) {
+          void vscode.window.showErrorMessage(
+            error instanceof Error
+              ? error.message
+              : "Workflow Studio could not be opened.",
+          );
+        }
+        break;
+      }
       case "openOpenAPIEditor":
         OpenAPIEditorPanel.open(this.context, {
           applicationId: message.applicationId,

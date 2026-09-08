@@ -20,6 +20,7 @@ import {
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import { ApiHandler } from "@api/index";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
+import type { ValkyrProcedureClient } from "@services/workflow/ValkyrProcedureClient";
 
 export type ToolResponse =
   | string
@@ -37,6 +38,15 @@ export interface ToolContext {
   workspaceTracker: WorkspaceTracker;
   checkpointTracker?: CheckpointTracker;
   api: ApiHandler;
+  getProcedureClient?: () => Promise<
+    Pick<
+      ValkyrProcedureClient,
+      "baseUrl" | "search" | "inspect" | "execute" | "status" | "control"
+    >
+  >;
+  recordAutoApprovedRequest?: () => void;
+  getChatMode?: () => "plan" | "act";
+  isTaskActive?: () => boolean;
 
   // State
   taskId: string;
@@ -80,7 +90,18 @@ export interface ToolContext {
   didAlreadyUseTool: boolean;
 }
 
+/** An observed tool outcome; failure does not prove that no side effect occurred. */
+export type ToolExecutionOutcome =
+  | "succeeded"
+  | "failed"
+  | "rejected"
+  | "blocked"
+  | "pending"
+  | "partial"
+  | "unknown";
+
 export interface ToolExecutionResult {
+  outcome?: ToolExecutionOutcome;
   shouldContinue: boolean;
   toolResponse?: ToolResponse;
   userRejected?: boolean;

@@ -34,17 +34,13 @@ describe("RemoteCodingSessionRegistry", () => {
 
   it("supports safe cancel and timeout controls", () => {
     const registry = new RemoteCodingSessionRegistry();
-    registry.start({ id: "cancel-me", task: "Refactor", createdAt: 0, timeoutMs: 1000 });
-
-    registry.start({ id: "timeout-me", task: "Docs", createdAt: 0, timeoutMs: 1000 });
-    
     registry.start({
       id: "cancel-me",
       task: "Refactor",
       createdAt: 0,
       timeoutMs: 1000,
     });
-    
+
     registry.start({
       id: "timeout-me",
       task: "Docs",
@@ -57,7 +53,17 @@ describe("RemoteCodingSessionRegistry", () => {
 
     expect(cancelled.status).toBe("cancelled");
     expect(cancelled.cancelReason).toBe("user_requested");
-    expect(timedOut.map(s => s.id)).toEqual(["timeout-me"]);
+    expect(timedOut.map((s) => s.id)).toEqual(["timeout-me"]);
     expect(registry.get("timeout-me")?.status).toBe("timed_out");
+  });
+
+  it("rejects duplicate active sessions without replacing the original", () => {
+    const registry = new RemoteCodingSessionRegistry();
+    registry.start({ id: "s1", task: "Original", createdAt: 1000 });
+    expect(() => registry.start({ id: "s1", task: "Replacement" })).toThrow(
+      "Remote coding session already active",
+    );
+    expect(registry.get("s1")?.task).toBe("Original");
+    expect(registry.list()).toHaveLength(1);
   });
 });

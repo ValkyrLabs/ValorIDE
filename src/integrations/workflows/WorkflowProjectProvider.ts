@@ -4,15 +4,20 @@ import { getValkyrLabsRtkApiClient } from "../../services/valkyrai/ValkyrLabsRtk
 import { getValkyraiBasePath } from "../../utils/serverValkyraiHost";
 import { collectWorkflowPages } from "./workflowCollection";
 import { workflowStudioWebviewHtml } from "./workflowStudioWebview";
+import {
+  assertWorkflowStudioBackend,
+  isWorkflowStudioId,
+} from "../../shared/WorkflowStudioTarget";
 
 type WorkflowListItem = {
   id: string;
   name?: string;
   description?: string;
   status?: string;
+  backend?: string;
 };
 
-class WorkflowEngineeringClient {
+export class WorkflowEngineeringClient {
   constructor(private readonly context: vscode.ExtensionContext) {}
 
   private async get<T>(path: string): Promise<T> {
@@ -47,14 +52,23 @@ class WorkflowEngineeringClient {
       }));
   }
 
-  async createStudioHandoff(workflowId: string): Promise<string> {
+  async createStudioHandoff(
+    workflowId: string,
+    expectedBackend = getValkyraiBasePath(),
+  ): Promise<string> {
+    if (!isWorkflowStudioId(workflowId))
+      throw new Error("The workflow reference is invalid.");
+    const base = assertWorkflowStudioBackend(
+      expectedBackend,
+      getValkyraiBasePath(),
+    );
     const token = await TokenStorageService.getInstance(
       this.context,
     ).getJwtToken();
     if (!token) {
       throw new Error("Sign in to ValorIDE before opening Workflow Studio.");
     }
-    const base = getValkyraiBasePath().replace(/\/+$/, "");
+    assertWorkflowStudioBackend(base, getValkyraiBasePath());
     const response = await getValkyrLabsRtkApiClient().request<{
       ticket?: string;
     }>({
@@ -66,7 +80,20 @@ class WorkflowEngineeringClient {
         jwtSession: token,
       },
     });
-    if (!response.data?.ticket) {
+    if (
+      token !==
+      (await TokenStorageService.getInstance(this.context).getJwtToken())
+    ) {
+      throw new Error(
+        "Your ValorIDE session changed. Open the workflow again with your current account.",
+      );
+    }
+    assertWorkflowStudioBackend(base, getValkyraiBasePath());
+    if (
+      typeof response.data?.ticket !== "string" ||
+      !response.data.ticket ||
+      response.data.ticket.length > 4096
+    ) {
       throw new Error("ValkyrAI did not return a Workflow Studio handoff.");
     }
     const launchUrl = new URL(`${base}/auth/valoride/webview-session`);
@@ -196,6 +223,8 @@ export function registerWorkflowProjects(
       workflow = selected?.workflow;
     }
     if (!workflow?.id) return;
+    // Keep refreshes bound to the backend that supplied this workflow reference.
+    const expectedBackend = workflow.backend ?? getValkyraiBasePath();
 
     await vscode.window.withProgress(
       {
@@ -204,11 +233,14 @@ export function registerWorkflowProjects(
       },
       async () => {
         try {
-          const launchUrl = await client.createStudioHandoff(workflow!.id);
+          const launchUrl = await client.createStudioHandoff(
+            workflow!.id,
+            expectedBackend,
+          );
           openWorkflowStudioPanel(
             launchUrl,
             workflow!,
-            () => client.createStudioHandoff(workflow!.id),
+            () => client.createStudioHandoff(workflow!.id, expectedBackend),
             output,
           );
         } catch (error) {

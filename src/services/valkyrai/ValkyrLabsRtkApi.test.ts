@@ -127,3 +127,54 @@ describe("Valkyr Labs transport invariant", () => {
     expect(source).not.toContain("VALKYR_LABS_API_TIMEOUT_MS");
   });
 });
+
+describe("bounded shared response reads", () => {
+  it("parses a multibyte JSON response at the exact byte limit", async () => {
+    const body = JSON.stringify({ text: "é" });
+    const client = getValkyrLabsRtkApiClient(
+      async () =>
+        new Response(body, { headers: { "content-type": "application/json" } }),
+    );
+    expect(
+      (
+        await client.request({
+          url: "https://example.test",
+          maxResponseBytes: Buffer.byteLength(body),
+        })
+      ).data,
+    ).toEqual({ text: "é" });
+  });
+  for (const declared of [false, true]) {
+    it(`cancels an oversized ${declared ? "declared" : "chunked"} response`, async () => {
+      const cancel = jest.fn();
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(new Uint8Array(11));
+        },
+        cancel,
+      });
+      const client = getValkyrLabsRtkApiClient(
+        async () =>
+          new Response(stream, {
+            headers: declared ? { "content-length": "11" } : {},
+          }),
+      );
+      await expect(
+        client.request({ url: "https://example.test", maxResponseBytes: 10 }),
+      ).rejects.toMatchObject({ status: "FETCH_ERROR" });
+      expect(cancel).toHaveBeenCalledTimes(1);
+    });
+  }
+  it("does not allow raw response mode to evade a requested bound", async () => {
+    const client = getValkyrLabsRtkApiClient(
+      async () => new Response("secret"),
+    );
+    await expect(
+      client.request({
+        url: "https://example.test",
+        maxResponseBytes: 1,
+        responseType: "raw",
+      }),
+    ).rejects.toMatchObject({ status: "FETCH_ERROR" });
+  });
+});

@@ -10,6 +10,7 @@ import { LlmDetailsSummary } from "./llm";
 import { McpMarketplaceItem, McpViewTab } from "./mcp";
 import type { RemoteCodingCommand } from "../services/communication/RemoteCodingSessionOrchestrator";
 import type { ValorTaskBridgePayload } from "./BuildMode";
+import type { WorkflowStudioTarget } from "./WorkflowStudioTarget";
 
 export interface WebviewMessage {
   type:
@@ -33,6 +34,7 @@ export interface WebviewMessage {
     | "requestLmStudioModels"
     | "openImage"
     | "openInBrowser"
+    | "openWorkflowStudio"
     | "createRuleFile"
     | "openMention"
     | "fixLayout"
@@ -171,6 +173,7 @@ export interface WebviewMessage {
   password?: string;
   // For openInBrowser
   url?: string;
+  workflowStudioTarget?: WorkflowStudioTarget;
   planActSeparateModelsSetting?: boolean;
   telemetrySetting?: TelemetrySetting;
   customInstructionsSetting?: string;

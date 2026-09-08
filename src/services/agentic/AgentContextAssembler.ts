@@ -266,6 +266,18 @@ export class AgentContextAssembler {
       });
       const compiledRecord = isRecord(compiled) ? compiled : {};
       const page = getRecordField(compiledRecord, "contextPage");
+      const pageStatus = getStringField(page ?? {}, "status")?.toLowerCase();
+      if (
+        pageStatus &&
+        ["blocked", "error", "expired", "failed", "rejected"].includes(
+          pageStatus,
+        )
+      ) {
+        // ContextPage reports policy/retrieval failures in a successful HTTP
+        // response. Do not project its framing-only prompt as ready memory;
+        // continue through the compatible scoped-memory/receipt fallback.
+        return undefined;
+      }
       const contextPageRef =
         getStringField(page ?? {}, "pageRef") ??
         getStringField(page ?? {}, "traceId") ??
@@ -286,6 +298,7 @@ export class AgentContextAssembler {
         maxEntries: input.maxEntries ?? DEFAULT_MAX_ENTRIES,
         maxEntryChars: input.maxEntryChars ?? DEFAULT_MAX_ENTRY_CHARS,
       });
+      const status: GrayMatterReadStatus = citations.length ? "ready" : "empty";
       const receipt = getRecordField(page ?? {}, "retrievalReceipt");
       const receiptId =
         getStringField(receipt ?? {}, "receiptId") ??
@@ -298,7 +311,7 @@ export class AgentContextAssembler {
         citations: citations.map((citation) => `gm:${citation.id}`),
         query,
         receiptIds: receiptId ? [receiptId] : undefined,
-        status: "ready",
+        status,
         traceIds: traceId ? [traceId] : undefined,
       };
 
@@ -327,7 +340,7 @@ export class AgentContextAssembler {
           citations,
           query,
           reads: [read],
-          status: "ready",
+          status,
         },
         promptSection: prompt,
       };
@@ -511,8 +524,17 @@ const extractContextPageCitations = (
   for (const rawItem of page.items) {
     if (!isRecord(rawItem)) continue;
     const id =
-      getStringField(rawItem, "itemRef") ?? getStringField(rawItem, "sourceId");
-    const excerpt = getStringField(rawItem, "summary");
+      getStringField(rawItem, "itemRef") ??
+      getStringField(rawItem, "sourceId") ??
+      getStringField(rawItem, "memoryId") ??
+      getStringField(rawItem, "entityId") ??
+      getStringField(rawItem, "id");
+    const excerpt =
+      getStringField(rawItem, "summary") ??
+      getStringField(rawItem, "textPreview") ??
+      getStringField(rawItem, "text") ??
+      getStringField(rawItem, "content") ??
+      getStringField(rawItem, "body");
     if (!id || !excerpt) continue;
     citations.push({
       excerpt: truncate(redactSensitive(excerpt), options.maxEntryChars),

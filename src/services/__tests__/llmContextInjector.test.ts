@@ -148,6 +148,11 @@ describe("LLMContextInjector", () => {
   it("does not replace the built-in prompt when a SYSTEM LLMDetails prompt is active", () => {
     injector = new LLMContextInjector(mockLogger);
     (injector as any).promptService = {
+      getAllConfigs: () => ({
+        systemPrompt: { sections: [] },
+        thorapiCatalog: null,
+        swarmRules: null,
+      }),
       getSystemPrompt: () =>
         "BUILT-IN VALORIDE PROMPT: use tools and completion reports.",
     };

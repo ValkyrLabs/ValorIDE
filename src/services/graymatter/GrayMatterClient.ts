@@ -1,4 +1,5 @@
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import { createHash } from "node:crypto";
 import type {
   GrayMatterCapabilities,
   GrayMatterControlSurface,
@@ -27,6 +28,8 @@ export type GrayMatterErrorKind =
   | "quota"
   | "unauthenticated"
   | "unavailable";
+
+export type GrayMatterMemoryWriteErrorKind = GrayMatterErrorKind | "unverified";
 
 export interface GrayMatterClientOptions {
   baseUrl: string;
@@ -196,6 +199,77 @@ export class GrayMatterClientError extends Error {
     super(message);
     this.name = "GrayMatterClientError";
   }
+}
+
+export class GrayMatterMemoryWriteUnverifiedError extends Error {
+  readonly kind = "unverified" as const;
+
+  constructor(readonly memoryId?: string) {
+    super(
+      "Memory persistence could not be verified. Inspect the exact memory when its reference is available before another write. This attempt must not be replayed automatically.",
+    );
+    this.name = "GrayMatterMemoryWriteUnverifiedError";
+  }
+}
+
+export interface GrayMatterMemoryWriteReceipt {
+  id: string;
+  type: GrayMatterMemoryType;
+  verification: {
+    status: "verified";
+    purpose: "write_verification";
+    contentHash: string;
+    inputContentHash: string;
+  };
+}
+
+const memoryRecord = (value: unknown): value is Record<string, any> =>
+  value !== null &&
+  typeof value === "object" &&
+  !Array.isArray(value) &&
+  [Object.prototype, null].includes(Object.getPrototypeOf(value));
+const memoryId = (value: unknown): value is string =>
+  typeof value === "string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+const memoryHash = (text: string): string =>
+  createHash("sha256").update(text).digest("hex");
+
+/** A raw HTTP acknowledgement is not a verified durable memory receipt. */
+export function requireVerifiedMemoryWrite(
+  value: unknown,
+  input: GrayMatterMemoryInput,
+): GrayMatterMemoryWriteReceipt {
+  const id = memoryRecord(value) && memoryId(value.id) ? value.id : undefined;
+  const proof =
+    memoryRecord(value) && memoryRecord(value.verification)
+      ? value.verification
+      : undefined;
+  if (
+    !id ||
+    !memoryRecord(value) ||
+    value.type !== input.type ||
+    proof?.status !== "verified" ||
+    proof?.purpose !== "write_verification" ||
+    typeof proof.contentHash !== "string" ||
+    !/^[0-9a-f]{64}$/.test(proof.contentHash) ||
+    proof.inputContentHash !== memoryHash(input.content)
+  )
+    throw new GrayMatterMemoryWriteUnverifiedError(id);
+  return {
+    id,
+    type: input.type,
+    verification: {
+      status: "verified",
+      purpose: "write_verification",
+      contentHash: proof.contentHash,
+      inputContentHash: proof.inputContentHash,
+    },
+  };
+}
+
+interface MemoryWriteSession {
+  token: string;
+  tenantHeaders: string;
 }
 
 export class GrayMatterClient {
@@ -595,22 +669,103 @@ export class GrayMatterClient {
     });
   }
 
-  async writeMemory(input: GrayMatterMemoryInput): Promise<unknown> {
+  async writeMemory(
+    input: GrayMatterMemoryInput,
+  ): Promise<GrayMatterMemoryWriteReceipt> {
     const metadata =
       input.metadata && Object.keys(input.metadata).length > 0
         ? JSON.stringify(input.metadata)
         : undefined;
 
-    return this.request("/MemoryEntry/write", {
-      body: JSON.stringify({
-        content: input.content,
-        text: input.content,
-        ...(metadata ? { metadata } : {}),
-        ...(input.tags ? { tags: input.tags } : {}),
+    const session = await this.memoryWriteSession();
+    let id: string | undefined;
+    let acknowledged = false;
+    try {
+      const response = await this.request(
+        "/MemoryEntry/write",
+        {
+          body: JSON.stringify({
+            content: input.content,
+            text: input.content,
+            ...(metadata ? { metadata } : {}),
+            ...(input.tags ? { tags: input.tags } : {}),
+            type: input.type,
+          }),
+          method: "POST",
+        },
+        { session, statuses: [200, 201] },
+      );
+      acknowledged = true;
+      if (memoryRecord(response) && memoryId(response.id)) id = response.id;
+      if (
+        !id ||
+        !memoryRecord(response) ||
+        response.type !== input.type ||
+        typeof response.text !== "string" ||
+        !response.text.trim()
+      )
+        throw new GrayMatterMemoryWriteUnverifiedError(id);
+      const readback = await this.request(
+        `/MemoryEntry/${id}`,
+        {},
+        { session, statuses: [200] },
+      );
+      await this.requireMemoryWriteSession(session);
+      if (
+        !memoryRecord(readback) ||
+        readback.id !== id ||
+        readback.type !== response.type ||
+        readback.text !== response.text
+      )
+        throw new GrayMatterMemoryWriteUnverifiedError(id);
+      return {
+        id,
         type: input.type,
-      }),
-      method: "POST",
-    });
+        verification: {
+          status: "verified",
+          purpose: "write_verification",
+          contentHash: memoryHash(response.text),
+          inputContentHash: memoryHash(input.content),
+        },
+      };
+    } catch (error) {
+      // A rejected POST can retain the existing auth/quota handling. Once a
+      // response was accepted, even a later read denial leaves a possible write.
+      if (
+        !acknowledged &&
+        error instanceof GrayMatterClientError &&
+        ["unauthenticated", "quota", "forbidden"].includes(error.kind)
+      )
+        throw error;
+      throw new GrayMatterMemoryWriteUnverifiedError(id);
+    }
+  }
+
+  private async memoryWriteSession(): Promise<MemoryWriteSession> {
+    const token = await this.options.getAuthToken();
+    const tenantHeaders = JSON.stringify(
+      buildTenantHeaders(await this.options.getTenantContext?.()),
+    );
+    if (!token)
+      throw new GrayMatterClientError(
+        "Sign in before writing GrayMatter memory.",
+        "unauthenticated",
+      );
+    return { token, tenantHeaders };
+  }
+
+  private async requireMemoryWriteSession(
+    expected: MemoryWriteSession,
+  ): Promise<void> {
+    const current = await this.memoryWriteSession();
+    if (
+      current.token !== expected.token ||
+      current.tenantHeaders !== expected.tenantHeaders
+    )
+      throw new GrayMatterClientError(
+        "The selected GrayMatter session changed.",
+        "unauthenticated",
+      );
   }
 
   async listProjects(): Promise<unknown> {
@@ -643,9 +798,20 @@ export class GrayMatterClient {
   private async request<T = unknown>(
     path: string,
     init: RequestInit = {},
+    verification?: { session: MemoryWriteSession; statuses: number[] },
   ): Promise<T> {
     const token = await this.options.getAuthToken();
     const tenantContext = await this.options.getTenantContext?.();
+    if (
+      verification &&
+      (token !== verification.session.token ||
+        JSON.stringify(buildTenantHeaders(tenantContext)) !==
+          verification.session.tenantHeaders)
+    )
+      throw new GrayMatterClientError(
+        "The selected GrayMatter session changed.",
+        "unauthenticated",
+      );
     const headers = toHeaderRecord(init.headers);
 
     headers.accept = "application/json";
@@ -664,6 +830,8 @@ export class GrayMatterClient {
         method: init.method,
         url: `${this.baseUrl}${path}`,
       });
+      if (verification && !verification.statuses.includes(response.status))
+        throw new GrayMatterMemoryWriteUnverifiedError();
       return response.data;
     } catch (error) {
       if (error instanceof ValkyrLabsApiError) {

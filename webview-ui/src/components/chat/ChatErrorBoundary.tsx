@@ -1,4 +1,5 @@
 import React from "react";
+import { TaskServiceClient } from "../../services/grpc-client";
 
 interface ChatErrorBoundaryProps {
   children: React.ReactNode;
@@ -12,6 +13,8 @@ interface ChatErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo?: React.ErrorInfo | null;
+  recovering?: boolean;
+  recoveryError?: string;
 }
 
 const stringifyContext = (
@@ -42,6 +45,26 @@ export class ChatErrorBoundary extends React.Component<
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
+
+  private recoverTask = async () => {
+    if (this.state.recovering) return;
+    this.setState({ recovering: true, recoveryError: undefined });
+    try {
+      await TaskServiceClient.clearTask({});
+      this.setState({
+        hasError: false,
+        error: null,
+        errorInfo: null,
+        recovering: false,
+      });
+    } catch {
+      this.setState({
+        recovering: false,
+        recoveryError:
+          "Could not close this chat. Try again or reload the view.",
+      });
+    }
+  };
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error in ChatErrorBoundary:", error.message);
@@ -113,8 +136,14 @@ export class ChatErrorBoundary extends React.Component<
             </details>
           )}
           <div style={{ marginTop: 10 }}>
+            <button onClick={this.recoverTask} disabled={this.state.recovering}>
+              {this.state.recovering ? "Closing chat…" : "Get started"}
+            </button>{" "}
             <button onClick={() => location.reload()}>Reload view</button>
           </div>
+          {this.state.recoveryError && (
+            <p role="alert">{this.state.recoveryError}</p>
+          )}
         </div>
       );
     }

@@ -140,6 +140,7 @@ export class OutputFilterService {
     // Remove audit details unless there are vulnerabilities
     if (!filtered.includes("found") || filtered.includes("found 0")) {
       filtered = filtered.replace(/^npm audit.*$/gm, "");
+      filtered = filtered.replace(/^found 0 vulnerabilities\s*$/gm, "");
     }
 
     // Remove empty lines
@@ -162,10 +163,10 @@ export class OutputFilterService {
     // Remove pip download progress
     filtered = filtered.replace(/^\s*\|[█▌▏\s]+\|.*$/gm, "");
 
-    // Remove "Collecting" lines unless they fail
+    // Keep package identities; suppress successful download chatter.
     const lines = filtered.split("\n");
     const filteredLines = lines.filter((line, index) => {
-      if (line.startsWith("Collecting") || line.startsWith("Downloading")) {
+      if (line.startsWith("Downloading")) {
         // Check if next few lines contain an error
         const nextFewLines = lines.slice(index + 1, index + 5).join(" ");
         return (
@@ -233,45 +234,16 @@ export class OutputFilterService {
    * Extracts only "Caused by" exceptions from Java stack traces
    */
   private static extractCausedByExceptions(output: string): string {
-    const lines = output.split("\n");
-    const relevantLines: string[] = [];
-    let inStackTrace = false;
-    let captureNext = 0;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      // Detect start of exception
-      if (line.includes("Exception") || line.includes("Error")) {
-        inStackTrace = true;
-        relevantLines.push(line);
-        captureNext = 2; // Capture next 2 lines for context
-      }
-      // Capture "Caused by" lines
-      else if (line.trim().startsWith("Caused by:")) {
-        relevantLines.push(line);
-        captureNext = 3; // Capture more context for root cause
-      }
-      // Capture context lines
-      else if (captureNext > 0) {
-        relevantLines.push(line);
-        captureNext--;
-      }
-      // Skip stack trace details
-      else if (inStackTrace && line.trim().startsWith("at ")) {
-        continue;
-      }
-      // End of stack trace
-      else if (inStackTrace && line.trim() === "") {
-        inStackTrace = false;
-      }
-      // Normal output
-      else if (!inStackTrace) {
-        relevantLines.push(line);
-      }
-    }
-
-    return relevantLines.join("\n");
+    // Keep every exception/cause and surrounding build output. Remove only
+    // recognizable Java frames, so filtering cannot swallow the final result.
+    return output
+      .split("\n")
+      .filter(
+        (line) =>
+          !/^\s*(?:\[ERROR\]\s*)?at\s+[\w.$<>/]+\([^)]*\)\s*$/.test(line) &&
+          !/^\s*\.\.\. \d+ more\s*$/.test(line),
+      )
+      .join("\n");
   }
 
   /**
@@ -279,7 +251,6 @@ export class OutputFilterService {
    */
   private static summarizeRepetitiveOutput(output: string): string {
     const lines = output.split("\n");
-    const lineCount = new Map<string, number>();
     const result: string[] = [];
     let lastLine = "";
     let repeatCount = 0;
@@ -289,7 +260,7 @@ export class OutputFilterService {
 
       // Skip empty lines in counting
       if (!trimmedLine) {
-        if (repeatCount > 1) {
+        if (repeatCount > 0) {
           result.push(`[Previous line repeated ${repeatCount} times]`);
           repeatCount = 0;
         }
@@ -301,7 +272,7 @@ export class OutputFilterService {
       if (trimmedLine === lastLine) {
         repeatCount++;
       } else {
-        if (repeatCount > 1) {
+        if (repeatCount > 0) {
           result.push(`[Previous line repeated ${repeatCount} times]`);
         }
         result.push(line);
@@ -310,7 +281,7 @@ export class OutputFilterService {
       }
     }
 
-    if (repeatCount > 1) {
+    if (repeatCount > 0) {
       result.push(`[Previous line repeated ${repeatCount} times]`);
     }
 
@@ -321,18 +292,25 @@ export class OutputFilterService {
    * Truncates output if it exceeds the maximum length
    */
   private static truncateOutput(output: string, maxLength?: number): string {
-    const limit = maxLength || this.DEFAULT_MAX_OUTPUT_LENGTH;
+    const limit =
+      Number.isFinite(maxLength) && maxLength! > 0
+        ? Math.floor(maxLength!)
+        : this.DEFAULT_MAX_OUTPUT_LENGTH;
 
     if (output.length <= limit) {
       return output;
     }
 
-    // Try to truncate at a sensible point (end of line)
-    const truncatePoint = output.lastIndexOf("\n", limit);
-    const actualTruncatePoint =
-      truncatePoint > limit * 0.8 ? truncatePoint : limit;
-
-    return output.substring(actualTruncatePoint) + this.TRUNCATION_MESSAGE;
+    const marker = this.TRUNCATION_MESSAGE + "\n";
+    if (limit <= marker.length) return marker.slice(0, limit);
+    const contentBudget = limit - marker.length;
+    const headLength = Math.ceil(contentBudget / 2);
+    const tailLength = contentBudget - headLength;
+    return (
+      output.slice(0, headLength) +
+      marker +
+      (tailLength ? output.slice(-tailLength) : "")
+    );
   }
 
   /**

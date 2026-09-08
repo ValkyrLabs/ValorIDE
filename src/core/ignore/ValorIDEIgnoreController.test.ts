@@ -2,7 +2,7 @@ import { ValorIDEIgnoreController } from "./ValorIDEIgnoreController";
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-import { after, beforeEach, describe, it } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import "should";
 
 describe("ValorIDEIgnoreController", () => {
@@ -36,7 +36,8 @@ describe("ValorIDEIgnoreController", () => {
     await controller.initialize();
   });
 
-  after(async () => {
+  afterEach(async () => {
+    controller?.dispose();
     // Clean up temp directory
     await fs.rm(tempDir, { recursive: true, force: true });
   });

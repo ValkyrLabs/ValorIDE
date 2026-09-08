@@ -1269,6 +1269,50 @@ describe("BuildModeCommandAdapter", () => {
     );
   });
 
+  it("keeps an unverified memory artifact for inspection without publishing the final report", async () => {
+    const executed = await queueBuildModeCommand(
+      {
+        command: {
+          ...baseCommand,
+          id: "cmd-final-report-unverified",
+          kind: "report",
+          label: "Publish final report",
+          command: "report:publish build-mode-final-report",
+          capabilityId: "graymatter.memory",
+          requiresApproval: false,
+        },
+        executionHooks: {
+          publishFinalReport: jest.fn(async () => ({
+            artifactUri: "valoride://build-mode/artifacts/task-1/final.md",
+            byteSize: 1234,
+            memoryId: "883e5d08-fde8-4c68-8b34-c9238a116863",
+            memoryStatus: "unverified" as const,
+            memoryError:
+              "Memory persistence could not be verified. Inspect the exact memory before another write.",
+          })),
+        },
+        finalReportMarkdown: completeFinalReportMarkdown,
+        taskId: "task-1",
+      },
+      fixedNow,
+    );
+    expect(executed.receipt).toMatchObject({
+      status: "failed",
+      nextOperatorAction: "inspect",
+    });
+    expect(executed.receipt.summary).not.toContain("published");
+    expect(executed.receipt.artifacts).toContainEqual(
+      expect.objectContaining({
+        kind: "final_report",
+        uri: "valoride://build-mode/artifacts/task-1/final.md",
+        metadata: expect.objectContaining({
+          memoryStatus: "unverified",
+          memoryId: "883e5d08-fde8-4c68-8b34-c9238a116863",
+        }),
+      }),
+    );
+  });
+
   it("redacts final report hook metadata before writing receipts", async () => {
     const publishFinalReport = jest.fn(async () => ({
       artifactUri:

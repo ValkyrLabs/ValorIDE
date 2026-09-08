@@ -441,7 +441,9 @@ export interface ValorIDESayTool {
     | "listFilesRecursive"
     | "listCodeDefinitionNames"
     | "searchFiles"
-    | "precisionSearchAndReplace";
+    | "precisionSearchAndReplace"
+    | "useProcedure";
+  procedureAction?: string;
   path?: string;
   diff?: string;
   content?: string;

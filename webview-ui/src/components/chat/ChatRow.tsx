@@ -50,6 +50,7 @@ import {
   FaBolt,
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
+import ProcedureToolCard from "./ProcedureToolCard";
 import type {
   ValorIDEApiReqInfo,
   ValorIDEAskUseMcpServer,
@@ -1726,6 +1727,13 @@ export const ChatRowContent = ({
     );
 
     switch (tool.tool) {
+      case "useProcedure":
+        return (
+          <ProcedureToolCard
+            content={tool.content}
+            awaitingApproval={message.type === "ask"}
+          />
+        );
       case "editedExistingFile":
         return (
           <>

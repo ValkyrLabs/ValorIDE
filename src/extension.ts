@@ -81,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize PromptService (load system.json, thorapi-catalog.json, swarm-rules.json)
   const workspaceRoot =
     vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || process.cwd();
-  void initializePromptService(workspaceRoot, outputChannel)
+  const promptReady = initializePromptService(workspaceRoot, outputChannel)
     .then(() => {
       Logger.log("PromptService initialized successfully");
     })
@@ -90,7 +90,10 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
   // Initialize MemoryBankLoader (load .valoride/memorybank/)
-  void initializeMemoryBankLoader(workspaceRoot, outputChannel)
+  const memoryBankReady = initializeMemoryBankLoader(
+    workspaceRoot,
+    outputChannel,
+  )
     .then(() => {
       Logger.log("MemoryBankLoader initialized successfully");
     })
@@ -99,7 +102,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
   // Initialize LLMPromptService (load base prompt + manual overrides)
-  void (async () => {
+  const llmPromptReady = (async () => {
     try {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
@@ -128,16 +131,24 @@ export function activate(context: vscode.ExtensionContext) {
   })();
 
   // Initialize LLMContextInjector (synthesize all prompt layers)
-  void initializeLLMContextInjector(
-    outputChannel,
-    new GrayMatterContextProvider(outputChannel),
-  )
+  void Promise.all([promptReady, memoryBankReady, llmPromptReady])
+    .then(() =>
+      initializeLLMContextInjector(
+        outputChannel,
+        new GrayMatterContextProvider(outputChannel),
+        context,
+      ),
+    )
     .then(() => {
       Logger.log("LLMContextInjector initialized successfully");
     })
     .catch((error) => {
       Logger.log(`LLMContextInjector initialization failed: ${error}`);
     });
+
+  // The broadcaster must exist before the orchestrator registers its workers.
+  initializeSwarmPromptBroadcaster(outputChannel);
+  Logger.log("SwarmPromptBroadcaster initialized successfully");
 
   // Initialize SwarmOrchestrator (Supervisor agent for task routing)
   initializeSwarmOrchestrator(outputChannel);
@@ -154,10 +165,6 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize BrowserErrorCapture (Console error + auto-fix)
   initializeBrowserErrorCapture(workspaceRoot, outputChannel);
   Logger.log("BrowserErrorCapture initialized successfully");
-
-  // Initialize SwarmPromptBroadcaster (Real-time prompt broadcast)
-  initializeSwarmPromptBroadcaster(outputChannel);
-  Logger.log("SwarmPromptBroadcaster initialized successfully");
 
   // Initialize ThorAPIModelRegistry (Auto-discover models/services)
   initializeThorAPIModelRegistry(workspaceRoot, outputChannel);

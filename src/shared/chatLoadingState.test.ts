@@ -157,3 +157,33 @@ describe("computeIsChatLoadingState", () => {
     expect(derived.inlineSources).toContain("api");
   });
 });
+
+describe("MCP terminal progress", () => {
+  for (const report of [
+    "Not sent: checkpoint unavailable",
+    "Outcome unknown: inspect before retrying",
+  ]) {
+    it(`ends stale API loading when MCP reports ${report}`, () => {
+      const api: ValorIDEMessage = {
+        ts: 1,
+        type: "say",
+        say: "api_req_started",
+        text: "{}",
+      };
+      const response: ValorIDEMessage = {
+        ts: 2,
+        type: "say",
+        say: "mcp_server_response",
+        text: report,
+      };
+      expect(
+        deriveChatLoadingState({
+          messages: [api, response],
+          lastMessage: response,
+          textAreaDisabled: true,
+          enableButtons: false,
+        }),
+      ).toMatchObject({ isChatLoading: false, inlineSpinnerCount: 0 });
+    });
+  }
+});

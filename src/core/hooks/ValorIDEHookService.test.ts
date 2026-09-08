@@ -84,3 +84,38 @@ describe("ValorIDEHookService", () => {
     expect(result?.context).toContain("policy failed");
   });
 });
+
+describe("PostToolUse outcome contract", () => {
+  for (const [outcome, claimedSuccess, expectedOutcome, success] of [
+    [undefined, true, "unknown", false],
+    ["pending", true, "pending", false],
+    ["partial", true, "partial", false],
+    ["succeeded", false, "succeeded", true],
+  ] as const) {
+    it(`requires explicit outcome ${outcome} rather than trusting a legacy success flag`, async () => {
+      const service = new ValorIDEHookService({
+        cwd: "/tmp",
+        taskId: "task-1",
+        enabled: false,
+      });
+      const hook = jest.spyOn(service, "runHook").mockResolvedValue(undefined);
+      await service.runPostToolUse({
+        toolName: "read_file",
+        parameters: { path: "example" },
+        result: "fixture output",
+        outcome,
+        success: claimedSuccess,
+        executionTimeMs: 5,
+      });
+      expect(hook).toHaveBeenCalledWith(
+        "PostToolUse",
+        expect.objectContaining({
+          postToolUse: expect.objectContaining({
+            outcome: expectedOutcome,
+            success,
+          }),
+        }),
+      );
+    });
+  }
+});

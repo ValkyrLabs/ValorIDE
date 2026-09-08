@@ -369,6 +369,8 @@ describe("ApplicationsList", () => {
       }),
     ).toHaveTextContent("Failed to extract archive: invalid central directory");
     expect(screen.getByText("Extracting Files")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled(),
+    );
   });
 });

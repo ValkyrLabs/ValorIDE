@@ -1,6 +1,7 @@
 import {
   BaseToolHandler,
   ToolExecutionResult,
+  ToolExecutionOutcome,
   ToolResponse,
 } from "./BaseToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
@@ -41,8 +42,10 @@ export class CommandToolHandler extends BaseToolHandler {
     let command: string | undefined = block.params.command;
     const requiresApprovalRaw: string | undefined =
       block.params.requires_approval;
-    const requiresApprovalPerLLM =
-      resolveCommandRequiresApproval(requiresApprovalRaw, command);
+    const requiresApprovalPerLLM = resolveCommandRequiresApproval(
+      requiresApprovalRaw,
+      command,
+    );
 
     try {
       if (partial) {
@@ -63,6 +66,7 @@ export class CommandToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
+            outcome: "blocked",
             toolResponse: await this.context.sayAndCreateMissingParamError(
               "execute_command",
               "command",
@@ -85,6 +89,7 @@ export class CommandToolHandler extends BaseToolHandler {
           );
           return {
             shouldContinue: true,
+            outcome: "blocked",
             toolResponse: formatResponse.toolError(
               formatResponse.valorideIgnoreError(ignoredFileAttemptedToAccess),
             ),
@@ -147,6 +152,7 @@ export class CommandToolHandler extends BaseToolHandler {
           if (!approved) {
             return {
               shouldContinue: true,
+              outcome: "rejected",
               userRejected: true,
               toolResponse: formatResponse.toolDenied(),
               feedback: approvalFeedback,
@@ -169,7 +175,8 @@ export class CommandToolHandler extends BaseToolHandler {
           }, 30_000);
         }
 
-        const [userRejected, result] = await this.executeCommand(command);
+        const [userRejected, result, outcome] =
+          await this.executeCommand(command);
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
@@ -184,6 +191,7 @@ export class CommandToolHandler extends BaseToolHandler {
         );
 
         return {
+          outcome,
           shouldContinue: true,
           toolResponse: result,
           userRejected,
@@ -197,6 +205,7 @@ export class CommandToolHandler extends BaseToolHandler {
         error as Error,
       );
       return {
+        outcome: "failed",
         shouldContinue: true,
         toolResponse: await this.handleError(
           "executing command",
@@ -212,7 +221,7 @@ export class CommandToolHandler extends BaseToolHandler {
    */
   private async executeCommandInNode(
     command: string,
-  ): Promise<[boolean, ToolResponse]> {
+  ): Promise<[boolean, ToolResponse, ToolExecutionOutcome]> {
     try {
       // Create a child process
       const childProcess = execa(command, {
@@ -233,8 +242,9 @@ export class CommandToolHandler extends BaseToolHandler {
       }
 
       // Create a timeout promise that rejects after 30 seconds
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           if (childProcess.pid) {
             childProcess.kill("SIGKILL"); // Use SIGKILL for more forceful termination
           }
@@ -243,8 +253,9 @@ export class CommandToolHandler extends BaseToolHandler {
       });
 
       // Race between command completion and timeout
-      const result = await Promise.race([childProcess, timeoutPromise]).catch(
-        (error) => {
+      const result = await Promise.race([childProcess, timeoutPromise])
+        .finally(() => clearTimeout(timeoutId))
+        .catch((error) => {
           // If we get here due to timeout, return a partial result with timeout flag
           Logger.info(`Command timed out after 30s: ${command}`);
           return {
@@ -253,8 +264,7 @@ export class CommandToolHandler extends BaseToolHandler {
             exitCode: 124, // Standard timeout exit code
             timedOut: true,
           };
-        },
-      );
+        });
 
       // Check if timeout occurred
       const wasTerminated = result.timedOut === true;
@@ -286,18 +296,19 @@ export class CommandToolHandler extends BaseToolHandler {
         `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${
           result.exitCode
         }.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
+        wasTerminated ? "failed" : commandExitOutcome(result.exitCode),
       ];
     } catch (error) {
       // Handle any errors that might occur
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      return [false, `Error executing command: ${errorMessage}`];
+      return [false, `Error executing command: ${errorMessage}`, "failed"];
     }
   }
 
   private async executeCommand(
     command: string,
-  ): Promise<[boolean, ToolResponse]> {
+  ): Promise<[boolean, ToolResponse, ToolExecutionOutcome]> {
     Logger.info("IS_TEST: " + isInTestMode());
 
     // Check if we're in test mode
@@ -429,6 +440,15 @@ export class CommandToolHandler extends BaseToolHandler {
     );
 
     result = result.trim();
+    const exitCode = process.getExitCode();
+    const outcome: ToolExecutionOutcome = completed
+      ? commandExitOutcome(exitCode)
+      : "pending";
+    const completionMessage = completed
+      ? Number.isInteger(exitCode)
+        ? `Command completed with exit code ${exitCode}.`
+        : "Command completed, but its exit status is unavailable."
+      : "Command is still running in the user's terminal.";
 
     if (filteredOutput.length > 0 && !didEmitCommandOutputToChat) {
       await this.context.say("command_output", filteredOutput);
@@ -438,20 +458,22 @@ export class CommandToolHandler extends BaseToolHandler {
       return [
         true,
         formatResponse.toolResult(
-          `Command is still running in the user's terminal.${
+          `${completionMessage}${
             filteredOutput.length > 0
               ? `\nHere's the output so far:\n${filteredOutput}`
               : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
+        outcome,
       ];
     }
 
     if (completed) {
       return [
         false,
-        `Command executed.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
+        `${completionMessage}${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
+        outcome,
       ];
     } else {
       return [
@@ -461,7 +483,17 @@ export class CommandToolHandler extends BaseToolHandler {
             ? `\nHere's the output so far:\n${filteredOutput}`
             : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
+        outcome,
       ];
     }
   }
 }
+
+const commandExitOutcome = (
+  exitCode: number | undefined,
+): ToolExecutionOutcome =>
+  exitCode === 0
+    ? "succeeded"
+    : Number.isInteger(exitCode)
+      ? "failed"
+      : "unknown";

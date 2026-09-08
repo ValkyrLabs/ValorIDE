@@ -1,4 +1,5 @@
 import { ManagedMcpService } from "@thorapi/services/monetization/ServiceMonetizationService";
+import { getCreatorDisplayName } from "./monetizedMarketplaceFunnel";
 
 export type MarketplaceSort = "newest" | "popular" | "price-low";
 export type PurchaseSheetMode = "details" | "subscribe";
@@ -11,8 +12,7 @@ export interface MarketplaceActionState {
 const DEFAULT_MONTHLY_CALL_ESTIMATE = 100;
 
 export function getCreatorLabel(service: ManagedMcpService): string {
-  const creator = service.createdBy?.trim();
-  return creator ? `By: ${creator}` : "By: verified creator";
+  return `By: ${getCreatorDisplayName(service)}`;
 }
 
 export function getServicePriceLabel(service: ManagedMcpService): string {
