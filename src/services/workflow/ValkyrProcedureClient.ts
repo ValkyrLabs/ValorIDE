@@ -300,6 +300,7 @@ export function requireProcedureControlState(
 export interface ProcedureExecutionState {
   id: string;
   workflowId?: string;
+  workflowVersionId?: string;
   state: string;
   terminal: boolean;
   succeeded: boolean;
@@ -323,17 +324,26 @@ export interface ProcedureDispatchResult {
 function executionState(
   value: unknown,
   expected?: string,
+  expectedVersion?: string,
 ): ProcedureExecutionState {
   if (
     !record(value) ||
     !uuid(value.id) ||
     !STATES.has(value.state) ||
+    (value.workflowVersionId != null &&
+      (!uuid(value.workflowVersionId) ||
+        (expectedVersion &&
+          value.workflowVersionId.toLowerCase() !==
+            expectedVersion.toLowerCase()))) ||
     (expected && value.id.toLowerCase() !== expected.toLowerCase())
   )
     fail("STATUS_UNAVAILABLE");
   return {
     id: value.id,
     ...(uuid(value.workflowId) ? { workflowId: value.workflowId } : {}),
+    ...(uuid(value.workflowVersionId)
+      ? { workflowVersionId: value.workflowVersionId }
+      : {}),
     state: value.state,
     terminal: TERMINAL.has(value.state),
     succeeded: value.state === "SUCCESS",
@@ -367,7 +377,11 @@ function dispatchResult(
     )
       fail("DISPATCH_OUTCOME_UNKNOWN");
     try {
-      workflow = executionState(value.workflowExecution);
+      workflow = executionState(
+        value.workflowExecution,
+        undefined,
+        value.workflowVersionId,
+      );
     } catch {
       fail("DISPATCH_OUTCOME_UNKNOWN");
     }

@@ -58,10 +58,10 @@ describe("procedure execution chat card", () => {
         screen.getByText(/ValkyrAI returned this execution state/),
       ).toBeTruthy();
       expect(screen.getByText(id)).toBeTruthy();
-      fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
+      fireEvent.click(screen.getByRole("button", { name: "Review this run" }));
       expect(vscode.postMessage).toHaveBeenLastCalledWith({
         type: "openWorkflowStudio",
-        workflowStudioTarget: { workflowId, backend },
+        workflowStudioTarget: { workflowId, backend, executionId: id },
       });
       cleanup();
     }
@@ -82,7 +82,9 @@ describe("procedure execution chat card", () => {
     expect(screen.getByText("Control unverified")).toBeTruthy();
     expect(screen.getByText(id)).toBeTruthy();
     expect(screen.queryByText("Cancelled")).toBeNull();
-    expect(screen.queryByRole("button", { name: "Open workflow" })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Review this run" }),
+    ).toBeNull();
   });
   it("does not infer a control outcome from mismatched or incomplete history", () => {
     for (const change of [
@@ -104,7 +106,7 @@ describe("procedure execution chat card", () => {
       });
       expect(screen.getByText("Unverified")).toBeTruthy();
       expect(
-        screen.queryByRole("button", { name: "Open workflow" }),
+        screen.queryByRole("button", { name: "Review this run" }),
       ).toBeNull();
       cleanup();
     }
@@ -123,10 +125,10 @@ describe("procedure execution chat card", () => {
       });
       expect(screen.getByText(id)).toBeTruthy();
       expect(screen.getByText(backend)).toBeTruthy();
-      fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
+      fireEvent.click(screen.getByRole("button", { name: "Review this run" }));
       expect(vscode.postMessage).toHaveBeenLastCalledWith({
         type: "openWorkflowStudio",
-        workflowStudioTarget: { workflowId, backend },
+        workflowStudioTarget: { workflowId, backend, executionId: id },
       });
       cleanup();
     }

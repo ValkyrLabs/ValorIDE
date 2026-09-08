@@ -102,7 +102,7 @@ export interface WebviewMessage {
     | "displayVSCodeError"
     | "accountLoginSuccess"
     | "accountLoginRequest"
-    | "streamToThorapi"
+    | "generateApplicationArtifact"
     | "thorapiRequest"
     | "openFileExplorerTab"
     | "getThorapiFolderContents"
@@ -201,8 +201,7 @@ export interface WebviewMessage {
   filename?: string;
 
   offset?: number;
-  // For streamToThorapi
-  blobData?: string; // Base64 encoded blob data
+  // Reference-only native application generation
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
   deploymentUrl?: string;

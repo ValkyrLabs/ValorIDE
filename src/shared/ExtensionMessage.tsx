@@ -214,6 +214,7 @@ export interface ExtensionMessage {
     error?: string; // Optional error message
   };
   streamToThorapiResult?: {
+    requestId?: string;
     success: boolean;
     applicationId?: string;
     error?: string;

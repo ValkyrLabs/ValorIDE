@@ -285,25 +285,37 @@ describe("ApplicationsList", () => {
       isFetching: false,
       refetch: mockRefetch,
     });
-    mockGenerateApplication.mockReturnValue({
-      unwrap: vi.fn().mockRejectedValue({
-        status: "TIMEOUT_ERROR",
-        error: "ThorAPI request timed out after 600000 ms.",
-      }),
-    });
 
     render(<ApplicationsList />);
     fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+
+    const request = mockPostMessage.mock.calls.at(-1)![0];
+    act(() =>
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              applicationId: "app-1",
+              requestId: request.requestId,
+              success: false,
+              step: "error",
+              error: "ThorAPI request timed out after 600000 ms.",
+            },
+          },
+        }),
+      ),
+    );
 
     expect(
       await screen.findByRole("alert", {
         name: "Application generation failed",
       }),
     ).toHaveTextContent("ThorAPI request timed out after 600000 ms.");
-    expect(screen.getByText("Receiving Application")).toBeInTheDocument();
-    expect(screen.getByText("Processing Data")).toBeInTheDocument();
-    expect(screen.getByText("Extracting Files")).toBeInTheDocument();
-    expect(screen.getByText("Finalizing Setup")).toBeInTheDocument();
+    expect(screen.getByText("Generate application")).toBeInTheDocument();
+    expect(screen.getByText("Check archive")).toBeInTheDocument();
+    expect(screen.getByText("Extract project")).toBeInTheDocument();
+    expect(screen.getByText("Prepare workspace")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
   });
 
@@ -321,18 +333,6 @@ describe("ApplicationsList", () => {
       isFetching: false,
       refetch: mockRefetch,
     });
-    mockGenerateApplication.mockReturnValue({
-      unwrap: vi.fn().mockResolvedValue({
-        filename: "sample.zip",
-        mimeType: "application/zip",
-        blob: {
-          type: "application/zip",
-          arrayBuffer: vi
-            .fn()
-            .mockResolvedValue(new TextEncoder().encode("zip-data").buffer),
-        },
-      }),
-    });
 
     render(<ApplicationsList />);
     fireEvent.click(screen.getByRole("button", { name: "Generate" }));
@@ -340,13 +340,14 @@ describe("ApplicationsList", () => {
     await waitFor(() =>
       expect(mockPostMessage).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: "streamToThorapi",
+          type: "generateApplicationArtifact",
           applicationId: "app-1",
-          filename: "sample.zip",
+          requestId: expect.any(String),
         }),
       ),
     );
 
+    const request = mockPostMessage.mock.calls.at(-1)![0];
     act(() => {
       window.dispatchEvent(
         new MessageEvent("message", {
@@ -355,6 +356,7 @@ describe("ApplicationsList", () => {
             streamToThorapiResult: {
               success: false,
               applicationId: "app-1",
+              requestId: request.requestId,
               error: "Failed to extract archive: invalid central directory",
               step: "error",
             },
@@ -368,9 +370,99 @@ describe("ApplicationsList", () => {
         name: "Application generation failed",
       }),
     ).toHaveTextContent("Failed to extract archive: invalid central directory");
-    expect(screen.getByText("Extracting Files")).toBeInTheDocument();
+    expect(screen.getByText("Extract project")).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled(),
     );
+  });
+  const generationResult = (request: any, overrides: any = {}) => {
+    act(() =>
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              applicationId: request.applicationId,
+              requestId: request.requestId,
+              success: true,
+              step: "completed",
+              ...overrides,
+            },
+          },
+        }),
+      ),
+    );
+  };
+
+  const prepareGeneration = () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [{ id: "app-1", name: "Sample App", status: "ready" }],
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+    const rendered = render(<ApplicationsList />);
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+    return { ...rendered, request: mockPostMessage.mock.calls.at(-1)![0] };
+  };
+
+  it("sends only references to the host and prevents duplicate paid requests", () => {
+    const { request } = prepareGeneration();
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+    expect(mockPostMessage).toHaveBeenCalledTimes(1);
+    expect(mockGenerateApplication).not.toHaveBeenCalled();
+    expect(request).toEqual({
+      type: "generateApplicationArtifact",
+      applicationId: "app-1",
+      applicationName: "Sample App",
+      requestId: expect.any(String),
+    });
+  });
+
+  it("ignores unrelated and late results after retry", async () => {
+    const { request } = prepareGeneration();
+    generationResult({ ...request, requestId: "unrelated" });
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Generate" })).toBeDisabled(),
+    );
+    generationResult(request, {
+      success: false,
+      step: "error",
+      error: "Service unavailable",
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Generate" }));
+    const retry = mockPostMessage.mock.calls.at(-1)![0];
+    expect(retry.requestId).not.toBe(request.requestId);
+    generationResult(request);
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Generate" })).toBeDisabled(),
+    );
+    generationResult(retry, {
+      success: false,
+      step: "error",
+      error: "Retry failed",
+    });
+    expect(
+      screen.getByRole("alert", { name: "Application generation failed" }),
+    ).toHaveTextContent("Retry failed");
+  });
+
+  it("discards an old account's generation progress", () => {
+    const { request, rerender } = prepareGeneration();
+    mockExtensionState = {
+      ...mockExtensionState,
+      authenticatedPrincipal: {
+        id: "different-user",
+        organizationId: "another-org",
+      },
+    };
+    rerender(<ApplicationsList />);
+    generationResult(request, {
+      success: false,
+      step: "error",
+      error: "Old account error",
+    });
+    expect(screen.queryByText("Old account error")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled();
   });
 });

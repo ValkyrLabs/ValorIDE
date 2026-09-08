@@ -81,6 +81,64 @@ function fixture(reply: unknown = response(), status = 202) {
 }
 
 describe("Valkyr procedure consumption", () => {
+  it("rejects conflicting or malformed execution versions without dispatch replay", async () => {
+    for (const workflowVersionId of [executionId, "not-a-version", "", 42]) {
+      const value = response();
+      const f = fixture({
+        ...value,
+        workflowExecution: { ...value.workflowExecution, workflowVersionId },
+      });
+      await expect(f.client.execute(request())).rejects.toMatchObject({
+        code: "DISPATCH_OUTCOME_UNKNOWN",
+      });
+      expect(f.fetch).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("retains a matching immutable execution version and never manufactures legacy evidence", async () => {
+    const value = response();
+    const f = fixture({
+      ...value,
+      workflowExecution: {
+        ...value.workflowExecution,
+        workflowVersionId: versionId.toUpperCase(),
+      },
+    });
+    expect(
+      (await f.client.execute(request())).workflow?.workflowVersionId,
+    ).toBe(versionId.toUpperCase());
+    for (const missing of [undefined, null]) {
+      const legacy = fixture({
+        ...value,
+        workflowExecution: {
+          ...value.workflowExecution,
+          workflowVersionId: missing,
+        },
+      });
+      expect(
+        (await legacy.client.execute(request())).workflow,
+      ).not.toHaveProperty("workflowVersionId");
+    }
+  });
+
+  it("keeps the observed version on exact status and rejects malformed version evidence", async () => {
+    const value = {
+      id: executionId,
+      state: "SUCCESS",
+      workflowVersionId: versionId,
+    };
+    expect(await fixture(value, 200).client.status(executionId)).toMatchObject({
+      workflowVersionId: versionId,
+    });
+    for (const malformed of ["not-a-version", "", 42, {}]) {
+      const f = fixture({ ...value, workflowVersionId: malformed }, 200);
+      await expect(f.client.status(executionId)).rejects.toMatchObject({
+        code: "STATUS_UNAVAILABLE",
+      });
+      expect(f.fetch).toHaveBeenCalledTimes(1);
+    }
+  });
+
   it("controls only the exact execution through the canonical routes without a resume payload", async () => {
     for (const [action, endpoint, state] of [
       ["pause", "pause", "PAUSED"],

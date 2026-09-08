@@ -16,5 +16,6 @@ export async function openWorkflowStudioTarget(value: unknown): Promise<void> {
   await vscode.commands.executeCommand("valoride.workflows.openStudio", {
     id: target.workflowId,
     backend: target.backend,
+    ...(target.executionId ? { executionId: target.executionId } : {}),
   });
 }

@@ -305,7 +305,9 @@ vi.mock("../context/ExtensionStateContext", () => ({
   ExtensionStateContextProvider: ({ children }: { children: any }) => children,
   hasConfiguredApiProvider: (config?: any) =>
     config?.apiProvider === "openai-native" ||
-    Boolean(config && Object.values(config).some((value) => value !== undefined)),
+    Boolean(
+      config && Object.values(config).some((value) => value !== undefined),
+    ),
   useExtensionState: () => ({
     authenticatedUser: { id: "user-123" },
     didHydrateState: true,
@@ -733,6 +735,68 @@ describe("App account balance prompt", () => {
     });
 
     expect(screen.getByTestId("build-mode-view")).toBeInTheDocument();
+  });
+
+  it("keeps human steering open during background application generation", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "valorBuildModeTask",
+            payload: {
+              taskId: "task-from-sagechat",
+              appBundle: {
+                id: "bundle-1",
+                name: "SageChat App",
+                version: "1.0.0",
+                productLine: "Internal tools",
+                intent: "Open Build Mode from SageChat.",
+                sourceSessionId: "sagechat-1",
+                createdAt: "2026-06-21T21:00:00.000Z",
+                artifacts: [],
+                componentBundleIds: [],
+                execModuleIds: [],
+              },
+              grayMatterContextPack: {
+                id: "ctx-1",
+                compiledAt: "2026-06-21T21:00:00.000Z",
+                source: "GrayMatter",
+                policy: "answer-confidently",
+                retrievalReceiptIds: ["receipt-1"],
+                memoryEntryIds: ["memory-1"],
+                summary: "Fixture context",
+              },
+            },
+          },
+        }),
+      );
+    });
+
+    await screen.findByTestId("build-mode-view");
+
+    for (const step of ["receiving", "completed"]) {
+      act(() =>
+        window.dispatchEvent(
+          new MessageEvent("message", {
+            data: {
+              type: "streamToThorapiResult",
+              streamToThorapiResult: {
+                success: true,
+                applicationId: "app-in-background",
+                requestId: "generation-request-1",
+                step,
+              },
+            },
+          }),
+        ),
+      );
+      expect(screen.getByTestId("build-mode-view")).toBeInTheDocument();
+    }
   });
 
   it("routes Build Mode preview opens through the existing browser bridge", async () => {
