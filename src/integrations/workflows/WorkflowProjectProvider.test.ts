@@ -107,9 +107,17 @@ describe("authenticated Workflow Studio handoff", () => {
   });
   it("normalizes equivalent UUID casing before requesting and opening an exact run", async () => {
     const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
-    mockRequest.mockResolvedValue({ data: { ticket: "opaque-ticket", executionId } });
-    const url = await client().createStudioHandoff(workflowId.toUpperCase(), backend, executionId.toUpperCase());
-    expect(mockRequest).toHaveBeenCalledWith(expect.objectContaining({ json: { workflowId, executionId } }));
+    mockRequest.mockResolvedValue({
+      data: { ticket: "opaque-ticket", executionId },
+    });
+    const url = await client().createStudioHandoff(
+      workflowId.toUpperCase(),
+      backend,
+      executionId.toUpperCase(),
+    );
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ json: { workflowId, executionId } }),
+    );
     expect(new URL(url).searchParams.get("executionId")).toBe(executionId);
   });
   it("opens a real registered Studio handoff and keeps its retry on the original backend", async () => {

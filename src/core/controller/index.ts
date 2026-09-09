@@ -4216,6 +4216,7 @@ export class Controller {
           });
         };
         try {
+          const generationBackend = getValkyraiBasePath();
           const jwtToken = await this.readStoredJwtToken();
           if (!jwtToken)
             throw new Error("Sign in before generating an application.");
@@ -4224,9 +4225,12 @@ export class Controller {
             applicationName,
             jwtToken,
             assertCurrent: async () => {
-              if ((await this.readStoredJwtToken()) !== jwtToken)
+              if (
+                (await this.readStoredJwtToken()) !== jwtToken ||
+                getValkyraiBasePath() !== generationBackend
+              )
                 throw new Error(
-                  "Your session changed during generation. Sign in and retry from the application card.",
+                  "Your session or backend changed during generation. Return to the original Application before retrying.",
                 );
             },
             onProgress: (progressMessage, step) =>

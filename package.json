@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.981",
+  "version": "3.20.982",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -607,7 +607,7 @@
     "version-packages": "changeset version",
     "package:audit": "node scripts/audit-vsix-package.mjs",
     "test:package-audit": "node --test scripts/audit-vsix-package.test.mjs",
-    "package:vsix": "npm run package && npx --yes @vscode/vsce package --no-yarn --no-dependencies && npm run package:audit",
+    "package:vsix": "npx --yes @vscode/vsce@3.9.2 package --no-yarn --no-dependencies && npm run package:audit",
     "test:inventory": "node scripts/host-test-inventory.cjs",
     "test:host:jest": "jest --runInBand",
     "test:host:vitest": "vitest run --config vitest.host.config.mts",

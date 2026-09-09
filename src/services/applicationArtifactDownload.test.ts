@@ -6,6 +6,7 @@ import {
   filenameFromDisposition,
 } from "./applicationArtifactDownload";
 import { getWorkspacePath } from "@utils/path";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { extractLocalZip } from "@utils/zipExtractor";
 import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
@@ -18,7 +19,7 @@ jest.mock("@utils/thorapi", () => ({
     jest.requireActual("path").join(root, "thorapi"),
 }));
 jest.mock("@utils/serverValkyraiHost", () => ({
-  getValkyraiBasePath: () => "https://api.example/v1",
+  getValkyraiBasePath: jest.fn(),
 }));
 jest.mock("@utils/zipExtractor", () => ({
   extractLocalZip: jest.fn(),
@@ -48,6 +49,9 @@ describe("native application artifacts", () => {
     jest.clearAllMocks();
     root = await fs.mkdtemp(path.join(os.tmpdir(), "valoride-artifact-test-"));
     (getWorkspacePath as jest.Mock).mockReturnValue(root);
+    (getValkyraiBasePath as jest.Mock).mockReturnValue(
+      "https://api.example/v1",
+    );
     fetchArtifact = jest.fn().mockResolvedValue(response);
     (getValkyrLabsRtkApiClient as jest.Mock).mockReturnValue({
       request: fetchArtifact,
@@ -149,14 +153,66 @@ describe("native application artifacts", () => {
   });
 
   it("stops before extraction when the session changes during download", async () => {
-    const assertCurrent = jest
-      .fn()
-      .mockResolvedValueOnce(undefined)
-      .mockRejectedValue(new Error("Session changed"));
+    let current = true;
+    const assertCurrent = jest.fn(async () => {
+      if (!current) throw new Error("Session changed");
+    });
+    fetchArtifact.mockImplementation(async () => {
+      current = false;
+      return response;
+    });
     await expect(
       downloadApplicationArtifact({ ...request, assertCurrent }),
     ).rejects.toThrow("Session changed");
+    expect(fetchArtifact).toHaveBeenCalledTimes(1);
     expect(extractLocalZip).not.toHaveBeenCalled();
+  });
+
+  it("does not send the session to a backend selected while progress is delivered", async () => {
+    await expect(
+      downloadApplicationArtifact({
+        ...request,
+        onProgress: (_message, step) => {
+          if (step === "receiving") {
+            (getValkyraiBasePath as jest.Mock).mockReturnValue(
+              "https://other.example/v1",
+            );
+          }
+        },
+      }),
+    ).rejects.toThrow(/backend changed/i);
+    expect(fetchArtifact).not.toHaveBeenCalled();
+  });
+
+  it("rejects the old backend response before writing a project", async () => {
+    fetchArtifact.mockImplementation(async () => {
+      (getValkyraiBasePath as jest.Mock).mockReturnValue(
+        "https://other.example/v1",
+      );
+      return response;
+    });
+    await expect(downloadApplicationArtifact(request)).rejects.toThrow(
+      /backend changed/i,
+    );
+    expect(fetchArtifact).toHaveBeenCalledTimes(1);
+    expect(extractLocalZip).not.toHaveBeenCalled();
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  it("rechecks the session after progress before the paid request", async () => {
+    let current = true;
+    await expect(
+      downloadApplicationArtifact({
+        ...request,
+        assertCurrent: async () => {
+          if (!current) throw new Error("Session changed");
+        },
+        onProgress: (_message, step) => {
+          if (step === "receiving") current = false;
+        },
+      }),
+    ).rejects.toThrow("Session changed");
+    expect(fetchArtifact).not.toHaveBeenCalled();
   });
 
   it("rejects non-ZIP responses and keeps extraction errors without a success stage", async () => {

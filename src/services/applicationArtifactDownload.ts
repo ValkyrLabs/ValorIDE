@@ -74,6 +74,7 @@ export async function downloadApplicationArtifact({
   const workspaceRoot = getWorkspacePath();
   if (!workspaceRoot)
     throw new Error("Open a workspace before downloading generated artifacts.");
+  const backend = getValkyraiBasePath();
   const generationKey = `${workspaceRoot}:${applicationId.toLowerCase()}`;
   if (activeGenerations.has(generationKey))
     throw new Error(
@@ -81,12 +82,20 @@ export async function downloadApplicationArtifact({
     );
   activeGenerations.add(generationKey);
   let stagingRoot: string | undefined;
-  const ensureCurrent = async () => {
+  const ensureTarget = () => {
+    if (getValkyraiBasePath() !== backend)
+      throw new Error(
+        "The ValkyrAI backend changed during generation. Return to the original backend before retrying.",
+      );
     if (getWorkspacePath() !== workspaceRoot)
       throw new Error(
         "The workspace changed during generation. Reopen the original workspace to retry.",
       );
+  };
+  const ensureCurrent = async () => {
+    ensureTarget();
     await assertCurrent?.();
+    ensureTarget();
   };
   try {
     await ensureCurrent();
@@ -94,8 +103,9 @@ export async function downloadApplicationArtifact({
       "Generating your application in ValkyrAI...",
       "receiving",
     );
+    await ensureCurrent();
     const response = await getValkyrLabsRtkApiClient().request<ArrayBuffer>({
-      url: `${getValkyraiBasePath()}/thorapi/generate/${encodeURIComponent(applicationId)}`,
+      url: `${backend}/thorapi/generate/${encodeURIComponent(applicationId)}`,
       method: "POST",
       headers: { Authorization: `Bearer ${jwtToken}`, jwtSession: jwtToken },
       responseType: "arrayBuffer",
@@ -105,6 +115,7 @@ export async function downloadApplicationArtifact({
     if (!isZipBuffer(archive))
       throw new Error("ValkyrAI returned a non-ZIP generation response.");
     await onProgress?.("Checking the generated archive...", "processing");
+    await ensureCurrent();
     const filename = filenameFromDisposition(
       response.headers["content-disposition"],
       applicationId,
@@ -122,6 +133,7 @@ export async function downloadApplicationArtifact({
     await fs.mkdir(applicationRoot, { recursive: true });
     await ensureCurrent();
     await onProgress?.("Extracting your project files...", "extracting");
+    await ensureCurrent();
     const extractedPath = await extractLocalZip(
       archivePath,
       applicationRoot,
@@ -145,6 +157,7 @@ export async function downloadApplicationArtifact({
       ),
       "utf8",
     );
+    await ensureCurrent();
     await onProgress?.(
       `Ready in ${getReadablePath(workspaceRoot, extractedPath)}`,
       "finalizing",

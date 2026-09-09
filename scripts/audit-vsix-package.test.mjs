@@ -1,5 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { auditEntries, formatMarkdownReport, parseUnzipListing } from './audit-vsix-package.mjs';
 
 test('parseUnzipListing extracts file entries and skips directories/totals', () => {
@@ -101,3 +106,31 @@ test('formatMarkdownReport includes package summary and largest files', () => {
   assert.match(markdown, /File count: 2/);
   assert.match(markdown, /20\textension\/dist\/extension.js/);
 });
+
+for (const launch of ['symbolic-path', 'path with spaces']) {
+  for (const forbiddenSource of [false, true]) {
+    test(`audit CLI ${launch} ${forbiddenSource ? 'rejects source leakage' : 'produces an explicit passing report'}`, (t) => {
+      const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ValorIDE audit '));
+      t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+      const target = path.join(root, 'audit package.mjs');
+      const source = fileURLToPath(new URL('./audit-vsix-package.mjs', import.meta.url));
+      if (launch === 'symbolic-path') fs.symlinkSync(source, target);
+      else fs.copyFileSync(source, target);
+      const entry = forbiddenSource ? 'extension/src/private-source.ts' : 'extension/dist/extension.js';
+      fs.mkdirSync(path.dirname(path.join(root, entry)), { recursive: true });
+      fs.writeFileSync(path.join(root, entry), '// release audit fixture\n');
+      const archive = path.join(root, 'fixture.vsix');
+      execFileSync('zip', ['-q', '-r', archive, 'extension'], { cwd: root });
+      const reports = path.join(root, 'reports');
+      const result = spawnSync(process.execPath, [target, archive], {
+        encoding: 'utf8', timeout: 5000,
+        env: { ...process.env, VALORIDE_VSIX_AUDIT_DIR: reports },
+      });
+      assert.equal(result.status, forbiddenSource ? 1 : 0, result.stderr);
+      assert.match(result.stdout, forbiddenSource ? /VSIX audit FAIL/ : /VSIX audit PASS/);
+      const report = JSON.parse(fs.readFileSync(path.join(reports, 'valoride-vsix-audit.json'), 'utf8'));
+      assert.equal(report.ok, !forbiddenSource);
+      assert.equal(report.fileCount, 1);
+    });
+  }
+}

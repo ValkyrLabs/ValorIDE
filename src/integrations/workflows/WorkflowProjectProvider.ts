@@ -102,6 +102,15 @@ export class WorkflowEngineeringClient {
       );
     }
     if (
+      executionId &&
+      (!isWorkflowStudioId(response.data?.executionId) ||
+        response.data.executionId.toLowerCase() !== executionId)
+    ) {
+      throw new Error(
+        "ValkyrAI did not confirm this exact run. Refresh its status before opening it again.",
+      );
+    }
+    if (
       typeof response.data?.ticket !== "string" ||
       !response.data.ticket ||
       response.data.ticket.length > 4096
