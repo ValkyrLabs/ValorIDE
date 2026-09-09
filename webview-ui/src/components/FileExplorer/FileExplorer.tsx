@@ -153,7 +153,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       const message = event.data;
       if (
         message.type === "streamToThorapiResult" &&
-        message.streamToThorapiResult?.success
+        message.streamToThorapiResult?.success &&
+        message.streamToThorapiResult.step === "completed"
       ) {
         console.log(
           "FileExplorer: Received streamToThorapiResult, refreshing files",

@@ -37,3 +37,10 @@ Isolated production-mode startup passed on the installed VS Code 1.133.0 with th
 Rollback is the previous Procedure discovery VSIX, SHA-256 393f20270b262730b59ce264a6df5cd759766acc093d975d4c0b28cf2062816f. No active window was force-reloaded. Authenticated live control from ValorIDE, current-window activation and public marketplace publication remain unverified. The release owner has explicitly retained the live control canary until a deliberately disposable execution is available.
 
 Evidence directory: `ValkyrAI/work/deployment/20260907-valoride-procedure-control/`. Control methodology is stored in GrayMatter as a983209b-4aac-408c-97c9-f8cb30d573f3 with exact readback. The strategy refinement queued during deployment is now stored and verified as 96ef3523-0ad8-48d2-85df-fd13280906b0.
+
+
+## Immutable execution version continuity — 8 September 2026
+
+Procedure dispatch rejects a supplied execution version that is malformed or differs from the top-level immutable WorkflowVersion. UUID comparison ignores casing. The result remains an unknown dispatch outcome; the client neither retries nor launches an agent fallback. Exact status reads preserve a valid observed version and reject malformed supplied version evidence. An omitted or null legacy version stays absent, rather than being inferred from another record. This is client contract validation, separate from server authorization and business-output correctness.
+
+Focused regressions were red first. Shared source acceptance is recorded in ValkyrAI/work/deployment/20260908-procedure-version-continuity. GrayMatter private adapter/mirror and ValorIDE source changes do not establish installed-plugin, extension activation, backend deployment or new live Procedure execution.

@@ -14,7 +14,7 @@ import { startOpenAiNativeOAuthLogin } from "@api/providers/openai-native-auth";
 import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
 import { downloadTask } from "@integrations/misc/export-markdown";
-import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
+import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
 import {
   fetchOpenGraphData,
   isImageUrl,
@@ -4204,132 +4204,63 @@ export class Controller {
         }
         break;
       }
-      case "streamToThorapi": {
-        const { blobData, applicationId, applicationName, filename, mimeType } =
-          message;
-
-        const sendProgress = async (step: string, progressMessage: string) => {
-          if (!applicationId) {
-            return;
-          }
+      case "generateApplicationArtifact": {
+        const { applicationId, applicationName, requestId } = message;
+        if (!applicationId || !requestId) break;
+        const sendResult = async (
+          result: NonNullable<ExtensionMessage["streamToThorapiResult"]>,
+        ) => {
           await this.postMessageToWebview({
             type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: true,
-              applicationId,
-              step,
-              message: progressMessage,
-            },
+            streamToThorapiResult: { ...result, applicationId, requestId },
           });
         };
-
         try {
-          if (!blobData || !applicationId) {
-            throw new Error("Missing required data for streamToThorapi");
-          }
-
-          await sendProgress("receiving", "Decoding generated archive...");
-
-          const binaryData = Buffer.from(blobData, "base64");
-          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
-          await fs.mkdir(thorapiFolderPath, { recursive: true });
-
-          const incomingName =
-            filename?.trim() || `application-${applicationId}-${Date.now()}`;
-          const sanitizedBaseName =
-            path
-              .basename(incomingName)
-              .replace(/[\\/:*?"<>|]/g, "_")
-              .trim() || `application-${applicationId}-${Date.now()}`;
-
-          const mime = mimeType?.toLowerCase() ?? "";
-          const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
-
-          let finalFilename = sanitizedBaseName;
-          if (looksLikeZip && !/\.zip$/i.test(finalFilename)) {
-            finalFilename = `${finalFilename}.zip`;
-          }
-
-          const filePath = path.join(thorapiFolderPath, finalFilename);
-          await fs.writeFile(filePath, binaryData);
-          await sendProgress(
-            "processing",
-            `Saved archive to ${getReadablePath(filePath)}`,
-          );
-
-          let extractedPath: string | undefined;
-          let readmePath: string | undefined;
-
-          if (looksLikeZip) {
-            await sendProgress("extracting", "Extracting project files...");
-            try {
-              extractedPath = await extractLocalZip(
-                filePath,
-                thorapiFolderPath,
-                applicationName || applicationId,
-              );
-            } catch (extractionError) {
-              throw new Error(
-                `Failed to extract archive: ${
-                  extractionError instanceof Error
-                    ? extractionError.message
-                    : String(extractionError)
-                }`,
-              );
-            }
-
-            if (extractedPath) {
-              readmePath = await this.findReadmeFile(extractedPath);
-              await sendProgress(
-                "finalizing",
-                `Extracted to ${getReadablePath(extractedPath)}`,
-              );
-            }
-
-            await fs.unlink(filePath).catch((unlinkError) => {
-              console.warn(
-                `Failed to delete archive ${filePath}: ${
-                  unlinkError instanceof Error
-                    ? unlinkError.message
-                    : String(unlinkError)
-                }`,
-              );
-            });
-          } else {
-            await sendProgress(
-              "finalizing",
-              `Saved file to ${getReadablePath(filePath)}`,
-            );
-          }
-
-          await this.postMessageToWebview({
-            type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: true,
-              applicationId,
-              filePath,
-              filename: finalFilename,
-              extractedPath,
-              readmePath,
-              step: "completed",
-              message: looksLikeZip
-                ? "Application extracted successfully."
-                : "Application saved successfully.",
+          const jwtToken = await this.readStoredJwtToken();
+          if (!jwtToken)
+            throw new Error("Sign in before generating an application.");
+          const artifact = await downloadApplicationArtifact({
+            applicationId,
+            applicationName,
+            jwtToken,
+            assertCurrent: async () => {
+              if ((await this.readStoredJwtToken()) !== jwtToken)
+                throw new Error(
+                  "Your session changed during generation. Sign in and retry from the application card.",
+                );
             },
+            onProgress: (progressMessage, step) =>
+              sendResult({ success: true, step, message: progressMessage }),
           });
+          await sendResult({
+            success: true,
+            ...artifact,
+            step: "completed",
+            message: "Your application is ready to open in ValorIDE.",
+          });
+          void vscode.window
+            .showInformationMessage(
+              `${applicationName || "Your application"} is ready in ValorIDE.`,
+              "Open project",
+            )
+            .then((action) => {
+              if (action === "Open project") {
+                return vscode.commands.executeCommand(
+                  "vscode.openFolder",
+                  vscode.Uri.file(artifact.extractedPath),
+                  { forceNewWindow: true },
+                );
+              }
+              return undefined;
+            });
         } catch (error) {
-          console.error("Error in streamToThorapi:", error);
-          await this.postMessageToWebview({
-            type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: false,
-              applicationId: message.applicationId,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : "Failed to stream to thorapi",
-              step: "error",
-            },
+          await sendResult({
+            success: false,
+            step: "error",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Application generation failed.",
           });
         }
         break;
@@ -4823,7 +4754,9 @@ export class Controller {
     const previous = (await getGlobalState(
       this.context,
       "grayMatterSession",
-    )) as import("@shared/GrayMatterSession").GrayMatterSessionState | undefined;
+    )) as
+      | import("@shared/GrayMatterSession").GrayMatterSessionState
+      | undefined;
     const resolvedToken = token || (await this.readStoredJwtToken());
     const tenantContext = await this.readStoredTenantContext();
     const grayMatterSession = reconcileGrayMatterSessionRefresh(
@@ -5018,10 +4951,10 @@ export class Controller {
         },
       });
     } catch (error) {
-      const status = error instanceof ValkyrLabsApiError
-        && typeof error.status === "number"
-        ? error.status
-        : undefined;
+      const status =
+        error instanceof ValkyrLabsApiError && typeof error.status === "number"
+          ? error.status
+          : undefined;
       const data = error instanceof ValkyrLabsApiError ? error.data : undefined;
       const errorMessage =
         error instanceof Error ? error.message : "ThorAPI request failed";
@@ -5325,7 +5258,7 @@ export class Controller {
       const getServiceByIdentifier = async (identifier: string) =>
         getValkyrLabsRtkApiClient().request<any>({
           url: `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
-            headers,
+          headers,
         });
 
       let response: any;
@@ -5367,8 +5300,8 @@ export class Controller {
         // Fallback: resolve marketplace item IDs to a concrete service identifier
         // (slug, id, or name) then retry /mcp/services/{slug}.
         try {
-          const serviceListResponse = await getValkyrLabsRtkApiClient()
-            .request<any>({
+          const serviceListResponse =
+            await getValkyrLabsRtkApiClient().request<any>({
               url: `${getValkyraiBasePath()}/mcp/services`,
               headers,
             });
@@ -5899,8 +5832,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         break;
       } catch (error) {
         if (
-          error instanceof ValkyrLabsApiError
-          && typeof error.status === "number"
+          error instanceof ValkyrLabsApiError &&
+          typeof error.status === "number"
         ) {
           success = true;
           errorMessage = undefined;

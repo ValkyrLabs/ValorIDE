@@ -1,6 +1,7 @@
 export interface WorkflowStudioTarget {
   workflowId: string;
   backend: string;
+  executionId?: string;
 }
 
 export const isWorkflowStudioId = (value: unknown): value is string =>
@@ -39,13 +40,26 @@ export function parseWorkflowStudioTarget(
   const target = value as Record<string, unknown>;
   if (
     Object.keys(target).some(
-      (key) => key !== "workflowId" && key !== "backend",
+      (key) => !["workflowId", "backend", "executionId"].includes(key),
     ) ||
     !isWorkflowStudioId(target.workflowId)
   )
     return null;
+  if (
+    Object.prototype.hasOwnProperty.call(target, "executionId") &&
+    !isWorkflowStudioId(target.executionId)
+  )
+    return null;
   const backend = canonicalBackend(target.backend);
-  return backend ? { workflowId: target.workflowId, backend } : null;
+  return backend
+    ? {
+        workflowId: target.workflowId,
+        backend,
+        ...(isWorkflowStudioId(target.executionId)
+          ? { executionId: target.executionId }
+          : {}),
+      }
+    : null;
 }
 
 export function assertWorkflowStudioBackend(

@@ -66,6 +66,44 @@ export function isZipBuffer(
   );
 }
 
+/** Validate the complete archive before any write, including existing output links. */
+async function validateLocalZipEntries(
+  entries: ReturnType<AdmZip["getEntries"]>,
+  targetDir: string,
+  extractDir: string,
+): Promise<void> {
+  const targetRoot = path.resolve(targetDir);
+  for (const entry of entries) {
+    const name = entry.entryName;
+    const relativeName = name.replace(/\\/g, "/");
+    const entryPath = path.resolve(extractDir, relativeName);
+    const relativePath = path.relative(targetRoot, entryPath);
+    if (
+      path.isAbsolute(relativeName) ||
+      /^[a-z]:/i.test(relativeName) ||
+      relativeName.split("/").some((part) => part === "..") ||
+      relativePath === ".." ||
+      relativePath.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relativePath)
+    ) {
+      throw new Error(`Unsafe archive path: ${name}`);
+    }
+    if (((entry.attr >>> 16) & 0o170000) === 0o120000) {
+      throw new Error(`Archive symbolic link is not supported: ${name}`);
+    }
+    let current = targetRoot;
+    for (const segment of ["", ...relativePath.split(path.sep)]) {
+      current = path.join(current, segment);
+      const stat = await fs.promises.lstat(current).catch((error) => {
+        if (error.code === "ENOENT") return undefined;
+        throw error;
+      });
+      if (stat?.isSymbolicLink())
+        throw new Error(`Generated output contains a symbolic link: ${name}`);
+    }
+  }
+}
+
 /**
  * Downloads a zip file from the given URL and extracts it to the target directory.
  * Uses VSCode's workspace.fs API for file operations.
@@ -130,6 +168,7 @@ export async function extractLocalZip(
   zipFilePath: string,
   targetDir: string,
   applicationName?: string,
+  options?: { fresh?: boolean },
 ): Promise<string> {
   // Read zip file from disk
   const buffer = await fs.promises.readFile(zipFilePath);
@@ -139,27 +178,49 @@ export async function extractLocalZip(
     filename: path.basename(zipFilePath),
     fallbackName: applicationName,
   });
-  const extractDir = path.join(targetDir, versionedName);
+  let extractDir = path.join(targetDir, versionedName);
 
   // Extract zip using adm-zip
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries();
-
-  for (const entry of zipEntries) {
-    const entryPath = path.join(extractDir, entry.entryName);
-    if (entry.isDirectory) {
-      await vscode.workspace.fs.createDirectory(vscode.Uri.file(entryPath));
-    } else {
-      // Ensure parent directory exists
-      await vscode.workspace.fs.createDirectory(
-        vscode.Uri.file(path.dirname(entryPath)),
-      );
-      // Write file
-      await vscode.workspace.fs.writeFile(
-        vscode.Uri.file(entryPath),
-        entry.getData(),
-      );
-    }
+  if (!zipEntries.some((entry) => !entry.isDirectory)) {
+    throw new Error("The generated archive contains no project files.");
   }
-  return extractDir;
+  if (options?.fresh) {
+    await fs.promises.mkdir(targetDir, { recursive: true });
+    if ((await fs.promises.lstat(targetDir)).isSymbolicLink()) {
+      throw new Error("Generated output contains a symbolic link.");
+    }
+    extractDir = await fs.promises.mkdtemp(`${extractDir}-`);
+  }
+  try {
+    await validateLocalZipEntries(zipEntries, targetDir, extractDir);
+
+    for (const entry of zipEntries) {
+      const entryPath = path.join(
+        extractDir,
+        entry.entryName.replace(/\\/g, "/"),
+      );
+      if (entry.isDirectory) {
+        await vscode.workspace.fs.createDirectory(vscode.Uri.file(entryPath));
+      } else {
+        // Ensure parent directory exists
+        await vscode.workspace.fs.createDirectory(
+          vscode.Uri.file(path.dirname(entryPath)),
+        );
+        // Write file
+        await vscode.workspace.fs.writeFile(
+          vscode.Uri.file(entryPath),
+          entry.getData(),
+        );
+      }
+    }
+    return extractDir;
+  } catch (error) {
+    if (options?.fresh)
+      await fs.promises
+        .rm(extractDir, { recursive: true, force: true })
+        .catch(() => undefined);
+    throw error;
+  }
 }

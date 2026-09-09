@@ -320,6 +320,7 @@ export default function ProcedureToolCard({
       ? parseWorkflowStudioTarget({
           workflowId: workflow.workflowId,
           backend: data.backend,
+          executionId: workflow.id,
         })
       : null;
   const detailEntries = [
@@ -396,7 +397,7 @@ export default function ProcedureToolCard({
           }
           style={workflowButtonStyle}
         >
-          Open workflow
+          {studioTarget.executionId ? "Review this run" : "Open workflow"}
         </button>
       )}
       {data.phase === "result" && data.action === "search" && candidates && (

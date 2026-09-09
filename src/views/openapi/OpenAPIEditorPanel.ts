@@ -244,6 +244,13 @@ const handleBlueprintSave = async (
         applicationId: options.applicationId,
         applicationName: options.applicationName,
         jwtToken,
+        assertCurrent: async () => {
+          if ((await requireJwt(context)) !== jwtToken) {
+            throw new Error(
+              "Your session changed during generation. Sign in and retry from the Blueprint editor.",
+            );
+          }
+        },
         onProgress: async (status) => {
           await panel.webview.postMessage({
             type: "blueprintProgress",

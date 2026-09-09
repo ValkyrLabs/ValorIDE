@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { Application } from "@thorapi/model";
-import {
-  useGetApplicationsQuery,
-  useGenerateApplicationMutation,
-} from "../../redux/services/ApplicationService";
+import { useGetApplicationsQuery } from "../../redux/services/ApplicationService";
 import { useGetObjectPermissionsQuery } from "../../redux/services/AclService";
 import { vscode } from "../../utils/vscode";
 import FileExplorer from "../FileExplorer/FileExplorer";
@@ -37,23 +34,23 @@ const GENERATION_STEPS: Array<{
 }> = [
   {
     id: "receiving",
-    label: "Receiving Application",
-    description: "Downloading application payload...",
+    label: "Generate application",
+    description: "Creating your project from its Blueprint...",
   },
   {
     id: "processing",
-    label: "Processing Data",
-    description: "Analyzing application structure...",
+    label: "Check archive",
+    description: "Checking the generated project...",
   },
   {
     id: "extracting",
-    label: "Extracting Files",
-    description: "Creating project structure...",
+    label: "Extract project",
+    description: "Writing your project files...",
   },
   {
     id: "finalizing",
-    label: "Finalizing Setup",
-    description: "Preparing development environment...",
+    label: "Prepare workspace",
+    description: "Recording the application and Blueprint source...",
   },
 ];
 
@@ -145,8 +142,7 @@ const ApplicationWriteActions: React.FC<ApplicationWriteActionsProps> = ({
   const permissions = Array.isArray(access?.permissions)
     ? access.permissions
         .filter(
-          (permission): permission is string =>
-            typeof permission === "string",
+          (permission): permission is string => typeof permission === "string",
         )
         .map((permission) => permission.toUpperCase())
     : [];
@@ -307,7 +303,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return { ownedApps: owned, sharedApps: shared };
   }, [applications, currentUserId]);
 
-  const [generateApplication] = useGenerateApplicationMutation();
+  const activeRequests = useRef(new Map<string, string>());
+  const generationScope = `${currentUserId || "anonymous"}:${authenticatedPrincipal?.organizationId || authenticatedPrincipal?.organization?.id || ""}:${jwtToken || ""}`;
   const [loadingStates, setLoadingStates] = useState<
     Record<string, ApplicationLoadingState>
   >({});
@@ -315,6 +312,16 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   const [completedApplications, setCompletedApplications] = useState<
     Set<string>
   >(new Set());
+
+  useEffect(() => {
+    activeRequests.current.clear();
+    setLoadingStates({});
+    setCompletedApplications(new Set());
+    setShowFileExplorer(false);
+    return () => {
+      activeRequests.current.clear();
+    };
+  }, [generationScope]);
 
   // Listen for messages from the extension
   useEffect(() => {
@@ -359,21 +366,22 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         return;
       }
 
-      console.log(
-        "ApplicationsList: Processing streamToThorapiResult:",
-        message.streamToThorapiResult,
-      );
       const {
         success,
         applicationId,
+        requestId,
         error,
         step,
         message: progressMessage,
-      } = message.streamToThorapiResult;
-
-      if (!applicationId) {
+      } = message.streamToThorapiResult || {};
+      if (
+        !applicationId ||
+        !requestId ||
+        activeRequests.current.get(applicationId) !== requestId
+      )
         return;
-      }
+      if (step === "completed" || success === false || error)
+        activeRequests.current.delete(applicationId);
 
       if (success && step === "completed") {
         console.log(
@@ -550,22 +558,20 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     }
   };
 
-  const handleGenerate = async (applicationId: string) => {
-    if (!applicationId) return;
-    let currentStep: ApplicationGenerationStep = "receiving";
-
-    // Find the application to get its name
-    const application = applications?.find((app) => app.id === applicationId);
-    const applicationName = application?.name || applicationId;
-
-    // Initialize loading state with all steps
+  const handleGenerate = (applicationId: string) => {
+    if (!applicationId || activeRequests.current.has(applicationId)) return;
+    const requestId = crypto.randomUUID();
+    activeRequests.current.set(applicationId, requestId);
+    const applicationName =
+      applications?.find((app) => app.id === applicationId)?.name ||
+      applicationId;
     setLoadingStates((prev) => ({
       ...prev,
       [applicationId]: {
         ...prev[applicationId],
         generating: true,
-        currentStep,
-        statusMessage: "Generating and downloading application payload...",
+        currentStep: "receiving",
+        statusMessage: "Generating your application in ValkyrAI...",
         error: undefined,
         steps: {
           receiving: false,
@@ -575,84 +581,22 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         },
       },
     }));
-
     try {
-      // Make the actual API call
-      const result = await generateApplication(applicationId).unwrap();
-      console.log("ApplicationsList: API result:", result);
-
-      // The filename is already extracted by the ApplicationService responseHandler
-      const extractedFilename = result.filename;
-      const mimeType =
-        result.mimeType || result.blob?.type || "application/octet-stream";
-      console.log(
-        "ApplicationsList: Using filename from service:",
-        extractedFilename,
-      );
-
-      // The archive has arrived; process it for the extension-host handoff.
-      currentStep = "processing";
-      setLoadingStates((prev) => ({
-        ...prev,
-        [applicationId]: {
-          ...prev[applicationId],
-          currentStep,
-          statusMessage: "Preparing generated archive for extraction...",
-          steps: { ...prev[applicationId]?.steps, receiving: true },
-        },
-      }));
-
-      // Convert blob to base64
-      const arrayBuffer = await result.blob.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-      let binaryString = "";
-      for (let i = 0; i < uint8Array.length; i++) {
-        binaryString += String.fromCharCode(uint8Array[i]);
-      }
-      const base64String = btoa(binaryString);
-
-      currentStep = "extracting";
-      setLoadingStates((prev) => ({
-        ...prev,
-        [applicationId]: {
-          ...prev[applicationId],
-          currentStep,
-          statusMessage: "Handing generated archive to ValorIDE...",
-          steps: { ...prev[applicationId]?.steps, processing: true },
-        },
-      }));
-
-      console.log(
-        "ApplicationsList: Sending to extension with filename:",
-        extractedFilename,
-        "and application name:",
-        applicationName,
-      );
-      // Send to extension to stream to thorapi folder with application name for user-friendly folder naming
       vscode.postMessage({
-        type: "streamToThorapi",
-        blobData: base64String,
-        applicationId: applicationId,
-        applicationName: applicationName,
-        filename: extractedFilename,
-        mimeType,
+        type: "generateApplicationArtifact",
+        applicationId,
+        applicationName,
+        requestId,
       });
-
-      // Note: We'll complete the final step when we receive the streamToThorapiResult message
     } catch (error) {
-      console.error("Generate failed:", error);
-      const errorMessage = formatApplicationGenerationError(error);
-      console.error(`Generate failed for ${applicationId}: ${errorMessage}`);
-
-      // Keep the checklist and completed steps visible for inspection/retry.
+      activeRequests.current.delete(applicationId);
       setLoadingStates((prev) => ({
         ...prev,
         [applicationId]: {
           ...prev[applicationId],
           generating: false,
-          currentStep,
           statusMessage: undefined,
-          error: errorMessage,
+          error: formatApplicationGenerationError(error),
         },
       }));
     }
@@ -723,217 +667,65 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     return (
       <div className="application-loading-steps" aria-live="polite">
         <div className="loading-steps">
-          <div
-            className="loading-step"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-            }}
-          >
-            {loadingStates[app.id]?.steps?.receiving ? (
-              <span
+          {GENERATION_STEPS.map(({ id, label, description }) => {
+            const state = loadingStates[app.id];
+            const complete = state?.steps?.[id];
+            const active = state?.currentStep === id;
+            return (
+              <div
+                key={id}
+                className="loading-step"
                 style={{
-                  color: "var(--vscode-charts-green)",
-                  marginRight: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  marginBottom: 8,
                 }}
               >
-                ✅
-              </span>
-            ) : loadingStates[app.id]?.error &&
-              loadingStates[app.id]?.currentStep === "receiving" ? (
-              <span
-                aria-label="Failed"
-                style={{
-                  color: "var(--vscode-errorForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ❌
-              </span>
-            ) : loadingStates[app.id]?.generating &&
-              loadingStates[app.id]?.currentStep === "receiving" ? (
-              <VSCodeProgressRing
-                style={{ width: "16px", height: "16px", marginRight: "8px" }}
-              />
-            ) : (
-              <span
-                style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ⏳
-              </span>
-            )}
-            <span>Receiving Application</span>
-            {!loadingStates[app.id]?.steps?.receiving && (
-              <span
-                style={{ marginLeft: "8px", fontSize: "12px", opacity: 0.7 }}
-              >
-                Downloading application payload...
-              </span>
-            )}
-          </div>
-          <div
-            className="loading-step"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-            }}
-          >
-            {loadingStates[app.id]?.steps?.processing ? (
-              <span
-                style={{
-                  color: "var(--vscode-charts-green)",
-                  marginRight: "8px",
-                }}
-              >
-                ✅
-              </span>
-            ) : loadingStates[app.id]?.error &&
-              loadingStates[app.id]?.currentStep === "processing" ? (
-              <span
-                aria-label="Failed"
-                style={{
-                  color: "var(--vscode-errorForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ❌
-              </span>
-            ) : loadingStates[app.id]?.steps?.receiving &&
-              loadingStates[app.id]?.generating ? (
-              <VSCodeProgressRing
-                style={{ width: "16px", height: "16px", marginRight: "8px" }}
-              />
-            ) : (
-              <span
-                style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ⏳
-              </span>
-            )}
-            <span>Processing Data</span>
-            {loadingStates[app.id]?.steps?.receiving &&
-              !loadingStates[app.id]?.steps?.processing && (
-                <span
-                  style={{ marginLeft: "8px", fontSize: "12px", opacity: 0.7 }}
-                >
-                  Analyzing application structure...
-                </span>
-              )}
-          </div>
-          <div
-            className="loading-step"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-            }}
-          >
-            {loadingStates[app.id]?.steps?.extracting ? (
-              <span
-                style={{
-                  color: "var(--vscode-charts-green)",
-                  marginRight: "8px",
-                }}
-              >
-                ✅
-              </span>
-            ) : loadingStates[app.id]?.error &&
-              loadingStates[app.id]?.currentStep === "extracting" ? (
-              <span
-                aria-label="Failed"
-                style={{
-                  color: "var(--vscode-errorForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ❌
-              </span>
-            ) : loadingStates[app.id]?.steps?.processing &&
-              loadingStates[app.id]?.generating ? (
-              <VSCodeProgressRing
-                style={{ width: "16px", height: "16px", marginRight: "8px" }}
-              />
-            ) : (
-              <span
-                style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ⏳
-              </span>
-            )}
-            <span>Extracting Files</span>
-            {loadingStates[app.id]?.steps?.processing &&
-              !loadingStates[app.id]?.steps?.extracting && (
-                <span
-                  style={{ marginLeft: "8px", fontSize: "12px", opacity: 0.7 }}
-                >
-                  Creating project structure...
-                </span>
-              )}
-          </div>
-          <div
-            className="loading-step"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-            }}
-          >
-            {loadingStates[app.id]?.steps?.finalizing ? (
-              <span
-                style={{
-                  color: "var(--vscode-charts-green)",
-                  marginRight: "8px",
-                }}
-              >
-                ✅
-              </span>
-            ) : loadingStates[app.id]?.error &&
-              loadingStates[app.id]?.currentStep === "finalizing" ? (
-              <span
-                aria-label="Failed"
-                style={{
-                  color: "var(--vscode-errorForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ❌
-              </span>
-            ) : loadingStates[app.id]?.steps?.extracting &&
-              loadingStates[app.id]?.generating ? (
-              <VSCodeProgressRing
-                style={{ width: "16px", height: "16px", marginRight: "8px" }}
-              />
-            ) : (
-              <span
-                style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  marginRight: "8px",
-                }}
-              >
-                ⏳
-              </span>
-            )}
-            <span>Finalizing Setup</span>
-            {loadingStates[app.id]?.steps?.extracting &&
-              !loadingStates[app.id]?.steps?.finalizing && (
-                <span
-                  style={{ marginLeft: "8px", fontSize: "12px", opacity: 0.7 }}
-                >
-                  Preparing development environment...
-                </span>
-              )}
-          </div>
+                {complete ? (
+                  <span
+                    aria-label="Completed"
+                    style={{
+                      color: "var(--vscode-charts-green)",
+                      marginRight: 8,
+                    }}
+                  >
+                    ✅
+                  </span>
+                ) : state?.error && active ? (
+                  <span
+                    aria-label="Failed"
+                    style={{
+                      color: "var(--vscode-errorForeground)",
+                      marginRight: 8,
+                    }}
+                  >
+                    ❌
+                  </span>
+                ) : state?.generating && active ? (
+                  <VSCodeProgressRing
+                    style={{ width: 16, height: 16, marginRight: 8 }}
+                  />
+                ) : (
+                  <span
+                    aria-label="Waiting"
+                    style={{
+                      color: "var(--vscode-descriptionForeground)",
+                      marginRight: 8,
+                    }}
+                  >
+                    ⏳
+                  </span>
+                )}
+                <span>{label}</span>
+                {active && !complete && (
+                  <span style={{ marginLeft: 8, fontSize: 12, opacity: 0.7 }}>
+                    {description}
+                  </span>
+                )}
+              </div>
+            );
+          })}
           {loadingStates[app.id]?.error ? (
             <div
               role="alert"
@@ -1193,7 +985,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                           >
                             ✅
                           </span>
-                          <span>Receiving Application</span>
+                          <span>{GENERATION_STEPS[0].label}</span>
                         </div>
                         <div
                           className="loading-step"
@@ -1211,7 +1003,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                           >
                             ✅
                           </span>
-                          <span>Processing Data</span>
+                          <span>{GENERATION_STEPS[1].label}</span>
                         </div>
                         <div
                           className="loading-step"
@@ -1229,7 +1021,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                           >
                             ✅
                           </span>
-                          <span>Extracting Files</span>
+                          <span>{GENERATION_STEPS[2].label}</span>
                         </div>
                         <div
                           className="loading-step"
@@ -1247,7 +1039,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                           >
                             ✅
                           </span>
-                          <span>Finalizing Setup</span>
+                          <span>{GENERATION_STEPS[3].label}</span>
                         </div>
                         <div
                           style={{

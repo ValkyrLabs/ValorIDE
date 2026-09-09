@@ -434,7 +434,7 @@ const AppContent = () => {
           // Handle application generation progress
           if (message.streamToThorapiResult) {
             const result = message.streamToThorapiResult;
-            if (result.applicationId) {
+            if (result.applicationId && !result.requestId) {
               setCurrentApplicationId(result.applicationId);
               setShowApplicationProgress(false);
               setBuildModePayload(undefined);

@@ -64,6 +64,54 @@ describe("authenticated Workflow Studio handoff", () => {
     mockRequest.mockResolvedValue({ data: { ticket: "opaque-ticket" } });
   });
   const client = () => new WorkflowEngineeringClient({} as any);
+  it("binds an exact execution into the ticket request, launch and secure retry", async () => {
+    const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
+    mockRequest.mockResolvedValue({
+      data: { ticket: "opaque-ticket", executionId },
+    });
+    registerWorkflowProjects(
+      { subscriptions: [] } as any,
+      { appendLine: jest.fn() } as any,
+    );
+    mockExecuteCommand.mockImplementation(async (name, target) =>
+      mockCommands.get(name)!(target),
+    );
+    await openWorkflowStudioTarget({ workflowId, backend, executionId });
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ json: { workflowId, executionId } }),
+    );
+    expect(mockPanel.webview.html).toContain(`executionId=${executionId}`);
+    mockRequest.mockClear();
+    await mockReceive.mock.calls[0][0]({
+      type: "valoride.workflowStudio.retry",
+    });
+    expect(mockRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ json: { workflowId, executionId } }),
+    );
+  });
+  it("never silently opens a definition when the server fails to bind the requested run", async () => {
+    const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
+    for (const returnedId of [undefined, workflowId]) {
+      mockRequest.mockResolvedValue({
+        data: { ticket: "opaque-ticket", executionId: returnedId },
+      });
+      await expect(
+        client().createStudioHandoff(workflowId, backend, executionId),
+      ).rejects.toThrow(/exact run/);
+    }
+    mockRequest.mockClear();
+    await expect(
+      client().createStudioHandoff(workflowId, backend, "../run"),
+    ).rejects.toThrow(/execution reference/);
+    expect(mockRequest).not.toHaveBeenCalled();
+  });
+  it("normalizes equivalent UUID casing before requesting and opening an exact run", async () => {
+    const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
+    mockRequest.mockResolvedValue({ data: { ticket: "opaque-ticket", executionId } });
+    const url = await client().createStudioHandoff(workflowId.toUpperCase(), backend, executionId.toUpperCase());
+    expect(mockRequest).toHaveBeenCalledWith(expect.objectContaining({ json: { workflowId, executionId } }));
+    expect(new URL(url).searchParams.get("executionId")).toBe(executionId);
+  });
   it("opens a real registered Studio handoff and keeps its retry on the original backend", async () => {
     registerWorkflowProjects(
       { subscriptions: [] } as any,

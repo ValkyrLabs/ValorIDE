@@ -15,6 +15,7 @@ type WorkflowListItem = {
   description?: string;
   status?: string;
   backend?: string;
+  executionId?: string;
 };
 
 export class WorkflowEngineeringClient {
@@ -55,9 +56,14 @@ export class WorkflowEngineeringClient {
   async createStudioHandoff(
     workflowId: string,
     expectedBackend = getValkyraiBasePath(),
+    executionId?: string,
   ): Promise<string> {
     if (!isWorkflowStudioId(workflowId))
       throw new Error("The workflow reference is invalid.");
+    if (executionId !== undefined && !isWorkflowStudioId(executionId))
+      throw new Error("The workflow execution reference is invalid.");
+    workflowId = workflowId.toLowerCase();
+    executionId = executionId?.toLowerCase();
     const base = assertWorkflowStudioBackend(
       expectedBackend,
       getValkyraiBasePath(),
@@ -71,10 +77,11 @@ export class WorkflowEngineeringClient {
     assertWorkflowStudioBackend(base, getValkyraiBasePath());
     const response = await getValkyrLabsRtkApiClient().request<{
       ticket?: string;
+      executionId?: string;
     }>({
       url: `${base}/auth/valoride/webview-ticket`,
       method: "POST",
-      json: { workflowId },
+      json: { workflowId, ...(executionId ? { executionId } : {}) },
       headers: {
         Authorization: `Bearer ${token}`,
         jwtSession: token,
@@ -89,6 +96,11 @@ export class WorkflowEngineeringClient {
       );
     }
     assertWorkflowStudioBackend(base, getValkyraiBasePath());
+    if (executionId && (!isWorkflowStudioId(response.data?.executionId) || response.data.executionId.toLowerCase() !== executionId)) {
+      throw new Error(
+        "ValkyrAI did not confirm this exact run. Refresh its status before opening it again.",
+      );
+    }
     if (
       typeof response.data?.ticket !== "string" ||
       !response.data.ticket ||
@@ -99,6 +111,7 @@ export class WorkflowEngineeringClient {
     const launchUrl = new URL(`${base}/auth/valoride/webview-session`);
     launchUrl.searchParams.set("ticket", response.data.ticket);
     launchUrl.searchParams.set("workflowId", workflowId);
+    if (executionId) launchUrl.searchParams.set("executionId", executionId);
     return launchUrl.toString();
   }
 }
@@ -236,11 +249,17 @@ export function registerWorkflowProjects(
           const launchUrl = await client.createStudioHandoff(
             workflow!.id,
             expectedBackend,
+            workflow!.executionId,
           );
           openWorkflowStudioPanel(
             launchUrl,
             workflow!,
-            () => client.createStudioHandoff(workflow!.id, expectedBackend),
+            () =>
+              client.createStudioHandoff(
+                workflow!.id,
+                expectedBackend,
+                workflow!.executionId,
+              ),
             output,
           );
         } catch (error) {
