@@ -111,6 +111,25 @@ describe("procedure execution chat card", () => {
       cleanup();
     }
   });
+  it("keeps the inspected run's exact version in the native handoff", () => {
+    const workflowVersionId = "7c6f4311-bf51-448a-83c8-e391c435314e";
+    show({
+      phase: "result",
+      action: "status",
+      backend,
+      result: { id, workflowId, workflowVersionId, state: "SUCCESS" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Review this run" }));
+    expect(vscode.postMessage).toHaveBeenLastCalledWith({
+      type: "openWorkflowStudio",
+      workflowStudioTarget: {
+        workflowId,
+        backend,
+        executionId: id,
+        workflowVersionId,
+      },
+    });
+  });
   it("opens the existing workflow through a backend-bound host message, keeping the exact execution visible", () => {
     for (const action of ["status", "execute"]) {
       const execution = { id, workflowId, state: "RUNNING" };
@@ -264,7 +283,7 @@ describe("procedure execution chat card", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
     expect(vscode.postMessage).toHaveBeenCalledWith({
       type: "openWorkflowStudio",
-      workflowStudioTarget: { workflowId, backend },
+      workflowStudioTarget: { workflowId, backend, workflowVersionId: id },
     });
   });
   it("keeps malformed discovery history non-actionable and does not fabricate input fields", () => {
@@ -385,6 +404,7 @@ describe("procedure input contract card", () => {
       type: "openWorkflowStudio",
       workflowStudioTarget: {
         workflowId: result.workflowId,
+        workflowVersionId: result.workflowVersionId,
         backend: "https://api-0.valkyrlabs.com/v1",
       },
     });

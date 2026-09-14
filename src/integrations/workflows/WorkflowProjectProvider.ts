@@ -16,6 +16,7 @@ type WorkflowListItem = {
   status?: string;
   backend?: string;
   executionId?: string;
+  workflowVersionId?: string;
 };
 
 export class WorkflowEngineeringClient {
@@ -57,11 +58,18 @@ export class WorkflowEngineeringClient {
     workflowId: string,
     expectedBackend = getValkyraiBasePath(),
     executionId?: string,
+    workflowVersionId?: string,
   ): Promise<string> {
     if (!isWorkflowStudioId(workflowId))
       throw new Error("The workflow reference is invalid.");
     if (executionId !== undefined && !isWorkflowStudioId(executionId))
       throw new Error("The workflow execution reference is invalid.");
+    if (
+      workflowVersionId !== undefined &&
+      !isWorkflowStudioId(workflowVersionId)
+    )
+      throw new Error("The workflow version reference is invalid.");
+    workflowVersionId = workflowVersionId?.toLowerCase();
     workflowId = workflowId.toLowerCase();
     executionId = executionId?.toLowerCase();
     const base = assertWorkflowStudioBackend(
@@ -77,11 +85,17 @@ export class WorkflowEngineeringClient {
     assertWorkflowStudioBackend(base, getValkyraiBasePath());
     const response = await getValkyrLabsRtkApiClient().request<{
       ticket?: string;
+      workflowId?: string;
       executionId?: string;
+      workflowVersionId?: string;
     }>({
       url: `${base}/auth/valoride/webview-ticket`,
       method: "POST",
-      json: { workflowId, ...(executionId ? { executionId } : {}) },
+      json: {
+        workflowId,
+        ...(executionId ? { executionId } : {}),
+        ...(workflowVersionId ? { workflowVersionId } : {}),
+      },
       headers: {
         Authorization: `Bearer ${token}`,
         jwtSession: token,
@@ -96,19 +110,29 @@ export class WorkflowEngineeringClient {
       );
     }
     assertWorkflowStudioBackend(base, getValkyraiBasePath());
-    if (executionId && (!isWorkflowStudioId(response.data?.executionId) || response.data.executionId.toLowerCase() !== executionId)) {
-      throw new Error(
-        "ValkyrAI did not confirm this exact run. Refresh its status before opening it again.",
-      );
-    }
-    if (
-      executionId &&
-      (!isWorkflowStudioId(response.data?.executionId) ||
-        response.data.executionId.toLowerCase() !== executionId)
-    ) {
-      throw new Error(
-        "ValkyrAI did not confirm this exact run. Refresh its status before opening it again.",
-      );
+    const references = { workflowId, executionId, workflowVersionId };
+    for (const key of [
+      "workflowId",
+      "executionId",
+      "workflowVersionId",
+    ] as const) {
+      const expected = references[key];
+      const actual = response.data?.[key];
+      if (
+        expected
+          ? !isWorkflowStudioId(actual) || actual.toLowerCase() !== expected
+          : actual != null
+      ) {
+        const label =
+          key === "executionId"
+            ? "run"
+            : key === "workflowVersionId"
+              ? "version"
+              : "workflow";
+        throw new Error(
+          `ValkyrAI did not confirm this exact ${label}. Refresh its status before opening it again.`,
+        );
+      }
     }
     if (
       typeof response.data?.ticket !== "string" ||
@@ -121,6 +145,8 @@ export class WorkflowEngineeringClient {
     launchUrl.searchParams.set("ticket", response.data.ticket);
     launchUrl.searchParams.set("workflowId", workflowId);
     if (executionId) launchUrl.searchParams.set("executionId", executionId);
+    if (workflowVersionId)
+      launchUrl.searchParams.set("workflowVersionId", workflowVersionId);
     return launchUrl.toString();
   }
 }
@@ -259,6 +285,7 @@ export function registerWorkflowProjects(
             workflow!.id,
             expectedBackend,
             workflow!.executionId,
+            workflow!.workflowVersionId,
           );
           openWorkflowStudioPanel(
             launchUrl,
@@ -268,6 +295,7 @@ export function registerWorkflowProjects(
                 workflow!.id,
                 expectedBackend,
                 workflow!.executionId,
+                workflow!.workflowVersionId,
               ),
             output,
           );

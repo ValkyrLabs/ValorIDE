@@ -6,6 +6,21 @@ import {
 const workflowId = "4d7b1763-71e6-4e8e-a1ee-b3cc39d6c671";
 const backend = "https://api-0.valkyrlabs.com/v1";
 describe("Workflow Studio navigation boundary", () => {
+  it("preserves an exact immutable version and refuses malformed versions", () => {
+    const workflowVersionId = "7c6f4311-bf51-448a-83c8-e391c435314e";
+    expect(
+      parseWorkflowStudioTarget({ workflowId, backend, workflowVersionId }),
+    ).toEqual({ workflowId, backend, workflowVersionId });
+    for (const invalid of [null, "", "../version", {}, "x".repeat(300)]) {
+      expect(
+        parseWorkflowStudioTarget({
+          workflowId,
+          backend,
+          workflowVersionId: invalid,
+        }),
+      ).toBeNull();
+    }
+  });
   it("preserves an optional exact execution and rejects malformed run targets", () => {
     const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
     expect(

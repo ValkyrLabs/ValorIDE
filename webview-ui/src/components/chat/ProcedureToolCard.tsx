@@ -73,7 +73,11 @@ function ProcedureCandidateReview({
     : null;
   const target =
     inputs && version && reference(item.procedureRef)
-      ? parseWorkflowStudioTarget({ workflowId: item.workflowId, backend })
+      ? parseWorkflowStudioTarget({
+          workflowId: item.workflowId,
+          workflowVersionId: version,
+          backend,
+        })
       : null;
   return (
     <li
@@ -309,6 +313,9 @@ export default function ProcedureToolCard({
     ? parseWorkflowStudioTarget({
         workflowId: result.workflowId,
         backend: data.backend,
+        ...(result.workflowVersionId != null
+          ? { workflowVersionId: result.workflowVersionId }
+          : {}),
       })
     : data.phase === "result" &&
         (data.action === "status" ||
@@ -321,6 +328,9 @@ export default function ProcedureToolCard({
           workflowId: workflow.workflowId,
           backend: data.backend,
           executionId: workflow.id,
+          ...(workflow.workflowVersionId != null
+            ? { workflowVersionId: workflow.workflowVersionId }
+            : {}),
         })
       : null;
   const detailEntries = [
