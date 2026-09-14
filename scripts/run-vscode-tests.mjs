@@ -17,6 +17,11 @@ if (!existsSync(executable) && process.platform === "darwin") {
 }
 if (!existsSync(executable))
   throw new Error(`VS Code test executable missing: ${executable}`);
+if (process.argv[2] === "--workflow-studio") {
+  process.env.VALORIDE_TEST_VSCODE_EXECUTABLE = executable;
+  await (await import("./workflow-studio-acceptance.mjs")).run();
+  process.exit(0);
+}
 const userDataDir = mkdtempSync(join(tmpdir(), "valoride-vscode-tests-"));
 console.log(`Isolated VS Code test profile and logs: ${userDataDir}`);
 const result = spawnSync(
