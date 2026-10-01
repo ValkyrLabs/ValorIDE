@@ -142,6 +142,29 @@ const ChatView = ({
       ourSenderId,
     });
 
+    // Public extension API invocations follow the same active UI handlers as
+    // a user click or message, including the pending-decision checks.
+    useEffect(() => {
+      if (isHidden) return undefined;
+      const handleInvoke = (event: MessageEvent<ExtensionMessage>) => {
+        const message = event.data;
+        if (message?.type !== "invoke") return;
+        switch (message.invoke) {
+          case "primaryButtonClick":
+            void handlePrimaryButtonClick();
+            break;
+          case "secondaryButtonClick":
+            void handleSecondaryButtonClick();
+            break;
+          case "sendMessage":
+            void handleSendMessage(message.text ?? "", message.images ?? []);
+            break;
+        }
+      };
+      window.addEventListener("message", handleInvoke);
+      return () => window.removeEventListener("message", handleInvoke);
+    }, [isHidden, handlePrimaryButtonClick, handleSecondaryButtonClick, handleSendMessage]);
+
     // Computed values
     const task = useMemo(() => messages?.at(0), [messages]);
     const modifiedMessages = useMemo(() => {

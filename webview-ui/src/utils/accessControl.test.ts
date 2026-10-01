@@ -1,7 +1,11 @@
+import { vi } from "vitest";
 import {
+  clearStoredAuthSession,
+  clearStoredJwtToken,
   clearStoredPrincipal,
   getPrincipalRoles,
   readStoredPrincipal,
+  storeJwtToken,
   writeStoredPrincipal,
 } from "./accessControl";
 
@@ -58,5 +62,60 @@ describe("accessControl role handling", () => {
     expect(loaded?.creditAccountId).toBe("credit-789");
     expect(loaded?.customer?.id).toBe("nested-customer-1");
     expect(loaded?.account?.id).toBe("nested-account-1");
+  });
+});
+
+describe("auth state refresh notifications", () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    const stored = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (key: string) => stored.get(key) ?? null,
+      setItem: (key: string, value: string) => stored.set(key, value),
+      removeItem: (key: string) => stored.delete(key),
+    });
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("does not emit logout events when already signed out", () => {
+    const listener = vi.fn();
+    window.addEventListener("jwt-token-updated", listener);
+    try {
+      clearStoredJwtToken("extension-state");
+      clearStoredJwtToken("extension-state");
+      expect(listener).not.toHaveBeenCalled();
+    } finally {
+      window.removeEventListener("jwt-token-updated", listener);
+    }
+  });
+
+  it("still emits a logout event when a stored session is removed", () => {
+    storeJwtToken("stored-session", "test");
+    const listener = vi.fn();
+    window.addEventListener("jwt-token-updated", listener);
+    try {
+      clearStoredJwtToken("extension-state");
+      clearStoredJwtToken("extension-state");
+      expect(listener).toHaveBeenCalledTimes(1);
+      expect(listener.mock.calls[0][0].detail).toMatchObject({
+        token: null,
+        source: "extension-state",
+      });
+      expect(sessionStorage.getItem("jwtToken")).toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBeNull();
+    } finally {
+      window.removeEventListener("jwt-token-updated", listener);
+    }
+  });
+
+  it("always signals an explicit logout even when storage is already empty", () => {
+    const listener = vi.fn();
+    window.addEventListener("authSessionInvalidated", listener);
+    try {
+      clearStoredAuthSession("explicit-logout");
+      expect(listener).toHaveBeenCalledTimes(1);
+    } finally {
+      window.removeEventListener("authSessionInvalidated", listener);
+    }
   });
 });

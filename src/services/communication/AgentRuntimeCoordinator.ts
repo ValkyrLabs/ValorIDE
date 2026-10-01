@@ -1,4 +1,11 @@
 import * as vscode from "vscode";
+import { createHash } from "node:crypto";
+import { TokenStorageService } from "../auth/TokenStorageService";
+import {
+  resolveInboundGovernedCodingTask,
+  observeNativeCodingProvider,
+  governedCodingEvidenceRefs,
+} from "../swarm/SwarmCodingInference";
 import { getAllExtensionState, updateGlobalState } from "@core/storage/state";
 import {
   MothershipService,
@@ -141,7 +148,9 @@ const EXECUTABLE_SWARM_ACTIONS = new Set([
 export class AgentRuntimeCoordinator implements vscode.Disposable {
   private readonly context: vscode.ExtensionContext;
   private mothership: MothershipService | null = null;
+  private mothershipInstanceId: string | null = null;
   private instanceId: string | null = null;
+  private instanceIdInitialization: Promise<string> | null = null;
   private gitDisposables: vscode.Disposable[] = [];
   private repositoryCommits = new Map<string, string | undefined>();
   private activeAssignments = new Map<string, TaskAssignment>();
@@ -161,6 +170,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private registrationRetryTimer: NodeJS.Timeout | null = null;
   private registrationRetryAttempt = 0;
   private registrationInFlight: Promise<void> | null = null;
+  private initializationTail: Promise<void> = Promise.resolve();
   private agenticState: AgenticCapabilityCommandCenterState =
     createAgenticCommandCenterState({
       approvalPolicy: "server-policy",
@@ -178,7 +188,21 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     );
   }
 
-  public async initialize(
+  public initialize(
+    jwtToken: string,
+    principal?: { id?: string },
+  ): Promise<void> {
+    const initialization = this.initializationTail.then(() =>
+      this.initializeOnce(jwtToken, principal),
+    );
+    this.initializationTail = initialization.then(
+      () => undefined,
+      () => undefined,
+    );
+    return initialization;
+  }
+
+  private async initializeOnce(
     jwtToken: string,
     principal?: { id?: string },
   ): Promise<void> {
@@ -197,7 +221,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return;
     }
 
-    this.instanceId = await this.ensureInstanceId();
+    this.instanceId = await this.getOrCreateInstanceId();
     await this.restoreOutcomeHandoffs();
     this.principalId = principal?.id;
     this.setSwarmState({
@@ -252,6 +276,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       }
     }
     this.mothership = null;
+    this.mothershipInstanceId = null;
     this.swarmNode = null;
     this.swarmTransport = null;
     this.mothershipBaseUrl = null;
@@ -261,10 +286,14 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     options: MothershipConnectionOptions,
   ): Promise<void> {
     const nextBaseUrl = (options.baseUrl ?? "").replace(/\/+$/, "");
+    const nextInstanceId = options.instanceId?.trim() || null;
     if (this.mothership) {
-      if (this.mothershipBaseUrl !== nextBaseUrl) {
+      if (
+        this.mothershipBaseUrl !== nextBaseUrl ||
+        this.mothershipInstanceId !== nextInstanceId
+      ) {
         Logger.log(
-          `Reconnecting mothership for ValkyrAI host change: ${this.mothershipBaseUrl || "unset"} -> ${nextBaseUrl || "default"}`,
+          `Reconnecting mothership because its canonical connection binding changed (hostChanged=${this.mothershipBaseUrl !== nextBaseUrl}, instanceChanged=${this.mothershipInstanceId !== nextInstanceId})`,
         );
         this.disposeMothershipConnection();
       } else {
@@ -282,6 +311,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
 
     this.mothership = new MothershipService(options);
     this.mothershipBaseUrl = nextBaseUrl;
+    this.mothershipInstanceId = nextInstanceId;
     this.swarmTransport = new MothershipSwarmTransport(this.mothership);
     this.mothership.on("connected", () => {
       Logger.log("Mothership connected");
@@ -291,7 +321,6 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       });
       void this.publishCapabilities();
       void this.registerSwarmNode();
-      void this.replayDurableOutcomes();
     });
 
     this.mothership.on("disconnected", () => {
@@ -337,11 +366,34 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     if (existing) {
       return existing;
     }
-    const generated = `valoride-${vscode.env.machineId.slice(0, 6)}-${Math.random()
-      .toString(36)
-      .substring(2, 8)}`;
+    // The fallback must be stable even if two activation paths both observe
+    // empty extension state before either write is visible. Random generation
+    // can otherwise bind the socket to one identity and publish another in
+    // durable state. The profile storage URI distinguishes isolated profiles
+    // on the same machine without exposing the path itself.
+    const machineId = vscode.env.machineId || "machine";
+    const profileScope =
+      this.context.globalStorageUri?.toString() ||
+      this.context.globalStorageUri?.fsPath ||
+      this.context.extension?.id ||
+      "valoride";
+    const suffix = createHash("sha256")
+      .update(`${machineId}\0${profileScope}`)
+      .digest("hex")
+      .slice(0, 8);
+    const generated = `valoride-${machineId.slice(0, 6)}-${suffix}`;
     await updateGlobalState(this.context, INSTANCE_ID_KEY, generated);
     return generated;
+  }
+
+  private getOrCreateInstanceId(): Promise<string> {
+    if (this.instanceId) {
+      return Promise.resolve(this.instanceId);
+    }
+    if (!this.instanceIdInitialization) {
+      this.instanceIdInitialization = this.ensureInstanceId();
+    }
+    return this.instanceIdInitialization;
   }
 
   private async publishCapabilities(force = false): Promise<void> {
@@ -479,6 +531,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       });
       this.clearRegistrationRetry();
       this.startHeartbeat();
+      this.replayDurableOutcomes();
     } catch (error) {
       Logger.log(`ValorIDE SWARM registration failed: ${String(error)}`);
       this.stopHeartbeat();
@@ -691,8 +744,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return undefined;
     }
 
+    const boundCodingData = payload?.data;
     const data =
-      payload && typeof payload === "object" ? payload : { message: payload };
+      ["filesystem.write", "valor.execute"].includes(action) &&
+      boundCodingData &&
+      typeof boundCodingData === "object" &&
+      boundCodingData.governedCodingInference
+        ? boundCodingData
+        : payload && typeof payload === "object"
+          ? payload
+          : { message: payload };
     const sourceInstanceId =
       command.sourceInstanceId || command.raw?.sourceInstanceId || "api-0";
     const message = buildSwarmMessage(
@@ -903,17 +964,40 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       );
     }
 
+    let governedConfiguration: ApiConfiguration | undefined;
+    if (["filesystem.write", "valor.execute"].includes(action)) {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      const credentials = TokenStorageService.getInstance(this.context);
+      if (!apiConfiguration.valkyraiHost || !this.instanceId) {
+        throw new Error(
+          "Governed coding requires the configured authenticated Core connection.",
+        );
+      }
+      governedConfiguration = await resolveInboundGovernedCodingTask(
+        apiConfiguration.valkyraiHost,
+        () => credentials.getJwtToken(),
+        this.instanceId,
+        message,
+        context,
+      );
+    }
     this.setSwarmState({
       activeTaskId: context.correlation.taskId ?? context.correlation.commandId,
       instanceId: this.instanceId ?? undefined,
       status: "busy",
     });
-    await webview.controller.initTask(text, images, undefined, {
-      commandId: context.correlation.commandId,
-      correlationId: context.correlation.correlationId,
-      sessionId: context.correlation.sessionId,
-      taskId: context.correlation.taskId,
-    });
+    await webview.controller.initTask(
+      text,
+      images,
+      undefined,
+      {
+        commandId: context.correlation.commandId,
+        correlationId: context.correlation.correlationId,
+        sessionId: context.correlation.sessionId,
+        taskId: context.correlation.taskId,
+      },
+      governedConfiguration,
+    );
     const localTaskId = webview.controller.task?.taskId;
     if (!localTaskId) {
       throw new Error(
@@ -957,6 +1041,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       sessionId: context.correlation.sessionId,
       status: "started",
       taskPreview: text.slice(0, 240),
+      governedCodingInference: governedConfiguration?.governedCodingInference,
     };
   }
 
@@ -1030,12 +1115,19 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     });
     const unprovenCompletion =
       event.kind === "completed" && status !== "SUCCEEDED";
+    const task = WebviewProvider.getAllInstances()[0]?.controller.task;
+    const codingBinding =
+      task?.taskId === event.taskId ? task.governedCodingInference : undefined;
+    const inferenceEvidence = codingBinding
+      ? governedCodingEvidenceRefs(codingBinding)
+      : [];
+    const evidenceRefs = [...(event.evidenceRefs ?? []), ...inferenceEvidence];
     await this.closeSwarmAssignment({
       completedAt: event.completedAt,
       confidence: unprovenCompletion ? "UNRESOLVED" : event.confidence,
       correlation: handoff.correlation,
       error: event.error,
-      evidenceRefs: event.evidenceRefs,
+      evidenceRefs: evidenceRefs.length > 0 ? evidenceRefs : event.evidenceRefs,
       localTaskId: event.taskId,
       retryable: event.error?.retryable,
       source: unprovenCompletion ? "legacy-classifier" : event.source,
@@ -1126,10 +1218,17 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     if (!this.mothership || !this.mothership.isConnected()) {
       return;
     }
-    this.mothership.sendAppTopic(
-      "swarm-outcome",
-      wrapSwarmRuntimeOutcome(outcome),
-    );
+    // An ACK carries the observed lifecycle status; it does not claim success.
+    // The canonical server validates result.outcome against the issued command.
+    this.mothership.sendCommandPayload({
+      type: "ACK",
+      ackId: outcome.commandId,
+      commandId: outcome.commandId,
+      targetInstanceId: outcome.targetInstanceId,
+      workerId: outcome.targetInstanceId,
+      status: outcome.status.toLowerCase(),
+      ...wrapSwarmRuntimeOutcome(outcome),
+    });
   }
 
   private limitSummary(summary: string): string {
@@ -1412,7 +1511,22 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
     const active = this.firstActiveAssignment();
     try {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      const activeBinding =
+        WebviewProvider.getAllInstances()[0]?.controller.task
+          ?.governedCodingInference;
+      const providerConfiguration: ApiConfiguration = activeBinding
+        ? {
+            apiProvider: "lmstudio",
+            lmStudioBaseUrl: new URL(activeBinding.endpoint).origin,
+            lmStudioModelId: activeBinding.model,
+          }
+        : apiConfiguration;
+      const localInference = await observeNativeCodingProvider(
+        providerConfiguration,
+      );
       await this.swarmNode.heartbeat({
+        localInference,
         activeTaskId: active?.taskId,
         projectId: active?.projectId,
         status: active ? "busy" : "online",

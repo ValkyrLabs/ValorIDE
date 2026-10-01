@@ -26,7 +26,27 @@ exports.activate = async (context) => {
       timestamp: Date.now(),
     }),
   );
-  return require(process.env.VALORIDE_NATIVE_BUNDLE).activate(context);
+  if (process.env.VALORIDE_NATIVE_ENGINEERING_WORKSPACE) {
+    await context.globalState.update("apiProvider", "lmstudio");
+    await context.globalState.update("lmStudioBaseUrl", process.env.VALORIDE_ACCEPTANCE_ENGINEERING_URL);
+    await context.globalState.update("lmStudioModelId", process.env.VALORIDE_ACCEPTANCE_ENGINEERING_MODEL);
+    await context.globalState.update("chatSettings", { mode: "act", llmSource: "local" });
+    await context.globalState.update("autoApprovalSettings", {
+      version: 1, enabled: true, maxRequests: 20, enableNotifications: false,
+      actions: { readFiles: true, readFilesExternally: false, editFiles: false,
+        editFilesExternally: false, executeSafeCommands: false, executeAllCommands: false,
+        useBrowser: false, useMcp: false, useProcedures: false },
+    });
+  }
+  const api = await require(process.env.VALORIDE_NATIVE_BUNDLE).activate(context);
+  // Read-only acceptance introspection of actual persisted runtime state. Tasks,
+  // command delivery, approvals, execution and outcomes still use product APIs.
+  return { ...api, acceptanceSnapshot: () => ({
+    instanceId: context.globalState.get("valorideSwarmInstanceId"),
+    handoffs: context.globalState.get("valorideSwarmOutcomeHandoffs"),
+    taskHistory: context.globalState.get("taskHistory"),
+    globalStoragePath: context.globalStorageUri.fsPath,
+  }) };
 };
 exports.deactivate = () =>
   require(process.env.VALORIDE_NATIVE_BUNDLE).deactivate();

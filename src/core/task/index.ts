@@ -177,7 +177,10 @@ import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { TokenStorageService } from "@services/auth/TokenStorageService";
 import { createSessionBoundProcedureClient } from "@services/workflow/ValkyrProcedureClient";
-import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
+import {
+  resolveFirstChunkRetryPolicy,
+  resolveFirstChunkTimeoutMs,
+} from "./apiTimeouts";
 import { resolveCommandRequiresApproval } from "./tools/commandApproval";
 import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
 import {
@@ -185,6 +188,7 @@ import {
   type TaskTerminalEvent,
   type TaskTerminalListener,
 } from "@shared/TaskLifecycle";
+import { buildCommandEvidenceRef } from "./CommandEvidence";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -220,9 +224,22 @@ export class Task {
   private communicationService?: CommunicationService;
   private readonly terminalListener?: TaskTerminalListener;
   private terminalReported = false;
+  private readonly commandEvidenceRefs = new Set<string>();
 
   readonly taskId: string;
-  api: ApiHandler;
+  private activeApi: ApiHandler;
+  readonly governedCodingInference?: import("@services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
+  get api(): ApiHandler {
+    return this.activeApi;
+  }
+  set api(handler: ApiHandler) {
+    if (this.governedCodingInference && this.activeApi) {
+      throw new Error(
+        "The governed coding task's approved provider cannot be replaced by settings.",
+      );
+    }
+    this.activeApi = handler;
+  }
   private terminalManager: TerminalManager;
   private urlContentFetcher: UrlContentFetcher;
   browserSession: BrowserSession;
@@ -276,7 +293,7 @@ export class Task {
   private didRejectTool = false;
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
-  private didAutomaticallyRetryFailedApiRequest = false;
+  private automaticApiRetryAttempts = 0;
 
   // Handler instances for better code organization
   private messageHandler: MessageHandler;
@@ -373,6 +390,8 @@ export class Task {
     // Initialize file context tracker
     this.fileContextTracker = new FileContextTracker(context, this.taskId);
     this.modelContextTracker = new ModelContextTracker(context, this.taskId);
+    // Lock before the first model request; ordinary tasks retain settings-driven behavior.
+    this.governedCodingInference = apiConfiguration.governedCodingInference;
     // Now that taskId is initialized, we can build the API handler
     this.api = buildApiHandler({
       ...apiConfiguration,
@@ -524,6 +543,7 @@ export class Task {
         shadowGitConfigWorkTree:
           await this.checkpointTracker?.getShadowGitConfigWorkTree(),
         conversationHistoryDeletedRange: this.conversationHistoryDeletedRange,
+        governedCodingInference: this.governedCodingInference,
       });
     } catch (error) {
       console.error("Failed to save valoride messages:", error);
@@ -1841,6 +1861,10 @@ export class Task {
     }
   }
 
+  recordCommandEvidence(command: string, result: ToolResponse): void {
+    this.commandEvidenceRefs.add(buildCommandEvidenceRef(command, result));
+  }
+
   // Checkpoints
 
   async saveCheckpoint(
@@ -2326,6 +2350,7 @@ export class Task {
           ];
         case "write_to_file":
         case "replace_in_file":
+        case "precision_search_and_replace":
           return [
             this.autoApprovalSettings.actions.editFiles,
             this.autoApprovalSettings.actions.editFilesExternally ?? false,
@@ -2393,7 +2418,7 @@ export class Task {
     this.userMessageContentReady = false;
     this.didRejectTool = false;
     this.didAlreadyUseTool = false;
-    this.didAutomaticallyRetryFailedApiRequest = false;
+    this.automaticApiRetryAttempts = 0;
     await this.diffViewProvider.reset();
   }
 
@@ -2871,10 +2896,24 @@ export class Task {
         const isAnthropicContextWindowError =
           checkIsAnthropicContextWindowError(error) && isAnthropic;
 
+        const providerRetry = resolveFirstChunkRetryPolicy(this.api);
+        if (
+          providerRetry &&
+          this.automaticApiRetryAttempts < providerRetry.maxRetries
+        ) {
+          console.log(
+            `first chunk failed; retrying once after ${providerRetry.backoffMs}ms under the provider policy`,
+          );
+          await setTimeoutPromise(providerRetry.backoffMs);
+          this.automaticApiRetryAttempts += 1;
+          await this.say("api_req_retried");
+          return true;
+        }
+
         if (
           isAnthropic &&
           isAnthropicContextWindowError &&
-          !this.didAutomaticallyRetryFailedApiRequest
+          this.automaticApiRetryAttempts === 0
         ) {
           this.conversationHistoryDeletedRange =
             this.contextManager.getNextTruncationRange(
@@ -2883,11 +2922,11 @@ export class Task {
               "quarter",
             );
           await this.saveValorIDEMessagesAndUpdateHistory();
-          this.didAutomaticallyRetryFailedApiRequest = true;
+          this.automaticApiRetryAttempts = 1;
           return true;
         }
 
-        if (isOpenRouter && !this.didAutomaticallyRetryFailedApiRequest) {
+        if (isOpenRouter && this.automaticApiRetryAttempts === 0) {
           if (isOpenRouterContextWindowError) {
             this.conversationHistoryDeletedRange =
               this.contextManager.getNextTruncationRange(
@@ -2899,7 +2938,7 @@ export class Task {
           }
           console.log("first chunk failed, waiting 1 second before retrying");
           await setTimeoutPromise(1000);
-          this.didAutomaticallyRetryFailedApiRequest = true;
+          this.automaticApiRetryAttempts = 1;
           return true;
         }
 
@@ -2915,7 +2954,7 @@ export class Task {
             normalizedError = new Error(
               "Context window exceeded. Click retry to truncate the conversation and try again.",
             );
-            this.didAutomaticallyRetryFailedApiRequest = false;
+            this.automaticApiRetryAttempts = 0;
           }
 
           const errorMessage = this.formatErrorWithStatusCode(normalizedError);
@@ -5103,12 +5142,16 @@ export class Task {
                 }
                 const checkpointHash =
                   lastCompletionResultMessage?.lastCheckpointHash?.trim();
-                const machineEvidenceRefs =
+                const checkpointEvidenceRefs =
                   checkpointHash &&
                   lastCompletionChangesSummary &&
                   lastCompletionChangesSummary.totalFiles > 0
                     ? [`valoride-checkpoint:${checkpointHash}`]
                     : [];
+                const machineEvidenceRefs = [
+                  ...checkpointEvidenceRefs,
+                  ...this.commandEvidenceRefs,
+                ];
                 await this.reportTerminal(
                   classifyTaskCompletion({
                     evidenceRefs: machineEvidenceRefs,

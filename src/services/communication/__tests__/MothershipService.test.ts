@@ -8,6 +8,45 @@ vi.mock("@utils/serverValkyraiHost", () => ({
 }));
 
 describe("MothershipService", () => {
+  it("keeps an active STOMP handshake single-flight", async () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+    } as any);
+    const deactivate = vi.fn();
+    svc.stompClient = {
+      active: true,
+      connected: false,
+      deactivate,
+    };
+
+    await Promise.all([svc.connect(), svc.connect()]);
+
+    expect(deactivate).not.toHaveBeenCalled();
+    expect(svc.stompClient.active).toBe(true);
+  });
+
+  it("keeps the registered socket when initialization reapplies the same JWT", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+    } as any);
+    const deactivate = vi.fn();
+    const client = {
+      active: true,
+      connected: true,
+      deactivate,
+    };
+    svc.stompClient = client;
+    svc.connected = true;
+
+    svc.updateJwtToken("token");
+
+    expect(deactivate).not.toHaveBeenCalled();
+    expect(svc.stompClient).toBe(client);
+    expect(svc.isConnected()).toBe(true);
+  });
+
   it("uses the canonical native STOMP /swarm endpoint", () => {
     const svc: any = new MothershipService({
       jwtToken: "token",

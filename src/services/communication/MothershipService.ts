@@ -62,7 +62,10 @@ export class MothershipService extends EventEmitter {
   }
 
   public async connect(): Promise<void> {
-    if (this.connected && this.stompClient?.connected) {
+    if (
+      (this.connected && this.stompClient?.connected) ||
+      this.stompClient?.active
+    ) {
       return;
     }
 
@@ -662,6 +665,10 @@ export class MothershipService extends EventEmitter {
   }
 
   public updateJwtToken(newToken: string): void {
+    if (newToken === this.options.jwtToken) {
+      return;
+    }
+
     this.options.jwtToken = newToken;
 
     // Reconnect with new token if currently connected

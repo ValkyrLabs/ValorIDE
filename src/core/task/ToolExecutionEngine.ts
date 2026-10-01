@@ -90,6 +90,9 @@ export class ToolExecutionEngine {
       recordAutoApprovedRequest: () => {
         this.task.consecutiveAutoApprovedRequestsCount++;
       },
+      recordCommandEvidence: (command, result) => {
+        this.task.recordCommandEvidence(command, result);
+      },
 
       // State
       taskId: this.task.taskId,

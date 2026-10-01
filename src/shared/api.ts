@@ -27,6 +27,9 @@ export type ApiProvider =
   | "sambanova";
 
 export interface ApiHandlerOptions {
+  governedCodingInference?: import("../services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
+  /** Transient credential accessor/authorization check; never written to task history. */
+  governedCodingRevalidate?: () => Promise<void>;
   apiModelId?: string;
   apiKey?: string; // anthropic
   valorideApiKey?: string;

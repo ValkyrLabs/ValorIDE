@@ -162,10 +162,10 @@ const ApiOptions = ({
     const newValue = event.target.value;
 
     // Update local state
-    setApiConfiguration({
-      ...apiConfiguration,
+    setApiConfiguration((current) => ({
+      ...current,
       [field]: newValue,
-    });
+    }));
 
     // If the field is the provider AND saveImmediately is true, save it immediately using the full context state
     if (saveImmediately && field === "apiProvider") {

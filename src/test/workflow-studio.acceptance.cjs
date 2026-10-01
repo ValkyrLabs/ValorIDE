@@ -190,15 +190,22 @@ exports.run = async () => {
         "workbench.action.closeActiveEditor",
       );
     }
+    const engineering = process.env.VALORIDE_NATIVE_ENGINEERING_WORKSPACE
+      ? await require("./workflow-engineering.acceptance.cjs").run({ extension, report, evidence, browser })
+      : undefined;
     fs.writeFileSync(
       path.join(evidence, "verification.json"),
       JSON.stringify(
-        { status: "passed", preauthenticated: true, handoffs: results },
+        { status: "passed", preauthenticated: true, handoffs: results, engineering },
         null,
         2,
       ),
     );
   } catch (error) {
+    // Preserve the original failure before optional CDP or screenshot diagnostics.
+    fs.writeFileSync(path.join(evidence, "native-test-error.json"),
+      JSON.stringify({ error: error.stack ?? String(error) }, null, 2), { mode: 0o600 });
+    console.error("Native acceptance failed:", error);
     // Save content-free frame locations and a screenshot; tickets/cookies stay out of diagnostics.
     const pages = await browser.pages();
     fs.writeFileSync(

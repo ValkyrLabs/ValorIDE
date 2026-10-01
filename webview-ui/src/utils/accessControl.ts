@@ -530,12 +530,22 @@ export const clearStoredJwtToken = (source?: string): void => {
     return;
   }
   try {
+    const hadStoredToken = Boolean(
+      sessionStorage.getItem(JWT_STORAGE_KEY) ||
+        sessionStorage.getItem(JWT_SESSION_KEY) ||
+        window.localStorage?.getItem(JWT_STORAGE_KEY) ||
+        window.localStorage?.getItem(AUTH_TOKEN_KEY) ||
+        window.localStorage?.getItem(JWT_SESSION_KEY),
+    );
     sessionStorage.removeItem(JWT_STORAGE_KEY);
     sessionStorage.removeItem(JWT_SESSION_KEY);
     window.localStorage?.removeItem(JWT_STORAGE_KEY);
     window.localStorage?.removeItem(AUTH_TOKEN_KEY);
     window.localStorage?.removeItem(JWT_SESSION_KEY);
-    dispatchJwtTokenChange(null, source);
+    // A signed-out state refresh is not a new logout/navigation action.
+    if (hadStoredToken) {
+      dispatchJwtTokenChange(null, source);
+    }
   } catch (error) {
     console.warn("Unable to clear JWT token", error);
   }

@@ -92,7 +92,7 @@ const WelcomeView = memo(() => {
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <img
               alt="ValorIDE"
-              src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
+              src="https://valkyrlabs.com/assets/images/VALKYR_LABS_INC_LOGO.png"
               style={{ maxWidth: 200, height: "auto", opacity: 0.95 }}
             />
           </div>

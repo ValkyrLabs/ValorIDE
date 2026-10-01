@@ -45,6 +45,7 @@ export interface ToolContext {
     >
   >;
   recordAutoApprovedRequest?: () => void;
+  recordCommandEvidence?: (command: string, result: ToolResponse) => void;
   getChatMode?: () => "plan" | "act";
   isTaskActive?: () => boolean;
 

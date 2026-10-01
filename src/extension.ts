@@ -15,6 +15,7 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { disposeAgentRuntimeCoordinator } from "./services/communication/AgentRuntimeCoordinator";
 import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
 import {
   hasDirectCallbackCredentials,
@@ -1016,6 +1017,14 @@ const { IS_DEV, DEV_WORKSPACE_FOLDER } = process.env;
 export function deactivate() {
   return new Promise<void>((resolve) => {
     Logger.log("Starting ValorIDE extension deactivation...");
+
+    try {
+      disposeAgentRuntimeCoordinator();
+      Logger.log("Agent runtime coordinator disposed successfully");
+    } catch (error) {
+      Logger.log(`Error disposing agent runtime coordinator: ${error}`);
+      console.error("Error disposing agent runtime coordinator:", error);
+    }
 
     try {
       // Clean up test mode

@@ -1,4 +1,9 @@
 import { Anthropic } from "@anthropic-ai/sdk";
+import {
+  governedCodingTaskApprovalSettings,
+  materializeGovernedCodingTask,
+} from "@services/swarm/SwarmCodingInference";
+import { TokenStorageService } from "@services/auth/TokenStorageService";
 import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 import crypto from "crypto";
@@ -42,6 +47,7 @@ import {
   getValkyrLabsRtkApiClient,
   ValkyrLabsApiError,
 } from "@services/valkyrai/ValkyrLabsRtkApi";
+import { testValkyraiHostConnection } from "@services/valkyrai/ValkyraiHostConnection";
 import { initializeAgentRuntimeCoordinator } from "@services/communication/AgentRuntimeCoordinator";
 import {
   buildTenantHeaders,
@@ -1706,6 +1712,7 @@ export class Controller {
     images?: string[],
     historyItem?: HistoryItem,
     taskProgressCorrelation?: Omit<TaskProgressCorrelation, "localTaskId">,
+    governedApiConfiguration?: ApiConfiguration,
   ) {
     await this.clearTask(); // ensures that an existing task doesn't exist before starting a new one, although this shouldn't be possible since user must clear task before starting a new one
     this.taskProgressCorrelation = undefined;
@@ -1717,10 +1724,22 @@ export class Controller {
       chatSettings,
       selectedLlmDetails,
     } = await getAllExtensionState(this.context);
-    const taskApiConfiguration = await this.resolveTaskApiConfiguration(
-      apiConfiguration,
-      selectedLlmDetails,
-    );
+    let taskApiConfiguration: ApiConfiguration;
+    if (governedApiConfiguration) {
+      if (!governedApiConfiguration.governedCodingInference) {
+        throw new Error("A governed coding task needs its validated command configuration.");
+      }
+      taskApiConfiguration = governedApiConfiguration;
+    } else if (historyItem?.governedCodingInference) {
+      const binding = historyItem.governedCodingInference;
+      if (!apiConfiguration.valkyraiHost) throw new Error("Governed coding history needs authenticated canonical revalidation.");
+      const credentials = TokenStorageService.getInstance(this.context);
+      taskApiConfiguration = await materializeGovernedCodingTask(apiConfiguration.valkyraiHost, () => credentials.getJwtToken(),
+        binding, binding.commandId, binding.actionDigest, binding.scopeDigest, binding.approvalSignature);
+      taskApiConfiguration.governedCodingInference!.requests.push(...binding.requests);
+    } else {
+      taskApiConfiguration = await this.resolveTaskApiConfiguration(apiConfiguration, selectedLlmDetails);
+    }
 
     if (autoApprovalSettings) {
       const updatedAutoApprovalSettings = {
@@ -1733,6 +1752,9 @@ export class Controller {
         updatedAutoApprovalSettings,
       );
     }
+    const taskAutoApprovalSettings = taskApiConfiguration.governedCodingInference
+      ? governedCodingTaskApprovalSettings(autoApprovalSettings)
+      : autoApprovalSettings;
     this.task = new Task(
       this.context,
       this.mcpHub,
@@ -1743,7 +1765,7 @@ export class Controller {
       (taskId) => this.reinitExistingTaskFromId(taskId),
       () => this.cancelTask(),
       taskApiConfiguration,
-      autoApprovalSettings,
+      taskAutoApprovalSettings,
       browserSettings,
       chatSettings,
       customInstructions,
@@ -2342,7 +2364,10 @@ export class Controller {
               "autoApprovalSettings",
               message.autoApprovalSettings,
             );
-            if (this.task) {
+            // A governed SWARM task must retain its native interaction floor.
+            // Global UI preferences can still be saved for later ordinary
+            // tasks, but cannot broaden an already-running signed command.
+            if (this.task && !this.task.governedCodingInference) {
               this.task.autoApprovalSettings = message.autoApprovalSettings;
             }
             await this.postStateToWebview();
@@ -2471,25 +2496,57 @@ export class Controller {
         if (!targetHost) {
           await this.postMessageToWebview({
             type: "valkyraiHostTestResult",
+            requestId: message.requestId,
             host: "",
             success: false,
             error: "Host URL is required.",
           });
           break;
         }
-        await this.testValkyraiHostConnection(targetHost);
+        const token = normalizeValkyraiHost(targetHost) === getValkyraiBasePath()
+          ? await getSecret(this.context, "jwtToken")
+          : undefined;
+        const result = await testValkyraiHostConnection(targetHost, undefined, token);
+        await this.postMessageToWebview({
+          type: "valkyraiHostTestResult",
+          requestId: message.requestId,
+          ...result,
+        });
         break;
       }
       case "updateValkyraiHost": {
         const requestedHost = message.valkyraiHost?.trim();
         if (!requestedHost) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostSaveResult",
+            requestId: message.requestId,
+            success: false,
+            error: "Host URL is required.",
+          });
           break;
         }
         const nextHost = normalizeValkyraiHost(requestedHost);
-        await vscode.workspace
-          .getConfiguration("valoride.valkyrai")
-          .update("host", nextHost, vscode.ConfigurationTarget.Global);
-        await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        try {
+          await vscode.workspace
+            .getConfiguration("valoride.valkyrai")
+            .update("host", nextHost, vscode.ConfigurationTarget.Global);
+          await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        } catch (error) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostSaveResult",
+            requestId: message.requestId,
+            host: nextHost,
+            success: false,
+            error: error instanceof Error ? error.message : "Unable to save host.",
+          });
+          break;
+        }
+        await this.postMessageToWebview({
+          type: "valkyraiHostSaveResult",
+          requestId: message.requestId,
+          host: nextHost,
+          success: true,
+        });
         await this.postStateToWebview();
         await this.refreshLLMDetails();
         try {
@@ -2504,6 +2561,7 @@ export class Controller {
           );
         }
         await this.retrySwarmRegistration("ValkyrAI host change");
+        void this.registerSwarmSession(nextHost);
         break;
       }
       case "refreshOpenAiModels":
@@ -5817,47 +5875,6 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       error: lastError,
     });
     return models;
-  }
-
-  private async testValkyraiHostConnection(host: string) {
-    let success = false;
-    let errorMessage: string | undefined;
-    const normalizedHost = normalizeValkyraiHost(host);
-    const endpoints = [
-      `${normalizedHost}/health`,
-      `${normalizedHost}/status`,
-      normalizedHost,
-    ];
-    for (const endpoint of endpoints) {
-      try {
-        await getValkyrLabsRtkApiClient().request({ url: endpoint });
-        success = true;
-        errorMessage = undefined;
-        break;
-      } catch (error) {
-        if (
-          error instanceof ValkyrLabsApiError &&
-          typeof error.status === "number"
-        ) {
-          success = true;
-          errorMessage = undefined;
-          break;
-        }
-        errorMessage =
-          error instanceof Error ? error.message : "Unable to reach host.";
-      }
-    }
-
-    if (success) {
-      void this.registerSwarmSession(normalizedHost);
-    }
-
-    await this.postMessageToWebview({
-      type: "valkyraiHostTestResult",
-      host: normalizedHost,
-      success,
-      error: errorMessage,
-    });
   }
 
   /**

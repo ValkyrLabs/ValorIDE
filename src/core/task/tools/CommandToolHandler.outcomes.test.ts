@@ -34,6 +34,7 @@ function fixture(completed: boolean, exitCode?: number) {
     ask: jest.fn(async () => ({ response: "yesButtonClicked" })),
     say: jest.fn(async () => undefined),
     saveCheckpoint: jest.fn(async () => undefined),
+    recordCommandEvidence: jest.fn(),
     workspaceTracker: { populateFilePaths: jest.fn() },
     terminalManager: {
       getOrCreateTerminal: jest.fn(async () => ({
@@ -72,6 +73,14 @@ describe("command execution outcome evidence", () => {
             : `exit code ${exitCode}`,
       );
       expect(context.terminalManager.runCommand).toHaveBeenCalledTimes(1);
+      if (outcome === "succeeded") {
+        expect(context.recordCommandEvidence).toHaveBeenCalledWith(
+          "fixture-only",
+          expect.stringContaining("exit code 0"),
+        );
+      } else {
+        expect(context.recordCommandEvidence).not.toHaveBeenCalled();
+      }
     });
   }
 

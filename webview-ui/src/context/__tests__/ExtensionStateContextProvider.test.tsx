@@ -56,6 +56,30 @@ describe("ExtensionStateContextProvider", () => {
     expect(screen.getByTestId("hydrated")).toBeInTheDocument();
   });
 
+  it("keeps a provider selection when model fields update in the same React batch", async () => {
+    const { ExtensionStateContextProvider, useExtensionState } = await import(
+      "../ExtensionStateContext"
+    );
+    const Child = () => {
+      const { apiConfiguration, setApiConfiguration } = useExtensionState();
+      return <>
+        <button onClick={() => {
+          setApiConfiguration((current) => ({ ...current, apiProvider: "lmstudio" }));
+          setApiConfiguration((current) => ({ ...current, lmStudioBaseUrl: "http://127.0.0.1:1234" }));
+          setApiConfiguration((current) => ({ ...current, lmStudioModelId: "qwen-image-2.1" }));
+        }}>Configure</button>
+        <div data-testid="provider">{apiConfiguration?.apiProvider}</div>
+        <div data-testid="origin">{apiConfiguration?.lmStudioBaseUrl}</div>
+        <div data-testid="model">{apiConfiguration?.lmStudioModelId}</div>
+      </>;
+    };
+    render(<ExtensionStateContextProvider><Child /></ExtensionStateContextProvider>);
+    await act(async () => { screen.getByText("Configure").click(); });
+    expect(screen.getByTestId("provider")).toHaveTextContent("lmstudio");
+    expect(screen.getByTestId("origin")).toHaveTextContent("http://127.0.0.1:1234");
+    expect(screen.getByTestId("model")).toHaveTextContent("qwen-image-2.1");
+  });
+
   it("renders the App shell without crashing", async () => {
     vi.useFakeTimers();
     vi.unmock("@thorapi/redux/services/UsageTransactionService");

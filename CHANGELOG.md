@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Make precision file edits honor the existing file-edit approval settings, including rejection and path-scoped automatic approval.
+- Restore chat approval/rejection button responses and extension API invocations; completed-task controls start a new task without sending a continuation message.
+- Send persisted engineering outcomes through the canonical SWARM command-response transport and replay them after registration is acknowledged.
 - Add a logout/auth-reset flow that restores the welcome screen after clearing client auth state.
 - Add a regression test covering the welcome screen after auth state is cleared.
 

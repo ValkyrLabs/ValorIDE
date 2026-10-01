@@ -92,4 +92,11 @@ describe("LmStudioHandler", () => {
 
     expect(result).toEqual([{ type: "reasoning", reasoning: "current" }]);
   });
+
+  it("declares one bounded product retry before the first streamed chunk", () => {
+    expect(handler.getApiStreamStartRetryPolicy()).toEqual({
+      maxRetries: 1,
+      backoffMs: 1_000,
+    });
+  });
 });

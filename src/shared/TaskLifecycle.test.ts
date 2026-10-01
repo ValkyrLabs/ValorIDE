@@ -56,4 +56,17 @@ describe("task completion outcome classification", () => {
       summary: "SUCCEEDED: the requested page is ready.",
     });
   });
+
+  it("accepts a successful command digest for a verification-only task", () => {
+    expect(
+      classifyTaskCompletion({
+        evidenceRefs: [`valoride-command:${"a".repeat(64)}`],
+        summary: "Verified the existing repair with its approved test command.",
+      }),
+    ).toMatchObject({
+      confidence: "EXPLICIT",
+      kind: "completed",
+      source: "runtime-envelope",
+    });
+  });
 });

@@ -103,6 +103,7 @@ export interface ExtensionMessage {
     | "swarm:command-response"
     | "swarm:broadcast"
     | "valkyraiHostTestResult"
+    | "valkyraiHostSaveResult"
     | "swarm:private-message"
     | "taskCompletionFilePreview"
     | "webviewError"
@@ -183,6 +184,7 @@ export interface ExtensionMessage {
   isConnected?: boolean;
   isRemote?: boolean;
   host?: string;
+  requiresAuth?: boolean;
   mentionsRequestId?: string;
   results?: Array<{
     path: string;
