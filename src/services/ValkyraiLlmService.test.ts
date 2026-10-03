@@ -1,3 +1,4 @@
+import { clearCredentialOrigins, registerCredentialOrigin } from "@shared/CredentialOrigin";
 import {
   callValkyraiLlm,
   callValkyraiLlmStream,
@@ -7,9 +8,29 @@ import {
 describe("callValkyraiLlm", () => {
   const originalFetch = global.fetch;
 
+  beforeEach(() => {
+    clearCredentialOrigins();
+    registerCredentialOrigin("session-token", "https://api-0.valkyrlabs.com");
+  });
+
   afterEach(() => {
+    clearCredentialOrigins();
     global.fetch = originalFetch;
     jest.restoreAllMocks();
+  });
+
+  it("rejects a credential issued elsewhere before dispatching chat or SSE", async () => {
+    const fetchMock = jest.fn();
+    global.fetch = fetchMock as unknown as typeof fetch;
+    const options = {
+      host: "https://foreign.invalid/v1",
+      serviceId: "llm-1",
+      jwt: "session-token",
+      prompt: "synthetic test",
+    };
+    await expect(callValkyraiLlm(options)).rejects.toThrow(/not bound/);
+    await expect(callValkyraiLlmStream(options).next()).rejects.toThrow(/not bound/);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("sends both Authorization and jwtSession headers when a JWT is provided", async () => {

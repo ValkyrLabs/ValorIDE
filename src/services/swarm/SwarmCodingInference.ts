@@ -1,3 +1,4 @@
+import { credentialBoundSdkFetch } from "../valkyrai/ValkyrLabsRtkApi";
 import type { ApiConfiguration } from "@shared/api";
 import type { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import type { SwarmMessage } from "@shared/swarm-protocol";
@@ -108,7 +109,7 @@ export async function materializeGovernedCodingTask(
   actionDigest: string,
   scopeDigest: string,
   approvalSignature: string,
-  request: typeof fetch = fetch,
+  request: typeof fetch = credentialBoundSdkFetch,
 ): Promise<ApiConfiguration> {
   assertGovernedCodingDescriptor(expected);
   const bearer = typeof jwt === "function" ? await jwt() : jwt;

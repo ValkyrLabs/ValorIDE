@@ -1,3 +1,4 @@
+import { clearCredentialOrigins, registerCredentialOrigin } from "@shared/CredentialOrigin";
 import { GrayMatterClient, GrayMatterClientError } from "./GrayMatterClient";
 import { createHash } from "node:crypto";
 
@@ -19,6 +20,14 @@ const headerValue = (
 ): string | undefined =>
   (headers as Record<string, string> | undefined)?.[name.toLowerCase()];
 
+// Positive fixtures model issuance once at a literal origin, before any request.
+const issuedFixtureToken = (token: string, issuanceOrigin: string): (() => string) => {
+  registerCredentialOrigin(token, issuanceOrigin);
+  return () => token;
+};
+beforeEach(() => clearCredentialOrigins());
+afterEach(() => clearCredentialOrigins());
+
 describe("verified GrayMatter writes", () => {
   const id = "883e5d08-fde8-4c68-8b34-c9238a116863";
   const input = {
@@ -34,7 +43,7 @@ describe("verified GrayMatter writes", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch,
-      getAuthToken: () => "token",
+      getAuthToken: issuedFixtureToken("token", "https://api.example.test"),
     });
     const result = await client.writeMemory(input);
     expect(result).toMatchObject({
@@ -68,7 +77,7 @@ describe("verified GrayMatter writes", () => {
       const client = new GrayMatterClient({
         baseUrl: "https://api.example.test/v1",
         fetch,
-        getAuthToken: () => "token",
+        getAuthToken: issuedFixtureToken("token", "https://api.example.test"),
       });
       await expect(client.writeMemory(input)).rejects.toMatchObject({
         kind: "unverified",
@@ -97,7 +106,7 @@ describe("verified GrayMatter writes", () => {
       const client = new GrayMatterClient({
         baseUrl: "https://api.example.test/v1",
         fetch,
-        getAuthToken: () => "token",
+        getAuthToken: issuedFixtureToken("token", "https://api.example.test"),
       });
       await expect(client.writeMemory(input)).rejects.toMatchObject({
         kind: "unverified",
@@ -116,6 +125,7 @@ describe("verified GrayMatter writes", () => {
     "token-after-read",
   ] as const) {
     it(`rejects ${boundary} session drift`, async () => {
+      registerCredentialOrigin("original", "https://api.example.test");
       let token = "original",
         tenantId = "tenant-a",
         calls = 0;
@@ -160,7 +170,7 @@ describe("verified GrayMatter writes", () => {
     await expect(
       new GrayMatterClient({
         ...options,
-        getAuthToken: () => "token",
+        getAuthToken: issuedFixtureToken("token", "https://api.example.test"),
       }).writeMemory(input),
     ).rejects.toMatchObject({ kind: "unverified" });
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -168,6 +178,22 @@ describe("verified GrayMatter writes", () => {
 });
 
 describe("GrayMatterClient", () => {
+  it("rejects unbound and foreign-origin sessions without dispatching memory requests", async () => {
+    const fetch = jest.fn(async () => jsonResponse(200, []));
+    const unbound = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch,
+      getAuthToken: () => "SYNTHETIC-UNBOUND",
+    });
+    await expect(unbound.listMemory()).rejects.toThrow(/not bound/);
+    const foreign = new GrayMatterClient({
+      baseUrl: "https://foreign.invalid/v1",
+      fetch,
+      getAuthToken: issuedFixtureToken("SYNTHETIC-ISSUER-ONLY", "https://api.example.test"),
+    });
+    await expect(foreign.listMemory()).rejects.toThrow(/not bound/);
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("compiles and projects a bounded Bifrost ContextPage", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async (url) =>
@@ -188,7 +214,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     await expect(
@@ -289,7 +315,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     const capabilities = await client.loadCapabilities();
@@ -333,7 +359,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     const capabilities = await client.loadCapabilities();
@@ -389,7 +415,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     await expect(client.loadCapabilities()).resolves.toMatchObject({
@@ -427,7 +453,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     await expect(client.loadCapabilities()).resolves.toMatchObject({
@@ -463,7 +489,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api-0.valkyrlabs.com"),
     });
 
     await expect(client.loadCapabilities()).resolves.toMatchObject({
@@ -488,7 +514,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.writeMemory({
@@ -519,7 +545,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.queryMemory({
@@ -548,7 +574,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.recallOmegaMemory({
@@ -580,7 +606,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.planOmegaRetrieval({
@@ -610,7 +636,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.rememberOmegaMemory({
@@ -645,7 +671,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.forgetOmegaMemory({
@@ -677,7 +703,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.getOmegaTrajectory("traj-1");
@@ -699,7 +725,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.evaluateOmegaRetrieval({
@@ -726,7 +752,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.recordOmegaTrajectoryOutcome({
@@ -769,7 +795,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.estimateOmegaIndexJob({ idempotencyKey: "estimate-1" });
@@ -822,7 +848,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.startOmegaRetrievalRun({
@@ -879,7 +905,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await expect(client.listMemory()).resolves.toEqual([{ id: "memory-1" }]);
@@ -900,7 +926,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await client.createProject({
@@ -934,7 +960,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await expect(client.queryMemory("project standards")).rejects.toMatchObject<
@@ -959,7 +985,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await expect(
@@ -1018,7 +1044,7 @@ describe("GrayMatterClient", () => {
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
       fetch: fetchMock,
-      getAuthToken: async () => "session-token",
+      getAuthToken: issuedFixtureToken("session-token", "https://api.example.test"),
     });
 
     await expect(client.listMemory()).rejects.toMatchObject<

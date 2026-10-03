@@ -123,3 +123,52 @@ describe("governed native coding configuration", () => {
   });
 });
 import { it } from "@jest/globals";
+import { clearCredentialOrigins, registerCredentialOrigin } from "@shared/CredentialOrigin";
+
+describe("governed coding default transport origin boundary", () => {
+  beforeEach(() => clearCredentialOrigins());
+  afterEach(() => {
+    clearCredentialOrigins();
+    jest.restoreAllMocks();
+  });
+
+  const defaultMaterialize = (host: string, jwt: string | (() => Promise<string>)) =>
+    materializeGovernedCodingTask(host, jwt, descriptor(), "exact-issued-command",
+      actionDigest, scopeDigest, "SYNTHETIC-NON-SECRET-PROOF");
+
+  it.each(["unbound", "foreign", "downgrade"])(
+    "rejects %s credentials before the default fetch dispatch", async (boundary) => {
+      const fetchMock = jest.spyOn(globalThis, "fetch").mockImplementation(jest.fn());
+      if (boundary !== "unbound")
+        registerCredentialOrigin("SYNTHETIC-ISSUER-ONLY", "https://issuer.invalid");
+      const host = boundary === "foreign" ? "https://foreign.invalid/v1"
+        : boundary === "downgrade" ? "http://issuer.invalid/v1" : "https://issuer.invalid/v1";
+      await expect(defaultMaterialize(host, "SYNTHETIC-ISSUER-ONLY")).rejects.toThrow();
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it("preserves same-origin admission and rejects delayed revalidation after destination sign-in", async () => {
+    let jwt = "SYNTHETIC-ISSUER-A";
+    registerCredentialOrigin(jwt, "https://issuer.invalid");
+    const requests: Request[] = [];
+    const fetchMock = jest.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      const request = new Request(input, init);
+      requests.push(request);
+      return new Response(JSON.stringify(request.url.endsWith("/models")
+        ? { data: [{ id: descriptor().model }] } : signed()),
+      { headers: { "Content-Type": "application/json" } });
+    });
+    const configuration = await defaultMaterialize("https://issuer.invalid/v1", async () => jwt);
+    expect(requests).toHaveLength(2);
+    expect(requests[0].headers.get("Authorization")).toBe("Bearer SYNTHETIC-ISSUER-A");
+    expect(requests[1].headers.has("Authorization")).toBe(false);
+    expect(requests.every(request => request.redirect === "error" && request.credentials === "omit")).toBe(true);
+    expect(configuration.governedCodingInference).toMatchObject(descriptor());
+    clearCredentialOrigins();
+    jwt = "SYNTHETIC-ISSUER-B";
+    registerCredentialOrigin(jwt, "https://foreign.invalid");
+    await expect(configuration.governedCodingRevalidate()).rejects.toThrow(/not bound/);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});

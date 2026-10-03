@@ -28,6 +28,7 @@ import {
   type SwarmMessage,
 } from "@shared/swarm-protocol";
 import * as vscode from "vscode";
+import { clearCredentialOrigins, registerCredentialOrigin } from "@shared/CredentialOrigin";
 import { extractSwarmInboundCommandContext } from "../swarm/SwarmRuntimeOutcome";
 
 // This suite uses the repository's esbuild Jest transform, which does not hoist
@@ -79,6 +80,44 @@ const makeCommand = (metadata: Record<string, unknown> = {}): SwarmMessage => ({
 describe("AgentRuntimeCoordinator governed SWARM routing", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    clearCredentialOrigins();
+    // The durable-outcome fixtures publish over the default hosted connection.
+    registerCredentialOrigin("fixture-token", "https://api-0.valkyrlabs.com");
+  });
+
+  afterEach(() => clearCredentialOrigins());
+
+  it("keeps a durable outcome queued when its credential belongs to another origin", async () => {
+    const { MothershipService } = jest.requireActual("./MothershipService");
+    registerCredentialOrigin("SYNTHETIC-FOREIGN-ISSUED", "https://foreign.invalid");
+    const reportError = jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const publish = jest.fn();
+    const mothership = new MothershipService({
+      instanceId: localInstanceId,
+      jwtToken: "SYNTHETIC-FOREIGN-ISSUED",
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+    }) as any;
+    mothership.connected = true;
+    mothership.stompClient = { connected: true, publish };
+    const coordinator = new AgentRuntimeCoordinator(context) as any;
+    coordinator.instanceId = localInstanceId;
+    coordinator.mothership = mothership;
+    coordinator.setSwarmState = jest.fn();
+    const outcome = await coordinator.closeSwarmAssignment({
+      completedAt: "2026-08-08T01:03:00.000Z",
+      startedAt: "2026-08-08T01:02:03.000Z",
+      correlation: extractSwarmInboundCommandContext(makeCommand(), localInstanceId).correlation,
+      status: "SUCCEEDED",
+      confidence: "EXPLICIT",
+      source: "runtime-envelope",
+      summary: "Synthetic durable outcome",
+      evidenceRefs: ["valoride-checkpoint:" + "a".repeat(40)],
+    });
+    expect(publish).not.toHaveBeenCalled();
+    expect(reportError).toHaveBeenCalledWith("Failed to send mothership message:",
+      expect.objectContaining({ message: expect.stringMatching(/not bound/) }));
+    expect(coordinator.getDurableOutcomeHandoffs().outcomes["command-1"]).toEqual(outcome);
+    reportError.mockRestore();
   });
 
   it("serializes overlapping startup and manual SWARM initialization", async () => {

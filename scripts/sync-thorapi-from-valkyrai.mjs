@@ -71,6 +71,13 @@ const supportTargets = [
   path.join(repoRoot, "webview-ui", "src", "utils"),
   path.join(repoRoot, "src", "utils"),
 ];
+// ValorIDE owns session-origin policy; upstream generated support cannot replace it.
+const protectedSupportTarget = supportTargets[0];
+const transportAdapter = [
+  "// ValorIDE session policy stays in the application transport across regeneration.",
+  'export { default } from "../../redux/customBaseQuery";',
+  "",
+].join("\n");
 
 const assertDirectory = async (dir) => {
   const stat = await fs.stat(dir);
@@ -246,7 +253,7 @@ const getChangedSupportFiles = async () => {
   const changed = [];
   for (const file of supportFiles) {
     const sourceFile = path.join(supportRoot, file);
-    if (await hasAnyChangedTarget(sourceFile, file, supportTargets)) {
+    if (await hasAnyChangedTarget(sourceFile, file, supportTargets.filter(target => target !== protectedSupportTarget))) {
       changed.push(file);
     }
   }
@@ -255,17 +262,23 @@ const getChangedSupportFiles = async () => {
 
 const copyDirectory = async (source, target) => {
   const files = await listFiles(source);
+  let runtimeBasePathPatched = null;
   if (!dryRun) {
-    await fs.rm(target, {
-      recursive: true,
-      force: true,
-      maxRetries: 5,
-      retryDelay: 100,
-    });
     await fs.mkdir(path.dirname(target), { recursive: true });
-    await fs.cp(source, target, { recursive: true });
+    const staging = await fs.mkdtemp(path.join(path.dirname(target), ".thorapi-sync-"));
+    try {
+      await fs.cp(source, staging, { recursive: true, dereference: true });
+      // Apply the local transport before making generated files visible. An
+      // interrupted copy cannot leave the upstream bearer/cookie implementation.
+      await fs.writeFile(path.join(staging, "redux", "customBaseQuery.tsx"), transportAdapter);
+      runtimeBasePathPatched = await patchRuntimeBasePath(staging);
+      await fs.rm(target, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+      await fs.rename(staging, target);
+    } finally {
+      await fs.rm(staging, { recursive: true, force: true });
+    }
   }
-  return files.length;
+  return { fileCount: files.length, runtimeBasePathPatched };
 };
 
 const copySupportFiles = async () => {
@@ -275,6 +288,7 @@ const copySupportFiles = async () => {
 
   if (!dryRun) {
     for (const targetDir of supportTargets) {
+      if (targetDir === protectedSupportTarget) continue;
       await fs.mkdir(targetDir, { recursive: true });
       for (const file of supportFiles) {
         await fs.copyFile(
@@ -376,6 +390,9 @@ const main = async () => {
   await assertDirectory(sourceRoot);
   const validation = await buildValidationReport();
   assertValidationReport(validation);
+  // Missing local policy is an installation error, never a reason to fall back
+  // to unbound upstream token storage after replacing the generated tree.
+  for (const file of supportFiles) await assertFile(path.join(protectedSupportTarget, file));
 
   const sourceFiles = await listFiles(sourceRoot);
   const source = {
@@ -392,11 +409,7 @@ const main = async () => {
 
   const copied = [];
   for (const target of thorapiTargets) {
-    const fileCount = await copyDirectory(sourceRoot, target);
-    let runtimeBasePathPatched = null;
-    if (!dryRun) {
-      runtimeBasePathPatched = await patchRuntimeBasePath(target);
-    }
+    const { fileCount, runtimeBasePathPatched } = await copyDirectory(sourceRoot, target);
     copied.push({
       target: path.relative(repoRoot, target),
       fileCount,
@@ -409,7 +422,7 @@ const main = async () => {
   if (!dryRun) {
     for (const target of supportTargets) {
       supportPatches.push({
-        authTokenStoragePatched: await patchAuthTokenStorage(target),
+        authTokenStoragePatched: target === protectedSupportTarget ? false : await patchAuthTokenStorage(target),
         target: path.relative(repoRoot, target),
       });
     }
@@ -427,10 +440,11 @@ const main = async () => {
     console.log(`${mode} ${item.fileCount} ThorAPI files into ${item.target}`);
   }
   console.log(
-    `${mode} support files ${supportFiles.join(", ")} into ${supportTargets
+    `${mode} support files ${supportFiles.join(", ")} into ${supportTargets.filter(target => target !== protectedSupportTarget)
       .map((target) => path.relative(repoRoot, target))
       .join(" and ")}`,
   );
+  console.log(`Preserved application-owned session support in ${path.relative(repoRoot, protectedSupportTarget)}`);
 
   if (reportJsonPath) {
     await fs.mkdir(path.dirname(reportJsonPath), { recursive: true });
@@ -451,7 +465,9 @@ const main = async () => {
             targets: supportTargets.map((target) =>
               path.relative(repoRoot, target),
             ),
+            applicationOwnedFiles: supportFiles.map(file => path.relative(repoRoot, path.join(protectedSupportTarget, file))),
           },
+          applicationTransport: path.relative(repoRoot, path.join(thorapiTargets[0], "redux", "customBaseQuery.tsx")),
           validation,
         },
         null,
