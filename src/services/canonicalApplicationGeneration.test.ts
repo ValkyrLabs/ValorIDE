@@ -51,6 +51,16 @@ describe("canonical application generation handoff", () => {
     await generated.complete(); expect(await fs.readdir(options.recoveryDirectory!)).toEqual([]);
   });
 
+  it("downloads a dedicated developer artifact through the authorized Application endpoint without a FileRecord dependency", async () => {
+    artifact.metadataJson = JSON.stringify({domain:"developer_project",storageDriverId:"s3",kind:"generation_package",organizationId:otherId,projectId:fileRecordId,applicationId,ownerId:accountId,generationRunRef:"run-1"});
+    const result=await generateCanonicalArchive(options);
+    expect(fetchArtifact).toHaveBeenCalledWith(`https://api.example/v1/thorapi/applications/${applicationId}/developer-project/artifacts/artifact-1/download`,expect.objectContaining({headers:{Authorization:"Bearer ephemeral-fixture-token"}}));
+    expect(result.provenance.artifactStorage).toBe("developer_project");expect(result.provenance.fileRecordId).toBeUndefined();await result.complete();
+  });
+  it("rejects mismatched developer scope before storage access", async () => {
+    artifact.metadataJson = JSON.stringify({domain:"developer_project",storageDriverId:"s3",kind:"generation_package",organizationId:otherId,projectId:fileRecordId,applicationId:otherId,ownerId:accountId,generationRunRef:"run-1"});
+    await expect(generateCanonicalArchive(options)).rejects.toThrow(/mismatched developer scope/);expect(fetchArtifact).not.toHaveBeenCalled();
+  });
   for (const [label, corrupt] of [
     ["request account", () => { request.accountId = otherId; }],
     ["request application", () => { request.applicationId = otherId; }],

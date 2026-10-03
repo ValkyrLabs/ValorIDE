@@ -14,6 +14,12 @@ const MAX_ARCHIVE_BYTES = 95 * 1024 * 1024;
 
 /** Exported pins describe an immutable server input; only the authorized server resolver can authenticate them. */
 export function validateProjectSourceRevision(value: any, applicationId: string, sourceFiles: Map<string, Buffer>, requireS3 = false): void {
+  if (value?.artifactId) {
+    const prefix = `source-snapshot:${applicationId}:`;
+    if (value.applicationId !== applicationId || !PROJECT_UUID.test(value.artifactId) || !PROJECT_UUID.test(value.organizationId) || !PROJECT_UUID.test(value.projectId) || value.revisionRef !== `${prefix}${value.artifactId}` || !/^[a-f0-9]{64}$/.test(value.checksumSha256 || "") || !Number.isSafeInteger(value.sizeBytes) || value.sizeBytes < 1 || value.sizeBytes > 128 * 1024 * 1024 || (value.commitSha != null && !/^[a-f0-9]{40}$/.test(value.commitSha)) || (value.treeSha != null && !/^[a-f0-9]{40}$/.test(value.treeSha)))
+      throw new Error("The developer source revision has invalid Application, Project, organization or immutable artifact evidence.");
+    return; // A descriptive exported pin grants no hosted access; the server rechecks grants and S3 bytes.
+  }
   const pin = (item: any) => {
     if (!item || !/^[a-z][a-z0-9_.-]{0,63}$/.test(item.storageDriverId || "") || !PROJECT_UUID.test(item.fileRecordId) || !PROJECT_UUID.test(item.fileVersionId) || !Number.isSafeInteger(item.fileVersionNumber) || item.fileVersionNumber < 1 || !/^[a-f0-9]{64}$/.test(item.checksumSha256 || ""))
       throw new Error("A frozen source revision requires an explicit storageDriverId, FileRecord, immutable FileVersion id/number and checksum. Unversioned uploaded assets cannot be used as frozen generation inputs.");
@@ -136,7 +142,8 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
     if (manifest.sourceRevision) validateProjectSourceRevision(manifest.sourceRevision, lineage.applicationId, sourceFiles, lineage.scope === "production");
     else if (lineage.scope === "production" && lineage.productionGenerationProven === true)
       throw new Error("A production project export must retain its frozen source revision and immutable FileVersion pins. Export a complete canonical project package.");
-    const generatedPath = safeProjectRelativePath(`artifacts/generated-${manifest.version}.zip`);
+    const canonical = lineage.scope === "canonical_application_generation";
+    const generatedPath = safeProjectRelativePath(canonical ? "export-reference/generator-original.zip" : `artifacts/generated-${manifest.version}.zip`);
     allowed.add(generatedPath.toLowerCase());
     const original = await fs.readFile(path.join(packageRoot, generatedPath));
     if (sha256(original) !== lineage.packageSha256) throw new Error("The original generated ZIP does not match its lineage checksum.");

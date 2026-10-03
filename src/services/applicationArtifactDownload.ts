@@ -1,4 +1,6 @@
 import fs from "fs/promises";
+import AdmZip from "adm-zip";
+import { createHash } from "crypto";
 import * as path from "path";
 import os from "os";
 import * as vscode from "vscode";
@@ -159,7 +161,18 @@ export async function downloadApplicationArtifact({
       }
       return files;
     };
-    const generatedFiles = await generatedPaths(incomingRoot);
+    let generatedFiles = await generatedPaths(incomingRoot);
+    const lineageBytes = await fs.readFile(path.join(incomingRoot, "generation-lineage.json")).catch((error) => { if (error.code === "ENOENT") return undefined; throw error; });
+    if (lineageBytes) {
+      const lineage = JSON.parse(lineageBytes.toString("utf8"));
+      const original = await fs.readFile(path.join(incomingRoot, "export-reference/generator-original.zip"));
+      if (lineage.applicationId !== applicationId || !/^[a-f0-9]{64}$/.test(lineage.originalGeneratorChecksumSha256 || "") || createHash("sha256").update(original).digest("hex") !== lineage.originalGeneratorChecksumSha256 || !Array.isArray(lineage.generatedFiles))
+        throw new Error("The canonical package has invalid generator ownership evidence. Existing project files were preserved.");
+      const owned = new AdmZip(original).getEntries().filter((entry) => !entry.isDirectory).map((entry) => entry.entryName).sort();
+      if (JSON.stringify([...lineage.generatedFiles].sort()) !== JSON.stringify(owned) || owned.some((relative) => !generatedFiles.includes(relative) || relative === ".valoride-generator-ignore"))
+        throw new Error("The original generator ZIP and canonical ownership manifest disagree. Existing project files were preserved.");
+      generatedFiles = owned;
+    }
     await ensureCurrent();
     // Current generators publish the actual API version in the plan; ZIP names contain an id, not a version.
     let plannedVersion: string | undefined;

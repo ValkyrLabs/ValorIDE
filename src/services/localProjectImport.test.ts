@@ -72,6 +72,26 @@ describe("canonical local project-package import", () => {
     expect((await readProjectBlueprintState(installed.extractedPath))?.etag).toBeUndefined();
   });
 
+  it("imports the dedicated developer export layout and artifact revision without FileRecord or invented hosted receipts",async()=>{
+    const sourceFiles=new Map<string,Buffer>([["openapi.json",Buffer.from(JSON.stringify(spec))],["runtime/adapter.py",Buffer.from("# custom kept\n")],
+      ["generation-lineage.json",Buffer.from(JSON.stringify({schemaVersion:1,scope:"canonical_application_generation",applicationId,packageSha256:sha(original),originalGeneratorChecksumSha256:sha(original),receiptRef:"local-fixture-receipt"}))],
+      ["export-reference/generator-original.zip",original]]);
+    const artifactId="44444444-4444-4444-8444-444444444444";
+    const sourceRevision={applicationId,artifactId,projectId:"22222222-2222-4222-8222-222222222222",organizationId:"33333333-3333-4333-8333-333333333333",revisionRef:`source-snapshot:${applicationId}:${artifactId}`,checksumSha256:"a".repeat(64),sizeBytes:100,commitSha:"b".repeat(40),treeSha:"c".repeat(40)};
+    const manifest={schemaVersion:1,version:"1.0.0",specificationPath:"openapi.json",sourceRevision,files:[...sourceFiles].map(([path,bytes])=>({path,bytes:bytes.length,sha256:sha(bytes)}))};
+    const zip=new AdmZip();for(const [file,bytes]of sourceFiles)zip.addFile(file,bytes);zip.addFile("source-manifest.json",Buffer.from(JSON.stringify(manifest)));await fs.writeFile(archivePath,zip.toBuffer());
+    const imported=await importPackage();expect(await fs.readFile(path.join(imported.extractedPath,"export-reference/generator-original.zip"))).toEqual(original);
+    expect((await readGenerationManifest(imported.extractedPath))?.generation).toBeUndefined();expect(await fs.readFile(path.join(imported.extractedPath,"runtime/adapter.py"),"utf8")).toBe("# custom kept\n");
+    expect(()=>validateProjectSourceRevision({...sourceRevision,projectId:"foreign"},applicationId,sourceFiles,true)).toThrow(/invalid Application/);
+  });
+  const fixtureTest=process.env.VALORIDE_BACKEND_EXPORT_FIXTURE?it:it.skip;
+  fixtureTest("imports the actual backend local round-trip export with its exact original ZIP and source descriptor",async()=>{
+    const bytes=await fs.readFile(process.env.VALORIDE_BACKEND_EXPORT_FIXTURE!);await fs.writeFile(archivePath,bytes);
+    const result=await importPackage();const zip=new AdmZip(bytes);
+    expect(await fs.readFile(path.join(result.extractedPath,"export-reference/generator-original.zip"))).toEqual(zip.readFile("export-reference/generator-original.zip"));
+    expect(await fs.readFile(path.join(result.extractedPath,"runtime/adapter.py"))).toEqual(zip.readFile("runtime/adapter.py"));
+    expect((await readGenerationManifest(result.extractedPath))?.generation).toBeUndefined();expect(result.specificationPath).toBe("openapi-spec.yaml");
+  });
   it("preserves authored edits and the original Blueprint baseline during repeated import from an opened project", async () => {
     const first = await importPackage(); const marker = await fs.readFile(path.join(first.extractedPath, BLUEPRINT_MARKER));
     await fs.appendFile(path.join(first.extractedPath, "runtime/adapter.py"), "# local edit\n");

@@ -23,7 +23,8 @@ export interface GeneratedProjectProvenance {
   receiptRef: string;
   generationRunRef: string;
   artifactRef: string;
-  fileRecordId: string;
+  fileRecordId?: string;
+  artifactStorage?: "file_record" | "developer_project";
   checksum: string;
   tenantId: string;
   accountId: string;

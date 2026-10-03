@@ -98,7 +98,7 @@ async function readArchive(url: string, jwtToken: string, bytes: number, ensureC
   throw new Error("The artifact download redirected too many times. Check the backend's storage configuration and retry.");
 }
 
-/** Generated API types remain authoritative. This adapter binds the canonical request, receipt, trace and tenant FileRecord bytes. */
+/** Generated API types remain authoritative. This adapter binds the canonical request, receipt, trace and private artifact bytes. */
 export async function generateCanonicalArchive(options: Options): Promise<{ archive: Buffer; fileName?: string; provenance: GeneratedProjectProvenance; complete: () => Promise<void> }> {
   const { backend, workspaceRoot, applicationId, applicationVersion, jwtToken, recoveryDirectory, assertCurrent } = options;
   const client = getValkyrLabsRtkApiClient();
@@ -161,12 +161,18 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
   const trace = await json<AppGenerationTraceResponse>(`/app_generation_ops/traces/${encodeURIComponent(receipt.receiptRef)}`);
   const artifact = packageFromTrace(trace, receipt, request);
   let metadata: Record<string, unknown>;
-  try { metadata = JSON.parse(artifact.metadataJson || "{}"); } catch { throw new Error("The packaged artifact has invalid FileRecord metadata. Repair its generation trace before downloading."); }
-  if (!metadata || typeof metadata !== "object" || !uuid.test(String(metadata.fileRecordId || "")) || metadata.generationRunRef !== receipt.generationRunRef)
-    throw new Error("The packaged artifact has no matching durable FileRecord. Repair the generation trace before downloading.");
+  try { metadata = JSON.parse(artifact.metadataJson || "{}"); } catch { throw new Error("The packaged artifact has invalid storage metadata. Repair its generation trace before downloading."); }
+  if (!metadata || typeof metadata !== "object" || metadata.generationRunRef !== receipt.generationRunRef)
+    throw new Error("The packaged artifact has no matching durable storage revision. Repair its generation trace before downloading.");
+  const developer = metadata.domain === "developer_project";
+  if (developer ? metadata.storageDriverId !== "s3" || metadata.kind !== "generation_package" || !uuid.test(String(metadata.organizationId || "")) || !uuid.test(String(metadata.projectId || "")) || !same(metadata.applicationId, applicationId) || !same(metadata.ownerId, principalId) : !uuid.test(String(metadata.fileRecordId || "")))
+    throw new Error("The packaged artifact has mismatched developer scope or no durable FileRecord. Repair its generation trace before downloading.");
+  const download = developer
+    ? `${backend}/thorapi/applications/${encodeURIComponent(applicationId)}/developer-project/artifacts/${encodeURIComponent(artifact.artifactRef)}/download`
+    : `${backend}/files/${encodeURIComponent(String(metadata.fileRecordId))}/download`;
   await options.onProgress?.("Downloading the verified application package from its generation receipt...");
-  const archive = await readArchive(`${backend}/files/${encodeURIComponent(String(metadata.fileRecordId))}/download`, jwtToken, artifact.byteSize!, assertCurrent, options.fetch || fetch);
+  const archive = await readArchive(download, jwtToken, artifact.byteSize!, assertCurrent, options.fetch || fetch);
   await assertCurrent();
   if (hash(archive) !== artifact.checksum!.toLowerCase()) throw new Error("The downloaded archive checksum disagrees with its receipt. No project files were written; retry or repair the stored artifact.");
-  return { archive, fileName: artifact.fileName, complete, provenance: { requestRef: request.requestRef, receiptRef: receipt.receiptRef, generationRunRef: receipt.generationRunRef!, artifactRef: artifact.artifactRef, fileRecordId: String(metadata.fileRecordId), checksum: artifact.checksum!.toLowerCase(), tenantId: request.tenantId, accountId: request.accountId!, specRevisionRef: receipt.specRevisionRef, buildRunRef: receipt.buildRunRef, testRunRef: receipt.testRunRef, runtimeBindingRef: receipt.runtimeBindingRef } };
+  return { archive, fileName: artifact.fileName, complete, provenance: { requestRef: request.requestRef, receiptRef: receipt.receiptRef, generationRunRef: receipt.generationRunRef!, artifactRef: artifact.artifactRef, ...(developer ? { artifactStorage: "developer_project" as const } : { fileRecordId: String(metadata.fileRecordId), artifactStorage: "file_record" as const }), checksum: artifact.checksum!.toLowerCase(), tenantId: request.tenantId, accountId: request.accountId!, specRevisionRef: receipt.specRevisionRef, buildRunRef: receipt.buildRunRef, testRunRef: receipt.testRunRef, runtimeBindingRef: receipt.runtimeBindingRef } };
 }

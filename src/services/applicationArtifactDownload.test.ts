@@ -1,6 +1,8 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
+import AdmZip from "adm-zip";
+import { createHash } from "crypto";
 import {
   downloadApplicationArtifact,
   filenameFromDisposition,
@@ -157,6 +159,35 @@ describe("native application artifacts", () => {
     const next = await downloadApplicationArtifact({ ...request, applicationVersion: "2" });
     expect(next.extractedPath).toBe(path.join(root, "thorapi", "Sample-v2"));
     await expect(fs.access(path.join(first.extractedPath, "thorapi"))).rejects.toThrow();
+  });
+
+  it("uses the original generator ownership vector and preserves edited custom source during canonical regeneration", async () => {
+    const original = new AdmZip();
+    original.addFile("spring-server/Generated.java", Buffer.from("fresh generated"));
+    const originalBytes = original.toBuffer();
+    (extractLocalZip as jest.Mock).mockImplementation(async (_archive, target) => {
+      const output = path.join(target, "incoming");
+      await fs.mkdir(path.join(output, "spring-server"), { recursive: true });
+      await fs.mkdir(path.join(output, "export-reference"));
+      await fs.writeFile(path.join(output, "spring-server/Generated.java"), "fresh generated");
+      await fs.writeFile(path.join(output, "custom.ts"), "committed custom");
+      await fs.writeFile(path.join(output, "export-reference/generator-original.zip"), originalBytes);
+      await fs.writeFile(path.join(output, "generation-lineage.json"), JSON.stringify({
+        applicationId, originalGeneratorChecksumSha256: createHash("sha256").update(originalBytes).digest("hex"),
+        generatedFiles: ["spring-server/Generated.java"],
+      }));
+      return output;
+    });
+    const first = await downloadApplicationArtifact(request);
+    await fs.writeFile(path.join(first.extractedPath, "custom.ts"), "local custom edit");
+    await fs.writeFile(path.join(first.extractedPath, "spring-server/Generated.java"), "local generated edit");
+    const confirmOverwrite = jest.fn(async () => true);
+    const repeated = await downloadApplicationArtifact({ ...request, confirmOverwrite });
+    expect(confirmOverwrite).toHaveBeenCalledWith(["spring-server/Generated.java"]);
+    expect(await fs.readFile(path.join(repeated.extractedPath, "custom.ts"), "utf8")).toBe("local custom edit");
+    expect(await fs.readFile(path.join(repeated.extractedPath, "spring-server/Generated.java"), "utf8")).toBe("fresh generated");
+    const manifest = JSON.parse(await fs.readFile(path.join(repeated.extractedPath, ".valoride-generation.json"), "utf8"));
+    expect(manifest.generatedFiles).toEqual(["spring-server/Generated.java"]);
   });
 
   it("rejects malformed identity, missing auth, and missing workspace before generation", async () => {
