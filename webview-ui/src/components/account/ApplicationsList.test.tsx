@@ -406,6 +406,19 @@ describe("ApplicationsList", () => {
     return { ...rendered, request: mockPostMessage.mock.calls.at(-1)![0] };
   };
 
+  it("shows a completion error even when the result also reports success", async () => {
+    const { request } = prepareGeneration();
+    generationResult(request, { error: "Generated archive failed validation" });
+    expect(
+      screen.getByRole("alert", { name: "Application generation failed" }),
+    ).toHaveTextContent("Generated archive failed validation");
+    expect(screen.queryByText(/generated successfully/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Generation completed successfully/i)).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled(),
+    );
+  });
+
   it("sends only references to the host and prevents duplicate paid requests", () => {
     const { request } = prepareGeneration();
     fireEvent.click(screen.getByRole("button", { name: "Generate" }));

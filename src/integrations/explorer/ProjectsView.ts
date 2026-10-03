@@ -8,13 +8,17 @@ import {
 import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveProjectCommandUri } from "./projectCommandUri";
 import {
-  commandWithJavaHome,
+  projectCommand,
   discoverProjectRuntime,
   findAvailablePort,
   localProjectUrl,
   ProjectTarget,
   waitForUrl,
 } from "./projectRuntime";
+import { describeGeneratedProject, listGeneratedProjects } from "./generatedProjects";
+import { previewLegacyProjectMigration } from "../../commands/legacyProjectMigrationCommand";
+import { registerProjectRoundTripCommands } from "../../commands/projectRoundTripCommands";
+import { registerProjectGitPublishCommand } from "../../commands/projectGitPublishCommand";
 import {
   ManagedNodeRuntime,
   ManagedProjectRuntimes,
@@ -65,33 +69,14 @@ export class ProjectsTreeDataProvider
     const folders = vscode.workspace.workspaceFolders || [];
     const results: Project[] = [];
 
+    const seen = new Set<string>();
     for (const folder of folders) {
-      try {
-        const thorapiPath = resolveThorapiFolderPath(folder.uri.fsPath);
-        const thorapi = vscode.Uri.file(thorapiPath);
-        const entries = await vscode.workspace.fs.readDirectory(thorapi);
-        for (const [name, fileType] of entries) {
-          if (fileType !== vscode.FileType.Directory) continue;
-          if (!/^v\d+\./i.test(name)) continue;
-          const uri = vscode.Uri.joinPath(thorapi, name);
-          let mtime: number | undefined;
-          try {
-            const stat = await vscode.workspace.fs.stat(uri);
-            mtime =
-              typeof (stat as any).mtime === "number"
-                ? (stat as any).mtime
-                : undefined;
-          } catch (err) {
-            // Debug: unable to stat project folder; leave mtime undefined
-            this.output.appendLine(
-              `[Projects][debug] stat failed for ${uri.fsPath}: ${String(err)}`,
-            );
-          }
-          const version = (name.match(/^v(\d+)[.-]?/i) || [])[1] || "";
-          results.push({ name, version, uri, mtime });
-        }
-      } catch (e) {
-        // ignore missing thorapi folder
+      const current = await describeGeneratedProject(folder.uri.fsPath);
+      const children = await listGeneratedProjects(resolveThorapiFolderPath(folder.uri.fsPath));
+      for (const project of [...(current ? [current] : []), ...children]) {
+        if (seen.has(project.directory)) continue;
+        seen.add(project.directory);
+        results.push({ name: project.name, version: project.version, uri: vscode.Uri.file(project.directory), mtime: project.mtime });
       }
     }
 
@@ -132,9 +117,15 @@ export function registerProjectsView(
   const getUriArg = (arg?: unknown) =>
     resolveProjectCommandUri(arg, view.selection?.[0]);
 
+  context.subscriptions.push(...registerProjectRoundTripCommands(context, output, getUriArg, () => provider.refresh()));
+  context.subscriptions.push(registerProjectGitPublishCommand(context, output, getUriArg));
+
   context.subscriptions.push(
     vscode.commands.registerCommand("valoride.projects.refresh", () =>
       provider.refresh(),
+    ),
+    vscode.commands.registerCommand("valoride.projects.migrateLegacy", (target?: unknown) =>
+      previewLegacyProjectMigration(getUriArg(target)),
     ),
     // Build selected project based on detected tool
     vscode.commands.registerCommand(
@@ -216,15 +207,6 @@ export function registerProjectsView(
   );
 }
 
-async function pathExists(uri: vscode.Uri): Promise<boolean> {
-  try {
-    await vscode.workspace.fs.stat(uri);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 type Task = "build" | "run";
 
 const javaEnvironment = (javaHome: string) => ({
@@ -248,40 +230,6 @@ const createProjectTerminal = (
     env,
   });
 
-async function projectCommand(
-  target: ProjectTarget,
-  task: Task,
-  javaHome?: string,
-) {
-  let thor_command: string;
-  if (target.tool === "maven") {
-    const hasWrapper = await pathExists(
-      vscode.Uri.file(path.join(target.directory, "mvnw")),
-    );
-    const mvn = hasWrapper ? "./mvnw" : "mvn";
-    thor_command =
-      task === "build"
-        ? `${mvn} -DskipTests clean package`
-        : `${mvn} spring-boot:run`;
-  } else if (target.tool === "gradle") {
-    const hasWrapper = await pathExists(
-      vscode.Uri.file(path.join(target.directory, "gradlew")),
-    );
-    const gradle = hasWrapper ? "./gradlew" : "gradle";
-    thor_command =
-      task === "build" ? `${gradle} build -x test` : `${gradle} bootRun`;
-  } else {
-    thor_command =
-      task === "build"
-        ? "npm install && npm run build"
-        : "npm install && npm run start";
-  }
-
-  return javaHome && target.tool !== "node"
-    ? commandWithJavaHome(thor_command, javaHome)
-    : thor_command;
-}
-
 async function requireCompatibleJava(
   layoutName: string,
   runtimes: ManagedProjectRuntimes,
@@ -301,7 +249,7 @@ async function buildProject(
   runtimes: ManagedProjectRuntimes,
 ) {
   const layout = await discoverProjectRuntime(uri.fsPath);
-  const targets = [layout.backend, layout.frontend].filter(
+  const targets = [layout.build || layout.backend, layout.frontend].filter(
     (target): target is ProjectTarget => Boolean(target),
   );
   if (targets.length === 0) {
@@ -412,6 +360,7 @@ async function runProject(
     frontendPort = await findAvailablePort(5173);
     const frontendEnv: Record<string, string> = {
       VITE_PORT: String(frontendPort),
+      PORT: String(frontendPort),
       ...nodeEnvironment(node),
     };
     if (backendPort) {

@@ -131,4 +131,25 @@ describe("createApplicationSourceArchive", () => {
       crypto.createHash("sha256").update(result.buffer).digest("hex"),
     );
   });
+
+  it("publishes the generated Boot module with authored workflow, adapter and deployment sources", async () => {
+    await fs.mkdir(path.join(workspaceRoot, "spring-server/src/main/resources"), { recursive: true });
+    await fs.writeFile(path.join(workspaceRoot, "spring-server/pom.xml"), "<project><artifactId>server</artifactId></project>");
+    await fs.writeFile(path.join(workspaceRoot, "spring-server/src/main/resources/openapi.yaml"), "openapi: 3.0.3\n");
+    for (const relative of ["workflow/module-draft.json", "runtime/dependencies.json", "runtime/render_clips.py", "clipping-service.openapi.json", "artifacts/generated-0.1.3-draft.zip", ".valoride-generation.json", ".valoride-blueprint.json"]) {
+      await fs.mkdir(path.dirname(path.join(workspaceRoot, relative)), { recursive: true });
+      await fs.writeFile(path.join(workspaceRoot, relative), relative);
+    }
+    const result = await createApplicationSourceArchive(workspaceRoot, "app-1", "Clipping App");
+    const archive = new AdmZip(result.buffer);
+    expect(result.manifest).toMatchObject({ backendRoot: "spring-server", openApiInputPath: "spring-server/src/main/resources/openapi.yaml" });
+    for (const relative of ["workflow/module-draft.json", "runtime/dependencies.json", "runtime/render_clips.py", "clipping-service.openapi.json"]) expect(archive.readAsText(relative)).toBe(relative);
+    for (const relative of ["spring-server/src/main/resources/openapi.yaml", "artifacts/generated-0.1.3-draft.zip", ".valoride-generation.json", ".valoride-blueprint.json"]) expect(archive.getEntry(relative)).toBeNull();
+  });
+
+  it("rejects a renamed local macOS binary before preparing a deployment source archive", async () => {
+    await fs.mkdir(path.join(workspaceRoot, "runtime"), { recursive: true });
+    await fs.writeFile(path.join(workspaceRoot, "runtime/ffmpeg"), Buffer.from("cffaedfe00000000", "hex"));
+    await expect(createApplicationSourceArchive(workspaceRoot, "app-1")).rejects.toThrow(/compiled macOS.*runtime\/ffmpeg.*target-platform/);
+  });
 });

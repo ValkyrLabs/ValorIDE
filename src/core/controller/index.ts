@@ -493,8 +493,10 @@ export class Controller {
       (msg) => this.postMessageToWebview(msg),
       this.context.extension?.packageJSON?.version ?? "1.0.0",
     );
-    void new GrayMatterMcpBridge({ logger: this.outputChannel })
-      .register(this.mcpHub)
+    void getSecret(this.context, "jwtToken")
+      .then((token) =>
+        new GrayMatterMcpBridge({ logger: this.outputChannel, token }).register(this.mcpHub),
+      )
       .catch((error) => {
         this.outputChannel.appendLine(
           `GrayMatter MCP registration failed: ${String(error)}`,
@@ -2788,6 +2790,25 @@ export class Controller {
         });
         break;
       }
+      case "setupLocalGrayMatter": {
+        try {
+          await vscode.commands.executeCommand("valoride.graymatter.connectLocal");
+          await this.postMessageToWebview({
+            type: "grayMatterSetupResult",
+            text: "Local memory is connected. Choose your coding model below to start.",
+            success: true,
+          });
+        } catch (error) {
+          await this.postMessageToWebview({
+            type: "grayMatterSetupResult",
+            text: error instanceof Error
+              ? error.message
+              : "Local setup failed. Open the GrayMatter task terminal and retry.",
+            success: false,
+          });
+        }
+        break;
+      }
       case "openMcpSettings": {
         const mcpSettingsFilePath = await this.mcpHub?.getMcpSettingsFilePath();
         if (mcpSettingsFilePath) {
@@ -4263,7 +4284,7 @@ export class Controller {
         break;
       }
       case "generateApplicationArtifact": {
-        const { applicationId, applicationName, requestId } = message;
+        const { applicationId, applicationName, applicationVersion, requestId } = message;
         if (!applicationId || !requestId) break;
         const sendResult = async (
           result: NonNullable<ExtensionMessage["streamToThorapiResult"]>,
@@ -4281,7 +4302,9 @@ export class Controller {
           const artifact = await downloadApplicationArtifact({
             applicationId,
             applicationName,
+            applicationVersion,
             jwtToken,
+            recoveryDirectory: path.join(this.context.globalStorageUri.fsPath, "generation-requests"),
             assertCurrent: async () => {
               if (
                 (await this.readStoredJwtToken()) !== jwtToken ||
@@ -4298,11 +4321,19 @@ export class Controller {
             success: true,
             ...artifact,
             step: "completed",
-            message: "Your application is ready to open in ValorIDE.",
+            message: artifact.preservedFiles.length || artifact.configurationWarnings.length
+              ? `Project updated. Preserved ${artifact.preservedFiles.length} edited or existing files. ${artifact.configurationWarnings.join(" ")}`
+              : "Your application is ready to open in ValorIDE.",
           });
+          await vscode.commands.executeCommand("valoride.projects.refresh");
+          if (artifact.preservedFiles.length || artifact.configurationWarnings.length) {
+            void vscode.window.showWarningMessage(
+              `Project updated; preserved files: ${artifact.preservedFiles.join(", ") || "none"}. ${artifact.configurationWarnings.join(" ")}`,
+            );
+          }
           void vscode.window
             .showInformationMessage(
-              `${applicationName || "Your application"} is ready in ValorIDE.`,
+              `${applicationName || "Your application"} v${artifact.applicationVersion} is ready in ValorIDE.`,
               "Open project",
             )
             .then((action) => {
@@ -4838,6 +4869,12 @@ export class Controller {
       grayMatterSession.status,
       grayMatterSession.error,
     );
+    if (resolvedToken && grayMatterSession.status === "ready") {
+      await new GrayMatterMcpBridge({
+        logger: this.outputChannel,
+        token: resolvedToken,
+      }).register(this.mcpHub);
+    }
     return grayMatterSession;
   }
 

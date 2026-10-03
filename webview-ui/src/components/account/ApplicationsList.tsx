@@ -383,7 +383,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       if (step === "completed" || success === false || error)
         activeRequests.current.delete(applicationId);
 
-      if (success && step === "completed") {
+      if (success && step === "completed" && !error) {
         console.log(
           "ApplicationsList: Success! Completing steps for:",
           applicationId,
@@ -411,7 +411,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
           (prev) => new Set([...Array.from(prev), applicationId]),
         );
         setShowFileExplorer(true);
-      } else if (success && isGenerationStep(step)) {
+      } else if (success && isGenerationStep(step) && !error) {
         setLoadingStates((prev) => {
           const completedSteps = stepsCompletedBefore(step);
           const existingSteps = prev[applicationId]?.steps;
@@ -562,9 +562,9 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     if (!applicationId || activeRequests.current.has(applicationId)) return;
     const requestId = crypto.randomUUID();
     activeRequests.current.set(applicationId, requestId);
-    const applicationName =
-      applications?.find((app) => app.id === applicationId)?.name ||
-      applicationId;
+    const application = applications?.find((app) => app.id === applicationId);
+    const applicationName = application?.name || "";
+    const applicationVersion = application?.openAPISpec?.info?.version;
     setLoadingStates((prev) => ({
       ...prev,
       [applicationId]: {
@@ -586,6 +586,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         type: "generateApplicationArtifact",
         applicationId,
         applicationName,
+        applicationVersion,
         requestId,
       });
     } catch (error) {

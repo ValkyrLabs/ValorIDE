@@ -139,6 +139,12 @@
         "icon": "$(database)"
       },
       {
+        "command": "valoride.graymatter.connectLocal",
+        "title": "Connect Local GrayMatter Lite",
+        "category": "ValorIDE",
+        "icon": "$(plug)"
+      },
+      {
         "command": "valoride.graymatter.signIn",
         "title": "Sign In To GrayMatter",
         "category": "ValorIDE",
@@ -176,6 +182,29 @@
         "title": "Refresh Projects",
         "category": "ValorIDE",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.projects.migrateLegacy",
+        "title": "Preview Legacy Project Migration",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.projects.import",
+        "title": "Import Local Project Package",
+        "category": "ValorIDE",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "valoride.projects.syncBlueprint",
+        "title": "Synchronize Project Blueprint",
+        "category": "ValorIDE",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "valoride.projects.publishSource",
+        "title": "Publish Project Source to GitHub",
+        "category": "ValorIDE",
+        "icon": "$(repo-push)"
       },
       {
         "command": "valoride.projects.build",
@@ -268,9 +297,24 @@
           "command": "valoride.projects.refresh",
           "group": "navigation@1",
           "when": "view == valoride-dev.ProjectsView"
+        },
+        {
+          "command": "valoride.projects.import",
+          "group": "navigation@2",
+          "when": "view == valoride-dev.ProjectsView"
         }
       ],
       "view/item/context": [
+        {
+          "command": "valoride.projects.publishSource",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "project@2"
+        },
+        {
+          "command": "valoride.projects.syncBlueprint",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "project@1"
+        },
         {
           "command": "valoride.projects.openInWindow",
           "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",

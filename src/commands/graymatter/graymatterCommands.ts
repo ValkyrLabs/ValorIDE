@@ -18,11 +18,17 @@ import {
   mergeTenantContext,
 } from "@services/auth/tenantContext";
 import type { GrayMatterSessionStatus } from "@shared/GrayMatterSession";
+import type { McpHub } from "@services/mcp/McpHub";
+import { connectLocalGrayMatterCommand } from "./localGrayMatterCommand";
 
 export const registerGrayMatterCommands = (
   context: vscode.ExtensionContext,
+  getMcpHub: () => McpHub,
 ): void => {
   context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.graymatter.connectLocal", () =>
+      connectLocalGrayMatterCommand(context, getMcpHub()),
+    ),
     vscode.commands.registerCommand("valoride.graymatter.openMemoryPanel", () =>
       GrayMatterMemoryPanel.open(context),
     ),
@@ -39,10 +45,9 @@ export const registerGrayMatterCommands = (
 export const refreshGrayMatterStatus = async (
   context: vscode.ExtensionContext,
 ): Promise<void> => {
-  const previous = (await getGlobalState(
-    context,
-    "grayMatterSession",
-  )) as import("@shared/GrayMatterSession").GrayMatterSessionState | undefined;
+  const previous = (await getGlobalState(context, "grayMatterSession")) as
+    | import("@shared/GrayMatterSession").GrayMatterSessionState
+    | undefined;
   const token = await getSecret(context, "jwtToken");
   const tenantContext = await readStoredTenantContext(context);
   const session = reconcileGrayMatterSessionRefresh(

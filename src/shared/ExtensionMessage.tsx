@@ -62,6 +62,7 @@ export interface ExtensionMessage {
     | "requestyModels"
     | "llmDetailsUpdated"
     | "mcpServers"
+    | "grayMatterSetupResult"
     | "relinquishControl"
     | "vsCodeLmModels"
     | "requestVsCodeLmModels"
@@ -223,6 +224,9 @@ export interface ExtensionMessage {
     filePath?: string;
     filename?: string;
     extractedPath?: string;
+    applicationVersion?: string;
+    preservedFiles?: string[];
+    configurationWarnings?: string[];
     readmePath?: string;
     step?: string;
     message?: string;

@@ -178,13 +178,13 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize StatusBarService (Token tracking & status display)
   initializeStatusBarService(context);
   Logger.log("StatusBarService initialized successfully");
-  registerGrayMatterCommands(context);
   void refreshGrayMatterStatus(context).catch((error) => {
     Logger.log(`GrayMatter status refresh failed: ${error}`);
   });
 
   // Register the webview view provider FIRST
   const sidebarWebview = new WebviewProvider(context, outputChannel);
+  registerGrayMatterCommands(context, () => sidebarWebview.controller.mcpHub);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       WebviewProvider.sideBarId,

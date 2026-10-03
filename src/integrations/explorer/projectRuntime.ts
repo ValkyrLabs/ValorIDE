@@ -16,6 +16,7 @@ export interface ProjectTarget {
 
 export interface ProjectRuntimeLayout {
   root: string;
+  build?: ProjectTarget;
   backend?: ProjectTarget;
   frontend?: ProjectTarget;
 }
@@ -103,7 +104,13 @@ const readArtifactRoots = async (
 const firstTarget = async (root: string, candidates: string[]) => {
   for (const candidate of candidates) {
     const target = await targetAt(root, candidate);
-    if (target) return target;
+    if (target) {
+      if (target.tool === "maven") {
+        const pom = await fs.readFile(path.join(target.directory, "pom.xml"), "utf8").catch(() => "");
+        if (/<packaging>\s*pom\s*<\/packaging>/.test(pom)) continue;
+      }
+      return target;
+    }
   }
   return undefined;
 };
@@ -120,6 +127,12 @@ export async function discoverProjectRuntime(
     (entry) =>
       entry.kind === "frontend-host-source" && typeof entry.path === "string",
   );
+  const rootTool = await detectProjectTool(root);
+  const childModules: string[] = [];
+  try {
+    const pom = await fs.readFile(path.join(root, "pom.xml"), "utf8");
+    for (const match of pom.matchAll(/<module>\s*([^<]+?)\s*<\/module>/g)) childModules.push(match[1]);
+  } catch { /* No Maven reactor at the canonical root. */ }
 
   const backend = backendDescriptor
     ? await targetAt(root, backendDescriptor.path as string)
@@ -129,6 +142,7 @@ export async function discoverProjectRuntime(
         "backend",
         "server",
         "api",
+        ...childModules,
       ]);
   const frontend = frontendDescriptor
     ? await targetAt(root, frontendDescriptor.path as string)
@@ -136,6 +150,7 @@ export async function discoverProjectRuntime(
 
   return {
     root: path.resolve(root),
+    build: rootTool && rootTool !== "node" ? { directory: path.resolve(root), tool: rootTool } : undefined,
     backend:
       backend && backend.tool !== "node"
         ? backend
@@ -144,12 +159,62 @@ export async function discoverProjectRuntime(
             "backend",
             "server",
             "api",
+            ...childModules,
           ]),
     frontend:
       frontend?.tool === "node"
         ? frontend
         : await firstTarget(root, ["ui", "frontend", "web", "client"]),
   };
+}
+
+export async function projectCommand(target: ProjectTarget, task: "build" | "run", javaHome?: string): Promise<string> {
+  let command: string;
+  if (target.tool === "node") {
+    let pkg: any;
+    try { pkg = JSON.parse(await fs.readFile(path.join(target.directory, "package.json"), "utf8")); }
+    catch { throw new Error(`Fix package.json in ${target.directory} before ${task}ing this project.`); }
+    const script = (task === "build" ? ["build", "typecheck"] : ["dev", "start", "serve"]).find((name) => typeof pkg.scripts?.[name] === "string");
+    if (!script) throw new Error(`${target.directory}/package.json needs a ${task === "build" ? "build" : "dev, start, or serve"} script. A generated client library cannot run by itself; open the UI/server module.`);
+    const install = await exists(path.join(target.directory, "node_modules")) ? "" : await exists(path.join(target.directory, "package-lock.json")) ? "npm ci && " : "npm install && ";
+    command = `${install}npm run ${script}`;
+  } else if (target.tool === "maven") {
+    const mvn = await exists(path.join(target.directory, "mvnw")) ? "./mvnw" : "mvn";
+    let installLibraries = "";
+    try {
+      const links = JSON.parse(await fs.readFile(path.join(target.directory, ".valoride-java-libraries.json"), "utf8"));
+      if (!Array.isArray(links.modules)) throw new Error("Invalid generated Java module list.");
+      for (const module of links.modules) {
+        if (typeof module !== "string" || !safeProjectPath(target.directory, module) || module === ".") throw new Error("Invalid generated Java module path.");
+        installLibraries += `${mvn} -f ${shellQuote(path.join(module, "pom.xml"))} -DskipTests install && `;
+      }
+    } catch (error) { if (error.code !== "ENOENT") throw error; }
+    if (task === "build") command = `${mvn} -DskipTests install`;
+    else {
+      const pom = await fs.readFile(path.join(target.directory, "pom.xml"), "utf8");
+      if (/<artifactId>\s*spring-boot-maven-plugin\s*<\/artifactId>/.test(pom)) command = `${mvn} spring-boot:run`;
+      else {
+        let mainClass: string | undefined;
+        try { mainClass = JSON.parse(await fs.readFile(path.join(target.directory, ".valoride-runtime.json"), "utf8")).mainClass; } catch { /* A Maven library is buildable but has no runnable entry point. */ }
+        if (!mainClass || !/^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(mainClass)) throw new Error(`${target.directory} is a Java library. Select the Spring Boot module or set mainClass in .valoride-runtime.json before running.`);
+        command = /<dependencies>/.test(pom)
+          ? `${mvn} compile org.apache.maven.plugins:maven-dependency-plugin:3.6.1:copy-dependencies -DincludeScope=runtime && java -cp 'target/classes${path.delimiter}target/dependency/*' ${mainClass}`
+          : `${mvn} compile && java -cp target/classes ${mainClass}`;
+      }
+    }
+    command = installLibraries + command;
+  } else {
+    const gradle = await exists(path.join(target.directory, "gradlew")) ? "./gradlew" : "gradle";
+    if (task === "build") command = `${gradle} build -x test`;
+    else {
+      const build = await fs.readFile(path.join(target.directory, "build.gradle"), "utf8").catch(() => fs.readFile(path.join(target.directory, "build.gradle.kts"), "utf8"));
+      if (build.includes("org.springframework.boot")) command = `${gradle} bootRun`;
+      else if (/\bapplication\b/.test(build)) command = `${gradle} run`;
+      else throw new Error(`${target.directory} has no Gradle application or Spring Boot entry point. Select the application module before running.`);
+    }
+  }
+  // Prefix each command so both Maven and the Java entry point use the managed JDK.
+  return javaHome && target.tool !== "node" ? command.split(" && ").map((part) => commandWithJavaHome(part, javaHome)).join(" && ") : command;
 }
 
 export const parseJavaMajorVersion = (versionOutput: string) => {

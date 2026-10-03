@@ -54,6 +54,13 @@ const REQUIRED_EXCLUSIONS = [
   "**/*.jks",
   "*.keystore",
   "**/*.keystore",
+  ".DS_Store",
+  "**/.DS_Store",
+  ".valoride-generation.json",
+  "**/.valoride-generation.json",
+  ".valoride-blueprint.json",
+  "**/.valoride-blueprint.json",
+  "artifacts/generated-*.zip",
   MANIFEST_FILE,
 ];
 
@@ -159,6 +166,14 @@ async function collectSourceFiles(workspaceRoot: string, matcher: Ignore) {
         continue;
       }
       if (!entry.isFile()) continue;
+      const handle = await fs.open(absolute, "r");
+      try {
+        const signature = Buffer.alloc(4);
+        const { bytesRead } = await handle.read(signature, 0, 4, 0);
+        if (bytesRead === 4 && ["feedface", "cefaedfe", "feedfacf", "cffaedfe", "cafebabe", "bebafeca"].includes(signature.toString("hex"))) {
+          throw new Error(`Source contains a compiled macOS or JVM binary: ${relative}. Publish source and a target-platform dependency recipe; keep local binaries outside the source snapshot.`);
+        }
+      } finally { await handle.close(); }
       const stat = await fs.stat(absolute);
       sourceBytes += stat.size;
       if (files.length + 1 > MAX_SOURCE_FILES) {
@@ -214,17 +229,22 @@ async function createManifest(
   sourceFiles: Array<{ relative: string }>,
   sourceBytes: number,
 ): Promise<ApplicationSourceManifest> {
-  if (!(await exists(path.join(workspaceRoot, "pom.xml")))) {
+  // A downloaded ThorAPI project has a root reactor and its Boot app in spring-server.
+  const backendRoot = await exists(path.join(workspaceRoot, "spring-server/pom.xml"))
+    ? "spring-server"
+    : ".";
+  if (!(await exists(path.join(workspaceRoot, backendRoot, "pom.xml")))) {
     throw new Error(
-      "Publish Source currently requires a Maven pom.xml at the workspace root.",
+      "Publish Source requires a Maven pom.xml at the workspace root or in spring-server. Open the complete generated project before retrying.",
     );
   }
   const frontendRoot = await detectFrontendRoot(workspaceRoot, sourceFiles);
   const openApiCandidates = [
+    ...(backendRoot === "." ? [] : ["spring-server/src/main/resources/openapi.yaml"]),
     "src/main/resources/openapi/api-out.yaml",
     "src/main/resources/openapi/api.yaml",
     "src/main/resources/openapi/openapi.yaml",
-  ];
+  ].map((candidate) => backendRoot === "." || candidate.startsWith("spring-server/") ? candidate : path.posix.join(backendRoot, candidate));
   const openApiInputPath =
     (
       await Promise.all(
@@ -243,7 +263,7 @@ async function createManifest(
     applicationId,
     applicationName,
     runtimeTemplate: "java_spring_boot",
-    backendRoot: ".",
+    backendRoot,
     openApiInputPath,
     ...(frontendRoot
       ? {

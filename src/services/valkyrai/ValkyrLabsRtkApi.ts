@@ -18,6 +18,7 @@ export interface ValkyrLabsApiRequest {
   maxResponseBytes?: number;
   params?: Record<string, unknown>;
   responseType?: "arrayBuffer" | "auto" | "json" | "raw" | "text";
+  redirect?: RequestRedirect;
   url: string;
 }
 
@@ -237,6 +238,7 @@ const createValkyrLabsBaseQuery =
         headers: requestHeaders(request),
         method: request.method ?? "GET",
         signal: abortController.signal,
+        ...(request.redirect ? { redirect: request.redirect } : {}),
       });
       const data = await parseResponseBody(
         response,

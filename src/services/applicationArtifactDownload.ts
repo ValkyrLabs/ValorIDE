@@ -1,11 +1,14 @@
 import fs from "fs/promises";
 import * as path from "path";
 import os from "os";
+import * as vscode from "vscode";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
-import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
+import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
+import { canonicalProjectFolder, generatedProjectDestination, installGeneratedProject } from "./generatedProjectInstall";
+import { connectGeneratedSources, initializeGeneratedProject } from "./generatedProjectConfiguration";
 
 export type ApplicationArtifactStage =
   | "receiving"
@@ -18,17 +21,25 @@ const activeGenerations = new Set<string>();
 export interface ApplicationArtifactDownloadRequest {
   applicationId: string;
   applicationName?: string;
+  applicationVersion?: string;
   jwtToken: string;
+  recoveryDirectory?: string;
+  fetch?: typeof fetch;
   onProgress?: (
     message: string,
     step: ApplicationArtifactStage,
   ) => void | Promise<void>;
   assertCurrent?: () => void | Promise<void>;
+  confirmOverwrite?: (affectedPaths: string[]) => boolean | Promise<boolean>;
 }
 
 export interface ApplicationArtifactDownloadResult {
   extractedPath: string;
   filename: string;
+  applicationVersion: string;
+  preservedFiles: string[];
+  configurationWarnings: string[];
+  generationReceiptRef: string;
 }
 
 const filenameFromDisposition = (
@@ -56,9 +67,13 @@ const filenameFromDisposition = (
 export async function downloadApplicationArtifact({
   applicationId,
   applicationName,
+  applicationVersion,
   jwtToken,
+  recoveryDirectory,
+  fetch: fetcher,
   onProgress,
   assertCurrent,
+  confirmOverwrite,
 }: ApplicationArtifactDownloadRequest): Promise<ApplicationArtifactDownloadResult> {
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -74,6 +89,8 @@ export async function downloadApplicationArtifact({
   const workspaceRoot = getWorkspacePath();
   if (!workspaceRoot)
     throw new Error("Open a workspace before downloading generated artifacts.");
+  if (!applicationName?.trim()) throw new Error("Save a project name before downloading the application.");
+  if (applicationVersion) canonicalProjectFolder(applicationName, applicationVersion);
   const backend = getValkyraiBasePath();
   const generationKey = `${workspaceRoot}:${applicationId.toLowerCase()}`;
   if (activeGenerations.has(generationKey))
@@ -104,65 +121,77 @@ export async function downloadApplicationArtifact({
       "receiving",
     );
     await ensureCurrent();
-    const response = await getValkyrLabsRtkApiClient().request<ArrayBuffer>({
-      url: `${backend}/thorapi/generate/${encodeURIComponent(applicationId)}`,
-      method: "POST",
-      headers: { Authorization: `Bearer ${jwtToken}`, jwtSession: jwtToken },
-      responseType: "arrayBuffer",
+    const generated = await generateCanonicalArchive({
+      backend, workspaceRoot, applicationId, applicationVersion, jwtToken, recoveryDirectory,
+      assertCurrent: ensureCurrent, fetch: fetcher,
+      onProgress: (message) => onProgress?.(message, "receiving"),
     });
     await ensureCurrent();
-    const archive = Buffer.from(response.data);
+    const archive = generated.archive;
     if (!isZipBuffer(archive))
       throw new Error("ValkyrAI returned a non-ZIP generation response.");
     await onProgress?.("Checking the generated archive...", "processing");
     await ensureCurrent();
     const filename = filenameFromDisposition(
-      response.headers["content-disposition"],
+      generated.fileName ? `attachment; filename="${generated.fileName}"` : undefined,
       applicationId,
     );
-    stagingRoot = await fs.mkdtemp(
+    stagingRoot = await fs.realpath(await fs.mkdtemp(
       path.join(os.tmpdir(), "valoride-generation-"),
-    );
+    ));
     const archivePath = path.join(stagingRoot, filename);
     await fs.writeFile(archivePath, archive);
-    // Stable identity keeps applications with identical names from overwriting each other.
-    const applicationRoot = path.join(
-      resolveThorapiFolderPath(workspaceRoot),
-      applicationId.toLowerCase(),
-    );
-    await fs.mkdir(applicationRoot, { recursive: true });
     await ensureCurrent();
     await onProgress?.("Extracting your project files...", "extracting");
     await ensureCurrent();
-    const extractedPath = await extractLocalZip(
+    const incomingRoot = await extractLocalZip(
       archivePath,
-      applicationRoot,
-      applicationName || applicationId,
+      stagingRoot,
+      applicationName,
       { fresh: true },
     );
+    const generatedPaths = async (directory: string, prefix = ""): Promise<string[]> => {
+      const files: string[] = [];
+      for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
+        const relative = path.posix.join(prefix, entry.name);
+        if (entry.isDirectory()) files.push(...await generatedPaths(path.join(directory, entry.name), relative));
+        else if (entry.isFile() && relative !== ".valoride-generator-ignore") files.push(relative);
+      }
+      return files;
+    };
+    const generatedFiles = await generatedPaths(incomingRoot);
     await ensureCurrent();
-    await fs.writeFile(
-      path.join(extractedPath, ".valoride-generation.json"),
-      JSON.stringify(
-        {
-          applicationId,
-          applicationName: applicationName || applicationId,
-          generatedAt: new Date().toISOString(),
-          source: "valkyrai",
-          direction: "valkyrai-to-valoride",
-          editableUpstreamSurface: "openapi-only",
-        },
-        null,
-        2,
-      ),
-      "utf8",
-    );
+    // Current generators publish the actual API version in the plan; ZIP names contain an id, not a version.
+    let plannedVersion: string | undefined;
+    try {
+      const plan = JSON.parse(await fs.readFile(path.join(incomingRoot, "generation-plan.json"), "utf8"));
+      plannedVersion = typeof plan.api?.version === "string" ? plan.api.version : undefined;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw new Error("The generated version manifest is invalid. Regenerate from the saved Blueprint.");
+    }
+    if (plannedVersion && applicationVersion && plannedVersion !== applicationVersion)
+      throw new Error("The generated API version changed. Refresh the application list and retry from the current Blueprint.");
+    const version = plannedVersion || applicationVersion || filename.match(/^v(\d+(?:\.\d+){0,2})\./i)?.[1];
+    if (!version) throw new Error("The archive has no API version. Save OpenAPI info.version and regenerate; existing project files were preserved.");
+    canonicalProjectFolder(applicationName, version);
+    const configurationWarnings = await initializeGeneratedProject(incomingRoot, applicationName, version);
+    await ensureCurrent();
+    const destination = await generatedProjectDestination(workspaceRoot, resolveThorapiFolderPath(workspaceRoot), applicationId);
+    const { extractedPath, preservedFiles } = await installGeneratedProject(incomingRoot, destination.parent, {
+      applicationId, applicationName, applicationVersion: version, generation: generated.provenance,
+    }, ensureCurrent, { mode: "regenerate", generatedFiles, confirmOverwrite: confirmOverwrite || (async (affectedPaths) => {
+      const preview = await vscode.workspace.openTextDocument({ language: "plaintext", content: `Regeneration replaces these canonical generated files:\n\n${affectedPaths.join("\n")}\n\nCommit .valoride-generator-ignore to protect intentional overrides. Custom extensions and unknown files remain protected.\n` });
+      await vscode.window.showTextDocument(preview, { preview: false });
+      return await vscode.window.showWarningMessage(`Replace ${affectedPaths.length} generated files with the canonical Blueprint output?`, { modal: true }, "Replace generated files") === "Replace generated files";
+    }) });
+    await connectGeneratedSources(extractedPath, destination.standalone ? extractedPath : workspaceRoot, configurationWarnings);
     await ensureCurrent();
     await onProgress?.(
-      `Ready in ${getReadablePath(workspaceRoot, extractedPath)}`,
+      `Ready in ${getReadablePath(workspaceRoot, extractedPath)}${preservedFiles.length ? `; preserved ${preservedFiles.length} edited or existing files` : ""}`,
       "finalizing",
     );
-    return { extractedPath, filename };
+    await generated.complete();
+    return { extractedPath, filename, applicationVersion: version, preservedFiles, configurationWarnings, generationReceiptRef: generated.provenance.receiptRef };
   } finally {
     if (stagingRoot)
       await fs

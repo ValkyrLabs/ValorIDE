@@ -58,6 +58,15 @@ describe("ValkyrLabsRtkApi", () => {
     );
   });
 
+  it("honors canonical redirect rejection without changing other consumers' fetch defaults", async () => {
+    const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(async () => jsonResponse(200, { ok: true }));
+    const client = getValkyrLabsRtkApiClient(fetchImpl);
+    await client.request({ url: "https://api.example/v1/app_generation_ops/requests", redirect: "error", headers: { Authorization: "Bearer fixture-only" } });
+    expect(fetchImpl.mock.calls[0][1]?.redirect).toBe("error");
+    await client.request({ url: "https://api.example/v1/example" });
+    expect(fetchImpl.mock.calls[1][1]).not.toHaveProperty("redirect");
+  });
+
   it("preserves repeated Set-Cookie values for authentication consumers", async () => {
     const setCookies = [
       "VALKYR_AUTH=issued.jwt.token; Path=/; Domain=.valkyrlabs.com; HttpOnly; Secure",
@@ -96,6 +105,7 @@ describe("Valkyr Labs transport invariant", () => {
     "src/services/ValkyraiLlmService.ts",
     "src/services/appService.ts",
     "src/services/applicationArtifactDownload.ts",
+    "src/services/canonicalApplicationGeneration.ts",
     "src/services/applicationSourcePublish.ts",
     "src/services/auth/AuthCodeExchangeService.ts",
     "src/services/auth/TokenStorageService.ts",

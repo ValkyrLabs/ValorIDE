@@ -128,6 +128,25 @@ export class GrayMatterMcpBridge {
       return;
     }
 
+    // A user-selected local profile or custom route survives activation and
+    // reconnect. Only the obsolete npm placeholder is replaced automatically.
+    const settingsPath = await hub.getMcpSettingsFilePath();
+    const settings = JSON.parse(await readFile(settingsPath, "utf8"));
+    if (
+      settings?.mcpServers?.[SERVER_NAME] &&
+      !isBrokenLegacyConfig(settings.mcpServers[SERVER_NAME])
+    ) {
+      this.registered = true;
+      return;
+    }
+
+    if (!this.options.token) {
+      this.options.logger?.appendLine(
+        "[GrayMatterMcpBridge] Choose hosted sign-in or Connect Local GrayMatter Lite to configure memory.",
+      );
+      return;
+    }
+
     const launcher = await findGrayMatterMcpLauncher();
     if (!launcher) {
       const repaired = await deleteBrokenLegacyConfig(hub);
@@ -136,7 +155,6 @@ export class GrayMatterMcpBridge {
       this.options.logger?.appendLine(
         `[GrayMatterMcpBridge] ${message}${repaired ? " Removed obsolete npx gm-activate configuration." : ""}`,
       );
-      void vscode.window.showWarningMessage(message);
       return;
     }
 

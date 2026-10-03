@@ -48,6 +48,7 @@ export interface WebviewMessage {
     | "testValkyraiHost"
     | "updateValkyraiHost"
     | "openMcpSettings"
+    | "setupLocalGrayMatter"
     | "restartMcpServer"
     | "deleteMcpServer"
     | "autoApprovalSettings"
@@ -204,6 +205,7 @@ export interface WebviewMessage {
   // Reference-only native application generation
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
+  applicationVersion?: string; // Saved OpenAPI info.version; archive plan is checked against it
   deploymentUrl?: string;
   mimeType?: string;
   // For addGeneratedToProject

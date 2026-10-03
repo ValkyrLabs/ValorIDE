@@ -32,6 +32,8 @@ ValorIDE helps developers move from prompt-based coding to controlled agentic de
 
 ## Core Workflow
 
+For application packages, use **ValorIDE: Import Local Project Package** to import generated code and custom source without hosted signup. Use **Synchronize Project Blueprint** to save an edited specification with canonical revision conflict protection. See [the project import and synchronization guide](docs/project-roundtrip.md) for the package contract and current regeneration handoff.
+
 1. **Describe the task**
    Ask ValorIDE to fix a bug, explain an error, refactor a module, generate a feature, wire an API, or convert a mockup into a working application.
 2. **ValorIDE gathers project context**
@@ -536,3 +538,36 @@ License
 
 Apache 2.0 © 2026 Valkyr Labs Inc.⁠￼
 ```
+
+
+### GrayMatter setup
+
+The welcome screen recommends hosted GrayMatter at valkyrlabs.com and also
+offers **Connect Local GrayMatter Lite**. Run that command from the command
+palette at any time. Choose a GrayMatter source folder if needed; ValorIDE runs
+its existing `./vaix setup` or restarts it with `./vaix up`, verifies the local
+account, and connects the canonical MCP launcher to the local profile. It never
+requires hosted signup or saves a password in MCP settings. The first source
+build may download toolchains and dependencies; installed Lite runs offline.
+Repeating the command reconnects the same server and preserves the hosted
+profile selection in GrayMatter. Interrupted setup can be retried.
+
+Choose Ollama or LM Studio for local inference, or configure your own provider.
+Lite memory tools appear in the MCP panel. The hosted account and memory browser
+use the authenticated ValkyrAI session and its tenant permissions.
+
+### Generated project folders and regeneration
+
+Generation uses the authenticated application request/run/receipt workflow. ValorIDE verifies the receipt's account, tenant, application, artifact size and SHA-256 checksum before extraction. The project marker records its receipt and source/build/test references. Interrupted downloads resume the same request, including after a token refresh; generating again after a completed download creates a new request for the saved Blueprint. Review failed build/validation evidence in ValkyrAI before retrying.
+
+Application downloads open in `<project-name>-v<OpenAPI-version>` directly under the configured ThorAPI folder. The generator's `generation-plan.json` supplies the version; no UUID or random suffix is added. Projects view recognizes the canonical folder and also works when that folder is opened as its own workspace.
+
+Downloading the same version updates files whose hashes still match the recorded generated baseline. Edited files, newly added files, deliberate deletions, and existing files with an unknown baseline are preserved and listed for review. A different version uses a separate folder; a different application with the same name/version produces an actionable collision error. Interrupted setup can be retried using the write-ahead hash record in `.valoride-generation.json`.
+
+Initialization adds missing TypeScript aliases/includes, Java source and JAR paths, and Maven library dependencies without replacing existing options. Maven Build installs generated modules so consumer folders can resolve their libraries. Existing alias conflicts or invalid configuration are reported for repair. Missing root configuration gets a canonical TS project and Maven reactor; if Java source is absent, a small local Java entry point is created. This entry point confirms project setup and can be replaced with your application entry point.
+
+Run selects the generated backend/UI modules, uses an existing `dev`, `start`, or `serve` script, and reports a library with no runnable entry point. Canonical regeneration replaces known generated files after affected-path review; a committed `.valoride-generator-ignore` protects intentional overrides. Custom extensions and unknown collisions remain protected. Publish source through the existing Git client using **Publish Project Source to GitHub**; ordinary Save does not push.
+
+Spring Boot output keeps an executable `exec` JAR alongside the normal library JAR so other Maven folders can import its classes. Existing plugin options and classifiers are retained. For older projects whose only JAR contains `BOOT-INF` classes, fix that plugin configuration, rebuild, and reconnect the consumer.
+
+For an older UUID-based download, use **Preview Legacy Project Migration**. Review the file list and verified name/version before creating a separate canonical copy. Existing destinations are rejected; secrets and build caches are excluded. The original project remains intact, and legacy files receive no guessed generated baseline. Undo parks an unedited migration copy in a recovery folder; it refuses to remove subsequent edits.

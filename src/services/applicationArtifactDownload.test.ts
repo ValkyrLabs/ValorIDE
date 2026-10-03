@@ -8,7 +8,7 @@ import {
 import { getWorkspacePath } from "@utils/path";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { extractLocalZip } from "@utils/zipExtractor";
-import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
+import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
 
 jest.mock("@utils/path", () => ({
   getWorkspacePath: jest.fn(),
@@ -26,8 +26,8 @@ jest.mock("@utils/zipExtractor", () => ({
   isZipBuffer: (data: Buffer) =>
     data.subarray(0, 4).equals(Buffer.from([80, 75, 3, 4])),
 }));
-jest.mock("./valkyrai/ValkyrLabsRtkApi", () => ({
-  getValkyrLabsRtkApiClient: jest.fn(),
+jest.mock("./canonicalApplicationGeneration", () => ({
+  generateCanonicalArchive: jest.fn(),
 }));
 
 const applicationId = "11111111-1111-4111-8111-111111111111";
@@ -35,11 +35,14 @@ const secondId = "22222222-2222-4222-8222-222222222222";
 const request = {
   applicationId,
   applicationName: "Sample",
+  applicationVersion: "1",
   jwtToken: "host-session",
 };
 const response = {
-  data: Buffer.from([80, 75, 3, 4, 1]),
-  headers: { "content-disposition": 'attachment; filename="v1.Sample.zip"' },
+  archive: Buffer.from([80, 75, 3, 4, 1]),
+  fileName: "v1.Sample.zip",
+  provenance: { requestRef: "req-1", receiptRef: "receipt-1", generationRunRef: "run-1", artifactRef: "artifact-1", fileRecordId: "file-1", checksum: "digest", tenantId: "tenant", accountId: "account" },
+  complete: jest.fn(async () => {}),
 };
 
 describe("native application artifacts", () => {
@@ -47,15 +50,13 @@ describe("native application artifacts", () => {
   let fetchArtifact: jest.Mock;
   beforeEach(async () => {
     jest.clearAllMocks();
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "valoride-artifact-test-"));
+    root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "valoride-artifact-test-")));
     (getWorkspacePath as jest.Mock).mockReturnValue(root);
     (getValkyraiBasePath as jest.Mock).mockReturnValue(
       "https://api.example/v1",
     );
     fetchArtifact = jest.fn().mockResolvedValue(response);
-    (getValkyrLabsRtkApiClient as jest.Mock).mockReturnValue({
-      request: fetchArtifact,
-    });
+    (generateCanonicalArchive as jest.Mock).mockImplementation((...args) => fetchArtifact(...args));
     (extractLocalZip as jest.Mock).mockImplementation(
       async (_archive, target) => {
         const output = path.join(target, "v1.Sample");
@@ -76,16 +77,14 @@ describe("native application artifacts", () => {
     });
     expect(fetchArtifact).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: `https://api.example/v1/thorapi/generate/${applicationId}`,
-        method: "POST",
-        headers: {
-          Authorization: "Bearer host-session",
-          jwtSession: "host-session",
-        },
-        responseType: "arrayBuffer",
+        backend: "https://api.example/v1",
+        applicationId,
+        jwtToken: "host-session",
+        assertCurrent: expect.any(Function),
       }),
     );
-    expect(result.extractedPath).toContain(applicationId);
+    expect(result.extractedPath).toBe(path.join(root, "thorapi", "Sample-v1"));
+    expect(result.extractedPath).not.toContain(applicationId);
     expect(
       JSON.parse(
         await fs.readFile(
@@ -94,6 +93,8 @@ describe("native application artifacts", () => {
         ),
       ),
     ).toMatchObject({ applicationId, editableUpstreamSurface: "openapi-only" });
+    expect(response.complete).toHaveBeenCalledTimes(1);
+    expect(result.generationReceiptRef).toBe("receipt-1");
     expect(stages).toEqual([
       "receiving",
       "processing",
@@ -126,16 +127,36 @@ describe("native application artifacts", () => {
     expect(fetchArtifact).toHaveBeenCalledTimes(2);
   });
 
-  it("separates applications even when their archive names match", async () => {
-    const [first, second] = await Promise.all([
-      downloadApplicationArtifact(request),
-      downloadApplicationArtifact({ ...request, applicationId: secondId }),
-    ]);
-    expect(first.extractedPath).not.toBe(second.extractedPath);
-    const archives = (extractLocalZip as jest.Mock).mock.calls.map(
-      (call) => call[0],
-    );
-    expect(archives[0]).not.toBe(archives[1]);
+  it("rejects a same-name/version collision instead of overwriting another application", async () => {
+    const first = await downloadApplicationArtifact(request);
+    await expect(downloadApplicationArtifact({ ...request, applicationId: secondId })).rejects.toThrow(/another application/i);
+    expect(JSON.parse(await fs.readFile(path.join(first.extractedPath, ".valoride-generation.json"), "utf8")).applicationId).toBe(applicationId);
+  });
+
+  it("uses the generated API version instead of the UUID ZIP filename and rejects a stale saved version", async () => {
+    fetchArtifact.mockResolvedValue({ ...response, fileName: `sample-thorapi-${applicationId}.zip` });
+    (extractLocalZip as jest.Mock).mockImplementation(async (_archive, target) => {
+      const output = path.join(target, "incoming"); await fs.mkdir(output);
+      await fs.writeFile(path.join(output, "generation-plan.json"), JSON.stringify({ api: { version: "3.2.1" } }));
+      return output;
+    });
+    const result = await downloadApplicationArtifact({ ...request, applicationVersion: undefined });
+    expect(result.extractedPath).toBe(path.join(root, "thorapi", "Sample-v3.2.1"));
+    expect(result.applicationVersion).toBe("3.2.1");
+    await expect(downloadApplicationArtifact(request)).rejects.toThrow(/version changed/i);
+    expect(await fs.readdir(path.join(root, "thorapi"))).toEqual(["Sample-v3.2.1"]);
+  });
+
+  it("regenerates into an opened canonical project and places a different version beside it", async () => {
+    const first = await downloadApplicationArtifact(request);
+    await fs.writeFile(path.join(first.extractedPath, "custom.ts"), "hand-written");
+    (getWorkspacePath as jest.Mock).mockReturnValue(first.extractedPath);
+    const repeated = await downloadApplicationArtifact(request);
+    expect(repeated.extractedPath).toBe(first.extractedPath);
+    expect(await fs.readFile(path.join(first.extractedPath, "custom.ts"), "utf8")).toBe("hand-written");
+    const next = await downloadApplicationArtifact({ ...request, applicationVersion: "2" });
+    expect(next.extractedPath).toBe(path.join(root, "thorapi", "Sample-v2"));
+    await expect(fs.access(path.join(first.extractedPath, "thorapi"))).rejects.toThrow();
   });
 
   it("rejects malformed identity, missing auth, and missing workspace before generation", async () => {
@@ -218,7 +239,7 @@ describe("native application artifacts", () => {
   it("rejects non-ZIP responses and keeps extraction errors without a success stage", async () => {
     fetchArtifact.mockResolvedValueOnce({
       ...response,
-      data: Buffer.from("login page"),
+      archive: Buffer.from("login page"),
     });
     await expect(downloadApplicationArtifact(request)).rejects.toThrow(
       /non-ZIP/,
@@ -234,6 +255,7 @@ describe("native application artifacts", () => {
       }),
     ).rejects.toThrow("Corrupt ZIP");
     expect(stages).not.toContain("finalizing");
+    expect(response.complete).not.toHaveBeenCalled();
     await expect(
       fs.access((extractLocalZip as jest.Mock).mock.calls[0][0]),
     ).rejects.toThrow();

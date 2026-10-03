@@ -4,10 +4,7 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { validateApiConfiguration } from "@thorapi/utils/validate";
 import { vscode } from "@thorapi/utils/vscode";
 import ApiOptions from "@thorapi/components/settings/ApiOptions";
-import {
-  readStoredPrincipal,
-  hydrateStoredCredentials,
-} from "@thorapi/utils/accessControl";
+import type { ExtensionMessage } from "@shared/ExtensionMessage";
 import {
   FaBrain,
   FaRocket,
@@ -32,20 +29,24 @@ const WelcomeView = memo(() => {
     undefined,
   );
   const [showApiOptions, setShowApiOptions] = useState(false);
-  const [hasStoredAuth, setHasStoredAuth] = useState(false);
+  const [localBusy, setLocalBusy] = useState(false);
+  const [localResult, setLocalResult] = useState<{
+    success: boolean;
+    text: string;
+  }>();
 
-  // Check for stored credentials on mount
   useEffect(() => {
-    // Restore JWT & Principal from localStorage if they exist (for sticky auth)
-    hydrateStoredCredentials("welcome-view-init");
-
-    const storedPrincipal = readStoredPrincipal();
-    const storedToken =
-      sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken");
-    if (storedPrincipal && storedToken) {
-      setHasStoredAuth(true);
-      return;
-    }
+    const listener = (event: MessageEvent<ExtensionMessage>) => {
+      if (event.data.type !== "grayMatterSetupResult") return;
+      setLocalBusy(false);
+      setLocalResult({
+        success: event.data.success === true,
+        text: event.data.text ?? "Local setup finished.",
+      });
+      if (event.data.success) setShowApiOptions(true);
+    };
+    window.addEventListener("message", listener);
+    return () => window.removeEventListener("message", listener);
   }, []);
 
   const disableLetsGoButton = apiErrorMessage != null;
@@ -69,11 +70,6 @@ const WelcomeView = memo(() => {
     setApiErrorMessage(validateApiConfiguration(apiConfiguration));
   }, [apiConfiguration]);
 
-  // If stored auth exists, parent App.tsx routes to the main interface
-  if (hasStoredAuth) {
-    return null;
-  }
-
   return (
     <>
       <div
@@ -90,11 +86,7 @@ const WelcomeView = memo(() => {
         >
           {/* Logo */}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <img
-              alt="ValorIDE"
-              src="https://valkyrlabs.com/assets/images/VALKYR_LABS_INC_LOGO.png"
-              style={{ maxWidth: 200, height: "auto", opacity: 0.95 }}
-            />
+            <span style={{ fontSize: 24, fontWeight: 700 }}>ValorIDE</span>
           </div>
 
           {/* Hero */}
@@ -124,7 +116,7 @@ const WelcomeView = memo(() => {
                   color: "var(--vscode-foreground)",
                 }}
               >
-                Train Your Digital Mind
+                Set up your coding workspace
               </h2>
             </div>
             <p
@@ -135,10 +127,8 @@ const WelcomeView = memo(() => {
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              ValorIDE is an agentic coding environment powered by{" "}
-              <strong>ValkyrAI GrayMatter</strong> — the intelligence layer
-              purpose-built for developers. Choose your AI instincts, configure
-              your memory, and vibe code at full speed.
+              Choose hosted GrayMatter or run GrayMatter Lite on your Mac. Then
+              choose the coding model you want to use.
             </p>
 
             <ul
@@ -201,7 +191,7 @@ const WelcomeView = memo(() => {
                   color: "var(--vscode-foreground)",
                 }}
               >
-                Start with ValkyrAI
+                GrayMatter Cloud · Recommended
               </span>
             </div>
             <p
@@ -212,15 +202,15 @@ const WelcomeView = memo(() => {
                 lineHeight: 1.5,
               }}
             >
-              Create a free account to access ValkyrAI GrayMatter prompts,
-              memory presets, and curated models. No credit card required.
+              Use hosted memory at valkyrlabs.com with your ValkyrAI account.
+              Create a free account or sign in to continue.
             </p>
             <VSCodeButton
               appearance="primary"
               onClick={handleSignup}
               style={{ width: "100%" }}
             >
-              Get Started for Free
+              Set up hosted GrayMatter
             </VSCodeButton>
             <div
               style={{
@@ -248,7 +238,55 @@ const WelcomeView = memo(() => {
             </div>
           </div>
 
-          {/* Own API key section */}
+          <div
+            style={{
+              background: "var(--vscode-panel-background)",
+              border: "1px solid var(--vscode-panel-border)",
+              borderRadius: 8,
+              padding: "18px 22px",
+              marginBottom: 12,
+            }}
+          >
+            <h3 style={{ margin: "0 0 8px", fontSize: 14 }}>
+              Local GrayMatter Lite
+            </h3>
+            <p
+              style={{
+                fontSize: 12,
+                lineHeight: 1.5,
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Keep memory on this machine. No valkyrlabs.com signup is needed.
+              Setup starts Lite from its source folder and connects its MCP
+              memory tools. The first source build may download missing
+              toolchains; installed Lite works offline.
+            </p>
+            <VSCodeButton
+              appearance="secondary"
+              disabled={localBusy}
+              onClick={() => {
+                setLocalBusy(true);
+                setLocalResult(undefined);
+                vscode.postMessage({ type: "setupLocalGrayMatter" });
+              }}
+              style={{ width: "100%" }}
+            >
+              {localBusy
+                ? "Setting up local memory…"
+                : "Connect Local GrayMatter Lite"}
+            </VSCodeButton>
+            {localResult && (
+              <p
+                role={localResult.success ? "status" : "alert"}
+                style={{ fontSize: 12, lineHeight: 1.5 }}
+              >
+                {localResult.text}
+              </p>
+            )}
+          </div>
+
+          {/* Model configuration is available without a hosted account. */}
           <div
             style={{
               background: "var(--vscode-panel-background)",
@@ -275,7 +313,7 @@ const WelcomeView = memo(() => {
             >
               <FaKey size={13} style={{ opacity: 0.7 }} />
               <span style={{ fontSize: 13, fontWeight: 600 }}>
-                Bring Your Own API Key
+                Choose a local model or your own provider
               </span>
               <FaChevronRight
                 size={10}
@@ -298,8 +336,8 @@ const WelcomeView = memo(() => {
                     lineHeight: 1.5,
                   }}
                 >
-                  Connect your existing API key from Anthropic, OpenAI,
-                  OpenRouter, or any compatible provider.
+                  Use Ollama or LM Studio locally, or connect your API key from
+                  Anthropic, OpenAI, OpenRouter, or another provider.
                 </p>
                 <ApiOptions showModelOptions={false} />
                 <VSCodeButton
