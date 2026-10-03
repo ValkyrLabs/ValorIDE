@@ -32,6 +32,7 @@ import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@thorapi/model";
 import { Application } from "@thorapi/model/Application";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import {
   clearStoredAuthSession,
   clearStoredJwtToken,
@@ -237,7 +238,7 @@ export const ExtensionStateContextProvider: React.FC<{
 
     switch (message.type) {
       case "state": {
-        const incoming = message.state;
+        let incoming = message.state;
         if (!incoming) {
           console.warn(
             "ExtensionStateContext: received state message without payload",
@@ -246,44 +247,27 @@ export const ExtensionStateContextProvider: React.FC<{
           break;
         }
 
-        // 1) Update auth-related local state + sessionStorage OUTSIDE of the setState updater
+        // Establish the selected host before considering credentials from native state.
+        setValkyraiHost(incoming.apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST);
         try {
-          if (incoming.authenticatedPrincipal) {
-            const principalRaw =
-              typeof incoming.authenticatedPrincipal === "string"
-                ? JSON.parse(incoming.authenticatedPrincipal)
-                : incoming.authenticatedPrincipal;
-            const principal = normalizePrincipal(principalRaw);
-            setAuthenticatedUser(principal);
-            if (principal) {
-              writeStoredPrincipal(principal as any);
-            } else {
-              clearStoredPrincipal("extension-state");
-            }
-          } else {
-            setAuthenticatedUser(undefined);
-            clearStoredPrincipal("extension-state");
-          }
-
           if (incoming.jwtToken) {
+            storeJwtToken(incoming.jwtToken, "extension-state", incoming.credentialOrigin);
             setJwtToken(incoming.jwtToken);
-            storeJwtToken(incoming.jwtToken, "extension-state");
-          } else if (incoming.isLoggedIn === false) {
+            const raw = incoming.authenticatedPrincipal;
+            const principal = normalizePrincipal(typeof raw === "string" ? JSON.parse(raw) : raw);
+            setAuthenticatedUser(principal);
+            if (principal) writeStoredPrincipal(principal as any);
+            else clearStoredPrincipal("extension-state");
+          } else {
             setJwtToken(undefined);
-            clearStoredJwtToken("extension-state");
-            clearStoredPrincipal("extension-state");
+            setAuthenticatedUser(undefined);
+            clearStoredAuthSession("extension-state");
           }
         } catch {
-          // Ignore storage errors in webview sandbox
-        }
-
-        // Update global ValkyrAI host before React consumers run effects
-        try {
-          const nextHost =
-            incoming.apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST;
-          setValkyraiHost(nextHost);
-        } catch (error) {
-          console.warn("Failed to update ValkyrAI host", error);
+          clearStoredAuthSession("origin-mismatch");
+          setJwtToken(undefined);
+          setAuthenticatedUser(undefined);
+          incoming = { ...incoming, jwtToken: undefined, authenticatedPrincipal: undefined, userInfo: undefined, isLoggedIn: false };
         }
 
         // 2) Update the main extension state via a PURE updater (no side-effects here)
@@ -309,7 +293,7 @@ export const ExtensionStateContextProvider: React.FC<{
         // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
         const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
         const hasStoredAuth = !!(
-          sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken")
+          getStoredJwtToken()
         );
         setShowWelcome(!hasKey && !isAuthed && !hasStoredAuth);
         setDidHydrateState(true);
@@ -414,10 +398,16 @@ export const ExtensionStateContextProvider: React.FC<{
         const authenticatedPrincipalStr = (message as any)
           .authenticatedPrincipal;
 
-        // Store JWT token in sessionStorage for ThorAPI requests
-        if (token) {
-          storeJwtToken(token, "extension-loginSuccess");
+        try {
+          if (!token) throw new Error("Sign-in did not return a session.");
+          storeJwtToken(token, "extension-loginSuccess", message.credentialOrigin);
           setJwtToken(token);
+        } catch {
+          clearStoredAuthSession("origin-mismatch");
+          setJwtToken(undefined);
+          setAuthenticatedUser(undefined);
+          setState(prev => ({ ...prev, jwtToken: undefined, authenticatedPrincipal: undefined, userInfo: undefined, isLoggedIn: false }));
+          break;
         }
 
         // Store authenticated user in sessionStorage

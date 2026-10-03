@@ -4,6 +4,9 @@ import {
   materializeGovernedCodingTask,
 } from "@services/swarm/SwarmCodingInference";
 import { TokenStorageService } from "@services/auth/TokenStorageService";
+import { credentialOrigin, registeredCredentialOrigin, clearCredentialOrigins } from "@shared/CredentialOrigin";
+import { readBoundCredential } from "@services/auth/OriginBoundCredentials";
+import { disposeAgentRuntimeCoordinator } from "@services/communication/AgentRuntimeCoordinator";
 import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 import crypto from "crypto";
@@ -457,6 +460,7 @@ const describeLlmDetailsForRouting = (
     .join(" ") || undefined;
 
 export class Controller {
+  private observedValkyraiHost = getValkyraiBasePath();
   private postMessage: (
     message: ExtensionMessage,
   ) => Thenable<boolean> | undefined;
@@ -1660,32 +1664,11 @@ export class Controller {
   // Auth methods
   async handleSignOut() {
     try {
-      // Clear all authentication-related secrets
-      await storeSecret(this.context, "valorideApiKey", undefined);
-      await storeSecret(this.context, "jwtToken", undefined);
-      await storeSecret(this.context, "valkyraiJwt", undefined);
-      await this.context.secrets.delete("refreshToken");
-      await this.context.secrets.delete("authState");
-      await this.context.secrets.delete("tenantContext");
-      await this.context.secrets.delete("graymatter-token");
-
-      // Clear all authentication-related global state
-      await updateGlobalState(this.context, "userInfo", undefined);
-      await updateGlobalState(
-        this.context,
-        "authenticatedPrincipal",
-        undefined,
-      );
-      await updateGlobalState(this.context, "isLoggedIn", false);
-      await this.context.globalState.update(
-        "authPersistenceEnabled",
-        undefined,
-      );
-      await updateGlobalState(this.context, "agenticState", undefined);
-      await this.refreshGrayMatterSessionState(undefined);
-
-      // Reset API provider to default
+      disposeAgentRuntimeCoordinator();
+      clearCredentialOrigins();
+      const logout = StartupAuthService.getInstance(this.context).handleLogout();
       await updateGlobalState(this.context, "apiProvider", "openrouter");
+      await logout;
 
       // Clear webview client-side state (sessionStorage, localStorage, cookies)
       await this.postMessageToWebview({
@@ -2163,16 +2146,17 @@ export class Controller {
         }
 
         try {
+          if (!message.credentialOrigin || message.credentialOrigin !== credentialOrigin(getValkyraiBasePath())) throw new Error("The backend changed. Retry sign-in at the selected destination.");
+          const startupAuthService = StartupAuthService.getInstance(this.context);
+          const loginRevision = startupAuthService.getAuthenticationRevision();
           const loginResult = await new ValoridePasswordLoginService().login({
             username,
             password,
           });
-          const startupAuthService = StartupAuthService.getInstance(
-            this.context,
-          );
           await startupAuthService.handleSuccessfulLogin(
             loginResult.tokens,
             loginResult.user,
+            loginRevision,
           );
           await this.refreshGrayMatterSessionState(loginResult.tokens.jwtToken);
           await this.postMessageToWebview({
@@ -2180,6 +2164,7 @@ export class Controller {
             requestId,
             success: true,
             token: loginResult.tokens.jwtToken,
+            credentialOrigin: loginResult.tokens.issuanceOrigin,
             authenticatedPrincipal: loginResult.user
               ? JSON.stringify(loginResult.user)
               : undefined,
@@ -2187,6 +2172,7 @@ export class Controller {
           await this.postMessageToWebview({
             type: "loginSuccess",
             token: loginResult.tokens.jwtToken,
+            credentialOrigin: loginResult.tokens.issuanceOrigin,
             authenticatedPrincipal: loginResult.user
               ? JSON.stringify(loginResult.user)
               : undefined,
@@ -2206,36 +2192,13 @@ export class Controller {
       }
       case "accountLoginSuccess": {
         const customToken = message.customToken?.trim();
-        const authenticatedPrincipal = this.normalizePrincipalPayload(
-          message.authenticatedPrincipal,
-        );
-        if (customToken) {
-          const startupAuthService = StartupAuthService.getInstance(
-            this.context,
-          );
-          await startupAuthService.handleSuccessfulLogin(
-            { jwtToken: customToken },
-            authenticatedPrincipal ?? message.authenticatedPrincipal ?? {},
-          );
+        // This acknowledges native sign-in; principal and tenant remain the
+        // values obtained from that backend, never a browser-supplied projection.
+        if (!customToken || customToken !== await TokenStorageService.getInstance(this.context).getJwtToken()) {
+          await this.postMessageToWebview({ type: "clearClientAuthState" });
+          vscode.window.showErrorMessage("Sign in through Account at the selected backend before connecting.");
+          break;
         }
-        if (authenticatedPrincipal) {
-          await updateGlobalState(
-            this.context,
-            "authenticatedPrincipal",
-            authenticatedPrincipal,
-          );
-          await updateGlobalState(
-            this.context,
-            "userInfo",
-            authenticatedPrincipal,
-          );
-          await this.storeTenantContextFromPayloads(authenticatedPrincipal);
-        }
-        await updateGlobalState(
-          this.context,
-          "isLoggedIn",
-          Boolean(customToken),
-        );
         await this.refreshGrayMatterSessionState(customToken);
         await this.postStateToWebview();
         break;
@@ -2529,6 +2492,8 @@ export class Controller {
         }
         const nextHost = normalizeValkyraiHost(requestedHost);
         try {
+          credentialOrigin(nextHost);
+          await this.suspendForValkyraiHostChange(nextHost);
           await vscode.workspace
             .getConfiguration("valoride.valkyrai")
             .update("host", nextHost, vscode.ConfigurationTarget.Global);
@@ -2550,20 +2515,7 @@ export class Controller {
           success: true,
         });
         await this.postStateToWebview();
-        await this.refreshLLMDetails();
-        try {
-          const startupAuthService = StartupAuthService.getInstance(
-            this.context,
-          );
-          await startupAuthService.restoreAuthentication();
-        } catch (error) {
-          console.warn(
-            "Failed to restore authentication after host change:",
-            error,
-          );
-        }
-        await this.retrySwarmRegistration("ValkyrAI host change");
-        void this.registerSwarmSession(nextHost);
+        // Destination-specific login starts the authenticated consumers.
         break;
       }
       case "refreshOpenAiModels":
@@ -3059,7 +3011,12 @@ export class Controller {
       case "updateSettings": {
         // api config
         if (message.apiConfiguration) {
-          await updateApiConfiguration(this.context, message.apiConfiguration);
+          try { await updateApiConfiguration(this.context, message.apiConfiguration); }
+          catch (error) {
+            vscode.window.showErrorMessage(error instanceof Error ? error.message : "Sign in at the selected backend before saving its session settings.");
+            await this.postStateToWebview();
+            break;
+          }
           if (this.task) {
             this.task.api = buildApiHandler(
               await this.resolveTaskApiConfiguration(message.apiConfiguration),
@@ -4715,7 +4672,8 @@ export class Controller {
 
   public async validateAuthState(state: string | null): Promise<boolean> {
     const storedNonce = await getSecret(this.context, "authNonce");
-    if (!state || state !== storedNonce) {
+    const nonceOrigin = await this.context.secrets.get("authNonceOrigin");
+    if (!state || state !== storedNonce || nonceOrigin !== credentialOrigin(getValkyraiBasePath())) {
       return false;
     }
     await storeSecret(this.context, "authNonce", undefined); // Clear after use
@@ -4780,13 +4738,14 @@ export class Controller {
     customToken: string,
     apiKey: string,
     authenticatedPrincipal?: any,
+    issuanceOrigin = registeredCredentialOrigin(customToken),
   ) {
     try {
       // Store API key for API calls
-      await storeSecret(this.context, "valorideApiKey", apiKey);
+      await storeSecret(this.context, "valorideApiKey", apiKey, issuanceOrigin);
 
       // Store JWT token for ThorAPI requests
-      await storeSecret(this.context, "jwtToken", customToken);
+      await storeSecret(this.context, "jwtToken", customToken, issuanceOrigin);
 
       // Store authenticated principal in backend state
       if (authenticatedPrincipal) {
@@ -4811,6 +4770,7 @@ export class Controller {
       await this.postMessageToWebview({
         type: "loginSuccess",
         token: customToken,
+        credentialOrigin: issuanceOrigin,
         authenticatedPrincipal: authenticatedPrincipal
           ? JSON.stringify(authenticatedPrincipal)
           : undefined,
@@ -4930,7 +4890,7 @@ export class Controller {
   private async readStoredJwtToken() {
     return (
       (await getSecret(this.context, "jwtToken")) ||
-      (await this.context.secrets.get("valor_jwt_token")) ||
+      (await readBoundCredential(this.context, "valor_jwt_token")) ||
       (await getSecret(this.context, "valkyraiJwt"))
     );
   }
@@ -5838,6 +5798,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       const authToken =
         apiConfiguration?.valkyraiJwt ||
         (await getSecret(this.context, "jwtToken"));
+      if (!authToken) {
+        await this.postMessageToWebview({ type: "llmDetailsUpdated", models: {}, llmDetails: [], error: "Sign in through Account at the selected backend to load its coding models." });
+        return {};
+      }
       if (authToken) {
         headers["Authorization"] = `Bearer ${authToken}`;
         headers["jwtSession"] = authToken;
@@ -5921,6 +5885,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   private async registerSwarmSession(host: string): Promise<void> {
     try {
       const jwtToken = await getSecret(this.context, "jwtToken");
+      if (!jwtToken) return;
       const instanceId = vscode.env.machineId || crypto.randomUUID();
       const version = this.context.extension?.packageJSON?.version ?? "unknown";
       const workspaceName =
@@ -5975,16 +5940,29 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       const configuredHost = vscode.workspace
         .getConfiguration("valoride.valkyrai")
         .get<string>("host");
+      await this.suspendForValkyraiHostChange(normalizeValkyraiHost(configuredHost));
       await updateGlobalState(
         this.context,
         "valkyraiHost",
         normalizeValkyraiHost(configuredHost),
       );
       await this.postStateToWebview();
-      await this.refreshLLMDetails();
     } catch (error) {
       console.error("Failed to react to ValkyrAI host change:", error);
     }
+  }
+
+  private async suspendForValkyraiHostChange(nextHost: string): Promise<void> {
+    let sameOrigin = false;
+    try { sameOrigin = credentialOrigin(nextHost) === credentialOrigin(this.observedValkyraiHost); } catch { /* Invalid direct configuration also suspends auth. */ }
+    this.observedValkyraiHost = nextHost;
+    if (sameOrigin) return;
+    // Stop transports synchronously, before any persistence or projection await.
+    disposeAgentRuntimeCoordinator();
+    clearCredentialOrigins();
+    await StartupAuthService.getInstance(this.context).handleLogout();
+    await this.postMessageToWebview({ type: "clearClientAuthState" });
+    await this.postMessageToWebview({ type: "llmDetailsUpdated", models: {}, llmDetails: [], error: "Backend changed. Sign in at the selected destination to connect." });
   }
 
   // Context menus and code actions
@@ -6477,8 +6455,9 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       authenticatedPrincipal,
       grayMatterSession,
       agenticState,
-      isLoggedIn,
+      isLoggedIn: Boolean(jwtToken) && isLoggedIn,
       jwtToken,
+      credentialOrigin: jwtToken ? registeredCredentialOrigin(jwtToken) : undefined,
     };
   }
 

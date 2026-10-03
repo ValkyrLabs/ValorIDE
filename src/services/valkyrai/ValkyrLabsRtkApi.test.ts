@@ -1,7 +1,15 @@
+import { it } from "@jest/globals";
+import {
+  registerCredentialOrigin,
+  clearCredentialOrigins,
+} from "@shared/CredentialOrigin";
 import fs from "fs";
 import path from "path";
 import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
-import { getValkyrLabsRtkApiClient } from "./ValkyrLabsRtkApi";
+import {
+  getValkyrLabsRtkApiClient,
+  credentialBoundSdkFetch,
+} from "./ValkyrLabsRtkApi";
 
 describe("ValkyrLabsRtkApi", () => {
   const jsonResponse = (status: number, body: unknown): Response =>
@@ -58,13 +66,20 @@ describe("ValkyrLabsRtkApi", () => {
     );
   });
 
-  it("honors canonical redirect rejection without changing other consumers' fetch defaults", async () => {
-    const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(async () => jsonResponse(200, { ok: true }));
+  it("rejects redirects for every consumer so legacy headers and refresh bodies cannot cross origins", async () => {
+    const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () => jsonResponse(200, { ok: true }),
+    );
     const client = getValkyrLabsRtkApiClient(fetchImpl);
-    await client.request({ url: "https://api.example/v1/app_generation_ops/requests", redirect: "error", headers: { Authorization: "Bearer fixture-only" } });
+    registerCredentialOrigin("fixture-only", "https://api.example");
+    await client.request({
+      url: "https://api.example/v1/app_generation_ops/requests",
+      redirect: "error",
+      headers: { Authorization: "Bearer fixture-only" },
+    });
     expect(fetchImpl.mock.calls[0][1]?.redirect).toBe("error");
     await client.request({ url: "https://api.example/v1/example" });
-    expect(fetchImpl.mock.calls[1][1]).not.toHaveProperty("redirect");
+    expect(fetchImpl.mock.calls[1][1]?.redirect).toBe("error");
   });
 
   it("preserves repeated Set-Cookie values for authentication consumers", async () => {
@@ -186,5 +201,66 @@ describe("bounded shared response reads", () => {
         responseType: "raw",
       }),
     ).rejects.toMatchObject({ status: "FETCH_ERROR" });
+  });
+});
+
+describe("all native credential transports", () => {
+  beforeEach(clearCredentialOrigins);
+  it.each([
+    { headers: { Authorization: "Bearer SYNTHETIC-A" } },
+    { headers: { jwtSession: "SYNTHETIC-A" } },
+    { json: { refreshToken: "SYNTHETIC-A" } },
+    { body: JSON.stringify({ refreshToken: "SYNTHETIC-A" }) },
+    { body: new URLSearchParams({ refresh_token: "SYNTHETIC-A" }) },
+  ])(
+    "refuses cross-origin credential requests before fetch %j",
+    async (credentials) => {
+      registerCredentialOrigin("SYNTHETIC-A", "https://issuer.invalid");
+      const fetchImpl = jest.fn();
+      const client = getValkyrLabsRtkApiClient(fetchImpl);
+      await expect(
+        client.request({
+          url: "https://other.invalid/v1/endpoint",
+          ...credentials,
+        }),
+      ).rejects.toMatchObject({ status: "FETCH_ERROR" });
+      expect(fetchImpl).not.toHaveBeenCalled();
+    },
+  );
+  it("refuses an unbound token and a credential-bearing URL without logging it", async () => {
+    const fetchImpl = jest.fn();
+    const client = getValkyrLabsRtkApiClient(fetchImpl);
+    await expect(
+      client.request({
+        url: "https://issuer.invalid",
+        headers: { Authorization: "Bearer SYNTHETIC-UNKNOWN" },
+      }),
+    ).rejects.toThrow("not bound");
+    registerCredentialOrigin("SYNTHETIC-A", "https://issuer.invalid");
+    await expect(
+      client.request({
+        url: "https://issuer.invalid?token=SYNTHETIC-A",
+        headers: { jwtSession: "SYNTHETIC-A" },
+      }),
+    ).rejects.toThrow("invalid backend");
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+  it("guards the OpenAI-compatible hosted SDK before dispatch and rejects redirects", async () => {
+    registerCredentialOrigin("SYNTHETIC-A", "https://issuer.invalid");
+    const fetchMock = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("{}"));
+    await expect(
+      credentialBoundSdkFetch("https://other.invalid", {
+        headers: { Authorization: "Bearer SYNTHETIC-A" },
+      }),
+    ).rejects.toThrow("not bound");
+    expect(fetchMock).not.toHaveBeenCalled();
+    await credentialBoundSdkFetch("https://issuer.invalid/v1/chat", {
+      headers: { Authorization: "Bearer SYNTHETIC-A" },
+      redirect: "follow",
+    });
+    expect(fetchMock.mock.calls[0][1]?.redirect).toBe("error");
+    fetchMock.mockRestore();
   });
 });

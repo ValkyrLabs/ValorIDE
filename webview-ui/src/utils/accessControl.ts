@@ -20,6 +20,10 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import { Principal, Role, Authority } from "@thorapi/model";
+import { credentialOrigin, registerCredentialOrigin, forgetCredentialOrigin, clearCredentialOrigins } from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "./valkyraiHost";
+import { getStoredJwtToken } from "./authTokenStorage";
+import { clearRememberedCsrfToken } from "./csrfToken";
 
 const STORAGE_KEY = "authenticatedPrincipal";
 const PRINCIPAL_STORAGE_EVENT = "principal-storage-changed";
@@ -31,6 +35,7 @@ const AUTH_USER_STORAGE_KEY = "authenticatedUser";
 const JWT_PERSIST_FLAG_KEY = "valoride.persistJwt";
 const AUTH_SESSION_INVALIDATED_EVENT = "authSessionInvalidated";
 const AUTH_STORAGE_KEYS = [
+  "valoride.jwtOrigin",
   STORAGE_KEY,
   AUTH_USER_STORAGE_KEY,
   JWT_STORAGE_KEY,
@@ -491,7 +496,7 @@ export const writeStoredPrincipal = (
 export const clearStoredPrincipal = (_reason?: string) =>
   writeStoredPrincipal(null);
 
-export const storeJwtToken = (token?: string | null, source?: string): void => {
+export const storeJwtToken = (token?: string | null, source?: string, issuanceHost?: string): void => {
   if (typeof window === "undefined") {
     return;
   }
@@ -500,9 +505,16 @@ export const storeJwtToken = (token?: string | null, source?: string): void => {
     return;
   }
 
+  if (!issuanceHost || credentialOrigin(issuanceHost) !== credentialOrigin(getValkyraiHost())) throw new Error("Sign in at the selected backend before restoring this session.");
+  const origin = credentialOrigin(issuanceHost);
+  registerCredentialOrigin(token, origin);
   try {
+    // Remove metadata first and write it last so partial writes fail closed.
+    sessionStorage.removeItem("valoride.jwtOrigin");
+    window.localStorage?.removeItem("valoride.jwtOrigin");
     sessionStorage.setItem(JWT_STORAGE_KEY, token);
     sessionStorage.setItem(JWT_SESSION_KEY, token);
+    sessionStorage.setItem("valoride.jwtOrigin", origin);
 
     const persistFlag =
       window.localStorage?.getItem(JWT_PERSIST_FLAG_KEY)?.toLowerCase() ??
@@ -513,7 +525,9 @@ export const storeJwtToken = (token?: string | null, source?: string): void => {
       window.localStorage?.setItem(JWT_STORAGE_KEY, token);
       window.localStorage?.setItem(AUTH_TOKEN_KEY, token);
       window.localStorage?.setItem(JWT_SESSION_KEY, token);
+      window.localStorage?.setItem("valoride.jwtOrigin", origin);
     } else {
+      window.localStorage?.removeItem("valoride.jwtOrigin");
       window.localStorage?.removeItem(JWT_STORAGE_KEY);
       window.localStorage?.removeItem(AUTH_TOKEN_KEY);
       window.localStorage?.removeItem(JWT_SESSION_KEY);
@@ -521,7 +535,8 @@ export const storeJwtToken = (token?: string | null, source?: string): void => {
 
     dispatchJwtTokenChange(token, source);
   } catch (error) {
-    console.warn("Unable to persist JWT token", error);
+    clearStoredJwtToken(source);
+    throw new Error("Unable to save this session. Retry sign-in at the selected backend.");
   }
 };
 
@@ -530,6 +545,10 @@ export const clearStoredJwtToken = (source?: string): void => {
     return;
   }
   try {
+    const previous = sessionStorage.getItem(JWT_STORAGE_KEY) || window.localStorage?.getItem(JWT_STORAGE_KEY);
+    if (previous) forgetCredentialOrigin(previous);
+    sessionStorage.removeItem("valoride.jwtOrigin");
+    window.localStorage?.removeItem("valoride.jwtOrigin");
     const hadStoredToken = Boolean(
       sessionStorage.getItem(JWT_STORAGE_KEY) ||
         sessionStorage.getItem(JWT_SESSION_KEY) ||
@@ -614,6 +633,8 @@ export const clearReadableAuthCookies = (): void => {
 };
 
 export const clearStoredAuthSession = (source?: string): void => {
+  clearRememberedCsrfToken();
+  clearCredentialOrigins();
   clearStoredJwtToken(source);
   clearStoredPrincipal(source);
 
@@ -638,10 +659,7 @@ export const hydrateStoredCredentials = (source?: string) => {
   }
 
   try {
-    const persistedToken =
-      window.localStorage?.getItem(JWT_STORAGE_KEY) ||
-      window.localStorage?.getItem(AUTH_TOKEN_KEY) ||
-      window.localStorage?.getItem(JWT_SESSION_KEY);
+    const persistedToken = getStoredJwtToken();
 
     if (persistedToken) {
       token = persistedToken;
@@ -653,7 +671,7 @@ export const hydrateStoredCredentials = (source?: string) => {
       window.localStorage?.getItem(STORAGE_KEY) ||
       window.localStorage?.getItem(AUTH_USER_STORAGE_KEY);
 
-    if (persistedPrincipalRaw) {
+    if (persistedToken && persistedPrincipalRaw) {
       principal = resolvePrincipal(persistedPrincipalRaw);
       writeStoredPrincipal(principal ?? null);
     }

@@ -1,3 +1,10 @@
+import { createHash } from "node:crypto";
+import {
+  clearCredentialOrigins,
+  registerCredentialOrigin,
+} from "@shared/CredentialOrigin";
+import { writeBoundCredential } from "./OriginBoundCredentials";
+const origin = "https://api-0.valkyrlabs.com";
 import {
   TokenStorageService,
   validateAuthSession,
@@ -30,6 +37,7 @@ const createContext = () => {
 
 describe("TokenStorageService JWT recovery", () => {
   afterEach(() => {
+    clearCredentialOrigins();
     jest.restoreAllMocks();
     (TokenStorageService as any).instance = undefined;
   });
@@ -40,7 +48,7 @@ describe("TokenStorageService JWT recovery", () => {
       [
         "authState",
         JSON.stringify({
-          tokens: { jwtToken: "account-webview-jwt" },
+          tokens: { jwtToken: "account-webview-jwt", issuanceOrigin: origin },
           user: { id: "principal-1" },
           timestamp: Date.now(),
         }),
@@ -57,6 +65,16 @@ describe("TokenStorageService JWT recovery", () => {
       globalState: { update: jest.fn() },
     } as any;
 
+    values.set(
+      "credentialOrigin:jwtToken",
+      JSON.stringify({
+        version: 1,
+        origin,
+        sha256: createHash("sha256")
+          .update("account-webview-jwt")
+          .digest("hex"),
+      }),
+    );
     const service = TokenStorageService.getInstance(context);
 
     await expect(service.getJwtToken()).resolves.toBe("account-webview-jwt");
@@ -80,11 +98,12 @@ describe("TokenStorageService JWT recovery", () => {
       status: 200,
       statusText: "OK",
     }));
+    registerCredentialOrigin("stored-jwt", origin);
     await expect(
       validateAuthSession(
         { request } as any,
         "https://api-0.valkyrlabs.com/v1",
-        { jwtToken: "stored-jwt" },
+        { jwtToken: "stored-jwt", issuanceOrigin: origin },
       ),
     ).resolves.toEqual({
       definitive: true,
@@ -107,26 +126,28 @@ describe("TokenStorageService JWT recovery", () => {
       .mockRejectedValueOnce(new ValkyrLabsApiError("Unauthorized", 401))
       .mockRejectedValueOnce(new ValkyrLabsApiError("Unavailable", 503));
 
+    registerCredentialOrigin("expired-jwt", origin);
+    registerCredentialOrigin("retryable-jwt", origin);
     await expect(
       validateAuthSession(
         { request } as any,
         "https://api-0.valkyrlabs.com/v1",
-        { jwtToken: "expired-jwt" },
+        { jwtToken: "expired-jwt", issuanceOrigin: origin },
       ),
     ).resolves.toMatchObject({ definitive: true, valid: false });
     await expect(
       validateAuthSession(
         { request } as any,
         "https://api-0.valkyrlabs.com/v1",
-        { jwtToken: "retryable-jwt" },
+        { jwtToken: "retryable-jwt", issuanceOrigin: origin },
       ),
     ).resolves.toMatchObject({ definitive: false, valid: false });
   });
 
-  it("migrates a legacy standalone JWT into canonical authState", async () => {
+  it("migrates a bound standalone JWT into canonical authState", async () => {
     Logger.initialize({ appendLine: jest.fn() } as any);
     const { context, globalValues, values } = createContext();
-    values.set("jwtToken", "legacy-jwt");
+    await writeBoundCredential(context, "jwtToken", "legacy-jwt", origin);
     globalValues.set("authenticatedPrincipal", {
       id: "principal-legacy",
       username: "legacy",
@@ -141,5 +162,43 @@ describe("TokenStorageService JWT recovery", () => {
     expect(JSON.parse(values.get("authState") || "{}")).toMatchObject({
       tokens: { jwtToken: "legacy-jwt" },
     });
+  });
+
+  it("finishes logout after an interrupted sign-in write without restoring the session", async () => {
+    Logger.initialize({ appendLine: jest.fn() } as any);
+    const { context, values } = createContext();
+    let continueWrite!: () => void;
+    let writeStarted!: () => void;
+    const started = new Promise<void>((resolve) => {
+      writeStarted = resolve;
+    });
+    const interrupted = new Promise<void>((resolve) => {
+      continueWrite = resolve;
+    });
+    context.secrets.store.mockImplementation(
+      async (key: string, value: string) => {
+        if (key === "credentialOrigin:jwtToken") {
+          writeStarted();
+          await interrupted;
+        }
+        values.set(key, value);
+      },
+    );
+    const service = TokenStorageService.getInstance(context);
+    const signingIn = service.storeAuthTokens({
+      jwtToken: "synthetic-interrupted-sign-in",
+      issuanceOrigin: origin,
+    });
+    const rejectedSignIn = expect(signingIn).rejects.toThrow(
+      /changed during sign-in/,
+    );
+    await started;
+    const loggingOut = service.clearStoredTokens();
+    continueWrite();
+    await rejectedSignIn;
+    await loggingOut;
+    expect(values.size).toBe(0);
+    await expect(service.getJwtToken()).resolves.toBeUndefined();
+    await expect(service.getStoredAuthTokens()).resolves.toBeNull();
   });
 });

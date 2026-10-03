@@ -11,9 +11,23 @@ import {
   withAuthResponseCookies,
 } from "./authResponse";
 import { extractTenantContext } from "./tenantContext";
+import {
+  credentialOrigin,
+  registerCredentialOrigin,
+  assertCredentialDestination,
+  clearCredentialOrigins,
+  getCredentialRevision,
+} from "@shared/CredentialOrigin";
+import {
+  BACKEND_CREDENTIAL_KEYS,
+  readBoundCredential,
+  writeBoundCredential,
+} from "./OriginBoundCredentials";
 
 export interface AuthTokens {
   jwtToken: string;
+  /** Captured request origin at issuance, not a value inferred from JWT claims. */
+  issuanceOrigin?: string;
   apiKey?: string;
   refreshToken?: string;
   expiresAt?: number;
@@ -45,6 +59,17 @@ export const validateAuthSession = async (
   tokens: AuthTokens,
 ): Promise<TokenValidationResult> => {
   try {
+    if (
+      !tokens.issuanceOrigin ||
+      credentialOrigin(baseUrl) !== tokens.issuanceOrigin
+    ) {
+      return {
+        definitive: false,
+        valid: false,
+        error: "Sign in at this backend to bind the session to its origin.",
+      };
+    }
+    assertCredentialDestination(tokens.jwtToken, baseUrl);
     const response = await client.request<any>({
       url: `${baseUrl}/auth/me`,
       headers: {
@@ -84,6 +109,13 @@ export const validateAuthSession = async (
 export class TokenStorageService {
   private static instance: TokenStorageService;
   private context: vscode.ExtensionContext;
+  private mutation: Promise<void> = Promise.resolve();
+
+  private enqueueMutation(operation: () => Promise<void>): Promise<void> {
+    const pending = this.mutation.then(operation, operation);
+    this.mutation = pending.catch(() => undefined);
+    return pending;
+  }
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -110,16 +142,54 @@ export class TokenStorageService {
     tokens: AuthTokens,
     user?: AuthenticatedUser,
   ): Promise<void> {
+    const revision = getCredentialRevision();
+    return this.enqueueMutation(async () => {
+      if (revision !== getCredentialRevision())
+        throw new Error(
+          "Sign-in was superseded by an account or backend change.",
+        );
+      await this.persistAuthTokens(tokens, user);
+      if (revision !== getCredentialRevision())
+        throw new Error(
+          "Sign-in was superseded by an account or backend change.",
+        );
+    });
+  }
+
+  private async persistAuthTokens(
+    tokens: AuthTokens,
+    user?: AuthenticatedUser,
+  ): Promise<void> {
     try {
+      const origin = tokens.issuanceOrigin;
+      if (!origin || credentialOrigin(getValkyraiBasePath()) !== origin)
+        throw new Error(
+          "The backend changed during sign-in. Retry at the selected destination.",
+        );
       // Store JWT token in VSCode secrets (primary storage)
-      await this.context.secrets.store("jwtToken", tokens.jwtToken);
+      await writeBoundCredential(
+        this.context,
+        "jwtToken",
+        tokens.jwtToken,
+        origin,
+      );
 
       if (tokens.apiKey) {
-        await this.context.secrets.store("valorideApiKey", tokens.apiKey);
+        await writeBoundCredential(
+          this.context,
+          "valorideApiKey",
+          tokens.apiKey,
+          origin,
+        );
       }
 
       if (tokens.refreshToken) {
-        await this.context.secrets.store("refreshToken", tokens.refreshToken);
+        await writeBoundCredential(
+          this.context,
+          "refreshToken",
+          tokens.refreshToken,
+          origin,
+        );
       }
 
       const tenantContext = extractTenantContext(user);
@@ -167,10 +237,11 @@ export class TokenStorageService {
    * Retrieve stored authentication tokens
    */
   async getStoredAuthTokens(): Promise<StoredAuthState | null> {
+    const revision = getCredentialRevision();
     try {
       const authStateStr = await this.context.secrets.get("authState");
       if (!authStateStr) {
-        const jwtToken = await this.context.secrets.get("jwtToken");
+        const jwtToken = await readBoundCredential(this.context, "jwtToken");
         if (!jwtToken) {
           return null;
         }
@@ -188,15 +259,39 @@ export class TokenStorageService {
           ({} as AuthenticatedUser);
         const migrated: StoredAuthState = {
           timestamp: Date.now(),
-          tokens: { jwtToken },
+          tokens: {
+            jwtToken,
+            issuanceOrigin: credentialOrigin(getValkyraiBasePath()),
+          },
           user,
         };
+        if (revision !== getCredentialRevision()) return null;
         await this.context.secrets.store("authState", JSON.stringify(migrated));
         Logger.log("Migrated legacy JWT into stored authentication state");
-        return migrated;
+        return revision === getCredentialRevision() ? migrated : null;
       }
 
       const authState: StoredAuthState = JSON.parse(authStateStr);
+      if (
+        revision !== getCredentialRevision() ||
+        !authState.tokens?.issuanceOrigin ||
+        authState.tokens.issuanceOrigin !==
+          credentialOrigin(getValkyraiBasePath())
+      )
+        return null;
+      // Canonical state is a recovery copy, not authority to rebind a token.
+      if (
+        (await readBoundCredential(
+          this.context,
+          "jwtToken",
+          getValkyraiBasePath(),
+          authState.tokens.jwtToken,
+        )) !== authState.tokens.jwtToken ||
+        revision !== getCredentialRevision()
+      )
+        return null;
+      if (authState.tokens.refreshToken)
+        await readBoundCredential(this.context, "refreshToken");
 
       // Validate token age (optional - tokens may have their own expiration)
       const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -234,6 +329,12 @@ export class TokenStorageService {
   async refreshTokens(refreshToken: string): Promise<AuthTokens | null> {
     try {
       const baseUrl = getValkyraiBasePath();
+      if (
+        (await readBoundCredential(this.context, "refreshToken", baseUrl)) !==
+        refreshToken
+      )
+        return null;
+      assertCredentialDestination(refreshToken, baseUrl);
       const response = await getValkyrLabsRtkApiClient().request<any>({
         url: `${baseUrl}/auth/refresh`,
         method: "POST",
@@ -247,6 +348,7 @@ export class TokenStorageService {
       if (response.status === 200 && newTokens) {
         return {
           ...newTokens,
+          issuanceOrigin: credentialOrigin(baseUrl),
           refreshToken: newTokens.refreshToken || refreshToken,
         };
       }
@@ -262,12 +364,18 @@ export class TokenStorageService {
    * Clear all stored authentication tokens
    */
   async clearStoredTokens(): Promise<void> {
+    clearCredentialOrigins();
+    return this.enqueueMutation(() => this.removeStoredTokens());
+  }
+
+  private async removeStoredTokens(): Promise<void> {
     try {
-      await this.context.secrets.delete("jwtToken");
-      await this.context.secrets.delete("valorideApiKey");
-      await this.context.secrets.delete("refreshToken");
+      for (const key of BACKEND_CREDENTIAL_KEYS)
+        await writeBoundCredential(this.context, key, undefined);
       await this.context.secrets.delete("authState");
       await this.context.secrets.delete("tenantContext");
+      await this.context.secrets.delete("authNonce");
+      await this.context.secrets.delete("authNonceOrigin");
       await this.context.globalState.update(
         "authPersistenceEnabled",
         undefined,
@@ -297,7 +405,7 @@ export class TokenStorageService {
    * Get individual token from secure storage
    */
   async getJwtToken(): Promise<string | undefined> {
-    const directToken = await this.context.secrets.get("jwtToken");
+    const directToken = await readBoundCredential(this.context, "jwtToken");
     if (directToken) {
       return directToken;
     }
@@ -309,13 +417,18 @@ export class TokenStorageService {
     const authState = await this.getStoredAuthTokens();
     const recoveredToken = authState?.tokens?.jwtToken;
     if (recoveredToken) {
-      await this.context.secrets.store("jwtToken", recoveredToken);
+      await writeBoundCredential(
+        this.context,
+        "jwtToken",
+        recoveredToken,
+        authState?.tokens.issuanceOrigin,
+      );
       Logger.log("Recovered JWT token from stored authentication state");
     }
     return recoveredToken;
   }
 
   async getApiKey(): Promise<string | undefined> {
-    return await this.context.secrets.get("valorideApiKey");
+    return readBoundCredential(this.context, "valorideApiKey");
   }
 }

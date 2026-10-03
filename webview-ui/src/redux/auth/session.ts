@@ -1,8 +1,9 @@
 import { Principal } from "@thorapi/model/Principal";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 
 export const getJwtToken = (): string | null => {
   try {
-    return sessionStorage.getItem("jwtToken");
+    return getStoredJwtToken();
   } catch {
     return null;
   }

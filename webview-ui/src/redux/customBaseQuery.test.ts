@@ -7,6 +7,7 @@ import type { BaseQueryApi } from "@reduxjs/toolkit/query";
 import customBaseQuery from "./customBaseQuery";
 import { setValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import thorapiBaseQuery from "@thorapi/redux/customBaseQuery";
+import { storeJwtToken } from "../utils/accessControl";
 
 const baseQueryApi: BaseQueryApi = {
   signal: new AbortController().signal,
@@ -118,6 +119,34 @@ describe("customBaseQuery", () => {
     setValkyraiHost("https://api.example.test/v1");
   });
 
+  it.each([
+    { name: "application", query: customBaseQuery },
+    { name: "generated ThorAPI", query: thorapiBaseQuery },
+  ])(
+    "guards explicit cross-origin credentials in $name requests",
+    async ({ query }) => {
+      storeJwtToken(
+        "SYNTHETIC-ISSUER-ONLY",
+        "fixture",
+        "https://api.example.test",
+      );
+      const fetchMock = vi.fn(async () => new Response("{}"));
+      vi.stubGlobal("fetch", fetchMock);
+      const result = await query(
+        {
+          url: "https://foreign.example.test/v1/MemoryEntry",
+          headers: { Authorization: "Bearer SYNTHETIC-ISSUER-ONLY" },
+          redirect: "follow",
+          credentials: "include",
+        },
+        baseQueryApi,
+        {},
+      );
+      expect(result).toMatchObject({ error: { status: "FETCH_ERROR" } });
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
@@ -125,6 +154,7 @@ describe("customBaseQuery", () => {
 
   it("does not send an expired bearer token when logging in", async () => {
     sessionStorage.setItem("jwtToken", "expired-token");
+    sessionStorage.setItem("valoride.jwtOrigin", "https://api.example.test");
     const fetchMock = vi.fn(
       async () =>
         new Response(JSON.stringify({ token: "fresh-token" }), {
@@ -145,7 +175,7 @@ describe("customBaseQuery", () => {
     );
 
     expect(headersFromFetchCall(fetchMock).get("authorization")).toBeNull();
-    expect(credentialsFromFetchCall(fetchMock)).toBe("include");
+    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
     expect(urlFromFetchCall(fetchMock)).toBe(
       "https://api.example.test/v1/auth/login",
     );
@@ -175,11 +205,12 @@ describe("customBaseQuery", () => {
     expect(urlFromFetchCall(fetchMock)).toBe(
       "https://api.example.test/v1/auth/login",
     );
-    expect(credentialsFromFetchCall(fetchMock)).toBe("include");
+    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
   });
 
   it("clears persisted auth when api-0 rejects a replaced session", async () => {
     sessionStorage.setItem("jwtToken", "expired-token");
+    sessionStorage.setItem("valoride.jwtOrigin", "https://api.example.test");
     localStorage.setItem("jwtToken", "expired-token");
     sessionStorage.setItem(
       "authenticatedPrincipal",
@@ -223,6 +254,7 @@ describe("customBaseQuery", () => {
   it("adds stored auth headers to VS Code bridged requests", async () => {
     vi.resetModules();
     sessionStorage.setItem("jwtToken", "session-token");
+    sessionStorage.setItem("valoride.jwtOrigin", "https://api.example.test");
     const postMessage = vi.fn((message: any) => {
       window.dispatchEvent(
         new MessageEvent("message", {
@@ -255,6 +287,7 @@ describe("customBaseQuery", () => {
   it("adds stored auth headers to generated ThorAPI VS Code bridged requests", async () => {
     vi.resetModules();
     sessionStorage.setItem("jwtToken", "session-token");
+    sessionStorage.setItem("valoride.jwtOrigin", "https://api.example.test");
     const postMessage = vi.fn((message: any) => {
       window.dispatchEvent(
         new MessageEvent("message", {
@@ -295,14 +328,18 @@ describe("customBaseQuery", () => {
   });
 
   it.each([
-    { mode: "cookies only", storedToken: null },
-    { mode: "cookies and stored session", storedToken: "session-token" },
+    { mode: "unbound legacy session", storedToken: null },
+    { mode: "origin-bound stored session", storedToken: "session-token" },
   ])(
     "uses $mode without opting into global bearer fallback",
     async ({ storedToken }) => {
       vi.stubGlobal("__VALKYR_AUTH_TOKEN__", "unapproved-global-token");
       if (storedToken) {
         sessionStorage.setItem("jwtToken", storedToken);
+        sessionStorage.setItem(
+          "valoride.jwtOrigin",
+          "https://api.example.test",
+        );
       }
       const fetchMock = vi.fn(
         async () =>
@@ -322,7 +359,7 @@ describe("customBaseQuery", () => {
         {},
       );
 
-      expect(credentialsFromFetchCall(fetchMock)).toBe("include");
+      expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
       expect(headersFromFetchCall(fetchMock).get("authorization")).toBe(
         storedToken ? `Bearer ${storedToken}` : null,
       );

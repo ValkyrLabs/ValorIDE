@@ -1,4 +1,5 @@
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { credentialOrigin } from "@shared/CredentialOrigin";
 import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 import { Logger } from "../logging/Logger";
 import {
@@ -151,6 +152,7 @@ export class ValoridePasswordLoginService {
     password,
   }: PasswordLoginCredentials): Promise<PasswordLoginResult> {
     const baseUrl = getValkyraiBasePath().replace(/\/+$/, "");
+    const origin = credentialOrigin(baseUrl);
     const client = getValkyrLabsRtkApiClient();
     const csrfResponse = await client.request<any>({
       url: `${baseUrl}/auth/csrf`,
@@ -164,6 +166,10 @@ export class ValoridePasswordLoginService {
     const cookieHeader = extractSetCookieHeader(csrfHeaders);
 
     try {
+      if (credentialOrigin(getValkyraiBasePath()) !== origin)
+        throw new Error(
+          "The backend changed during sign-in. Retry at the selected destination.",
+        );
       const response = await client.request<any>({
         url: `${baseUrl}/auth/login`,
         method: "POST",
@@ -193,7 +199,7 @@ export class ValoridePasswordLoginService {
       }
 
       return {
-        tokens,
+        tokens: { ...tokens, issuanceOrigin: origin },
         user: extractAuthenticatedUser(response.data),
       };
     } catch (error) {

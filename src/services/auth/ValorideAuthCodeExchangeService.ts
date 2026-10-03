@@ -1,4 +1,5 @@
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { credentialOrigin } from "@shared/CredentialOrigin";
 import { getValkyrLabsRtkApiClient } from "../valkyrai/ValkyrLabsRtkApi";
 import { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 import {
@@ -18,6 +19,7 @@ export class ValorideAuthCodeExchangeService {
     state: string,
   ): Promise<AuthCodeExchangeResult> {
     const baseUrl = getValkyraiBasePath();
+    const origin = credentialOrigin(baseUrl);
     const response = await getValkyrLabsRtkApiClient().request<any>({
       url: `${baseUrl}/auth/valoride/code-exchange`,
       method: "POST",
@@ -35,7 +37,7 @@ export class ValorideAuthCodeExchangeService {
     }
 
     return {
-      tokens,
+      tokens: { ...tokens, issuanceOrigin: origin },
       user: extractAuthenticatedUser(response.data),
     };
   }

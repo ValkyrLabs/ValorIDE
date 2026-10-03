@@ -5,6 +5,14 @@ import {
   isAuthenticated as isAuthed,
 } from "../redux/auth/session";
 import { getWebsocketUrl } from "../websocket/websocket";
+import {
+  assertSafeWebSocketUrl,
+  assertCredentialDestination,
+} from "@shared/CredentialOrigin";
+import {
+  getValkyraiHost,
+  subscribeToValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
 
 export interface WebSocketUtilsConfig {
   onMessage?: (message: WebsocketMessage) => void;
@@ -17,6 +25,8 @@ export class WebSocketUtils {
   private client: StompJs.Client | null = null;
   private config: WebSocketUtilsConfig;
   private connected: boolean = false;
+  private unsubscribeHost?: () => void;
+  private invalidate = () => this.disconnect();
 
   constructor(config: WebSocketUtilsConfig = {}) {
     this.config = config;
@@ -29,17 +39,33 @@ export class WebSocketUtils {
       return false;
     }
 
-    console.log("Creating WebSocket client with token:", token);
-
     const websocketUrl = getWebsocketUrl();
     if (!websocketUrl) {
       console.warn("WebSocket connection skipped: no websocket URL configured");
       return false;
     }
 
-    const authenticatedUrl = `${websocketUrl}?token=${encodeURIComponent(token)}`;
+    const verifyDestination = () => {
+      assertSafeWebSocketUrl(websocketUrl, getValkyraiHost());
+      assertCredentialDestination(token, websocketUrl);
+    };
+    try {
+      verifyDestination();
+    } catch {
+      this.config.onError?.(
+        new Error(
+          "SWARM connection refused. Sign in at the selected destination and retry.",
+        ),
+      );
+      return false;
+    }
+    this.disconnect();
+    this.unsubscribeHost = subscribeToValkyraiHost(this.invalidate);
+    window.addEventListener("authSessionInvalidated", this.invalidate);
     this.client = new StompJs.Client({
-      brokerURL: authenticatedUrl,
+      brokerURL: websocketUrl,
+      beforeConnect: verifyDestination,
+      debug: () => {},
       reconnectDelay: 5000,
       connectHeaders: {
         Authorization: `Bearer ${token}`,
@@ -56,9 +82,11 @@ export class WebSocketUtils {
         this.config.onDisconnect?.();
       },
       onStompError: (frame) => {
-        console.error("Broker error: " + frame.headers["message"]);
-        console.error("Details: " + frame.body);
-        this.config.onError?.(frame);
+        this.config.onError?.(
+          new Error(
+            "SWARM authentication failed. Sign in at the selected backend and retry.",
+          ),
+        );
       },
     });
 
@@ -118,6 +146,9 @@ export class WebSocketUtils {
   }
 
   disconnect() {
+    this.unsubscribeHost?.();
+    this.unsubscribeHost = undefined;
+    window.removeEventListener("authSessionInvalidated", this.invalidate);
     if (this.client) {
       this.client.deactivate();
       this.client = null;

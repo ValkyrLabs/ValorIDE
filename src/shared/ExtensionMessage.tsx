@@ -157,6 +157,7 @@ export interface ExtensionMessage {
   mcpServers?: McpServer[];
   customToken?: string;
   token?: string; // JWT token for authentication
+  credentialOrigin?: string;
   authenticatedPrincipal?: string; // JSON string of authenticated principal
   requestId?: string;
   success?: boolean;
@@ -339,6 +340,7 @@ export interface ExtensionState {
   globalValorIDERulesToggles: ValorIDERulesToggles;
   localValorIDERulesToggles: ValorIDERulesToggles;
   jwtToken?: string;
+  credentialOrigin?: string;
   authenticatedPrincipal?: any;
   grayMatterSession?: GrayMatterSessionState;
   agenticState?: AgenticCapabilityCommandCenterState;

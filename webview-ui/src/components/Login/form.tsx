@@ -48,7 +48,11 @@ const Form: React.FC<FormProps> = ({
   if (loginSuccess) {
     // If the response contains a token, store it
     if (loginUserResult.data && loginUserResult.data.token) {
-      storeJwtToken(loginUserResult.data.token, "login-form");
+      storeJwtToken(
+        loginUserResult.data.token,
+        "login-form",
+        loginUserResult.data.credentialOrigin,
+      );
 
       const rawPrincipal = loginUserResult.data.authenticatedPrincipal;
       let parsedPrincipal: unknown = rawPrincipal;
@@ -96,11 +100,8 @@ const Form: React.FC<FormProps> = ({
         await externalOnSubmit(values as Login, formikHelpers);
       } else {
         // Use internal handler (standalone usage)
-        setTimeout(() => {
-          console.log(values);
-          loginUser(values);
-          setSubmitting(false);
-        }, 0);
+        await loginUser(values).unwrap();
+        setSubmitting(false);
       }
     } catch (error) {
       console.error("Form submission error:", error);

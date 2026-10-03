@@ -20,7 +20,6 @@ import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCod
 import {
   hasDirectCallbackCredentials,
   parseAuthCallbackQuery,
-  parseLegacyAuthCallbackCredentials,
   summarizeAuthCallback,
 } from "./security/authCallback";
 import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
@@ -646,6 +645,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         const startupAuthService = StartupAuthService.getInstance(context);
+        const loginRevision = startupAuthService.getAuthenticationRevision();
         const code = query.get("code");
         if (code && state) {
           const exchange =
@@ -656,6 +656,7 @@ export function activate(context: vscode.ExtensionContext) {
           await startupAuthService.handleSuccessfulLogin(
             exchange.tokens,
             exchange.user,
+            loginRevision,
           );
           await refreshGrayMatterStatus(context);
 
@@ -664,11 +665,13 @@ export function activate(context: vscode.ExtensionContext) {
               exchange.tokens.jwtToken,
               exchange.tokens.apiKey,
               exchange.user,
+              exchange.tokens.issuanceOrigin,
             );
           } else {
             await visibleWebview?.controller.postMessageToWebview({
               type: "loginSuccess",
               token: exchange.tokens.jwtToken,
+              credentialOrigin: exchange.tokens.issuanceOrigin,
               authenticatedPrincipal: exchange.user
                 ? JSON.stringify(exchange.user)
                 : undefined,
@@ -694,23 +697,9 @@ export function activate(context: vscode.ExtensionContext) {
             return;
           }
 
-          const legacyCredentials = parseLegacyAuthCallbackCredentials(query);
-          if (legacyCredentials) {
-            await startupAuthService.handleSuccessfulLogin(
-              {
-                jwtToken: legacyCredentials.token,
-                apiKey: legacyCredentials.apiKey,
-              },
-              legacyCredentials.authenticatedPrincipal,
-            );
-            await refreshGrayMatterStatus(context);
-
-            await visibleWebview?.controller.handleAuthCallback(
-              legacyCredentials.token,
-              legacyCredentials.apiKey,
-              legacyCredentials.authenticatedPrincipal,
-            );
-          }
+          // Credential-bearing URI callbacks cannot establish issuance origin.
+          vscode.window.showErrorMessage("Sign in through Account or a new one-time authorization code.");
+          return;
         }
         break;
       }

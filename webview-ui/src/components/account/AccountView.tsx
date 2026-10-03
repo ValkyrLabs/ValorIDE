@@ -345,9 +345,8 @@ const AccountView = ({
       const result = vscode.isAvailable()
         ? await loginThroughExtensionHost(values)
         : await loginUser(values).unwrap();
-      if (result.token) {
-        storeJwtToken(result.token, "account-login");
-      }
+      if (!result.token) throw new Error("Sign-in did not return a destination-bound session. Use Account sign-in in the ValorIDE extension.");
+      storeJwtToken(result.token, "account-login", result.credentialOrigin);
       if (result.user) {
         writeStoredPrincipal(result.user as any);
       }

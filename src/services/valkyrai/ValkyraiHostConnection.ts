@@ -42,7 +42,13 @@ export async function testValkyraiHostConnection(
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
     if (response.status === 401 || response.status === 403) {
-      return { host: normalizedHost, success: true, requiresAuth: true };
+      return {
+        host: normalizedHost,
+        success: false,
+        requiresAuth: true,
+        error:
+          "This host requires sign-in. An authentication denial does not verify the backend. Select the destination explicitly and sign in there; your existing session will not be forwarded.",
+      };
     }
     const schema = response.data;
     if (

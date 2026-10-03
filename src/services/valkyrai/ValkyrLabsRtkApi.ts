@@ -1,11 +1,25 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query";
 import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
+import {
+  assertCredentialHeaders,
+  assertRefreshCredential,
+} from "@shared/CredentialOrigin";
 
 export type ValkyrLabsFetch = (
   url: string,
   init?: RequestInit,
 ) => Promise<Response>;
+
+/** SDK requests still enforce the same origin/redirect boundary as REST. */
+export const credentialBoundSdkFetch: typeof globalThis.fetch = async (
+  input,
+  init,
+) => {
+  const request = new Request(input, init);
+  assertCredentialHeaders(request.url, request.headers);
+  return globalThis.fetch(request, { redirect: "error", credentials: "omit" });
+};
 
 export interface ValkyrLabsApiRequest {
   acceptHttpErrors?: boolean;
@@ -228,17 +242,24 @@ const createValkyrLabsBaseQuery =
     );
 
     try {
+      const destination = requestUrl(request);
+      // Authorization and the legacy jwtSession header must both be guarded;
+      // fetch may strip only Authorization when following a cross-origin redirect.
+      const checkedHeaders = new Headers(requestHeaders(request));
+      assertCredentialHeaders(destination, checkedHeaders);
+      assertRefreshCredential(destination, request.json ?? request.body);
       const body =
         request.json === undefined
           ? request.body
           : JSON.stringify(request.json);
       const response = await fetchImpl(requestUrl(request), {
         body,
-        credentials: request.credentials,
+        credentials: "omit",
         headers: requestHeaders(request),
         method: request.method ?? "GET",
         signal: abortController.signal,
-        ...(request.redirect ? { redirect: request.redirect } : {}),
+        // Never follow a redirect carrying credentials, cookies, passwords or codes.
+        redirect: "error",
       });
       const data = await parseResponseBody(
         response,

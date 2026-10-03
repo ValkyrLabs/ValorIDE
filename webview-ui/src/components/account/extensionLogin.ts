@@ -1,8 +1,11 @@
 import { Login, Principal } from "@thorapi/model";
 import { vscode } from "@thorapi/utils/vscode";
+import { credentialOrigin } from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 export interface ExtensionLoginResult {
   token: string;
+  credentialOrigin: string;
   user?: Principal;
 }
 
@@ -11,6 +14,7 @@ const REQUEST_TIMEOUT_MS = 20000;
 let inFlightLogin:
   | {
       username: string;
+      origin: string;
       promise: Promise<ExtensionLoginResult>;
     }
   | undefined;
@@ -42,7 +46,11 @@ export const loginThroughExtensionHost = (
   values: Pick<Login, "username" | "password">,
 ): Promise<ExtensionLoginResult> => {
   const normalizedUsername = values.username.trim().toLowerCase();
-  if (inFlightLogin?.username === normalizedUsername) {
+  const origin = credentialOrigin(getValkyraiHost());
+  if (
+    inFlightLogin?.username === normalizedUsername &&
+    inFlightLogin.origin === origin
+  ) {
     return inFlightLogin.promise;
   }
 
@@ -70,6 +78,17 @@ export const loginThroughExtensionHost = (
         reject(new Error(message.error || "Login failed."));
         return;
       }
+      if (
+        message.credentialOrigin !== origin ||
+        credentialOrigin(getValkyraiHost()) !== origin
+      ) {
+        reject(
+          new Error(
+            "The backend changed during sign-in. Retry at the selected destination.",
+          ),
+        );
+        return;
+      }
 
       const token = message.token || message.customToken;
       if (!token) {
@@ -79,6 +98,7 @@ export const loginThroughExtensionHost = (
 
       resolve({
         token,
+        credentialOrigin: origin,
         user: parsePrincipal(message.authenticatedPrincipal),
       });
     }
@@ -89,10 +109,11 @@ export const loginThroughExtensionHost = (
       requestId,
       username: values.username,
       password: values.password,
+      credentialOrigin: origin,
     });
   });
 
-  inFlightLogin = { username: normalizedUsername, promise };
+  inFlightLogin = { username: normalizedUsername, origin, promise };
   const clearInFlight = () => {
     if (inFlightLogin?.promise === promise) {
       inFlightLogin = undefined;

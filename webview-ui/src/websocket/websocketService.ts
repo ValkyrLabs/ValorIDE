@@ -1,3 +1,5 @@
+import { assertSafeWebSocketUrl } from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { addMessage } from "../components/ServerConsole/websocketSlice";
 import store from "../redux/store"; // Adjust the import path as necessary
 import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
@@ -15,7 +17,9 @@ export const connectWebSocket = () => {
   }
 
   try {
-    socket = new WebSocket(socketUrl);
+    socket = new WebSocket(
+      (assertSafeWebSocketUrl(socketUrl, getValkyraiHost()), socketUrl),
+    );
   } catch (err) {
     console.error("Failed to create WebSocket:", err);
     store.dispatch(

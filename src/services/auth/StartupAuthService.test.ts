@@ -69,7 +69,7 @@ describe("StartupAuthService authentication ordering", () => {
     const restoration = service.restoreAuthentication();
     await Promise.resolve();
     await service.handleSuccessfulLogin(
-      { jwtToken: "new-jwt" },
+      { jwtToken: "new-jwt", issuanceOrigin: "https://api-0.valkyrlabs.com" },
       { id: "principal-new" },
     );
     validation.resolve({ definitive: true, valid: false });
@@ -114,5 +114,30 @@ describe("StartupAuthService authentication ordering", () => {
       StartupAuthService.getInstance(context).restoreAuthentication(),
     ).resolves.toEqual({ error: "Service unavailable", success: false });
     expect(clearStoredTokens).not.toHaveBeenCalled();
+  });
+  it("rejects an in-flight login superseded by explicit logout even on the same host", async () => {
+    Logger.initialize({ appendLine: jest.fn() } as any);
+    const context = {
+      secrets: { delete: jest.fn(), get: jest.fn(), store: jest.fn() },
+      globalState: { get: jest.fn(), update: jest.fn() },
+    } as any;
+    const service = StartupAuthService.getInstance(context);
+    const revision = service.getAuthenticationRevision();
+    await service.handleLogout();
+    const stored = jest.spyOn(
+      TokenStorageService.getInstance(context),
+      "storeAuthTokens",
+    );
+    await expect(
+      service.handleSuccessfulLogin(
+        {
+          jwtToken: "SYNTHETIC-A",
+          issuanceOrigin: "https://api-0.valkyrlabs.com",
+        },
+        {},
+        revision,
+      ),
+    ).rejects.toThrow("superseded");
+    expect(stored).not.toHaveBeenCalled();
   });
 });

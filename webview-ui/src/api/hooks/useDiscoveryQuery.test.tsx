@@ -78,6 +78,10 @@ describe("useDiscoveryQuery host-aware Swarm discovery", () => {
 
   it("attaches the stored ValorIDE auth token to discovery requests", () => {
     window.sessionStorage.setItem("jwtToken", "session-token");
+    window.sessionStorage.setItem(
+      "valoride.jwtOrigin",
+      "https://api-0.valkyrlabs.com",
+    );
 
     expect(getSwarmDiscoveryHeaders().get("Authorization")).toBe(
       "Bearer session-token",

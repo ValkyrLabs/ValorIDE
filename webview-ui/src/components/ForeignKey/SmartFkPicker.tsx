@@ -1,3 +1,4 @@
+import { authFetch } from "@thorapi/utils/authFetch";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form as BSForm, ListGroup, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
@@ -16,17 +17,6 @@ function isUuidLike(s: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
     s.trim(),
   );
-}
-
-async function authFetch(input: string, init?: RequestInit) {
-  const token = sessionStorage.getItem("jwtToken");
-  return fetch(input, {
-    ...(init || {}),
-    headers: {
-      ...(init?.headers || {}),
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
-    },
-  });
 }
 
 type Option = { id: string; label: string; raw: any };

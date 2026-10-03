@@ -9,7 +9,10 @@ import {
 } from "@shared/api";
 import { createOpenRouterStream } from "../transform/openrouter-stream";
 import { ApiStream, ApiStreamUsageChunk } from "../transform/stream";
-import { getValkyrLabsRtkApiClient } from "@services/valkyrai/ValkyrLabsRtkApi";
+import {
+  getValkyrLabsRtkApiClient,
+  credentialBoundSdkFetch,
+} from "@services/valkyrai/ValkyrLabsRtkApi";
 import { OpenRouterErrorResponse } from "./types";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
@@ -24,6 +27,7 @@ export class ValorIDEHandler implements ApiHandler {
     this.client = new OpenAI({
       baseURL: `${basePath}/llm-details/heimdallm/chat`,
       apiKey: this.options.valorideApiKey || "noop",
+      fetch: credentialBoundSdkFetch,
       defaultHeaders: {
         "HTTP-Referer": basePath, // Optional, for including your app on valkyrlabs.com/v1 rankings.
         "X-Title": "ValorIDE", // Optional. Shows in rankings on valkyrlabs.com/v1.

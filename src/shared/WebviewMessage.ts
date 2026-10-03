@@ -216,6 +216,7 @@ export interface WebviewMessage {
   fileContent?: string;
   fileSize?: number;
   jwtToken?: string;
+  credentialOrigin?: string;
   // For uploadOpenAPISpecResult
   success?: boolean;
   specPath?: string;

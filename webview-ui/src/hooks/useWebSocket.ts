@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
+import { assertSafeWebSocketUrl } from "@shared/CredentialOrigin";
+import {
+  getValkyraiHost,
+  subscribeToValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
 import { getWebsocketUrl, isValidWsUrl } from "../websocket/websocket";
 
 export interface WebSocketMessage {
@@ -19,26 +23,10 @@ const toWsProtocol = (value: string): string =>
       ? value.replace("https://", "wss://")
       : value;
 
-const appendAuthToken = (value: string, token: string | null): string => {
-  if (!token) {
-    return value;
-  }
-
-  try {
-    const url = new URL(value);
-    if (!url.searchParams.has("token")) {
-      url.searchParams.set("token", token);
-    }
-    return url.toString();
-  } catch {
-    return value;
-  }
-};
-
 const resolveWebSocketUrl = (value: string): string => {
   const candidate = toWsProtocol(value.trim());
   if (/^wss?:\/\//i.test(candidate)) {
-    return appendAuthToken(candidate, getStoredJwtToken());
+    return candidate;
   }
 
   const configuredBase = getWebsocketUrl();
@@ -50,14 +38,14 @@ const resolveWebSocketUrl = (value: string): string => {
     const base = new URL(configuredBase);
     if (candidate.startsWith("/")) {
       base.searchParams.set("topic", candidate);
-      return appendAuthToken(base.toString(), getStoredJwtToken());
+      return base.toString();
     }
 
     const resolved = new URL(
       candidate,
       `${base.toString().replace(/\/+$/, "")}/`,
     );
-    return appendAuthToken(resolved.toString(), getStoredJwtToken());
+    return resolved.toString();
   } catch {
     return candidate;
   }
@@ -84,12 +72,14 @@ const useJwtTokenVersion = () => {
     window.addEventListener("jwt-token-updated", bumpTokenVersion);
     window.addEventListener("credentialsHydrated", bumpTokenVersion);
     window.addEventListener("storage", handleStorage);
+    const unsubscribeHost = subscribeToValkyraiHost(bumpTokenVersion);
 
     return () => {
       window.removeEventListener("jwtTokenChanged", bumpTokenVersion);
       window.removeEventListener("jwt-token-updated", bumpTokenVersion);
       window.removeEventListener("credentialsHydrated", bumpTokenVersion);
       window.removeEventListener("storage", handleStorage);
+      unsubscribeHost();
     };
   }, []);
 
@@ -114,6 +104,7 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
 
   const connect = useCallback(() => {
     try {
+      assertSafeWebSocketUrl(resolvedUrl, getValkyraiHost());
       const ws = new WebSocket(resolvedUrl);
 
       ws.onopen = () => {
@@ -161,7 +152,7 @@ export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
       console.error("[WebSocket] Connection failed:", err);
       setError(err);
     }
-  }, [resolvedUrl, reconnectInterval, maxReconnectAttempts]);
+  }, [resolvedUrl, tokenVersion, reconnectInterval, maxReconnectAttempts]);
 
   useEffect(() => {
     connect();

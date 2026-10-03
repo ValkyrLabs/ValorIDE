@@ -1,4 +1,9 @@
 import { Configuration, setBasePath } from "@thorapi/src";
+import {
+  credentialOrigin,
+  clearCredentialOrigins,
+} from "@shared/CredentialOrigin";
+import { clearRememberedCsrfToken } from "./csrfToken";
 
 type HostListener = (host: string) => void;
 
@@ -59,10 +64,30 @@ const notifyHostChange = (host: string) => {
 
 export const getValkyraiHost = () => currentHost;
 
+const invalidateBackendSession = () => {
+  clearCredentialOrigins();
+  clearRememberedCsrfToken();
+  // Returning to an old host must not silently revive its saved browser session.
+  for (const name of ["sessionStorage", "localStorage"] as const) {
+    try {
+      globalThis[name]?.removeItem("valoride.jwtOrigin");
+    } catch {
+      // Storage can be unavailable in an embedded or restricted browser.
+    }
+  }
+};
+
 export const setValkyraiHost = (value?: string) => {
   const nextHost = normalizeValkyraiHost(value);
   if (nextHost === currentHost) {
     return;
+  }
+  try {
+    if (credentialOrigin(nextHost) !== credentialOrigin(currentHost)) {
+      invalidateBackendSession();
+    }
+  } catch {
+    invalidateBackendSession();
   }
   currentHost = nextHost;
   setBasePath(nextHost);

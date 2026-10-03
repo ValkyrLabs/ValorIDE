@@ -1,3 +1,4 @@
+import { authFetch } from "@thorapi/utils/authFetch";
 import store from "../store";
 import * as ThorServices from "@thorapi/redux/services";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
@@ -69,11 +70,8 @@ export async function globalUuidLookup(
         try {
           await import("../customBaseQuery");
           // We can’t call baseQuery directly here; fallback to fetch
-          const token = sessionStorage.getItem("jwtToken") || "";
           const basePath = getValkyraiHost().replace(/\/+$/, "");
-          const res = await fetch(`${basePath}/${api.reducerPath}/${uuid}`, {
-            headers: token ? { authorization: `Bearer ${token}` } : undefined,
-          });
+          const res = await authFetch(`${basePath}/${api.reducerPath}/${uuid}`);
           if (res.ok)
             return { entity: api.reducerPath, data: await res.json() };
         } catch {}

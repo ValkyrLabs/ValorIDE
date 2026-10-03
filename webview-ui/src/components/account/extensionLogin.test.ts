@@ -1,3 +1,4 @@
+import { setValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loginThroughExtensionHost } from "./extensionLogin";
 import { vscode } from "@thorapi/utils/vscode";
@@ -11,6 +12,7 @@ vi.mock("@thorapi/utils/vscode", () => ({
 describe("loginThroughExtensionHost", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    setValkyraiHost("https://api-0.valkyrlabs.com/v1");
   });
 
   it("posts a login request and resolves the matching extension response", async () => {
@@ -34,6 +36,7 @@ describe("loginThroughExtensionHost", () => {
           requestId: posted.requestId,
           success: true,
           token: "jwt-token",
+          credentialOrigin: "https://api-0.valkyrlabs.com",
           authenticatedPrincipal: JSON.stringify({ id: "principal-1" }),
         },
       }),
@@ -41,6 +44,7 @@ describe("loginThroughExtensionHost", () => {
 
     await expect(promise).resolves.toEqual({
       token: "jwt-token",
+      credentialOrigin: "https://api-0.valkyrlabs.com",
       user: { id: "principal-1" },
     });
   });
@@ -93,5 +97,25 @@ describe("loginThroughExtensionHost", () => {
 
     await expect(first).rejects.toThrow("access denied");
     await expect(second).rejects.toThrow("access denied");
+  });
+  it("rejects a delayed login response after selecting another origin", async () => {
+    const promise = loginThroughExtensionHost({
+      username: "fixture",
+      password: "dummy",
+    });
+    const posted = vi.mocked(vscode.postMessage).mock.calls[0][0] as any;
+    setValkyraiHost("https://other.invalid/v1");
+    window.dispatchEvent(
+      new MessageEvent("message", {
+        data: {
+          type: "accountLoginResult",
+          requestId: posted.requestId,
+          success: true,
+          token: "SYNTHETIC-A",
+          credentialOrigin: "https://api-0.valkyrlabs.com",
+        },
+      }),
+    );
+    await expect(promise).rejects.toThrow("backend changed");
   });
 });

@@ -1,3 +1,5 @@
+import { getValkyraiHost, setValkyraiHost } from "../valkyraiHost";
+import { clearCredentialOrigins } from "@shared/CredentialOrigin";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   readStoredPrincipal,
@@ -33,6 +35,8 @@ const createMockStorage = () => {
 
 describe("Sticky Auth Persistence", () => {
   beforeEach(() => {
+    setValkyraiHost("https://api-0.valkyrlabs.com/v1");
+    clearCredentialOrigins();
     // Setup mock storage
     global.localStorage = createMockStorage() as Storage;
     global.sessionStorage = createMockStorage() as Storage;
@@ -46,7 +50,7 @@ describe("Sticky Auth Persistence", () => {
   describe("storeJwtToken", () => {
     it("should store JWT token in both sessionStorage and localStorage", () => {
       const token = "test-jwt-token-12345";
-      storeJwtToken(token, "test-source");
+      storeJwtToken(token, "test-source", getValkyraiHost());
 
       expect(sessionStorage.getItem("jwtToken")).toBe(token);
       expect(localStorage.getItem("jwtToken")).toBe(token);
@@ -54,8 +58,8 @@ describe("Sticky Auth Persistence", () => {
 
     it("should clear token when null is passed", () => {
       const token = "test-jwt-token-12345";
-      storeJwtToken(token, "test-source");
-      storeJwtToken(null, "test-source");
+      storeJwtToken(token, "test-source", getValkyraiHost());
+      storeJwtToken(null, "test-source", getValkyraiHost());
 
       expect(sessionStorage.getItem("jwtToken")).toBeNull();
       expect(localStorage.getItem("jwtToken")).toBeNull();
@@ -105,6 +109,10 @@ describe("Sticky Auth Persistence", () => {
     it("should restore JWT token from localStorage to sessionStorage", () => {
       const token = "restored-jwt-token";
       localStorage.setItem("jwtToken", token);
+      localStorage.setItem(
+        "valoride.jwtOrigin",
+        "https://api-0.valkyrlabs.com",
+      );
 
       const { token: restoredToken } = hydrateStoredCredentials("test");
 
@@ -112,7 +120,7 @@ describe("Sticky Auth Persistence", () => {
       expect(sessionStorage.getItem("jwtToken")).toBe(token);
     });
 
-    it("should restore principal from localStorage to sessionStorage", () => {
+    it("keeps an unbound principal unavailable until destination-specific sign-in", () => {
       const principal: Principal = {
         id: "user-456",
         username: "restoreduser",
@@ -126,9 +134,7 @@ describe("Sticky Auth Persistence", () => {
 
       const { principal: restoredPrincipal } = hydrateStoredCredentials("test");
 
-      expect(restoredPrincipal).not.toBeNull();
-      expect(restoredPrincipal?.id).toBe(principal.id);
-      expect(restoredPrincipal?.username).toBe(principal.username);
+      expect(restoredPrincipal).toBeNull();
     });
 
     it("should return both token and principal when both exist", () => {
@@ -143,6 +149,10 @@ describe("Sticky Auth Persistence", () => {
       };
 
       localStorage.setItem("jwtToken", token);
+      localStorage.setItem(
+        "valoride.jwtOrigin",
+        "https://api-0.valkyrlabs.com",
+      );
       localStorage.setItem("authenticatedPrincipal", JSON.stringify(principal));
 
       const { token: restoredToken, principal: restoredPrincipal } =
@@ -156,7 +166,7 @@ describe("Sticky Auth Persistence", () => {
   describe("clearStoredJwtToken", () => {
     it("should clear JWT token from both storages", () => {
       const token = "token-to-clear";
-      storeJwtToken(token, "test");
+      storeJwtToken(token, "test", getValkyraiHost());
 
       clearStoredJwtToken("test");
 
@@ -186,7 +196,7 @@ describe("Sticky Auth Persistence", () => {
 
   describe("clearStoredAuthSession", () => {
     it("clears token, principal, and legacy auth storage keys", () => {
-      storeJwtToken("stale-token", "test");
+      storeJwtToken("stale-token", "test", getValkyraiHost());
       writeStoredPrincipal({
         id: "user-to-clear",
         username: "clearuser",
@@ -222,7 +232,7 @@ describe("Sticky Auth Persistence", () => {
         grantedAuthorities: [],
       };
 
-      storeJwtToken(token, "login");
+      storeJwtToken(token, "login", getValkyraiHost());
       writeStoredPrincipal(principal);
 
       // Verify credentials are stored
@@ -257,7 +267,7 @@ describe("Sticky Auth Persistence", () => {
         grantedAuthorities: [],
       };
 
-      storeJwtToken(token, "login");
+      storeJwtToken(token, "login", getValkyraiHost());
       writeStoredPrincipal(principal);
 
       // Verify stored

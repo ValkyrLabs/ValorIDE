@@ -161,19 +161,34 @@ describe("ValkyrAI backend Test & Save", () => {
     expect(harness.onDone).not.toHaveBeenCalled();
   });
 
-  it("saves an auth-protected host with an explicit sign-in status", () => {
+  it("requires explicit destination selection after an auth denial", () => {
     openBackend();
     const request = startTest();
     response({
       type: "valkyraiHostTestResult",
       requestId: request.requestId,
       host: request.valkyraiHost,
-      success: true,
+      success: false,
       requiresAuth: true,
+      error: "Authentication denial does not verify backend identity.",
     });
+    expect(
+      harness.postMessage.mock.calls.some(
+        ([message]) => message.type === "updateValkyraiHost",
+      ),
+    ).toBe(false);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Select host for sign-in" }),
+    );
+    const selection = harness.postMessage.mock.calls.at(-1)![0];
+    expect(selection).toMatchObject({
+      type: "updateValkyraiHost",
+      valkyraiHost: request.valkyraiHost,
+    });
+    expect(selection).not.toHaveProperty("token");
     response({
       type: "valkyraiHostSaveResult",
-      requestId: request.requestId,
+      requestId: selection.requestId,
       host: request.valkyraiHost,
       success: true,
     });

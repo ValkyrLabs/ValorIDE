@@ -16,6 +16,19 @@ import { refreshCsrfToken } from "@thorapi/utils/authFetch";
 import { applyTenantHeaders } from "@thorapi/utils/tenantContext";
 import { vscode } from "@thorapi/utils/vscode";
 import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
+import {
+  assertCredentialHeaders,
+  assertRefreshCredential,
+  credentialOrigin,
+  getCredentialRevision,
+} from "@shared/CredentialOrigin";
+
+const requestUrl = (arg: unknown): string => {
+  const value = typeof arg === "string" ? arg : (arg as FetchArgs)?.url || "";
+  return /^https?:\/\//i.test(value)
+    ? value
+    : `${getValkyraiHost().replace(/\/+$/, "")}/${value.replace(/^\/+/, "")}`;
+};
 
 const getRequestPath = (arg: unknown): string => {
   const url = typeof arg === "string" ? arg : (arg as { url?: string })?.url;
@@ -61,14 +74,18 @@ const isExpiredSessionError = (
 const buildBaseQuery = () =>
   fetchBaseQuery({
     baseUrl: getValkyraiHost(),
-    credentials: "include",
+    // API sessions use bound explicit headers, never an implicit cookie jar.
+    credentials: "omit",
+    redirect: "error",
     timeout: VALKYR_LABS_API_TIMEOUT_MS,
     prepareHeaders: (headers, { arg }) => {
-      const token = getStoredJwtToken();
+      const destination = requestUrl(arg);
+      const token = getStoredJwtToken(destination);
       if (token && !isLoginRequest(arg)) {
         headers.set("Authorization", `Bearer ${token}`);
         headers.set("jwtSession", token);
       }
+      assertCredentialHeaders(destination, headers);
 
       applyTenantHeaders(headers);
       const method = typeof arg === "string" ? undefined : arg?.method;
@@ -162,7 +179,9 @@ const withStoredAuthHeaders = <
 >(
   request: T,
 ): T => {
-  const token = getStoredJwtToken();
+  const destination = requestUrl(request);
+  const token = getStoredJwtToken(destination);
+  assertCredentialHeaders(destination, new Headers(request.headers));
   if (!token || isLoginRequest(request.url)) {
     return request;
   }
@@ -331,9 +350,35 @@ const extensionThorapiBaseQuery = async (
 
 const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
   const isLogin = isLoginRequest(args);
+  try {
+    const destination = requestUrl(args);
+    const safe = new URL(destination);
+    safe.search = "";
+    credentialOrigin(safe.toString());
+    assertCredentialHeaders(
+      destination,
+      new Headers(typeof args === "string" ? undefined : args?.headers),
+    );
+    if (
+      isLogin &&
+      credentialOrigin(safe.toString()) !== credentialOrigin(getValkyraiHost())
+    )
+      throw new Error("Select the destination before signing in.");
+    const body = typeof args === "string" ? undefined : args?.body;
+    assertRefreshCredential(destination, body);
+  } catch {
+    return {
+      error: {
+        status: "FETCH_ERROR",
+        error:
+          "Sign in at the selected backend. This credential request is not bound to its destination.",
+      },
+    };
+  }
   if (isLogin) {
     clearStoredAuthSession("pre-login");
   }
+  const loginRevision = getCredentialRevision();
 
   if (shouldUseExtensionThorapiBridge(args)) {
     const result = await extensionThorapiBaseQuery(args);
@@ -344,7 +389,19 @@ const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
   }
 
   const baseQuery = buildBaseQuery();
-  let result = await baseQuery(args, api, extraOptions);
+  const safeArgs =
+    typeof args === "string"
+      ? { url: args, redirect: "error" as const, credentials: "omit" as const }
+      : { ...args, redirect: "error" as const, credentials: "omit" as const };
+  let result = await baseQuery(safeArgs, api, extraOptions);
+  if (isLogin && loginRevision !== getCredentialRevision())
+    return {
+      error: {
+        status: "FETCH_ERROR",
+        error:
+          "Sign-in was superseded by an account or backend change. Retry at the selected destination.",
+      },
+    };
 
   if (
     result.error &&
@@ -357,7 +414,7 @@ const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
     if (shouldAttachCsrfToken(method)) {
       const refreshed = await refreshCsrfToken();
       if (refreshed) {
-        result = await baseQuery(args, api, extraOptions);
+        result = await baseQuery(safeArgs, api, extraOptions);
       }
     }
   }
@@ -365,6 +422,14 @@ const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
   if (isExpiredSessionError(result.error)) {
     clearStoredAuthSession("api-auth-error");
   }
+  if (isLogin && loginRevision !== getCredentialRevision())
+    return {
+      error: {
+        status: "FETCH_ERROR",
+        error:
+          "Sign-in was superseded by an account or backend change. Retry at the selected destination.",
+      },
+    };
   return result;
 };
 

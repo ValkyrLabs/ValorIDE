@@ -2,8 +2,13 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { Login, Principal } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
+import { credentialOrigin } from "@shared/CredentialOrigin";
 
-type NormalizedLoginResponse = { token: string; user?: Principal };
+type NormalizedLoginResponse = {
+  token: string;
+  user?: Principal;
+  credentialOrigin: string;
+};
 
 type LoginListResponse = Login[];
 
@@ -41,7 +46,15 @@ export const AuthService = createApi({
         method: "POST",
         body,
       }),
-      transformResponse: (response: any): NormalizedLoginResponse => {
+      transformResponse: (
+        response: any,
+        meta: any,
+      ): NormalizedLoginResponse => {
+        const origin = credentialOrigin(meta?.request?.url);
+        if (origin !== credentialOrigin(getValkyraiHost()))
+          throw new Error(
+            "The backend changed during sign-in. Retry at the selected destination.",
+          );
         // Backend returns { token, authenticatedPrincipal } where authenticatedPrincipal can be
         // an object or a JSON string. Normalize to { token, user?: Principal }.
         const token: string | undefined = response?.token;
@@ -54,7 +67,7 @@ export const AuthService = createApi({
             // leave user undefined if parsing fails
           }
         }
-        return { token: token ?? "", user };
+        return { token: token ?? "", user, credentialOrigin: origin };
       },
       invalidatesTags: [{ type: "Auth", id: "LIST" }],
     }),

@@ -1,3 +1,7 @@
+import {
+  assertCredentialHeaders,
+  credentialOrigin,
+} from "@shared/CredentialOrigin";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getValkyraiHost,
@@ -120,37 +124,7 @@ export const buildSwarmDiscoveryUrl = ({
   return url.toString();
 };
 
-const readAuthToken = () => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  const storedToken = getStoredJwtToken();
-  if (storedToken) {
-    return storedToken;
-  }
-  const storageKeys = [
-    "jwtToken",
-    "jwtSession",
-    "authToken",
-    "auth_token",
-    "valoride_jwt",
-    "temp_auth_token",
-    "VALKYR_AUTH",
-  ];
-  for (const storage of [window.sessionStorage, window.localStorage]) {
-    for (const key of storageKeys) {
-      try {
-        const value = storage?.getItem?.(key);
-        if (value?.trim()) {
-          return value.replace(/^Bearer\s+/i, "").trim();
-        }
-      } catch {
-        // Ignore unavailable storage in webview/test sandboxes.
-      }
-    }
-  }
-  return null;
-};
+const readAuthToken = (destination?: string) => getStoredJwtToken(destination);
 
 const createThorapiRequestId = () => {
   if (
@@ -188,6 +162,10 @@ export const requestSwarmJson = async <T = any>(
   url: string,
   init: RequestInit = {},
 ): Promise<SwarmJsonResponse<T>> => {
+  const safe = new URL(url);
+  safe.search = "";
+  credentialOrigin(safe.toString());
+  assertCredentialHeaders(url, new Headers(init.headers));
   if (typeof window !== "undefined" && vscode.isAvailable()) {
     const requestId = createThorapiRequestId();
     return new Promise<SwarmJsonResponse<T>>((resolve) => {
@@ -237,7 +215,11 @@ export const requestSwarmJson = async <T = any>(
     });
   }
 
-  const response = await fetch(url, init);
+  const response = await fetch(url, {
+    ...init,
+    redirect: "error",
+    credentials: "omit",
+  });
   const text = await response.text();
   let data: T = undefined as T;
   if (text) {
@@ -255,9 +237,9 @@ export const requestSwarmJson = async <T = any>(
   };
 };
 
-export const getSwarmDiscoveryHeaders = () => {
+export const getSwarmDiscoveryHeaders = (destination?: string) => {
   const headers = new Headers({ Accept: "application/json" });
-  const token = readAuthToken();
+  const token = readAuthToken(destination);
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
     headers.set("jwtSession", token);
@@ -365,7 +347,7 @@ export function useDiscoveryQuery(
       });
 
       const response = await requestSwarmJson(url, {
-        headers: getSwarmDiscoveryHeaders(),
+        headers: getSwarmDiscoveryHeaders(url),
       });
 
       if (!response.ok) {

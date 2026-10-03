@@ -1,4 +1,11 @@
 import { clearRememberedCsrfToken } from "./csrfToken";
+import {
+  credentialOrigin,
+  registerCredentialOrigin,
+  assertCredentialDestination,
+  clearCredentialOrigins,
+} from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "./valkyraiHost";
 
 const readStorage = (
   storage: Storage | undefined,
@@ -42,15 +49,6 @@ const READABLE_AUTH_COOKIE_NAMES = [
 
 const COOKIE_PRESERVE_DURING_AUTH_CLEAR = new Set(["cart"]);
 
-const JWT_STORAGE_KEYS = [
-  "jwtToken",
-  "authToken",
-  "jwtSession",
-  "auth_token",
-  "valoride_jwt",
-  "temp_auth_token",
-  "VALKYR_AUTH",
-] as const;
 
 type ClearBrowserAuthStorageOptions = {
   preserveSessionKeys?: string[];
@@ -155,26 +153,6 @@ const normalizeJwtToken = (value?: string | null): string | null => {
   return bearerMatch ? bearerMatch[1]?.trim() || null : token;
 };
 
-const readCookie = (name: string): string | null => {
-  if (typeof document === "undefined" || !document.cookie) {
-    return null;
-  }
-  const encodedName = encodeURIComponent(name);
-  const cookies = document.cookie.split(";");
-  for (const cookie of cookies) {
-    const [rawName, ...rawValue] = cookie.split("=");
-    const cookieName = rawName?.trim();
-    if (cookieName !== name && cookieName !== encodedName) {
-      continue;
-    }
-    try {
-      return decodeURIComponent(rawValue.join("=").trim());
-    } catch {
-      return rawValue.join("=").trim();
-    }
-  }
-  return null;
-};
 
 export const clearReadableAuthCookies = (): void => {
   if (typeof document === "undefined") {
@@ -198,6 +176,7 @@ export const clearReadableAuthCookies = (): void => {
 export const clearBrowserAuthStorage = (
   options: ClearBrowserAuthStorageOptions = {},
 ): void => {
+  clearCredentialOrigins();
   clearRememberedCsrfToken();
   const { localStorage, sessionStorage } = getStorageScope();
   clearStorage(sessionStorage, options.preserveSessionKeys);
@@ -205,22 +184,53 @@ export const clearBrowserAuthStorage = (
   clearReadableAuthCookies();
 };
 
-export const getStoredJwtToken = (): string | null => {
+export const getStoredJwtToken = (
+  destination = getValkyraiHost(),
+): string | null => {
   const { localStorage, sessionStorage } = getStorageScope();
+  let origin: string;
+  try {
+    origin = credentialOrigin(getValkyraiHost());
+  } catch {
+    return null;
+  }
+  const bound = (
+    storage: Storage | undefined,
+    token: string | null,
+  ): string | null => {
+    if (!token || readStorage(storage, "valoride.jwtOrigin") !== origin)
+      return null;
+    try {
+      registerCredentialOrigin(token, origin);
+      assertCredentialDestination(token, destination);
+      return token;
+    } catch {
+      return null;
+    }
+  };
 
-  for (const key of JWT_STORAGE_KEYS) {
-    const sessionToken = normalizeJwtToken(readStorage(sessionStorage, key));
+  // Only the canonical value participates in origin binding. Legacy aliases
+  // and readable cookies cannot acquire a new origin from another login.
+  for (const key of ["jwtToken"]) {
+    const sessionToken = bound(
+      sessionStorage,
+      normalizeJwtToken(readStorage(sessionStorage, key)),
+    );
     if (sessionToken) {
       return sessionToken;
     }
   }
 
-  for (const key of JWT_STORAGE_KEYS) {
-    const localToken = normalizeJwtToken(readStorage(localStorage, key));
+  for (const key of ["jwtToken"]) {
+    const localToken = bound(
+      localStorage,
+      normalizeJwtToken(readStorage(localStorage, key)),
+    );
     if (localToken) {
       try {
         sessionStorage?.setItem("jwtToken", localToken);
         sessionStorage?.setItem("jwtSession", localToken);
+        sessionStorage?.setItem("valoride.jwtOrigin", origin);
       } catch {
         // no-op
       }
@@ -228,12 +238,7 @@ export const getStoredJwtToken = (): string | null => {
     }
   }
 
-  for (const key of JWT_STORAGE_KEYS) {
-    const cookieToken = normalizeJwtToken(readCookie(key));
-    if (cookieToken) {
-      return cookieToken;
-    }
-  }
+  // Legacy/readable cookies do not carry reliable issuance origin metadata.
 
   return null;
 };

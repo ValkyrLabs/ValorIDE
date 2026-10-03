@@ -1,3 +1,5 @@
+import { assertSafeWebSocketUrl } from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { useCallback, useEffect, useState } from "react";
 
 import { useDispatch } from "react-redux";
@@ -19,7 +21,9 @@ const useWebSocket = (url: string) => {
   );
 
   useEffect(() => {
-    const newSocket = new WebSocket(url);
+    const newSocket = new WebSocket(
+      (assertSafeWebSocketUrl(url, getValkyraiHost()), url),
+    );
 
     newSocket.onopen = () => {
       console.log("WebSocket connected");

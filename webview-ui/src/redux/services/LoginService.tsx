@@ -1,6 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Login } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery"; // Use ThorAPI base query
+import { credentialOrigin } from "@shared/CredentialOrigin";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 type LoginResponse = Login[];
 
@@ -29,12 +31,23 @@ export const LoginService = createApi({
       invalidatesTags: [{ type: "Login", id: "LIST" }],
     }),
 
-    loginUser: build.mutation<Login, Partial<Login>>({
+    loginUser: build.mutation<
+      Login & { credentialOrigin: string },
+      Partial<Login>
+    >({
       query: (body) => ({
         url: `/auth/login`,
         method: "POST",
         body,
       }),
+      transformResponse: (response: Login, meta: any) => {
+        const origin = credentialOrigin(meta?.request?.url);
+        if (origin !== credentialOrigin(getValkyraiHost()))
+          throw new Error(
+            "The backend changed during sign-in. Retry at the selected destination.",
+          );
+        return { ...response, credentialOrigin: origin };
+      },
       invalidatesTags: [{ type: "Login", id: "LIST" }],
     }),
     getLogin: build.query<Login, string>({

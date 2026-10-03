@@ -16,6 +16,11 @@ import * as Yup from "yup";
 import { useAddPrincipalMutation } from "../../redux/services/PrincipalService";
 
 import { Login, Principal } from "@thorapi/model";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
+import {
+  credentialOrigin,
+  getCredentialRevision,
+} from "@shared/CredentialOrigin";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
 import ErrorModal from "../ErrorModal";
@@ -82,13 +87,19 @@ const Form: React.FC = () => {
     setSubmitting(true);
 
     try {
+      const origin = credentialOrigin(getValkyraiHost());
+      const revision = getCredentialRevision();
       // Attempt to create the Principal
       const response = await addPrincipal(values).unwrap();
+      if (revision !== getCredentialRevision())
+        throw new Error(
+          "The session or backend changed. Sign in at the selected destination.",
+        );
 
       // If the response contains auth, persist it for downstream flows
       const respAny: any = response as any;
       if (respAny?.token) {
-        storeJwtToken(respAny.token, "signup-form");
+        storeJwtToken(respAny.token, "signup-form", origin);
       }
 
       if (respAny?.authenticatedPrincipal) {

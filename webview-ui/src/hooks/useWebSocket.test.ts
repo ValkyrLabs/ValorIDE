@@ -2,6 +2,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useWebSocket } from "./useWebSocket";
 import { setWebsocketBaseUrl } from "../websocket/websocket";
+import { setValkyraiHost } from "../utils/valkyraiHost";
+import { storeJwtToken, clearStoredAuthSession } from "../utils/accessControl";
 
 class MockWebSocket {
   static CONNECTING = 0;
@@ -63,29 +65,39 @@ describe("useWebSocket", () => {
     });
     vi.stubGlobal("sessionStorage", session);
     vi.stubGlobal("localStorage", local);
+    setValkyraiHost("https://api-0.valkyrlabs.com/v1");
     setWebsocketBaseUrl("wss://api-0.valkyrlabs.com/v1/chat");
   });
 
   afterEach(() => {
+    clearStoredAuthSession();
     vi.unstubAllGlobals();
   });
 
-  it("reconnects with a stored token when auth changes", async () => {
+  it("closes the previous raw connection on sign-in and logout without adding credentials to URLs", async () => {
     renderHook(() => useWebSocket("/topic/swarm/org-1"));
 
     await waitFor(() => expect(MockWebSocket.instances).toHaveLength(1));
     expect(MockWebSocket.instances[0].url).not.toContain("token=");
 
     act(() => {
-      window.sessionStorage.setItem("jwtToken", "fresh-token");
-      window.dispatchEvent(new CustomEvent("jwtTokenChanged"));
+      storeJwtToken(
+        "SYNTHETIC-FRESH-TOKEN",
+        "fixture",
+        "https://api-0.valkyrlabs.com",
+      );
     });
 
     await waitFor(() => expect(MockWebSocket.instances).toHaveLength(2));
     expect(MockWebSocket.instances[0].close).toHaveBeenCalled();
-    expect(MockWebSocket.instances[1].url).toContain("token=fresh-token");
+    expect(MockWebSocket.instances[1].url).not.toContain("token=");
+    expect(MockWebSocket.instances[1].url).not.toContain("SYNTHETIC");
     expect(MockWebSocket.instances[1].url).toContain(
       "topic=%2Ftopic%2Fswarm%2Forg-1",
     );
+    act(() => clearStoredAuthSession());
+    await waitFor(() => expect(MockWebSocket.instances).toHaveLength(3));
+    expect(MockWebSocket.instances[1].close).toHaveBeenCalled();
+    expect(MockWebSocket.instances[2].url).not.toContain("token=");
   });
 });

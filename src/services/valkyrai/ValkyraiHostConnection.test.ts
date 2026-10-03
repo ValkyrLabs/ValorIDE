@@ -1,3 +1,4 @@
+import { registerCredentialOrigin } from "@shared/CredentialOrigin";
 import { describe, expect, it, jest } from "@jest/globals";
 import { testValkyraiHostConnection } from "./ValkyraiHostConnection";
 import { getValkyrLabsRtkApiClient } from "./ValkyrLabsRtkApi";
@@ -82,7 +83,7 @@ describe("ValkyrAI host connection test", () => {
   });
 
   it.each([401, 403])(
-    "reports HTTP %s as reachable with sign-in required",
+    "does not interpret HTTP %s as a verified backend",
     async (status) => {
       const client = getValkyrLabsRtkApiClient(
         async () => new Response("Sign in required", { status }),
@@ -91,8 +92,9 @@ describe("ValkyrAI host connection test", () => {
         await testValkyraiHostConnection("https://new.example/v1", client),
       ).toEqual({
         host: "https://new.example/v1",
-        success: true,
+        success: false,
         requiresAuth: true,
+        error: expect.stringContaining("does not verify"),
       });
     },
   );
@@ -103,6 +105,10 @@ describe("ValkyrAI host connection test", () => {
         new Response(JSON.stringify({ openapi: "3.0.1", paths: {} }), {
           headers: { "content-type": "application/json" },
         }),
+    );
+    registerCredentialOrigin(
+      "current-backend-token",
+      "https://current.example",
     );
     await testValkyraiHostConnection(
       "https://current.example/v1",

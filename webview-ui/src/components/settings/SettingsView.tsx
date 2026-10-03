@@ -243,8 +243,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             });
           } else {
             setIsTestingValkyraiHost(false);
-            setValkyraiHostStatus("Unavailable");
-            setValkyraiHostStatusKind("error");
+            setValkyraiHostStatus(message.requiresAuth ? "Sign-in required; host unverified" : "Unavailable");
+            setValkyraiHostStatusKind(message.requiresAuth ? "warn" : "error");
             setValkyraiHostError(
               message.error || "Unable to reach ValkyrAI host.",
             );
@@ -373,6 +373,17 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   const handleResetValkyraiHost = () => {
     setValkyraiHostInput(DEFAULT_VALKYRAI_HOST);
     testAndSaveValkyraiHost(DEFAULT_VALKYRAI_HOST);
+  };
+
+  const selectHostForLogin = () => {
+    if (pendingHostRef.current) return;
+    const target = valkyraiHostInput.trim();
+    const error = validateValkyraiHost(target);
+    if (error) { setValkyraiHostError(error); return; }
+    pendingHostRef.current = { host: normalizeValkyraiHost(target), requestId: crypto.randomUUID(), phase: "saving", requiresAuth: true };
+    setIsTestingValkyraiHost(true);
+    setValkyraiHostStatus("Selecting backend…");
+    vscode.postMessage({ type: "updateValkyraiHost", valkyraiHost: pendingHostRef.current.host, requestId: pendingHostRef.current.requestId });
   };
 
   const communicationService = useCommunicationService() as any;
@@ -658,8 +669,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 />
               </div>
               <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
-                Test the ValkyrAI backend and save its Base URL to VS Code
-                settings. The result appears here.
+                Switching backend signs out the current session. Select a
+                destination, then sign in through Account there. A schema test
+                checks availability; a 401 or 403 does not verify identity.
               </p>
               <VSCodeTextField
                 value={valkyraiHostInput}
@@ -700,6 +712,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                   ) : (
                     "Test & Save"
                   )}
+                </VSCodeButton>
+                <VSCodeButton appearance="secondary" onClick={selectHostForLogin} disabled={isTestingValkyraiHost}>
+                  Select host for sign-in
                 </VSCodeButton>
                 <VSCodeButton
                   appearance="secondary"

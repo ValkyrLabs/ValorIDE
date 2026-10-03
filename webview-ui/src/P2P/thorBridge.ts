@@ -1,3 +1,6 @@
+import { authenticatedStompOptions } from "@thorapi/utils/stompAuth";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
+import { assertSafeWebSocketUrl } from "@shared/CredentialOrigin";
 import { Client, IMessage } from "@stomp/stompjs";
 import { getWebsocketUrl, isValidWsUrl } from "@thorapi/websocket/websocket";
 import { WebsocketMessageTypeEnum } from "@thorapi/model";
@@ -25,16 +28,6 @@ if (typeof window !== "undefined") {
     let lastConnectRequestedAt = 0;
     let currentSendListener: ((ev: Event) => void) | null = null;
     let hasLoggedMissingJwt = false;
-    // Simple local flag: default to true to persist JWT in localStorage
-    const shouldPersistJwt = (): boolean => {
-      try {
-        const v = localStorage.getItem("valoride.persistJwt");
-        return v === null ? true : v === "true";
-      } catch {
-        return true;
-      }
-    };
-
     const getOrCreateInstanceId = (): string => {
       try {
         let id = localStorage.getItem("valoride.instanceId");
@@ -58,30 +51,10 @@ if (typeof window !== "undefined") {
         : getFallbackWsBase();
       let jwtToken: string | null = null;
       try {
-        jwtToken = sessionStorage.getItem("jwtToken");
-        if (!jwtToken) {
-          // Fall back to localStorage for persisted sessions
-          jwtToken =
-            localStorage.getItem("jwtToken") ||
-            localStorage.getItem("authToken");
-          if (jwtToken) {
-            // Mirror into sessionStorage and notify listeners
-            sessionStorage.setItem("jwtToken", jwtToken);
-            try {
-              window.dispatchEvent(
-                new CustomEvent("jwt-token-updated", {
-                  detail: {
-                    token: jwtToken,
-                    timestamp: Date.now(),
-                    source: "thorBridge-localStorage",
-                  },
-                }),
-              );
-            } catch {}
-          }
-        }
+        assertSafeWebSocketUrl(baseURL, getValkyraiHost());
+        jwtToken = getStoredJwtToken(baseURL);
       } catch {
-        // ignore storage access issues
+        return null;
       }
 
       if (!jwtToken) {
@@ -94,9 +67,7 @@ if (typeof window !== "undefined") {
 
       hasLoggedMissingJwt = false;
 
-      // Append token as query parameter for authentication
-      const separator = baseURL.includes("?") ? "&" : "?";
-      return `${baseURL}${separator}token=${jwtToken}`;
+      return baseURL;
     };
 
     const toAppMessage = (raw: any): AppMessage | null => {
@@ -229,7 +200,7 @@ if (typeof window !== "undefined") {
       );
 
       stompClient = new Client({
-        brokerURL: authenticatedURL,
+        ...authenticatedStompOptions(authenticatedURL),
         reconnectDelay: 5000,
       });
 
@@ -281,9 +252,7 @@ if (typeof window !== "undefined") {
 
       stompClient.onStompError = (frame) => {
         console.error(
-          "thorBridge STOMP error:",
-          frame.headers["message"],
-          frame.body,
+          "thorBridge authentication failed. Sign in at the selected backend and retry.",
         );
         postStatus("error");
         isConnecting = false;
@@ -307,6 +276,7 @@ if (typeof window !== "undefined") {
         const app = ce.detail;
         if (!app || !stompClient) return;
         try {
+          authenticatedStompOptions(authenticatedURL).beforeConnect();
           stompClient.publish({
             destination: "/app/chat",
             body: toThorBody(app),
@@ -377,6 +347,17 @@ if (typeof window !== "undefined") {
       } catch (error) {
         console.warn("thorBridge: failed to handle host change", error);
       }
+    });
+
+    window.addEventListener("authSessionInvalidated", () => {
+      isConnecting = false;
+      if (connectionRetryInterval) {
+        clearInterval(connectionRetryInterval);
+        connectionRetryInterval = null;
+      }
+      void stompClient?.deactivate();
+      stompClient = null;
+      postStatus("disconnected");
     });
 
     // Start the connection process

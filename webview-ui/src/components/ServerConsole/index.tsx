@@ -1,3 +1,4 @@
+import { authenticatedStompOptions } from "@thorapi/utils/stompAuth";
 import * as StompJs from "@stomp/stompjs";
 import { useEffect, useState } from "react";
 import {
@@ -58,8 +59,8 @@ const stompClient = new Client({
     console.log("Disconnected from WebSocket");
   },
   onStompError: (frame) => {
-    console.error("Broker reported error: " + frame.headers["message"]);
-    console.error("Additional details: " + frame.body);
+    console.error("SWARM authentication failed. Sign in at the selected backend and retry.");
+
   },
 });
 
@@ -113,8 +114,10 @@ const ServerConsole = () => {
 
     setIsConnecting(true);
 
+    let auth;
+    try { auth = authenticatedStompOptions(socketUrl); } catch { setIsConnecting(false); return undefined; }
     stompClient.configure({
-      brokerURL: socketUrl,
+      ...auth,
       reconnectDelay: 5000,
       onConnect: () => {
         setIsConnecting(false);
@@ -141,8 +144,8 @@ const ServerConsole = () => {
       onStompError: (frame) => {
         setIsConnecting(false);
         dispatch(setConnected(false));
-        console.error("Broker error: " + frame.headers["message"]);
-        console.error("Details: " + frame.body);
+        console.error("SWARM authentication failed. Sign in at the selected backend and retry.");
+
       },
     });
 

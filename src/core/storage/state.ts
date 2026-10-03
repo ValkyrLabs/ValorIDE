@@ -11,6 +11,9 @@ import { ChatSettings } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { SelectedLlmDetails } from "@shared/llm";
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import { isBackendCredential, readBoundCredential, writeBoundCredential } from "@services/auth/OriginBoundCredentials";
+import { credentialOrigin } from "@shared/CredentialOrigin";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
@@ -44,7 +47,13 @@ export async function storeSecret(
   context: vscode.ExtensionContext,
   key: SecretKey,
   value?: string,
+  issuanceHost?: string,
 ) {
+  if (isBackendCredential(key)) return writeBoundCredential(context, key, value, issuanceHost);
+  if (key === "authNonce") {
+    if (value) await context.secrets.store("authNonceOrigin", credentialOrigin(getValkyraiBasePath()));
+    else await context.secrets.delete("authNonceOrigin");
+  }
   if (value) {
     await context.secrets.store(key, value);
   } else {
@@ -56,6 +65,7 @@ export async function getSecret(
   context: vscode.ExtensionContext,
   key: SecretKey,
 ) {
+  if (isBackendCredential(key)) return readBoundCredential(context, key);
   return await context.secrets.get(key);
 }
 
@@ -504,6 +514,11 @@ export async function updateApiConfiguration(
   context: vscode.ExtensionContext,
   apiConfiguration: ApiConfiguration,
 ) {
+  if (apiConfiguration.valkyraiHost && credentialOrigin(apiConfiguration.valkyraiHost) !== credentialOrigin(getValkyraiBasePath())) throw new Error("Select the backend in ValkyrAI Backend settings, then sign in through Account there.");
+  for (const key of ["valkyraiJwt", "valorideApiKey"] as const) {
+    const value = apiConfiguration[key];
+    if (value && await readBoundCredential(context, key) !== value) throw new Error("This saved backend credential has no matching issuance origin. Sign out and sign in through Account at the selected backend.");
+  }
   const {
     apiProvider,
     apiModelId,

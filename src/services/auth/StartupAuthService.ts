@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
 import { TokenStorageService, StoredAuthState } from "./TokenStorageService";
 import { Logger } from "../logging/Logger";
-import { updateGlobalState, storeSecret } from "../../core/storage/state";
+import { updateGlobalState } from "../../core/storage/state";
+import { credentialOrigin } from "@shared/CredentialOrigin";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
 export interface AuthRestorationResult {
   success: boolean;
@@ -18,6 +20,7 @@ export class StartupAuthService {
   private context: vscode.ExtensionContext;
   private tokenStorage: TokenStorageService;
   private authRevision = 0;
+  private projectionMutation: Promise<void> = Promise.resolve();
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -61,7 +64,11 @@ export class StartupAuthService {
         if (restoreRevision === this.authRevision) {
           await this.clearExtensionAuthProjection();
         }
-        return { success: false, error: "No stored tokens" };
+        return {
+          success: false,
+          error:
+            "Sign in at the selected backend. Existing sessions without a matching origin stay unavailable.",
+        };
       }
 
       Logger.log("Found stored authentication tokens, validating...");
@@ -171,37 +178,58 @@ export class StartupAuthService {
     tokens: any,
     user: any,
   ): Promise<void> {
-    try {
-      // Store tokens in VSCode secrets for other services
-      await storeSecret(this.context, "jwtToken", tokens.jwtToken);
-      if (tokens.apiKey) {
-        await storeSecret(this.context, "valorideApiKey", tokens.apiKey);
-      }
-
-      // Update global state with user info
+    const revision = this.authRevision;
+    const operation = async () => {
+      if (
+        revision !== this.authRevision ||
+        tokens.issuanceOrigin !== credentialOrigin(getValkyraiBasePath())
+      )
+        throw new Error("Authentication state was superseded. Retry sign-in.");
       await updateGlobalState(this.context, "userInfo", user);
       await updateGlobalState(this.context, "authenticatedPrincipal", user);
       await updateGlobalState(this.context, "isLoggedIn", true);
-
-      // Set API provider to the unified ValkyrAI route if we have tokens
-      if (tokens.apiKey) {
+      if (tokens.apiKey)
         await updateGlobalState(this.context, "apiProvider", "valkyrai");
-      }
-
-      Logger.log("Extension authentication state updated successfully");
-    } catch (error) {
-      Logger.log(`Error updating extension auth state: ${error}`);
-      throw error;
-    }
+    };
+    const pending = this.projectionMutation.then(operation, operation);
+    this.projectionMutation = pending.catch(() => undefined);
+    await pending;
   }
 
   /**
    * Handle successful login by storing tokens securely
    */
-  async handleSuccessfulLogin(tokens: any, user: any): Promise<void> {
+  getAuthenticationRevision(): number {
+    return this.authRevision;
+  }
+
+  async handleSuccessfulLogin(
+    tokens: any,
+    user: any,
+    expectedRevision = this.authRevision,
+  ): Promise<void> {
     try {
+      if (expectedRevision !== this.authRevision)
+        throw new Error(
+          "Sign-in was superseded by an account or backend change. Retry sign-in.",
+        );
+      if (
+        !tokens.issuanceOrigin ||
+        tokens.issuanceOrigin !== credentialOrigin(getValkyraiBasePath())
+      )
+        throw new Error(
+          "The backend changed during sign-in. Retry at the selected destination.",
+        );
       this.authRevision += 1;
+      const loginRevision = this.authRevision;
       await this.tokenStorage.storeAuthTokens(tokens, user);
+      if (
+        loginRevision !== this.authRevision ||
+        tokens.issuanceOrigin !== credentialOrigin(getValkyraiBasePath())
+      )
+        throw new Error(
+          "Sign-in was superseded by a backend or account change. Retry at the selected destination.",
+        );
       await this.updateExtensionAuthState(tokens, user);
       Logger.log("Successful login handled and tokens stored");
     } catch (error) {
@@ -228,15 +256,25 @@ export class StartupAuthService {
 
   private async clearExtensionAuthState(): Promise<void> {
     await this.clearExtensionAuthProjection();
-    await storeSecret(this.context, "jwtToken", undefined);
-    await storeSecret(this.context, "valorideApiKey", undefined);
   }
 
   private async clearExtensionAuthProjection(): Promise<void> {
-    await updateGlobalState(this.context, "userInfo", undefined);
-    await updateGlobalState(this.context, "authenticatedPrincipal", undefined);
-    await updateGlobalState(this.context, "isLoggedIn", false);
-    await updateGlobalState(this.context, "grayMatterSession", undefined);
+    const revision = this.authRevision;
+    const operation = async () => {
+      if (revision !== this.authRevision) return;
+      await updateGlobalState(this.context, "userInfo", undefined);
+      await updateGlobalState(
+        this.context,
+        "authenticatedPrincipal",
+        undefined,
+      );
+      await updateGlobalState(this.context, "isLoggedIn", false);
+      await updateGlobalState(this.context, "grayMatterSession", undefined);
+      await updateGlobalState(this.context, "agenticState", undefined);
+    };
+    const pending = this.projectionMutation.then(operation, operation);
+    this.projectionMutation = pending.catch(() => undefined);
+    await pending;
   }
 
   /**

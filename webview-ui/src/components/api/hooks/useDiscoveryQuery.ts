@@ -1,3 +1,4 @@
+import { authFetch } from "@thorapi/utils/authFetch";
 import { useCallback, useEffect, useState } from "react";
 import {
   buildSwarmDiscoveryUrl,
@@ -52,14 +53,23 @@ export const useDiscoveryQuery = ({
       setError(null);
       setErrorKind(null);
       setRecoveryActions([]);
-      const response = await fetch(
+      const response = await authFetch(
         buildSwarmDiscoveryUrl({
           organizationId,
           status,
           apiHost,
           path: "agents/discovery",
         }),
-        { headers: getSwarmDiscoveryHeaders() },
+        {
+          headers: getSwarmDiscoveryHeaders(
+            buildSwarmDiscoveryUrl({
+              organizationId,
+              status,
+              apiHost,
+              path: "agents/discovery",
+            }),
+          ),
+        },
       );
       if (!response.ok) {
         failureKind = classifySwarmDiscoveryStatus(

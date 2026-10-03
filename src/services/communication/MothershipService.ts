@@ -11,6 +11,11 @@ import {
   getValkyraiWsBase,
 } from "@utils/serverValkyraiHost";
 import { validateSwarmMessage } from "@shared/swarm-protocol";
+import {
+  assertCredentialDestination,
+  credentialOrigin,
+  assertSafeWebSocketUrl,
+} from "@shared/CredentialOrigin";
 
 export interface MothershipConnectionOptions {
   jwtToken: string;
@@ -46,6 +51,7 @@ export class MothershipService extends EventEmitter {
   private replayWindowSize = 200;
   private lastProcessedSequence = 0;
   private outboundSequence = 0;
+  private connectionRevision = 0;
   private pendingBySequence = new Map<number, WebsocketMessage>();
   private replayBuffer: WebsocketMessage[] = [];
   private acknowledgedMessageIds = new Set<string>();
@@ -75,8 +81,7 @@ export class MothershipService extends EventEmitter {
         this.getDefaultWebsocketUrl();
       const wsUrl = this.buildStompEndpointUrl(baseUrl);
 
-      // Add JWT token as query parameter for authentication
-      wsUrl.searchParams.set("token", this.options.jwtToken);
+      this.assertDestination(wsUrl);
       wsUrl.searchParams.set("instanceId", this.instanceId);
 
       void this.stompClient?.deactivate();
@@ -85,24 +90,31 @@ export class MothershipService extends EventEmitter {
       this.stompClient = new Client({
         brokerURL: wsUrl.toString(),
         connectHeaders: this.buildAgentHeaders(),
-        debug: (message) => console.debug("Mothership STOMP:", message),
+        // The server authenticates Authorization on STOMP CONNECT. Re-check
+        // every automatic retry and never expose a bearer in a URL/debug frame.
+        beforeConnect: () => {
+          this.assertDestination(wsUrl);
+        },
+        debug: () => {},
         reconnectDelay: this.reconnectDelay,
         onConnect: () => this.handleConnected(),
         onDisconnect: (frame) => {
-          console.log("Mothership STOMP disconnected:", frame.headers.message);
+          console.log("Mothership STOMP disconnected");
           this.handleDisconnected(frame);
         },
         onStompError: (frame) => {
-          const message = frame.headers.message || frame.body;
-          console.error("Mothership STOMP error:", message);
-          this.emit("error", new Error(message || "Mothership STOMP error"));
+          this.emit(
+            "error",
+            new Error(
+              "SWARM authentication or connection failed. Sign in at the selected backend and retry.",
+            ),
+          );
         },
         onWebSocketClose: (event) => {
-          console.log("Mothership websocket closed:", event.code, event.reason);
+          console.log("Mothership websocket closed:", event.code);
           this.handleDisconnected(event);
         },
         onWebSocketError: (error) => {
-          console.error("Mothership websocket error:", error);
           this.emit(
             "error",
             this.toConnectionError(error, wsUrl, "Mothership websocket error"),
@@ -112,9 +124,11 @@ export class MothershipService extends EventEmitter {
 
       this.stompClient.activate();
     } catch (error) {
-      console.error("Failed to connect to mothership:", error);
-      this.emit("error", error);
-      throw error;
+      const safe = new Error(
+        "SWARM connection refused. Verify the selected backend and sign in there before retrying.",
+      );
+      this.emit("error", safe);
+      throw safe;
     }
   }
 
@@ -185,10 +199,6 @@ export class MothershipService extends EventEmitter {
   }
 
   private toConnectionError(error: unknown, url: URL, fallback: string): Error {
-    if (error instanceof Error && error.message) {
-      return error;
-    }
-
     const target = `${url.origin}${url.pathname}`;
     const detail =
       error && typeof error === "object" && "type" in error
@@ -200,12 +210,31 @@ export class MothershipService extends EventEmitter {
   }
 
   private buildAgentHeaders(): Record<string, string> {
+    this.assertDestination(
+      new URL(
+        this.normalizeWsUrl(this.options.baseUrl) ??
+          this.getDefaultWebsocketUrl(),
+      ),
+    );
     return {
       Authorization: `Bearer ${this.options.jwtToken}`,
       "X-Agent-Instance-Id": this.instanceId,
       "X-Agent-Version": "valoride",
       "X-ValorIDE-Instance": this.instanceId,
     };
+  }
+
+  private assertDestination(url: URL): void {
+    assertSafeWebSocketUrl(url.toString(), getValkyraiBasePath());
+    if (
+      credentialOrigin(`${url.protocol}//${url.host}`) !==
+      credentialOrigin(getValkyraiBasePath())
+    )
+      throw new Error("SWARM destination differs from the selected backend.");
+    assertCredentialDestination(
+      this.options.jwtToken,
+      `${url.protocol}//${url.host}${url.pathname}`,
+    );
   }
 
   private handleConnected(): void {
@@ -645,6 +674,7 @@ export class MothershipService extends EventEmitter {
   }
 
   public disconnect(): void {
+    this.connectionRevision += 1;
     this.stopPingInterval();
 
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
@@ -674,7 +704,9 @@ export class MothershipService extends EventEmitter {
     // Reconnect with new token if currently connected
     if (this.connected) {
       this.disconnect();
+      const revision = this.connectionRevision;
       setTimeout(() => {
+        if (revision !== this.connectionRevision) return;
         this.connect().catch(console.error);
       }, 1000);
     }

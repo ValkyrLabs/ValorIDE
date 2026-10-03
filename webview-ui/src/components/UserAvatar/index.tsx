@@ -24,8 +24,7 @@ import React, {
 } from "react";
 import { Image, Spinner } from "react-bootstrap";
 import { FaCamera, FaUser, FaCheck, FaTimes } from "react-icons/fa";
-import axios from "axios";
-import { BASE_PATH } from "@thorapi/src";
+import { authFetch } from "@thorapi/utils/authFetch";
 import { ContentMediaLink } from "@thorapi/model/ContentMediaLink";
 import "./UserAvatar.css";
 
@@ -184,23 +183,9 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
         const formData = new FormData();
         formData.append("file", file);
 
-        const token = sessionStorage.getItem("jwtToken");
-        const headers: Record<string, string> = {
-          "Content-Type": "multipart/form-data",
-        };
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        const response = await axios.post(
-          `${BASE_PATH}/files/upload`,
-          formData,
-          {
-            headers,
-          },
-        );
-
-        const media: ContentMediaLink = response.data;
+        const response = await authFetch("/files/upload", { method: "POST", body: formData });
+        if (!response.ok) throw new Error("Avatar upload failed. Check the selected backend and sign in there.");
+        const media: ContentMediaLink = await response.json();
 
         if (media.mediaUrl) {
           onAvatarChange?.(media.mediaUrl);
