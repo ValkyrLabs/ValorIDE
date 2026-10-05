@@ -3,6 +3,18 @@ import {
   createSessionBoundProcedureClient,
   procedureTraceId,
 } from "./ValkyrProcedureClient";
+import {
+  clearCredentialOrigins,
+  registerCredentialOrigin,
+} from "@shared/CredentialOrigin";
+
+beforeEach(() => {
+  clearCredentialOrigins();
+  // Authenticated fixtures carry the same exact-origin evidence as real stored
+  // sessions. Negative cases retain missing or changed credentials.
+  registerCredentialOrigin("session-token", "https://api-0.valkyrlabs.com");
+});
+afterEach(() => clearCredentialOrigins());
 
 const executionId = "6b5f4311-bf51-448a-83c8-e391c435314e";
 const versionId = "bfdeef65-350b-46af-a4ad-4bc82586fc4c";
@@ -81,6 +93,17 @@ function fixture(reply: unknown = response(), status = 202) {
 }
 
 describe("Valkyr procedure consumption", () => {
+  it("does not send an unbound or differently bound session to the procedure endpoint", async () => {
+    for (const origin of [undefined, "https://another-backend.example.test"]) {
+      clearCredentialOrigins();
+      if (origin) registerCredentialOrigin("session-token", origin);
+      const f = fixture();
+      await expect(f.client.execute(request())).rejects.toMatchObject({
+        code: "DISPATCH_OUTCOME_UNKNOWN",
+      });
+      expect(f.fetch).not.toHaveBeenCalled();
+    }
+  });
   it("rejects conflicting or malformed execution versions without dispatch replay", async () => {
     for (const workflowVersionId of [executionId, "not-a-version", "", 42]) {
       const value = response();

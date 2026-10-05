@@ -50,6 +50,8 @@ export interface LLMDetailsPromptCandidate {
   systemPrompt?: string;
   promptType?: "SYSTEM" | "APPEND" | string;
   tags?: string[] | string;
+  promptTags?: string[] | string;
+  metaData?: string;
   ratingScore?: number;
   rating?: number;
   updatedDate?: string;
@@ -68,6 +70,8 @@ export class LLMPromptService {
   private selectedPrompt: SelectedPrompt | null = null;
   private projectStack: ProjectStack | null = null;
   private llmDetailsService: LLMDetailsPromptService | null = null;
+  private selectionRevision = 0;
+  private manualSelection = false;
 
   constructor(workspaceRoot: string, logger: vscode.OutputChannel) {
     this.workspaceRoot = workspaceRoot;
@@ -78,6 +82,15 @@ export class LLMPromptService {
    * Initialize — detect project stack and attempt ThorAPI load
    */
   async initialize(llmDetailsService?: LLMDetailsPromptService): Promise<void> {
+    if (this.manualSelection) {
+      this.logger.appendLine(
+        "[LLMPromptService] Keeping the user's selected prompt",
+      );
+      return;
+    }
+    const revision = ++this.selectionRevision;
+    this.selectedPrompt = null;
+    this.llmDetailsService = llmDetailsService ?? null;
     this.logger.appendLine("[LLMPromptService] Initializing...");
 
     try {
@@ -89,13 +102,14 @@ export class LLMPromptService {
 
       // Try ThorAPI first
       if (llmDetailsService) {
-        this.llmDetailsService = llmDetailsService;
-        await this.loadFromThorAPI();
+        await this.loadFromThorAPI(revision);
       } else {
         this.logger.appendLine(
           "[LLMPromptService] LLMDetailsService not available, skipping ThorAPI load",
         );
       }
+
+      if (revision !== this.selectionRevision) return;
 
       // Fall back to local if needed
       if (!this.selectedPrompt) {
@@ -184,7 +198,7 @@ export class LLMPromptService {
   /**
    * Load from ThorAPI LLMDetails service (PRIMARY)
    */
-  private async loadFromThorAPI(): Promise<void> {
+  private async loadFromThorAPI(revision: number): Promise<void> {
     if (!this.llmDetailsService) {
       return;
     }
@@ -201,8 +215,8 @@ export class LLMPromptService {
       );
 
       // Query LLMDetailsService by tag (highest-rated first)
-      // This is a mock call - actual implementation requires webview RTK Query integration
       const llmDetails = await this.queryLLMDetails(tags);
+      if (revision !== this.selectionRevision) return;
 
       if (llmDetails) {
         const prompt = getPromptBody(llmDetails);
@@ -329,6 +343,8 @@ export class LLMPromptService {
     source?: SelectedPrompt["source"];
     stackSpecific?: boolean;
   }): void {
+    this.manualSelection = true;
+    this.selectionRevision += 1;
     this.selectedPrompt = {
       source: selection.source ?? "thorapi",
       llmDetailsId: selection.llmDetailsId,
@@ -435,10 +451,14 @@ export function createExtensionHostLLMDetailsService(
       };
       const authToken =
         apiConfiguration.valkyraiJwt || (await getSecret(context, "jwtToken"));
-      if (authToken) {
-        headers.Authorization = `Bearer ${authToken}`;
-        headers.jwtSession = authToken;
+      if (!authToken) {
+        logger.appendLine(
+          "[LLMPromptService] ThorAPI query skipped: sign in at the selected backend; using fallback prompt",
+        );
+        return null;
       }
+      headers.Authorization = `Bearer ${authToken}`;
+      headers.jwtSession = authToken;
 
       let response;
       try {
@@ -464,6 +484,24 @@ export function createExtensionHostLLMDetailsService(
         throw new Error(`LlmDetails query failed with HTTP ${response.status}`);
       }
 
+      // A reply from the previous account or backend must not become the prompt
+      // for a new session. The RTK client also enforces credential origins.
+      const current = await getAllExtensionState(context);
+      const currentToken =
+        current.apiConfiguration?.valkyraiJwt ||
+        (await getSecret(context, "jwtToken"));
+      if (
+        !current.apiConfiguration?.valkyraiHost ||
+        normalizeValkyraiHost(current.apiConfiguration.valkyraiHost) !==
+          normalizeValkyraiHost(apiConfiguration.valkyraiHost) ||
+        currentToken !== authToken
+      ) {
+        logger.appendLine(
+          "[LLMPromptService] Discarding prompt reply after the account or backend changed",
+        );
+        return null;
+      }
+
       return selectBestLlmDetailsPrompt(response.data, input.tags);
     },
   };
@@ -473,14 +511,16 @@ export function selectBestLlmDetailsPrompt(
   payload: unknown,
   tags: string[],
 ): LLMDetailsPromptCandidate | null {
-  const candidates = extractLlmDetails(payload).filter((candidate) => {
-    const prompt = getPromptBody(candidate);
-    if (!prompt || typeof prompt !== "string") {
-      return false;
-    }
-    const accessStatus = `${candidate.accessStatus || ""}`.toLowerCase();
-    return !candidate.isPremium && accessStatus !== "blocked";
-  });
+  const candidates = extractLlmDetails(payload)
+    .map(normalizeLlmDetailsCandidate)
+    .filter((candidate) => {
+      const prompt = getPromptBody(candidate);
+      if (!prompt || typeof prompt !== "string") {
+        return false;
+      }
+      const accessStatus = `${candidate.accessStatus || ""}`.toLowerCase();
+      return !candidate.isPremium && accessStatus !== "blocked";
+    });
 
   if (candidates.length === 0) {
     return null;
@@ -494,9 +534,11 @@ export function selectBestLlmDetailsPrompt(
         queryTags.has(tag.toLowerCase()),
       ).length,
       rating:
-        typeof candidate.ratingScore === "number"
+        typeof candidate.ratingScore === "number" &&
+        Number.isFinite(candidate.ratingScore)
           ? candidate.ratingScore
-          : typeof candidate.rating === "number"
+          : typeof candidate.rating === "number" &&
+              Number.isFinite(candidate.rating)
             ? candidate.rating
             : 0,
       recency:
@@ -509,25 +551,81 @@ export function selectBestLlmDetailsPrompt(
     )[0].candidate;
 }
 
-function extractLlmDetails(payload: unknown): LLMDetailsPromptCandidate[] {
+function extractLlmDetails(
+  payload: unknown,
+  depth = 0,
+): LLMDetailsPromptCandidate[] {
+  if (depth > 4) return [];
   if (Array.isArray(payload)) {
-    return payload as LLMDetailsPromptCandidate[];
+    return payload.filter(
+      (entry) => entry && typeof entry === "object" && !Array.isArray(entry),
+    ) as LLMDetailsPromptCandidate[];
   }
   if (payload && typeof payload === "object") {
     const record = payload as Record<string, unknown>;
-    for (const key of ["content", "items", "data", "results"]) {
+    for (const key of ["content", "items", "records", "data", "results"]) {
       if (Array.isArray(record[key])) {
-        return record[key] as LLMDetailsPromptCandidate[];
+        return extractLlmDetails(record[key], depth + 1);
       }
+    }
+    if (record.data && typeof record.data === "object") {
+      return extractLlmDetails(record.data, depth + 1);
     }
   }
   return [];
 }
 
 function getPromptBody(candidate: LLMDetailsPromptCandidate): string | null {
-  const prompt =
-    candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
-  return typeof prompt === "string" && prompt.trim().length > 0 ? prompt : null;
+  for (const prompt of [
+    candidate.initialPrompt,
+    candidate.prompt,
+    candidate.systemPrompt,
+  ]) {
+    if (typeof prompt === "string" && prompt.trim().length > 0) return prompt;
+  }
+  return null;
+}
+
+function normalizeLlmDetailsCandidate(
+  candidate: LLMDetailsPromptCandidate,
+): LLMDetailsPromptCandidate {
+  let metadata: Record<string, unknown> = {};
+  if (typeof candidate.metaData === "string") {
+    try {
+      const parsed = JSON.parse(candidate.metaData);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed))
+        metadata = parsed;
+    } catch {
+      /* Invalid optional metadata leaves the direct fields intact. */
+    }
+  }
+  const metadataRating = Number(metadata.ratingScore);
+  return {
+    ...candidate,
+    promptType:
+      candidate.promptType ??
+      (typeof metadata.promptType === "string"
+        ? metadata.promptType
+        : undefined),
+    tags: [
+      ...new Set([
+        ...normalizeTags(candidate.tags),
+        ...normalizeTags(candidate.promptTags),
+        ...normalizeTags(metadata.tags),
+        ...normalizeTags(metadata.promptTags),
+      ]),
+    ],
+    ratingScore:
+      candidate.ratingScore ??
+      (Number.isFinite(metadataRating) ? metadataRating : undefined),
+    // Optional metadata cannot make a blocked or premium prompt accessible.
+    isPremium: candidate.isPremium || metadata.isPremium === true,
+    accessStatus:
+      `${candidate.accessStatus || ""}`.toLowerCase() === "blocked" ||
+      `${metadata.accessStatus || ""}`.toLowerCase() === "blocked"
+        ? "blocked"
+        : candidate.accessStatus,
+  };
 }
 
 function classifyLlmDetailsQueryError(error: unknown): string {
@@ -541,14 +639,32 @@ function classifyLlmDetailsQueryError(error: unknown): string {
 }
 
 function normalizePromptMode(mode: unknown): "SYSTEM" | "APPEND" {
-  return mode === "APPEND" ? "APPEND" : "SYSTEM";
+  return typeof mode === "string" && mode.toUpperCase() === "APPEND"
+    ? "APPEND"
+    : "SYSTEM";
 }
 
 function normalizeTags(tags: unknown): string[] {
   if (Array.isArray(tags)) {
-    return tags.map((tag) => `${tag}`.trim()).filter((tag) => tag.length > 0);
+    return tags
+      .filter((tag): tag is string => typeof tag === "string")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
   }
   if (typeof tags === "string") {
+    if (/^[\[{]/.test(tags.trim())) {
+      try {
+        const parsed = JSON.parse(tags);
+        if (Array.isArray(parsed)) return normalizeTags(parsed);
+        if (parsed && typeof parsed === "object")
+          return [
+            ...normalizeTags(parsed.tags),
+            ...normalizeTags(parsed.promptTags),
+          ];
+      } catch {
+        return [];
+      }
+    }
     return tags
       .split(/[,\s]+/)
       .map((tag) => tag.trim())
@@ -582,4 +698,11 @@ export function getLLMPromptService(): LLMPromptService {
     throw new Error("LLMPromptService not initialized");
   }
   return llmPromptService;
+}
+
+// Keep the same instance used by LLMContextInjector and honor manual selections.
+export async function refreshLLMPromptServiceAfterAuthentication(
+  llmDetailsService: LLMDetailsPromptService,
+): Promise<void> {
+  await getLLMPromptService().initialize(llmDetailsService);
 }

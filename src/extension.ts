@@ -40,11 +40,15 @@ import { initializeStatusBarService } from "./services/StatusBarService";
 import {
   createExtensionHostLLMDetailsService,
   initializeLLMPromptService,
+  refreshLLMPromptServiceAfterAuthentication,
   SelectedPrompt,
 } from "./services/llmPromptService";
 import {
   decideStartupReveal,
   FIRST_ACTIVATION_REVEAL_STATE_KEY,
+  LEGACY_STARTUP_REVEAL_STATE_KEY,
+  getExplicitStartupSetting,
+  StartupRevealMode,
 } from "./services/startupRevealPolicy";
 import { getAllExtensionState } from "./core/storage/state";
 import {
@@ -204,6 +208,17 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (authResult.success) {
         Logger.log("Successfully restored authentication from stored tokens");
+        // Reuse the prompt service held by the context injector. A startup query
+        // may have completed before stored authentication became available.
+        void llmPromptReady
+          .then(() =>
+            refreshLLMPromptServiceAfterAuthentication(
+              createExtensionHostLLMDetailsService(context, outputChannel),
+            ),
+          )
+          .catch((error) =>
+            Logger.log(`LLMPromptService refresh failed: ${error}`),
+          );
         await refreshGrayMatterStatus(context);
         // Notify the webview that authentication was restored
         sidebarWebview.controller.postMessageToWebview({
@@ -321,12 +336,20 @@ export function activate(context: vscode.ExtensionContext) {
     IS_DEV && IS_DEV === "true",
   );
 
+  const startupConfiguration = vscode.workspace.getConfiguration("valoride");
   const revealDecision = decideStartupReveal({
-    revealOnStartupSetting: vscode.workspace
-      .getConfiguration("valoride")
-      .get<boolean>("revealOnStartup", false),
+    revealOnStartupSetting: getExplicitStartupSetting(
+      startupConfiguration.inspect<boolean>("revealOnStartup"),
+    ),
+    legacyRevealMode: getExplicitStartupSetting(
+      startupConfiguration.inspect<StartupRevealMode>("startup.revealSidebar"),
+    ),
     firstActivationRevealCompleted: context.globalState.get<boolean>(
       FIRST_ACTIVATION_REVEAL_STATE_KEY,
+      false,
+    ),
+    legacyRevealCompleted: context.globalState.get<boolean>(
+      LEGACY_STARTUP_REVEAL_STATE_KEY,
       false,
     ),
   });
@@ -341,7 +364,7 @@ export function activate(context: vscode.ExtensionContext) {
     void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
     void context.globalState.update(FIRST_ACTIVATION_REVEAL_STATE_KEY, true);
   } else {
-    Logger.log("ValorIDE startup reveal skipped for returning user");
+    Logger.log(`ValorIDE startup reveal skipped: ${revealDecision.reason}`);
   }
 
   context.subscriptions.push(
@@ -698,7 +721,9 @@ export function activate(context: vscode.ExtensionContext) {
           }
 
           // Credential-bearing URI callbacks cannot establish issuance origin.
-          vscode.window.showErrorMessage("Sign in through Account or a new one-time authorization code.");
+          vscode.window.showErrorMessage(
+            "Sign in through Account or a new one-time authorization code.",
+          );
           return;
         }
         break;

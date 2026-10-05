@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   initializeLLMPromptService,
+  getLLMPromptService,
+  refreshLLMPromptServiceAfterAuthentication,
   LLMPromptService,
   selectBestLlmDetailsPrompt,
 } from "../llmPromptService";
@@ -181,5 +183,177 @@ describe("LLMPromptService", () => {
     );
 
     expect(selected?.id).toBe("system-prompt");
+  });
+
+  it("refreshes after sign-in without replacing the instance held by prompt consumers", async () => {
+    await initializeLLMPromptService(process.cwd(), mockLogger, {
+      query: async () => null,
+    });
+    const original = getLLMPromptService();
+    await refreshLLMPromptServiceAfterAuthentication({
+      query: async () => ({ id: "restored", prompt: "Authenticated prompt" }),
+    });
+    expect(getLLMPromptService()).toBe(original);
+    expect(original.getSelectedPrompt()?.llmDetailsId).toBe("restored");
+  });
+
+  it("preserves the user's selection when authentication is restored", async () => {
+    const query = vi.fn();
+    service.applyManualSelection({
+      name: "User prompt",
+      prompt: "Keep my edit",
+    });
+    await service.initialize({ query });
+    expect(query).not.toHaveBeenCalled();
+    expect(service.getSelectedPrompt()?.prompt).toBe("Keep my edit");
+  });
+
+  it("does not let a pending startup response overwrite a newly selected manual prompt", async () => {
+    let complete!: (value: any) => void;
+    const pending = service.initialize({
+      query: () =>
+        new Promise((resolve) => {
+          complete = resolve;
+        }),
+    });
+    service.applyManualSelection({
+      name: "User prompt",
+      prompt: "Keep the newer selection",
+    });
+    complete({ id: "stale", prompt: "Old startup reply" });
+    await pending;
+    expect(service.getSelectedPrompt()?.prompt).toBe(
+      "Keep the newer selection",
+    );
+  });
+
+  it("a newer authenticated query wins over an earlier startup response", async () => {
+    let complete!: (value: any) => void;
+    const pending = service.initialize({
+      query: () =>
+        new Promise((resolve) => {
+          complete = resolve;
+        }),
+    });
+    await service.initialize({
+      query: async () => ({ id: "current", prompt: "New session" }),
+    });
+    complete({ id: "stale", prompt: "Old startup reply" });
+    await pending;
+    expect(service.getSelectedPrompt()?.llmDetailsId).toBe("current");
+  });
+
+  it("does not retain a previous automatic account prompt after a denied refresh", async () => {
+    const root = fs.mkdtempSync(
+      path.join(tmpdir(), "valoride-prompt-refresh-"),
+    );
+    try {
+      const fresh = new LLMPromptService(root, mockLogger);
+      await fresh.initialize({
+        query: async () => ({
+          id: "previous-account",
+          prompt: "Previous account prompt",
+        }),
+      });
+      await fresh.initialize({ query: async () => null });
+      expect(fresh.getSelectedPrompt()).toBeNull();
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it.each(["error", "empty", "missing-body"])(
+    "uses the local fallback when a remote response is %s",
+    async (outcome) => {
+      const root = fs.mkdtempSync(
+        path.join(tmpdir(), "valoride-prompt-fallback-"),
+      );
+      try {
+        fs.mkdirSync(path.join(root, ".valoride/prompts"), { recursive: true });
+        fs.writeFileSync(
+          path.join(root, ".valoride/prompts/system.json"),
+          JSON.stringify("Local prompt"),
+        );
+        const fresh = new LLMPromptService(root, mockLogger);
+        await fresh.initialize({
+          query: async () => {
+            if (outcome === "error") throw new Error("Unavailable");
+            return outcome === "empty"
+              ? null
+              : { id: "no-body", initialPrompt: " " };
+          },
+        });
+        expect(fresh.getSelectedPrompt()?.prompt).toBe("Local prompt");
+        expect(fresh.getSelectedPrompt()?.source).toBe("fallback");
+      } finally {
+        fs.rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("accepts nested records with JSON prompt tags and metadata while excluding premium records", () => {
+    const selected = selectBestLlmDetailsPrompt(
+      {
+        data: {
+          data: {
+            records: [
+              null,
+              "invalid",
+              {
+                id: "blocked",
+                prompt: "Private",
+                metaData: '{"accessStatus":"BLOCKED"}',
+              },
+              {
+                id: "premium",
+                prompt: "Private",
+                metaData: '{"isPremium":true}',
+              },
+              {
+                id: "generic",
+                prompt: "Generic",
+                tags: ["system"],
+                ratingScore: 5,
+              },
+              {
+                id: "stack",
+                systemPrompt: "Stack prompt",
+                promptTags: '["typescript"]',
+                metaData:
+                  '{"tags":["thorapi"],"promptType":"append","ratingScore":4.8}',
+              },
+            ],
+          },
+        },
+      },
+      ["typescript", "thorapi", "system"],
+    );
+    expect(selected?.id).toBe("stack");
+    expect(selected?.tags).toEqual(["typescript", "thorapi"]);
+    expect(selected?.ratingScore).toBe(4.8);
+  });
+
+  it("handles malformed records and bounds cyclic wrapper traversal", () => {
+    const cyclic: any = {};
+    cyclic.data = cyclic;
+    expect(selectBestLlmDetailsPrompt(cyclic, [])).toBeNull();
+    expect(
+      selectBestLlmDetailsPrompt(
+        [null, false, "string", [], { initialPrompt: 7 }],
+        [],
+      ),
+    ).toBeNull();
+    const selected = selectBestLlmDetailsPrompt(
+      [
+        {
+          id: "valid",
+          initialPrompt: " ",
+          systemPrompt: "Usable",
+          metaData: "invalid json",
+        },
+      ],
+      [],
+    );
+    expect(selected?.id).toBe("valid");
   });
 });
