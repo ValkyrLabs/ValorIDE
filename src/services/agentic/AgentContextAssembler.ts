@@ -1,4 +1,10 @@
 import {
+  evaluateGrayMatterReceiptPolicy,
+  extractGrayMatterReceiptMetadata,
+  redactGrayMatterPromptText,
+  type GrayMatterReceiptMetadata as ReceiptMetadata,
+} from "@services/graymatter/GrayMatterReceiptPolicy";
+import {
   GrayMatterClient,
   GrayMatterClientError,
   GrayMatterContextPageCompileInput,
@@ -27,7 +33,7 @@ export interface GrayMatterReadableClient {
     input: GrayMatterContextPagePromptInput,
   ) => Promise<unknown>;
   listMemory?: () => Promise<unknown>;
-  queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
+  queryMemory?: (query: GrayMatterMemoryQuery) => Promise<unknown>;
   retrieveMemoryWithReceipt?: (
     query: GrayMatterRetrievalReceiptQuery,
   ) => Promise<unknown>;
@@ -93,19 +99,6 @@ export interface AssembleAgentContextInput {
 
 type MemoryEntryLike = Record<string, unknown>;
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
-
-interface ReceiptMetadata {
-  answerAllowed?: boolean;
-  answerPolicy?: string;
-  caveatRequired?: boolean;
-  disposition?: string;
-  receiptId?: string;
-  recommendedAction?: string;
-  retrievalStatus?: string;
-  requiredActions?: string[];
-  traceId?: string;
-  warning?: string;
-}
 
 interface ContextReadResponse {
   metadata?: ReceiptMetadata;
@@ -266,6 +259,60 @@ export class AgentContextAssembler {
       });
       const compiledRecord = isRecord(compiled) ? compiled : {};
       const page = getRecordField(compiledRecord, "contextPage");
+      const compiledReceipt = getRecordField(page ?? {}, "retrievalReceipt");
+      const explicitPolicy =
+        getRecordField(compiledRecord, "graymatterPolicy") ??
+        getRecordField(page ?? {}, "graymatterPolicy");
+      if (
+        explicitPolicy ||
+        (compiledReceipt &&
+          [
+            "answerPolicy",
+            "retrievalStatus",
+            "answerAllowed",
+            "graymatterPolicy",
+          ].some((key) => key in compiledReceipt))
+      ) {
+        const metadata = extractGrayMatterReceiptMetadata({
+          graymatterPolicy: explicitPolicy,
+          receipt: {
+            ...compiledReceipt,
+            graymatterPolicy:
+              compiledReceipt?.graymatterPolicy ?? page?.graymatterPolicy,
+            traceId: compiledReceipt?.traceId ?? page?.traceId,
+          },
+        });
+        const policy = evaluateGrayMatterReceiptPolicy(metadata);
+        if (!policy.allowsContext) {
+          const status: GrayMatterReadStatus =
+            policy.state === "denied"
+              ? "forbidden"
+              : policy.state === "quota"
+                ? "quota"
+                : "unavailable";
+          const read: GrayMatterTranscriptRead = {
+            at: readAt,
+            citations: [],
+            query,
+            status,
+          };
+          applyReceiptDetails(read, metadata, policy.warning);
+          return {
+            grayMatter: {
+              citations: [],
+              error: policy.warning,
+              query,
+              reads: [read],
+              status,
+            },
+            promptSection: formatGrayMatterPromptSection(
+              status,
+              [],
+              policy.warning,
+            ),
+          };
+        }
+      }
       const pageStatus = getStringField(page ?? {}, "status")?.toLowerCase();
       if (
         pageStatus &&
@@ -364,46 +411,59 @@ export class AgentContextAssembler {
   ): Promise<ContextReadResponse> {
     const grayMatter = this.options.grayMatter;
 
-    if (grayMatter?.listMemory) {
-      try {
-        const listedMemory = await grayMatter.listMemory();
-        const relevantEntries = rankRelevantMemoryEntries(listedMemory, input);
-        if (relevantEntries.length || !grayMatter.retrieveMemoryWithReceipt) {
-          return { value: relevantEntries };
-        }
-      } catch (error) {
-        if (
-          error instanceof GrayMatterClientError &&
-          error.kind !== "unavailable"
-        ) {
-          throw error;
-        }
-        if (!grayMatter.retrieveMemoryWithReceipt) {
-          throw error;
-        }
-      }
-    }
-
     if (!grayMatter?.retrieveMemoryWithReceipt) {
+      // Keep the newer ACL-scoped compatibility path for clients that do not
+      // expose receipt retrieval. It cannot replace a receipt policy decision.
+      if (grayMatter?.listMemory) {
+        return {
+          value: rankRelevantMemoryEntries(
+            await grayMatter.listMemory(),
+            input,
+          ),
+        };
+      }
       return {
         warning:
           "graymatter_acl_scoped_memory_read_unavailable:direct_query_not_authorized",
       };
     }
 
-    const receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
-      includeEvaluator: false,
-      includeItems: true,
-      includeText: true,
-      qualityProfile: "DEFAULT",
-      query: query.query,
-      retrievalMode: "HYBRID",
-      topK: query.limit ?? DEFAULT_MAX_ENTRIES,
-    });
-    const metadata = extractReceiptMetadata(receiptResponse);
-    const policyWarning = receiptPolicyWarning(metadata);
+    let receiptResponse: unknown;
+    try {
+      receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
+        includeEvaluator: false,
+        includeItems: true,
+        includeText: true,
+        qualityProfile: "DEFAULT",
+        query: query.query,
+        retrievalMode: "HYBRID",
+        topK: query.limit ?? DEFAULT_MAX_ENTRIES,
+      });
+    } catch (error) {
+      if (
+        grayMatter.listMemory &&
+        error instanceof GrayMatterClientError &&
+        error.kind === "unavailable" &&
+        (error.status === 404 || error.status === 405)
+      ) {
+        // Older servers can lack the custom receipt route while serving the
+        // authenticated, tenant-scoped generated MemoryEntry endpoint. Never
+        // take this path after an auth/quota failure, timeout or policy result.
+        return {
+          value: rankRelevantMemoryEntries(
+            await grayMatter.listMemory(),
+            input,
+          ),
+        };
+      }
+      throw error;
+    }
+    const metadata = extractGrayMatterReceiptMetadata(receiptResponse);
+    const policy = evaluateGrayMatterReceiptPolicy(metadata);
+    const policyWarning =
+      policy.state === "allowed" ? undefined : policy.warning;
 
-    if (receiptPolicyBlocks(metadata)) {
+    if (!policy.allowsContext) {
       return {
         metadata,
         warning: policyWarning,
@@ -696,6 +756,7 @@ const getCitationContent = (entry: MemoryEntryLike) =>
   getStringField(entry, "content") ??
   getStringField(entry, "summary") ??
   getStringField(entry, "textPreview") ??
+  getStringField(entry, "excerpt") ??
   getStringField(entry, "text") ??
   getStringField(entry, "body");
 
@@ -744,7 +805,7 @@ const formatCitation = (citation: GrayMatterContextCitation) => {
     citation.tags?.length ? `(${citation.tags.join(", ")})` : undefined,
   ].filter(Boolean);
 
-  return `- ${parts.join(" ")}: ${citation.excerpt}`;
+  return redactSensitive(`- ${parts.join(" ")}: ${citation.excerpt}`);
 };
 
 const getStringField = (
@@ -822,211 +883,6 @@ const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
   return getStringField(metadata, "title");
 };
 
-const extractReceiptMetadata = (
-  response: unknown,
-): ReceiptMetadata | undefined => {
-  if (!isRecord(response)) {
-    return undefined;
-  }
-  const receipt = isRecord(response.receipt) ? response.receipt : undefined;
-  const policy = extractGrayMatterPolicy(response, receipt);
-  if (!receipt && !policy) {
-    return undefined;
-  }
-
-  const metadata: ReceiptMetadata = {
-    answerAllowed: policy
-      ? getBooleanField(policy, "answerAllowed")
-      : undefined,
-    answerPolicy:
-      getStringField(policy ?? {}, "answerPolicy") ??
-      getStringField(receipt ?? {}, "answerPolicy"),
-    caveatRequired: policy
-      ? getBooleanField(policy, "caveatRequired")
-      : undefined,
-    disposition: policy ? getStringField(policy, "disposition") : undefined,
-    receiptId:
-      getStringField(policy ?? {}, "receiptId") ??
-      getStringField(receipt ?? {}, "receiptId"),
-    recommendedAction:
-      getStringField(policy ?? {}, "recommendedAction") ??
-      getStringField(receipt ?? {}, "recommendedAction"),
-    retrievalStatus:
-      getStringField(policy ?? {}, "retrievalStatus") ??
-      getStringField(receipt ?? {}, "retrievalStatus"),
-    requiredActions: policy
-      ? getStringArrayField(policy, "requiredActions")
-      : undefined,
-    traceId:
-      getStringField(policy ?? {}, "traceId") ??
-      getStringField(receipt ?? {}, "traceId"),
-    warning: policy ? getStringField(policy, "warning") : undefined,
-  };
-
-  return Object.values(metadata).some((value) => value !== undefined)
-    ? metadata
-    : undefined;
-};
-
-const extractGrayMatterPolicy = (
-  response: MemoryEntryLike,
-  receipt?: MemoryEntryLike,
-): MemoryEntryLike | undefined => {
-  const topLevelPolicy = response.graymatterPolicy;
-  if (isRecord(topLevelPolicy)) {
-    return topLevelPolicy;
-  }
-
-  const receiptPolicy = receipt?.graymatterPolicy;
-  return isRecord(receiptPolicy) ? receiptPolicy : undefined;
-};
-
-const getBooleanField = (
-  record: MemoryEntryLike,
-  key: string,
-): boolean | undefined => {
-  const value = record[key];
-  return typeof value === "boolean" ? value : undefined;
-};
-
-const receiptPolicyBlocks = (metadata?: ReceiptMetadata): boolean => {
-  if (!metadata) {
-    return false;
-  }
-
-  const disposition = metadata.disposition?.toLowerCase();
-  if (metadata.answerAllowed === false && metadata.caveatRequired !== true) {
-    return true;
-  }
-  if (
-    disposition &&
-    [
-      "deny",
-      "denied",
-      "do_not_answer",
-      "do_not_answer_from_memory",
-      "require_clarification",
-      "require_retry",
-      "retry",
-      "clarify",
-    ].includes(disposition)
-  ) {
-    return true;
-  }
-
-  const answerPolicy = metadata.answerPolicy;
-  const retrievalStatus = metadata.retrievalStatus;
-  const recommendedAction = metadata.recommendedAction;
-  return (
-    [
-      "DENY",
-      "DO_NOT_ANSWER_CONFIDENTLY",
-      "REQUIRE_CLARIFICATION",
-      "REQUIRE_RETRY",
-    ].includes(answerPolicy ?? "") ||
-    [
-      "ACCESS_DENIED",
-      "CONFLICTING_CONTEXT",
-      "ERROR",
-      "EVALUATOR_REJECTED",
-      "LOW_CONFIDENCE",
-      "PARTIAL_COVERAGE",
-      "POLICY_REDACTED",
-      "RETRY_REQUIRED",
-      "STALE_CONTEXT",
-    ].includes(retrievalStatus ?? "") ||
-    [
-      "ASK_CLARIFYING_QUESTION",
-      "DO_NOT_ANSWER",
-      "ESCALATE_TO_USER",
-      "RETRY_SAME_QUERY",
-      "RETRY_WITH_EXPANDED_QUERY",
-      "RETRY_WITH_RECENCY_BIAS",
-      "RETRY_WITH_SCHEMA_FILTER",
-      "RUN_EVALUATOR",
-    ].includes(recommendedAction ?? "")
-  );
-};
-
-const receiptPolicyWarning = (
-  metadata?: ReceiptMetadata,
-): string | undefined => {
-  if (!metadata) {
-    return undefined;
-  }
-
-  const answerPolicy = metadata.answerPolicy;
-  const retrievalStatus = metadata.retrievalStatus;
-  const recommendedAction = metadata.recommendedAction;
-  const blockedPolicy = [
-    "DENY",
-    "DO_NOT_ANSWER_CONFIDENTLY",
-    "REQUIRE_CLARIFICATION",
-    "REQUIRE_RETRY",
-  ].includes(answerPolicy ?? "");
-  const blockedStatus = [
-    "ACCESS_DENIED",
-    "CONFLICTING_CONTEXT",
-    "ERROR",
-    "EVALUATOR_REJECTED",
-    "LOW_CONFIDENCE",
-    "PARTIAL_COVERAGE",
-    "POLICY_REDACTED",
-    "RETRY_REQUIRED",
-    "STALE_CONTEXT",
-  ].includes(retrievalStatus ?? "");
-  const blockedAction = [
-    "ASK_CLARIFYING_QUESTION",
-    "DO_NOT_ANSWER",
-    "ESCALATE_TO_USER",
-    "RETRY_SAME_QUERY",
-    "RETRY_WITH_EXPANDED_QUERY",
-    "RETRY_WITH_RECENCY_BIAS",
-    "RETRY_WITH_SCHEMA_FILTER",
-    "RUN_EVALUATOR",
-  ].includes(recommendedAction ?? "");
-
-  const policyDisposition = metadata.disposition;
-  const policyActions = metadata.requiredActions?.join(",");
-  const policyWarning = metadata.warning;
-  const policyAnswerAllowed =
-    metadata.answerAllowed === undefined
-      ? undefined
-      : `answerAllowed=${metadata.answerAllowed}`;
-  const policyCaveatRequired =
-    metadata.caveatRequired === undefined
-      ? undefined
-      : `caveatRequired=${metadata.caveatRequired}`;
-  const policyCaveat = metadata.caveatRequired === true;
-  const policyBlocked = receiptPolicyBlocks(metadata);
-
-  if (
-    !blockedPolicy &&
-    !blockedStatus &&
-    !blockedAction &&
-    !policyBlocked &&
-    !policyCaveat &&
-    !policyWarning
-  ) {
-    return undefined;
-  }
-
-  return [
-    metadata.receiptId ? `receiptId=${metadata.receiptId}` : undefined,
-    metadata.traceId ? `traceId=${metadata.traceId}` : undefined,
-    answerPolicy ? `answerPolicy=${answerPolicy}` : undefined,
-    retrievalStatus ? `retrievalStatus=${retrievalStatus}` : undefined,
-    recommendedAction ? `recommendedAction=${recommendedAction}` : undefined,
-    policyAnswerAllowed,
-    policyCaveatRequired,
-    policyDisposition ? `disposition=${policyDisposition}` : undefined,
-    policyActions ? `requiredActions=${policyActions}` : undefined,
-    policyWarning,
-  ]
-    .filter(Boolean)
-    .join(" ");
-};
-
 const uniqueStrings = (values: Array<string | undefined>) =>
   Array.from(
     new Set(values.filter((value): value is string => Boolean(value))),
@@ -1059,14 +915,7 @@ const isContextReadResponse = (
 const formatReadError = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
-const redactSensitive = (value: string) =>
-  value
-    .replace(/(authorization\s*:\s*bearer\s+)[^\s,;]+/gi, "$1[REDACTED]")
-    .replace(/\b(bearer\s+)[^\s,;]+/gi, "$1[REDACTED]")
-    .replace(
-      /\b[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{8,}\b/g,
-      "[REDACTED_JWT]",
-    );
+const redactSensitive = redactGrayMatterPromptText;
 
 const truncate = (value: string, maxChars: number) => {
   const normalized = value.replace(/\s+/g, " ").trim();

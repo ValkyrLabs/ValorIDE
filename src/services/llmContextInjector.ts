@@ -201,7 +201,7 @@ export class LLMContextInjector {
 
     if (
       grayMatterConfig?.enabled &&
-      grayMatterConfig.queryMemory &&
+      grayMatterConfig.retrieveMemoryWithReceipt &&
       this.grayMatterContextProvider
     ) {
       const context = await this.grayMatterContextProvider.getContextForPrompt(

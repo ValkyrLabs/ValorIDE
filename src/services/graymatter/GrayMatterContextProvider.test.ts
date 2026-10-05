@@ -15,6 +15,74 @@ const baseConfig = (
 });
 
 describe("GrayMatterContextProvider", () => {
+  it("injects actual Lite compiler excerpts with receipt-only callbacks and no hosted login", async () => {
+    const provider = new GrayMatterContextProvider();
+    const receiptId = "ca944002-b655-4f31-adcc-886fcd6e085c";
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receiptId,
+      contextPageRef: receiptId,
+      policyVersion: "bifrost-lite-context/v1",
+      contextHash: "a".repeat(64),
+      retrievalStatus: "SUFFICIENT_CONTEXT",
+      answerPolicy: "ANSWER_WITH_CITATIONS",
+      recommendedAction: "use_context",
+      staleRefs: [],
+      omittedRefs: [],
+      items: [
+        {
+          memoryId: "local-memory",
+          type: "decision",
+          excerpt: "Keep local edits. password=example-fixture-value",
+          sourceHash: "b".repeat(64),
+        },
+      ],
+    }));
+    const result = await provider.getContextForPrompt("Preserve edits", {
+      enabled: true,
+      maxTokens: 400,
+      scopes: ["project"],
+      retrieveMemoryWithReceipt,
+    });
+    expect(result?.formattedBlock).toContain("[gm:local-memory]");
+    expect(result?.formattedBlock).toContain("Keep local edits.");
+    expect(result?.formattedBlock).not.toContain("example-fixture-value");
+    expect(result?.retrievalReceiptIds).toEqual([receiptId]);
+    expect(result?.retrievalTraceIds).toEqual([receiptId]);
+  });
+
+  it.each([
+    { items: [{ memoryId: "unsafe", text: "Unsafe receiptless text" }] },
+    {
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        retrievalStatus: "OK",
+        items: [{ memoryId: "unsafe", text: "Unsafe unauditable text" }],
+      },
+    },
+    {
+      receipt: {
+        receiptId: "receipt",
+        traceId: "trace",
+        answerPolicy: "FUTURE_ALLOW",
+        retrievalStatus: "OK",
+        caveatRequired: true,
+        items: [{ memoryId: "unsafe", text: "Unsafe unknown policy" }],
+      },
+    },
+  ])(
+    "omits malformed or unknown receipt context without direct-query fallback %j",
+    async (reply) => {
+      const queryMemory = jest.fn();
+      const provider = new GrayMatterContextProvider();
+      const result = await provider.getContextForPrompt(
+        "safe context",
+        baseConfig(queryMemory, async () => reply),
+      );
+      expect(result).toBeNull();
+      expect(queryMemory).not.toHaveBeenCalled();
+    },
+  );
+
   it("omits prompt context rather than direct-querying when receipt retrieval is unavailable", async () => {
     const appendLine = jest.fn();
     const provider = new GrayMatterContextProvider({ appendLine }, () => 1000);
@@ -210,11 +278,22 @@ describe("GrayMatterContextProvider", () => {
     const retrieveMemoryWithReceipt = jest
       .fn()
       .mockResolvedValueOnce({
-        receipt: { answerPolicy: "ALLOW_ANSWER", items: [invariant] },
+        receipt: {
+          answerPolicy: "ALLOW_ANSWER",
+          items: [invariant],
+          receiptId: "invariant-receipt",
+          traceId: "invariant-trace",
+          retrievalStatus: "OK",
+          recommendedAction: "ANSWER",
+        },
       })
       .mockResolvedValueOnce({
         receipt: {
           answerPolicy: "ALLOW_ANSWER",
+          receiptId: "context-receipt",
+          traceId: "context-trace",
+          retrievalStatus: "OK",
+          recommendedAction: "ANSWER",
           items: [
             invariant,
             {

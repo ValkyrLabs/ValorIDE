@@ -121,7 +121,7 @@ describe("LLMContextInjector", () => {
     expect(typeof partialPrompt).toBe("string");
   });
 
-  it("preserves the receipt-backed retriever when injecting GrayMatter context", async () => {
+  it("supports receipt-only GrayMatter injection without requiring a legacy query callback", async () => {
     let receivedConfig: { retrieveMemoryWithReceipt?: unknown } | undefined;
     const receiptRetriever = async () => ({ receipt: { items: [] } });
     const provider = {
@@ -136,7 +136,6 @@ describe("LLMContextInjector", () => {
       grayMatter: {
         enabled: true,
         maxTokens: 400,
-        queryMemory: async () => ({ results: [] }),
         retrieveMemoryWithReceipt: receiptRetriever,
         scopes: ["project", "organization", "user"],
       },

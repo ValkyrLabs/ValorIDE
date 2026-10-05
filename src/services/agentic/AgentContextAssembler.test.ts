@@ -1,3 +1,7 @@
+import {
+  clearCredentialOrigins,
+  registerCredentialOrigin,
+} from "@shared/CredentialOrigin";
 import { GrayMatterClientError } from "@services/graymatter/GrayMatterClient";
 import {
   AgentContextAssembler,
@@ -34,7 +38,184 @@ const readySession = {
   status: "ready",
 } as const;
 
+beforeEach(() => clearCredentialOrigins());
+afterEach(() => clearCredentialOrigins());
+
 describe("AgentContextAssembler", () => {
+  it("uses flat Lite compiler excerpts and their explicit correlation reference", async () => {
+    const receiptId = "ca944002-b655-4f31-adcc-886fcd6e085c";
+    const listMemory = jest.fn();
+    const context = await new AgentContextAssembler({
+      grayMatter: {
+        listMemory,
+        retrieveMemoryWithReceipt: async () => ({
+          receiptId,
+          contextPageRef: receiptId,
+          policyVersion: "bifrost-lite-context/v1",
+          contextHash: "a".repeat(64),
+          retrievalStatus: "SUFFICIENT_CONTEXT",
+          answerPolicy: "ANSWER_WITH_CITATIONS",
+          recommendedAction: "use_context",
+          staleRefs: [],
+          omittedRefs: [],
+          items: [
+            {
+              memoryId: "local-memory",
+              type: "decision",
+              excerpt:
+                "Keep local project edits. api_key=example-fixture-value",
+            },
+          ],
+        }),
+      },
+    }).assemble({ task: "Preserve edits" });
+    expect(context.grayMatter.status).toBe("ready");
+    expect(context.promptSection).toContain("[gm:local-memory]");
+    expect(context.promptSection).not.toContain("example-fixture-value");
+    expect(context.grayMatter.reads[0]).toMatchObject({
+      receiptIds: [receiptId],
+      traceIds: [receiptId],
+    });
+    expect(listMemory).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      receipt: {
+        receiptId: "r",
+        traceId: "t",
+        answerPolicy: "DENY",
+        retrievalStatus: "ACCESS_DENIED",
+      },
+    },
+    {
+      receipt: {
+        receiptId: "r",
+        traceId: "t",
+        answerPolicy: "REQUIRE_RETRY",
+        retrievalStatus: "LOW_CONFIDENCE",
+      },
+    },
+    {
+      receipt: {
+        receiptId: "r",
+        answerPolicy: "ALLOW_ANSWER",
+        retrievalStatus: "OK",
+      },
+    },
+    { items: [{ memoryId: "unsafe", text: "Unaudited memory" }] },
+  ])(
+    "does not bypass a blocked or malformed receipt through the scoped list %j",
+    async (reply) => {
+      const listMemory = jest.fn(async () => [
+        { id: "unreviewed", text: "Never inject this fallback" },
+      ]);
+      const queryMemory = jest.fn();
+      const context = await new AgentContextAssembler({
+        grayMatter: {
+          listMemory,
+          queryMemory,
+          retrieveMemoryWithReceipt: async () => reply,
+        },
+      }).assemble({ task: "Safe task" });
+      expect(context.grayMatter.status).toBe("unavailable");
+      expect(context.grayMatter.citations).toEqual([]);
+      expect(listMemory).not.toHaveBeenCalled();
+      expect(queryMemory).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([401, 403, 429, 500])(
+    "does not use legacy reads after HTTP %s receipt failures",
+    async (status) => {
+      const listMemory = jest.fn();
+      const context = await new AgentContextAssembler({
+        grayMatter: {
+          listMemory,
+          retrieveMemoryWithReceipt: async () => {
+            throw new GrayMatterClientError(
+              "Receipt failed",
+              status === 401
+                ? "unauthenticated"
+                : status === 403
+                  ? "forbidden"
+                  : status === 429
+                    ? "quota"
+                    : "unavailable",
+              status,
+            );
+          },
+        },
+      }).assemble({ task: "Safe task" });
+      expect(context.grayMatter.status).not.toBe("ready");
+      expect(listMemory).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps authorized generated MemoryEntry compatibility only when the custom receipt route is absent", async () => {
+    const listMemory = jest.fn(async () => [
+      {
+        id: "legacy-memory",
+        text: "Keep ValorIDE generated ThorAPI clients.",
+        tags: ["valoride", "thorapi"],
+      },
+    ]);
+    const context = await new AgentContextAssembler({
+      grayMatter: {
+        listMemory,
+        retrieveMemoryWithReceipt: async () => {
+          throw new GrayMatterClientError(
+            "Receipt route missing",
+            "unavailable",
+            404,
+          );
+        },
+      },
+    }).assemble({ task: "ValorIDE ThorAPI" });
+    expect(context.grayMatter.status).toBe("ready");
+    expect(listMemory).toHaveBeenCalledTimes(1);
+  });
+
+  it("cannot project or bypass an explicit ContextPage receipt denial", async () => {
+    const compileContextPagePrompt = jest.fn();
+    const listMemory = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn();
+    const context = await new AgentContextAssembler({
+      grayMatter: {
+        compileContextPage: async () => ({
+          contextPage: {
+            pageRef: "page",
+            status: "ready",
+            traceId: "trace-denied",
+            retrievalReceipt: {
+              receiptId: "receipt-denied",
+              answerPolicy: "DENY",
+              retrievalStatus: "ACCESS_DENIED",
+            },
+            items: [
+              {
+                itemRef: "unsafe",
+                summary: "This denied content must not enter the prompt",
+              },
+            ],
+          },
+        }),
+        compileContextPagePrompt,
+        listMemory,
+        retrieveMemoryWithReceipt,
+      },
+    }).assemble({ task: "Safe task" });
+    expect(context.grayMatter.status).toBe("forbidden");
+    expect(context.grayMatter.reads[0]).toMatchObject({
+      receiptIds: ["receipt-denied"],
+      traceIds: ["trace-denied"],
+    });
+    expect(context.promptSection).not.toContain("This denied content");
+    expect(compileContextPagePrompt).not.toHaveBeenCalled();
+    expect(listMemory).not.toHaveBeenCalled();
+    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+  });
+
   it("prefers a bounded Bifrost ContextPage prompt with source lineage", async () => {
     const queryMemory = jest.fn();
     const retrieveMemoryWithReceipt = jest.fn();
@@ -130,7 +311,22 @@ describe("AgentContextAssembler", () => {
         type: "decision",
       },
     ]);
-    const retrieveMemoryWithReceipt = jest.fn();
+    const retrieveMemoryWithReceipt = jest.fn(async () => ({
+      receipt: {
+        answerPolicy: "ALLOW_ANSWER",
+        retrievalStatus: "OK",
+        recommendedAction: "ANSWER",
+        receiptId: "receipt-fresh",
+        traceId: "trace-fresh",
+        items: [
+          {
+            memoryId: "memory-fallback",
+            textPreview:
+              "Preserve the GrayMatter receipt and authorization boundary.",
+          },
+        ],
+      },
+    }));
     const assembler = new AgentContextAssembler({
       grayMatter: {
         compileContextPage: jest.fn(async () => ({
@@ -138,10 +334,7 @@ describe("AgentContextAssembler", () => {
             items: [],
             pageRef: "context-page-failed",
             retrievalReceipt: {
-              answerPolicy: "REQUIRE_RETRY",
               receiptId: "receipt-failed",
-              recommendedAction: "RETRY_WITH_EXPANDED_QUERY",
-              retrievalStatus: "LOW_CONFIDENCE",
             },
             status: "failed",
           },
@@ -158,8 +351,8 @@ describe("AgentContextAssembler", () => {
     });
 
     expect(compileContextPagePrompt).not.toHaveBeenCalled();
-    expect(listMemory).toHaveBeenCalledTimes(1);
-    expect(retrieveMemoryWithReceipt).not.toHaveBeenCalled();
+    expect(listMemory).not.toHaveBeenCalled();
+    expect(retrieveMemoryWithReceipt).toHaveBeenCalledTimes(1);
     expect(context.bifrost).toBeUndefined();
     expect(context.grayMatter.status).toBe("ready");
     expect(context.grayMatter.citations).toEqual([
@@ -226,6 +419,7 @@ describe("AgentContextAssembler", () => {
         items: [],
         receiptId: "receipt-fallback",
         retrievalStatus: "OK",
+        traceId: "trace-receipt-fallback",
       },
     }));
     const assembler = new AgentContextAssembler({
@@ -369,6 +563,7 @@ describe("AgentContextAssembler", () => {
         receiptId: "receipt-empty",
         recommendedAction: "ANSWER",
         retrievalStatus: "OK",
+        traceId: "trace-receipt-empty",
       },
     }));
     const assembler = new AgentContextAssembler({
@@ -387,7 +582,7 @@ describe("AgentContextAssembler", () => {
     expect(context.grayMatter.reads[0]?.warning).toBeUndefined();
   });
 
-  it("uses the ACL-scoped MemoryEntry list before the slower receipt path", async () => {
+  it("uses the ACL-scoped MemoryEntry list only when receipt capability is absent", async () => {
     const listMemory = jest.fn(async () => ({
       content: [
         {
@@ -407,10 +602,11 @@ describe("AgentContextAssembler", () => {
         receiptId: "receipt-empty",
         recommendedAction: "ANSWER",
         retrievalStatus: "OK",
+        traceId: "trace-receipt-empty",
       },
     }));
     const assembler = new AgentContextAssembler({
-      grayMatter: { listMemory, queryMemory, retrieveMemoryWithReceipt },
+      grayMatter: { listMemory, queryMemory },
       now: () => new Date("2026-05-13T12:00:00.000Z"),
     });
 
@@ -599,11 +795,20 @@ describe("AgentContextAssembler", () => {
   });
 
   it("creates a task prompt section only when the session can query GrayMatter", async () => {
+    // Positive fixture models authenticated issuance at a literal origin.
+    registerCredentialOrigin("session-token", "https://api-0.valkyrlabs.com");
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async (url) =>
         url.endsWith("/graymatter_ops/context_page/compile")
           ? jsonResponse(404, { message: "Not found" })
           : jsonResponse(200, {
+              receipt: {
+                receiptId: "task-receipt",
+                traceId: "task-trace",
+                answerPolicy: "ALLOW_ANSWER",
+                retrievalStatus: "OK",
+                recommendedAction: "ANSWER",
+              },
               results: [
                 {
                   content: "Use server-side RBAC for GrayMatter access.",
@@ -625,7 +830,7 @@ describe("AgentContextAssembler", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api-0.valkyrlabs.com/v1/MemoryEntry",
+      "https://api-0.valkyrlabs.com/v1/graymatter-retrieval-receipts",
       expect.objectContaining({
         headers: expect.objectContaining({
           authorization: "Bearer session-token",
@@ -637,9 +842,18 @@ describe("AgentContextAssembler", () => {
   });
 
   it("passes tenant context through GrayMatter task memory retrieval", async () => {
+    // Positive fixture models authenticated issuance at a literal origin.
+    registerCredentialOrigin("session-token", "https://api-0.valkyrlabs.com");
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>
         jsonResponse(200, {
+          receipt: {
+            receiptId: "tenant-receipt",
+            traceId: "tenant-trace",
+            answerPolicy: "ALLOW_ANSWER",
+            retrievalStatus: "OK",
+            recommendedAction: "ANSWER",
+          },
           results: [
             {
               content: "Use tenant-scoped GrayMatter invariants.",
