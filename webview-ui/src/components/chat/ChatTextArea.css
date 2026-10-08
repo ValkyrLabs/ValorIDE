@@ -1,62 +1,166 @@
+.valoride-chat {
+  --valoride-chat-background: var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
+  --valoride-chat-surface: color-mix(in srgb, var(--valoride-chat-background) 94%, var(--vscode-foreground, #ccc) 6%);
+  --valoride-chat-surface-hover: color-mix(in srgb, var(--valoride-chat-background) 90%, var(--vscode-foreground, #ccc) 10%);
+  --valoride-chat-radius: 14px;
+  background: var(--valoride-chat-background);
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  line-height: 1.5;
+}
+
+/* Keep semantic emphasis in the markup, with a quiet, consistent visual weight. */
+.valoride-chat,
+.valoride-chat * {
+  font-weight: 400 !important;
+}
+
+.valoride-chat p,
+.valoride-chat h1,
+.valoride-chat h2,
+.valoride-chat h3,
+.valoride-chat h4,
+.valoride-chat h5,
+.valoride-chat h6 {
+  font-family: inherit;
+}
+
+.valoride-chat-card {
+  background: var(--valoride-chat-surface);
+  border: none;
+  border-radius: var(--valoride-chat-radius);
+}
+
+.valoride-chat [role="button"]:focus-visible,
+.valoride-chat button:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 3px;
+}
+
+/* Keep keyboard focus inside rounded file cards that clip their contents. */
+.valoride-chat-card > [role="button"]:focus-visible {
+  border-radius: inherit;
+  outline-offset: -2px;
+}
+
+.valoride-chat vscode-button {
+  color: var(--vscode-foreground);
+  border: none;
+  border-radius: var(--valoride-chat-radius);
+  font-weight: 400;
+}
+
+.valoride-chat vscode-button:not([appearance="icon"]):not([appearance="secondary"]) {
+  background: color-mix(in srgb, var(--vscode-button-background) 32%, var(--valoride-chat-surface));
+  color: var(--vscode-foreground);
+}
+
+.valoride-chat vscode-button[appearance="secondary"] {
+  background: var(--valoride-chat-surface-hover);
+  color: var(--vscode-foreground);
+}
+
+.valoride-chat vscode-button::part(control) {
+  border: none;
+  border-radius: inherit;
+  font-weight: 400;
+}
+
+.valoride-chat vscode-button::part(control):focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+.chat-composer {
+  --chat-composer-glow: #61dafb;
+  position: relative;
+  margin: 10px 15px;
+  border: none;
+  border-radius: var(--valoride-chat-radius, 14px);
+  background: var(--valoride-chat-surface, var(--vscode-input-background));
+  box-shadow: 0 0 4px color-mix(in srgb, var(--chat-composer-glow) 16%, transparent);
+}
+
+.chat-composer:has(.chat-text-area.waiting) {
+  --chat-composer-glow: #ff9900;
+}
+
+.chat-composer:has(.chat-text-area.sad) {
+  --chat-composer-glow: #ff5555;
+}
+
+.chat-composer:has(.chat-text-area.waiting, .chat-text-area.sad, .chat-text-area.stubborn, .chat-text-area.extended-thinking) {
+  animation: chatComposerPulse 6s ease-in-out infinite;
+}
+
+.chat-composer:focus-within {
+  outline: 1px solid color-mix(in srgb, var(--vscode-focusBorder) 35%, transparent);
+  outline-offset: 1px;
+}
+
 .chat-text-area {
   width: 100%;
   box-sizing: border-box;
-  background-color: transparent;
+  background: transparent;
   color: var(--vscode-input-foreground);
-  border-radius: 10px;
-  font-family: var(--vscode-font-family);
-  font-size: var(--vscode-editor-font-size);
-  line-height: 2em;
+  border: none;
+  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  font-size: var(--vscode-editor-font-size, 13px);
+  line-height: 1.5;
   resize: none;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: none;
-  padding: 9px 28px 3px 9px;
   flex: 1;
   z-index: 1;
   outline: none;
-  /* default glow color (happy) */
-  --glow-color: #61dafb;
 }
 
-.chat-text-area.happy {
-  --glow-color: #61dafb;
-  border: 1px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color);
+.chat-text-area::placeholder {
+  color: var(--vscode-input-placeholderForeground);
 }
 
-/* Pulse even when happy if extended thinking is enabled */
-.chat-text-area.happy.extended-thinking {
-  animation: glowPulse 1.75s ease-in-out infinite;
+.chat-composer-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--valoride-chat-surface-hover, var(--vscode-button-secondaryBackground));
+  color: var(--vscode-foreground);
+  cursor: pointer;
 }
 
-.chat-text-area.waiting {
-  --glow-color: #ff9900;
-  border: 1px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color);
-  animation: glowPulse 1.75s ease-in-out infinite;
+.chat-composer-send:hover:enabled {
+  background: color-mix(in srgb, var(--vscode-focusBorder) 24%, var(--valoride-chat-surface-hover));
 }
 
-.chat-text-area.sad {
-  --glow-color: #ff0000;
-  border: 1px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color);
-  animation: glowPulse 1.75s ease-in-out infinite;
+.chat-composer-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.chat-text-area.stubborn {
-  /* Keep stubborn mode pulsing regardless of state */
-  animation: glowPulse 1.75s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0% {
-    box-shadow: 0 0 6px var(--glow-color);
+@keyframes chatComposerPulse {
+  0%, 100% {
+    box-shadow: 0 0 2px color-mix(in srgb, var(--chat-composer-glow) 12%, transparent);
   }
   50% {
-    box-shadow: 0 0 16px var(--glow-color);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--chat-composer-glow) 22%, transparent);
   }
-  100% {
-    box-shadow: 0 0 6px var(--glow-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-composer {
+    animation: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .chat-composer:focus-within {
+    outline-color: Highlight;
   }
 }

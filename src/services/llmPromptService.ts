@@ -652,7 +652,7 @@ function normalizeTags(tags: unknown): string[] {
       .filter((tag) => tag.length > 0);
   }
   if (typeof tags === "string") {
-    if (/^[\[{]/.test(tags.trim())) {
+    if (/^[[{]/.test(tags.trim())) {
       try {
         const parsed = JSON.parse(tags);
         if (Array.isArray(parsed)) return normalizeTags(parsed);

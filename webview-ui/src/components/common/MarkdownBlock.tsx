@@ -107,8 +107,8 @@ const remarkPreventBoldFilenames = () => {
 const StyledMarkdown = styled.div`
   pre {
     background-color: ${CODE_BLOCK_BG_COLOR};
-    border-radius: 3px;
-    margin: 13x 0;
+    border-radius: var(--valoride-chat-radius, 14px);
+    margin: 13px 0;
     padding: 10px 10px;
     max-width: calc(100vw - 20px);
     overflow-x: auto;
@@ -145,7 +145,7 @@ const StyledMarkdown = styled.div`
     background-color: var(--vscode-textCodeBlock-background, #1e1e1e);
     padding: 0px 2px;
     border-radius: 3px;
-    border: 1px solid var(--vscode-textSeparator-foreground, #424242);
+    border: none;
     white-space: pre-line;
     word-break: break-word;
     overflow-wrap: anywhere;

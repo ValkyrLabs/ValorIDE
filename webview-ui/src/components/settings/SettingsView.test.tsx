@@ -9,7 +9,7 @@ import {
 import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
 import SettingsView from "./SettingsView";
 
-const harness = vi.hoisted(() => ({ postMessage: vi.fn(), onDone: vi.fn() }));
+const harness = vi.hoisted(() => ({ postMessage: vi.fn(), onDone: vi.fn(), apiError: undefined as string | undefined, modelError: undefined as string | undefined }));
 
 vi.mock("@thorapi/utils/vscode", () => ({
   vscode: { postMessage: harness.postMessage },
@@ -26,8 +26,8 @@ vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   }),
 }));
 vi.mock("@thorapi/utils/validate", () => ({
-  validateApiConfiguration: () => undefined,
-  validateModelId: () => undefined,
+  validateApiConfiguration: () => harness.apiError,
+  validateModelId: () => harness.modelError,
 }));
 vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
   useCommunicationService: () => ({}),
@@ -42,11 +42,6 @@ vi.mock("@thorapi/components/common/OfflineBanner", () => ({
 vi.mock("@thorapi/components/common/SettingsButton", () => ({
   default: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
-  ),
-}));
-vi.mock("../mcp/configuration/McpConfigurationView", () => ({
-  TabButton: ({ children, onClick }: any) => (
-    <button onClick={onClick}>{children}</button>
   ),
 }));
 vi.mock("@vscode/webview-ui-toolkit/react", () => ({
@@ -81,7 +76,7 @@ const response = (data: Record<string, unknown>) =>
   });
 const openBackend = () => {
   render(<SettingsView onDone={harness.onDone} />);
-  fireEvent.click(screen.getByRole("button", { name: "ValkyrAI Backend" }));
+  fireEvent.click(screen.getByRole("tab", { name: "ValkyrAI Backend" }));
 };
 const startTest = (host = "https://new.example") => {
   fireEvent.input(screen.getByLabelText("Base URL"), {
@@ -96,6 +91,7 @@ const startTest = (host = "https://new.example") => {
 describe("ValkyrAI backend Test & Save", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    harness.apiError = undefined; harness.modelError = undefined;
     const stored = new Map<string, string>();
     vi.stubGlobal("localStorage", {
       getItem: (key: string) => stored.get(key) ?? null,
@@ -314,5 +310,28 @@ describe("ValkyrAI backend Test & Save", () => {
     });
     expect(harness.postMessage).toHaveBeenCalledTimes(1);
     expect(harness.onDone).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("invalid settings save recovery", () => {
+  afterEach(() => { cleanup(); harness.apiError = undefined; harness.modelError = undefined; });
+  it("keeps invalid provider settings open and saves only after correction", () => {
+    harness.postMessage.mockClear(); harness.onDone.mockClear(); harness.apiError = "Choose an API provider.";
+    render(<SettingsView onDone={harness.onDone} />);
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose an API provider.");
+    expect(harness.onDone).not.toHaveBeenCalled(); expect(harness.postMessage).not.toHaveBeenCalled();
+    harness.apiError = undefined;
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(harness.postMessage).toHaveBeenCalledWith(expect.objectContaining({ type: "updateSettings" }));
+    expect(harness.onDone).toHaveBeenCalledTimes(1);
+  });
+  it("keeps an invalid model visible without persisting it", () => {
+    harness.postMessage.mockClear(); harness.onDone.mockClear(); harness.modelError = "Choose a valid model.";
+    render(<SettingsView onDone={harness.onDone} />);
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose a valid model.");
+    expect(harness.onDone).not.toHaveBeenCalled(); expect(harness.postMessage).not.toHaveBeenCalled();
   });
 });

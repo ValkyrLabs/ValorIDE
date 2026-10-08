@@ -203,10 +203,10 @@ const TenantAppGenerationPanel = ({
         <div className="tenant-app-generation-alert">{validationMessage}</div>
       )}
       {(isCreating || isRunning || traceQuery.isFetching) && (
-        <div className="tenant-app-generation-alert">Working...</div>
+        <div className="tenant-app-generation-alert" role="status" aria-live="polite">Working...</div>
       )}
       {operationError && (
-        <div className="tenant-app-generation-alert error">{operationError}</div>
+        <div className="tenant-app-generation-alert error" role="alert">{operationError}</div>
       )}
 
       <div className="tenant-app-generation-summary">

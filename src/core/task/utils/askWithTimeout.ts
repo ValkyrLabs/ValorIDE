@@ -22,8 +22,15 @@ export async function awaitAskWithTimeout<
   timeoutMs: number = COMMAND_OUTPUT_TIMEOUT_MS,
   fallback: T = COMMAND_OUTPUT_FALLBACK as T,
 ): Promise<T> {
-  return Promise.race([
-    askPromise,
-    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), timeoutMs)),
-  ]);
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      askPromise,
+      new Promise<T>((resolve) => {
+        timeout = setTimeout(() => resolve(fallback), timeoutMs);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeout);
+  }
 }

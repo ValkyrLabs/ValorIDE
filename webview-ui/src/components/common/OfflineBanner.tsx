@@ -1,45 +1,26 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useReducer, useState } from "react";
+import type { CSSProperties } from "react";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { Notice } from "./Notice";
 
-const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({
-  style,
-}) => {
-  const svc: any = useCommunicationService();
-  const isNoop = !!svc?.isNoop;
-  const [isVisible, setIsVisible] = useState(isNoop); // Banner is visible only if communication is not working
-
+const OfflineBanner = ({ style, onOpenSettings }: { style?: CSSProperties; onOpenSettings?: () => void }) => {
+  const service = useCommunicationService() as any;
+  const [, refresh] = useReducer((value: number) => value + 1, 0);
+  const [phase, setPhase] = useState<string>();
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isNoop) {
-      timer = setTimeout(() => {
-        setIsVisible(false);
-      }, 5000); // Hide after 5 seconds
-    }
-    return () => {
-      if (timer) clearTimeout(timer); // Clear timeout on component unmount
-    };
-  }, [isNoop]); // Re-run effect if isNoop changes
-
-  if (!isVisible) return null; // Do not render if not visible
-
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      style={{
-        margin: "0 10px 6px 10px",
-        padding: "6px 10px",
-        borderRadius: 6,
-        fontSize: 12,
-        color: "var(--vscode-editor-foreground)",
-        background: "var(--vscode-editor-background)",
-        border: "1px solid var(--vscode-inputValidation-warningBorder)",
-        ...style,
-      }}
-    >
-      Communication service unreachable. Features limited.
-    </div>
-  );
+    setPhase(undefined);
+    const update = (status?: { phase?: string }) => { setPhase(status?.phase); refresh(); };
+    service?.on?.("status", update);
+    service?.on?.("error", update);
+    return () => { service?.off?.("status", update); service?.off?.("error", update); };
+  }, [service]);
+  const unavailable = service?.isNoop === true || service?.ready === false || !!service?.error;
+  if (!unavailable) return null;
+  const connecting = !service?.isNoop && !service?.error && phase === "connecting";
+  return <Notice kind={connecting ? "info" : "warn"} style={style}
+    action={onOpenSettings && <VSCodeButton appearance="secondary" onClick={onOpenSettings}>Connection settings</VSCodeButton>}>
+    {connecting ? "Connecting shared features… Local editing remains available." : "Shared connections are unavailable. Local editing remains available."}
+  </Notice>;
 };
-
 export default OfflineBanner;

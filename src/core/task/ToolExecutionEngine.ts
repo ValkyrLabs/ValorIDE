@@ -93,11 +93,18 @@ export class ToolExecutionEngine {
       recordCommandEvidence: (command, result) => {
         this.task.recordCommandEvidence(command, result);
       },
+      shouldAutoApproveCommand: this.task.shouldAutoApproveCommand?.bind(
+        this.task,
+      ),
+      recordCommandApproval: this.task.recordCommandApproval?.bind(this.task),
+      recordCommandOutcome: this.task.recordCommandOutcome?.bind(this.task),
 
       // State
       taskId: this.task.taskId,
       cwd: this.cwd,
-      autoApprovalSettings: this.task.autoApprovalSettings,
+      get autoApprovalSettings() {
+        return task.autoApprovalSettings;
+      },
       didEditFile: this.task.didEditFile,
       get consecutiveMistakeCount() {
         return task.consecutiveMistakeCount;
@@ -105,8 +112,12 @@ export class ToolExecutionEngine {
       set consecutiveMistakeCount(value: number) {
         task.consecutiveMistakeCount = value;
       },
-      consecutiveAutoApprovedRequestsCount:
-        this.task.consecutiveAutoApprovedRequestsCount,
+      get consecutiveAutoApprovedRequestsCount() {
+        return task.consecutiveAutoApprovedRequestsCount;
+      },
+      set consecutiveAutoApprovedRequestsCount(value: number) {
+        task.consecutiveAutoApprovedRequestsCount = value;
+      },
 
       // Callbacks
       say: this.task.say.bind(this.task),
@@ -148,9 +159,10 @@ export class ToolExecutionEngine {
     didAlreadyUseTool: boolean;
     handled: boolean;
   }> {
-    Logger.info(
-      `[ToolExecutionEngine] executeToolBlock start name=${block.name} partial=${block.partial} didReject=${didRejectTool} didAlreadyUse=${didAlreadyUseTool}`,
-    );
+    if (!block.partial)
+      Logger.info(
+        `[ToolExecutionEngine] executeToolBlock start name=${block.name} partial=${block.partial} didReject=${didRejectTool} didAlreadyUse=${didAlreadyUseTool}`,
+      );
     if (didRejectTool) {
       // ignore any tool content after user has rejected tool once
       if (!block.partial) {
@@ -282,7 +294,7 @@ export class ToolExecutionEngine {
       }
     }
 
-    if (effectiveBlock.name !== "browser_action") {
+    if (!effectiveBlock.partial && effectiveBlock.name !== "browser_action") {
       await this.task.browserSession.closeBrowser();
     }
 
@@ -349,7 +361,7 @@ export class ToolExecutionEngine {
       );
 
       // If the ToolManager handled the tool
-      if (result.shouldContinue) {
+      if (result.handled || result.shouldContinue) {
         // Push the tool result if there is one
         if (result.toolResponse) {
           pushToolResult(result.toolResponse);
@@ -365,9 +377,10 @@ export class ToolExecutionEngine {
             );
           }
         }
-        Logger.info(
-          `[ToolExecutionEngine] Tool manager handled ${block.name} shouldContinue=${result.shouldContinue} userRejected=${result.userRejected} didAlreadyUse=${result.didAlreadyUseTool}`,
-        );
+        if (!block.partial)
+          Logger.info(
+            `[ToolExecutionEngine] Tool manager handled ${block.name} shouldContinue=${result.shouldContinue} userRejected=${result.userRejected} didAlreadyUse=${result.didAlreadyUseTool}`,
+          );
 
         return {
           outcome:
@@ -375,7 +388,7 @@ export class ToolExecutionEngine {
             (result.didRejectTool || result.userRejected
               ? "rejected"
               : "unknown"),
-          shouldContinue: true,
+          shouldContinue: result.shouldContinue,
           didRejectTool: result.didRejectTool || result.userRejected || false,
           didAlreadyUseTool: result.didAlreadyUseTool || false,
           handled: true,

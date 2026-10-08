@@ -299,6 +299,16 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
               <div
                 key={item.id}
                 className="history-item"
+                role="group"
+                tabIndex={0}
+                aria-label={item.task}
+                aria-description="Press Enter or Space to open this task."
+                onKeyDown={(event) => {
+                  if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault();
+                    handleHistorySelect(item.id);
+                  }
+                }}
                 style={{
                   cursor: "pointer",
                   borderBottom:

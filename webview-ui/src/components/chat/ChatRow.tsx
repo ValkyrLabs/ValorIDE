@@ -118,13 +118,9 @@ const statusShortLabel: Record<ValorIDEFileChangeStatus, string> = {
 
 const ChangesSummaryContainer = styled.div`
   margin-top: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.08));
-  background: color-mix(
-    in srgb,
-    var(--vscode-editorWidget-background) 82%,
-    transparent
-  );
+  border-radius: var(--valoride-chat-radius, 14px);
+  border: none;
+  background: var(--valoride-chat-surface, var(--vscode-editorWidget-background));
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -196,8 +192,8 @@ const ChangesSummaryRow = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 8px;
-  border: 1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.07));
+  border-radius: var(--valoride-chat-radius, 14px);
+  border: none;
   padding: 8px 10px;
   cursor: pointer;
   gap: 10px;
@@ -207,12 +203,7 @@ const ChangesSummaryRow = styled.button`
     transform 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: color-mix(
-      in srgb,
-      var(--vscode-editorWidget-background) 55%,
-      transparent
-    );
-    border-color: color-mix(in srgb, currentColor 20%, transparent);
+    background: var(--valoride-chat-surface-hover, var(--vscode-list-hoverBackground));
   }
 
   &:disabled {
@@ -452,7 +443,7 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
                     paddingLeft: 44,
                     paddingRight: 24,
                     background: "var(--vscode-editorWidget-background)",
-                    borderRadius: 6,
+                    borderRadius: "var(--valoride-chat-radius, 14px)",
                     marginTop: 6,
                   }}
                 >
@@ -1053,13 +1044,12 @@ export const CompletionSummaryCard = memo(
 
     return (
       <div
+        className="valoride-chat-card"
         style={{
           marginTop: 12,
-          borderRadius: 10,
-          border:
-            "1px solid var(--vscode-editorWidget-border, rgba(255,255,255,0.08))",
-          background:
-            "color-mix(in srgb, var(--vscode-editor-background) 90%, transparent)",
+          borderRadius: "var(--valoride-chat-radius, 14px)",
+          border: "none",
+          background: "var(--valoride-chat-surface)",
           padding: 12,
           display: "flex",
           flexDirection: "column",
@@ -1946,8 +1936,8 @@ export const ChatRowContent = ({
                   marginBottom: "8px",
                   fontSize: "12px",
                   color: "var(--vscode-descriptionForeground)",
-                  border: "1px solid var(--vscode-editorWidget-border)",
-                  borderRadius: 6,
+                  border: "none",
+                  borderRadius: "var(--valoride-chat-radius, 14px)",
                   padding: "8px 10px",
                   display: "flex",
                   alignItems: "center",
@@ -2046,10 +2036,10 @@ export const ChatRowContent = ({
             </div>
             <div
               style={{
-                borderRadius: 3,
+                borderRadius: "var(--valoride-chat-radius, 14px)",
                 backgroundColor: CODE_BLOCK_BG_COLOR,
                 overflow: "hidden",
-                border: "1px solid var(--vscode-editorGroup-border)",
+                border: "none",
               }}
             >
               <div
@@ -2254,8 +2244,8 @@ export const ChatRowContent = ({
         </div>
         <div
           style={{
-            borderRadius: 3,
-            border: "1px solid var(--vscode-editorGroup-border)",
+            borderRadius: "var(--valoride-chat-radius, 14px)",
+            border: "none",
             overflow: "hidden",
             backgroundColor: CODE_BLOCK_BG_COLOR,
           }}
@@ -2353,7 +2343,7 @@ export const ChatRowContent = ({
         <div
           style={{
             background: "var(--vscode-textCodeBlock-background)",
-            borderRadius: "3px",
+            borderRadius: "var(--valoride-chat-radius, 14px)",
             padding: "8px 10px",
             marginTop: "8px",
           }}
@@ -2664,10 +2654,8 @@ export const ChatRowContent = ({
                 />
                 <span
                   style={{
-                    color: isReady
-                      ? "var(--vscode-charts-green)"
-                      : "var(--vscode-editorWarning-foreground)",
-                    fontWeight: 700,
+                    color: "var(--vscode-foreground)",
+                    fontWeight: 400,
                   }}
                 >
                   GrayMatter {isReady ? "memory checked" : "needs attention"}
@@ -2734,16 +2722,18 @@ export const ChatRowContent = ({
           }
           return (
             <div
-              onClick={onToggleExpand}
-              style={{
-                cursor: "pointer",
-                background:
-                  "color-mix(in srgb, var(--vscode-editorWidget-background) 75%, transparent)",
-                border:
-                  "1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.08))",
-                borderRadius: 8,
-                padding: 8,
+              className="valoride-chat-card valoride-reasoning-card"
+              role="button"
+              tabIndex={0}
+              aria-expanded={isExpanded}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onToggleExpand();
+                }
               }}
+              onClick={onToggleExpand}
+              style={{ cursor: "pointer", padding: "10px 12px" }}
             >
               <div
                 style={{
@@ -2870,7 +2860,7 @@ export const ChatRowContent = ({
                   flexDirection: "column",
                   backgroundColor: "var(--vscode-textBlockQuote-background)",
                   padding: 8,
-                  borderRadius: 3,
+                  borderRadius: "var(--valoride-chat-radius, 14px)",
                   fontSize: 12,
                   color: "var(--vscode-foreground)",
                   opacity: 0.8,
@@ -2902,7 +2892,7 @@ export const ChatRowContent = ({
                   flexDirection: "column",
                   backgroundColor: "rgba(255, 191, 0, 0.1)",
                   padding: 8,
-                  borderRadius: 3,
+                  borderRadius: "var(--valoride-chat-radius, 14px)",
                   fontSize: 12,
                 }}
               >
@@ -2939,7 +2929,7 @@ export const ChatRowContent = ({
                 flexDirection: "column",
                 backgroundColor: "rgba(255, 191, 0, 0.1)",
                 padding: 8,
-                borderRadius: 3,
+                borderRadius: "var(--valoride-chat-radius, 14px)",
                 fontSize: 12,
               }}
             >
@@ -3095,7 +3085,7 @@ export const ChatRowContent = ({
                 flexDirection: "column",
                 backgroundColor: "rgba(255, 191, 0, 0.1)",
                 padding: 8,
-                borderRadius: 3,
+                borderRadius: "var(--valoride-chat-radius, 14px)",
                 fontSize: 12,
               }}
             >

@@ -28,7 +28,7 @@ const materialize = (request: jest.Mock, binding = descriptor()) => materializeG
   scopeDigest, "v1.test-only-existing-proof", request as typeof fetch);
 
 describe("governed native coding configuration", () => {
-  it("keeps native tool decisions interactive despite broader ambient preferences", () => {
+  it("retains explicit local approval settings without broadening the signed task", () => {
     const ambient = {
       version: 14,
       enabled: true,
@@ -51,16 +51,15 @@ describe("governed native coding configuration", () => {
 
     expect(governed).toMatchObject({
       version: 14,
-      enabled: false,
+      enabled: true,
       maxRequests: 200,
-      enableNotifications: false,
+      enableNotifications: true,
+      actions: {
+        readFiles: true, editFiles: true, executeSafeCommands: true,
+        readFilesExternally: false, editFilesExternally: false,
+        executeAllCommands: false, useBrowser: false, useMcp: false, useProcedures: false,
+      },
     });
-    expect(Object.values(governed.actions)).toEqual(
-      expect.arrayContaining([false]),
-    );
-    expect(Object.values(governed.actions).every((value) => value === false)).toBe(
-      true,
-    );
     expect(ambient.enabled).toBe(true);
     expect(Object.values(ambient.actions).every((value) => value === true)).toBe(
       true,

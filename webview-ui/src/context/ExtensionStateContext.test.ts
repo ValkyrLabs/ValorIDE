@@ -121,6 +121,8 @@ describe("hasConfiguredApiProvider", () => {
               },
               isLoggedIn: true,
               jwtToken: "jwt-token",
+              credentialOrigin: "http://127.0.0.1:65530",
+              apiConfiguration: { valkyraiHost: "http://127.0.0.1:65530/v1" },
               userInfo: { username: "valor" },
               valorideMessages: [],
               taskHistory: [],

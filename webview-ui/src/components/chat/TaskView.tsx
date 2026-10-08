@@ -37,7 +37,7 @@ const ScrollToBottomButton = styled.div`
     var(--vscode-toolbar-hoverBackground) 55%,
     transparent
   );
-  border-radius: 3px;
+  border-radius: var(--valoride-chat-radius, 14px);
   overflow: hidden;
   cursor: pointer;
   display: flex;
@@ -80,8 +80,8 @@ const ActionButtonsContainer = styled.div`
   flex-wrap: wrap;
   gap: 8px;
   padding: 8px 15px;
-  border-top: 1px solid var(--vscode-editorGroup-border);
-  background-color: var(--vscode-editor-background);
+  border: none;
+  background-color: var(--valoride-chat-background, var(--vscode-sideBar-background));
   position: relative;
   z-index: 1;
   flex-shrink: 0;
@@ -100,8 +100,8 @@ const CommandApprovalPrompt = styled.div`
 const CommandApprovalText = styled.code`
   color: var(--vscode-descriptionForeground);
   background: var(--vscode-textCodeBlock-background);
-  border: 1px solid var(--vscode-editorGroup-border);
-  border-radius: 4px;
+  border: none;
+  border-radius: var(--valoride-chat-radius, 14px);
   padding: 3px 6px;
   min-width: 0;
   overflow: hidden;
@@ -558,8 +558,8 @@ const TaskView: React.FC<TaskViewProps> = ({
               right: "20px",
               background:
                 "color-mix(in srgb, var(--vscode-editor-background) 95%, transparent)",
-              borderRadius: "8px",
-              border: "1px solid var(--vscode-editorGroup-border)",
+              borderRadius: "var(--valoride-chat-radius, 14px)",
+              border: "none",
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
               zIndex: 1000,
             }}

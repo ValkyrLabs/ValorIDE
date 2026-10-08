@@ -1,7 +1,19 @@
 const { transformSync } = require("esbuild");
 const babel = require("@babel/core");
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+const transformerSource = fs.readFileSync(__filename);
 
 module.exports = {
+  getCacheKey(source, filename, options) {
+    return crypto
+      .createHash("sha256")
+      .update(source)
+      .update(filename)
+      .update(options.configString)
+      .update(transformerSource)
+      .digest("hex");
+  },
   process(source, filename) {
     const isTs = filename.endsWith(".ts");
     const isTsx = filename.endsWith(".tsx");
@@ -14,6 +26,8 @@ module.exports = {
       sourcemap: "inline",
       jsx: "automatic",
       sourcefile: filename,
+      // Match tsconfig.json: providers use TypeScript's legacy decorators.
+      tsconfigRaw: { compilerOptions: { experimentalDecorators: true } },
       supported: { "dynamic-import": false },
     });
 

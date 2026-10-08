@@ -12,6 +12,38 @@ export function fixModelHtmlEscaping(text: string): string {
     .replace(/&apos;/g, "'");
 }
 
+/** Repair XML-escaped shell syntax before approval; preserve quoted literal data. */
+export function normalizeModelCommand(command: string): string {
+  let quote: string | undefined;
+  let encodedQuote = false;
+  let result = "";
+  for (let i = 0; i < command.length; i++) {
+    let char = command[i];
+    if (char === "\\" && quote !== "'") {
+      result += command.slice(i, i + 2);
+      i++;
+      continue;
+    }
+    if (char === "&" && (!quote || encodedQuote)) {
+      const entity = command.slice(i).match(/^&(amp|lt|gt|quot|apos);/);
+      if (entity) {
+        char = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" }[entity[1]]!;
+        i += entity[0].length - 1;
+        if (!quote && (char === '"' || char === "'")) encodedQuote = true;
+      }
+    }
+    if (char === '"' || char === "'") {
+      if (!quote) quote = char;
+      else if (quote === char) {
+        quote = undefined;
+        encodedQuote = false;
+      }
+    }
+    result += char;
+  }
+  return result;
+}
+
 /**
  * Removes invalid characters (like the replacement character �) from a string
  * @param text String potentially containing invalid characters

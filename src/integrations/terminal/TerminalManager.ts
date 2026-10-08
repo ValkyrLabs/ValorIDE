@@ -1,4 +1,3 @@
-import pWaitFor from "p-wait-for";
 import * as vscode from "vscode";
 import { arePathsEqual } from "@utils/path";
 import {
@@ -104,25 +103,17 @@ export class TerminalManager {
   private terminalIds: Set<number> = new Set();
   private processes: Map<number, TerminalProcess> = new Map();
   private disposables: vscode.Disposable[] = [];
+  private pendingStarts = new Map<number, () => void>();
   private terminalInstanceToInfo: WeakMap<vscode.Terminal, TerminalInfo> =
     new WeakMap();
 
-  constructor() {
+  constructor(
+    private readonly limits: {
+      shellIntegrationTimeoutMs?: number;
+      foregroundTimeoutMs?: number;
+    } = {},
+  ) {
     let disposable: vscode.Disposable | undefined;
-    try {
-      disposable = (
-        vscode.window as vscode.Window
-      ).onDidStartTerminalShellExecution?.(async (e) => {
-        // Creating a read stream here results in a more consistent output. This is most obvious when running the `date` command.
-        e?.execution?.read();
-      });
-    } catch (error) {
-      // console.error("Error setting up onDidEndTerminalShellExecution", error)
-    }
-    if (disposable) {
-      this.disposables.push(disposable);
-    }
-
     try {
       disposable = (
         vscode.window as vscode.Window
@@ -132,7 +123,9 @@ export class TerminalManager {
           return;
         }
         const process = this.processes.get(terminalInfo.id);
-        process?.handleShellExecutionEnd(e?.exitCode);
+        if (process?.matchesExecution(e?.execution)) {
+          process.handleShellExecutionEnd(e?.exitCode);
+        }
       });
     } catch (error) {
       // console.error("Error setting up onDidEndTerminalShellExecution", error)
@@ -148,6 +141,7 @@ export class TerminalManager {
           return;
         }
         const process = this.processes.get(terminalInfo.id);
+        this.pendingStarts.get(terminalInfo.id)?.();
         process?.handleTerminalClosed();
         TerminalRegistry.removeTerminal(terminalInfo.id);
         this.terminalIds.delete(terminalInfo.id);
@@ -165,10 +159,11 @@ export class TerminalManager {
   runCommand(
     terminalInfo: TerminalInfo,
     command: string,
+    options: { beforeDispatch?: () => boolean } = {},
   ): TerminalProcessResultPromise {
     terminalInfo.busy = true;
     terminalInfo.lastCommand = command;
-    const process = new TerminalProcess();
+    const process = new TerminalProcess(this.limits.foregroundTimeoutMs);
     this.processes.set(terminalInfo.id, process);
     this.terminalInstanceToInfo.set(terminalInfo.terminal, terminalInfo);
 
@@ -190,6 +185,7 @@ export class TerminalManager {
 
     const promise = new Promise<void>((resolve, reject) => {
       process.once("continue", () => {
+        if (process.getState() === "blocked") terminalInfo.busy = false;
         resolve();
       });
       process.once("error", (error) => {
@@ -198,22 +194,58 @@ export class TerminalManager {
       });
     });
 
-    // if shell integration is already active, run the command immediately
-    if (terminalInfo.terminal.shellIntegration) {
-      process.waitForShellIntegration = false;
-      process.run(terminalInfo.terminal, command);
-    } else {
-      // docs recommend waiting 3s for shell integration to activate
-      pWaitFor(() => terminalInfo.terminal.shellIntegration !== undefined, {
-        timeout: 4000,
-      }).finally(() => {
-        const existingProcess = this.processes.get(terminalInfo.id);
-        if (existingProcess && existingProcess.waitForShellIntegration) {
-          existingProcess.waitForShellIntegration = false;
-          existingProcess.run(terminalInfo.terminal, command);
+    // Let consumers attach output/completion listeners before dispatching.
+    queueMicrotask(() => {
+      if (
+        !process.isActive() ||
+        this.processes.get(terminalInfo.id) !== process
+      )
+        return;
+      let dispatched = false;
+      const start = () => {
+        if (dispatched) return;
+        dispatched = true;
+        this.pendingStarts.get(terminalInfo.id)?.();
+        if (
+          !process.isActive() ||
+          this.processes.get(terminalInfo.id) !== process
+        )
+          return;
+        try {
+          if (options.beforeDispatch?.() === false) {
+            process.block();
+            return;
+          }
+        } catch (error) {
+          process.fail(error);
+          return;
         }
+        process.waitForShellIntegration = false;
+        void process
+          .run(terminalInfo.terminal, command)
+          .catch((error) => process.fail(error));
+      };
+      if (terminalInfo.terminal.shellIntegration?.executeCommand) {
+        start();
+        return;
+      }
+      const timer = setTimeout(
+        start,
+        this.limits.shellIntegrationTimeoutMs ?? 3000,
+      );
+      const ready = vscode.window.onDidChangeTerminalShellIntegration?.((e) => {
+        if (
+          e.terminal === terminalInfo.terminal &&
+          e.shellIntegration?.executeCommand
+        )
+          start();
       });
-    }
+      this.pendingStarts.set(terminalInfo.id, () => {
+        clearTimeout(timer);
+        ready?.dispose();
+        this.pendingStarts.delete(terminalInfo.id);
+      });
+    });
 
     return mergePromise(process, promise);
   }
@@ -241,9 +273,15 @@ export class TerminalManager {
     const availableTerminal = terminals.find((t) => !t.busy);
     if (availableTerminal) {
       // Navigate back to the desired directory
-      await this.runCommand(availableTerminal, `cd "${cwd}"`);
-      this.terminalIds.add(availableTerminal.id);
-      return availableTerminal;
+      const navigation = this.runCommand(availableTerminal, `cd "${cwd}"`);
+      await navigation;
+      if (
+        navigation.getState() === "completed" &&
+        navigation.getExitCode() === 0
+      ) {
+        this.terminalIds.add(availableTerminal.id);
+        return availableTerminal;
+      }
     }
 
     // If all terminals are busy, create a new one
@@ -288,6 +326,14 @@ export class TerminalManager {
     // for (const info of this.terminals) {
     // 	//info.terminal.dispose() // dont want to dispose terminals when task is aborted
     // }
+    for (const cleanup of [...this.pendingStarts.values()]) cleanup();
+    for (const [id, process] of this.processes) {
+      if (process.isActive()) {
+        process.cancel();
+        // Leave the user's terminal open, but never reuse an uncertain command.
+        TerminalRegistry.removeTerminal(id);
+      }
+    }
     this.terminalIds.clear();
     this.processes.clear();
     this.terminalInstanceToInfo = new WeakMap();

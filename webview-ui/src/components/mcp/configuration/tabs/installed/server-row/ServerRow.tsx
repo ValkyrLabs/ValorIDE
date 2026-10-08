@@ -1,6 +1,6 @@
 import { McpServer } from "@shared/mcp";
 import { DEFAULT_MCP_TIMEOUT_SECONDS } from "@shared/mcp";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useId } from "react";
 import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
@@ -47,6 +47,7 @@ const ServerRow = ({
   const { mcpMarketplaceCatalog, autoApprovalSettings, setMcpServers } =
     useExtensionState();
 
+  const detailsId = useId();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -142,7 +143,7 @@ const ServerRow = ({
   };
 
   return (
-    <div style={{ marginBottom: "10px" }}>
+    <div className="valoride-surface valoride-mcp-server">
       <div
         style={{
           display: "flex",
@@ -158,28 +159,13 @@ const ServerRow = ({
           borderRadius: isExpanded || server.error ? "4px 4px 0 0" : "4px",
           opacity: server.disabled ? 0.6 : 1,
         }}
-        onClick={handleRowClick}
       >
-        {!server.error &&
-          isExpandable &&
-          (isExpanded ? (
-            <FaChevronDown style={{ marginRight: "8px" }} />
-          ) : (
-            <FaChevronRight style={{ marginRight: "8px" }} />
-          ))}
-        <span
-          style={{
-            flex: 1,
-            overflow: "hidden",
-            wordBreak: "break-all",
-            whiteSpace: "normal",
-            display: "flex",
-            alignItems: "center",
-            marginRight: "4px",
-          }}
-        >
-          {getMcpServerDisplayName(server.name, mcpMarketplaceCatalog)}
-        </span>
+        <button type="button" className="valoride-disclosure" onClick={handleRowClick}
+          disabled={!!server.error || !isExpandable} aria-expanded={isExpanded} aria-controls={detailsId}>
+          {!server.error && isExpandable && (isExpanded ? <FaChevronDown /> : <FaChevronRight />)}
+          <span>{getMcpServerDisplayName(server.name, mcpMarketplaceCatalog)}</span>
+        </button>
+        <span className="valoride-server-state">{server.disabled ? "Disabled" : server.status}</span>
         {/* Collapsed view controls */}
         {!server.error && (
           <div
@@ -224,6 +210,7 @@ const ServerRow = ({
           <div
             role="switch"
             aria-checked={!server.disabled}
+            aria-label={`Enable ${server.name}`}
             tabIndex={0}
             style={{
               width: "20px",
@@ -275,7 +262,7 @@ const ServerRow = ({
       </div>
 
       {server.error ? (
-        <div
+        <div id={detailsId} role="alert"
           style={{
             fontSize: "13px",
             background: "var(--vscode-textCodeBlock-background)",
@@ -321,7 +308,7 @@ const ServerRow = ({
         </div>
       ) : (
         isExpanded && (
-          <div
+          <div id={detailsId}
             style={{
               background: "var(--vscode-textCodeBlock-background)",
               padding: "0 10px 10px 10px",
@@ -456,7 +443,7 @@ const ServerRow = ({
             >
               {server.status === "connecting"
                 ? "Restarting..."
-                : "Restart Server"}
+                : server.status === "disconnected" ? "Retry Connection" : "Restart Server"}
             </VSCodeButton>
 
             <DangerButton

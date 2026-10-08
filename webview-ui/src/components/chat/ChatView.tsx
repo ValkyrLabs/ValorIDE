@@ -237,6 +237,7 @@ const ChatView = ({
 
     return (
       <div
+        className="valoride-chat"
         style={{
           position: "fixed",
           top: 0,

@@ -1726,7 +1726,7 @@ export class Controller {
       taskApiConfiguration = await this.resolveTaskApiConfiguration(apiConfiguration, selectedLlmDetails);
     }
 
-    if (autoApprovalSettings) {
+    if (autoApprovalSettings && !taskApiConfiguration.governedCodingInference) {
       const updatedAutoApprovalSettings = {
         ...autoApprovalSettings,
         version: (autoApprovalSettings.version ?? 1) + 1,
@@ -2329,12 +2329,8 @@ export class Controller {
               "autoApprovalSettings",
               message.autoApprovalSettings,
             );
-            // A governed SWARM task must retain its native interaction floor.
-            // Global UI preferences can still be saved for later ordinary
-            // tasks, but cannot broaden an already-running signed command.
-            if (this.task && !this.task.governedCodingInference) {
-              this.task.autoApprovalSettings = message.autoApprovalSettings;
-            }
+            // Apply reductions immediately; a governed task cannot exceed its original local ceiling.
+            this.task?.updateAutoApprovalSettings(message.autoApprovalSettings);
             await this.postStateToWebview();
           }
         }
@@ -6462,8 +6458,13 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   async clearTask() {
-    this.task?.abortTask();
+    const previousTask = this.task;
     this.task = undefined; // removes reference to it, so once promises end it will be garbage collected
+    if (previousTask) {
+      // An outgoing stream must not restore its history over the replacement task.
+      previousTask.abandoned = true;
+      await previousTask.abortTask();
+    }
   }
 
   // Caching mechanism to keep track of webview messages + API conversation history per provider instance

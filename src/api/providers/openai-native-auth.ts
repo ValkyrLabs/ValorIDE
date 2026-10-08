@@ -11,6 +11,16 @@ export interface ResolveOpenAiNativeAuthTokenOptions {
   nowMs?: number;
 }
 
+/** Credential mode selects its permitted inference transport, not JWT scopes. */
+export type OpenAiNativeAuth =
+  | { mode: "api-key"; token: string }
+  | { mode: "oauth"; token: string; accountId?: string };
+
+const pendingAuthResolutions = new Map<
+  string,
+  Promise<OpenAiNativeAuth | undefined>
+>();
+
 interface CodexAuthTokens {
   access_token?: string;
   refresh_token?: string;
@@ -47,14 +57,18 @@ export interface OpenAiNativeOAuthLoginResult {
 }
 
 const OPENAI_OAUTH_CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
-const OPENAI_OAUTH_AUTHORIZE_ENDPOINT = "https://auth.openai.com/oauth/authorize";
+const OPENAI_OAUTH_AUTHORIZE_ENDPOINT =
+  "https://auth.openai.com/oauth/authorize";
 const OPENAI_OAUTH_TOKEN_ENDPOINT = "https://auth.openai.com/oauth/token";
-const OPENAI_OAUTH_SCOPE =
-  "openid profile email offline_access api.connectors.read api.connectors.invoke";
-const OPENAI_OAUTH_ORIGINATOR = "Codex Desktop";
+// Match OpenClaw's public Codex PKCE flow; Platform API scopes are not this grant.
+const OPENAI_OAUTH_SCOPE = "openid profile email offline_access";
+const OPENAI_OAUTH_ORIGINATOR = "valoride";
 const ACCESS_TOKEN_EXPIRY_SKEW_MS = 60_000;
 const DEFAULT_OAUTH_CALLBACK_PORT = 1455;
 const DEFAULT_OAUTH_TIMEOUT_MS = 5 * 60_000;
+
+const trimString = (value: unknown): string | undefined =>
+  typeof value === "string" ? value.trim() || undefined : undefined;
 
 const parseJwtPayload = (
   token?: string,
@@ -149,11 +163,13 @@ const waitForOAuthCode = async ({
   redirectUri,
   state,
   timeoutMs,
+  signal,
 }: {
   onReady?: () => void;
   redirectUri: string;
   state: string;
   timeoutMs: number;
+  signal?: AbortSignal;
 }): Promise<string> =>
   new Promise((resolve, reject) => {
     const redirectUrl = new URL(redirectUri);
@@ -163,6 +179,7 @@ const waitForOAuthCode = async ({
       if (settled) return;
       settled = true;
       clearTimeout(timeout);
+      signal?.removeEventListener("abort", onAbort);
       server.closeAllConnections?.();
       if (server.listening) {
         server.close(fn);
@@ -212,10 +229,26 @@ const waitForOAuthCode = async ({
       settle(() => reject(new Error("OpenAI OAuth login timed out.")));
     }, timeoutMs);
 
+    const onAbort = () =>
+      settle(() => reject(new Error("OpenAI OAuth login was cancelled.")));
+    signal?.addEventListener("abort", onAbort, { once: true });
+
     server.on("error", (error) => {
-      settle(() => reject(error));
+      settle(() =>
+        reject(
+          (error as NodeJS.ErrnoException).code === "EADDRINUSE"
+            ? new Error(
+                "OpenAI OAuth callback port is busy. Close the other login attempt, then reconnect ChatGPT OAuth in ValorIDE settings.",
+              )
+            : error,
+        ),
+      );
     });
-    server.listen(Number(redirectUrl.port), () => onReady?.());
+    if (signal?.aborted) {
+      onAbort();
+      return;
+    }
+    server.listen(Number(redirectUrl.port), "127.0.0.1", () => onReady?.());
   });
 
 const renderOAuthCallbackPage = (success: boolean): string =>
@@ -273,8 +306,8 @@ const writeCodexAuthFile = async ({
   tokens: RefreshCodexTokenResult;
 }): Promise<OpenAiNativeOAuthLoginResult> => {
   const accountId =
-    getAccountIdFromToken(tokens.idToken) ||
-    getAccountIdFromToken(tokens.accessToken);
+    getAccountIdFromToken(tokens.accessToken) ||
+    getAccountIdFromToken(tokens.idToken);
   const updatedAuth: CodexAuthFile = {
     auth_mode: "chatgpt",
     OPENAI_API_KEY: null,
@@ -366,40 +399,44 @@ export const startOpenAiNativeOAuthLogin = async (
     rejectServerReady = reject;
   });
 
+  const cancellation = new AbortController();
   const codePromise = waitForOAuthCode({
     onReady: resolveServerReady!,
     redirectUri,
     state,
     timeoutMs,
+    signal: cancellation.signal,
   });
   codePromise.catch((error) => {
     rejectServerReady!(
       error instanceof Error ? error : new Error(String(error)),
     );
   });
-  await serverReady;
-  await options.openAuthorizationUrl(authorizationUrl);
-  const code = await codePromise;
-  const tokens = await exchangeOpenAiNativeOAuthCode({
-    code,
-    codeVerifier,
-    redirectUri,
-  });
-  return writeCodexAuthFile({
-    authPath,
-    nowMs: options.nowMs ?? Date.now(),
-    tokens,
-  });
+  try {
+    await serverReady;
+    await options.openAuthorizationUrl(authorizationUrl);
+    const code = await codePromise;
+    const tokens = await exchangeOpenAiNativeOAuthCode({
+      code,
+      codeVerifier,
+      redirectUri,
+    });
+    return await writeCodexAuthFile({
+      authPath,
+      nowMs: options.nowMs ?? Date.now(),
+      tokens,
+    });
+  } catch (error) {
+    // Free the callback port immediately when browser opening is interrupted.
+    cancellation.abort();
+    await codePromise.catch(() => undefined);
+    throw error;
+  }
 };
 
-export const resolveOpenAiNativeAuthToken = async (
+const readOpenAiNativeAuth = async (
   options: ResolveOpenAiNativeAuthTokenOptions = {},
-): Promise<string | undefined> => {
-  const explicitApiKey = options.openAiNativeApiKey?.trim();
-  if (explicitApiKey) {
-    return explicitApiKey;
-  }
-
+): Promise<OpenAiNativeAuth | undefined> => {
   const authPath = options.codexAuthPath || getDefaultCodexAuthPath();
 
   let authFileRaw: string;
@@ -412,12 +449,25 @@ export const resolveOpenAiNativeAuthToken = async (
   let authFile: CodexAuthFile;
   try {
     authFile = JSON.parse(authFileRaw) as CodexAuthFile;
+    if (!authFile || typeof authFile !== "object" || Array.isArray(authFile)) {
+      return undefined;
+    }
   } catch {
     return undefined;
   }
 
-  let accessToken = authFile.tokens?.access_token?.trim();
-  const storedRefreshToken = authFile.tokens?.refresh_token?.trim();
+  const savedApiKey = trimString(authFile.OPENAI_API_KEY);
+  if (savedApiKey && authFile.auth_mode !== "chatgpt") {
+    return { mode: "api-key", token: savedApiKey };
+  }
+  if (authFile.auth_mode === "api_key") return undefined;
+
+  let accessToken = trimString(authFile.tokens?.access_token);
+  let accountId =
+    getAccountIdFromToken(accessToken) ||
+    trimString(authFile.tokens?.account_id) ||
+    getAccountIdFromToken(trimString(authFile.tokens?.id_token));
+  const storedRefreshToken = trimString(authFile.tokens?.refresh_token);
   if (!accessToken) {
     return undefined;
   }
@@ -436,9 +486,9 @@ export const resolveOpenAiNativeAuthToken = async (
       accessToken = refreshed.accessToken;
       const nextRefreshToken = refreshed.refreshToken || storedRefreshToken;
       const nextAccountId =
-        getAccountIdFromToken(refreshed.idToken) ||
         getAccountIdFromToken(refreshed.accessToken) ||
-        authFile.tokens?.account_id;
+        getAccountIdFromToken(refreshed.idToken) ||
+        accountId;
 
       const updatedAuth: CodexAuthFile = {
         ...authFile,
@@ -464,6 +514,7 @@ export const resolveOpenAiNativeAuthToken = async (
         },
       );
       await fs.chmod(authPath, 0o600).catch(() => undefined);
+      accountId = nextAccountId;
     } catch {
       if ((accessTokenExpiryMs ?? 0) <= nowMs) {
         return undefined;
@@ -476,5 +527,33 @@ export const resolveOpenAiNativeAuthToken = async (
     return undefined;
   }
 
-  return accessToken;
+  return { mode: "oauth", token: accessToken, accountId };
 };
+
+export const resolveOpenAiNativeAuth = async (
+  options: ResolveOpenAiNativeAuthTokenOptions = {},
+): Promise<OpenAiNativeAuth | undefined> => {
+  const explicitApiKey = options.openAiNativeApiKey?.trim();
+  if (explicitApiKey) return { mode: "api-key", token: explicitApiKey };
+  const authPath = options.codexAuthPath || getDefaultCodexAuthPath();
+  // Concurrent requests join one refresh. Re-read after settlement so reconnect,
+  // account switching, revoked credentials and token rotation take effect.
+  const pending = pendingAuthResolutions.get(authPath);
+  if (pending) return pending;
+  const resolution = readOpenAiNativeAuth({
+    ...options,
+    codexAuthPath: authPath,
+  });
+  pendingAuthResolutions.set(authPath, resolution);
+  try {
+    return await resolution;
+  } finally {
+    pendingAuthResolutions.delete(authPath);
+  }
+};
+
+/** Compatibility for consumers that only need the bearer, not its transport. */
+export const resolveOpenAiNativeAuthToken = async (
+  options: ResolveOpenAiNativeAuthTokenOptions = {},
+): Promise<string | undefined> =>
+  (await resolveOpenAiNativeAuth(options))?.token;

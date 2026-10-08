@@ -100,6 +100,7 @@ const InstalledServersView = () => {
           </div>
         ) : error ? (
           <div
+            role="alert"
             className="error-message py-4"
             style={{
               color: "var(--vscode-errorForeground)",

@@ -743,9 +743,9 @@ const ContextPagePanel = ({ accountId }: ContextPagePanelProps) => {
         </VSCodeButton>
       </div>
 
-      {isWorking && <div className="context-page-alert">Working...</div>}
+      {isWorking && <div className="context-page-alert" role="status" aria-live="polite">Working...</div>}
       {operationError && (
-        <div className="context-page-alert error">{operationError}</div>
+        <div className="context-page-alert error" role="alert">{operationError}</div>
       )}
 
       <div className="context-page-summary">

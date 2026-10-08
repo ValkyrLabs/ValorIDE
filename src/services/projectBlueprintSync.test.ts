@@ -3,7 +3,7 @@ import os from "os";
 import path from "path";
 import { it } from "@jest/globals";
 import { installGeneratedProject } from "./generatedProjectInstall";
-import { BLUEPRINT_MARKER, initializeProjectBlueprintState, ProjectBlueprintConflict, readProjectBlueprintState, specificationHash, synchronizeProjectBlueprint } from "./projectBlueprintSync";
+import { BLUEPRINT_MARKER, initializeProjectBlueprintState, ProjectBlueprintConflict, readProjectBlueprintState, safeProjectRelativePath, specificationHash, synchronizeProjectBlueprint } from "./projectBlueprintSync";
 import { ValkyrLabsApiError, ValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
 const applicationId = "11111111-1111-4111-8111-111111111111";
@@ -12,6 +12,20 @@ const backend = "https://api.example/v1";
 const original = { openapi: "3.0.3", info: { title: "Round Trip", version: "1.0.0" }, paths: {} };
 const document = (specification: any, etag = "a".repeat(64)) => ({ applicationId, specId, filename: "openapi.json", etag, specification });
 const response = (data: any) => ({ data, status: 200, statusText: "OK", headers: {} });
+
+describe("project source path boundary", () => {
+  it.each(Array.from({ length: 32 }, (_, code) => code))("rejects embedded ASCII control code %i", (code) => {
+    expect(() => safeProjectRelativePath(`src/${String.fromCharCode(code)}file.ts`)).toThrow(/unsafe source path/);
+  });
+  it.each(["../outside.ts", "src/../outside.ts", "/outside.ts", "C:/outside.ts", "src\\file.ts", "src//file.ts", "src/./file.ts"])(
+    "rejects unsafe source path %s", (candidate) => {
+      expect(() => safeProjectRelativePath(candidate)).toThrow(/unsafe source path/);
+    },
+  );
+  it.each(["src/file.ts", "src/a b.ts", "src/café.ts"])("retains safe source path %s", (candidate) => {
+    expect(safeProjectRelativePath(candidate)).toBe(candidate);
+  });
+});
 
 describe("local project Blueprint synchronization", () => {
   let fixture: string;

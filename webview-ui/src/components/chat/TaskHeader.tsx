@@ -230,10 +230,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
   return (
     <div style={{ padding: "10px 13px 10px 13px" }}>
       <div
+        className="valoride-chat-card"
         style={{
-          backgroundColor: "var(--vscode-sideBar-border)",
-
-          borderRadius: "10px",
+          backgroundColor: "var(--valoride-chat-surface)",
+          borderRadius: "var(--valoride-chat-radius, 14px)",
           padding: "9px 10px 9px 14px",
           display: "flex",
           flexDirection: "column",

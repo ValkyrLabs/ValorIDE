@@ -1,3 +1,4 @@
+import { it } from "@jest/globals";
 jest.mock("execa", () => ({ execa: jest.fn() }));
 jest.mock("@integrations/notifications", () => ({
   showSystemNotification: jest.fn(),
@@ -28,6 +29,8 @@ function fixture(completed: boolean, exitCode?: number) {
     taskId: "task-1",
     autoApprovalSettings: { enabled: false },
     consecutiveMistakeCount: 0,
+    consecutiveAutoApprovedRequestsCount: 0,
+    removeLastPartialMessageIfExistsWithType: jest.fn(),
     api: { getModel: () => ({ id: "test" }) },
     valorideIgnoreController: { validateCommand: () => undefined },
     shouldAutoApproveTool: () => false,
@@ -40,7 +43,7 @@ function fixture(completed: boolean, exitCode?: number) {
       getOrCreateTerminal: jest.fn(async () => ({
         terminal: { show: jest.fn() },
       })),
-      runCommand: jest.fn(() => process),
+      runCommand: jest.fn((_terminal, _command, options) => { options?.beforeDispatch?.(); return process; }),
     },
   };
   return { handler: new CommandToolHandler(context as any), context };
@@ -105,4 +108,85 @@ describe("command execution outcome evidence", () => {
       }
     });
   }
+});
+
+
+describe("governed local command authority", () => {
+  const block = (approval = "false") => ({
+    type: "tool_use" as const, name: "execute_command" as const, partial: false,
+    params: { command: "npm run build", requires_approval: approval },
+  });
+
+  it("honors a governed denial even when ordinary command preferences are broad", async () => {
+    const { handler, context } = fixture(true, 0);
+    Object.assign(context, {
+      shouldAutoApproveTool: () => [true, true],
+      shouldAutoApproveCommand: jest.fn(() => false),
+      ask: jest.fn(async () => ({ response: "noButtonClicked" })),
+    });
+    expect((await handler.execute(block(), false)).outcome).toBe("rejected");
+    expect(context.ask).toHaveBeenCalledTimes(1);
+    expect(context.terminalManager.runCommand).not.toHaveBeenCalled();
+  });
+
+  it("reuses a valid exact local command decision without another approval prompt", async () => {
+    const { handler, context } = fixture(true, 0);
+    Object.assign(context, {
+      shouldAutoApproveTool: () => [true, false],
+      shouldAutoApproveCommand: jest.fn(() => true),
+      consecutiveAutoApprovedRequestsCount: 0,
+      removeLastPartialMessageIfExistsWithType: jest.fn(),
+      ask: jest.fn(async () => ({ response: "noButtonClicked" })),
+    });
+    expect((await handler.execute(block("true"), false)).outcome).toBe("succeeded");
+    expect(context.ask).not.toHaveBeenCalled();
+    expect(context.consecutiveAutoApprovedRequestsCount).toBe(1);
+  });
+
+  it.each(["yesButtonClicked", "noButtonClicked"])("records the user's exact %s decision", async (response) => {
+    const { handler, context } = fixture(true, 0);
+    const recordCommandApproval = jest.fn();
+    Object.assign(context, { recordCommandApproval,
+      ask: jest.fn(async () => ({ response })),
+    });
+    await handler.execute(block("true"), false);
+    expect(recordCommandApproval).toHaveBeenCalledWith("npm run build", response === "yesButtonClicked");
+  });
+
+  it("records uncertain terminal completion so it cannot silently authorize another execution", async () => {
+    const { handler, context } = fixture(true);
+    const recordCommandOutcome = jest.fn();
+    Object.assign(context, { recordCommandOutcome });
+    expect((await handler.execute(block("true"), false)).outcome).toBe("unknown");
+    expect(recordCommandOutcome).toHaveBeenCalledWith("npm run build", "unknown");
+  });
+});
+
+
+describe("command authority immediately before dispatch", () => {
+  it("does not run or charge an automatic request after local authority changes while the terminal opens", async () => {
+    const { handler, context } = fixture(true, 0);
+    let allowed = true;
+    Object.assign(context, { shouldAutoApproveTool: () => [true, false],
+      shouldAutoApproveCommand: () => allowed });
+    context.terminalManager.getOrCreateTerminal.mockImplementation(async () => {
+      allowed = false; return { terminal: { show: jest.fn() } };
+    });
+    const result = await handler.execute({ type: "tool_use", name: "execute_command", partial: false,
+      params: { command: "pwd", requires_approval: "false" } }, false);
+    expect(result.outcome).toBe("blocked");
+    expect(context.terminalManager.runCommand).not.toHaveBeenCalled();
+    expect(context.consecutiveAutoApprovedRequestsCount).toBe(0);
+  });
+
+  it("does not dispatch an explicit decision after its task is cancelled during the approval prompt", async () => {
+    const { handler, context } = fixture(true, 0);
+    let active = true;
+    Object.assign(context, { isTaskActive: () => active });
+    context.ask.mockImplementation(async () => { active = false; return { response: "yesButtonClicked" }; });
+    const result = await handler.execute({ type: "tool_use", name: "execute_command", partial: false,
+      params: { command: "pwd", requires_approval: "true" } }, false);
+    expect(result.outcome).toBe("blocked");
+    expect(context.terminalManager.runCommand).not.toHaveBeenCalled();
+  });
 });

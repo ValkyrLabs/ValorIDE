@@ -56,6 +56,12 @@ const { ValkyrProcedureClient } = jest.requireActual<
   typeof import("@services/workflow/ValkyrProcedureClient")
 >("@services/workflow/ValkyrProcedureClient");
 
+const { registerCredentialOrigin, clearCredentialOrigins } = jest.requireActual<
+  typeof import("@shared/CredentialOrigin")
+>("@shared/CredentialOrigin");
+
+afterEach(() => clearCredentialOrigins());
+
 describe("ToolManager", () => {
   it("routes a parsed procedure call through approval and the real authenticated client", async () => {
     const order: string[] = [];
@@ -77,6 +83,8 @@ describe("ToolManager", () => {
         }),
       } as unknown as Response;
     });
+    // Honor the real exact-origin guard with an ephemeral, explicit protocol fixture.
+    registerCredentialOrigin("test-session", "https://api-0.valkyrlabs.com");
     const client = new ValkyrProcedureClient({
       baseUrl: "https://api-0.valkyrlabs.com",
       fetch,

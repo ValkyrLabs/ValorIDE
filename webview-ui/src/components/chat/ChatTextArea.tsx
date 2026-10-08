@@ -138,7 +138,7 @@ const PLAN_MODE_COLOR = "var(--vscode-inputValidation-warningBorder)";
 const SwitchOption = styled.div<{ isActive: boolean }>`
   padding: 2px 8px;
   color: ${(props) =>
-    props.isActive ? "white" : "var(--vscode-input-foreground)"};
+    props.isActive ? "var(--vscode-foreground)" : "var(--vscode-descriptionForeground)"};
   z-index: 1;
   transition: color 0.2s ease;
   font-size: 12px;
@@ -156,8 +156,8 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 const SwitchContainer = styled.div<{ disabled: boolean }>`
   display: flex;
   align-items: center;
-  background-color: var(--vscode-editor-background);
-  border: 1px solid var(--vscode-input-border);
+  background-color: var(--valoride-chat-surface-hover, var(--vscode-editor-background));
+  border: none;
   border-radius: 12px;
   overflow: hidden;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
@@ -173,7 +173,7 @@ const Slider = styled.div<{ isAct: boolean; isPlan?: boolean }>`
   height: 100%;
   width: 50%;
   background-color: ${(props) =>
-    props.isPlan ? PLAN_MODE_COLOR : "var(--vscode-focusBorder)"};
+    `color-mix(in srgb, ${props.isPlan ? PLAN_MODE_COLOR : "var(--vscode-focusBorder)"} 28%, var(--valoride-chat-surface))`};
   transition: transform 0.2s ease;
   transform: translateX(${(props) => (props.isAct ? "100%" : "0%")});
 `;
@@ -200,8 +200,8 @@ const ControlsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: -5px;
-  padding: 0px 15px 5px 15px;
+  gap: 6px;
+  padding: 0 12px 10px;
 `;
 
 const ModelSelectorTooltip = styled.div<ModelSelectorTooltipProps>`
@@ -210,9 +210,9 @@ const ModelSelectorTooltip = styled.div<ModelSelectorTooltipProps>`
   left: 15px;
   right: 15px;
   background: ${CODE_BLOCK_BG_COLOR};
-  border: 1px solid var(--vscode-editorGroup-border);
+  border: none;
   padding: 12px;
-  border-radius: 3px;
+  border-radius: var(--valoride-chat-radius, 14px);
   z-index: 1000;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
@@ -343,9 +343,6 @@ const ChatTextAreaRuntimeBase = forwardRef<
     const slashCommandsMenuContainerRef = useRef<HTMLDivElement>(null);
 
     const [thumbnailsHeight, setThumbnailsHeight] = useState(0);
-    const [textAreaBaseHeight, setTextAreaBaseHeight] = useState<
-      number | undefined
-    >(undefined);
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
@@ -1471,13 +1468,13 @@ const ChatTextAreaRuntimeBase = forwardRef<
     };
 
     return (
-      <div>
+      <div className="chat-composer">
         <div
           data-testid="chat-textarea-dropzone"
           style={{
             border: 0,
-            borderRadius: 10,
-            padding: "10px 15px",
+            borderRadius: "var(--valoride-chat-radius, 14px)",
+            padding: "14px 14px 8px",
             opacity: textAreaDisabled ? 0.5 : 1,
             position: "relative",
             display: "flex",
@@ -1516,8 +1513,8 @@ const ChatTextAreaRuntimeBase = forwardRef<
             <div
               style={{
                 position: "absolute",
-                inset: "10px 15px",
-                borderRadius: 10,
+                inset: "14px 14px 8px",
+                borderRadius: "var(--valoride-chat-radius, 14px)",
                 pointerEvents: "none",
                 zIndex: 5,
               }}
@@ -1528,26 +1525,26 @@ const ChatTextAreaRuntimeBase = forwardRef<
             style={{
               position: "absolute",
 
-              top: 10,
-              left: 15,
-              right: 15,
-              bottom: 10,
+              top: 14,
+              left: 14,
+              right: 14,
+              bottom: 8,
               pointerEvents: "none",
               whiteSpace: "pre-wrap",
               wordWrap: "break-word",
               color: "transparent",
               overflow: "hidden",
-              backgroundColor: "var(--vscode-input-background)",
+              backgroundColor: "transparent",
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
-              lineHeight: "var(--vscode-editor-line-height)",
-              borderRadius: 10,
+              lineHeight: "1.5",
+              borderRadius: "var(--valoride-chat-radius, 14px)",
               borderLeft: 0,
               borderRight: 0,
               borderTop: 0,
               borderColor: "transparent",
               borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
-              padding: "10px 30px 5px 10px",
+              padding: 0,
             }}
           />
           <GlowingTextArea
@@ -1582,16 +1579,10 @@ const ChatTextAreaRuntimeBase = forwardRef<
             onPaste={handlePaste}
             onSelect={updateCursorPosition}
             onMouseUp={updateCursorPosition}
-            onHeightChange={(height) => {
-              if (
-                textAreaBaseHeight === undefined ||
-                height < textAreaBaseHeight
-              ) {
-                setTextAreaBaseHeight(height);
-              }
-              onHeightChange?.(height);
-            }}
+            onHeightChange={onHeightChange}
             placeholder={placeholderText}
+            aria-label="Message"
+            minRows={3}
             maxRows={10}
             autoFocus={true}
             style={{
@@ -1599,33 +1590,21 @@ const ChatTextAreaRuntimeBase = forwardRef<
               boxSizing: "border-box",
               backgroundColor: "transparent",
               color: "var(--vscode-input-foreground)",
-              borderRadius: 10,
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
-              lineHeight: "var(--vscode-editor-line-height)",
+              lineHeight: "1.5",
               resize: "none",
               overflowX: "hidden",
-              overflowY: "scroll",
+              overflowY: "auto",
               scrollbarWidth: "none",
-              // Since we have maxRows, when text is long enough it starts to overflow the bottom padding, appearing behind the thumbnails. To fix this, we use a transparent border to push the text up instead. (https://stackoverflow.com/questions/42631947/maintaining-a-padding-inside-of-text-area/52538410#52538410)
-              // borderTop: "9px solid transparent",
-              //borderLeft: 0,
-              //borderRight: 0,
-              // borderTop: 0,
-
-              //borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
-              //borderColor: "transparent",
-              // borderRight: "54px solid transparent",
-              // borderLeft: "9px solid transparent", // NOTE: react-textarea-autosize doesn't calculate correct height when using borderLeft/borderRight so we need to use horizontal padding instead
-              // Instead of using boxShadow, we use a div with a border to better replicate the behavior when the textarea is focused
-              // boxShadow: "0px 0px 0px 1px var(--vscode-input-border)",
-              padding: "9px 28px 3px 9px",
+              border: "none",
+              // Reserve attachment space even after the textarea starts scrolling.
+              borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
+              padding: 0,
               cursor: textAreaDisabled ? "not-allowed" : undefined,
               flex: 1,
               zIndex: 1,
-              outline: isTextAreaFocused
-                ? `1px solid ${chatSettings.mode === "plan" ? PLAN_MODE_COLOR : "var(--vscode-focusBorder)"}`
-                : "none",
+              outline: "none",
             }}
             onScroll={() => updateHighlights()}
           />
@@ -1638,56 +1617,12 @@ const ChatTextAreaRuntimeBase = forwardRef<
                 position: "absolute",
                 paddingTop: 4,
                 bottom: 14,
-                left: 22,
-                right: 47, // (54 + 9) + 4 extra padding
+                left: 14,
+                right: 14,
                 zIndex: 2,
               }}
             />
           )}
-          <div
-            style={{
-              position: "absolute",
-              right: 23,
-              display: "flex",
-              alignItems: "flex-center",
-              height: textAreaBaseHeight || 31,
-              bottom: 9.5, // should be 10 but doesn't look good on mac
-              zIndex: 2,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <button
-                style={{
-                  cursor: "pointer",
-                  padding: "4px",
-                  width: "30px",
-                  height: "28px",
-                  backgroundColor: "var(--vscode-textCodeBlock-background)",
-                  borderRadius: "15px",
-                }}
-                data-testid="send-button"
-                disabled={textAreaDisabled}
-                onClick={() => {
-                  if (!textAreaDisabled) {
-                    setIsTextAreaFocused(false);
-                    onSend(inputValue, selectedImages);
-                    // Ensure images clear immediately after sending
-                    try {
-                      setSelectedImages([]);
-                    } catch {}
-                  }
-                }}
-              >
-                <FaPaperPlane />
-              </button>
-            </div>
-          </div>
         </div>
 
         <ControlsContainer>
@@ -1699,8 +1634,8 @@ const ChatTextAreaRuntimeBase = forwardRef<
                 left: 20,
                 background: "var(--vscode-badge-background)",
                 color: "var(--vscode-badge-foreground)",
-                border: "1px solid var(--vscode-badge-foreground)",
-                borderRadius: 6,
+                border: "none",
+                borderRadius: "var(--valoride-chat-radius, 14px)",
                 padding: "3px 8px",
                 fontSize: 12,
                 boxShadow: "0 0 6px rgba(0,0,0,0.2)",
@@ -1851,6 +1786,23 @@ const ChatTextAreaRuntimeBase = forwardRef<
               </SwitchOption>
             </SwitchContainer>
           </Tooltip>
+          <button
+            className="chat-composer-send"
+            data-testid="send-button"
+            aria-label="Send message"
+            disabled={textAreaDisabled}
+            onClick={() => {
+              if (!textAreaDisabled) {
+                setIsTextAreaFocused(false);
+                onSend(inputValue, selectedImages);
+                try {
+                  setSelectedImages([]);
+                } catch {}
+              }
+            }}
+          >
+            <FaPaperPlane />
+          </button>
         </ControlsContainer>
       </div>
     );

@@ -1,0 +1,257 @@
+/* Shared webview design. Semantic status colors and keyboard focus remain visible. */
+:root, body.valoride-calm, .valoride-app {
+  --valoride-background: var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
+  --valoride-foreground: var(--vscode-foreground, #cccccc);
+  --valoride-surface: color-mix(in srgb, var(--valoride-background) 94%, var(--valoride-foreground) 6%);
+  --valoride-surface-hover: color-mix(in srgb, var(--valoride-background) 90%, var(--valoride-foreground) 10%);
+  --valoride-surface-inset: color-mix(in srgb, var(--valoride-background) 97%, var(--valoride-foreground) 3%);
+  --valoride-radius: 14px;
+  --valoride-control-radius: 10px;
+  --valoride-gap: 12px;
+  --valoride-focus: var(--vscode-focusBorder, #007fd4);
+}
+
+body.valoride-calm {
+  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+  line-height: 1.45;
+  color: var(--valoride-foreground);
+  background: var(--valoride-background);
+}
+.valoride-app {
+  height: 100%; width: 100%; min-height: 0; min-width: 0;
+  display: flex; flex-direction: column;
+  color: var(--valoride-foreground);
+  background: var(--valoride-background);
+  --input-background: var(--valoride-surface);
+  --input-border: transparent;
+  --corner-radius: 10px;
+}
+.valoride-app *, body.valoride-calm :is(.modal, .ant-modal, .draggable-modal) * {
+  font-weight: 400 !important;
+}
+.valoride-app :is(h1,h2,h3,h4,h5,h6,p,label,button,.nav-link),
+body.valoride-calm .modal :is(h1,h2,h3,h4,h5,h6,p,label,button) {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+.valoride-app :is(h1,h2,h3,h4,h5,h6) {
+  color: var(--valoride-foreground);
+  line-height: 1.4;
+}
+.valoride-app :is(.valoride-surface,.card,.history-preview-card,.history-preview-item,
+  .application-card,.progress-step,.result-details,.context-source-card,.context-source-section,
+  .context-source-metric,.context-page-compact-summary,.context-page-summary > div,
+  .tenant-app-generation-summary > div,.generation-trace-card,.generation-trace-chain,
+  .skillopt-route-explanation,.skillopt-route-metric,.receipt-trace-summary-item,
+  .server-console,.build-mode__panel,.build-mode__stat,.build-mode__item,.capability-command-center__pill,
+  .capability-command-center__command,.capability-command-center__quota,
+  .border,div[style*="border: 1px solid"]) {
+  background: var(--valoride-surface) !important;
+  border: 0 !important;
+  border-radius: var(--valoride-radius) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.valoride-app :is(.card-header,.card-footer,.history-preview-card .card-header,
+  .history-preview-card .card-body,.server-console,.server-console .card-body,
+  .server-console .card-footer,.account-view-root,.build-mode,.build-mode__header,
+  .build-mode__operator-strip,.build-mode__section-nav,.application-progress,.file-explorer) {
+  background: var(--valoride-background) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+.valoride-app :is(.account-view-root,.server-console)::before,
+.valoride-app :is(.account-view-root,.server-console)::after { content: none !important; }
+.valoride-app :is(.card,.history-preview-card)::before { content: none !important; }
+.valoride-app :is(.history-preview-item,.application-card):hover {
+  background: var(--valoride-surface-hover) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.valoride-app :is(.card-header,.card-footer,.build-mode__panel h2) {
+  border: 0 !important;
+}
+.valoride-app :is(.tenant-app-generation-panel,.context-page-panel,.receipt-trace-inspector,
+  .file-explorer,.capability-command-center,.settings-screen,.mcp-screen) { gap: var(--valoride-gap); }
+.valoride-app :is(.tenant-app-generation-json,.context-page-json,.context-source-json,
+  .receipt-trace-json,.generation-trace-summary-json,.skillopt-route-scores,pre) {
+  background: var(--valoride-surface-inset);
+  border: 0 !important;
+  border-radius: var(--valoride-radius);
+  overflow-wrap: anywhere;
+}
+.valoride-app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea:not([data-testid="chat-input"]),select,.form-control,.form-select) {
+  background-color: var(--valoride-surface) !important;
+  color: var(--valoride-foreground);
+  border: 0 !important;
+  border-radius: var(--valoride-control-radius) !important;
+  box-shadow: none;
+}
+.valoride-app :is(vscode-text-field,vscode-text-area,vscode-dropdown)::part(control) {
+  background: var(--valoride-surface);
+  border: 0;
+  border-radius: var(--valoride-control-radius);
+}
+.valoride-app :is(button,.btn,vscode-button)::before,
+.valoride-app :is(button,.btn,vscode-button)::after { box-shadow: none; }
+.valoride-app :is(button,.btn) {
+  font-family: inherit;
+  border-radius: var(--valoride-control-radius);
+  box-shadow: none !important;
+  text-transform: none !important;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.valoride-app :is(button,.btn):hover { transform: none !important; }
+.valoride-app :is(button,[role="button"],[role="switch"],a,input,textarea:not([data-testid="chat-input"]),select,summary):focus-visible,
+body.valoride-calm .modal :is(button,a,input,textarea,select):focus-visible {
+  outline: 2px solid var(--valoride-focus) !important;
+  outline-offset: 2px;
+}
+.valoride-app vscode-button::part(control):focus-visible {
+  outline: 2px solid var(--valoride-focus);
+  outline-offset: 2px;
+}
+.valoride-app :is(vscode-text-field,vscode-text-area,vscode-dropdown):focus-within {
+  outline: 2px solid var(--valoride-focus);
+  outline-offset: 2px;
+  border-radius: var(--valoride-control-radius);
+}
+.valoride-tabs {
+  display: flex; gap: 4px; min-width: 0; padding: 4px;
+  overflow-x: auto; overflow-y: hidden;
+  flex-shrink: 0; scrollbar-width: thin;
+  background: var(--valoride-surface-inset);
+  border: 0 !important;
+  border-radius: var(--valoride-radius);
+}
+.valoride-app :is(.valoride-tab,.lcars-account-tab-link) {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; min-width: 0; min-height: 34px; padding: 7px 10px;
+  flex: 0 0 auto; margin: 0;
+  border: 0 !important; border-radius: var(--valoride-control-radius);
+  color: var(--vscode-descriptionForeground);
+  background: transparent;
+  text-transform: none; white-space: nowrap; font-size: 12px;
+  cursor: pointer; box-shadow: none !important; transform: none !important;
+}
+.valoride-app :is(.valoride-tab,.lcars-account-tab-link)[aria-selected="true"] {
+  color: var(--valoride-foreground);
+  background: var(--valoride-surface-hover);
+}
+.valoride-app :is(.valoride-tab,.lcars-account-tab-link):hover { background: var(--valoride-surface); }
+.valoride-app :is(.lcars-account-tab-link)::before,
+.valoride-app :is(.lcars-account-tab-link)::after { content: none !important; }
+.valoride-app :is(.lcars-account-tab-container,.account-content) { border: 0; background: transparent; }
+.valoride-app .lcars-account-tabs { align-items: center; padding: 4px; min-height: 0; min-width: 0; }
+.valoride-app .needs-attention { animation: none !important; }
+.valoride-app .needs-attention svg { filter: none; }
+.valoride-app .needs-attention .account-tab-label::after {
+  content: " •"; color: var(--vscode-notificationsWarningIcon-foreground, #cca700);
+}
+.valoride-app .account-logo svg { width: min(320px,100%); filter: none; }
+.valoride-app .valoride-disclosure {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; min-width: 0; padding: 5px 0;
+  text-align: left; color: inherit; background: transparent; border: 0;
+  cursor: pointer; overflow-wrap: anywhere;
+}
+.valoride-app .valoride-disclosure:disabled { cursor: default; opacity: 1; }
+.valoride-app .valoride-mcp-server { overflow: hidden; margin-bottom: var(--valoride-gap); }
+.valoride-app .valoride-mcp-server > div { background: transparent !important; border-radius: 0 !important; }
+.valoride-app .valoride-server-state { color: var(--vscode-descriptionForeground); font-size: 11px; }
+.valoride-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; line-height: 1.3; padding: 4px 8px;
+  border: 0; border-radius: 999px; background: var(--valoride-surface);
+}
+.valoride-status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.valoride-notice {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; padding: 10px 12px;
+  margin: 6px 0 12px; border: 0; border-radius: var(--valoride-radius);
+  background: var(--valoride-surface); color: var(--valoride-foreground);
+  font-size: 12px; line-height: 1.45; overflow-wrap: anywhere;
+}
+.valoride-notice--warn { color: var(--valoride-foreground); }
+.valoride-notice--warn::before { content: ""; width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--vscode-notificationsWarningIcon-foreground, #cca700); }
+.valoride-notice--error { color: var(--vscode-errorForeground, #f48771); }
+.valoride-app :is(.error-message,.file-explorer-error,.context-page-alert,.tenant-app-generation-alert,
+  .receipt-trace-alert,.alert,.inputValidation-error) {
+  border: 0 !important; border-radius: var(--valoride-radius) !important;
+  box-shadow: none !important; overflow-wrap: anywhere;
+}
+.valoride-app .history-item:focus-within :is(.delete-button,.export-button) {
+  opacity: 1; pointer-events: auto;
+}
+body.valoride-calm :is(.modal-content,.ant-modal-content,.dropdown-menu,.popover) {
+  background: var(--valoride-surface) !important;
+  color: var(--valoride-foreground);
+  border: 0 !important; border-radius: var(--valoride-radius) !important;
+  box-shadow: 0 8px 28px #00000018 !important;
+}
+body.valoride-calm :is(.modal-header,.modal-footer) { border: 0; background: transparent; }
+@media (prefers-reduced-motion: reduce) {
+  .valoride-app *, .valoride-app *::before, .valoride-app *::after,
+  body.valoride-calm :is(.modal,.ant-modal) * {
+    animation: none !important; transition: none !important; scroll-behavior: auto !important;
+  }
+}
+@media (forced-colors: active) {
+  .valoride-app :is(.valoride-surface,.card,.valoride-tab,.build-mode__panel,.valoride-notice),
+  body.valoride-calm .modal-content { outline: 1px solid CanvasText; }
+  .valoride-app [role="tab"][aria-selected="true"] { outline: 2px solid Highlight; }
+}
+
+/* File/task cards keep the focus indicator within clipped rounded surfaces. */
+.valoride-app .valoride-chat-card[role="button"]:focus-visible,
+.valoride-app .valoride-chat-card [role="button"]:focus-visible,
+.valoride-app .history-item:focus-visible {
+  outline: 1px solid var(--valoride-focus) !important;
+  outline-offset: -2px !important;
+}
+
+.valoride-app .account-screen { box-sizing: border-box; flex: 1; min-height: 0; height: auto !important; margin: 0 !important; padding: 12px !important; }
+.valoride-screen-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; min-height: 32px; }
+.valoride-app :is(.server-console,.cool-button,.message-row,.agent-card) { animation: none !important; filter: none; }
+
+/* Let the composer carry one visible, rounded keyboard indicator. */
+.valoride-app .chat-composer:has([data-testid="chat-input"]:focus-visible) {
+  outline: 1px solid var(--valoride-focus);
+  outline-offset: 1px;
+}
+.valoride-app .valoride-disclosure:focus-visible {
+  outline: 1px solid var(--valoride-focus) !important;
+  outline-offset: -2px;
+  border-radius: var(--valoride-control-radius);
+}
+.valoride-app label { background: transparent; }
+.valoride-app .valoride-console {
+  background: var(--valoride-background) !important;
+  border: 0;
+  border-radius: var(--valoride-radius);
+}
+.valoride-app :is(vscode-text-field,vscode-dropdown)::part(root) {
+  background: var(--valoride-surface);
+  border: 0;
+  border-radius: var(--valoride-control-radius);
+}
+.valoride-app vscode-button:not([appearance="icon"])::part(control) {
+  border: 0;
+  border-radius: var(--valoride-control-radius);
+  font-weight: 400;
+  box-shadow: none;
+}
+.valoride-app :is(.build-mode__chip,.build-mode__status-pill) {
+  background: var(--valoride-surface);
+  border: 0;
+  border-radius: 999px;
+}
+.valoride-app .server-console :is(.console-title,.connection-status) {
+  color: var(--valoride-foreground);
+  text-shadow: none;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.valoride-app .server-console :is(.status-icon,.message-row) { animation: none; }

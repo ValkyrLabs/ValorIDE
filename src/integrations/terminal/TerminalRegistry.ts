@@ -18,6 +18,8 @@ export class TerminalRegistry {
       cwd,
       name: "ValorIDE",
       iconPath: new vscode.ThemeIcon("robot"),
+      // Agent commands must return output instead of waiting inside a pager.
+      env: { PAGER: "cat", GIT_PAGER: "cat" },
     });
     const newInfo: TerminalInfo = {
       terminal,

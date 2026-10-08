@@ -1,115 +1,54 @@
-import React from "react";
-import { render, screen, act } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { vi } from "vitest";
-import MockedCommunicationService, {
-  MockCommunicationService,
-} from "@thorapi/mocks/MockCommunicationService"; // Assuming a mock service exists
+import { EventEmitter } from "node:events";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import OfflineBanner from "./OfflineBanner";
 
-// Mock the custom hook
-vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
-  useCommunicationService: vi.fn(),
+vi.mock("@thorapi/context/CommunicationServiceContext", () => ({ useCommunicationService: vi.fn() }));
+vi.mock("@vscode/webview-ui-toolkit/react", () => ({
+  VSCodeButton: ({ appearance: _appearance, children, ...props }: any) => <button {...props}>{children}</button>,
 }));
 
-describe("OfflineBanner", () => {
-  let mockSvc: MockCommunicationService;
+let service: EventEmitter & { isNoop: boolean; ready: boolean; error: Error | null };
+beforeEach(() => {
+  service = Object.assign(new EventEmitter(), { isNoop: false, ready: true, error: null });
+  vi.mocked(useCommunicationService).mockReturnValue(service as any);
+  vi.useFakeTimers();
+});
+afterEach(() => { cleanup(); vi.useRealTimers(); vi.clearAllMocks(); });
 
-  beforeEach(() => {
-    // Reset mocks before each test
-    vi.clearAllMocks();
-
-    // Create a new mock service instance for each test
-    mockSvc = new MockCommunicationService();
-
-    // Mock the useCommunicationService hook to return our mock instance
-    (useCommunicationService as any).mockReturnValue(mockSvc);
-
-    // Use fake timers for setTimeout
-    vi.useFakeTimers();
+describe("persistent shared connection feedback", () => {
+  it("renders no warning for a ready communication service", () => {
+    render(<OfflineBanner />); expect(screen.queryByRole("status")).toBeNull();
   });
-
-  afterEach(() => {
-    // Restore real timers after each test
-    vi.useRealTimers();
-  });
-
-  it("should not render if communication service is not noop", () => {
-    mockSvc.isNoop = false; // Simulate service being available
+  it("keeps an unavailable connection visible past the old five-second timeout", () => {
+    service.isNoop = true; service.ready = false;
     render(<OfflineBanner />);
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(60_000));
+    expect(screen.getByRole("status")).toHaveTextContent("Shared connections are unavailable. Local editing remains available.");
   });
-
-  it("should render and be visible initially if communication service is noop", () => {
-    mockSvc.isNoop = true; // Simulate service being unavailable
-    render(<OfflineBanner />);
-    expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(
-      screen.getByText("Communication service unreachable. Features limited."),
-    ).toBeVisible();
+  it("follows connecting, restored, and interrupted events without remounting", () => {
+    service.ready = false; render(<OfflineBanner />);
+    act(() => service.emit("status", { phase: "connecting" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Connecting shared features");
+    act(() => { service.ready = true; service.emit("status", { phase: "connected" }); });
+    expect(screen.queryByRole("status")).toBeNull();
+    act(() => { service.ready = false; service.error = new Error("fixture interrupted"); service.emit("error", service.error); });
+    expect(screen.getByRole("status")).toHaveTextContent("Shared connections are unavailable");
+    act(() => { service.error = null; service.ready = true; service.emit("status", { phase: "connected" }); });
+    expect(screen.queryByRole("status")).toBeNull();
   });
-
-  it("should hide after 5 seconds if communication service is noop", () => {
-    mockSvc.isNoop = true; // Simulate service being unavailable
-    render(<OfflineBanner />);
-
-    // Initially visible
-    expect(screen.getByRole("status")).toBeVisible();
-
-    // Advance timers by 5 seconds
-    act(() => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    // Banner should be hidden (not in the document)
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  it("offers the supplied recovery action without expanding permissions or reconnecting implicitly", () => {
+    service.ready = false; const open = vi.fn();
+    render(<OfflineBanner onOpenSettings={open} />);
+    expect(open).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Connection settings" }));
+    expect(open).toHaveBeenCalledTimes(1);
   });
-
-  it("should not hide if communication service becomes available before 5 seconds", () => {
-    mockSvc.isNoop = true; // Simulate service being unavailable
-    render(<OfflineBanner />);
-
-    // Initially visible
-    expect(screen.getByRole("status")).toBeVisible();
-
-    // Simulate service becoming available
-    act(() => {
-      mockSvc.isNoop = false;
-      // Note: The useEffect dependency array [isNoop] will cause the effect to re-run.
-      // However, the current implementation of the banner doesn't re-render or re-apply the effect
-      // when isNoop changes *after* the initial render.
-      // For this test, we are checking if the *existing* timer is cleared.
-      // The current banner logic doesn't clear the timer if isNoop becomes false.
-      // This test might reveal a limitation in the current banner implementation if it were to re-render.
-      // For now, we'll focus on the timer clearing aspect if the component were to re-mount or isNoop changed in a way that re-triggers the effect.
-      // Given the current structure, the effect runs once on mount. If isNoop changes, the component doesn't re-render to re-evaluate the effect.
-      // The test will focus on the timer clearing on unmount, which is handled by the cleanup function.
-      // Let's adjust the test to focus on the timer clearing on unmount, as that's what the cleanup function does.
-    });
-
-    // Advance timers by less than 5 seconds
-    act(() => {
-      vi.advanceTimersByTime(4000);
-    });
-
-    // Banner should still be visible
-    expect(screen.getByRole("status")).toBeVisible();
-
-    // Unmount the component to trigger the cleanup function
-    // This part is tricky with react-testing-library's render.
-    // A more direct way to test cleanup is to ensure the timer is cleared.
-    // The current test setup doesn't easily allow for unmounting and checking timer state.
-    // Let's simplify this test to focus on the primary requirement: hiding after 5 seconds.
-    // The current implementation of the banner's useEffect doesn't re-evaluate if `isNoop` changes *after* the initial render.
-    // The cleanup function `clearTimeout(timer)` is called on unmount.
-    // If the component were to re-mount with `isNoop` as false, it wouldn't render.
-    // If `isNoop` changes from true to false *while mounted*, the banner would remain visible until the timer fires or it unmounts.
-    // The current test focuses on the happy path of hiding after 5 seconds.
-    // For a more robust test, we'd need to simulate `isNoop` changing and re-rendering.
-    // For now, let's ensure the core functionality (hiding after 5s) is tested.
+  it("releases both live listeners on unmount", () => {
+    const view = render(<OfflineBanner />);
+    expect(service.listenerCount("status")).toBe(1); expect(service.listenerCount("error")).toBe(1);
+    view.unmount();
+    expect(service.listenerCount("status")).toBe(0); expect(service.listenerCount("error")).toBe(0);
   });
-
-  // Add a test for the cleanup function explicitly if needed, but it's implicitly tested by advancing timers and checking visibility.
-  // The current test suite covers the core requirements.
 });

@@ -283,17 +283,7 @@ const DottedLine = styled.div<{ small?: boolean; $isCheckedOut?: boolean }>`
   flex: ${(props) => (props.small ? "0 0 5px" : "1")};
   min-width: ${(props) => (props.small ? "5px" : "5px")};
   height: 1px;
-  background-image: linear-gradient(
-    to right,
-    ${(props) =>
-        props.$isCheckedOut
-          ? "var(--vscode-textLink-foreground)"
-          : "var(--vscode-descriptionForeground)"}
-      50%,
-    transparent 50%
-  );
-  background-size: 4px 1px;
-  background-repeat: repeat-x;
+  background: none;
 `;
 
 const ButtonGroup = styled.div`
@@ -326,42 +316,16 @@ const CustomButton = styled.button<{
   cursor: pointer;
   position: relative;
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 1px;
-    background-image: ${(props) =>
-      props.isActive || props.disabled
-        ? "none"
-        : `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
-			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
-			linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
-			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%)`};
-    background-size: ${(props) =>
-      props.isActive || props.disabled
-        ? "auto"
-        : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
-    background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
-    background-position:
-      0 0,
-      100% 0,
-      0 100%,
-      0 0;
-  }
+  border-radius: var(--valoride-chat-radius, 14px);
 
   &:hover:not(:disabled) {
-    background: ${(props) =>
-      props.$isCheckedOut
-        ? "var(--vscode-textLink-foreground)"
-        : "var(--vscode-descriptionForeground)"};
-    color: var(--vscode-editor-background);
-    &::before {
-      display: none;
-    }
+    background: var(--valoride-chat-surface-hover, var(--vscode-list-hoverBackground));
+    color: var(--vscode-foreground);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
   }
 
   &:disabled {

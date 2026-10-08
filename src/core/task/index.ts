@@ -189,6 +189,7 @@ import {
   type TaskTerminalListener,
 } from "@shared/TaskLifecycle";
 import { buildCommandEvidenceRef } from "./CommandEvidence";
+import { GovernedLocalAuthority, type GovernedLocalAuthorityState } from "@services/swarm/GovernedLocalAuthority";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -229,6 +230,7 @@ export class Task {
   readonly taskId: string;
   private activeApi: ApiHandler;
   readonly governedCodingInference?: import("@services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
+  private readonly governedLocalAuthority?: GovernedLocalAuthority;
   get api(): ApiHandler {
     return this.activeApi;
   }
@@ -392,6 +394,15 @@ export class Task {
     this.modelContextTracker = new ModelContextTracker(context, this.taskId);
     // Lock before the first model request; ordinary tasks retain settings-driven behavior.
     this.governedCodingInference = apiConfiguration.governedCodingInference;
+    if (this.governedCodingInference) {
+      const openedRoot = vscode.workspace.workspaceFolders?.at(0)?.uri;
+      // A legacy history item without a bounded local receipt stays interactive.
+      this.governedLocalAuthority = new GovernedLocalAuthority(this.governedCodingInference,
+        (!historyItem || historyItem.governedLocalAuthority) && openedRoot?.scheme === "file"
+          ? openedRoot.fsPath : undefined,
+        autoApprovalSettings, Date.now, historyItem?.governedLocalAuthority);
+      this.autoApprovalSettings = this.governedLocalAuthority.settings(autoApprovalSettings);
+    }
     // Now that taskId is initialized, we can build the API handler
     this.api = buildApiHandler({
       ...apiConfiguration,
@@ -544,6 +555,7 @@ export class Task {
           await this.checkpointTracker?.getShadowGitConfigWorkTree(),
         conversationHistoryDeletedRange: this.conversationHistoryDeletedRange,
         governedCodingInference: this.governedCodingInference,
+        governedLocalAuthority: this.governedLocalAuthority?.snapshot(this.consecutiveAutoApprovedRequestsCount),
       });
     } catch (error) {
       console.error("Failed to save valoride messages:", error);
@@ -2336,8 +2348,45 @@ export class Task {
     });
   }
 
+  updateAutoApprovalSettings(settings: AutoApprovalSettings): void {
+    this.autoApprovalSettings = this.governedLocalAuthority?.settings(settings) ?? settings;
+  }
+
+  private localAuthorityState(): GovernedLocalAuthorityState {
+    const folder = vscode.workspace.workspaceFolders?.at(0)?.uri;
+    return { settings: this.autoApprovalSettings,
+      workspaceRoot: folder?.scheme === "file" && path.resolve(folder.fsPath) === path.resolve(cwd) ? folder.fsPath : undefined,
+      workspaceTrusted: vscode.workspace.isTrusted === true, active: !this.abort && !this.abandoned,
+      mode: this.chatSettings.mode, requests: this.consecutiveAutoApprovedRequestsCount,
+      binding: this.governedCodingInference! };
+  }
+
+  shouldAutoApproveCommand(command: string, requiresApproval: boolean): boolean | undefined {
+    return this.governedLocalAuthority?.canAutoApproveCommand(command, requiresApproval, this.localAuthorityState());
+  }
+
+  recordCommandApproval(command: string, approved: boolean): void {
+    this.governedLocalAuthority?.recordDecision(command, approved, this.localAuthorityState());
+  }
+
+  recordCommandOutcome(command: string, outcome: string): void {
+    this.governedLocalAuthority?.recordOutcome(command, outcome);
+  }
+
   // Returns bool for most tools, and tuple for tools with nested settings
   shouldAutoApproveTool(toolName: ToolUseName): boolean | [boolean, boolean] {
+    if (this.governedLocalAuthority) {
+      const state = this.localAuthorityState();
+      switch (toolName) {
+        case "read_file": case "list_files": case "list_code_definition_names": case "search_files":
+          return [this.governedLocalAuthority.canUse("readFiles", state), false];
+        case "write_to_file": case "replace_in_file": case "precision_search_and_replace":
+          return [this.governedLocalAuthority.canUse("editFiles", state), false];
+        case "execute_command":
+          return [this.governedLocalAuthority.canUse("executeSafeCommands", state), false];
+        default: return false;
+      }
+    }
     if (this.autoApprovalSettings.enabled) {
       switch (toolName) {
         case "read_file":
@@ -2379,6 +2428,11 @@ export class Task {
     blockname: ToolUseName,
     autoApproveActionpath: string | undefined,
   ): boolean {
+    if (this.governedLocalAuthority) {
+      const action = ["write_to_file", "replace_in_file", "precision_search_and_replace"].includes(blockname)
+        ? "editFiles" : "readFiles";
+      return this.governedLocalAuthority.canAccessPath(action, autoApproveActionpath, this.localAuthorityState());
+    }
     let isLocalRead: boolean = false;
     if (autoApproveActionpath) {
       const absolutePath = path.resolve(cwd, autoApproveActionpath);
@@ -4446,10 +4500,12 @@ export class Task {
                   ? autoApproveResult
                   : [autoApproveResult, false];
 
-                if (
+                const localDecision = this.governedCodingInference
+                  ? false : this.shouldAutoApproveCommand(command, requiresApprovalPerLLM);
+                if (localDecision ?? (
                   (!requiresApprovalPerLLM && autoApproveSafe) ||
                   (requiresApprovalPerLLM && autoApproveSafe && autoApproveAll)
-                ) {
+                )) {
                   this.removeLastPartialMessageIfExistsWithType(
                     "ask",
                     "command",
@@ -4467,6 +4523,7 @@ export class Task {
                     command +
                       `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`, // ugly hack until we refactor combineCommandSequences
                   );
+                  this.recordCommandApproval(command, didApprove);
                   if (!didApprove) {
                     break;
                   }
@@ -4489,6 +4546,8 @@ export class Task {
 
                 const [userRejected, result] =
                   await this.executeCommandTool(command);
+                // The legacy terminal path has no trustworthy exit outcome; it grants no retry receipt.
+                this.recordCommandOutcome(command, "unknown");
                 if (timeoutId) {
                   clearTimeout(timeoutId);
                 }
@@ -5361,12 +5420,15 @@ export class Task {
           message: `ValorIDE has auto-approved ${this.autoApprovalSettings.maxRequests.toString()} API requests.`,
         });
       }
-      await this.ask(
+      const decision = await this.ask(
         "auto_approval_max_req_reached",
         `ValorIDE has auto-approved ${this.autoApprovalSettings.maxRequests.toString()} API requests. Would you like to reset the count and proceed with the task?`,
       );
-      // if we get past the promise it means the user approved and did not start a new task
+      if (!ToolApprovalManager.normalizeApprovalResponse(decision.response, decision.text, decision.images).approved) {
+        return true;
+      }
       this.consecutiveAutoApprovedRequestsCount = 0;
+      this.governedLocalAuthority?.resetRequestBudget(true, this.localAuthorityState());
     }
 
     // get previous api req's index to check token usage and determine if we need to truncate conversation history

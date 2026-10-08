@@ -430,7 +430,7 @@ describe("App account balance prompt", () => {
 
     render(<App />);
 
-    expect(screen.queryByText(/Get Started for Free/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Set up hosted GrayMatter/i)).not.toBeInTheDocument();
 
     act(() => {
       window.dispatchEvent(
@@ -443,8 +443,29 @@ describe("App account balance prompt", () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByText(/Get Started for Free/i)).toBeInTheDocument(),
+      expect(screen.getByText(/Set up hosted GrayMatter/i)).toBeInTheDocument(),
     );
+  });
+
+  it("keeps an open connection form mounted when the selected destination clears auth", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    const { default: App } = await import("../App");
+    render(<App />);
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent("message", {
+        data: { type: "action", action: "settingsButtonClicked" },
+      }));
+    });
+    expect(screen.getByTestId("settings-view")).toBeInTheDocument();
+    act(() => {
+      window.dispatchEvent(new MessageEvent("message", {
+        data: { type: "clearClientAuthState" },
+      }));
+    });
+    expect(screen.getByTestId("settings-view")).toBeInTheDocument();
+    expect(screen.queryByTestId("account-view")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("build-mode-view")).not.toBeInTheDocument();
   });
 
   it("opens account receipts when a SWARM command response arrives", async () => {

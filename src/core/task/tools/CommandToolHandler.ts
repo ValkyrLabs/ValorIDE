@@ -8,7 +8,7 @@ import { AssistantMessageContent } from "@core/assistant-message";
 import { formatResponse } from "@core/prompts/responses";
 
 import { showSystemNotification } from "@integrations/notifications";
-import { fixModelHtmlEscaping } from "@utils/string";
+import { normalizeModelCommand } from "@utils/string";
 import { execa } from "execa";
 import {
   combineCommandSequences,
@@ -17,11 +17,6 @@ import {
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
 import { isInTestMode } from "@services/test/TestMode";
 import { Logger } from "@services/logging/Logger";
-import { setTimeout as setTimeoutPromise } from "node:timers/promises";
-import {
-  awaitAskWithTimeout,
-  COMMAND_OUTPUT_TIMEOUT_MS,
-} from "../utils/askWithTimeout";
 import { resolveCommandRequiresApproval } from "./commandApproval";
 
 export class CommandToolHandler extends BaseToolHandler {
@@ -33,13 +28,17 @@ export class CommandToolHandler extends BaseToolHandler {
       return { shouldContinue: false };
     }
 
-    Logger.info(
-      `[CommandToolHandler] Received execute_command tool partial=${partial} params=${JSON.stringify(
-        block.params,
-      )}`,
-    );
+    if (!partial)
+      Logger.info(
+        `[CommandToolHandler] Received execute_command tool partial=${partial} params=${JSON.stringify(
+          block.params,
+        )}`,
+      );
 
-    let command: string | undefined = block.params.command;
+    let command: string | undefined =
+      block.params.command === undefined
+        ? undefined
+        : normalizeModelCommand(block.params.command);
     const requiresApprovalRaw: string | undefined =
       block.params.requires_approval;
     const requiresApprovalPerLLM = resolveCommandRequiresApproval(
@@ -75,11 +74,6 @@ export class CommandToolHandler extends BaseToolHandler {
         }
         this.context.consecutiveMistakeCount = 0;
 
-        // gemini models tend to use unescaped html entities in commands
-        if (this.context.api.getModel().id.includes("gemini")) {
-          command = fixModelHtmlEscaping(command);
-        }
-
         const ignoredFileAttemptedToAccess =
           this.context.valorideIgnoreController.validateCommand(command);
         if (ignoredFileAttemptedToAccess) {
@@ -110,16 +104,20 @@ export class CommandToolHandler extends BaseToolHandler {
           ? autoApproveResult
           : [autoApproveResult, false];
 
+        const localDecision = this.context.shouldAutoApproveCommand?.(
+          command,
+          requiresApprovalPerLLM,
+        );
         if (
-          (!requiresApprovalPerLLM && autoApproveSafe) ||
-          (requiresApprovalPerLLM && autoApproveSafe && autoApproveAll)
+          localDecision ??
+          ((!requiresApprovalPerLLM && autoApproveSafe) ||
+            (requiresApprovalPerLLM && autoApproveSafe && autoApproveAll))
         ) {
           this.context.removeLastPartialMessageIfExistsWithType(
             "ask",
             "command",
           );
           await this.context.say("command", command, undefined, false);
-          this.context.consecutiveAutoApprovedRequestsCount++;
           didAutoApprove = true;
         } else {
           if (
@@ -146,6 +144,7 @@ export class CommandToolHandler extends BaseToolHandler {
             response === "yesButtonClicked" ||
             (response === "messageResponse" &&
               (normalizedText === "yes" || normalizedText === "approve"));
+          this.context.recordCommandApproval?.(command, approved);
           const hasFeedback = !!text || !!images?.length;
           approvalFeedback = hasFeedback ? { text, images } : undefined;
 
@@ -175,11 +174,43 @@ export class CommandToolHandler extends BaseToolHandler {
           }, 30_000);
         }
 
-        const [userRejected, result, outcome] =
-          await this.executeCommand(command);
-        if (timeoutId) {
+        const beforeDispatch = (charge = true) => {
+          if (
+            this.context.isTaskActive?.() === false ||
+            (this.context.getChatMode && this.context.getChatMode() !== "act")
+          )
+            return false;
+          if (didAutoApprove) {
+            const currentDecision = this.context.shouldAutoApproveCommand?.(
+              command!,
+              requiresApprovalPerLLM,
+            );
+            const current = this.context.shouldAutoApproveTool(block.name);
+            const [safe, all] = Array.isArray(current)
+              ? current
+              : [current, false];
+            if (
+              !(
+                currentDecision ??
+                ((!requiresApprovalPerLLM && safe) ||
+                  (requiresApprovalPerLLM && safe && all))
+              )
+            )
+              return false;
+            // Charge only an operation that still has authority immediately before dispatch.
+            if (charge) this.context.consecutiveAutoApprovedRequestsCount++;
+          }
+          return true;
+        };
+        let executionResult: [boolean, ToolResponse, ToolExecutionOutcome];
+        try {
+          executionResult = await this.executeCommand(command, beforeDispatch);
+        } finally {
           clearTimeout(timeoutId);
         }
+        const [userRejected, result, outcome] = executionResult;
+
+        this.context.recordCommandOutcome?.(command, outcome);
 
         // Re-populate file paths in case the command modified the workspace
         this.context.workspaceTracker.populateFilePaths();
@@ -310,186 +341,139 @@ export class CommandToolHandler extends BaseToolHandler {
     }
   }
 
+  private commandDispatchBlocked(): [
+    boolean,
+    ToolResponse,
+    ToolExecutionOutcome,
+  ] {
+    return [
+      false,
+      "Command was not executed because the task or local approval changed. Review the current command and settings before retrying.",
+      "blocked",
+    ];
+  }
+
   private async executeCommand(
     command: string,
+    beforeDispatch: (charge?: boolean) => boolean,
   ): Promise<[boolean, ToolResponse, ToolExecutionOutcome]> {
-    Logger.info("IS_TEST: " + isInTestMode());
-
-    // Check if we're in test mode
     if (isInTestMode()) {
-      // In test mode, execute the command directly in Node
-      Logger.info("Executing command in Node: " + command);
+      if (!beforeDispatch()) return this.commandDispatchBlocked();
       return this.executeCommandInNode(command);
     }
-    Logger.info("Executing command in VS code terminal: " + command);
-
     const terminalInfo = await this.context.terminalManager.getOrCreateTerminal(
       this.context.cwd,
     );
-    terminalInfo.terminal.show(); // weird visual bug when creating new terminals
+    if (!beforeDispatch(false)) return this.commandDispatchBlocked();
+    terminalInfo.terminal.show();
     const process = this.context.terminalManager.runCommand(
       terminalInfo,
       command,
+      { beforeDispatch },
     );
-
-    let userFeedback: { text?: string; images?: string[] } | undefined;
-    let didContinue = false;
-    let didEmitCommandOutputToChat = false;
-
-    // Chunked terminal output buffering
-    const CHUNK_LINE_COUNT = 20;
-    const CHUNK_BYTE_SIZE = 2048; // 2KB
-    const CHUNK_DEBOUNCE_MS = 100;
-
-    let outputBuffer: string[] = [];
-    let outputBufferSize: number = 0;
-    let chunkTimer: NodeJS.Timeout | null = null;
-    let chunkEnroute = false;
-
-    const flushBuffer = async (force = false) => {
-      if (chunkEnroute || outputBuffer.length === 0) {
-        if (force && !chunkEnroute && outputBuffer.length > 0) {
-          // If force is true and no chunkEnroute, flush anyway
-        } else {
-          return;
-        }
-      }
-      const chunk = outputBuffer.join("\n");
-      outputBuffer = [];
-      outputBufferSize = 0;
-      chunkEnroute = true;
-      try {
-        didEmitCommandOutputToChat = true;
-        const askPromise = this.context.ask("command_output", chunk);
-        const { response, text, images } = await awaitAskWithTimeout(
-          askPromise,
-          COMMAND_OUTPUT_TIMEOUT_MS,
-        );
-        if (response === "yesButtonClicked") {
-          // proceed while running
-        } else {
-          userFeedback = { text, images };
-        }
-        didContinue = true;
-        process.continue();
-      } catch {
-        // ask promise was ignored
-      } finally {
-        chunkEnroute = false;
-        // If more output accumulated while chunkEnroute, flush again
-        if (outputBuffer.length > 0) {
-          await flushBuffer();
-        }
-      }
-    };
-
-    const scheduleFlush = () => {
-      if (chunkTimer) {
-        clearTimeout(chunkTimer);
-      }
-      chunkTimer = setTimeout(() => flushBuffer(), CHUNK_DEBOUNCE_MS);
-    };
-
-    let result = "";
-    let fullOutput = ""; // Keep track of full output for filtering
-
-    process.on("line", (line) => {
-      result += line + "\n";
-      fullOutput += line + "\n";
-
-      if (!didContinue) {
-        outputBuffer.push(line);
-        outputBufferSize += Buffer.byteLength(line, "utf8");
-        // Flush if buffer is large enough
-        if (
-          outputBuffer.length >= CHUNK_LINE_COUNT ||
-          outputBufferSize >= CHUNK_BYTE_SIZE
-        ) {
-          flushBuffer();
-        } else {
-          scheduleFlush();
-        }
-      } else {
-        didEmitCommandOutputToChat = true;
-        this.context.say("command_output", line);
-      }
-    });
-
+    const limit = 512 * 1024;
+    let fullOutput = "";
+    let truncated = false;
     let completed = false;
-    process.once("completed", async () => {
+    let outputBuffer = "";
+    let chunkTimer: ReturnType<typeof setTimeout> | undefined;
+    let pendingFlush: Promise<void> | undefined;
+
+    const flush = (): Promise<void> => {
+      clearTimeout(chunkTimer);
+      chunkTimer = undefined;
+      if (pendingFlush) return pendingFlush;
+      if (!outputBuffer) return Promise.resolve();
+      const chunk = outputBuffer;
+      outputBuffer = "";
+      // Output is informational, not a new command approval. A completed quick
+      // command must not wait for an extra two-second approval timeout.
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      pendingFlush = Promise.race([
+        this.context.say("command_output", chunk),
+        new Promise<undefined>((resolve) => {
+          timer = setTimeout(() => resolve(undefined), 1000);
+        }),
+      ])
+        .then(
+          () => undefined,
+          () => undefined,
+        )
+        .finally(() => {
+          clearTimeout(timer);
+          pendingFlush = undefined;
+        });
+      return pendingFlush;
+    };
+    const onLine = (line: string) => {
+      const text = (line ?? "") + "\n";
+      if (fullOutput.length + text.length > limit) truncated = true;
+      fullOutput = (fullOutput + text).slice(-limit);
+      outputBuffer += text;
+      if (outputBuffer.length > 32 * 1024)
+        outputBuffer =
+          "[Earlier display output omitted]\n" + outputBuffer.slice(-32 * 1024);
+      if (!chunkTimer)
+        chunkTimer = setTimeout(() => {
+          void flush();
+        }, 100);
+    };
+    const onCompleted = () => {
       completed = true;
-      // Flush any remaining buffered output
-      if (!didContinue && outputBuffer.length > 0) {
-        if (chunkTimer) {
-          clearTimeout(chunkTimer);
-          chunkTimer = null;
-        }
-        await flushBuffer(true);
+    };
+    const onUnavailable = () => {
+      void this.context.say("shell_integration_warning").catch(() => {});
+    };
+    process.on("line", onLine);
+    process.once("completed", onCompleted);
+    process.once("no_shell_integration", onUnavailable);
+    try {
+      try {
+        await process;
+      } catch (error) {
+        if (process.getState?.() !== "unknown") throw error;
+        // Lost output capture does not prove the command failed or had no effects.
+        Logger.info(`Command output tracking unavailable: ${String(error)}`);
       }
-    });
-
-    process.once("no_shell_integration", async () => {
-      await this.context.say("shell_integration_warning");
-    });
-
-    await process;
-
-    // Wait for a short delay to ensure all messages are sent to the webview
-    await setTimeoutPromise(50);
-
-    // Filter the full output before using it
-    const filteredOutput = OutputFilterService.filterCommandOutput(
-      fullOutput,
-      command,
-    );
-
-    result = result.trim();
+      await flush();
+      if (outputBuffer) await flush();
+    } finally {
+      clearTimeout(chunkTimer);
+      process.removeListener("line", onLine);
+      process.removeListener("completed", onCompleted);
+      process.removeListener("no_shell_integration", onUnavailable);
+    }
+    const filteredOutput =
+      (truncated
+        ? "[Earlier command output truncated; retained latest output]\n"
+        : "") + OutputFilterService.filterCommandOutput(fullOutput, command);
     const exitCode = process.getExitCode();
-    const outcome: ToolExecutionOutcome = completed
-      ? commandExitOutcome(exitCode)
-      : "pending";
-    const completionMessage = completed
-      ? Number.isInteger(exitCode)
-        ? `Command completed with exit code ${exitCode}.`
-        : "Command completed, but its exit status is unavailable."
-      : "Command is still running in the user's terminal.";
-
-    if (filteredOutput.length > 0 && !didEmitCommandOutputToChat) {
-      await this.context.say("command_output", filteredOutput);
-    }
-
-    if (userFeedback) {
-      return [
-        true,
-        formatResponse.toolResult(
-          `${completionMessage}${
-            filteredOutput.length > 0
-              ? `\nHere's the output so far:\n${filteredOutput}`
-              : ""
-          }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
-          userFeedback.images,
-        ),
-        outcome,
-      ];
-    }
-
-    if (completed) {
-      return [
-        false,
-        `${completionMessage}${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
-        outcome,
-      ];
-    } else {
-      return [
-        false,
-        `Command is still running in the user's terminal.${
-          filteredOutput.length > 0
-            ? `\nHere's the output so far:\n${filteredOutput}`
-            : ""
-        }\n\nYou will be updated on the terminal status and new output in the future.`,
-        outcome,
-      ];
-    }
+    const state = process.getState?.();
+    const outcome: ToolExecutionOutcome =
+      state === "blocked"
+        ? "blocked"
+        : completed
+          ? commandExitOutcome(exitCode)
+          : state === "unknown" || state === "cancelled"
+            ? "unknown"
+            : "pending";
+    const message =
+      state === "blocked"
+        ? "Command was not executed because the task or local approval changed. Review the current command and settings before retrying."
+        : state === "cancelled"
+          ? "Command waiting was cancelled. An already started command may still be running in the terminal. Inspect it before retrying."
+          : state === "unknown"
+            ? "Command was sent once, but terminal output tracking is unavailable. It may still be running. Inspect the terminal before retrying."
+            : completed
+              ? Number.isInteger(exitCode)
+                ? `Command completed with exit code ${exitCode}.`
+                : "Command completed, but its exit status is unavailable."
+              : "Command is still running in the user's terminal. Do not repeat it; inspect its status and output first.";
+    return [
+      false,
+      `${message}${filteredOutput ? `\nOutput:\n${filteredOutput}` : ""}`,
+      outcome,
+    ];
   }
 }
 

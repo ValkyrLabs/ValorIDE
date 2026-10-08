@@ -571,3 +571,35 @@ Run selects the generated backend/UI modules, uses an existing `dev`, `start`, o
 Spring Boot output keeps an executable `exec` JAR alongside the normal library JAR so other Maven folders can import its classes. Existing plugin options and classifiers are retained. For older projects whose only JAR contains `BOOT-INF` classes, fix that plugin configuration, rebuild, and reconnect the consumer.
 
 For an older UUID-based download, use **Preview Legacy Project Migration**. Review the file list and verified name/version before creating a separate canonical copy. Existing destinations are rejected; secrets and build caches are excluded. The original project remains intact, and legacy files receive no guessed generated baseline. Undo parks an unedited migration copy in a recovery folder; it refuses to remove subsequent edits.
+
+### OpenAI and ChatGPT OAuth
+
+Select **OpenAI Native** and **Connect ChatGPT OAuth** in provider settings, or reuse your existing `codex login` session. Leave the API-key field empty to use OAuth. ValorIDE reads `$CODEX_HOME/auth.json` (otherwise `~/.codex/auth.json`), refreshes expiring sessions, and rechecks credentials between requests. Interrupted browser opening releases the callback port immediately so you can retry. A busy port, missing account ID, rejected session, or unavailable subscription/workspace model produces a specific recovery message.
+
+ChatGPT OAuth uses the account-scoped Codex Responses endpoint at `https://chatgpt.com/backend-api/codex/responses`, with streaming and `store: false`. Explicit OpenAI API keys use the Platform API. Adding Platform scopes such as `api.responses.write` to a ChatGPT OAuth login does not change its inference transport.
+
+The OAuth authorization parameters and Codex transport follow [OpenClaw's implementation](https://github.com/openclaw/openclaw/tree/699a3c58bf28512d6b46a48f6f13447457a10172), specifically `extensions/openai/openai-chatgpt-oauth-authorization.runtime.ts` and `packages/ai/src/providers/openai-chatgpt-responses.ts`. Its MIT notice is retained below for this adaptation.
+
+```text
+MIT License
+
+Copyright (c) 2026 OpenClaw Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

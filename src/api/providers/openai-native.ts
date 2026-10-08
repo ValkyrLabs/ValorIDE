@@ -17,10 +17,14 @@ import type {
   ResponseInputMessageContentList,
   ResponseStreamEvent,
 } from "openai/resources/responses/responses";
-import { resolveOpenAiNativeAuthToken } from "./openai-native-auth";
+import {
+  resolveOpenAiNativeAuth,
+  OpenAiNativeAuth,
+} from "./openai-native-auth";
 import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
 import {
   extractOpenAiResponsesReasoningText,
+  isOpenAiResponsesCompletedEvent,
   takeOpenAiResponsesEventsThroughCompletion,
 } from "./openai-native-events";
 
@@ -31,34 +35,72 @@ interface OpenAiNativeHandlerOptions {
 }
 
 const OPENAI_NATIVE_REASONING_SUMMARY = "detailed" as const;
+// Codex OAuth transport matches OpenClaw; never send this grant to Platform.
+const OPENAI_CODEX_BASE_URL = "https://chatgpt.com/backend-api/codex";
+const OPENAI_PLATFORM_BASE_URL = "https://api.openai.com/v1";
 
 export class OpenAiNativeHandler implements ApiHandler {
   private options: OpenAiNativeHandlerOptions;
   private client: OpenAI | undefined;
+  private clientAuth: OpenAiNativeAuth | undefined;
 
   constructor(options: OpenAiNativeHandlerOptions) {
     this.options = options;
   }
 
-  private async ensureClient(): Promise<OpenAI> {
-    if (!this.client) {
-      const authToken = await resolveOpenAiNativeAuthToken({
-        openAiNativeApiKey: this.options.openAiNativeApiKey,
-      });
-      if (!authToken) {
-        throw new Error(
-          "OpenAI authentication is required. Provide an OpenAI API key or run `codex login` to use OAuth.",
-        );
-      }
+  private async ensureClient(): Promise<{
+    client: OpenAI;
+    auth: OpenAiNativeAuth;
+  }> {
+    const auth = await resolveOpenAiNativeAuth({
+      openAiNativeApiKey: this.options.openAiNativeApiKey,
+    });
+    if (!auth) {
+      this.client = undefined;
+      this.clientAuth = undefined;
+      throw new Error(
+        "OpenAI authentication is required. Connect ChatGPT OAuth in ValorIDE settings, run `codex login`, or provide an OpenAI API key.",
+      );
+    }
+    if (auth.mode === "oauth" && !auth.accountId) {
+      this.client = undefined;
+      this.clientAuth = undefined;
+      throw new Error(
+        "Your ChatGPT OAuth session is missing its account ID. Reconnect ChatGPT OAuth in ValorIDE settings or run `codex login` again.",
+      );
+    }
+    if (
+      !this.client ||
+      this.clientAuth?.mode !== auth.mode ||
+      this.clientAuth?.token !== auth.token ||
+      (auth.mode === "oauth" &&
+        this.clientAuth?.mode === "oauth" &&
+        this.clientAuth.accountId !== auth.accountId)
+    ) {
       try {
         this.client = new OpenAI({
-          apiKey: authToken,
+          apiKey: auth.token,
+          baseURL:
+            auth.mode === "oauth"
+              ? OPENAI_CODEX_BASE_URL
+              : OPENAI_PLATFORM_BASE_URL,
+          ...(auth.mode === "oauth"
+            ? {
+                defaultHeaders: {
+                  "ChatGPT-Account-Id": auth.accountId!,
+                  "OpenAI-Beta": "responses=experimental",
+                  originator: "valoride",
+                  Accept: "text/event-stream",
+                },
+              }
+            : {}),
         });
+        this.clientAuth = auth;
       } catch (error: any) {
         throw new Error(`Error creating OpenAI client: ${error.message}`);
       }
     }
-    return this.client;
+    return { client: this.client, auth };
   }
 
   private async *yieldUsage(
@@ -148,15 +190,19 @@ export class OpenAiNativeHandler implements ApiHandler {
   private async *createResponsesMessage(
     systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
+    client: OpenAI,
+    isOAuth: boolean,
   ): ApiStream {
-    const client = await this.ensureClient();
     const model = this.getModel();
     const emittedReasoning = new Set<string>();
     const stream = await client.responses.create({
       model: model.id,
-      instructions: systemPrompt,
+      instructions: isOAuth
+        ? systemPrompt || "You are a helpful assistant."
+        : systemPrompt,
       input: this.convertToResponsesInput(messages),
       stream: true,
+      ...(isOAuth ? { store: false } : {}),
       reasoning: {
         effort:
           (this.options.reasoningEffort as ChatCompletionReasoningEffort) ||
@@ -177,6 +223,21 @@ export class OpenAiNativeHandler implements ApiHandler {
         };
       }
 
+      if (isOpenAiResponsesCompletedEvent(event)) {
+        const response = (event as { response?: OpenAI.Responses.Response })
+          .response;
+        if (response?.status === "failed") {
+          throw new Error(response.error?.message || "OpenAI response failed");
+        }
+        if (response?.status === "incomplete") {
+          throw new Error(
+            "OpenAI response ended before completion. Retry the request or reduce its size.",
+          );
+        }
+        yield normalizeOpenAiUsageChunk(model.info, response?.usage);
+        continue;
+      }
+
       switch (event.type) {
         case "response.output_text.delta":
           if (event.delta) {
@@ -186,12 +247,13 @@ export class OpenAiNativeHandler implements ApiHandler {
             };
           }
           break;
-        case "response.completed":
-          yield normalizeOpenAiUsageChunk(model.info, event.response.usage);
-          break;
         case "response.failed":
           throw new Error(
             event.response.error?.message || "OpenAI response failed",
+          );
+        case "response.incomplete":
+          throw new Error(
+            "OpenAI response ended before completion. Retry the request or reduce its size.",
           );
         case "error":
           throw new Error(event.message || "OpenAI response stream failed");
@@ -204,8 +266,34 @@ export class OpenAiNativeHandler implements ApiHandler {
     systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
   ): ApiStream {
-    const client = await this.ensureClient();
+    const { client, auth } = await this.ensureClient();
     const model = this.getModel();
+
+    if (auth.mode === "oauth") {
+      try {
+        yield* this.createResponsesMessage(
+          systemPrompt,
+          messages,
+          client,
+          true,
+        );
+      } catch (error: any) {
+        if (error?.status === 401) {
+          this.client = undefined;
+          this.clientAuth = undefined;
+          throw new Error(
+            "Your ChatGPT OAuth session was rejected. Reconnect ChatGPT OAuth in ValorIDE settings or run `codex login` again.",
+          );
+        }
+        if (error?.status === 403) {
+          throw new Error(
+            "Your ChatGPT account cannot use this Codex model. Check your ChatGPT subscription and workspace access, or select an available model.",
+          );
+        }
+        throw error;
+      }
+      return;
+    }
 
     switch (model.id) {
       case "gpt-5.6-sol":
@@ -215,7 +303,12 @@ export class OpenAiNativeHandler implements ApiHandler {
       case "gpt-5.4":
       case "gpt-5.4-mini":
       case "gpt-5.4-nano":
-        yield* this.createResponsesMessage(systemPrompt, messages);
+        yield* this.createResponsesMessage(
+          systemPrompt,
+          messages,
+          client,
+          false,
+        );
         break;
       default: {
         const stream = await client.chat.completions.create({

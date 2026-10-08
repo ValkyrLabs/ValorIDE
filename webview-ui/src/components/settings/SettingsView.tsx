@@ -15,7 +15,8 @@ import {
 import { vscode } from "@thorapi/utils/vscode";
 import SettingsButton from "@thorapi/components/common/SettingsButton";
 import ApiOptions from "./ApiOptions";
-import { TabButton } from "../mcp/configuration/McpConfigurationView";
+import { TabList, TabButton } from "../common/TabList";
+import { Notice } from "../common/Notice";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
@@ -37,6 +38,7 @@ const { IS_DEV } = process.env;
 
 type SettingsViewProps = {
   onDone: () => void;
+  initialTab?: SettingsTab;
 };
 
 type SettingsTab = "application" | "valkyraiBackend" | "browser";
@@ -56,7 +58,7 @@ const titleCaseStatus = (value?: string): string => {
     .join(" ");
 };
 
-const SettingsView = ({ onDone }: SettingsViewProps) => {
+const SettingsView = ({ onDone, initialTab }: SettingsViewProps) => {
   const {
     apiConfiguration,
     version,
@@ -73,7 +75,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     agenticState,
   } = useExtensionState();
   const [activeSettingsTab, setActiveSettingsTab] =
-    useState<SettingsTab>("application");
+    useState<SettingsTab>(initialTab ?? "application");
   const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -151,29 +153,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
       openRouterModels,
     );
 
-    // setApiErrorMessage(apiValidationResult)
-    // setModelIdErrorMessage(modelIdValidationResult)
-
-    let apiConfigurationToSubmit = apiConfiguration;
-    if (!apiValidationResult && !modelIdValidationResult) {
-      // vscode.postMessage({ type: "apiConfiguration", apiConfiguration })
-      // vscode.postMessage({
-      // 	type: "customInstructions",
-      // 	text: customInstructions,
-      // })
-      // vscode.postMessage({
-      // 	type: "telemetrySetting",
-      // 	text: telemetrySetting,
-      // })
-      // console.log("handleSubmit", withoutDone)
-      // vscode.postMessage({
-      // 	type: "separateModeSetting",
-      // 	text: separateModeSetting,
-      // })
-    } else {
-      // if the api configuration is invalid, we don't save it
-      apiConfigurationToSubmit = undefined;
-    }
+    setApiErrorMessage(apiValidationResult);
+    setModelIdErrorMessage(modelIdValidationResult);
+    if (apiValidationResult || modelIdValidationResult) return;
+    const apiConfigurationToSubmit = apiConfiguration;
 
     vscode.postMessage({
       type: "updateSettings",
@@ -189,9 +172,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   };
 
   useEffect(() => {
-    setApiErrorMessage(undefined);
-    setModelIdErrorMessage(undefined);
-  }, [apiConfiguration]);
+    setApiErrorMessage((previous) => previous ? validateApiConfiguration(apiConfiguration) : undefined);
+    setModelIdErrorMessage((previous) => previous ? validateModelId(apiConfiguration, openRouterModels) : undefined);
+  }, [apiConfiguration, openRouterModels]);
 
   // validate as soon as the component is mounted
   /*
@@ -465,36 +448,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   return (
     <>
       <SystemAlerts />
-      <div className="fixed top-0 left-0 right-0 bottom-0 pt-2.5 pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
+      <div className="settings-screen fixed top-0 left-0 right-0 bottom-0 pt-2.5 pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-[13px] pr-[17px]">
           <h3 className="text-(--vscode-foreground) m-0">Settings</h3>
           <div className="flex items-center gap-2">
-            <VSCodeButton
-              appearance="icon"
-              onClick={handleStar}
-              title="Star us on GitHub"
-            >
-              <FaGithub />
-            </VSCodeButton>
-            <VSCodeButton
-              appearance="icon"
-              onClick={handleShare}
-              title="Copy Marketplace link to clipboard"
-            >
-              {copied ? <FaCheck size={14} /> : <FaShareAlt size={14} />}
-            </VSCodeButton>
-            <div
-              className="flex items-center"
-              title="Store and load the JWT in local storage to avoid logging in every time"
-            >
-              <VSCodeCheckbox
-                checked={persistJwt}
-                onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}
-              >
-                <span className="text-xs">Remember login</span>
-              </VSCodeCheckbox>
-            </div>
+            <VSCodeButton appearance="secondary" onClick={onDone} disabled={isTestingValkyraiHost}>Done</VSCodeButton>
             <VSCodeButton
               onClick={() => handleSubmit(false)}
               disabled={
@@ -506,9 +465,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           </div>
         </div>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">
-          {/**
-          <OfflineBanner />
-           */}
+          <OfflineBanner onOpenSettings={() => setActiveSettingsTab("valkyraiBackend")} />
           {peers.length > 0 && (
             <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-3 bg-(--vscode-panel-background) text-(--vscode-foreground)">
               <div className="mb-2 font-semibold">Active instances</div>
@@ -531,23 +488,25 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </div>
           )}
 
-          <div className="flex gap-px mb-3 border-0 border-b border-solid border-(--vscode-panel-border)">
+          <TabList aria-label="Settings sections" className="mb-3">
             {settingsTabs.map((tab) => (
               <TabButton
                 key={tab.id}
+                id={`settings-tab-${tab.id}`} aria-controls="settings-panel"
                 isActive={activeSettingsTab === tab.id}
                 onClick={() => setActiveSettingsTab(tab.id)}
               >
                 {tab.label}
               </TabButton>
             ))}
-          </div>
+          </TabList>
 
+          <div role="tabpanel" id="settings-panel" aria-labelledby={`settings-tab-${activeSettingsTab}`}>
           {activeSettingsTab === "application" && (
             <>
               {planActSeparateModelsSetting ? (
                 <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-5 bg-(--vscode-panel-background)">
-                  <div className="flex gap-px mb-2.5 -mt-2 border-0 border-b border-solid border-(--vscode-panel-border)">
+                  <TabList aria-label="Model mode" className="mb-2.5">
                     <TabButton
                       isActive={chatSettings.mode === "plan"}
                       onClick={() => handleTabChange("plan")}
@@ -560,7 +519,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                     >
                       Act Mode
                     </TabButton>
-                  </div>
+                  </TabList>
 
                   <div className="-mb-3">
                     <ApiOptions
@@ -580,6 +539,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 />
               )}
 
+              {(apiErrorMessage || modelIdErrorMessage) && <Notice kind="error">{apiErrorMessage || modelIdErrorMessage}</Notice>}
               <div className="mb-[5px]">
                 <VSCodeTextArea
                   value={customInstructions ?? ""}
@@ -688,7 +648,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               </VSCodeTextField>
               {valkyraiHostError && (
                 <div
-                  className="text-xs mt-1 px-2 py-1 rounded"
+                  role="alert"
+                  className="valoride-notice valoride-notice--error text-xs mt-1 px-2 py-1 rounded"
                   style={{
                     color:
                       "var(--vscode-inputValidation-errorForeground, #f48771)",
@@ -800,6 +761,35 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           )}
 
           {activeSettingsTab === "browser" && <BrowserSettingsSection />}
+          </div>
+
+          <div className="settings-footer-actions flex flex-wrap items-center gap-2 mb-3">
+            <VSCodeButton
+              appearance="icon"
+              onClick={handleStar}
+              title="Star us on GitHub"
+            >
+              <FaGithub />
+            </VSCodeButton>
+            <VSCodeButton
+              appearance="icon"
+              onClick={handleShare}
+              title="Copy Marketplace link to clipboard"
+            >
+              {copied ? <FaCheck size={14} /> : <FaShareAlt size={14} />}
+            </VSCodeButton>
+            <div
+              className="flex items-center"
+              title="Store and load the JWT in local storage to avoid logging in every time"
+            >
+              <VSCodeCheckbox
+                checked={persistJwt}
+                onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}
+              >
+                <span className="text-xs">Remember login</span>
+              </VSCodeCheckbox>
+            </div>
+          </div>
 
           <div className="mt-auto pr-2 flex flex-wrap justify-center gap-2">
             <SettingsButton

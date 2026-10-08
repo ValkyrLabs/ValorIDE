@@ -261,9 +261,9 @@ const RestoreConfirmTooltip = styled.div`
   top: calc(100% - 0.5px);
   right: 0;
   background: ${CODE_BLOCK_BG_COLOR};
-  border: 1px solid var(--vscode-editorGroup-border);
+  border: none;
   padding: 12px;
-  border-radius: 3px;
+  border-radius: var(--valoride-chat-radius, 14px);
   margin-top: 8px;
   width: calc(100vw - 57px);
   min-width: 0px;

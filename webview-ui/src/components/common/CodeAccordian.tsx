@@ -57,15 +57,26 @@ const CodeAccordian = ({
 
   return (
     <div
+      className="valoride-chat-card"
       style={{
-        borderRadius: 3,
+        borderRadius: "var(--valoride-chat-radius, 14px)",
         backgroundColor: CODE_BLOCK_BG_COLOR,
         overflow: "hidden", // This ensures the inner scrollable area doesn't overflow the rounded corners
-        border: "1px solid var(--vscode-editorGroup-border)",
+        border: "none",
       }}
     >
       {(path || isFeedback || isConsoleLogs) && (
         <div
+          role="button"
+          tabIndex={isLoading ? -1 : 0}
+          aria-expanded={isExpanded}
+          aria-disabled={!!isLoading}
+          onKeyDown={(event) => {
+            if (!isLoading && (event.key === "Enter" || event.key === " ")) {
+              event.preventDefault();
+              onToggleExpand();
+            }
+          }}
           style={{
             color: "var(--vscode-descriptionForeground)",
             display: "flex",

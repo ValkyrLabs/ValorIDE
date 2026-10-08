@@ -51,6 +51,7 @@ export class ToolManager {
     didRejectTool: boolean,
     didAlreadyUseTool: boolean,
   ): Promise<{
+    handled?: boolean;
     outcome?: ToolExecutionOutcome;
     shouldContinue: boolean;
     toolResponse?: ToolResponse;
@@ -87,6 +88,7 @@ export class ToolManager {
     if (handler) {
       const result = await handler.execute(block, partial);
       return {
+        handled: true,
         outcome:
           result.outcome ?? (result.userRejected ? "rejected" : "unknown"),
         shouldContinue: result.shouldContinue,

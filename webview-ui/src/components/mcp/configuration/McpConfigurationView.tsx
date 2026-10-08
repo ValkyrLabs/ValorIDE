@@ -1,6 +1,7 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { TabList, TabButton } from "../../common/TabList";
+export { TabButton } from "../../common/TabList";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { vscode } from "@thorapi/utils/vscode";
 import AddRemoteServerForm from "./tabs/add-server/AddRemoteServerForm";
@@ -14,9 +15,10 @@ import { useCommunicationService } from "@thorapi/context/CommunicationServiceCo
 type McpViewProps = {
   onDone: () => void;
   initialTab?: McpViewTab;
+  onOpenSettings?: () => void;
 };
 
-const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
+const McpConfigurationView = ({ onDone, initialTab, onOpenSettings }: McpViewProps) => {
   const { mcpMarketplaceEnabled } = useExtensionState();
   const isMarketplaceVisible = mcpMarketplaceEnabled !== false;
   const [activeTab, setActiveTab] = useState<McpViewTab>(
@@ -48,6 +50,7 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
   return (
     <>
       <div
+        className="mcp-screen"
         style={{
           position: "fixed",
           top: 0,
@@ -75,17 +78,12 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
         </div>
 
         <div style={{ flex: 1, overflow: "auto" }}>
+          <OfflineBanner onOpenSettings={onOpenSettings} style={{ margin: "0 20px 12px" }} />
           {/* Tabs container */}
-          <div
-            style={{
-              display: "flex",
-              gap: "1px",
-              padding: "0 20px 0 20px",
-              borderBottom: "1px solid var(--vscode-panel-border)",
-            }}
-          >
+          <TabList aria-label="MCP server views" style={{ margin: "0 20px 12px" }}>
             {isMarketplaceVisible && (
               <TabButton
+                id="mcp-tab-marketplace" aria-controls="mcp-panel"
                 isActive={activeTab === "marketplace"}
                 onClick={() => handleTabChange("marketplace")}
               >
@@ -93,21 +91,23 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
               </TabButton>
             )}
             <TabButton
+              id="mcp-tab-addRemote" aria-controls="mcp-panel"
               isActive={activeTab === "addRemote"}
               onClick={() => handleTabChange("addRemote")}
             >
               Remote Servers
             </TabButton>
             <TabButton
+              id="mcp-tab-installed" aria-controls="mcp-panel"
               isActive={activeTab === "installed"}
               onClick={() => handleTabChange("installed")}
             >
               Installed
             </TabButton>
-          </div>
+          </TabList>
 
           {/* Content container */}
-          <div style={{ width: "100%" }}>
+          <div role="tabpanel" id="mcp-panel" aria-labelledby={`mcp-tab-${activeTab}`} style={{ width: "100%" }}>
             {isMarketplaceVisible && activeTab === "marketplace" && (
               <McpMarketplaceView />
             )}
@@ -123,39 +123,5 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
     </>
   );
 };
-
-const StyledTabButton = styled.button<{ isActive: boolean }>`
-  background: none;
-  border: none;
-  border-bottom: 2px solid
-    ${(props) => (props.isActive ? "var(--vscode-foreground)" : "transparent")};
-  color: ${(props) =>
-    props.isActive
-      ? "var(--vscode-foreground)"
-      : "var(--vscode-descriptionForeground)"};
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 13px;
-  margin-bottom: -1px;
-  font-family: inherit;
-
-  &:hover {
-    color: var(--vscode-foreground);
-  }
-`;
-
-export const TabButton = ({
-  children,
-  isActive,
-  onClick,
-}: {
-  children: React.ReactNode;
-  isActive: boolean;
-  onClick: () => void;
-}) => (
-  <StyledTabButton isActive={isActive} onClick={onClick}>
-    {children}
-  </StyledTabButton>
-);
 
 export default McpConfigurationView;

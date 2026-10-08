@@ -1,4 +1,5 @@
 export type HistoryItem = {
+  governedLocalAuthority?: import("../services/swarm/GovernedLocalAuthority").GovernedLocalAuthoritySnapshot;
   governedCodingInference?: import("../services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
   id: string;
   ts: number;

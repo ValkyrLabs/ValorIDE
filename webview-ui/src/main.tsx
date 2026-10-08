@@ -82,6 +82,9 @@ import "./themes/valkyr/bootstrap.css";
 import "./App.css";
 import "./index.css";
 import "antd/dist/reset.css";
+import "./styles/calm.css";
+
+document.body.classList.add("valoride-calm");
 
 import type { ProviderProps } from "react-redux";
 import { Provider } from "react-redux";
@@ -116,7 +119,9 @@ root.render(
             typeof navigator !== "undefined" ? navigator.userAgent : "",
         }}
       >
-        <RootComponent />
+        <div className="valoride-app">
+          <RootComponent />
+        </div>
       </ErrorBoundary>
     </MemoryRouter>
   </ReduxProvider>,

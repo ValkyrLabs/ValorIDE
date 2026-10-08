@@ -3,14 +3,14 @@ import { PROJECT_UUID, normalizeBlueprintBackend } from "./projectBlueprintSync"
 
 export interface DeveloperSourceRevision {
   applicationId: string; artifactId: string; projectId: string; organizationId: string;
-  revisionRef: string; checksumSha256: string; sizeBytes: number; commitSha?: string;
+  revisionRef: string; checksumSha256: string; sizeBytes: number; commitSha?: string; originalGeneratorChecksum?: string;
 }
 export interface GitSourceConnections {
   bindings: Array<{ bindingId: string; repository: string }>;
   projects: Array<{ projectId: string; name?: string }>;
 }
 export interface SourceHandoffOptions {
-  backend: string; applicationId: string; jwtToken: string; assertCurrent: () => Promise<void>;
+  backend: string; applicationId: string; jwtToken: string; assertCurrent: () => Promise<void>; sourceKind?: "upload";
 }
 async function request<T>(options: SourceHandoffOptions, suffix: string, method = "GET", json?: unknown): Promise<T> {
   if (!PROJECT_UUID.test(options.applicationId) || !options.jwtToken.trim()) throw new Error("Sign in to the Application's authorized account before selecting pushed source.");
@@ -22,9 +22,14 @@ async function request<T>(options: SourceHandoffOptions, suffix: string, method 
     await options.assertCurrent(); return result.data;
   } catch (error) {
     const status = error instanceof ValkyrLabsApiError ? error.status : undefined;
-    throw new Error(status === 409 ? "The Application source selection changed. Reload it and review the pushed commit before selecting it again."
-      : status === 401 || status === 403 ? "The Application, Project or existing GitHub connection is unavailable to this account. Reconnect its authorized account."
-      : `Source retrieval${status ? ` (${status})` : ""} was interrupted or unavailable. The pushed Git commit remains intact; retry fetching that exact commit after checking the existing binding and Contents read permission.`);
+    const upload = options.sourceKind === "upload";
+    throw new Error(status === 409 ? "The Application source selection changed. Reload it and review the immutable revision before selecting it again."
+      : status === 401 || status === 403 ? upload
+        ? "The Application or Project is unavailable to this account. Reconnect its authorized account before selecting source."
+        : "The Application, Project or existing GitHub connection is unavailable to this account. Reconnect its authorized account."
+      : upload
+        ? `Source selection${status ? ` (${status})` : ""} was interrupted or unavailable. The uploaded revision remains intact; reconnect and retry selecting that exact revision.`
+        : `Source retrieval${status ? ` (${status})` : ""} was interrupted or unavailable. The pushed Git commit remains intact; retry fetching that exact commit after checking the existing binding and Contents read permission.`);
   }
 }
 export async function authorizedGitSourceConnections(options: SourceHandoffOptions): Promise<GitSourceConnections> {
@@ -45,5 +50,51 @@ export async function fetchAndSelectPushedRevision(options: SourceHandoffOptions
   const selected = await request<DeveloperSourceRevision>(options, "/developer-project/selected-source", "PUT", { revisionRef: source.revisionRef, expectedArtifactRef: current?.artifactRef ?? null });
   if (selected.applicationId !== options.applicationId || selected.projectId !== options.projectId || selected.revisionRef !== source.revisionRef || selected.checksumSha256 !== source.checksumSha256 || selected.commitSha !== options.commitSha)
     throw new Error("The backend selected a different source revision. Review the Application's selected source before generating.");
+  return selected;
+}
+
+export interface ApplicationSourceSelection {
+  applicationId: string;
+  artifactRef?: string | null;
+  sourceRevision?: DeveloperSourceRevision | null;
+}
+
+export async function applicationSourceSelection(options: SourceHandoffOptions): Promise<ApplicationSourceSelection> {
+  const current = await request<ApplicationSourceSelection>(options, "/developer-project/selection");
+  if (!current || current.applicationId !== options.applicationId ||
+      (current.artifactRef != null && (typeof current.artifactRef !== "string" || current.artifactRef.length > 512)))
+    throw new Error("The current source selection belongs to another Application or is invalid. No source selection was changed.");
+  return current;
+}
+
+export async function latestPublishedApplicationSource<T>(options: SourceHandoffOptions): Promise<T | undefined> {
+  return request<T | undefined>(options, "/source-snapshots");
+}
+
+/** Recover an interrupted upload's exact immutable revision without adopting a newer parent selection. */
+export async function selectPublishedApplicationSource(options: SourceHandoffOptions,
+    source: { applicationId: string; artifactId: string; revisionRef: string; checksumSha256: string; sizeBytes: number },
+    expectedArtifactRef: string | null, originalGeneratorChecksum: string): Promise<DeveloperSourceRevision> {
+  if (source.applicationId !== options.applicationId || !PROJECT_UUID.test(source.artifactId) ||
+      source.revisionRef !== `source-snapshot:${options.applicationId}:${source.artifactId}` ||
+      !/^[a-f0-9]{64}$/.test(source.checksumSha256) || !/^[a-f0-9]{64}$/.test(originalGeneratorChecksum) ||
+      !Number.isSafeInteger(source.sizeBytes) || source.sizeBytes < 1)
+    throw new Error("Uploaded source has invalid immutable Application evidence. No source selection was changed.");
+  const current = await applicationSourceSelection(options);
+  let selected: DeveloperSourceRevision;
+  if (current.artifactRef === source.revisionRef) {
+    selected = current.sourceRevision!;
+  } else {
+    if ((current.artifactRef ?? null) !== expectedArtifactRef)
+      throw new Error("The Application source selection changed after publication. Review its current revision before retrying; the uploaded source remains intact.");
+    selected = await request<DeveloperSourceRevision>(options, "/developer-project/selected-source", "PUT", {
+      revisionRef: source.revisionRef, expectedArtifactRef,
+    });
+  }
+  if (!selected || selected.applicationId !== options.applicationId || selected.artifactId !== source.artifactId ||
+      selected.revisionRef !== source.revisionRef || selected.checksumSha256 !== source.checksumSha256 ||
+      selected.sizeBytes !== source.sizeBytes || !PROJECT_UUID.test(selected.projectId) || !PROJECT_UUID.test(selected.organizationId) ||
+      selected.originalGeneratorChecksum !== originalGeneratorChecksum)
+    throw new Error("The backend selected a different or invalid source revision. Review the Application's selected source before generating.");
   return selected;
 }

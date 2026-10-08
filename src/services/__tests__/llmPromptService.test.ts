@@ -356,4 +356,15 @@ describe("LLMPromptService", () => {
     );
     expect(selected?.id).toBe("valid");
   });
+
+  it.each([
+    [' ["typescript"] ', ["typescript"]],
+    [' {"tags":["typescript"],"promptTags":["thorapi"]} ', ["typescript", "thorapi"]],
+    ["[invalid", []],
+    ["{invalid", []],
+    ["typescript, thorapi", ["typescript", "thorapi"]],
+  ])("normalizes prompt tag input %s without adopting malformed JSON", (tags, expected) => {
+    const selected = selectBestLlmDetailsPrompt([{ id: "tag-fixture", prompt: "Local fixture prompt", tags }], []);
+    expect(selected?.tags).toEqual(expected);
+  });
 });

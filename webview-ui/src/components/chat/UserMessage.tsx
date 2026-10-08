@@ -96,9 +96,9 @@ const UserMessage: React.FC<UserMessageProps> = ({
   return (
     <div
       style={{
-        backgroundColor: isEditing ? "unset" : "var(--vscode-badge-background)",
-        color: "var(--vscode-badge-foreground)",
-        borderRadius: "3px",
+        backgroundColor: isEditing ? "unset" : "var(--valoride-chat-surface)",
+        color: "var(--vscode-foreground)",
+        borderRadius: "var(--valoride-chat-radius, 14px)",
         padding: "9px",
         whiteSpace: "pre-line",
         wordWrap: "break-word",
@@ -118,9 +118,8 @@ const UserMessage: React.FC<UserMessageProps> = ({
               width: "100%",
               backgroundColor: "var(--vscode-input-background)",
               color: "var(--vscode-input-foreground)",
-              borderColor: "var(--vscode-input-border)",
-              border: "1px solid",
-              borderRadius: "2px",
+              border: "none",
+              borderRadius: "var(--valoride-chat-radius, 14px)",
               padding: "6px",
               fontFamily: "inherit",
               fontSize: "inherit",

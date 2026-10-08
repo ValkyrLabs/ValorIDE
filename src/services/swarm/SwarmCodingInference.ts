@@ -4,34 +4,15 @@ import type { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import type { SwarmMessage } from "@shared/swarm-protocol";
 import type { SwarmInboundCommandContext } from "./SwarmRuntimeOutcome";
 import { randomUUID } from "node:crypto";
+import { restrictGovernedLocalSettings } from "./GovernedLocalAuthority";
 
 export const GOVERNED_CODING_VERSION = "workflow-governed-coding-inference/v1";
 
-/**
- * A server-approved SWARM command authorizes the reviewed command envelope. It
- * does not turn every native file, terminal, browser, or MCP prompt into an
- * ambiently approved action. Keep the native task interactive even if the
- * user's ordinary ValorIDE auto-approval preferences change while it runs.
- */
+/** Retain explicit user permissions for bounded local operations; server proof grants no native permissions. */
 export function governedCodingTaskApprovalSettings(
   settings: AutoApprovalSettings,
 ): AutoApprovalSettings {
-  return {
-    ...settings,
-    enabled: false,
-    actions: {
-      readFiles: false,
-      readFilesExternally: false,
-      editFiles: false,
-      editFilesExternally: false,
-      executeSafeCommands: false,
-      executeAllCommands: false,
-      useBrowser: false,
-      useMcp: false,
-      useProcedures: false,
-    },
-    enableNotifications: false,
-  };
+  return restrictGovernedLocalSettings(settings);
 }
 
 export interface GovernedCodingDescriptor {

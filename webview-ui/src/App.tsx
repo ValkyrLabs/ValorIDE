@@ -186,6 +186,7 @@ const AppContent = () => {
     }
   }, []);
   const [showSettings, setShowSettings] = useState(false);
+  const [settingsInitialTab, setSettingsInitialTab] = useState<"application" | "valkyraiBackend" | "browser">("application");
   const hideSettings = useCallback(() => setShowSettings(false), []);
   const [showHistory, setShowHistory] = useState(false);
   const [showMcp, setShowMcp] = useState(false);
@@ -235,7 +236,8 @@ const AppContent = () => {
   const showLoggedOutShell = useCallback(() => {
     setHasStoredAuth(false);
     setForceShowWelcome(true);
-    setShowSettings(false);
+    // Keep an open connection form mounted through destination session clearing
+    // so its pending save can show the host confirmation or recovery error.
     setShowHistory(false);
     setShowMcp(false);
     setShowAccount(false);
@@ -345,6 +347,7 @@ const AppContent = () => {
         case "action":
           switch (message.action!) {
             case "settingsButtonClicked":
+              setSettingsInitialTab("application");
               setShowSettings(true);
               setShowHistory(false);
               setShowMcp(false);
@@ -793,10 +796,10 @@ const AppContent = () => {
         <WelcomeView />
       ) : (
         <>
-          {showSettings && <SettingsView onDone={hideSettings} />}
+          {showSettings && <SettingsView onDone={hideSettings} initialTab={settingsInitialTab} />}
           {showHistory && <HistoryView onDone={() => setShowHistory(false)} />}
           {showMcp && (
-            <McpView initialTab={mcpTab} onDone={() => setShowMcp(false)} />
+            <McpView initialTab={mcpTab} onDone={() => setShowMcp(false)} onOpenSettings={() => { setSettingsInitialTab("valkyraiBackend"); setShowMcp(false); setShowSettings(true); }} />
           )}
           {showAccount && (
             <AccountView

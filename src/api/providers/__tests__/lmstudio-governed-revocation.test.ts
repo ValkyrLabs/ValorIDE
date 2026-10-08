@@ -1,6 +1,7 @@
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { LmStudioHandler } from "../lmstudio";
+import { clearCredentialOrigins, registerCredentialOrigin } from "@shared/CredentialOrigin";
 import {
   GOVERNED_CODING_VERSION,
   materializeGovernedCodingTask,
@@ -9,6 +10,8 @@ import {
 
 /** Explicit local HTTP protocol fixture; real adapter/OpenAI transport, no task or reasoning. */
 describe("governed LM Studio request revocation", () => {
+  beforeEach(() => clearCredentialOrigins());
+  afterEach(() => clearCredentialOrigins());
   it("stops the next real completion request after Core revokes admission, using the current secure-token accessor", async () => {
     let revoked = false, modelRequests = 0, coreRequests = 0;
     let currentToken = "unit-only-initial-token";
@@ -41,6 +44,7 @@ describe("governed LM Studio request revocation", () => {
     await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
     try {
       const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+      registerCredentialOrigin(currentToken, origin);
       binding = {
         schemaVersion: GOVERNED_CODING_VERSION, toolCallId: "one-reviewed-call",
         workflowExecutionId: "10000000-0000-4000-8000-000000000001", workflowVersionId: "10000000-0000-4000-8000-000000000002",
@@ -72,6 +76,7 @@ describe("governed LM Studio request revocation", () => {
       await early.return?.(undefined);
 
       revoked = true; currentToken = "unit-only-refreshed-token";
+      registerCredentialOrigin(currentToken, origin);
       const next = async () => {
         for await (const chunk of handler.createMessage("Unit system fixture", [{ role: "user", content: "Second unit request fixture" }])) {
           void chunk;
@@ -133,6 +138,7 @@ describe("governed LM Studio request revocation", () => {
         maxTokens: 512, temperature: 0.1, connectionHash: "a".repeat(64),
       };
       const credentials = jest.fn(async () => "unit-only-current-token");
+      registerCredentialOrigin("unit-only-current-token", origin);
       const configuration = await materializeGovernedCodingTask(origin, credentials, binding,
         "retry-command", actionDigest, scopeDigest, "v1.unit-only-existing-proof");
       const handler = new LmStudioHandler(configuration);

@@ -30,7 +30,7 @@ export interface ProjectBlueprintState {
 }
 
 export function safeProjectRelativePath(relative: string): string {
-  if (typeof relative !== "string" || !relative || relative.includes("\\") || /[\x00-\x1f]/.test(relative) || /^[a-z]:/i.test(relative) || path.posix.isAbsolute(relative) || relative.split("/").some((part) => !part || part === "." || part === ".."))
+  if (typeof relative !== "string" || !relative || relative.includes("\\") || Array.from(relative).some((character) => character.charCodeAt(0) <= 0x1f) || /^[a-z]:/i.test(relative) || path.posix.isAbsolute(relative) || relative.split("/").some((part) => !part || part === "." || part === ".."))
     throw new Error("The project package contains an unsafe source path.");
   return relative;
 }

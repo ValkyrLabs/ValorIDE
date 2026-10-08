@@ -89,10 +89,10 @@ const ServerConsole: React.FC = () => {
 
     if (jwtToken && authenticatedUser) {
       addLog(
-        `Authenticated as ${authenticatedUser.username || authenticatedUser.email || authenticatedUser.id} - cookie session active`,
+        `Account identity available: ${authenticatedUser.username || authenticatedUser.email || authenticatedUser.id}`,
       );
     } else if (jwtToken) {
-      addLog("JWT token available - cookie session should be active");
+      addLog("Credential available; connection must still be verified");
     } else {
       addLog(
         "WARNING: No active authentication session - connection will fail",
@@ -177,6 +177,7 @@ const ServerConsole: React.FC = () => {
 
   return (
     <div
+      className="valoride-console"
       style={{
         padding: "20px",
         height: "100%",

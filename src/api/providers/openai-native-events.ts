@@ -2,10 +2,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object";
 
 export const isOpenAiResponsesCompletedEvent = (event: unknown): boolean =>
-  isRecord(event) && event.type === "response.completed";
+  isRecord(event) &&
+  (event.type === "response.completed" || event.type === "response.done");
 
 /**
- * OpenAI's `response.completed` event is the authoritative end of a Responses
+ * OpenAI's `response.completed` (Codex also uses `response.done`) ends a Responses
  * stream. Stop consuming there so a transport that remains open cannot leave
  * ValorIDE in a permanent streaming/Working state.
  */

@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import "./AccountView.css";
+import { TabList } from "../common/TabList";
 
 import { useGetAccountBalanceQuery as useGetCreditAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
@@ -266,7 +267,7 @@ const AccountView = ({
       return;
     }
     activeTabElement.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "nearest",
       inline: "nearest",
     });
@@ -565,6 +566,7 @@ const AccountView = ({
 
   return (
     <div
+      className="account-screen"
       style={{
         height: "100%",
         display: "flex",
@@ -575,6 +577,10 @@ const AccountView = ({
       }}
     >
       <SystemAlerts />
+      <header className="valoride-screen-header">
+        <h3 style={{ margin: 0 }}>Account</h3>
+        <VSCodeButton appearance="secondary" onClick={onDone}>Done</VSCodeButton>
+      </header>
 
       {peers.length > 0 && (
         <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-3 bg-(--vscode-panel-background) text-(--vscode-foreground)">
@@ -601,7 +607,7 @@ const AccountView = ({
       {/* Tab navigation */}
       {authed && (
         <nav className="lcars-account-tab-container" aria-label="Account tabs">
-          <div className="lcars-account-tabs lcars-variant-cyan" role="tablist">
+          <TabList className="lcars-account-tabs" aria-label="Account sections">
             {accountTabs.map((tab) => (
               <button
                 key={tab.key}
@@ -611,6 +617,8 @@ const AccountView = ({
                 type="button"
                 role="tab"
                 aria-selected={activeTab === tab.key}
+                tabIndex={activeTab === tab.key ? 0 : -1}
+                id={`account-tab-${tab.key}`} aria-controls="account-panel"
                 className={`lcars-account-tab-link ${activeTab === tab.key ? "active" : ""} ${tab.needsAttention ? "needs-attention" : ""}`}
                 onClick={() => {
                   setActiveTab(tab.key);
@@ -619,17 +627,18 @@ const AccountView = ({
                   }
                 }}
                 title={tab.title}
-                aria-label={tab.title}
+                aria-label={tab.needsAttention ? `${tab.title} — needs attention` : tab.title}
               >
                 {tab.icon}
                 <span className="account-tab-label">{tab.label}</span>
               </button>
             ))}
-          </div>
+          </TabList>
         </nav>
       )}
 
       {/* Tab content */}
+      <div id="account-panel" role={authed ? "tabpanel" : undefined} aria-labelledby={authed ? `account-tab-${activeTab}` : undefined} className="account-content">
       {activeTab === "login" ? (
         <div className="flex justify-center">
           {!authed && (
@@ -972,6 +981,7 @@ const AccountView = ({
       ) : (
         <>nothing selected</>
       )}
+      </div>
     </div>
   );
 };

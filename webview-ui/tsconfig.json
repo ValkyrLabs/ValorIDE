@@ -38,6 +38,7 @@
         "../../ValkyrAI/packages/component-library/src/openapi-designer/*"
       ],
       "@shared/*": ["../src/shared/*"],
+      "@services/*": ["../src/services/*"],
       "@valkyr/component-library/*": ["src/components/*"],
       "@utils/*": ["src/utils/*", "../src/utils/*"],
       "@utils/serverValkyraiHost": ["src/utils/serverValkyraiHost.ts"]
