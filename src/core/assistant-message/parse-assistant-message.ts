@@ -4,8 +4,7 @@ import {
   ToolUse,
   ToolParamName,
   toolParamNames,
-  toolUseNames,
-  ToolUseName,
+  normalizeToolUseName,
 } from ".";
 
 function normalizeLegacyToolFormat(message: string): string {
@@ -13,7 +12,6 @@ function normalizeLegacyToolFormat(message: string): string {
     return message;
   }
 
-  const toolNameSet = new Set<string>(toolUseNames as Iterable<string>);
   const paramNameSet = new Set<string>(toolParamNames as Iterable<string>);
 
   let normalized = message.replace(/<\/?function_calls>/g, "");
@@ -21,8 +19,8 @@ function normalizeLegacyToolFormat(message: string): string {
   normalized = normalized.replace(
     /<invoke\s+name=(["'])([^"']+)\1>([\s\S]*?)<\/invoke>/g,
     (match, _quote, rawToolName, inner) => {
-      const toolName = rawToolName.trim();
-      if (!toolNameSet.has(toolName)) {
+      const toolName = normalizeToolUseName(rawToolName.trim());
+      if (!toolName) {
         return match;
       }
 
@@ -80,8 +78,12 @@ export function parseAssistantMessage(assistantMessage: string) {
 
     if (currentToolUse) {
       const currentToolValue = accumulator.slice(currentToolUseStartIndex);
-      const toolUseClosingTag = `</${currentToolUse.name}>`;
-      if (currentToolValue.endsWith(toolUseClosingTag)) {
+      const closingTag = currentToolValue.slice(-64).match(/<\/([A-Za-z_]+)>$/);
+      if (
+        closingTag &&
+        normalizeToolUseName(closingTag[1]) === currentToolUse.name
+      ) {
+        const toolUseClosingTag = closingTag[0];
         if (
           currentToolUse.name === "ask_followup_question" &&
           !currentToolUse.params.question
@@ -153,32 +155,29 @@ export function parseAssistantMessage(assistantMessage: string) {
     // no currentToolUse
 
     let didStartToolUse = false;
-    const possibleToolUseOpeningTags = toolUseNames.map((name) => `<${name}>`);
-    for (const toolUseOpeningTag of possibleToolUseOpeningTags) {
-      if (accumulator.endsWith(toolUseOpeningTag)) {
-        // start of a new tool use
-        currentToolUse = {
-          type: "tool_use",
-          name: toolUseOpeningTag.slice(1, -1) as ToolUseName,
-          params: {},
-          partial: true,
-        };
-        currentToolUseStartIndex = accumulator.length;
-        // this also indicates the end of the current text content
-        if (currentTextContent) {
-          currentTextContent.partial = false;
-          // remove the partially accumulated tool use tag from the end of text (<tool)
-          currentTextContent.content = currentTextContent.content
-            .slice(0, -toolUseOpeningTag.slice(0, -1).length)
-            .trim();
-          if (currentTextContent.content)
-            contentBlocks.push(currentTextContent);
-          currentTextContent = undefined;
-        }
-
-        didStartToolUse = true;
-        break;
+    // Match only at a top-level tag boundary. Parameter/file content is left
+    // untouched, and the bounded suffix avoids rescanning large message text.
+    const openingTag = accumulator.endsWith(">")
+      ? accumulator.slice(-64).match(/<([A-Za-z_]+)>$/)
+      : null;
+    const toolName = openingTag && normalizeToolUseName(openingTag[1]);
+    if (openingTag && toolName) {
+      currentToolUse = {
+        type: "tool_use",
+        name: toolName,
+        params: {},
+        partial: true,
+      };
+      currentToolUseStartIndex = accumulator.length;
+      if (currentTextContent) {
+        currentTextContent.partial = false;
+        currentTextContent.content = currentTextContent.content
+          .slice(0, -openingTag[0].slice(0, -1).length)
+          .trim();
+        if (currentTextContent.content) contentBlocks.push(currentTextContent);
+        currentTextContent = undefined;
       }
+      didStartToolUse = true;
     }
 
     if (!didStartToolUse) {

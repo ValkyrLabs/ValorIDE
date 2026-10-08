@@ -507,3 +507,49 @@ describe("MCP recovery reports for the human and agent", () => {
     expect(JSON.stringify(f.results)).toContain("record-1");
   });
 });
+
+describe("legacy MCP names keep canonical approval and dispatch", () => {
+  for (const name of ["use_mcp_server", "USE_MCP_TOOL"]) {
+    it(`${name} reaches the canonical hooks and permission callback before one dispatch`, async () => {
+      const f = fixture();
+      f.block.name = name;
+      await f.call();
+      expect(f.hooks.runPreToolUse).toHaveBeenCalledWith(
+        "use_mcp_tool",
+        f.block.params,
+      );
+      expect(f.task.shouldAutoApproveTool).toHaveBeenCalledWith("use_mcp_tool");
+      expect(f.task.ask).toHaveBeenCalledTimes(1);
+      expect(f.hub.callTool).toHaveBeenCalledTimes(1);
+      expect(f.order.slice(0, 3)).toEqual([
+        "approval",
+        "checkpoint",
+        "dispatch",
+      ]);
+    });
+  }
+
+  it("preserves explicit rejection of a legacy MCP name", async () => {
+    const f = fixture();
+    f.block.name = "use_mcp_server";
+    f.task.ask.mockResolvedValue({ response: "noButtonClicked" });
+    expect(await f.call()).toMatchObject({
+      didRejectTool: true,
+      handled: true,
+    });
+    expect(f.hub.callTool).not.toHaveBeenCalled();
+    expect(f.hooks.runPostToolUse).toHaveBeenCalledWith(
+      expect.objectContaining({ outcome: "rejected" }),
+    );
+  });
+
+  it("does not elevate a legacy name into automatic MCP approval", async () => {
+    const f = fixture();
+    f.block.name = "USE_MCP_SERVER";
+    f.server.tools[0].autoApprove = true;
+    f.task.shouldAutoApproveTool.mockReturnValue(false);
+    await f.call();
+    expect(f.task.ask).toHaveBeenCalledTimes(1);
+    expect(f.task.consecutiveAutoApprovedRequestsCount).toBe(0);
+  });
+});

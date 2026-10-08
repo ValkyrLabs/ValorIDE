@@ -31,6 +31,16 @@ export const toolUseNames = [
   "send_ws_message",
 ] as const;
 
+const toolUseNameSet = new Set<string>(toolUseNames);
+
+/** Canonical identity shared by parsing, permission checks and dispatch. */
+export function normalizeToolUseName(name: string): ToolUseName | undefined {
+  if (typeof name !== "string") return undefined;
+  const lowered = name.toLowerCase();
+  const canonical = lowered === "use_mcp_server" ? "use_mcp_tool" : lowered;
+  return toolUseNameSet.has(canonical) ? (canonical as ToolUseName) : undefined;
+}
+
 // Converts array of tool call names into a union type ("execute_command" | "read_file" | ...)
 export type ToolUseName = (typeof toolUseNames)[number];
 

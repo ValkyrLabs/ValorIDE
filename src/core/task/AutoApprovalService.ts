@@ -1,6 +1,7 @@
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import { ToolUseName } from "@core/assistant-message";
 import * as path from "path";
+import { PathAccess } from "@services/access/PathAccess";
 
 export class AutoApprovalService {
   constructor(
@@ -25,6 +26,7 @@ export class AutoApprovalService {
           ];
         case "write_to_file":
         case "replace_in_file":
+        case "precision_search_and_replace":
           return [
             this.autoApprovalSettings.actions.editFiles,
             this.autoApprovalSettings.actions.editFilesExternally ?? false,
@@ -39,6 +41,8 @@ export class AutoApprovalService {
         case "access_mcp_resource":
         case "use_mcp_tool":
           return this.autoApprovalSettings.actions.useMcp;
+        case "use_procedure":
+          return this.autoApprovalSettings.actions.useProcedures ?? false;
       }
     }
     return false;
@@ -53,30 +57,41 @@ export class AutoApprovalService {
     blockname: ToolUseName,
     autoApproveActionpath: string | undefined,
   ): boolean {
-    let isLocalRead: boolean = false;
-    if (autoApproveActionpath) {
-      const absolutePath = path.resolve(this.cwd, autoApproveActionpath);
-      isLocalRead = absolutePath.startsWith(this.cwd);
-    } else {
-      // If we do not get a path for some reason, default to a (safer) false return
-      isLocalRead = false;
-    }
+    return AutoApprovalService.canAutoApprovePath(
+      this.cwd,
+      autoApproveActionpath,
+      this.shouldAutoApproveTool(blockname),
+    );
+  }
 
-    // Get auto-approve settings for local and external edits
-    const autoApproveResult = this.shouldAutoApproveTool(blockname);
-    const [autoApproveLocal, autoApproveExternal] = Array.isArray(
-      autoApproveResult,
-    )
-      ? autoApproveResult
-      : [autoApproveResult, false];
+  /** Apply path restrictions after the caller's current permission decision. */
+  static canAutoApprovePath(
+    cwd: string,
+    actionPath: string | undefined,
+    approval: boolean | [boolean, boolean],
+  ): boolean {
+    if (!actionPath) return false;
+    const [allowLocal, allowExternal] = Array.isArray(approval)
+      ? approval
+      : [approval, false];
+    if (!allowLocal) return false;
 
-    if (
-      (isLocalRead && autoApproveLocal) ||
-      (!isLocalRead && autoApproveLocal && autoApproveExternal)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    const workspaceRoot = path.resolve(cwd);
+    const absolutePath = path.resolve(workspaceRoot, actionPath);
+    const relativePath = path.relative(workspaceRoot, absolutePath);
+    const isLocal =
+      relativePath === "" ||
+      (!path.isAbsolute(relativePath) &&
+        relativePath !== ".." &&
+        !relativePath.startsWith(`..${path.sep}`));
+    if (!isLocal && !allowExternal) return false;
+
+    // Re-read ignore rules for each decision so a changed rule revokes approval.
+    // Explicit external flags remain a policy decision; dispatch still enforces
+    // its independent workspace and delegated-authority restrictions.
+    return new PathAccess({
+      workspaceRoot,
+      allowOutsideWorkspace: !isLocal && allowExternal,
+    }).validateAccess(absolutePath);
   }
 }

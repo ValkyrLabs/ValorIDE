@@ -2433,31 +2433,11 @@ export class Task {
         ? "editFiles" : "readFiles";
       return this.governedLocalAuthority.canAccessPath(action, autoApproveActionpath, this.localAuthorityState());
     }
-    let isLocalRead: boolean = false;
-    if (autoApproveActionpath) {
-      const absolutePath = path.resolve(cwd, autoApproveActionpath);
-      isLocalRead = absolutePath.startsWith(cwd);
-    } else {
-      // If we do not get a path for some reason, default to a (safer) false return
-      isLocalRead = false;
-    }
-
-    // Get auto-approve settings for local and external edits
-    const autoApproveResult = this.shouldAutoApproveTool(blockname);
-    const [autoApproveLocal, autoApproveExternal] = Array.isArray(
-      autoApproveResult,
-    )
-      ? autoApproveResult
-      : [autoApproveResult, false];
-
-    if (
-      (isLocalRead && autoApproveLocal) ||
-      (!isLocalRead && autoApproveLocal && autoApproveExternal)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return AutoApprovalService.canAutoApprovePath(
+      cwd,
+      autoApproveActionpath,
+      this.shouldAutoApproveTool(blockname),
+    );
   }
 
   private formatErrorWithStatusCode(error: any): string {

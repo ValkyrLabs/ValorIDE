@@ -32,6 +32,7 @@ import {
 import { loadMcpDocumentation } from "@core/prompts/loadMcpDocumentation";
 import {
   AssistantMessageContent,
+  normalizeToolUseName,
   ToolParamName,
   ToolUseName,
 } from "@core/assistant-message";
@@ -159,6 +160,10 @@ export class ToolExecutionEngine {
     didAlreadyUseTool: boolean;
     handled: boolean;
   }> {
+    const canonicalName = normalizeToolUseName(block.name);
+    if (canonicalName && canonicalName !== block.name) {
+      block = { ...block, name: canonicalName };
+    }
     if (!block.partial)
       Logger.info(
         `[ToolExecutionEngine] executeToolBlock start name=${block.name} partial=${block.partial} didReject=${didRejectTool} didAlreadyUse=${didAlreadyUseTool}`,
