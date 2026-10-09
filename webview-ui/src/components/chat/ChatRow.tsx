@@ -684,7 +684,7 @@ export const completionOutcomeForMessage = (message: ValorIDEMessage) =>
   message.summarySchemaVersion === 2 && message.summaryOutcome
     ? message.summaryOutcome
     : classifyTaskCompletion({
-        summary: message.text || message.summaryMarkdown || "",
+        summary: message.text || "",
       }).kind;
 
 export const buildCompletionFallbackMarkdown = (
@@ -693,11 +693,12 @@ export const buildCompletionFallbackMarkdown = (
   title?: string,
   evidenceRefs?: string[],
   verificationEvidence?: TaskVerificationEvidence[],
+  outcome?: TaskTerminalKind,
 ): string =>
   buildTaskSummary({
     taskId: "Task",
     title: stripMarkdownHeadingPrefix(title) || "Task",
-    status: "completed",
+    status: outcome ?? "completed",
     resultText: text,
     changesSummary,
     evidenceRefs,
@@ -2987,7 +2988,10 @@ export const ChatRowContent = ({
               (initialPromptText && text?.trim() === initialPromptText.trim()),
           );
           const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
-            text || message.summaryMarkdown,
+            text ||
+              (message.summarySchemaVersion === 2
+                ? message.summaryMarkdown
+                : undefined),
             message.changesSummary,
             message.summaryTitle,
             message.summarySchemaVersion === 2
@@ -2996,6 +3000,7 @@ export const ChatRowContent = ({
             message.summarySchemaVersion === 2
               ? message.summaryVerificationEvidence
               : undefined,
+            completionOutcomeForMessage(message),
           );
           const completionReportMarkdown =
             message.summarySchemaVersion === 2
@@ -3189,7 +3194,10 @@ export const ChatRowContent = ({
                   text.trim() === initialPromptText.trim()),
             );
             const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
-              text || message.summaryMarkdown,
+              text ||
+                (message.summarySchemaVersion === 2
+                  ? message.summaryMarkdown
+                  : undefined),
               message.changesSummary,
               message.summaryTitle,
               message.summarySchemaVersion === 2
@@ -3198,6 +3206,7 @@ export const ChatRowContent = ({
               message.summarySchemaVersion === 2
                 ? message.summaryVerificationEvidence
                 : undefined,
+              completionOutcomeForMessage(message),
             );
             const completionReportMarkdown =
               message.summarySchemaVersion === 2

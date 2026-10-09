@@ -318,6 +318,73 @@ describe("ChatRow Content - completion_result summary handling", () => {
   });
 
   it.each(["say", "ask"])(
+    "does not infer proof from a legacy completion report without its original notes in a %s row",
+    (type) => {
+      const message = {
+        type,
+        [type]: "completion_result",
+        ts: Date.now(),
+        summaryTitle: "Old report",
+        summaryMarkdown:
+          "# Old report — COMPLETE\n\n## Executive Summary\n**Status:** ✅ SHIPPED\n\n## Quality Gates\n✅ Tests passing\n\n## Ship Status\n**Production-ready:** Yes",
+      } as any;
+      render(
+        <ProviderAny>
+          <ChatRowContent
+            message={message}
+            isExpanded={true}
+            onToggleExpand={() => {}}
+            lastModifiedMessage={message}
+            isLast={true}
+            onHeightChange={() => {}}
+          />
+        </ProviderAny>,
+      );
+      expect(screen.getByText("Task Outcome Unverified")).toBeTruthy();
+      expect(document.body.textContent).not.toContain("✅ SHIPPED");
+      expect(document.body.textContent).not.toContain("Production-ready: Yes");
+      expect(document.body.textContent).not.toContain("✅ Tests passing");
+    },
+  );
+
+  it("keeps a runtime failed completion outcome in a thin report despite earlier successful commands", () => {
+    const evidenceRef = `valoride-command:${"c".repeat(64)}`;
+    const message = {
+      type: "say",
+      say: "completion_result",
+      ts: Date.now(),
+      text: "Finished the repair.",
+      summaryTitle: "Runtime result",
+      summaryMarkdown: "# Runtime result\nStatus: Completed ✅",
+      summarySchemaVersion: 2,
+      summaryOutcome: "failed",
+      summaryEvidenceRefs: [evidenceRef],
+      summaryVerificationEvidence: [
+        { gate: "build", exitCode: 7, evidenceRef },
+      ],
+    } as any;
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+    expect(screen.getByText("Task Failed")).toBeTruthy();
+    expect(screen.getByText(/— FAILED/)).toBeTruthy();
+    expect(
+      screen.getByText(/❌ Build command: observed exit code 7/),
+    ).toBeTruthy();
+    expect(screen.queryByText("Task Completed")).toBeNull();
+    expect(document.body.textContent).not.toContain("Production-ready: Yes");
+  });
+
+  it.each(["say", "ask"])(
     "keeps a blocked legacy completion report blocked in a %s row and does not attribute shared files",
     (type) => {
       const message = {
