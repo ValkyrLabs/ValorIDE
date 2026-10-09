@@ -76,10 +76,10 @@ describe("command execution outcome evidence", () => {
             : `exit code ${exitCode}`,
       );
       expect(context.terminalManager.runCommand).toHaveBeenCalledTimes(1);
-      if (outcome === "succeeded") {
+      if (outcome === "succeeded" || outcome === "failed") {
         expect(context.recordCommandEvidence).toHaveBeenCalledWith(
           "fixture-only",
-          expect.stringContaining("exit code 0"),
+          expect.stringContaining(`exit code ${exitCode}`),
         );
       } else {
         expect(context.recordCommandEvidence).not.toHaveBeenCalled();

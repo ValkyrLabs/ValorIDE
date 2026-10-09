@@ -1,10 +1,16 @@
-import { ValorIDEChangesSummary } from "./ExtensionMessage";
+import type { ValorIDEChangesSummary } from "./ExtensionMessage";
+import type { TaskTerminalKind } from "./TaskLifecycle";
 
-export type TaskSummaryStatus =
-  | "completed"
-  | "failed"
-  | "cancelled"
-  | "in_progress";
+export type TaskSummaryStatus = TaskTerminalKind | "cancelled" | "in_progress";
+
+export type TaskVerificationGate = "tests" | "build" | "typecheck" | "lint";
+
+/** Recorded by command execution; never inferred from completion prose. */
+export interface TaskVerificationEvidence {
+  gate: TaskVerificationGate;
+  evidenceRef: string;
+  exitCode: number;
+}
 
 export interface TaskSummaryCheckpoint {
   label?: string;
@@ -27,4 +33,7 @@ export interface TaskSummaryInput {
   checkpoints?: TaskSummaryCheckpoint[];
   attachments?: string[];
   completedAt?: string;
+  /** Runtime-produced references only. */
+  evidenceRefs?: string[];
+  verificationEvidence?: TaskVerificationEvidence[];
 }

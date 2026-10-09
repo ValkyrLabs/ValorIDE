@@ -145,8 +145,8 @@ describe("ChatRow Content - completion_result summary handling", () => {
 
     // The initial prompt is represented inside the generated report, not as a
     // duplicated free-floating message above it.
-    expect(screen.getByText(initialPrompt)).toBeTruthy();
-    expect(screen.getByText(/What was built:/)).toBeTruthy();
+    expect(screen.getAllByText(initialPrompt)).toHaveLength(2);
+    expect(screen.getByText(/Reported result:/)).toBeTruthy();
 
     // The summary card title should be visible
     expect(
@@ -186,8 +186,8 @@ describe("ChatRow Content - completion_result summary handling", () => {
 
     // The initial prompt is represented inside the generated report, not as a
     // duplicated free-floating message above it.
-    expect(screen.getByText(initialPrompt)).toBeTruthy();
-    expect(screen.getByText(/What was built:/)).toBeTruthy();
+    expect(screen.getAllByText(initialPrompt)).toHaveLength(2);
+    expect(screen.getByText(/Reported result:/)).toBeTruthy();
   });
 
   it("does not duplicate result text outside the report when a summary exists", () => {
@@ -219,8 +219,8 @@ describe("ChatRow Content - completion_result summary handling", () => {
     );
 
     // The result text is represented inside the report, not rendered twice.
-    expect(screen.getByText(resultText)).toBeTruthy();
-    expect(screen.getByText(/What was built:/)).toBeTruthy();
+    expect(screen.getAllByText(resultText)).toHaveLength(2);
+    expect(screen.getByText(/Reported result:/)).toBeTruthy();
 
     // The summary card title should also be visible
     expect(
@@ -238,6 +238,8 @@ describe("ChatRow Content - completion_result summary handling", () => {
       summaryMarkdown: `# Task: ${text}\n\n## 🔧 Implementation Details\n- Refactored models\n- Added tests`,
       summaryTitle: text,
       summaryCompletedAt: new Date().toISOString(),
+      summarySchemaVersion: 2,
+      summaryOutcome: "outcome-uncertain",
     } as any;
 
     render(
@@ -258,7 +260,7 @@ describe("ChatRow Content - completion_result summary handling", () => {
     expect(screen.getByText(`Completion Report — ${text}`)).toBeTruthy();
   });
 
-  it("shows the full completion report invariant instead of only the compact card title", () => {
+  it("rebuilds a legacy completion report with unverified claims instead of trusting its ship status", () => {
     const title = "Fix the completion report";
     const message = {
       type: "say",
@@ -309,8 +311,65 @@ describe("ChatRow Content - completion_result summary handling", () => {
     expect(screen.getByText(/Quality Gates/)).toBeTruthy();
     expect(screen.getByText(/Before\/After Comparison/)).toBeTruthy();
     expect(screen.getByText(/Ship Status/)).toBeTruthy();
-    expect(screen.getByText("Completion report")).toBeTruthy();
+    expect(screen.getByText("Task Outcome Unverified")).toBeTruthy();
+    expect(screen.queryByText(/✅ SHIPPED/)).toBeNull();
+    expect(document.body.textContent).not.toContain("Production-ready: Yes");
+    expect(screen.queryByText(/Tests passing/)).toBeNull();
   });
+
+  it.each(["say", "ask"])(
+    "keeps a blocked legacy completion report blocked in a %s row and does not attribute shared files",
+    (type) => {
+      const message = {
+        type,
+        [type]: "completion_result",
+        ts: Date.now(),
+        text: "# Tool Usage Reliability — Blocked\n\nNo files changed or tests run. This session has no callable filesystem, terminal, browser, or worker tools.\n\nProduction-ready: No — implementation and verification are blocked.",
+        summaryTitle: "Fix all tool usage issues and failures",
+        summaryMarkdown:
+          "# Tool Usage Reliability — COMPLETE\n\n## Executive Summary\n- **Status:** ✅ SHIPPED\n\n## Quality Gates\n- ✅ Tests passing\n\n## Ship Status\n**Production-ready:** Yes",
+        changesSummary: {
+          totalFiles: 1,
+          totalInsertions: 4,
+          totalDeletions: 0,
+          files: [
+            {
+              relativePath: "ChatRow.graymatter.ts",
+              absolutePath: "/workspace/ChatRow.graymatter.ts",
+              insertions: 4,
+              deletions: 0,
+              status: "modified",
+            },
+          ],
+        },
+      } as any;
+      render(
+        <ProviderAny>
+          <ChatRowContent
+            message={message}
+            isExpanded={true}
+            onToggleExpand={() => {}}
+            lastModifiedMessage={message}
+            isLast={true}
+            onHeightChange={() => {}}
+          />
+        </ProviderAny>,
+      );
+      expect(screen.getByText("Task Blocked")).toBeTruthy();
+      expect(screen.getByText(/— BLOCKED/)).toBeTruthy();
+      expect(screen.getAllByText(/task attribution unverified/)).toHaveLength(
+        3,
+      );
+      expect(
+        screen.getByText(/Tests: no runtime verification recorded/),
+      ).toBeTruthy();
+      expect(screen.queryByText("Task Completed")).toBeNull();
+      expect(screen.queryByText(/✅ SHIPPED/)).toBeNull();
+      expect(screen.queryByText(/✅ Tests passing/)).toBeNull();
+      expect(document.body.textContent).not.toContain("Production-ready: Yes");
+      expect(screen.queryByText(/Files created\/modified/)).toBeNull();
+    },
+  );
 });
 
 describe("ChatRow Content - command and GrayMatter UX", () => {

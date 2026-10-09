@@ -1,4 +1,7 @@
-import { composeRuntimeSystemPrompt } from "./runtimePrompt";
+import {
+  composeRuntimeSystemPrompt,
+  COMPLETION_REPORT_TRUTH,
+} from "./runtimePrompt";
 import type { SelectedPrompt } from "@services/llmPromptService";
 import { estimateTextTokens } from "@core/context/context-management/ContextEfficiency";
 
@@ -48,10 +51,11 @@ describe("composeRuntimeSystemPrompt", () => {
     expect(prompt).toContain("required completion-report contract");
   });
 
-  it("uses the built-in prompt unchanged when no server prompt is active", () => {
-    expect(composeRuntimeSystemPrompt("BUILT-IN ONLY", null)).toBe(
-      "BUILT-IN ONLY",
-    );
+  it("preserves the built-in prompt and enforces truthful reporting without a server selection", () => {
+    const prompt = composeRuntimeSystemPrompt("BUILT-IN ONLY", null);
+    expect(prompt).toContain("BUILT-IN ONLY");
+    expect(prompt).toContain(COMPLETION_REPORT_TRUTH);
+    expect(prompt).toContain("not evidence of success");
   });
 
   it("extractively compacts duplicate LlmDetails guidance for small models", () => {

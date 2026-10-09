@@ -30,6 +30,7 @@ describe("TaskSummaryBuilder", () => {
       title: "Implement summary builder",
       status: "completed",
       resultText: "Implemented the summary builder feature.",
+      evidenceRefs: [`valoride-command:${"a".repeat(64)}`],
       changesSummary,
       decisions: ["Added markdown builder", "Included change table"],
       todos: [
@@ -44,12 +45,14 @@ describe("TaskSummaryBuilder", () => {
     expect(markdown).toContain("# 🎯 Implement summary builder — COMPLETE");
     expect(markdown).toContain("## 📊 Executive Summary");
     expect(markdown).toContain("## 🔧 Implementation Details");
-    expect(markdown).toContain("**Status:** ✅ SHIPPED");
+    expect(markdown).toContain("**Status:** ✅ Completed");
     expect(markdown).toContain("### Changed Files");
     expect(markdown).toContain("## ✅ Quality Gates");
     expect(markdown).toContain("## 📈 Before/After Comparison");
     expect(markdown).toContain("## 🚀 Ship Status");
-    expect(markdown).toContain("**Production-ready:** Yes");
+    expect(markdown).toContain(
+      "**Production-ready:** Not verified by this report.",
+    );
     expect(markdown).toContain("src/index.ts");
     expect(markdown).toContain("docs/README.md");
     expect(markdown).toContain("- [ ] Ship it");

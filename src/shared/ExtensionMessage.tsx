@@ -7,6 +7,8 @@ import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
 import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 import { ChatSettings } from "./ChatSettings";
+import type { TaskTerminalKind } from "./TaskLifecycle";
+import type { TaskVerificationEvidence } from "./TaskSummary";
 import { HistoryItem } from "./HistoryItem";
 import {
   McpServer,
@@ -367,6 +369,8 @@ export interface ValorIDEFileChangeSummary {
 }
 
 export interface ValorIDEChangesSummary {
+  /** A checkpoint diff does not attribute concurrent/user edits to this task. */
+  scope?: "workspace";
   totalFiles: number;
   totalInsertions: number;
   totalDeletions: number;
@@ -391,6 +395,10 @@ export interface ValorIDEMessage {
   summaryMarkdown?: string;
   summaryTitle?: string;
   summaryCompletedAt?: string;
+  summarySchemaVersion?: 2;
+  summaryOutcome?: TaskTerminalKind;
+  summaryEvidenceRefs?: string[];
+  summaryVerificationEvidence?: TaskVerificationEvidence[];
 }
 
 export type ValorIDEAsk =

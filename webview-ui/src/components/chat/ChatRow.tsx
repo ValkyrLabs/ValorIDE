@@ -62,6 +62,12 @@ import type {
   ExtensionMessage,
 } from "@shared/ExtensionMessage";
 import { COMPLETION_RESULT_CHANGES_FLAG } from "@shared/ExtensionMessage";
+import { buildTaskSummary } from "@shared/TaskCompletionReport";
+import {
+  classifyTaskCompletion,
+  type TaskTerminalKind,
+} from "@shared/TaskLifecycle";
+import type { TaskVerificationEvidence } from "@shared/TaskSummary";
 import {
   COMMAND_OUTPUT_STRING,
   COMMAND_REQ_APP_STRING,
@@ -674,62 +680,29 @@ const stripMarkdownHeadingPrefix = (value?: string) =>
     .replace(/^[^A-Za-z0-9]+/, "")
     .trim();
 
-const buildCompletionFallbackMarkdown = (
+export const completionOutcomeForMessage = (message: ValorIDEMessage) =>
+  message.summarySchemaVersion === 2 && message.summaryOutcome
+    ? message.summaryOutcome
+    : classifyTaskCompletion({
+        summary: message.text || message.summaryMarkdown || "",
+      }).kind;
+
+export const buildCompletionFallbackMarkdown = (
   text?: string,
   changesSummary?: ValorIDEChangesSummary,
   title?: string,
-): string => {
-  const reportTitle = stripMarkdownHeadingPrefix(title) || "Task";
-  const completionText =
-    text?.trim() ||
-    "ValorIDE completed the requested task and captured the final workspace state.";
-  const files = changesSummary?.files ?? [];
-  const totalFiles = changesSummary?.totalFiles ?? files.length;
-  const totalInsertions = changesSummary?.totalInsertions ?? 0;
-  const totalDeletions = changesSummary?.totalDeletions ?? 0;
-  const keyFiles = files
-    .slice(0, 5)
-    .map(
-      (f) =>
-        `- \`${f.relativePath}\` (${(f.status ?? "modified").toUpperCase()})`,
-    );
-
-  if (changesSummary) {
-    keyFiles.unshift(
-      `- Files created/modified: ${totalFiles}`,
-      `- Insertions/deletions: +${totalInsertions} / -${totalDeletions}`,
-    );
-  }
-
-  return [
-    `# 🎯 ${reportTitle} — COMPLETE`,
-    "",
-    "## 📊 Executive Summary",
-    `- **What was built:** ${completionText}`,
-    "- **Impact/value delivered:** The requested work is complete and captured in the workspace state.",
-    "- **Status:** ✅ SHIPPED",
-    "",
-    "## 🔧 Implementation Details",
-    ...(keyFiles.length
-      ? keyFiles
-      : ["- No changed-file summary was attached."]),
-    "",
-    "## ✅ Quality Gates",
-    "- ⚠️ Tests passing: not reported in completion payload",
-    "- ⚠️ Build: not reported in completion payload",
-    "- ⚠️ TypeScript: not reported in completion payload",
-    "- ✅ Completion report rendered",
-    "",
-    "## 📈 Before/After Comparison",
-    "| Metric | Before | After |",
-    "|--------|--------|-------|",
-    "| Task status | ❌ Pending | ✅ Complete |",
-    `| Changed files | 0 tracked in report | ${totalFiles} file${totalFiles === 1 ? "" : "s"} |`,
-    "",
-    "## 🚀 Ship Status",
-    "**Production-ready:** Yes",
-  ].join("\n");
-};
+  evidenceRefs?: string[],
+  verificationEvidence?: TaskVerificationEvidence[],
+): string =>
+  buildTaskSummary({
+    taskId: "Task",
+    title: stripMarkdownHeadingPrefix(title) || "Task",
+    status: "completed",
+    resultText: text,
+    changesSummary,
+    evidenceRefs,
+    verificationEvidence,
+  });
 
 const isThinCompletionReport = (markdown?: string): boolean => {
   const normalized = markdown?.trim();
@@ -1007,18 +980,20 @@ export const CompletionSummaryCard = memo(
     title,
     completedAt,
     fallbackMarkdown,
+    outcome = "outcome-uncertain",
   }: {
     markdown?: string;
     title?: string;
     completedAt?: string;
     fallbackMarkdown?: string;
+    outcome?: TaskTerminalKind;
   }) => {
     let completedLabel: string | undefined;
     if (completedAt) {
       const date = new Date(completedAt);
       completedLabel = Number.isNaN(date.getTime())
         ? undefined
-        : `Completed ${date.toLocaleString()}`;
+        : `${outcome === "completed" ? "Completed" : "Reported"} ${date.toLocaleString()}`;
     }
 
     const bodyMarkdown = markdown;
@@ -1056,7 +1031,14 @@ export const CompletionSummaryCard = memo(
             color: "var(--vscode-foreground)",
           }}
         >
-          <FaCheckCircle size={28} color="var(--vscode-charts-green)" />
+          {outcome === "completed" ? (
+            <FaCheckCircle size={28} color="var(--vscode-charts-green)" />
+          ) : (
+            <FaExclamationTriangle
+              size={28}
+              color="var(--vscode-descriptionForeground)"
+            />
+          )}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 13 }}>
               {displayTitle
@@ -1526,18 +1508,32 @@ export const ChatRowContent = ({
             MCP server:
           </span>,
         ];
-      case "completion_result":
+      case "completion_result": {
+        const outcome = completionOutcomeForMessage(message);
+        const completed = outcome === "completed";
+        const labels = {
+          completed: "Task Completed",
+          blocked: "Task Blocked",
+          failed: "Task Failed",
+          "waiting-approval": "Task Waiting for Approval",
+          "outcome-uncertain": "Task Outcome Unverified",
+        };
         return [
-          <FaCheck
+          completed ? (
+            <FaCheck style={{ color: successColor, marginBottom: "-1.5px" }} />
+          ) : (
+            <FaExclamationTriangle style={{ color: normalColor }} />
+          ),
+          <span
             style={{
-              color: successColor,
-              marginBottom: "-1.5px",
+              color: completed ? successColor : normalColor,
+              fontWeight: "bold",
             }}
-          />,
-          <span style={{ color: successColor, fontWeight: "bold" }}>
-            Task Completed
+          >
+            {labels[outcome]}
           </span>,
         ];
+      }
       case "api_req_started":
         const getIconSpan = (
           IconComponent: React.ComponentType<any>,
@@ -2991,15 +2987,24 @@ export const ChatRowContent = ({
               (initialPromptText && text?.trim() === initialPromptText.trim()),
           );
           const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
-            text,
+            text || message.summaryMarkdown,
             message.changesSummary,
             message.summaryTitle,
+            message.summarySchemaVersion === 2
+              ? message.summaryEvidenceRefs
+              : undefined,
+            message.summarySchemaVersion === 2
+              ? message.summaryVerificationEvidence
+              : undefined,
           );
-          const completionReportMarkdown = resolveCompletionReportMarkdown(
-            message.summaryMarkdown,
-            completionFallbackMarkdown,
-            text,
-          );
+          const completionReportMarkdown =
+            message.summarySchemaVersion === 2
+              ? resolveCompletionReportMarkdown(
+                  message.summaryMarkdown,
+                  completionFallbackMarkdown,
+                  text,
+                )
+              : completionFallbackMarkdown;
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
           }
@@ -3030,13 +3035,14 @@ export const ChatRowContent = ({
               </div>
               <div
                 style={{
-                  color: "var(--vscode-charts-green)",
+                  color: "var(--vscode-foreground)",
                   paddingTop: 10,
                 }}
               >
                 {text && !shouldHideText && <Markdown markdown={text} />}
                 <CompletionSummaryCard
-                  markdown={message.summaryMarkdown}
+                  markdown={completionReportMarkdown}
+                  outcome={completionOutcomeForMessage(message)}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
                   fallbackMarkdown={completionFallbackMarkdown}
@@ -3183,15 +3189,24 @@ export const ChatRowContent = ({
                   text.trim() === initialPromptText.trim()),
             );
             const completionFallbackMarkdown = buildCompletionFallbackMarkdown(
-              text,
+              text || message.summaryMarkdown,
               message.changesSummary,
               message.summaryTitle,
+              message.summarySchemaVersion === 2
+                ? message.summaryEvidenceRefs
+                : undefined,
+              message.summarySchemaVersion === 2
+                ? message.summaryVerificationEvidence
+                : undefined,
             );
-            const completionReportMarkdown = resolveCompletionReportMarkdown(
-              message.summaryMarkdown,
-              completionFallbackMarkdown,
-              text,
-            );
+            const completionReportMarkdown =
+              message.summarySchemaVersion === 2
+                ? resolveCompletionReportMarkdown(
+                    message.summaryMarkdown,
+                    completionFallbackMarkdown,
+                    text,
+                  )
+                : completionFallbackMarkdown;
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
             }
@@ -3222,13 +3237,14 @@ export const ChatRowContent = ({
                 </div>
                 <div
                   style={{
-                    color: "var(--vscode-charts-green)",
+                    color: "var(--vscode-foreground)",
                     paddingTop: 10,
                   }}
                 >
                   {text && !shouldHideText && <Markdown markdown={text} />}
                   <CompletionSummaryCard
-                    markdown={message.summaryMarkdown}
+                    markdown={completionReportMarkdown}
+                    outcome={completionOutcomeForMessage(message)}
                     title={message.summaryTitle}
                     completedAt={message.summaryCompletedAt}
                     fallbackMarkdown={completionFallbackMarkdown}

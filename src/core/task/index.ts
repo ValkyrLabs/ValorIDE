@@ -194,7 +194,13 @@ import {
   type TaskTerminalEvent,
   type TaskTerminalListener,
 } from "@shared/TaskLifecycle";
-import { buildCommandEvidenceRef } from "./CommandEvidence";
+import {
+  buildCommandEvidenceRef,
+  commandResultExitCode,
+  verificationGateForCommand,
+} from "./CommandEvidence";
+import type { TaskVerificationEvidence } from "@shared/TaskSummary";
+import type { TaskCompletionClassification } from "@shared/TaskLifecycle";
 import { GovernedLocalAuthority, type GovernedLocalAuthorityState } from "@services/swarm/GovernedLocalAuthority";
 
 export const cwd =
@@ -232,6 +238,7 @@ export class Task {
   private readonly terminalListener?: TaskTerminalListener;
   private terminalReported = false;
   private readonly commandEvidenceRefs = new Set<string>();
+  private readonly verificationEvidence: TaskVerificationEvidence[] = [];
 
   readonly taskId: string;
   private activeApi: ApiHandler;
@@ -1225,7 +1232,7 @@ export class Task {
         hash,
       );
       if (summary && summary.totalFiles > 0) {
-        return summary;
+        return { ...summary, scope: "workspace" };
       }
     } catch (error) {
       console.error("Failed to get diff summary:", error);
@@ -1880,7 +1887,13 @@ export class Task {
   }
 
   recordCommandEvidence(command: string, result: ToolResponse): void {
-    this.commandEvidenceRefs.add(buildCommandEvidenceRef(command, result));
+    const evidenceRef = buildCommandEvidenceRef(command, result);
+    const exitCode = commandResultExitCode(result);
+    if (exitCode === 0) this.commandEvidenceRefs.add(evidenceRef);
+    const gate = verificationGateForCommand(command);
+    if (gate && exitCode !== undefined) {
+      this.verificationEvidence.push({ gate, exitCode, evidenceRef });
+    }
   }
 
   // Checkpoints
@@ -2327,9 +2340,10 @@ export class Task {
     }
 
     if (completed) {
+      const exitCode = process.getExitCode();
       return [
         false,
-        `Command executed.${
+        `${exitCode === undefined ? "Command completed, but its exit status is unavailable." : `Command completed with exit code ${exitCode}.`}${
           filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""
         }`,
       ];
@@ -5011,15 +5025,18 @@ export class Task {
             })();
             const summaryCompletedAt = new Date().toISOString();
             const buildSummaryMarkdown = (
+              outcome: TaskCompletionClassification,
               changesSummary?: ValorIDEChangesSummary,
             ) =>
               buildTaskSummary({
                 taskId: this.taskId,
                 title: summaryTitle,
-                status: "completed",
-                resultText: result,
+                status: outcome.kind,
+                resultText: outcome.summary,
                 changesSummary,
                 completedAt: summaryCompletedAt,
+                evidenceRefs: outcome.evidenceRefs,
+                verificationEvidence: this.verificationEvidence,
               });
 
             const addNewChangesFlagToLastCompletionResultMessage =
@@ -5136,13 +5153,6 @@ export class Task {
                 }
                 this.consecutiveMistakeCount = 0;
 
-                if (this.autoApprovalSettings.enableNotifications) {
-                  showSystemNotification({
-                    subtitle: "Task Completed",
-                    message: result.replace(/\n/g, " "),
-                  });
-                }
-
                 let commandResult: ToolResponse | undefined;
                 if (command) {
                   if (lastMessage && lastMessage.ask !== "command") {
@@ -5156,7 +5166,6 @@ export class Task {
                     await this.saveCheckpoint(true);
                     lastCompletionChangesSummary =
                       await addNewChangesFlagToLastCompletionResultMessage();
-                    telemetryService.captureTaskCompleted(this.taskId);
                   } else {
                     // we already sent a command message, meaning the complete completion message has also been sent
                     await this.saveCheckpoint(true);
@@ -5178,16 +5187,29 @@ export class Task {
                   }
                   // user didn't reject, but the command may have output
                   commandResult = execCommandResult;
+                  this.recordCommandEvidence(command, commandResult);
                 } else {
                   await this.say("completion_result", result, undefined, false);
                   await this.saveCheckpoint(true);
                   lastCompletionChangesSummary =
                     await addNewChangesFlagToLastCompletionResultMessage();
-                  telemetryService.captureTaskCompleted(this.taskId);
                 }
 
+                // Classify once after the optional command. A shared workspace
+                // checkpoint is not task-owned execution or verification proof.
+                const commandExitCode = commandResultExitCode(commandResult);
+                const completionOutcome = classifyTaskCompletion({
+                  evidenceRefs: [...this.commandEvidenceRefs],
+                  summary:
+                    commandExitCode !== undefined && commandExitCode !== 0
+                      ? `FAILED: Completion command exited ${commandExitCode}.\n\n${result}`
+                      : command && commandExitCode === undefined
+                        ? `OUTCOME_UNCERTAIN: Completion command exit status was not verified.\n\n${result}`
+                        : result,
+                });
                 // we already sent completion_result says, an empty string asks relinquishes control over button and field
                 const summaryMarkdown = buildSummaryMarkdown(
+                  completionOutcome,
                   lastCompletionChangesSummary,
                 );
                 const lastCompletionResultMessage = findLast(
@@ -5199,30 +5221,37 @@ export class Task {
                   lastCompletionResultMessage.summaryTitle = summaryTitle;
                   lastCompletionResultMessage.summaryCompletedAt =
                     summaryCompletedAt;
+                  lastCompletionResultMessage.summarySchemaVersion = 2;
+                  lastCompletionResultMessage.summaryOutcome =
+                    completionOutcome.kind;
+                  lastCompletionResultMessage.summaryEvidenceRefs =
+                    completionOutcome.evidenceRefs;
+                  lastCompletionResultMessage.summaryVerificationEvidence = [
+                    ...this.verificationEvidence,
+                  ];
                   await this.saveValorIDEMessagesAndUpdateHistory();
                   await this.postMessageToWebview({
                     type: "partialMessage",
                     partialMessage: lastCompletionResultMessage,
                   });
                 }
-                const checkpointHash =
-                  lastCompletionResultMessage?.lastCheckpointHash?.trim();
-                const checkpointEvidenceRefs =
-                  checkpointHash &&
-                  lastCompletionChangesSummary &&
-                  lastCompletionChangesSummary.totalFiles > 0
-                    ? [`valoride-checkpoint:${checkpointHash}`]
-                    : [];
-                const machineEvidenceRefs = [
-                  ...checkpointEvidenceRefs,
-                  ...this.commandEvidenceRefs,
-                ];
-                await this.reportTerminal(
-                  classifyTaskCompletion({
-                    evidenceRefs: machineEvidenceRefs,
-                    summary: result,
-                  }),
-                );
+                await this.reportTerminal(completionOutcome);
+                if (completionOutcome.kind === "completed") {
+                  telemetryService.captureTaskCompleted(this.taskId);
+                }
+                if (this.autoApprovalSettings.enableNotifications) {
+                  const labels = {
+                    completed: "Task completed",
+                    blocked: "Task blocked",
+                    failed: "Task failed",
+                    "waiting-approval": "Task waiting for approval",
+                    "outcome-uncertain": "Task outcome unverified",
+                  };
+                  showSystemNotification({
+                    subtitle: labels[completionOutcome.kind],
+                    message: completionOutcome.summary.replace(/\n/g, " "),
+                  });
+                }
                 const { response, text, images } = await this.ask(
                   "completion_result",
                   "",
@@ -5234,30 +5263,36 @@ export class Task {
                 });
                 if (response === "yesButtonClicked") {
                   // Submit completed task to ContentData
-                  try {
-                    const { TaskCompletionSubmitter } = await import(
-                      "@services/content-data/TaskCompletionSubmitter"
-                    );
-                    const submitter = TaskCompletionSubmitter.getInstance();
-                    const taskMessage = this.valorideMessages[0];
-                    await submitter.submitCompletedTask({
-                      taskId: this.taskId,
-                      completionResult: result,
-                      taskDescription: taskMessage.text,
-                      timestamp: new Date(),
-                    });
-                  } catch (error) {
-                    console.error(
-                      "Failed to submit task completion to ContentData:",
-                      error,
-                    );
-                    // Don't fail the task if ContentData submission fails
+                  if (completionOutcome.kind === "completed") {
+                    try {
+                      const { TaskCompletionSubmitter } = await import(
+                        "@services/content-data/TaskCompletionSubmitter"
+                      );
+                      const submitter = TaskCompletionSubmitter.getInstance();
+                      const taskMessage = this.valorideMessages[0];
+                      await submitter.submitCompletedTask({
+                        taskId: this.taskId,
+                        completionResult: result,
+                        taskDescription: taskMessage.text,
+                        timestamp: new Date(),
+                      });
+                    } catch (error) {
+                      console.error(
+                        "Failed to submit task completion to ContentData:",
+                        error,
+                      );
+                      // Don't fail the task if ContentData submission fails
+                    }
                   }
 
                   pushToolResult(""); // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
                   break;
                 }
                 await this.say("user_feedback", text ?? "", images);
+                // Follow-up work needs fresh runtime evidence rather than
+                // inheriting the previous completion report's checks.
+                this.commandEvidenceRefs.clear();
+                this.verificationEvidence.length = 0;
 
                 const toolResults: (
                   | Anthropic.TextBlockParam

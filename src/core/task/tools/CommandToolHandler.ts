@@ -215,7 +215,7 @@ export class CommandToolHandler extends BaseToolHandler {
         // Re-populate file paths in case the command modified the workspace
         this.context.workspaceTracker.populateFilePaths();
 
-        if (!userRejected && outcome === "succeeded") {
+        if (!userRejected && (outcome === "succeeded" || outcome === "failed")) {
           this.context.recordCommandEvidence?.(command, result);
         }
 

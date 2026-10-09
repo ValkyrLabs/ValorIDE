@@ -82,7 +82,8 @@ export const classifyTaskCompletion = (
   }
   if (
     declaredStatus === "BLOCKED" ||
-    /\b(?:is|was|remains) blocked\b/i.test(summary) ||
+    /\b(?:is|was|are|were|remains) blocked\b/i.test(summary) ||
+    /^\s*#{1,6}\s+[^\n]*[—–-]\s*blocked\s*$/im.test(summary) ||
     /\b(?:could not|cannot|can't|unable to) (?:complete|continue|proceed)\b/i.test(
       summary,
     ) ||

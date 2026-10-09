@@ -17,6 +17,15 @@ const section = (title: string, body: string) =>
     body.trim(),
   ].join("\n");
 
+export const COMPLETION_REPORT_TRUTH = [
+  "# Completion report truth — ValorIDE runtime contract",
+  "Completion templates are formatting examples, not evidence of success.",
+  "Report BLOCKED, FAILED or OUTCOME UNVERIFIED when that is the actual outcome; never fill COMPLETE, SHIPPED or Production-ready: Yes by default.",
+  "Report checks as passed only when this task actually executed them successfully. No tests run, suggested commands, unavailable tools and failed commands are not passing gates.",
+  "A shared workspace diff can contain user or other agents' edits. Do not claim those files, tests or commits as this task's work without task-specific evidence.",
+  "Check the actual tool inventory and observed dispatch results before claiming tools are unavailable. A blocked completion report does not establish successful tool execution or production readiness.",
+].join("\n");
+
 export const formatSelectedPromptSection = (selectedPrompt: SelectedPrompt) =>
   section(
     `SELECTED VALKYRAI PROMPT — ${selectedPrompt.name}`,
@@ -52,6 +61,7 @@ export function composeRuntimeSystemPrompt(
   selectedPrompt?: SelectedPrompt | null,
   budget?: RuntimePromptBudget,
 ): string {
+  fallbackSystemPrompt = `${fallbackSystemPrompt}\n\n${COMPLETION_REPORT_TRUTH}`;
   if (!selectedPrompt?.prompt?.trim()) {
     return fallbackSystemPrompt;
   }
