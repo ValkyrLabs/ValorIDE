@@ -791,7 +791,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         <div
           className={`application-card ${isOwned ? "application-card-owned" : ""}`}
         >
-          <div className="application-card-content">
+          <div className="application-card-content application-card-with-actions">
             <div className="application-info">
               <div className="application-heading-row">
                 <h3 className="application-name">
@@ -823,48 +823,6 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                   </span>
                 )}
               </div>
-
-              {app.id && (
-                <div className="application-buttons">
-                  <VSCodeButton
-                    appearance="secondary"
-                    aria-label="Open"
-                    role="button"
-                    onClick={() => handleApplicationSelect(app)}
-                  >
-                    Open
-                  </VSCodeButton>
-                  <ApplicationWriteActions
-                    application={app}
-                    isOwned={isOwned}
-                    loadingState={loadingStates[appId]}
-                    onBlueprint={handleBlueprint}
-                    onPublishSource={handlePublishSource}
-                  />
-                  <VSCodeButton
-                    appearance="primary"
-                    aria-label="Generate"
-                    role="button"
-                    onClick={() => handleGenerate(appId)}
-                    disabled={loadingStates[appId]?.generating}
-                  >
-                    {loadingStates[appId]?.generating
-                      ? "Generating..."
-                      : "Generate"}
-                  </VSCodeButton>
-                  <VSCodeButton
-                    appearance="secondary"
-                    aria-label="Deploy"
-                    role="button"
-                    onClick={() => handleDeploy(app)}
-                    disabled={loadingStates[appId]?.deploying}
-                  >
-                    {loadingStates[appId]?.deploying
-                      ? "Deploying..."
-                      : "Deploy"}
-                  </VSCodeButton>
-                </div>
-              )}
               {loadingStates[appId]?.sourceStatus && (
                 <div
                   aria-live="polite"
@@ -879,6 +837,50 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                 </div>
               )}
             </div>
+
+            {app.id && (
+              <div
+                className="application-buttons"
+                role="group"
+                aria-label={`Actions for ${app.name || app.id}`}
+              >
+                <VSCodeButton
+                  appearance="secondary"
+                  aria-label="Open"
+                  role="button"
+                  onClick={() => handleApplicationSelect(app)}
+                >
+                  Open
+                </VSCodeButton>
+                <ApplicationWriteActions
+                  application={app}
+                  isOwned={isOwned}
+                  loadingState={loadingStates[appId]}
+                  onBlueprint={handleBlueprint}
+                  onPublishSource={handlePublishSource}
+                />
+                <VSCodeButton
+                  appearance="primary"
+                  aria-label="Generate"
+                  role="button"
+                  onClick={() => handleGenerate(appId)}
+                  disabled={loadingStates[appId]?.generating}
+                >
+                  {loadingStates[appId]?.generating
+                    ? "Generating..."
+                    : "Generate"}
+                </VSCodeButton>
+                <VSCodeButton
+                  appearance="secondary"
+                  aria-label="Deploy"
+                  role="button"
+                  onClick={() => handleDeploy(app)}
+                  disabled={loadingStates[appId]?.deploying}
+                >
+                  {loadingStates[appId]?.deploying ? "Deploying..." : "Deploy"}
+                </VSCodeButton>
+              </div>
+            )}
           </div>
         </div>
         {renderLoadingSteps(app)}

@@ -1208,12 +1208,14 @@ label {
   }
 }
 .applications-list {
+  box-sizing: border-box;
   color: var(--vscode-foreground);
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   height: 100%;
   min-height: 0;
+  min-width: 0;
   overflow: hidden;
   padding: 10px;
   width: 100%;
@@ -1236,6 +1238,7 @@ label {
 }
 
 .applications-container {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -1291,8 +1294,8 @@ label {
   align-content: stretch;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  justify-content: space-evenly;
+  gap: 1em;
+  justify-content: flex-start;
   width: 100%;
 }
 
@@ -1330,6 +1333,12 @@ label {
   gap: 16px;
   justify-content: space-between;
   min-width: 0;
+}
+
+.application-card-content.application-card-with-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10em;
+  gap: 1em;
 }
 
 .application-info {
@@ -1480,9 +1489,9 @@ label {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 14px;
-  min-width: 120px;
-  width: 100%;
+  margin-top: 0;
+  min-width: 0;
+  width: 10em;
 }
 
 .application-buttons vscode-button {
@@ -1514,14 +1523,6 @@ label {
 
   .application-card-content {
     flex-direction: column;
-  }
-
-  .application-buttons {
-    width: 100%;
-  }
-
-  .application-buttons vscode-button {
-    width: 100%;
   }
 }
 

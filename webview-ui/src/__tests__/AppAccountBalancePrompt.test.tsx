@@ -12,6 +12,7 @@ const appTestHarness = vi.hoisted(() => ({
   accountProps: vi.fn(),
   dispatch: vi.fn(),
   postMessage: vi.fn(),
+  recordUsageTransaction: vi.fn(),
   useGetAccountBalanceQuery: vi.fn(),
   apiErrors: {
     creditIntent: undefined as any,
@@ -288,11 +289,9 @@ vi.mock("../components/content-data/ContentDataHandler", () => ({
 vi.mock("../services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args: any[]) =>
     appTestHarness.useGetAccountBalanceQuery(...args),
-}));
-
-vi.mock("../components/usage-tracking/StartupDebit", () => ({
-  __esModule: true,
-  default: () => null,
+  useRecordUsageTransactionMutation: () => [
+    appTestHarness.recordUsageTransaction,
+  ],
 }));
 
 vi.mock("react-redux", () => ({
@@ -344,6 +343,10 @@ describe("App account balance prompt", () => {
     appTestHarness.accountProps.mockClear();
     appTestHarness.dispatch.mockClear();
     appTestHarness.postMessage.mockClear();
+    appTestHarness.recordUsageTransaction.mockReset();
+    appTestHarness.recordUsageTransaction.mockReturnValue({
+      unwrap: () => Promise.resolve({ currentBalance: 100 }),
+    });
     appTestHarness.useGetAccountBalanceQuery.mockReset();
     appTestHarness.useGetAccountBalanceQuery.mockReturnValue({
       data: { currentBalance: 0 },
@@ -372,6 +375,38 @@ describe("App account balance prompt", () => {
     delete (globalThis as any).localStorage;
     delete (globalThis as any).sessionStorage;
     delete (globalThis as any).acquireVsCodeApi;
+  });
+
+  it("does not record usage when opening and reopening the authenticated UI", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    localStorage.setItem("jwtToken", "test-session");
+    sessionStorage.setItem(
+      "authenticatedPrincipal",
+      JSON.stringify({ id: "user-123", username: "test-user" }),
+    );
+    const { default: App } = await import("../App");
+
+    for (let session = 0; session < 2; session++) {
+      const view = render(<App />);
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      });
+      for (let opening = 0; opening < 2; opening++) {
+        act(() => {
+          window.dispatchEvent(
+            new MessageEvent("message", {
+              data: { type: "action", action: "accountButtonClicked" },
+            }),
+          );
+        });
+        expect(screen.getByTestId("account-view")).toBeInTheDocument();
+        const props = appTestHarness.accountProps.mock.calls.at(-1)?.[0];
+        act(() => props.onDone());
+      }
+      view.unmount();
+    }
+
+    expect(appTestHarness.recordUsageTransaction).not.toHaveBeenCalled();
   });
 
   it("opens account view only after validated balance is below required credits", async () => {

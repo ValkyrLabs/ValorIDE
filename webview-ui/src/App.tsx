@@ -30,7 +30,6 @@ import { MothershipProvider } from "./context/MothershipContext";
 import { ChatMothershipProvider } from "./components/chat/ChatMothershipProvider";
 import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingHandler";
 import { ContentDataHandler } from "./components/content-data/ContentDataHandler";
-import StartupDebit from "./components/usage-tracking/StartupDebit";
 import { registerExternalLinkInterceptor } from "./utils/linkInterceptor";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import { TaskProgressChatRelay } from "./services/TaskProgressChatRelay";
@@ -1052,8 +1051,6 @@ const App = () => {
           <UsageTrackingHandler />
           {/* Process content data messages invisibly */}
           <ContentDataHandler />
-          {/* Auto-debit for auto-login sessions */}
-          <StartupDebit />
           <AppContent />
         </ChatMothershipProvider>
       </MothershipProvider>
