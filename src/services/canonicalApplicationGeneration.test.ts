@@ -3,6 +3,8 @@ import os from "os";
 import path from "path";
 import { createHash } from "crypto";
 import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
+import { downloadCanonicalProjectExport } from "./canonicalProjectExport";
+jest.mock("./canonicalProjectExport", () => ({ downloadCanonicalProjectExport: jest.fn() }));
 import { getValkyrLabsRtkApiClient, ValkyrLabsApiError } from "./valkyrai/ValkyrLabsRtkApi";
 
 jest.mock("./valkyrai/ValkyrLabsRtkApi", () => ({
@@ -48,6 +50,17 @@ describe("canonical application generation handoff", () => {
     const journal = path.join(options.recoveryDirectory!, (await fs.readdir(options.recoveryDirectory!))[0]);
     expect((await fs.stat(journal)).mode & 0o777).toBe(0o600);
     expect(await fs.readFile(journal, "utf8")).not.toContain(options.jwtToken);
+    await generated.complete(); expect(await fs.readdir(options.recoveryDirectory!)).toEqual([]);
+  });
+
+  it("downloads the complete export for the same accepted receipt once and retains receipt recovery until installation completes", async () => {
+    const completeExport = Buffer.from("complete export with its own checksum");
+    (downloadCanonicalProjectExport as jest.Mock).mockResolvedValue(completeExport);
+    const generated = await generateCanonicalArchive({ ...options, completeProjectExport: true });
+    expect(generated.archive).toEqual(completeExport);
+    expect(downloadCanonicalProjectExport).toHaveBeenCalledWith(expect.objectContaining({ applicationId, receiptRef: receipt.receiptRef, backend: options.backend, jwtToken: options.jwtToken }));
+    expect(fetchArtifact).not.toHaveBeenCalled();
+    expect((await fs.readdir(options.recoveryDirectory!)).length).toBe(1);
     await generated.complete(); expect(await fs.readdir(options.recoveryDirectory!)).toEqual([]);
   });
 

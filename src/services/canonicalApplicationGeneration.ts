@@ -9,6 +9,8 @@ import type { Principal } from "@thorapi/model/Principal";
 import { getValkyrLabsRtkApiClient, ValkyrLabsApiError } from "./valkyrai/ValkyrLabsRtkApi";
 import { assertNoProjectLinks, GeneratedProjectProvenance } from "./generatedProjectInstall";
 
+import { downloadCanonicalProjectExport } from "./canonicalProjectExport";
+
 const MAX_ARCHIVE_BYTES = 128 * 1024 * 1024;
 const hash = (bytes: string | Buffer) => createHash("sha256").update(bytes).digest("hex");
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -26,6 +28,8 @@ interface Options {
   assertCurrent: () => Promise<void>;
   onProgress?: (message: string) => void | Promise<void>;
   fetch?: typeof fetch;
+  /** Fetch the complete editable export from the same accepted receipt instead of downloading twice. */
+  completeProjectExport?: boolean;
 }
 
 const same = (left: unknown, right: unknown) => typeof left === "string" && typeof right === "string" && left.toLowerCase() === right.toLowerCase();
@@ -171,8 +175,10 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
     ? `${backend}/thorapi/applications/${encodeURIComponent(applicationId)}/developer-project/artifacts/${encodeURIComponent(artifact.artifactRef)}/download`
     : `${backend}/files/${encodeURIComponent(String(metadata.fileRecordId))}/download`;
   await options.onProgress?.("Downloading the verified application package from its generation receipt...");
-  const archive = await readArchive(download, jwtToken, artifact.byteSize!, assertCurrent, options.fetch || fetch);
+  const archive = options.completeProjectExport
+    ? await downloadCanonicalProjectExport({ backend, applicationId, receiptRef: receipt.receiptRef, jwtToken, assertCurrent })
+    : await readArchive(download, jwtToken, artifact.byteSize!, assertCurrent, options.fetch || fetch);
   await assertCurrent();
-  if (hash(archive) !== artifact.checksum!.toLowerCase()) throw new Error("The downloaded archive checksum disagrees with its receipt. No project files were written; retry or repair the stored artifact.");
+  if (!options.completeProjectExport && hash(archive) !== artifact.checksum!.toLowerCase()) throw new Error("The downloaded archive checksum disagrees with its receipt. No project files were written; retry or repair the stored artifact.");
   return { archive, fileName: artifact.fileName, complete, provenance: { requestRef: request.requestRef, receiptRef: receipt.receiptRef, generationRunRef: receipt.generationRunRef!, artifactRef: artifact.artifactRef, ...(developer ? { artifactStorage: "developer_project" as const } : { fileRecordId: String(metadata.fileRecordId), artifactStorage: "file_record" as const }), checksum: artifact.checksum!.toLowerCase(), tenantId: request.tenantId, accountId: request.accountId!, specRevisionRef: receipt.specRevisionRef, buildRunRef: receipt.buildRunRef, testRunRef: receipt.testRunRef, runtimeBindingRef: receipt.runtimeBindingRef } };
 }

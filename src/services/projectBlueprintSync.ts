@@ -90,12 +90,20 @@ export async function readProjectBlueprintState(root: string): Promise<ProjectBl
   } catch (error) { if (error.code === "ENOENT") return undefined; throw error; }
 }
 
-export async function initializeProjectBlueprintState(root: string, state: ProjectBlueprintState): Promise<void> {
+export async function initializeProjectBlueprintState(root: string, state: ProjectBlueprintState, replaceImportedBase = false): Promise<void> {
   const existing = await readProjectBlueprintState(root);
   if (existing) {
     if (existing.applicationId.toLowerCase() !== state.applicationId.toLowerCase() || existing.specificationPath !== state.specificationPath)
       throw new Error("This folder is bound to another Application or editable specification. Import into a new folder.");
-    return; // Repeated imports retain the base revision, pending save, and local edits.
+    if (!replaceImportedBase) return; // Repeated imports retain the base revision, pending save, and local edits.
+    if (existing.pending) throw new Error("Retry the pending Blueprint synchronization before replacing its imported base.");
+    // A complete accepted generation establishes its admitted source, not a new server ETag.
+    // Retain an existing ETag only when it describes the same source and backend.
+    const sameBase = existing.baselineHash === state.baselineHash && (!state.backend || state.backend === existing.backend);
+    const next: ProjectBlueprintState = { ...state, ...(state.backend || existing.backend ? { backend: state.backend || existing.backend } : {}),
+      ...(sameBase && existing.etag ? { etag: existing.etag, specId: existing.specId } : {}) };
+    await writeState(root, next);
+    return;
   }
   await writeState(root, state, true);
 }

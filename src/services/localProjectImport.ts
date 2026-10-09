@@ -4,7 +4,7 @@ import os from "os";
 import { createHash } from "crypto";
 import AdmZip from "adm-zip";
 import { extractLocalZip, isZipBuffer } from "../utils/zipExtractor";
-import { canonicalProjectFolder, generatedProjectDestination, installGeneratedProject, assertNoProjectLinks, GENERATION_MARKER } from "./generatedProjectInstall";
+import { canonicalProjectFolder, generatedProjectDestination, installGeneratedProject, assertNoProjectLinks, GENERATION_MARKER, GeneratedProjectProvenance } from "./generatedProjectInstall";
 import { initializeGeneratedProject, connectGeneratedSources } from "./generatedProjectConfiguration";
 import { BLUEPRINT_MARKER, PROJECT_UUID, initializeProjectBlueprintState, readProjectBlueprintState, parseProjectSpecification, safeProjectRelativePath, specificationHash, normalizeBlueprintBackend, ProjectBlueprintState } from "./projectBlueprintSync";
 
@@ -100,9 +100,13 @@ export interface LocalProjectImportRequest {
   workspaceRoot?: string;
   assertCurrent?: () => void | Promise<void>;
   onProgress?: (message: string) => void | Promise<void>;
+  /** Only the authenticated native generation path supplies verified receipt provenance. */
+  expectedGeneration?: { applicationId: string; applicationVersion?: string; backend: string; provenance: GeneratedProjectProvenance };
+  mode?: "import" | "regenerate";
+  confirmOverwrite?: (affectedPaths: string[]) => boolean | Promise<boolean>;
 }
 
-export async function importLocalProjectPackage({ archivePath, parent, workspaceRoot, assertCurrent, onProgress }: LocalProjectImportRequest): Promise<{ extractedPath: string; preservedFiles: string[]; configurationWarnings: string[]; specificationPath: string; packageSha256: string }> {
+export async function importLocalProjectPackage({ archivePath, parent, workspaceRoot, assertCurrent, onProgress, expectedGeneration, mode = "import", confirmOverwrite }: LocalProjectImportRequest): Promise<{ extractedPath: string; preservedFiles: string[]; configurationWarnings: string[]; specificationPath: string; packageSha256: string; applicationVersion: string }> {
   let staging: string | undefined;
   try {
     await assertCurrent?.();
@@ -138,6 +142,23 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
     const lineageBytes = sourceFiles.get("generation-lineage.json");
     if (!lineageBytes) throw new Error("The project package is missing its original generation-lineage.json.");
     const lineage = JSON.parse(lineageBytes.toString("utf8"));
+    if (manifest.applicationId !== undefined && manifest.applicationId !== lineage.applicationId)
+      throw new Error("The project manifest and generation lineage belong to different Applications. Export the complete package from the intended Application.");
+    if (manifest.receiptRef !== undefined && manifest.receiptRef !== lineage.receiptRef)
+      throw new Error("The project manifest and generation lineage identify different generation receipts. Export the complete package again.");
+    if (expectedGeneration) {
+      const proof = expectedGeneration.provenance;
+      if (lineage.applicationId !== expectedGeneration.applicationId || manifest.applicationId !== expectedGeneration.applicationId ||
+          manifest.receiptRef !== proof.receiptRef || lineage.receiptRef !== proof.receiptRef || lineage.requestRef !== proof.requestRef ||
+          lineage.generationRunRef !== proof.generationRunRef || lineage.artifactRef !== proof.artifactRef || lineage.generatedPackageChecksumSha256 !== proof.checksum ||
+          (expectedGeneration.applicationVersion && manifest.version !== expectedGeneration.applicationVersion))
+        throw new Error("The complete project export does not match this Application's accepted generation receipt or API version. Existing project files were preserved; retry the same receipt.");
+      if (mode !== "regenerate") throw new Error("Verified generation exports must use the reviewed regeneration path.");
+    } else if (mode === "regenerate") {
+      throw new Error("Regeneration requires the Application's verified receipt. Use Import Local Project Package for an offline export.");
+    }
+    if ((lineage.scope === "canonical_application_generation" || (manifest.sourceRevision && lineage.sourceRevision)) && specificationHash(manifest.sourceRevision ?? null) !== specificationHash(lineage.sourceRevision ?? null))
+      throw new Error("The project manifest and lineage identify different frozen source revisions. Export the complete package again.");
     if (!PROJECT_UUID.test(lineage.applicationId) || !/^[a-f0-9]{64}$/.test(lineage.packageSha256)) throw new Error("The project generation lineage has no valid application identity or generated ZIP checksum.");
     if (manifest.sourceRevision) validateProjectSourceRevision(manifest.sourceRevision, lineage.applicationId, sourceFiles, lineage.scope === "production");
     else if (lineage.scope === "production" && lineage.productionGenerationProven === true)
@@ -148,6 +169,8 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
     const original = await fs.readFile(path.join(packageRoot, generatedPath));
     if (sha256(original) !== lineage.packageSha256) throw new Error("The original generated ZIP does not match its lineage checksum.");
     validateArchive(original);
+    if (lineage.originalGeneratorChecksumSha256 !== undefined && lineage.originalGeneratorChecksumSha256 !== sha256(original))
+      throw new Error("The canonical original generator checksum disagrees with its exported ZIP. Export the complete package again.");
     if (envelope) {
       for (const relative of await listPackageFiles(sourceRoot)) if (!allowed.has(relative.toLowerCase())) throw new Error(`The project package contains undeclared source: ${relative}`);
       if (!envelope.has(generatedPath)) throw new Error("The portable export must declare its original generated ZIP.");
@@ -164,7 +187,10 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
     if (candidates.length !== 1) throw new Error("The package must identify one editable OpenAPI source using specificationPath in source-manifest.json.");
     const { relative: specificationPath, specification } = candidates[0];
     if (specification.info.version !== manifest.version) throw new Error("The editable spec and project manifest versions differ. Export a consistent project package.");
-    const identity = { applicationId: lineage.applicationId, applicationName: specification.info.title, applicationVersion: manifest.version };
+    if (lineage.specChecksumSha256 !== undefined && lineage.specChecksumSha256 !== sha256(sourceFiles.get(specificationPath)!))
+      throw new Error("The editable Blueprint does not match the generation's admitted specification. Export the complete package again.");
+    const identity = { applicationId: lineage.applicationId, applicationName: specification.info.title, applicationVersion: manifest.version,
+      ...(expectedGeneration ? { generation: expectedGeneration.provenance } : {}) };
     canonicalProjectFolder(identity.applicationName, identity.applicationVersion);
     const state: ProjectBlueprintState = { schemaVersion: 1, applicationId: identity.applicationId, specificationPath, baselineHash: specificationHash(specification) };
     if (manifest.blueprint) {
@@ -173,9 +199,15 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
         throw new Error("The exported canonical Blueprint binding is invalid.");
       Object.assign(state, { backend: normalizeBlueprintBackend(binding.backend), specId: binding.specId, etag: binding.etag });
     }
+    if (expectedGeneration) state.backend = normalizeBlueprintBackend(expectedGeneration.backend);
     await assertCurrent?.();
     const incoming = await extractLocalZip(path.join(packageRoot, generatedPath), staging, identity.applicationName, { fresh: true });
     const generatedFiles = (await listPackageFiles(incoming)).filter((relative) => relative !== ".valoride-generator-ignore");
+    if (lineage.generatedFiles !== undefined && (!Array.isArray(lineage.generatedFiles) ||
+        JSON.stringify([...lineage.generatedFiles].sort()) !== JSON.stringify([...generatedFiles].sort())))
+      throw new Error("The canonical generator ownership list disagrees with the original ZIP. Existing project files were preserved.");
+    if (expectedGeneration && !Array.isArray(lineage.generatedFiles))
+      throw new Error("The complete generation export has no verified generator ownership list. Export the complete package again.");
     if (envelope && generatedFiles.some((relative) => relative.toLowerCase() === "export-reference" || relative.toLowerCase().startsWith("export-reference/")))
       throw new Error("Generated source conflicts with the reserved portable export-reference folder.");
     try {
@@ -194,15 +226,17 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
     const existingState = await readProjectBlueprintState(target);
     if (existingState && (existingState.applicationId.toLowerCase() !== identity.applicationId.toLowerCase() || existingState.specificationPath !== specificationPath))
       throw new Error("This folder is bound to another Application or editable specification. Import into a new folder.");
+    if (mode === "regenerate" && existingState?.pending)
+      throw new Error("Retry the pending Blueprint synchronization before regenerating this project; local edits and the saved base were preserved.");
     await assertCurrent?.();
     await onProgress?.("Installing project sources and preserving local edits...");
     // An imported lineage remains descriptive. It never grants hosted tenant access or manufactures a verified generation receipt.
-    const installed = await installGeneratedProject(incoming, destination.parent, identity, assertCurrent, { mode: "import", generatedFiles });
-    await initializeProjectBlueprintState(installed.extractedPath, state);
+    const installed = await installGeneratedProject(incoming, destination.parent, identity, assertCurrent, { mode, generatedFiles, confirmOverwrite });
+    await initializeProjectBlueprintState(installed.extractedPath, state, mode === "regenerate" && !installed.preservedFiles.includes(specificationPath));
     await assertCurrent?.();
     const offset = workspaceRoot ? path.relative(workspaceRoot, installed.extractedPath) : undefined;
     const containingWorkspace = workspaceRoot && offset !== ".." && !offset!.startsWith(`..${path.sep}`) && !path.isAbsolute(offset!) ? workspaceRoot : installed.extractedPath;
     await connectGeneratedSources(installed.extractedPath, containingWorkspace, configurationWarnings);
-    return { ...installed, specificationPath, configurationWarnings, packageSha256: sha256(archive) };
+    return { ...installed, specificationPath, configurationWarnings, packageSha256: sha256(archive), applicationVersion: manifest.version };
   } finally { if (staging) await fs.rm(staging, { recursive: true, force: true }); }
 }

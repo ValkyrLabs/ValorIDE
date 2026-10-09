@@ -1,16 +1,14 @@
 import fs from "fs/promises";
-import AdmZip from "adm-zip";
-import { createHash } from "crypto";
 import * as path from "path";
 import os from "os";
 import * as vscode from "vscode";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
-import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
+import { isZipBuffer } from "@utils/zipExtractor";
 import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
-import { canonicalProjectFolder, generatedProjectDestination, installGeneratedProject } from "./generatedProjectInstall";
-import { connectGeneratedSources, initializeGeneratedProject } from "./generatedProjectConfiguration";
+import { canonicalProjectFolder } from "./generatedProjectInstall";
+import { importLocalProjectPackage } from "./localProjectImport";
 
 export type ApplicationArtifactStage =
   | "receiving"
@@ -125,7 +123,7 @@ export async function downloadApplicationArtifact({
     await ensureCurrent();
     const generated = await generateCanonicalArchive({
       backend, workspaceRoot, applicationId, applicationVersion, jwtToken, recoveryDirectory,
-      assertCurrent: ensureCurrent, fetch: fetcher,
+      assertCurrent: ensureCurrent, fetch: fetcher, completeProjectExport: true,
       onProgress: (message) => onProgress?.(message, "receiving"),
     });
     await ensureCurrent();
@@ -146,58 +144,21 @@ export async function downloadApplicationArtifact({
     await ensureCurrent();
     await onProgress?.("Extracting your project files...", "extracting");
     await ensureCurrent();
-    const incomingRoot = await extractLocalZip(
+    const installed = await importLocalProjectPackage({
       archivePath,
-      stagingRoot,
-      applicationName,
-      { fresh: true },
-    );
-    const generatedPaths = async (directory: string, prefix = ""): Promise<string[]> => {
-      const files: string[] = [];
-      for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
-        const relative = path.posix.join(prefix, entry.name);
-        if (entry.isDirectory()) files.push(...await generatedPaths(path.join(directory, entry.name), relative));
-        else if (entry.isFile() && relative !== ".valoride-generator-ignore") files.push(relative);
-      }
-      return files;
-    };
-    let generatedFiles = await generatedPaths(incomingRoot);
-    const lineageBytes = await fs.readFile(path.join(incomingRoot, "generation-lineage.json")).catch((error) => { if (error.code === "ENOENT") return undefined; throw error; });
-    if (lineageBytes) {
-      const lineage = JSON.parse(lineageBytes.toString("utf8"));
-      const original = await fs.readFile(path.join(incomingRoot, "export-reference/generator-original.zip"));
-      if (lineage.applicationId !== applicationId || !/^[a-f0-9]{64}$/.test(lineage.originalGeneratorChecksumSha256 || "") || createHash("sha256").update(original).digest("hex") !== lineage.originalGeneratorChecksumSha256 || !Array.isArray(lineage.generatedFiles))
-        throw new Error("The canonical package has invalid generator ownership evidence. Existing project files were preserved.");
-      const owned = new AdmZip(original).getEntries().filter((entry) => !entry.isDirectory).map((entry) => entry.entryName).sort();
-      if (JSON.stringify([...lineage.generatedFiles].sort()) !== JSON.stringify(owned) || owned.some((relative) => !generatedFiles.includes(relative) || relative === ".valoride-generator-ignore"))
-        throw new Error("The original generator ZIP and canonical ownership manifest disagree. Existing project files were preserved.");
-      generatedFiles = owned;
-    }
-    await ensureCurrent();
-    // Current generators publish the actual API version in the plan; ZIP names contain an id, not a version.
-    let plannedVersion: string | undefined;
-    try {
-      const plan = JSON.parse(await fs.readFile(path.join(incomingRoot, "generation-plan.json"), "utf8"));
-      plannedVersion = typeof plan.api?.version === "string" ? plan.api.version : undefined;
-    } catch (error) {
-      if (error.code !== "ENOENT") throw new Error("The generated version manifest is invalid. Regenerate from the saved Blueprint.");
-    }
-    if (plannedVersion && applicationVersion && plannedVersion !== applicationVersion)
-      throw new Error("The generated API version changed. Refresh the application list and retry from the current Blueprint.");
-    const version = plannedVersion || applicationVersion || filename.match(/^v(\d+(?:\.\d+){0,2})\./i)?.[1];
-    if (!version) throw new Error("The archive has no API version. Save OpenAPI info.version and regenerate; existing project files were preserved.");
-    canonicalProjectFolder(applicationName, version);
-    const configurationWarnings = await initializeGeneratedProject(incomingRoot, applicationName, version);
-    await ensureCurrent();
-    const destination = await generatedProjectDestination(workspaceRoot, resolveThorapiFolderPath(workspaceRoot), applicationId);
-    const { extractedPath, preservedFiles } = await installGeneratedProject(incomingRoot, destination.parent, {
-      applicationId, applicationName, applicationVersion: version, generation: generated.provenance,
-    }, ensureCurrent, { mode: "regenerate", generatedFiles, confirmOverwrite: confirmOverwrite || (async (affectedPaths) => {
-      const preview = await vscode.workspace.openTextDocument({ language: "plaintext", content: `Regeneration replaces these canonical generated files:\n\n${affectedPaths.join("\n")}\n\nCommit .valoride-generator-ignore to protect intentional overrides. Custom extensions and unknown files remain protected.\n` });
-      await vscode.window.showTextDocument(preview, { preview: false });
-      return await vscode.window.showWarningMessage(`Replace ${affectedPaths.length} generated files with the canonical Blueprint output?`, { modal: true }, "Replace generated files") === "Replace generated files";
-    }) });
-    await connectGeneratedSources(extractedPath, destination.standalone ? extractedPath : workspaceRoot, configurationWarnings);
+      parent: resolveThorapiFolderPath(workspaceRoot),
+      workspaceRoot,
+      assertCurrent: ensureCurrent,
+      expectedGeneration: { applicationId, applicationVersion, backend, provenance: generated.provenance },
+      mode: "regenerate",
+      confirmOverwrite: confirmOverwrite || (async (affectedPaths) => {
+        const preview = await vscode.workspace.openTextDocument({ language: "plaintext", content: `Regeneration replaces these canonical generated files:\n\n${affectedPaths.join("\n")}\n\nCommit .valoride-generator-ignore to protect intentional overrides. Custom extensions and unknown files remain protected.\n` });
+        await vscode.window.showTextDocument(preview, { preview: false });
+        return await vscode.window.showWarningMessage(`Replace ${affectedPaths.length} generated files with the canonical Blueprint output?`, { modal: true }, "Replace generated files") === "Replace generated files";
+      }),
+    });
+    const { extractedPath, preservedFiles, configurationWarnings } = installed;
+    const version = installed.applicationVersion;
     await ensureCurrent();
     await onProgress?.(
       `Ready in ${getReadablePath(workspaceRoot, extractedPath)}${preservedFiles.length ? `; preserved ${preservedFiles.length} edited or existing files` : ""}`,

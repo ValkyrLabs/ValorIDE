@@ -78,6 +78,7 @@ describe("canonical local project-package import", () => {
       ["export-reference/generator-original.zip",original]]);
     const artifactId="44444444-4444-4444-8444-444444444444";
     const sourceRevision={applicationId,artifactId,projectId:"22222222-2222-4222-8222-222222222222",organizationId:"33333333-3333-4333-8333-333333333333",revisionRef:`source-snapshot:${applicationId}:${artifactId}`,checksumSha256:"a".repeat(64),sizeBytes:100,commitSha:"b".repeat(40),treeSha:"c".repeat(40)};
+    const lineage=JSON.parse(sourceFiles.get("generation-lineage.json")!.toString("utf8")); lineage.sourceRevision=sourceRevision; sourceFiles.set("generation-lineage.json",Buffer.from(JSON.stringify(lineage)));
     const manifest={schemaVersion:1,version:"1.0.0",specificationPath:"openapi.json",sourceRevision,files:[...sourceFiles].map(([path,bytes])=>({path,bytes:bytes.length,sha256:sha(bytes)}))};
     const zip=new AdmZip();for(const [file,bytes]of sourceFiles)zip.addFile(file,bytes);zip.addFile("source-manifest.json",Buffer.from(JSON.stringify(manifest)));await fs.writeFile(archivePath,zip.toBuffer());
     const imported=await importPackage();expect(await fs.readFile(path.join(imported.extractedPath,"export-reference/generator-original.zip"))).toEqual(original);
@@ -88,10 +89,25 @@ describe("canonical local project-package import", () => {
   fixtureTest("imports the actual backend local round-trip export with its exact original ZIP and source descriptor",async()=>{
     const bytes=await fs.readFile(process.env.VALORIDE_BACKEND_EXPORT_FIXTURE!);await fs.writeFile(archivePath,bytes);
     const result=await importPackage();const zip=new AdmZip(bytes);
-    expect(await fs.readFile(path.join(result.extractedPath,"export-reference/generator-original.zip"))).toEqual(zip.readFile("export-reference/generator-original.zip"));
-    expect(await fs.readFile(path.join(result.extractedPath,"runtime/adapter.py"))).toEqual(zip.readFile("runtime/adapter.py"));
-    expect((await readGenerationManifest(result.extractedPath))?.generation).toBeUndefined();expect(result.specificationPath).toBe("openapi-spec.yaml");
-  });
+    expect((await fs.readFile(path.join(result.extractedPath,"export-reference/generator-original.zip"))).equals(zip.readFile("export-reference/generator-original.zip")!)).toBe(true);
+    const manifest=JSON.parse(zip.readFile("source-manifest.json")!.toString("utf8"));
+    const preserveSettings=(before: any,after: any) => {
+      if (Array.isArray(before)) expect(after.slice(0,before.length)).toEqual(before);
+      else if (before && typeof before === "object") for (const key of Object.keys(before)) preserveSettings(before[key],after[key]);
+      else expect(after).toEqual(before);
+    };
+    for (const file of manifest.files) {
+      const bytes=await fs.readFile(path.join(result.extractedPath,file.path)); const original=zip.readFile(file.path)!;
+      if (bytes.equals(original)) continue;
+      if (!/(^|\/)tsconfig(?:\.[^/]+)?\.json$/.test(file.path)) throw new Error(`Imported source differs from the retained export: ${file.path}`);
+      const ts=jest.requireActual("typescript");
+      const before=ts.parseConfigFileTextToJson(file.path,original.toString("utf8")); const after=ts.parseConfigFileTextToJson(file.path,bytes.toString("utf8"));
+      expect(before.error).toBeUndefined(); expect(after.error).toBeUndefined(); preserveSettings(before.config,after.config);
+    }
+    const lineage=JSON.parse(zip.readFile("generation-lineage.json")!.toString("utf8"));
+    expect((await readGenerationManifest(result.extractedPath))?.applicationId).toBe(lineage.applicationId);
+    expect((await readGenerationManifest(result.extractedPath))?.generation).toBeUndefined();expect(result.specificationPath).toBe(manifest.specificationPath);
+  }, 30_000);
   it("preserves authored edits and the original Blueprint baseline during repeated import from an opened project", async () => {
     const first = await importPackage(); const marker = await fs.readFile(path.join(first.extractedPath, BLUEPRINT_MARKER));
     await fs.appendFile(path.join(first.extractedPath, "runtime/adapter.py"), "# local edit\n");
@@ -212,4 +228,9 @@ describe("canonical local project-package import", () => {
     await fs.writeFile(archivePath, packageBytes((_zip, manifest) => { manifest.sourceRevision = value; }));
     await expect(importPackage()).rejects.toThrow(); await expect(fs.access(parent)).rejects.toThrow();
   });
+  it("rejects a manifest's foreign Application before installing any source", async () => {
+    await fs.writeFile(archivePath, packageBytes((_zip, manifest) => { manifest.applicationId = "22222222-2222-4222-8222-222222222222"; }));
+    await expect(importPackage()).rejects.toThrow(/different Applications/); await expect(fs.access(parent)).rejects.toThrow();
+  });
+
 });

@@ -144,4 +144,27 @@ describe("local project Blueprint synchronization", () => {
     await expect(sync()).rejects.toThrow(/invalid Blueprint/);
     expect(request).toHaveBeenCalledTimes(1);
   });
+  it("replaces a regenerated unchanged spec baseline without inventing an ETag, retaining a matching base on repeated import", async () => {
+    await sync();
+    const current = await readProjectBlueprintState(root);
+    const admitted = { ...original, info: { ...original.info, description: "accepted regenerated change" } };
+    const next = { schemaVersion: 1 as const, applicationId, specificationPath: "openapi.json", baselineHash: specificationHash(admitted), backend };
+    await initializeProjectBlueprintState(root, next); expect(await readProjectBlueprintState(root)).toEqual(current);
+    await initializeProjectBlueprintState(root, next, true);
+    expect(await readProjectBlueprintState(root)).toEqual(next);
+    expect((await readProjectBlueprintState(root))?.etag).toBeUndefined();
+    canonical = document(admitted, "c".repeat(64));
+    await fs.writeFile(path.join(root, "openapi.json"), JSON.stringify(admitted));
+    expect((await sync()).status).toBe("unchanged");
+    expect(request.mock.calls.filter(([input]) => input.method === "PUT")).toHaveLength(0);
+  });
+
+  it("keeps an unresolved Blueprint save intact when regeneration tries to replace the base", async () => {
+    await sync(); const state = (await readProjectBlueprintState(root))!;
+    const pending = { ...state, pending: { expectedEtag: state.etag!, specificationHash: "d".repeat(64) } };
+    await fs.writeFile(path.join(root, BLUEPRINT_MARKER), JSON.stringify(pending));
+    await expect(initializeProjectBlueprintState(root, { ...state, baselineHash: "e".repeat(64) }, true)).rejects.toThrow(/pending Blueprint/);
+    expect(await readProjectBlueprintState(root)).toEqual(pending);
+  });
+
 });
