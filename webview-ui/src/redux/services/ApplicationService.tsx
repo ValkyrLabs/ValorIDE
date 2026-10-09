@@ -5,6 +5,11 @@ import {
   applicationTagsFor,
   normalizeApplicationResponse,
 } from "./applicationResponse";
+import { loadApplicationPages } from "./applicationPaging";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
+import { getStoredJwtToken } from "../../utils/authTokenStorage";
+import { readStoredTenantContext } from "../../utils/tenantContext";
+import { getCredentialRevision } from "@shared/CredentialOrigin";
 
 type ApplicationResponse = Application[];
 
@@ -19,7 +24,7 @@ export const ApplicationService = createApi({
       { page: number; limit?: number }
     >({
       query: ({ page, limit = 20 }) =>
-        `Application?page=${page}&limit=${limit}`,
+        `Application?page=${page}&size=${limit}&sort=id,asc`,
       transformResponse: normalizeApplicationResponse,
       providesTags: (result, error, { page }) =>
         result
@@ -30,13 +35,25 @@ export const ApplicationService = createApi({
           : [],
     }),
 
-    // 2) Simple "get all" Query (optional)
-    getApplications: build.query<ApplicationResponse, void>({
-      query: () => ({
-        url: `Application`,
-        method: "GET",
-      }),
-      transformResponse: normalizeApplicationResponse,
+    // Cache a complete list per account/tenant/backend, not just page zero.
+    getApplications: build.query<ApplicationResponse, string | void>({
+      async queryFn(_scope, api, _extra, baseQuery) {
+        const host = getValkyraiHost();
+        const token = getStoredJwtToken(host);
+        const revision = getCredentialRevision();
+        const tenantId = readStoredTenantContext().tenantId;
+        return loadApplicationPages(
+          (url) => baseQuery({ url, method: "GET" }),
+          {
+            signal: api.signal,
+            isCurrent: () =>
+              getValkyraiHost() === host &&
+              getCredentialRevision() === revision &&
+              getStoredJwtToken(host) === token &&
+              readStoredTenantContext().tenantId === tenantId,
+          },
+        );
+      },
       providesTags: (result) =>
         result
           ? [...applicationTagsFor(result), { type: "Application", id: "LIST" }]

@@ -21,15 +21,15 @@ const firstArrayValue = (value: unknown): unknown[] | undefined => {
   return Object.values(value).find(Array.isArray) as unknown[] | undefined;
 };
 
-export const normalizeApplicationResponse = (
+export const extractApplicationCollection = (
   response: unknown,
-): Application[] => {
+): unknown[] | undefined => {
   if (Array.isArray(response)) {
-    return response as Application[];
+    return response;
   }
 
   if (!isObject(response)) {
-    return [];
+    return undefined;
   }
 
   const envelope = response as ApplicationEnvelope;
@@ -44,8 +44,13 @@ export const normalizeApplicationResponse = (
   ];
 
   const applicationList = candidates.find(Array.isArray);
-  return Array.isArray(applicationList) ? (applicationList as Application[]) : [];
+  return Array.isArray(applicationList) ? applicationList : undefined;
 };
+
+export const normalizeApplicationResponse = (
+  response: unknown,
+): Application[] =>
+  (extractApplicationCollection(response) ?? []) as Application[];
 
 export const applicationTagsFor = (applications: unknown) =>
   normalizeApplicationResponse(applications)

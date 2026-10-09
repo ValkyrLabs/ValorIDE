@@ -11,6 +11,7 @@ import ApplicationsList, {
   getApplicationDeployUrl,
   getApplicationOpenUrl,
 } from "./ApplicationsList";
+import { loadApplicationPages } from "../../redux/services/applicationPaging";
 
 const mockRefetch = vi.fn();
 const mockUseGetApplicationsQuery = vi.fn();
@@ -59,6 +60,67 @@ describe("ApplicationsList", () => {
     };
     mockAclAccess = { permissions: [], isOwner: false, isAdmin: false };
     vi.unstubAllEnvs();
+  });
+
+  it("renders the same owned production Clipping draft fetched from page two", async () => {
+    const ownerId = "0c339b19-a9eb-475a-8501-0c272c0c2f0b";
+    const clipping = {
+      id: "4b2a4dc5-e9f6-45c4-aaaa-0bb187ee386c",
+      name: "John Social Video Clipping",
+      ownerId,
+      status: "disabled",
+    };
+    const read = vi
+      .fn()
+      .mockResolvedValueOnce({
+        data: Array.from({ length: 20 }, (_, i) => ({
+          id: `first-${i}`,
+          name: `Shared ${i}`,
+        })),
+      })
+      .mockResolvedValueOnce({ data: [clipping] });
+    const catalog = await loadApplicationPages(read);
+    mockExtensionState = {
+      authenticatedUser: { id: ownerId },
+      jwtToken: "not-a-cache-key",
+    };
+    mockAclAccess = { permissions: [], isOwner: true, isAdmin: false };
+    mockUseGetApplicationsQuery.mockReturnValue({
+      ...catalog,
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+    render(<ApplicationsList />);
+    expect(screen.getByText("John Social Video Clipping")).toBeInTheDocument();
+    expect(read).toHaveBeenCalledTimes(2);
+    const scope = mockUseGetApplicationsQuery.mock.calls[0][0];
+    expect(scope).toContain(ownerId);
+    expect(scope).not.toContain("not-a-cache-key");
+  });
+
+  it("changes its catalog cache key when the signed-in owner changes", () => {
+    mockUseGetApplicationsQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isFetching: false,
+      refetch: mockRefetch,
+    });
+    mockExtensionState = {
+      authenticatedUser: { id: "owner-one" },
+      jwtToken: "first-token",
+    };
+    const view = render(<ApplicationsList />);
+    const first = mockUseGetApplicationsQuery.mock.calls.at(-1)?.[0];
+    mockExtensionState = {
+      authenticatedUser: { id: "owner-two" },
+      jwtToken: "second-token",
+    };
+    view.rerender(<ApplicationsList />);
+    const second = mockUseGetApplicationsQuery.mock.calls.at(-1)?.[0];
+    expect(first).not.toEqual(second);
+    expect(second).toContain("owner-two");
+    expect(second).not.toContain("second-token");
   });
 
   it("shows a refresh button that triggers refetch", () => {
@@ -412,8 +474,12 @@ describe("ApplicationsList", () => {
     expect(
       screen.getByRole("alert", { name: "Application generation failed" }),
     ).toHaveTextContent("Generated archive failed validation");
-    expect(screen.queryByText(/generated successfully/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Generation completed successfully/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/generated successfully/i),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Generation completed successfully/i),
+    ).not.toBeInTheDocument();
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Generate" })).toBeEnabled(),
     );

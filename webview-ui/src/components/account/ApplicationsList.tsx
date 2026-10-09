@@ -9,6 +9,9 @@ import { useGetObjectPermissionsQuery } from "../../redux/services/AclService";
 import { vscode } from "../../utils/vscode";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import { useExtensionState } from "../../context/ExtensionStateContext";
+import { getValkyraiHost } from "../../utils/valkyraiHost";
+import { readStoredTenantContext } from "../../utils/tenantContext";
+import { getCredentialRevision } from "@shared/CredentialOrigin";
 import {
   FaCalendarAlt,
   FaCloudUploadAlt,
@@ -266,6 +269,12 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     jwtToken ||
     currentUserId ||
     (isAuthenticated ? "authenticated" : "anonymous");
+  const catalogScope = JSON.stringify([
+    getValkyraiHost(),
+    currentUserId || (isAuthenticated ? "authenticated" : "anonymous"),
+    readStoredTenantContext().tenantId || "",
+    getCredentialRevision(),
+  ]);
 
   // Always fetch applications - don't skip the query
   // The API will handle authentication and return appropriate errors if not authenticated
@@ -275,7 +284,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     isLoading,
     isFetching,
     refetch,
-  } = useGetApplicationsQuery(undefined, {
+  } = useGetApplicationsQuery(catalogScope, {
     refetchOnMountOrArgChange: true,
     skip: false, // Always attempt to fetch applications
   });
