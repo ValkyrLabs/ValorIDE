@@ -97,6 +97,10 @@ import McpResourceRow from "@thorapi/components/mcp/configuration/tabs/installed
 import UserMessage from "./UserMessage";
 import { type TaskConfidence } from "@thorapi/utils/taskPhase";
 import { hasRenderableFollowupContent } from "@thorapi/components/chat/taskMessageVisibility";
+import {
+  getGrayMatterContextPresentation,
+  type GrayMatterContextPayload,
+} from "./grayMatterContextPresentation";
 
 const statusColorMap: Record<ValorIDEFileChangeStatus, string> = {
   added: "var(--vscode-charts-green)",
@@ -958,18 +962,6 @@ const CompletionReportBody = memo(({ markdown }: { markdown: string }) => {
     </div>
   );
 });
-
-interface GrayMatterContextPayload {
-  citations?: number;
-  checkedAt?: string;
-  message?: string;
-  recovery?: {
-    actions?: Array<{ id?: string; label?: string; primary?: boolean }>;
-    message?: string;
-    reason?: string;
-  };
-  status?: string;
-}
 
 const getGrayMatterRecoveryActions = (
   payload: GrayMatterContextPayload,
@@ -2610,12 +2602,10 @@ export const ChatRowContent = ({
           const payload =
             safeParseJSON<GrayMatterContextPayload>(message.text) || {};
           const status = payload.status || "unavailable";
-          const isReady = status === "ready" || status === "empty";
-          const recoveryMessage = payload.recovery?.message || payload.message;
-          const actions = getGrayMatterRecoveryActions({
-            ...payload,
-            status,
-          });
+          const presentation = getGrayMatterContextPresentation(payload);
+          const actions = presentation.showRecoveryActions
+            ? getGrayMatterRecoveryActions({ ...payload, status })
+            : [];
           return (
             <div
               style={{
@@ -2647,9 +2637,11 @@ export const ChatRowContent = ({
                 )}
                 <FaBolt
                   color={
-                    isReady
+                    presentation.tone === "ready"
                       ? "var(--vscode-charts-green)"
-                      : "var(--vscode-editorWarning-foreground)"
+                      : presentation.tone === "warning"
+                        ? "var(--vscode-editorWarning-foreground)"
+                        : "var(--vscode-descriptionForeground)"
                   }
                 />
                 <span
@@ -2658,7 +2650,7 @@ export const ChatRowContent = ({
                     fontWeight: 400,
                   }}
                 >
-                  GrayMatter {isReady ? "memory checked" : "needs attention"}
+                  GrayMatter {presentation.title}
                 </span>
                 <span
                   style={{
@@ -2667,7 +2659,7 @@ export const ChatRowContent = ({
                     marginLeft: "auto",
                   }}
                 >
-                  {status}
+                  {presentation.statusLabel}
                 </span>
               </div>
               {isExpanded && (
@@ -2679,7 +2671,7 @@ export const ChatRowContent = ({
                     paddingLeft: 18,
                   }}
                 >
-                  {recoveryMessage && (
+                  {presentation.message && (
                     <div
                       style={{
                         color: "var(--vscode-foreground)",
@@ -2687,7 +2679,7 @@ export const ChatRowContent = ({
                         lineHeight: 1.35,
                       }}
                     >
-                      {recoveryMessage}
+                      {presentation.message}
                     </div>
                   )}
                   {actions.length > 0 && (

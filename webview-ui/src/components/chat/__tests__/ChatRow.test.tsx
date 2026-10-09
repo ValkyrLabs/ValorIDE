@@ -877,6 +877,103 @@ describe("ChatRow Content - reasoning severity indicator", () => {
 });
 
 describe("ChatRow Content - GrayMatter recovery", () => {
+  const renderGrayMatterResult = (payload: Record<string, unknown>) => {
+    const message = {
+      type: "say",
+      say: "graymatter_context",
+      ts: Date.now(),
+      text: JSON.stringify(payload),
+    } as any;
+    return render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+  };
+
+  it("renders a normal empty result without attention, retry, or account recovery", () => {
+    renderGrayMatterResult({
+      status: "empty",
+      policyState: "allowed",
+      citations: 0,
+      recovery: {
+        message: "Sign in and retry",
+        actions: [{ id: "open_login", label: "Sign in to ValkyrAI" }],
+      },
+    });
+    expect(screen.getByText("GrayMatter memory checked")).toBeInTheDocument();
+    expect(screen.getByText("no relevant memories")).toBeInTheDocument();
+    expect(screen.queryByText(/needs attention|unavailable|retry/i)).toBeNull();
+    expect(screen.queryByRole("button", { name: /Sign in/i })).toBeNull();
+  });
+
+  it.each([
+    "retry_required",
+    "clarification_required",
+    "conflicting",
+    "partial",
+    "stale",
+  ])(
+    "renders connected %s memory as unused without an access warning",
+    (policyState) => {
+      renderGrayMatterResult({
+        status: "unavailable",
+        policyState,
+        citations: 0,
+        message:
+          "GrayMatter is connected, but the retrieved memory was too uncertain for this task. Refine the request and retry. No memory was added.",
+        recovery: {
+          actions: [{ id: "open_account", label: "Open ValorIDE account" }],
+        },
+      });
+      expect(screen.getByText("GrayMatter memory checked")).toBeInTheDocument();
+      expect(screen.getByText("no context used")).toBeInTheDocument();
+      expect(screen.getByText(/GrayMatter is connected/)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/needs attention|unavailable|retry/i),
+      ).toBeNull();
+      expect(screen.queryByRole("button", { name: /account/i })).toBeNull();
+    },
+  );
+
+  it("keeps a transport error and its recovery visible", () => {
+    renderGrayMatterResult({
+      status: "unavailable",
+      message: "GrayMatter did not respond. Check the selected backend.",
+    });
+    expect(screen.getByText("GrayMatter needs attention")).toBeInTheDocument();
+    expect(screen.getByText("unavailable")).toBeInTheDocument();
+    expect(screen.getByText(/Check the selected backend/)).toBeInTheDocument();
+  });
+
+  it("shows an unverified receipt as a real memory-check failure", () => {
+    renderGrayMatterResult({
+      status: "unavailable",
+      policyState: "unavailable",
+      message: "GrayMatter's memory receipt could not be verified.",
+    });
+    expect(
+      screen.getByText("GrayMatter memory check failed"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("receipt not verified")).toBeInTheDocument();
+    expect(screen.queryByText("no relevant memories")).toBeNull();
+  });
+
+  it("shows pending discovery without claiming a connection error", () => {
+    renderGrayMatterResult({ status: "checking" });
+    expect(
+      screen.getByText("GrayMatter checking connection"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/needs attention|unavailable/)).toBeNull();
+  });
+
   it("renders the borderless GrayMatter row collapsed by default", () => {
     const onToggleExpand = vi.fn();
     const message = {
