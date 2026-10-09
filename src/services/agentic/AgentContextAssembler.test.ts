@@ -688,6 +688,7 @@ describe("AgentContextAssembler", () => {
 
     expect(queryMemory).not.toHaveBeenCalled();
     expect(context.grayMatter.status).toBe("unavailable");
+    expect(context.grayMatter.policyState).toBe("retry_required");
     expect(context.grayMatter.citations).toEqual([]);
     expect(context.grayMatter.reads[0]).toEqual(
       expect.objectContaining({

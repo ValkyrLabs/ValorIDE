@@ -140,6 +140,12 @@ import {
   reconcileGrayMatterSessionRefresh,
   type GrayMatterSessionState,
 } from "@services/graymatter/GrayMatterSessionService";
+import {
+  grayMatterPolicyMessage,
+  shouldDegradeGrayMatterAccess,
+  waitForGrayMatterTaskSession,
+  type GrayMatterTaskSession,
+} from "@services/graymatter/GrayMatterTaskRecovery";
 import { getLLMPromptService } from "@services/llmPromptService";
 import {
   extractTenantContext,
@@ -2466,6 +2472,7 @@ export class Task {
 
     return (
       !session ||
+      session.baseUrl !== getValkyraiBasePath() ||
       session.status !== "ready" ||
       !session.capabilities.memoryQuery
     );
@@ -2497,9 +2504,9 @@ export class Task {
   private async refreshGrayMatterSessionForTask(
     token: string | undefined,
     session: GrayMatterSessionState | undefined,
-  ): Promise<GrayMatterSessionState | undefined> {
+  ): Promise<GrayMatterTaskSession> {
     if (!this.shouldRefreshGrayMatterSession(token, session)) {
-      return session;
+      return { session, pending: false };
     }
 
     const refresh = async () => {
@@ -2515,16 +2522,19 @@ export class Task {
       return refreshed;
     };
 
-    // Capability discovery must never consume the task's transport budget.
-    // Actual memory calls remain authenticated and server-authorized; this only
-    // prevents a recovering backend from blocking unrelated task execution.
-    void refresh().catch((error) => {
+    // Let fast recovery finish, with a short budget independent of transport.
+    // A slow refresh still updates the next task without blocking this one.
+    const pendingRefresh = refresh();
+    void pendingRefresh.catch((error) => {
       console.warn(
         "Failed to refresh the GrayMatter session in the background:",
         error,
       );
     });
-    return session;
+    return waitForGrayMatterTaskSession(
+      pendingRefresh,
+      session?.baseUrl === getValkyraiBasePath() ? session : undefined,
+    );
   }
 
   private initializeCheckpointTrackerForChat(): Promise<void> {
@@ -2598,10 +2608,20 @@ export class Task {
           console.warn("Failed to report GrayMatter context access:", error);
         });
       };
-      const grayMatterSession = await this.refreshGrayMatterSessionForTask(
+      const discovery = await this.refreshGrayMatterSessionForTask(
         token,
         cachedGrayMatterSession,
       );
+      const grayMatterSession = discovery.session;
+
+      if (token && discovery.pending && grayMatterSession?.status !== "ready") {
+        await reportGrayMatterAccess({
+          message:
+            "GrayMatter's connection check is still running. This task continued without memory. Retry once GrayMatter is connected.",
+          status: "checking",
+        });
+        return undefined;
+      }
 
       if (
         !token ||
@@ -2654,7 +2674,11 @@ export class Task {
         (status === "forbidden" ||
           status === "quota" ||
           status === "unauthenticated" ||
-          status === "unavailable")
+          status === "unavailable") &&
+        shouldDegradeGrayMatterAccess({
+          status,
+          policyState: context?.grayMatter.policyState,
+        })
       ) {
         const degradedSession = degradeGrayMatterSession(
           grayMatterSession,
@@ -2679,8 +2703,10 @@ export class Task {
             ? `GrayMatter injected ${citationCount} remembered context entr${citationCount === 1 ? "y" : "ies"} into this task.`
             : status === "empty"
               ? "GrayMatter checked memory before this task; no relevant memories were returned."
-              : (context?.grayMatter.error ??
+              : (grayMatterPolicyMessage(context?.grayMatter.policyState) ??
+                context?.grayMatter.error ??
                 "GrayMatter memory retrieval is unavailable; continuing without memory context."),
+        policyState: context?.grayMatter.policyState,
         status,
       });
 

@@ -3,6 +3,7 @@ import {
   extractGrayMatterReceiptMetadata,
   redactGrayMatterPromptText,
   type GrayMatterReceiptMetadata as ReceiptMetadata,
+  type GrayMatterReceiptPolicyState,
 } from "@services/graymatter/GrayMatterReceiptPolicy";
 import {
   GrayMatterClient,
@@ -61,6 +62,7 @@ export interface GrayMatterTranscriptRead {
 export interface AgentGrayMatterContext {
   citations: GrayMatterContextCitation[];
   error?: string;
+  policyState?: GrayMatterReceiptPolicyState;
   query?: string;
   reads: GrayMatterTranscriptRead[];
   status: GrayMatterReadStatus;
@@ -102,6 +104,7 @@ type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 
 interface ContextReadResponse {
   metadata?: ReceiptMetadata;
+  policyState?: GrayMatterReceiptPolicyState;
   usedReceipt?: boolean;
   value?: unknown;
   warning?: string;
@@ -174,6 +177,7 @@ export class AgentContextAssembler {
           grayMatter: {
             citations: [],
             error: response.warning,
+            policyState: response.policyState,
             query,
             reads: [read],
             status,
@@ -301,6 +305,7 @@ export class AgentContextAssembler {
             grayMatter: {
               citations: [],
               error: policy.warning,
+              policyState: policy.state,
               query,
               reads: [read],
               status,
@@ -466,6 +471,7 @@ export class AgentContextAssembler {
     if (!policy.allowsContext) {
       return {
         metadata,
+        policyState: policy.state,
         warning: policyWarning,
       };
     }

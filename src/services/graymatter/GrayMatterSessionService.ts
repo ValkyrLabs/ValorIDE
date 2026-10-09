@@ -50,7 +50,11 @@ export const reconcileGrayMatterSessionRefresh = (
   previous: GrayMatterSessionState | undefined,
   refreshed: GrayMatterSessionState,
 ): GrayMatterSessionState => {
-  if (previous?.status === "ready" && refreshed.status === "unavailable") {
+  if (
+    previous?.status === "ready" &&
+    refreshed.status === "unavailable" &&
+    previous.baseUrl === refreshed.baseUrl
+  ) {
     return {
       ...previous,
       checkedAt: refreshed.checkedAt,
@@ -131,17 +135,10 @@ export const buildGrayMatterRecovery = (
 
   return {
     ...recoveryBase,
-    actions: [
-      {
-        id: "open_account",
-        command: "valoride.accountButtonClicked",
-        label: "Open ValorIDE account",
-        primary: true,
-      },
-    ],
+    actions: [],
     message:
-      "GrayMatter capability discovery is unavailable on the selected ValorIDE backend.",
-    retryable: false,
+      "GrayMatter's connection check failed. Retry this task; if it persists, check the configured ValkyrAI backend.",
+    retryable: true,
   };
 };
 

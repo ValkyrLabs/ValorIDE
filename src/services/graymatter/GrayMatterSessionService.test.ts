@@ -1,4 +1,8 @@
 import {
+  clearCredentialOrigins,
+  registerCredentialOrigin,
+} from "@shared/CredentialOrigin";
+import {
   createGrayMatterSessionState,
   degradeGrayMatterSession,
   defaultGrayMatterCapabilities,
@@ -18,6 +22,62 @@ const jsonResponse = (status: number, body: unknown): Response =>
   }) as unknown as Response;
 
 describe("GrayMatterSessionService", () => {
+  beforeEach(() => {
+    clearCredentialOrigins();
+    registerCredentialOrigin("jwt-token", "https://api-0.valkyrlabs.com/v1");
+  });
+  afterEach(() => clearCredentialOrigins());
+
+  it("keeps backend failures retryable without implying that sign-in is lost", async () => {
+    const fetch = jest.fn(async () =>
+      jsonResponse(503, { message: "Temporarily unavailable" }),
+    );
+    const session = await createGrayMatterSessionState({
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      fetch,
+      token: "jwt-token",
+    });
+    expect(session).toMatchObject({
+      status: "unavailable",
+      recovery: { actions: [], retryable: true },
+    });
+    expect(session.recovery?.message).toContain("Retry this task");
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("never sends an unbound credential to discovery", async () => {
+    const fetch = jest.fn();
+    const state = await createGrayMatterSessionState({
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      fetch,
+      token: "unbound-token",
+    });
+    expect(state.status).toBe("unavailable");
+    expect(state.error).toContain("not bound");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("does not carry ready capabilities into a different backend", () => {
+    const previous = {
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      capabilities: {
+        ...defaultGrayMatterCapabilities,
+        grayMatter: true,
+        memoryRead: true,
+      },
+      checkedAt: "2026-10-09T02:01:34.008Z",
+      status: "ready" as const,
+    };
+    const unavailable = {
+      ...previous,
+      baseUrl: "http://localhost:8080/v1",
+      status: "unavailable" as const,
+    };
+    expect(reconcileGrayMatterSessionRefresh(previous, unavailable)).toBe(
+      unavailable,
+    );
+  });
+
   it("preserves the last ready session across a transient transport timeout", () => {
     const previous = {
       baseUrl: "https://api-0.valkyrlabs.com/v1",
