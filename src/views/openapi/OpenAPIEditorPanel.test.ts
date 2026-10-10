@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { it } from "@jest/globals";
+import { JSDOM } from "jsdom";
 import { OpenAPIEditorPanel } from "./OpenAPIEditorPanel";
 import { getSecret } from "@core/storage/state";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
@@ -79,6 +80,65 @@ beforeEach(() => {
   OpenAPIEditorPanel.open(context, { applicationId });
 });
 afterEach(() => panel.dispose());
+
+it("startup receives the canonical load request emitted while HTML is being attached", async () => {
+  panel.dispose();
+  let startupReceiver: typeof receive | undefined;
+  let startupRequest: Promise<void> | undefined;
+  panel.webview.onDidReceiveMessage = (handler: typeof receive) => {
+    startupReceiver = handler;
+  };
+  Object.defineProperty(panel.webview, "html", {
+    configurable: true,
+    set: () => {
+      startupRequest = startupReceiver?.({ type: "blueprintLoad" });
+    },
+  });
+
+  OpenAPIEditorPanel.open(context, { applicationId });
+  await startupRequest;
+
+  expect(transport).toHaveBeenCalledTimes(1);
+  expect(transport).toHaveBeenCalledWith(
+    expect.objectContaining({
+      url: `${backend}/thorapi/applications/${applicationId}/openapi`,
+    }),
+  );
+  expect(post).toHaveBeenCalledWith(
+    expect.objectContaining({ type: "blueprintLoaded" }),
+  );
+});
+
+it("startup shows progress before the bundle and an actionable failure if it cannot start", () => {
+  const dom = new JSDOM(panel.webview.html, { runScripts: "dangerously" });
+  try {
+    const root = dom.window.document.getElementById("root");
+    expect(root?.textContent).toMatch(/Opening Blueprint/i);
+    dom.window.dispatchEvent(new dom.window.Event("error"));
+    expect(root?.textContent).toMatch(/could not start/i);
+    expect(root?.textContent).toMatch(/reopen Blueprint from the Application/i);
+  } finally {
+    dom.window.close();
+  }
+});
+
+it("startup keeps Application metadata inside the bootstrap data", () => {
+  panel.dispose();
+  const applicationName = '</script><img id="injected-application-name">';
+  OpenAPIEditorPanel.open(context, { applicationId, applicationName });
+  const dom = new JSDOM(panel.webview.html, { runScripts: "dangerously" });
+  try {
+    expect(
+      dom.window.document.getElementById("injected-application-name"),
+    ).toBeNull();
+    expect((dom.window as any).__valorideBlueprint).toEqual({
+      applicationId,
+      applicationName,
+    });
+  } finally {
+    dom.window.close();
+  }
+});
 
 it("loads, saves and regenerates the same Application on its original backend", async () => {
   await receive({ type: "blueprintLoad" });

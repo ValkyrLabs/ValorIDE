@@ -77,11 +77,6 @@ export class OpenAPIEditorPanel {
     OpenAPIEditorPanel.currentPanel = panel;
     OpenAPIEditorPanel.currentApplicationId = options.applicationId;
     OpenAPIEditorPanel.currentBackend = backend;
-    panel.webview.html = renderOpenAPIEditorPanel(
-      context,
-      panel.webview,
-      options,
-    );
 
     panel.webview.onDidReceiveMessage(async (message) => {
       if (message?.type === "requestTheme") {
@@ -123,6 +118,13 @@ export class OpenAPIEditorPanel {
       OpenAPIEditorPanel.currentApplicationId = undefined;
       OpenAPIEditorPanel.currentBackend = undefined;
     });
+
+    // The webview can request its canonical document as soon as HTML is attached.
+    panel.webview.html = renderOpenAPIEditorPanel(
+      context,
+      panel.webview,
+      options,
+    );
   }
 }
 
@@ -338,6 +340,7 @@ const renderOpenAPIEditorPanel = (
     connectSrcEntries.add(valkyraiWsOrigin);
   }
   const connectSrc = Array.from(connectSrcEntries).filter(Boolean).join(" ");
+  const bootstrap = JSON.stringify(options).replace(/</g, "\\u003c");
 
   return /* html */ `<!DOCTYPE html>
 <html lang="en">
@@ -349,13 +352,23 @@ const renderOpenAPIEditorPanel = (
     <title>OpenAPI Editor</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <p id="blueprint-startup-status" role="status" style="padding:12px;color:var(--vscode-editor-foreground);font-family:var(--vscode-font-family)">Opening Blueprint...</p>
+    </div>
     <script nonce="${nonce}">
+      const reportStartupFailure = () => {
+        const status = document.getElementById("blueprint-startup-status");
+        if (status) status.textContent = "Blueprint could not start. Close this editor and reopen Blueprint from the Application.";
+      };
+      window.addEventListener("error", reportStartupFailure, true);
+      window.addEventListener("unhandledrejection", reportStartupFailure);
       try {
         window.__valorideWebviewMode = "openapi-editor";
         window.__valorideValkyraiBasePath = ${JSON.stringify(valkyraiBasePath)};
-        window.__valorideBlueprint = ${JSON.stringify(options)};
-      } catch {}
+        window.__valorideBlueprint = ${bootstrap};
+      } catch {
+        reportStartupFailure();
+      }
     </script>
     <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
   </body>
