@@ -91,6 +91,7 @@ export interface ExtensionMessage {
     | "streamToThorapiResult"
     | "applicationSourcePublishProgress"
     | "applicationSourcePublishResult"
+    | "applicationSourceRestoreResult"
     | "thorapiResponse"
     | "openFileExplorerResult"
     | "workspaceFiles"
@@ -236,6 +237,11 @@ export interface ExtensionMessage {
   };
   applicationId?: string;
   sourcePublishStatus?: string;
+  sourceRestoreResult?: {
+    success: boolean;
+    applicationId: string;
+    error?: string;
+  };
   sourcePublishResult?: {
     success: boolean;
     applicationId: string;

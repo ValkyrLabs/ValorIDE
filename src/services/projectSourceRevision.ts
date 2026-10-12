@@ -12,6 +12,114 @@ export interface GitSourceConnections {
 export interface SourceHandoffOptions {
   backend: string; applicationId: string; jwtToken: string; assertCurrent: () => Promise<void>; sourceKind?: "upload";
 }
+
+/** A content-free pin of the exact profile association and configuration. */
+export interface SourceSelectionDescriptor {
+  applicationId: string;
+  buildProfileId: string | null;
+  artifactRef: string | null;
+  profileSha256: string;
+}
+export interface SourceSelectionTransition {
+  baseline: SourceSelectionDescriptor;
+  selected: SourceSelectionDescriptor;
+  sourceRevision: DeveloperSourceRevision;
+}
+
+export function sourceSelectionDescriptor(value: unknown, applicationId: string): SourceSelectionDescriptor {
+  const descriptor = value as SourceSelectionDescriptor | undefined;
+  if (!descriptor || typeof descriptor.applicationId !== "string" || descriptor.applicationId !== applicationId ||
+      !PROJECT_UUID.test(applicationId) ||
+      (descriptor.buildProfileId !== null && (typeof descriptor.buildProfileId !== "string" || !PROJECT_UUID.test(descriptor.buildProfileId))) ||
+      (descriptor.artifactRef !== null && (typeof descriptor.artifactRef !== "string" ||
+        !descriptor.artifactRef.trim() || descriptor.artifactRef.length > 512)) ||
+      (descriptor.buildProfileId === null && descriptor.artifactRef !== null) ||
+      typeof descriptor.profileSha256 !== "string" || !/^[a-f0-9]{64}$/.test(descriptor.profileSha256))
+    throw new Error("The source selection descriptor is invalid or belongs to another Application. No source selection was changed.");
+  // Project only the contract fields; never retain arbitrary response or recovery-file data.
+  return { applicationId, buildProfileId: descriptor.buildProfileId, artifactRef: descriptor.artifactRef,
+    profileSha256: descriptor.profileSha256 };
+}
+
+export function sameSourceSelection(left: SourceSelectionDescriptor, right: SourceSelectionDescriptor): boolean {
+  return left.applicationId === right.applicationId && left.buildProfileId === right.buildProfileId &&
+    left.artifactRef === right.artifactRef && left.profileSha256 === right.profileSha256;
+}
+
+export async function applicationSourceSelectionDescriptor(options: SourceHandoffOptions): Promise<SourceSelectionDescriptor> {
+  return sourceSelectionDescriptor(await request(options, "/developer-project/source-selection/state"), options.applicationId);
+}
+
+export function sourceSelectionTransition(value: unknown, applicationId: string): SourceSelectionTransition {
+  const transition = value as SourceSelectionTransition | undefined;
+  const baseline = sourceSelectionDescriptor(transition?.baseline, applicationId);
+  const selected = sourceSelectionDescriptor(transition?.selected, applicationId);
+  const source = transition?.sourceRevision;
+  if (!source || source.applicationId !== applicationId || typeof source.artifactId !== "string" || !PROJECT_UUID.test(source.artifactId) ||
+      typeof source.projectId !== "string" || !PROJECT_UUID.test(source.projectId) ||
+      typeof source.organizationId !== "string" || !PROJECT_UUID.test(source.organizationId) ||
+      source.revisionRef !== `source-snapshot:${applicationId}:${source.artifactId}` ||
+      typeof source.checksumSha256 !== "string" || !/^[a-f0-9]{64}$/.test(source.checksumSha256) ||
+      typeof source.originalGeneratorChecksum !== "string" || !/^[a-f0-9]{64}$/.test(source.originalGeneratorChecksum) ||
+      !Number.isSafeInteger(source.sizeBytes) || source.sizeBytes < 1 ||
+      (source.commitSha != null && (typeof source.commitSha !== "string" || !/^[a-f0-9]{40}$/.test(source.commitSha))) ||
+      selected.buildProfileId === null || selected.buildProfileId === baseline.buildProfileId ||
+      selected.artifactRef !== source.revisionRef)
+    throw new Error("The backend selected a different or invalid source revision. Review the Application's selected source before generating.");
+  const sourceRevision: DeveloperSourceRevision = { applicationId, artifactId: source.artifactId,
+    projectId: source.projectId, organizationId: source.organizationId, revisionRef: source.revisionRef,
+    checksumSha256: source.checksumSha256, sizeBytes: source.sizeBytes,
+    originalGeneratorChecksum: source.originalGeneratorChecksum, ...(source.commitSha ? { commitSha: source.commitSha } : {}) };
+  return { baseline, selected, sourceRevision };
+}
+
+export async function selectPublishedApplicationSourceReversibly(options: SourceHandoffOptions,
+    source: { applicationId: string; artifactId: string; revisionRef: string; checksumSha256: string; sizeBytes: number },
+    expectedCurrent: SourceSelectionDescriptor, originalGeneratorChecksum: string): Promise<SourceSelectionTransition> {
+  const expected = sourceSelectionDescriptor(expectedCurrent, options.applicationId);
+  if (source.applicationId !== options.applicationId || !PROJECT_UUID.test(source.artifactId) ||
+      source.revisionRef !== `source-snapshot:${options.applicationId}:${source.artifactId}` ||
+      !/^[a-f0-9]{64}$/.test(source.checksumSha256) || !/^[a-f0-9]{64}$/.test(originalGeneratorChecksum) ||
+      !Number.isSafeInteger(source.sizeBytes) || source.sizeBytes < 1)
+    throw new Error("Uploaded source has invalid immutable Application evidence. No source selection was changed.");
+  const current = await applicationSourceSelectionDescriptor(options);
+  if (!sameSourceSelection(current, expected))
+    throw new Error("The Application source selection changed after publication. Review its profile and saved baseline before retrying; the uploaded source remains intact.");
+  const transition = sourceSelectionTransition(await request(options, "/developer-project/source-selection/select", "POST", {
+    revisionRef: source.revisionRef, expectedCurrent: expected,
+  }), options.applicationId);
+  if (!sameSourceSelection(transition.baseline, expected) ||
+      transition.sourceRevision.artifactId !== source.artifactId ||
+      transition.sourceRevision.checksumSha256 !== source.checksumSha256 ||
+      transition.sourceRevision.sizeBytes !== source.sizeBytes ||
+      transition.sourceRevision.originalGeneratorChecksum !== originalGeneratorChecksum)
+    throw new Error("The backend returned a different selection or immutable revision. Keep the recorded baseline and review the Application before retrying.");
+  return transition;
+}
+
+/** A lost restoration response is recoverable because the exact original descriptor is already known. */
+export async function restoreNullApplicationSourceSelection(options: SourceHandoffOptions,
+    expectedCurrent: SourceSelectionDescriptor, baseline: SourceSelectionDescriptor): Promise<SourceSelectionDescriptor> {
+  const expected = sourceSelectionDescriptor(expectedCurrent, options.applicationId);
+  const original = sourceSelectionDescriptor(baseline, options.applicationId);
+  if (original.artifactRef !== null || expected.buildProfileId === null ||
+      expected.buildProfileId === original.buildProfileId ||
+      !expected.artifactRef?.match(new RegExp(`^source-snapshot:${options.applicationId}:[a-f0-9-]{36}$`)))
+    throw new Error("Restoration requires the recorded no-source baseline and its exact selected source descriptor.");
+  const current = await applicationSourceSelectionDescriptor(options);
+  if (sameSourceSelection(current, original)) return original;
+  if (!sameSourceSelection(current, expected))
+    throw new Error("The source selection or recorded baseline changed. Review it without retrying restoration.");
+  const restored = sourceSelectionDescriptor(await request(options, "/developer-project/source-selection/restore-null", "POST", {
+    expectedCurrent: expected, baseline: original,
+  }), options.applicationId);
+  if (!sameSourceSelection(restored, original))
+    throw new Error("The recorded source baseline was not restored. Review the Application; no further restoration was attempted.");
+  const readback = await applicationSourceSelectionDescriptor(options);
+  if (!sameSourceSelection(readback, original))
+    throw new Error("Source restoration readback changed. Keep the saved baseline and review the Application.");
+  return readback;
+}
 async function request<T>(options: SourceHandoffOptions, suffix: string, method = "GET", json?: unknown): Promise<T> {
   if (!PROJECT_UUID.test(options.applicationId) || !options.jwtToken.trim()) throw new Error("Sign in to the Application's authorized account before selecting pushed source.");
   const backend = normalizeBlueprintBackend(options.backend);

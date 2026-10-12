@@ -41,7 +41,7 @@ import { searchWorkspaceFiles } from "@services/search/file-search";
 import { OpenAPIEditorPanel } from "../../views/openapi/OpenAPIEditorPanel";
 import { TerminalManager } from "@integrations/terminal/TerminalManager";
 import { PathAccess } from "@services/access/PathAccess";
-import { publishApplicationSource } from "@services/applicationSourcePublish";
+import { publishApplicationSource, restoreApplicationSourceSelection } from "@services/applicationSourcePublish";
 
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
@@ -2553,6 +2553,19 @@ export class Controller {
           deploymentUrl: message.deploymentUrl,
         });
         break;
+      case "restoreApplicationSourceSelection": {
+        const applicationId = message.applicationId || "";
+        try {
+          await restoreApplicationSourceSelection({ context: this.context, applicationId });
+          await this.postMessageToWebview({ type: "applicationSourceRestoreResult", sourceRestoreResult: { success: true, applicationId } });
+          void vscode.window.showInformationMessage("Restored the recorded Application source selection. Your local edits remain intact.");
+        } catch (error) {
+          await this.postMessageToWebview({ type: "applicationSourceRestoreResult", sourceRestoreResult: {
+            success: false, applicationId, error: error instanceof Error ? error.message : "Unable to restore the recorded source selection.",
+          } });
+        }
+        break;
+      }
       case "publishApplicationSource": {
         const sourceApplicationId = message.applicationId;
         if (!sourceApplicationId) {

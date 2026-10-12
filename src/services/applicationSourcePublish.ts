@@ -10,11 +10,13 @@ import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import type * as vscode from "vscode";
 import { assertNoProjectLinks, readGenerationManifest } from "./generatedProjectInstall";
 import { PROJECT_UUID, normalizeBlueprintBackend, readProjectBlueprintState, safeProjectRelativePath } from "./projectBlueprintSync";
-import { applicationSourceSelection, latestPublishedApplicationSource, selectPublishedApplicationSource,
-  DeveloperSourceRevision, SourceHandoffOptions } from "./projectSourceRevision";
+import { applicationSourceSelectionDescriptor, latestPublishedApplicationSource, selectPublishedApplicationSourceReversibly,
+  restoreNullApplicationSourceSelection, sameSourceSelection, sourceSelectionDescriptor, sourceSelectionTransition,
+  DeveloperSourceRevision, SourceHandoffOptions, SourceSelectionDescriptor, SourceSelectionTransition } from "./projectSourceRevision";
 
 const MANIFEST_FILE = ".valoride-deploy.json";
 export const SOURCE_PUBLICATION_MARKER = ".valoride-source-publication.json";
+export const SOURCE_SELECTION_MARKER = ".valoride-source-selection.json";
 const activePublications = new Set<string>();
 const MAX_SOURCE_BYTES = 95 * 1024 * 1024;
 const MAX_SOURCE_FILES = 25_000;
@@ -69,6 +71,7 @@ const REQUIRED_EXCLUSIONS = [
   "artifacts/generated-*.zip",
   MANIFEST_FILE,
   `${SOURCE_PUBLICATION_MARKER}*`,
+  `${SOURCE_SELECTION_MARKER}*`,
 ];
 
 export interface ApplicationSourceManifest {
@@ -105,6 +108,7 @@ export interface ApplicationSourcePublishResult {
   manifest: ApplicationSourceManifest;
   selected?: boolean;
   sourceRevision?: DeveloperSourceRevision;
+  sourceSelection?: SourceSelectionTransition;
 }
 
 export interface PublishApplicationSourceRequest {
@@ -384,8 +388,14 @@ export async function createApplicationSourceArchive(workspaceRoot: string, appl
 }
 
 interface SourcePublicationRecovery {
-  schemaVersion: 1; applicationId: string; backend: string; checksumSha256: string;
-  originalGeneratorChecksum: string; expectedArtifactRef: string | null; result?: ApplicationSourcePublishResult;
+  schemaVersion: 2; applicationId: string; backend: string; checksumSha256: string;
+  originalGeneratorChecksum: string; baseline: SourceSelectionDescriptor; expectedCurrent: SourceSelectionDescriptor;
+  result?: ApplicationSourcePublishResult; transition?: SourceSelectionTransition;
+}
+
+interface SourceSelectionRecovery {
+  schemaVersion: 1; applicationId: string; backend: string; baseline: SourceSelectionDescriptor;
+  transition: SourceSelectionTransition; state: "selected" | "restored"; createdAt: string; status: string;
 }
 
 function publishedSource(value: ApplicationSourcePublishResult | undefined, applicationId: string,
@@ -400,28 +410,62 @@ function publishedSource(value: ApplicationSourcePublishResult | undefined, appl
     sizeBytes: value.sizeBytes, createdAt: value.createdAt, status: value.status, manifest: archive.manifest };
 }
 
-async function savePublication(root: string, value: SourcePublicationRecovery): Promise<void> {
-  await assertNoProjectLinks(root, SOURCE_PUBLICATION_MARKER);
-  const file = path.join(root, SOURCE_PUBLICATION_MARKER);
+async function saveRecovery(root: string, marker: string, value: SourcePublicationRecovery | SourceSelectionRecovery): Promise<void> {
+  await assertNoProjectLinks(root, marker);
+  const file = path.join(root, marker);
   const temporary = file + "." + crypto.randomBytes(6).toString("hex") + ".tmp";
   try { await fs.writeFile(temporary, JSON.stringify(value, null, 2) + "\n", { flag: "wx", mode: 0o600 }); await fs.rename(temporary, file); }
   finally { await fs.rm(temporary, { force: true }); }
 }
 
-async function readPublication(root: string): Promise<SourcePublicationRecovery | undefined> {
-  await assertNoProjectLinks(root, SOURCE_PUBLICATION_MARKER);
+const savePublication = (root: string, value: SourcePublicationRecovery) => saveRecovery(root, SOURCE_PUBLICATION_MARKER, value);
+
+async function readRecovery(root: string, marker: string): Promise<any | undefined> {
+  await assertNoProjectLinks(root, marker);
   try {
-    const bytes = await fs.readFile(path.join(root, SOURCE_PUBLICATION_MARKER));
-    if (bytes.length > 131072) throw new Error("Source publication recovery metadata exceeds its limit.");
-    let value: SourcePublicationRecovery;
-    try { value = JSON.parse(bytes.toString("utf8")); }
-    catch { throw new Error("Review the saved source publication metadata JSON before retrying."); }
-    if (value.schemaVersion !== 1 || !PROJECT_UUID.test(value.applicationId) || typeof value.backend !== "string" ||
-        !/^[a-f0-9]{64}$/.test(value.checksumSha256) || !/^[a-f0-9]{64}$/.test(value.originalGeneratorChecksum) ||
-        (value.expectedArtifactRef !== null && (typeof value.expectedArtifactRef !== "string" || value.expectedArtifactRef.length > 512)))
-      throw new Error("Review the saved source publication metadata before retrying.");
-    return value;
+    const bytes = await fs.readFile(path.join(root, marker));
+    if (bytes.length > 131072) throw new Error("Source recovery metadata exceeds its limit.");
+    try { return JSON.parse(bytes.toString("utf8")); }
+    catch { throw new Error("Review the saved source recovery metadata JSON before retrying."); }
   } catch (error) { if (error.code === "ENOENT") return undefined; throw error; }
+}
+
+async function readSelectionRecovery(root: string): Promise<SourceSelectionRecovery | undefined> {
+  const value = await readRecovery(root, SOURCE_SELECTION_MARKER);
+  if (!value) return undefined;
+  if (value.schemaVersion !== 1 || !PROJECT_UUID.test(value.applicationId) || typeof value.backend !== "string" ||
+      !["selected", "restored"].includes(value.state) || typeof value.createdAt !== "string" ||
+      !["validated", "superseded"].includes(value.status))
+    throw new Error("Review the saved source selection recovery metadata before retrying.");
+  return { schemaVersion: 1, applicationId: value.applicationId, backend: normalizeBlueprintBackend(value.backend),
+    baseline: sourceSelectionDescriptor(value.baseline, value.applicationId),
+    transition: sourceSelectionTransition(value.transition, value.applicationId), state: value.state,
+    createdAt: value.createdAt, status: value.status };
+}
+
+async function readPublication(root: string): Promise<SourcePublicationRecovery | undefined> {
+  const value = await readRecovery(root, SOURCE_PUBLICATION_MARKER);
+  if (!value) return undefined;
+  if (value.schemaVersion !== 2 || !PROJECT_UUID.test(value.applicationId) || typeof value.backend !== "string" ||
+      !/^[a-f0-9]{64}$/.test(value.checksumSha256) || !/^[a-f0-9]{64}$/.test(value.originalGeneratorChecksum))
+    throw new Error("Review the saved source publication metadata before retrying. Legacy recovery does not record the full baseline; keep it intact for review.");
+  const pending: SourcePublicationRecovery = { schemaVersion: 2, applicationId: value.applicationId,
+    backend: normalizeBlueprintBackend(value.backend), checksumSha256: value.checksumSha256,
+    originalGeneratorChecksum: value.originalGeneratorChecksum,
+    baseline: sourceSelectionDescriptor(value.baseline, value.applicationId),
+    expectedCurrent: sourceSelectionDescriptor(value.expectedCurrent, value.applicationId), result: value.result,
+    ...(value.transition ? { transition: sourceSelectionTransition(value.transition, value.applicationId) } : {}) };
+  if (pending.transition && (!sameSourceSelection(pending.transition.baseline, pending.expectedCurrent) ||
+      pending.transition.sourceRevision.applicationId !== pending.result?.applicationId ||
+      pending.transition.sourceRevision.artifactId !== pending.result?.artifactId ||
+      pending.transition.sourceRevision.revisionRef !== pending.result?.revisionRef ||
+      pending.transition.sourceRevision.checksumSha256 !== pending.checksumSha256 ||
+      pending.transition.sourceRevision.checksumSha256 !== pending.result?.checksumSha256 ||
+      pending.transition.sourceRevision.originalGeneratorChecksum !== pending.originalGeneratorChecksum ||
+      pending.transition.sourceRevision.sizeBytes !== pending.result?.sizeBytes ||
+      typeof pending.result?.createdAt !== "string" || !["validated", "superseded"].includes(pending.result?.status)))
+    throw new Error("The saved source transition differs from its publication. Preserve the recovery metadata and review it.");
+  return pending;
 }
 
 export async function publishApplicationSource({ context, applicationId, applicationName = applicationId,
@@ -465,9 +509,20 @@ export async function publishApplicationSource({ context, applicationId, applica
       throw new Error("Source or account changed after an interrupted publication. Keep your edits and review " + SOURCE_PUBLICATION_MARKER + " before publishing a different revision.");
     await options.assertCurrent();
     if (!pending) {
-      const current = await applicationSourceSelection(options);
-      pending = { schemaVersion: 1, applicationId, backend, checksumSha256: archive.checksumSha256,
-        originalGeneratorChecksum, expectedArtifactRef: current.artifactRef ?? null };
+      const current = await applicationSourceSelectionDescriptor(options);
+      const previous = await readSelectionRecovery(workspaceRoot);
+      if (previous && (previous.applicationId !== applicationId || previous.backend !== backend ||
+          !sameSourceSelection(current, previous.state === "restored" ? previous.baseline : previous.transition.selected)))
+        throw new Error("The source selection or account changed since the saved baseline. Keep it and review before publishing another revision.");
+      pending = { schemaVersion: 2, applicationId, backend, checksumSha256: archive.checksumSha256,
+        originalGeneratorChecksum, baseline: previous?.baseline ?? current, expectedCurrent: current };
+      if (previous?.state === "selected" && previous.transition.sourceRevision.checksumSha256 === archive.checksumSha256 &&
+          previous.transition.sourceRevision.originalGeneratorChecksum === originalGeneratorChecksum) {
+        pending.transition = previous.transition;
+        pending.expectedCurrent = previous.transition.baseline;
+        pending.result = { ...previous.transition.sourceRevision, createdAt: previous.createdAt, status: previous.status, manifest: archive.manifest };
+      }
+      // The exact baseline and intent are durable before upload or selection.
       await savePublication(workspaceRoot, pending);
     }
     let result = pending.result ? publishedSource(pending.result, applicationId, archive) : undefined;
@@ -500,14 +555,63 @@ export async function publishApplicationSource({ context, applicationId, applica
     }
     await options.assertCurrent();
     await onProgress?.(`Selecting immutable source revision ${result.revisionRef}...`);
-    let sourceRevision: DeveloperSourceRevision;
-    try { sourceRevision = await selectPublishedApplicationSource(options, result, pending.expectedArtifactRef, originalGeneratorChecksum); }
+    try {
+      if (!pending.transition) {
+        pending.transition = await selectPublishedApplicationSourceReversibly(options, result, pending.expectedCurrent, originalGeneratorChecksum);
+        // The server creates the selected profile; persist its descriptor before readback/finalization.
+        await savePublication(workspaceRoot, pending);
+      }
+      const current = await applicationSourceSelectionDescriptor(options);
+      if (!sameSourceSelection(current, pending.transition.selected))
+        throw new Error("The selected source profile changed. Keep the saved transition and review it without selecting again.");
+    }
     catch (error) {
       throw new Error(`Uploaded revision ${result.revisionRef} remains intact. ${error instanceof Error ? error.message : "Reconnect and retry selecting that exact source."}`);
     }
     await options.assertCurrent();
+    await saveRecovery(workspaceRoot, SOURCE_SELECTION_MARKER, { schemaVersion: 1, applicationId, backend,
+      baseline: pending.baseline, transition: pending.transition!, state: "selected", createdAt: result.createdAt, status: result.status });
     await fs.rm(path.join(workspaceRoot, SOURCE_PUBLICATION_MARKER), { force: true });
+    await options.assertCurrent();
     await onProgress?.(`Selected immutable source revision ${result.revisionRef} for the next generation.`);
-    return { ...result, selected: true, sourceRevision };
+    return { ...result, selected: true, sourceRevision: pending.transition!.sourceRevision, sourceSelection: pending.transition };
+  } finally { activePublications.delete(key); }
+}
+
+/** Restores only a recorded no-source baseline; source files and immutable snapshots are preserved. */
+export async function restoreApplicationSourceSelection({ context, applicationId, onProgress }: PublishApplicationSourceRequest): Promise<SourceSelectionDescriptor> {
+  const root = getWorkspacePath();
+  if (!root || !PROJECT_UUID.test(applicationId)) throw new Error("Open the original Application project before restoring its source selection.");
+  const key = root + ":" + applicationId;
+  if (activePublications.has(key)) throw new Error("Wait for this Application's source publication or restoration to finish.");
+  activePublications.add(key);
+  try {
+    const backend = normalizeBlueprintBackend(getValkyraiBasePath());
+    const jwtToken = await getSecret(context, "jwtToken");
+    if (!jwtToken) throw new Error("Sign in to the Application's authorized account before restoring source.");
+    const options: SourceHandoffOptions = { backend, applicationId, jwtToken, sourceKind: "upload", assertCurrent: async () => {
+      if (normalizeBlueprintBackend(getValkyraiBasePath()) !== backend || await getSecret(context, "jwtToken") !== jwtToken)
+        throw new Error("The backend or session changed. Return to the original account before restoring source.");
+    } };
+    await options.assertCurrent();
+    const blueprint = await readProjectBlueprintState(root);
+    const generation = await readGenerationManifest(root);
+    if ((blueprint && (blueprint.applicationId !== applicationId || blueprint.backend && normalizeBlueprintBackend(blueprint.backend) !== backend)) ||
+        generation && generation.applicationId !== applicationId)
+      throw new Error("This project belongs to another Application or backend. Preserve its edits and return to the original project before restoring source.");
+    const pending = await readPublication(root);
+    let saved = await readSelectionRecovery(root);
+    if (pending?.transition && pending.result) saved = { schemaVersion: 1, applicationId: pending.applicationId,
+      backend: pending.backend, baseline: pending.baseline, transition: pending.transition, state: "selected",
+      createdAt: pending.result.createdAt, status: pending.result.status };
+    if (!saved || saved.applicationId !== applicationId || saved.backend !== backend)
+      throw new Error("No complete source restoration record exists for this Application and backend. Keep pending metadata intact and review the original selection.");
+    await onProgress?.("Restoring the recorded source baseline...");
+    const restored = await restoreNullApplicationSourceSelection(options, saved.transition.selected, saved.baseline);
+    await options.assertCurrent();
+    await saveRecovery(root, SOURCE_SELECTION_MARKER, { ...saved, state: "restored" });
+    if (pending?.transition) await fs.rm(path.join(root, SOURCE_PUBLICATION_MARKER), { force: true });
+    await options.assertCurrent();
+    return restored;
   } finally { activePublications.delete(key); }
 }

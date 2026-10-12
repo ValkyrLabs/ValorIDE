@@ -203,8 +203,8 @@ describe("canonical Application source publication", () => {
     await fs.writeFile(file, data);
   };
   const publish = () => publishApplicationSource({ context: {} as any, applicationId, applicationName: "Useful App" });
-  const uploaded = () => request.mock.calls.filter(([q]) => q.method === "POST");
-  const puts = () => request.mock.calls.filter(([q]) => q.method === "PUT");
+  const uploaded = () => request.mock.calls.filter(([q]) => q.method === "POST" && q.url.endsWith("/source-snapshots"));
+  const puts = () => request.mock.calls.filter(([q]) => q.method === "POST" && q.url.endsWith("/source-selection/select"));
   const marker = async () => JSON.parse(await fs.readFile(path.join(root, SOURCE_PUBLICATION_MARKER), "utf8"));
 
   beforeEach(async () => {
@@ -230,6 +230,16 @@ describe("canonical Application source publication", () => {
     (getSecret as jest.Mock).mockResolvedValue(jwtToken);
     (getValkyraiBasePath as jest.Mock).mockReturnValue(backend);
     request = jest.fn(async q => {
+      const descriptor = () => ({ applicationId, buildProfileId: selected ? artifactId : projectId,
+        artifactRef: currentArtifact, profileSha256: (selected ? "b" : "a").repeat(64) });
+      if (q.method === "GET" && q.url.endsWith("/source-selection/state")) return { data: descriptor() };
+      if (q.method === "POST" && q.url.endsWith("/source-selection/select")) {
+        if (selectionFailure === "before") throw new Error(jwtToken);
+        selected = { ...source, projectId, organizationId, originalGeneratorChecksum };
+        currentArtifact = revisionRef;
+        if (selectionFailure === "after") throw new Error(jwtToken);
+        return { data: { baseline: q.json.expectedCurrent, selected: descriptor(), sourceRevision: selected } };
+      }
       if (q.method === "GET" && q.url.endsWith("/selection"))
         return { data: { applicationId, artifactRef: currentArtifact, sourceRevision: selected } };
       if (q.method === "GET" && q.url.endsWith("/source-snapshots")) return { data: source };
@@ -301,8 +311,10 @@ describe("canonical Application source publication", () => {
   it("uploads and explicitly selects one immutable revision using the captured parent and header-only session", async () => {
     const result = await publish();
     expect(result).toMatchObject({ selected: true, revisionRef, sourceRevision: { projectId, organizationId, originalGeneratorChecksum } });
-    expect(request.mock.calls.map(([q]) => q.method)).toEqual(["GET", "GET", "POST", "GET", "PUT"]);
-    expect(puts()[0][0].json).toEqual({ revisionRef, expectedArtifactRef: "existing-generator-artifact" });
+    expect(request.mock.calls.map(([q]) => q.method)).toEqual(["GET", "GET", "POST", "GET", "POST", "GET"]);
+    expect(puts()[0][0].json).toEqual({ revisionRef, expectedCurrent: {
+      applicationId, buildProfileId: projectId, artifactRef: "existing-generator-artifact", profileSha256: "a".repeat(64),
+    } });
     for (const [q] of request.mock.calls) {
       expect(q.headers).toEqual({ Authorization: `Bearer ${jwtToken}` });
       expect(JSON.stringify(q.json ?? {})).not.toContain(jwtToken);
@@ -319,7 +331,7 @@ describe("canonical Application source publication", () => {
     const saved = await marker();
     expect(saved.result.revisionRef).toBe(revisionRef);
     expect(JSON.stringify(saved)).not.toMatch(/token|credential|password/i);
-    expect(saved.expectedArtifactRef).toBe("existing-generator-artifact");
+    expect(saved.expectedCurrent.artifactRef).toBe("existing-generator-artifact");
     selectionFailure = "none";
     expect((await publish()).selected).toBe(true);
     expect(uploaded()).toHaveLength(1);
@@ -327,11 +339,11 @@ describe("canonical Application source publication", () => {
     expect(await fs.readFile(path.join(root, "ui/src/App.tsx"), "utf8")).toContain("Protected custom edit");
   });
 
-  it("recovers a lost selection response through the already-selected frozen descriptor", async () => {
+  it("preserves an unknown selection response for review without inferring a new profile descriptor", async () => {
     selectionFailure = "after";
     await expect(publish()).rejects.toThrow(/remains intact/);
     selectionFailure = "none";
-    expect((await publish()).sourceRevision).toMatchObject({ revisionRef, originalGeneratorChecksum });
+    await expect(publish()).rejects.toThrow(/selection changed after publication/);
     expect(uploaded()).toHaveLength(1); expect(puts()).toHaveLength(1);
   });
 
@@ -363,7 +375,7 @@ describe("canonical Application source publication", () => {
     selectionFailure = "none";
     await expect(publish()).rejects.toThrow(/selection changed after publication/);
     expect(uploaded()).toHaveLength(1); expect(puts()).toHaveLength(1);
-    expect((await marker()).expectedArtifactRef).toBe("existing-generator-artifact");
+    expect((await marker()).expectedCurrent.artifactRef).toBe("existing-generator-artifact");
   });
 
   it("preserves edits made after an interrupted upload and requires review before a different revision", async () => {
@@ -380,7 +392,7 @@ describe("canonical Application source publication", () => {
     const transport = request.getMockImplementation()!;
     request.mockImplementation(async q => {
       const response = await transport(q);
-      if (q.method === "POST") (getSecret as jest.Mock).mockResolvedValue("different-session");
+      if (q.method === "POST" && q.url.endsWith("/source-snapshots")) (getSecret as jest.Mock).mockResolvedValue("different-session");
       return response;
     });
     await expect(publish()).rejects.toThrow(/backend or session changed/);
@@ -394,7 +406,7 @@ describe("canonical Application source publication", () => {
     const transport = request.getMockImplementation()!;
     request.mockImplementation(async q => {
       const response = await transport(q);
-      return q.method === "POST" ? { data: { ...response.data, applicationId: organizationId } } : response;
+      return q.method === "POST" && q.url.endsWith("/source-snapshots") ? { data: { ...response.data, applicationId: organizationId } } : response;
     });
     await expect(publish()).rejects.toThrow(/different or invalid immutable/);
     expect(puts()).toHaveLength(0);

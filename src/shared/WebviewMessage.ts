@@ -114,6 +114,7 @@ export interface WebviewMessage {
     | "uploadOpenAPISpecResult"
     | "openOpenAPIEditor"
     | "publishApplicationSource"
+    | "restoreApplicationSourceSelection"
     | "openFile"
     | "trackFunnelEvent"
     | "remoteCodingSessionCommand"
