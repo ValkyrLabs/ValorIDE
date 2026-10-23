@@ -4,7 +4,7 @@ import path from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { installGeneratedProject, readGenerationManifest } from "./generatedProjectInstall";
-import { GENERATOR_POLICY } from "./generatedProjectPolicy";
+import { GENERATOR_POLICY, parseGeneratorPolicy } from "./generatedProjectPolicy";
 
 const exec = promisify(execFile);
 const identity = { applicationId: "11111111-1111-4111-8111-111111111111", applicationName: "Policy", applicationVersion: "1.0.0" };
@@ -72,5 +72,53 @@ describe("canonical regeneration ownership and explicit committed overrides", ()
     expect(confirmOverwrite).toHaveBeenCalledWith(["generated.ts"]);
     expect(await fs.readFile(path.join(project, "generated.ts"), "utf8")).toBe("canonical regenerated");
     await expect(installGeneratedProject(incoming, parent, identity, undefined, { mode: "regenerate" })).rejects.toThrow(/file ownership manifest/);
+  });
+});
+
+describe("portable generator policy compatibility", () => {
+  it("preserves an exact root file without silently protecting same-named nested files", () => {
+    const preserve = parseGeneratorPolicy("generated.ts\n");
+    expect(preserve("generated.ts")).toBe(true);
+    expect(preserve("nested/generated.ts")).toBe(false);
+    expect(preserve("generated.ts.map")).toBe(false);
+  });
+
+  it("keeps one-level wildcard protection distinct from nested paths", () => {
+    const preserve = parseGeneratorPolicy("frontend/*/style.css\n");
+    expect(preserve("frontend/theme/style.css")).toBe(true);
+    expect(preserve("frontend/theme/mobile/style.css")).toBe(false);
+    expect(preserve("other/frontend/theme/style.css")).toBe(false);
+  });
+
+  it("uses the canonical double-star and directory rule meanings", () => {
+    const preserve = parseGeneratorPolicy("frontend/**/style.css\nassets/\n");
+    expect(preserve("frontend/theme/mobile/style.css")).toBe(true);
+    expect(preserve("frontend/style.css")).toBe(false);
+    expect(preserve("assets/original.png")).toBe(true);
+    expect(preserve("assets/brand/original.svg")).toBe(true);
+    expect(preserve("other/assets/original.png")).toBe(false);
+  });
+
+  it("treats non-wildcard punctuation literally and accepts committed CRLF comments", () => {
+    const preserve = parseGeneratorPolicy("# original layout\r\n src/brand+theme?.tsx \r\n\r\n");
+    expect(preserve("src/brand+theme?.tsx")).toBe(true);
+    expect(preserve("src/brandtheme1.tsx")).toBe(false);
+  });
+
+  it.each([
+    "!generated.ts", "[ab].tsx", "src\\brand.tsx", "/src/brand.tsx",
+    "../brand.tsx", "src/../brand.tsx", "src//brand.tsx", "./brand.tsx",
+    ".git/config", ".hg/config", ".svn/config", ".env", "src/.env.local",
+    "keys/private.pem", "keys/private.KEY", "C:/brand.tsx", "src/\u0000brand.tsx",
+    "x".repeat(2049),
+  ])("refuses a policy rejected by canonical regeneration: %s", (rule) => {
+    expect(() => parseGeneratorPolicy(rule)).toThrow(/policy/);
+  });
+
+  it("retains the canonical policy size and rule-count limits", () => {
+    expect(() => parseGeneratorPolicy("#" + "x".repeat(64 * 1024))).toThrow(/64 KiB/);
+    const allowed = Array.from({ length: 2000 }, (_, index) => "owned/" + index + ".ts").join("\n");
+    expect(parseGeneratorPolicy(allowed)("owned/1999.ts")).toBe(true);
+    expect(() => parseGeneratorPolicy(allowed + "\nowned/2000.ts")).toThrow(/too many rules/);
   });
 });
