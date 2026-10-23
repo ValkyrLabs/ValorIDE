@@ -2,7 +2,7 @@ name: ValorIDE VSIX package audit
 
 on:
   pull_request:
-    branches: [main, rc-5]
+    branches: [main, rc-5, rc-8]
   push:
     branches: [main, rc-5]
 
