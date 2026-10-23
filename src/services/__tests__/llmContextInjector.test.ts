@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
 import * as path from "path";
 import * as vscode from "vscode";
 import { LLMContextInjector } from "../llmContextInjector";
@@ -139,20 +139,61 @@ describe("LLMContextInjector", () => {
         queryMemory: async () => ({ results: [] }),
         retrieveMemoryWithReceipt: receiptRetriever,
         scopes: ["project", "organization", "user"],
+        timeoutMs: 3000,
       },
     });
 
     expect(receivedConfig?.retrieveMemoryWithReceipt).toBe(receiptRetriever);
   });
 
+  it("keeps actionable receipt-policy degradation in the async system prompt", async () => {
+    const provider = {
+      getContextForPrompt: async () => ({
+        durationMs: 4,
+        entriesUsed: 0,
+        formattedBlock: [
+          "## GrayMatter Receipt-Backed Context",
+          "Status: retry_required",
+          "Receipt refs: gm_rr_retry",
+          "Trace refs: gm_trace_retry",
+          "Raw MemoryEntry fallback is prohibited for this prompt path.",
+          "Follow the receipt retry action before relying on durable memory.",
+        ].join("\n"),
+        fromScopes: [],
+        policyStates: ["retry_required"],
+        retrievalReceiptIds: ["gm_rr_retry"],
+        retrievalTraceIds: ["gm_trace_retry"],
+        retrievalWarnings: ["retrievalStatus=LOW_CONFIDENCE"],
+        status: "retry_required",
+        tokensEstimated: 40,
+      }),
+    } as unknown as GrayMatterContextProvider;
+    injector = new LLMContextInjector(mockLogger, provider);
+
+    const prompt = await injector.generateSystemPromptAsync({
+      grayMatter: {
+        enabled: true,
+        maxTokens: 400,
+        retrieveMemoryWithReceipt: async () => ({ receipt: { items: [] } }),
+        scopes: ["project", "organization", "user"],
+        timeoutMs: 3000,
+      },
+      includeLLMDetailsOverride: false,
+      includeMemoryBank: false,
+      includeSwarmRules: false,
+      includeSystemPrompt: false,
+      includeThorAPICatalog: false,
+    });
+
+    expect(prompt).toContain("Status: retry_required");
+    expect(prompt).toContain("Receipt refs: gm_rr_retry");
+    expect(prompt).toContain("Trace refs: gm_trace_retry");
+    expect(prompt).toContain("Raw MemoryEntry fallback is prohibited");
+  });
+
   it("does not replace the built-in prompt when a SYSTEM LLMDetails prompt is active", () => {
     injector = new LLMContextInjector(mockLogger);
     (injector as any).promptService = {
-      getAllConfigs: () => ({
-        systemPrompt: { sections: [] },
-        thorapiCatalog: null,
-        swarmRules: null,
-      }),
       getSystemPrompt: () =>
         "BUILT-IN VALORIDE PROMPT: use tools and completion reports.",
     };

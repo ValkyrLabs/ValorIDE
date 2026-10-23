@@ -199,11 +199,7 @@ export class LLMContextInjector {
         mergedConfig.grayMatter?.seedQuery,
       ));
 
-    if (
-      grayMatterConfig?.enabled &&
-      grayMatterConfig.queryMemory &&
-      this.grayMatterContextProvider
-    ) {
+    if (grayMatterConfig?.enabled && this.grayMatterContextProvider) {
       const context = await this.grayMatterContextProvider.getContextForPrompt(
         grayMatterConfig.seedQuery ?? "ValorIDE conversation start",
         {
