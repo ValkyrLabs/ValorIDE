@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ChatView from "../ChatView";
 
@@ -173,5 +173,62 @@ describe("ChatView", () => {
       screen.queryByTestId("capability-command-center"),
     ).not.toBeInTheDocument();
     expect(screen.getByTestId("task-view")).toBeInTheDocument();
+  });
+
+  it("connects extension button invocations to the current visible controls and removes the listener on unmount", () => {
+    const primary = vi.fn();
+    const secondary = vi.fn();
+    mockUseChatState.mockReturnValue({
+      ...mockUseChatState(),
+      handlePrimaryButtonClick: primary,
+      handleSecondaryButtonClick: secondary,
+    });
+    const view = renderChatView();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: { type: "invoke", invoke: "primaryButtonClick" },
+        }),
+      );
+    });
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: { type: "invoke", invoke: "secondaryButtonClick" },
+        }),
+      );
+    });
+    expect(primary).toHaveBeenCalledTimes(1);
+    expect(secondary).toHaveBeenCalledTimes(1);
+    view.unmount();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: { type: "invoke", invoke: "primaryButtonClick" },
+        }),
+      );
+    });
+    expect(primary).toHaveBeenCalledTimes(1);
+  });
+
+  it("preserves extension-supplied text and images through the ordinary send handler", () => {
+    const send = vi.fn();
+    mockUseMessageHandling.mockReturnValue({ handleSendMessage: send });
+    renderChatView();
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "invoke",
+            invoke: "sendMessage",
+            text: "Resume the approved task",
+            images: ["fixture-image"],
+          },
+        }),
+      );
+    });
+    expect(send).toHaveBeenCalledExactlyOnceWith("Resume the approved task", [
+      "fixture-image",
+    ]);
   });
 });

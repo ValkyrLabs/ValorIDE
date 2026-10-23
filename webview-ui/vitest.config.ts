@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
+    // Bound concurrent module transforms during full-stack builds; keep test deadlines unchanged.
+    maxWorkers: 2,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
   },
@@ -28,31 +30,19 @@ export default defineConfig({
       },
       {
         find: "@thorapi/model",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/model",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/model"),
       },
       {
         find: "@thorapi/src",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/src",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/src"),
       },
       {
         find: "@thorapi/redux",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/redux",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/redux"),
       },
       {
         find: "@thorapi/api",
-        replacement: resolve(
-          __dirname,
-          "../../ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi/api",
-        ),
+        replacement: resolve(__dirname, "./src/thorapi/api"),
       },
       {
         find: "@thorapi/services",

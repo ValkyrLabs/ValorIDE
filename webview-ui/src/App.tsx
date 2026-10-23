@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState, useLayoutEffect } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useEvent } from "react-use";
 import { useDispatch, useSelector } from "react-redux";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
@@ -27,6 +33,7 @@ import { ContentDataHandler } from "./components/content-data/ContentDataHandler
 import StartupDebit from "./components/usage-tracking/StartupDebit";
 import { registerExternalLinkInterceptor } from "./utils/linkInterceptor";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
+import { TaskProgressChatRelay } from "./services/TaskProgressChatRelay";
 import LoadingSpinner from "./components/LoadingSpinner";
 import BuildModeView from "./components/build-mode/BuildModeView";
 import {
@@ -224,6 +231,7 @@ const AppContent = () => {
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | undefined
   >(undefined);
+  const taskProgressRelayRef = useRef(new TaskProgressChatRelay());
   const showLoggedOutShell = useCallback(() => {
     setHasStoredAuth(false);
     setForceShowWelcome(true);
@@ -289,6 +297,28 @@ const AppContent = () => {
   const handleMessage = useCallback(
     (e: MessageEvent) => {
       const message: ExtensionMessage = e.data;
+
+      const progressUpdates =
+        taskProgressRelayRef.current.acceptExtensionMessage(message);
+      for (const update of progressUpdates) {
+        void sendChatAction({
+          type: "chat_message",
+          content: update.content,
+          messageId: `valoride-progress:${update.eventKey}`,
+          taskId: update.taskId,
+          metadata: {
+            commandId: update.correlation?.commandId,
+            correlationId: update.correlation?.correlationId,
+            localTaskId: update.correlation?.localTaskId,
+            messageTs: update.messageTs,
+            phase: update.phase,
+            progressKind: update.kind,
+            sessionId: update.correlation?.sessionId,
+            source: "valoride-task-progress",
+            timestamp: Date.now(),
+          },
+        });
+      }
 
       // Track different message types to mothership
       switch (message.type) {
@@ -404,7 +434,7 @@ const AppContent = () => {
           // Handle application generation progress
           if (message.streamToThorapiResult) {
             const result = message.streamToThorapiResult;
-            if (result.applicationId) {
+            if (result.applicationId && !result.requestId) {
               setCurrentApplicationId(result.applicationId);
               setShowApplicationProgress(false);
               setBuildModePayload(undefined);
@@ -517,14 +547,9 @@ const AppContent = () => {
           break;
 
         case "partialMessage":
-          // Track partial messages (streaming)
-          sendChatAction({
-            type: "api_data",
-            metadata: {
-              action: "partial_message",
-              timestamp: Date.now(),
-            },
-          });
+          // Partial tokens are rendered locally. Meaningful phase/tool transitions
+          // are relayed separately by TaskProgressChatRelay, so forwarding every
+          // token here only amplifies transport and webview repaint pressure.
           break;
 
         case "serverConsoleNewMessage":

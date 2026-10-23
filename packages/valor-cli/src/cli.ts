@@ -6,17 +6,17 @@
 
 import { Command } from "commander";
 import chalk from "chalk";
-import { TaskCommand } from "./commands/TaskCommand";
-import { InstanceCommand } from "./commands/InstanceCommand";
-import { ConfigCommand } from "./commands/ConfigCommand";
-import { CheckpointCommand } from "./commands/CheckpointCommand";
+import { TaskCommand } from "./commands/TaskCommand.js";
+import { InstanceCommand } from "./commands/InstanceCommand.js";
+import { ConfigCommand } from "./commands/ConfigCommand.js";
+import { CheckpointCommand } from "./commands/CheckpointCommand.js";
 
 const program = new Command();
 
 program
   .name("valor")
   .description("ValorIDE CLI - Autonomous coding agent")
-  .version("0.1.0");
+  .version("0.2.0");
 
 // Task command
 program

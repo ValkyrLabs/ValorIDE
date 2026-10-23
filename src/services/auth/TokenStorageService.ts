@@ -1,8 +1,15 @@
 import * as vscode from "vscode";
-import axios from "axios";
 import { Logger } from "../logging/Logger";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
-import { buildAuthTokensFromResponse } from "./authResponse";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "../valkyrai/ValkyrLabsRtkApi";
+import {
+  buildAuthTokensFromResponse,
+  extractAuthenticatedUser,
+  withAuthResponseCookies,
+} from "./authResponse";
 import { extractTenantContext } from "./tenantContext";
 
 export interface AuthTokens {
@@ -24,6 +31,51 @@ export interface StoredAuthState {
   user: AuthenticatedUser;
   timestamp: number;
 }
+
+export interface TokenValidationResult {
+  definitive: boolean;
+  error?: string;
+  user?: AuthenticatedUser;
+  valid: boolean;
+}
+
+export const validateAuthSession = async (
+  client: ReturnType<typeof getValkyrLabsRtkApiClient>,
+  baseUrl: string,
+  tokens: AuthTokens,
+): Promise<TokenValidationResult> => {
+  try {
+    const response = await client.request<any>({
+      url: `${baseUrl}/auth/me`,
+      headers: {
+        Authorization: `Bearer ${tokens.jwtToken}`,
+        jwtSession: tokens.jwtToken,
+      },
+    });
+
+    if (response.status === 200 && response.data?.authenticated === true) {
+      return {
+        definitive: true,
+        valid: true,
+        user:
+          extractAuthenticatedUser(response.data) ||
+          response.data.authenticatedPrincipalObject,
+      };
+    }
+
+    return { definitive: true, valid: false };
+  } catch (error) {
+    Logger.log(`Token validation failed: ${error}`);
+    const definitive =
+      error instanceof ValkyrLabsApiError &&
+      (error.status === 401 || error.status === 403);
+    return {
+      definitive,
+      error: error instanceof Error ? error.message : String(error),
+      valid: false,
+    };
+  }
+};
 
 /**
  * Secure token storage service for persistent authentication
@@ -118,7 +170,30 @@ export class TokenStorageService {
     try {
       const authStateStr = await this.context.secrets.get("authState");
       if (!authStateStr) {
-        return null;
+        const jwtToken = await this.context.secrets.get("jwtToken");
+        if (!jwtToken) {
+          return null;
+        }
+
+        // Migrate installations that predate the canonical authState record.
+        // Keeping the JWT in SecretStorage still requires live `/auth/me`
+        // validation before the extension restores an authenticated session.
+        const user =
+          (this.context.globalState.get("authenticatedPrincipal") as
+            | AuthenticatedUser
+            | undefined) ||
+          (this.context.globalState.get("userInfo") as
+            | AuthenticatedUser
+            | undefined) ||
+          ({} as AuthenticatedUser);
+        const migrated: StoredAuthState = {
+          timestamp: Date.now(),
+          tokens: { jwtToken },
+          user,
+        };
+        await this.context.secrets.store("authState", JSON.stringify(migrated));
+        Logger.log("Migrated legacy JWT into stored authentication state");
+        return migrated;
       }
 
       const authState: StoredAuthState = JSON.parse(authStateStr);
@@ -141,31 +216,16 @@ export class TokenStorageService {
   /**
    * Validate stored tokens with the backend
    */
-  async validateTokens(
-    tokens: AuthTokens,
-  ): Promise<{ valid: boolean; user?: AuthenticatedUser }> {
-    try {
-      // Make a test API call to validate the JWT token
-      const baseUrl = getValkyraiBasePath();
-      const response = await axios.get(`${baseUrl}/auth/validate`, {
-        headers: {
-          Authorization: `Bearer ${tokens.jwtToken}`,
-        },
-        timeout: 10000,
-      });
-
-      if (response.status === 200 && response.data.valid) {
-        return {
-          valid: true,
-          user: response.data.user,
-        };
-      }
-
-      return { valid: false };
-    } catch (error) {
-      Logger.log(`Token validation failed: ${error}`);
-      return { valid: false };
-    }
+  async validateTokens(tokens: AuthTokens): Promise<TokenValidationResult> {
+    // `/auth/me` is the canonical authenticated-session probe exposed by
+    // ValkyrAI. The former `/auth/validate` route does not exist in the
+    // production backend, so every restart incorrectly classified a live
+    // token as invalid and erased it.
+    return validateAuthSession(
+      getValkyrLabsRtkApiClient(),
+      getValkyraiBasePath(),
+      tokens,
+    );
   }
 
   /**
@@ -174,19 +234,15 @@ export class TokenStorageService {
   async refreshTokens(refreshToken: string): Promise<AuthTokens | null> {
     try {
       const baseUrl = getValkyraiBasePath();
-      const response = await axios.post(
-        `${baseUrl}/auth/refresh`,
-        {
-          refreshToken,
-        },
-        {
-          timeout: 10000,
-        },
-      );
+      const response = await getValkyrLabsRtkApiClient().request<any>({
+        url: `${baseUrl}/auth/refresh`,
+        method: "POST",
+        json: { refreshToken },
+      });
 
       const newTokens = buildAuthTokensFromResponse(
         response.data,
-        response.headers,
+        withAuthResponseCookies(response.headers, response.setCookies),
       );
       if (response.status === 200 && newTokens) {
         return {
@@ -241,7 +297,22 @@ export class TokenStorageService {
    * Get individual token from secure storage
    */
   async getJwtToken(): Promise<string | undefined> {
-    return await this.context.secrets.get("jwtToken");
+    const directToken = await this.context.secrets.get("jwtToken");
+    if (directToken) {
+      return directToken;
+    }
+
+    // Account authentication stores one canonical authState alongside the
+    // convenience jwtToken slot. Recover from that state so extension-host
+    // commands cannot report "sign in" while the Account webview is already
+    // authenticated. Repairing the convenience slot keeps later reads cheap.
+    const authState = await this.getStoredAuthTokens();
+    const recoveredToken = authState?.tokens?.jwtToken;
+    if (recoveredToken) {
+      await this.context.secrets.store("jwtToken", recoveredToken);
+      Logger.log("Recovered JWT token from stored authentication state");
+    }
+    return recoveredToken;
   }
 
   async getApiKey(): Promise<string | undefined> {

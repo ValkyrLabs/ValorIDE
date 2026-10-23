@@ -1,0 +1,241 @@
+.valor-omega-replay {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+  padding: 0.85rem;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 0.45rem;
+  background: color-mix(
+    in srgb,
+    var(--vscode-editor-background) 92%,
+    var(--vscode-focusBorder)
+  );
+}
+
+.valor-omega-replay-heading,
+.valor-omega-result-header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.valor-omega-replay-heading > div,
+.valor-omega-result-header > div,
+.valor-omega-warning {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.valor-omega-replay-heading span {
+  color: var(--vscode-testing-iconPassed);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.valor-omega-replay-heading h4,
+.valor-omega-replay-heading p,
+.valor-omega-selection,
+.valor-omega-result > p {
+  margin: 0;
+}
+
+.valor-omega-replay-heading p {
+  max-width: 38rem;
+  color: var(--vscode-descriptionForeground);
+}
+
+.valor-omega-replay form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(9rem, 1fr));
+  gap: 0.65rem;
+}
+
+.valor-omega-replay label {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.78rem;
+}
+
+.valor-omega-replay label.wide {
+  grid-column: span 3;
+}
+
+.valor-omega-replay input,
+.valor-omega-replay textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.45rem;
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 0.2rem;
+  outline: none;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font: inherit;
+}
+
+.valor-omega-replay input:focus,
+.valor-omega-replay textarea:focus {
+  border-color: var(--vscode-focusBorder);
+}
+
+.valor-omega-replay form > button,
+.valor-omega-steps button,
+.valor-omega-edge-inspector button {
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 0.25rem;
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  cursor: pointer;
+}
+
+.valor-omega-replay form > button {
+  align-self: end;
+  min-height: 2.1rem;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.valor-omega-replay button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.valor-omega-error,
+.valor-omega-warning,
+.valor-omega-result-header > .blocked {
+  color: var(--vscode-testing-iconFailed);
+}
+
+.valor-omega-result {
+  display: grid;
+  gap: 0.7rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--vscode-panel-border);
+}
+
+.valor-omega-result-header > div > span,
+.valor-omega-result footer {
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.76rem;
+}
+
+.valor-omega-result-header > .verified {
+  color: var(--vscode-testing-iconPassed);
+}
+
+.valor-omega-warning {
+  padding: 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 0.35rem;
+}
+
+.valor-omega-steps,
+.valor-omega-edge-inspector [role="group"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.valor-omega-steps button,
+.valor-omega-edge-inspector button {
+  padding: 0.3rem 0.45rem;
+}
+
+.valor-omega-steps button[aria-pressed="true"],
+.valor-omega-edge-inspector button[aria-pressed="true"] {
+  border-color: var(--vscode-focusBorder);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.valor-omega-selection {
+  color: var(--vscode-textLink-foreground);
+}
+
+.valor-omega-graph {
+  width: 100%;
+  min-height: 180px;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 0.35rem;
+  background: var(--vscode-editor-background);
+}
+
+.valor-omega-graph line {
+  stroke: var(--vscode-descriptionForeground);
+  stroke-width: 2;
+}
+
+.valor-omega-graph line.selected {
+  stroke: var(--vscode-focusBorder);
+  stroke-width: 3;
+}
+
+.valor-omega-graph marker polygon {
+  fill: var(--vscode-focusBorder);
+}
+
+.valor-omega-graph circle {
+  fill: var(--vscode-editorWidget-background);
+  stroke: var(--vscode-testing-iconPassed);
+  stroke-width: 2;
+}
+
+.valor-omega-graph text {
+  fill: var(--vscode-editor-foreground);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.valor-omega-graph text.node-ref {
+  fill: var(--vscode-descriptionForeground);
+  font-size: 8px;
+}
+
+.valor-omega-edge-inspector {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.valor-omega-edge-inspector dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.valor-omega-edge-inspector dl > div {
+  padding: 0.45rem;
+  background: var(--vscode-editorWidget-background);
+}
+
+.valor-omega-edge-inspector dt {
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.valor-omega-edge-inspector dd {
+  margin: 0.2rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .valor-omega-replay-heading,
+  .valor-omega-result-header {
+    flex-direction: column;
+  }
+
+  .valor-omega-replay form {
+    grid-template-columns: 1fr;
+  }
+
+  .valor-omega-replay label.wide {
+    grid-column: auto;
+  }
+}

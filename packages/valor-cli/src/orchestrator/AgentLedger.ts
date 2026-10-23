@@ -6,7 +6,7 @@
 import { promises as fs } from "fs";
 import { join } from "path";
 import { homedir } from "os";
-import { AgentLedgerEntry } from "../types";
+import type { AgentLedgerEntry } from "../types.js";
 
 export class AgentLedger {
   private ledgerPath: string;

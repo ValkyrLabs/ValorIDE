@@ -25,3 +25,28 @@ export function resolveFirstChunkTimeoutMs(
     FALLBACK_FIRST_CHUNK_TIMEOUT_MS
   );
 }
+
+export interface FirstChunkRetryPolicy {
+  maxRetries: number;
+  backoffMs: number;
+}
+
+/** Resolve a bounded provider-declared retry for failures before any model output is consumed. */
+export function resolveFirstChunkRetryPolicy(
+  api: ApiHandler,
+): FirstChunkRetryPolicy | undefined {
+  const declared = api.getApiStreamStartRetryPolicy?.();
+  if (
+    !declared ||
+    !Number.isInteger(declared.maxRetries) ||
+    declared.maxRetries < 1 ||
+    declared.maxRetries > 3 ||
+    !positiveFiniteNumber(declared.backoffMs)
+  ) {
+    return undefined;
+  }
+  return {
+    maxRetries: declared.maxRetries,
+    backoffMs: Math.min(30_000, Math.max(100, Math.round(declared.backoffMs))),
+  };
+}

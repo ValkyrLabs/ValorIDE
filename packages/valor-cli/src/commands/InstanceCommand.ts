@@ -3,7 +3,7 @@
  */
 
 import chalk from "chalk";
-import { SessionManager } from "../SessionManager";
+import { SessionManager } from "../SessionManager.js";
 
 export class InstanceCommand {
   private sessionManager: SessionManager;

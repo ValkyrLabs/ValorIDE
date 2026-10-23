@@ -2,9 +2,9 @@
  * Orchestrator - Coordinates multi-agent execution with baton-passing
  */
 
-import { Agent } from "./Agent";
-import { AgentLedger } from "./AgentLedger";
-import { getNextRole, getRoleExecutionOrder } from "./RoleDefinitions";
+import type { Agent } from "./Agent.js";
+import { AgentLedger } from "./AgentLedger.js";
+import { getNextRole, getRoleExecutionOrder } from "./RoleDefinitions.js";
 
 export interface OrchestrationContext {
   taskId: string;

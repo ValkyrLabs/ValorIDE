@@ -8,7 +8,46 @@ vi.mock("@utils/serverValkyraiHost", () => ({
 }));
 
 describe("MothershipService", () => {
-  it("uses the native STOMP /ws endpoint instead of the SockJS transport path", () => {
+  it("keeps an active STOMP handshake single-flight", async () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+    } as any);
+    const deactivate = vi.fn();
+    svc.stompClient = {
+      active: true,
+      connected: false,
+      deactivate,
+    };
+
+    await Promise.all([svc.connect(), svc.connect()]);
+
+    expect(deactivate).not.toHaveBeenCalled();
+    expect(svc.stompClient.active).toBe(true);
+  });
+
+  it("keeps the registered socket when initialization reapplies the same JWT", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+    } as any);
+    const deactivate = vi.fn();
+    const client = {
+      active: true,
+      connected: true,
+      deactivate,
+    };
+    svc.stompClient = client;
+    svc.connected = true;
+
+    svc.updateJwtToken("token");
+
+    expect(deactivate).not.toHaveBeenCalled();
+    expect(svc.stompClient).toBe(client);
+    expect(svc.isConnected()).toBe(true);
+  });
+
+  it("uses the canonical native STOMP /swarm endpoint", () => {
     const svc: any = new MothershipService({
       jwtToken: "token",
       userId: "user-1",
@@ -16,15 +55,15 @@ describe("MothershipService", () => {
 
     expect(
       svc.buildStompEndpointUrl("https://api-0.valkyrlabs.com/v1").toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/ws");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
     expect(
       svc
         .buildStompEndpointUrl("wss://api-0.valkyrlabs.com/ws/websocket")
         .toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/ws");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
     expect(
       svc.buildStompEndpointUrl("wss://api-0.valkyrlabs.com/chat").toString(),
-    ).toBe("wss://api-0.valkyrlabs.com/chat");
+    ).toBe("wss://api-0.valkyrlabs.com/swarm");
   });
 
   it("turns opaque websocket ErrorEvents into actionable connection errors", () => {
@@ -64,6 +103,128 @@ describe("MothershipService", () => {
     expect(svc.stompClient.publish).toBeCalledWith(
       expect.objectContaining({
         destination: "/app/chat",
+      }),
+    );
+  });
+
+  it("subscribes to the authenticated session-scoped SWARM control reply queue", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }));
+    svc.stompClient = { connected: true, subscribe };
+
+    svc.subscribeToMothershipTopics();
+
+    expect(subscribe).toHaveBeenCalledWith(
+      "/user/queue/swarm-control",
+      expect.any(Function),
+      expect.any(Object),
+    );
+    expect(subscribe).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not publish legacy chat messages during the canonical SWARM handshake", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = {
+      connected: true,
+      publish,
+      subscribe: vi.fn(() => ({ unsubscribe: vi.fn() })),
+    };
+    const connected = vi.fn();
+    svc.on("connected", connected);
+
+    svc.handleConnected();
+
+    expect(connected).toHaveBeenCalledOnce();
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it("drops unsupported legacy app topics instead of poisoning the SWARM socket", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = { connected: true, publish };
+    svc.connected = true;
+
+    svc.sendAppTopic("presence:join", { id: "valoride-target" });
+
+    expect(publish).not.toHaveBeenCalled();
+  });
+
+  it("publishes registration to the dedicated SWARM control endpoint", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const publish = vi.fn();
+    svc.stompClient = { connected: true, publish };
+    svc.connected = true;
+
+    svc.sendSwarmControlPayload({
+      id: "register-1",
+      payload: { action: "register" },
+    });
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        destination: "/app/swarm/control",
+      }),
+    );
+    const body = JSON.parse(publish.mock.calls[0][0].body);
+    const envelope = JSON.parse(body.payload);
+    expect(envelope).toMatchObject({
+      topic: "swarm",
+      payload: {
+        id: "register-1",
+        payload: { action: "register" },
+      },
+      senderId: "valoride-target",
+    });
+  });
+
+  it("normalizes generated uppercase COMMAND envelopes without dropping the action or instruction", () => {
+    const svc: any = new MothershipService({
+      jwtToken: "token",
+      userId: "user-1",
+      instanceId: "valoride-target",
+    } as any);
+    const received = vi.fn();
+    svc.on("remoteCommand", received);
+
+    svc.handleRemoteCommand({
+      commandId: "command-1",
+      type: "COMMAND",
+      from: { instanceId: "api-0", type: "server" },
+      to: { instanceId: "valoride-target", type: "agent" },
+      payload: {
+        action: "filesystem.write",
+        data: JSON.stringify({
+          instruction: "Write Hello World and open the file.",
+        }),
+      },
+    });
+
+    expect(received).toHaveBeenCalledOnce();
+    expect(received).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "command-1",
+        type: "filesystem.write",
+        sourceInstanceId: "api-0",
+        targetInstanceId: "valoride-target",
+        payload: {
+          instruction: "Write Hello World and open the file.",
+        },
       }),
     );
   });

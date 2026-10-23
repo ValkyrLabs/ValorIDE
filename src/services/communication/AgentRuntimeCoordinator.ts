@@ -1,4 +1,11 @@
 import * as vscode from "vscode";
+import { createHash } from "node:crypto";
+import { TokenStorageService } from "../auth/TokenStorageService";
+import {
+  resolveInboundGovernedCodingTask,
+  observeNativeCodingProvider,
+  governedCodingEvidenceRefs,
+} from "../swarm/SwarmCodingInference";
 import { getAllExtensionState, updateGlobalState } from "@core/storage/state";
 import {
   MothershipService,
@@ -14,11 +21,17 @@ import {
   createDefaultValorCapabilities,
 } from "../agentic/CapabilityRegistry";
 import {
+  AgenticCommandBus,
+  type AgenticCommand,
+  type CommandApprovalDecision,
+} from "../agentic/CommandBus";
+import {
   createAgenticCommandCenterState,
   updateSwarmState,
 } from "../agentic/AgenticStateModel";
 import { MothershipSwarmTransport } from "../swarm/MothershipSwarmTransport";
 import {
+  SwarmNodeHeartbeatError,
   SwarmNodeRegistrationError,
   SwarmNodeService,
 } from "../swarm/SwarmNodeService";
@@ -34,6 +47,25 @@ import type {
   AgenticSwarmState,
 } from "@shared/AgenticState";
 import type { ApiConfiguration } from "@shared/api";
+import type { TaskTerminalEvent } from "@shared/TaskLifecycle";
+import {
+  authorizeCanonicalSwarmApproval,
+  buildSwarmRuntimeOutcome,
+  classifySwarmTerminalStatus,
+  extractSwarmInboundCommandContext,
+  normalizeServerStampedSwarmMessage,
+  SwarmCorrelationError,
+  SwarmOutcomeHandoffLedger,
+  type SwarmApprovalAuthorization,
+  type SwarmCommandCorrelation,
+  type SwarmInboundCommandContext,
+  type SwarmOutcomeHandoffSnapshot,
+  type SwarmRuntimeOutcome,
+  type SwarmRuntimeOutcomeConfidence,
+  type SwarmRuntimeOutcomeSource,
+  type SwarmRuntimeOutcomeStatus,
+  wrapSwarmRuntimeOutcome,
+} from "../swarm/SwarmRuntimeOutcome";
 
 type GitExtension = {
   getAPI(version: number): GitAPI;
@@ -95,11 +127,13 @@ const EXECUTABLE_SWARM_ACTIONS = new Set([
   "code.execute",
   "deploy-application",
   "execute",
+  "filesystem.write",
   "ide.execute",
   "new-task",
   "newtask",
   "remote_chat_message",
   "send_message",
+  "swarm.command",
   "task.start",
   "valhalla.swarm.createapp",
   "valor.execute",
@@ -114,7 +148,9 @@ const EXECUTABLE_SWARM_ACTIONS = new Set([
 export class AgentRuntimeCoordinator implements vscode.Disposable {
   private readonly context: vscode.ExtensionContext;
   private mothership: MothershipService | null = null;
+  private mothershipInstanceId: string | null = null;
   private instanceId: string | null = null;
+  private instanceIdInitialization: Promise<string> | null = null;
   private gitDisposables: vscode.Disposable[] = [];
   private repositoryCommits = new Map<string, string | undefined>();
   private activeAssignments = new Map<string, TaskAssignment>();
@@ -122,22 +158,51 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private readonly capabilityRegistry = new CapabilityRegistry(
     createDefaultValorCapabilities(),
   );
+  private readonly commandBus: AgenticCommandBus;
+  private outcomeHandoffLedger = new SwarmOutcomeHandoffLedger();
+  private outcomeHandoffsRestored = false;
+  private readonly terminalSubscriptions = new Map<string, vscode.Disposable>();
   private principalId: string | undefined;
   private swarmNode: SwarmNodeService | null = null;
   private swarmTransport: MothershipSwarmTransport | null = null;
   private mothershipBaseUrl: string | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
+  private registrationRetryTimer: NodeJS.Timeout | null = null;
+  private registrationRetryAttempt = 0;
+  private registrationInFlight: Promise<void> | null = null;
+  private initializationTail: Promise<void> = Promise.resolve();
   private agenticState: AgenticCapabilityCommandCenterState =
     createAgenticCommandCenterState({
-      approvalPolicy: "local-confirmation-required",
+      approvalPolicy: "server-policy",
     });
   private isInitialized = false;
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
+    this.commandBus = new AgenticCommandBus({
+      approve: (command) => this.resolveCanonicalSwarmApproval(command),
+      capabilities: this.capabilityRegistry,
+    });
+    this.commandBus.registerHandler("swarm.command", (command) =>
+      this.startInboundSwarmTask(command),
+    );
   }
 
-  public async initialize(
+  public initialize(
+    jwtToken: string,
+    principal?: { id?: string },
+  ): Promise<void> {
+    const initialization = this.initializationTail.then(() =>
+      this.initializeOnce(jwtToken, principal),
+    );
+    this.initializationTail = initialization.then(
+      () => undefined,
+      () => undefined,
+    );
+    return initialization;
+  }
+
+  private async initializeOnce(
     jwtToken: string,
     principal?: { id?: string },
   ): Promise<void> {
@@ -156,7 +221,8 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return;
     }
 
-    this.instanceId = await this.ensureInstanceId();
+    this.instanceId = await this.getOrCreateInstanceId();
+    await this.restoreOutcomeHandoffs();
     this.principalId = principal?.id;
     this.setSwarmState({
       instanceId: this.instanceId,
@@ -182,14 +248,23 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     return this.instanceId;
   }
 
+  public getDurableOutcomeHandoffs(): SwarmOutcomeHandoffSnapshot {
+    return this.outcomeHandoffLedger.getSnapshot();
+  }
+
   public dispose(): void {
     this.gitDisposables.forEach((d) => d.dispose());
     this.gitDisposables = [];
+    this.terminalSubscriptions.forEach((subscription) =>
+      subscription.dispose(),
+    );
+    this.terminalSubscriptions.clear();
     this.disposeMothershipConnection();
     this.isInitialized = false;
   }
 
   private disposeMothershipConnection(): void {
+    this.clearRegistrationRetry();
     if (this.mothership) {
       try {
         this.swarmTransport?.dispose();
@@ -201,6 +276,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       }
     }
     this.mothership = null;
+    this.mothershipInstanceId = null;
     this.swarmNode = null;
     this.swarmTransport = null;
     this.mothershipBaseUrl = null;
@@ -210,10 +286,14 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     options: MothershipConnectionOptions,
   ): Promise<void> {
     const nextBaseUrl = (options.baseUrl ?? "").replace(/\/+$/, "");
+    const nextInstanceId = options.instanceId?.trim() || null;
     if (this.mothership) {
-      if (this.mothershipBaseUrl !== nextBaseUrl) {
+      if (
+        this.mothershipBaseUrl !== nextBaseUrl ||
+        this.mothershipInstanceId !== nextInstanceId
+      ) {
         Logger.log(
-          `Reconnecting mothership for ValkyrAI host change: ${this.mothershipBaseUrl || "unset"} -> ${nextBaseUrl || "default"}`,
+          `Reconnecting mothership because its canonical connection binding changed (hostChanged=${this.mothershipBaseUrl !== nextBaseUrl}, instanceChanged=${this.mothershipInstanceId !== nextInstanceId})`,
         );
         this.disposeMothershipConnection();
       } else {
@@ -231,6 +311,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
 
     this.mothership = new MothershipService(options);
     this.mothershipBaseUrl = nextBaseUrl;
+    this.mothershipInstanceId = nextInstanceId;
     this.swarmTransport = new MothershipSwarmTransport(this.mothership);
     this.mothership.on("connected", () => {
       Logger.log("Mothership connected");
@@ -285,11 +366,34 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     if (existing) {
       return existing;
     }
-    const generated = `valoride-${vscode.env.machineId.slice(0, 6)}-${Math.random()
-      .toString(36)
-      .substring(2, 8)}`;
+    // The fallback must be stable even if two activation paths both observe
+    // empty extension state before either write is visible. Random generation
+    // can otherwise bind the socket to one identity and publish another in
+    // durable state. The profile storage URI distinguishes isolated profiles
+    // on the same machine without exposing the path itself.
+    const machineId = vscode.env.machineId || "machine";
+    const profileScope =
+      this.context.globalStorageUri?.toString() ||
+      this.context.globalStorageUri?.fsPath ||
+      this.context.extension?.id ||
+      "valoride";
+    const suffix = createHash("sha256")
+      .update(`${machineId}\0${profileScope}`)
+      .digest("hex")
+      .slice(0, 8);
+    const generated = `valoride-${machineId.slice(0, 6)}-${suffix}`;
     await updateGlobalState(this.context, INSTANCE_ID_KEY, generated);
     return generated;
+  }
+
+  private getOrCreateInstanceId(): Promise<string> {
+    if (this.instanceId) {
+      return Promise.resolve(this.instanceId);
+    }
+    if (!this.instanceIdInitialization) {
+      this.instanceIdInitialization = this.ensureInstanceId();
+    }
+    return this.instanceIdInitialization;
   }
 
   private async publishCapabilities(force = false): Promise<void> {
@@ -297,7 +401,6 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return;
     }
     if (!force && this.capabilityCache) {
-      this.mothership.sendAppTopic("capabilities", this.capabilityCache);
       return;
     }
 
@@ -346,7 +449,6 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     };
 
     this.capabilityCache = envelope;
-    this.mothership.sendAppTopic("capabilities", envelope);
   }
 
   private getTrackedRepositories(): string[] {
@@ -363,6 +465,21 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private async registerSwarmNode(): Promise<void> {
+    if (this.registrationInFlight) {
+      return this.registrationInFlight;
+    }
+    const registration = this.performSwarmRegistration();
+    this.registrationInFlight = registration;
+    try {
+      await registration;
+    } finally {
+      if (this.registrationInFlight === registration) {
+        this.registrationInFlight = null;
+      }
+    }
+  }
+
+  private async performSwarmRegistration(): Promise<void> {
     if (
       !this.mothership ||
       !this.mothership.isConnected() ||
@@ -386,7 +503,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       status: "registering",
     });
     this.swarmNode = new SwarmNodeService({
-      approvalPolicy: "local-confirmation-required",
+      approvalPolicy: "server-policy",
       capabilities: this.capabilityRegistry,
       instance: {
         instanceId: this.instanceId,
@@ -412,7 +529,9 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         lastError: undefined,
         status: "online",
       });
+      this.clearRegistrationRetry();
       this.startHeartbeat();
+      this.replayDurableOutcomes();
     } catch (error) {
       Logger.log(`ValorIDE SWARM registration failed: ${String(error)}`);
       this.stopHeartbeat();
@@ -423,6 +542,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         status:
           error instanceof SwarmNodeRegistrationError ? "rejected" : "error",
       });
+      this.scheduleSwarmReregistration();
     }
   }
 
@@ -520,7 +640,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         await this.handleTaskAssignment(command, payload);
         break;
       case "task-cancel":
-        this.handleTaskCancellation(command, payload);
+        await this.handleTaskCancellation(command, payload);
         break;
       case "widget-open":
       case "ui-widget-open":
@@ -543,21 +663,43 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       case "newtask":
       case "remote_chat_message":
       case "send_message":
+      case "swarm.command":
       case "task.start":
       case "valhalla.swarm.createapp":
       case "valor.execute":
         if (await this.tryHandleInboundSwarmCommand(command, payload)) {
           break;
         }
-        this.forwardRemoteCommandToWebview(command);
+        Logger.log(
+          `Refused executable SWARM command ${command.id}: governed runtime is unavailable.`,
+        );
         break;
       default:
         if (await this.tryHandleInboundSwarmCommand(command, payload)) {
           break;
         }
+        if (this.isExecutableSwarmRemoteCommand(command, payload)) {
+          Logger.log(
+            `Refused executable SWARM command ${command.id}: governed runtime is unavailable.`,
+          );
+          break;
+        }
         Logger.log(`Unhandled remote command type: ${command.type}`);
         this.forwardRemoteCommandToWebview(command);
     }
+  }
+
+  private isExecutableSwarmRemoteCommand(
+    command: RemoteCommand,
+    payload: any,
+  ): boolean {
+    const raw = command.raw?.command ?? command.raw ?? command;
+    return (
+      (validateSwarmMessage(raw) && raw.type === SwarmMessageType.COMMAND) ||
+      EXECUTABLE_SWARM_ACTIONS.has(
+        String(command.type || payload?.action || "").trim(),
+      )
+    );
   }
 
   private async tryHandleInboundSwarmCommand(
@@ -588,7 +730,12 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const raw = command.raw?.command ?? command.raw ?? command;
     if (validateSwarmMessage(raw)) {
       return raw.type === SwarmMessageType.COMMAND
-        ? { ...raw, id: command.id }
+        ? normalizeServerStampedSwarmMessage({ ...raw, id: command.id }, [
+            command.raw,
+            command.raw?.command,
+            raw,
+            payload,
+          ])
         : undefined;
     }
 
@@ -597,8 +744,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return undefined;
     }
 
+    const boundCodingData = payload?.data;
     const data =
-      payload && typeof payload === "object" ? payload : { message: payload };
+      ["filesystem.write", "valor.execute"].includes(action) &&
+      boundCodingData &&
+      typeof boundCodingData === "object" &&
+      boundCodingData.governedCodingInference
+        ? boundCodingData
+        : payload && typeof payload === "object"
+          ? payload
+          : { message: payload };
     const sourceInstanceId =
       command.sourceInstanceId || command.raw?.sourceInstanceId || "api-0";
     const message = buildSwarmMessage(
@@ -618,23 +773,183 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       data,
       {
         metadata: {
+          ...(payload?.metadata && typeof payload.metadata === "object"
+            ? payload.metadata
+            : {}),
           commandId: command.id,
+          approvalProof:
+            payload?.metadata?.approvalProof ??
+            payload?.approvalProof ??
+            command.raw?.approvalProof,
+          checkpointId:
+            payload?.metadata?.checkpointId ?? payload?.checkpointId,
+          correlationId:
+            payload?.metadata?.correlationId ?? payload?.correlationId,
+          goalId: payload?.metadata?.goalId ?? payload?.goalId,
+          idempotencyKey:
+            payload?.metadata?.idempotencyKey ?? payload?.idempotencyKey,
           receiptRef: command.raw?.receiptRef ?? payload?.receiptRef,
+          sessionId: payload?.metadata?.sessionId ?? payload?.sessionId,
+          taskId: payload?.metadata?.taskId ?? payload?.taskId,
           traceId:
             command.raw?.trace?.traceId ??
             command.raw?.traceId ??
             payload?.traceId,
+          trajectoryId:
+            payload?.metadata?.trajectoryId ?? payload?.trajectoryId,
+          workflowExecutionRef:
+            payload?.metadata?.workflowExecutionRef ??
+            payload?.workflowExecutionRef,
+          workflowVersionId:
+            payload?.metadata?.workflowVersionId ?? payload?.workflowVersionId,
         },
       },
     );
     message.id = command.id;
-    return message;
+    return normalizeServerStampedSwarmMessage(message, [
+      command.raw,
+      command.raw?.command,
+      raw,
+      payload,
+    ]);
   }
 
   private async executeInboundSwarmCommand(
     message: SwarmMessage,
   ): Promise<Record<string, unknown>> {
-    const action = message.payload.action;
+    if (!this.instanceId) {
+      throw new Error("ValorIDE SWARM instance identity is unavailable.");
+    }
+
+    const context = extractSwarmInboundCommandContext(message, this.instanceId);
+    const authorization = authorizeCanonicalSwarmApproval(message, context);
+    if (authorization.code === "ERR_GOVERNED_BINDING_REQUIRED") {
+      const refused = await this.commandBus.execute({
+        capabilityId: "swarm.command",
+        correlationId: context.correlation.correlationId,
+        id: context.correlation.commandId,
+        payload: { context, message },
+        source: "swarm",
+      });
+      return {
+        action: context.correlation.action,
+        code: authorization.code,
+        commandBusStatus: refused.status,
+        commandId: context.correlation.commandId,
+        error: authorization.reason,
+        status: "WAITING_APPROVAL",
+      };
+    }
+    const receivedAt = new Date().toISOString();
+    const acceptance = this.outcomeHandoffLedger.accept(
+      context.correlation,
+      receivedAt,
+    );
+    if (acceptance.kind === "conflict") {
+      throw new SwarmCorrelationError(
+        "ERR_CORRELATION_CONFLICT",
+        acceptance.reason,
+      );
+    }
+    if (acceptance.kind === "duplicate-terminal") {
+      this.emitRuntimeOutcome(acceptance.outcome);
+      return {
+        action: context.correlation.action,
+        commandId: context.correlation.commandId,
+        duplicate: true,
+        outcome: acceptance.outcome,
+        status: "terminal-replayed",
+      };
+    }
+    if (acceptance.kind === "duplicate-active") {
+      return {
+        action: context.correlation.action,
+        commandId: context.correlation.commandId,
+        correlationId: context.correlation.correlationId,
+        duplicate: true,
+        localTaskId: acceptance.handoff.localTaskId,
+        sessionId: context.correlation.sessionId,
+        status: acceptance.handoff.state === "RUNNING" ? "started" : "accepted",
+      };
+    }
+    await this.persistOutcomeHandoffs();
+
+    const commandResult = await this.commandBus.execute({
+      capabilityId: "swarm.command",
+      correlationId: context.correlation.correlationId,
+      id: context.correlation.commandId,
+      payload: { context, message },
+      source: "swarm",
+    });
+    if (commandResult.status === "success") {
+      return (
+        this.asRecord(commandResult.output) ?? {
+          action: context.correlation.action,
+          commandId: context.correlation.commandId,
+          status: "started",
+        }
+      );
+    }
+
+    const terminalStatus = this.statusForRejectedCommand(
+      commandResult.status,
+      authorization,
+    );
+    const error = {
+      code:
+        authorization.code ??
+        commandResult.error?.code ??
+        "ERR_SWARM_COMMAND_REJECTED",
+      message:
+        authorization.reason ||
+        commandResult.error?.message ||
+        "SWARM command could not be started.",
+      retryable: terminalStatus !== "BLOCKED",
+    };
+    const outcome = await this.closeSwarmAssignment({
+      approvalRef: authorization.approvalRef,
+      completedAt: new Date().toISOString(),
+      correlation: context.correlation,
+      error,
+      retryable: error.retryable,
+      startedAt: receivedAt,
+      status: terminalStatus,
+      summary: error.message,
+    });
+    return {
+      action: context.correlation.action,
+      commandId: context.correlation.commandId,
+      outcome,
+      status: "terminal",
+    };
+  }
+
+  private resolveCanonicalSwarmApproval(
+    command: AgenticCommand,
+  ): CommandApprovalDecision {
+    const message = command.payload.message as SwarmMessage | undefined;
+    const context = command.payload.context as
+      | SwarmInboundCommandContext
+      | undefined;
+    if (!message || !context) {
+      return {
+        approved: false,
+        reason: "Canonical SWARM command context is missing.",
+      };
+    }
+    const authorization = authorizeCanonicalSwarmApproval(message, context);
+    return {
+      approved: authorization.approved,
+      reason: authorization.reason,
+    };
+  }
+
+  private async startInboundSwarmTask(
+    command: AgenticCommand,
+  ): Promise<Record<string, unknown>> {
+    const message = command.payload.message as SwarmMessage;
+    const context = command.payload.context as SwarmInboundCommandContext;
+    const action = context.correlation.action;
     const data = message.payload.data ?? {};
     const text = this.extractRemoteTaskText(action, data);
     const images = Array.isArray(data.images)
@@ -649,20 +964,101 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       );
     }
 
+    let governedConfiguration: ApiConfiguration | undefined;
+    if (["filesystem.write", "valor.execute"].includes(action)) {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      const credentials = TokenStorageService.getInstance(this.context);
+      if (!apiConfiguration.valkyraiHost || !this.instanceId) {
+        throw new Error(
+          "Governed coding requires the configured authenticated Core connection.",
+        );
+      }
+      governedConfiguration = await resolveInboundGovernedCodingTask(
+        apiConfiguration.valkyraiHost,
+        () => credentials.getJwtToken(),
+        this.instanceId,
+        message,
+        context,
+      );
+    }
     this.setSwarmState({
-      activeTaskId: message.id,
+      activeTaskId: context.correlation.taskId ?? context.correlation.commandId,
       instanceId: this.instanceId ?? undefined,
       status: "busy",
     });
-    await webview.controller.initTask(text, images);
+    await webview.controller.initTask(
+      text,
+      images,
+      undefined,
+      {
+        commandId: context.correlation.commandId,
+        correlationId: context.correlation.correlationId,
+        sessionId: context.correlation.sessionId,
+        taskId: context.correlation.taskId,
+      },
+      governedConfiguration,
+    );
+    const localTaskId = webview.controller.task?.taskId;
+    if (!localTaskId) {
+      throw new Error(
+        "ValorIDE did not create a local task for the governed SWARM command.",
+      );
+    }
+
+    const startedAt = new Date().toISOString();
+    this.outcomeHandoffLedger.markRunning(
+      context.correlation.commandId,
+      startedAt,
+      localTaskId,
+    );
+    const previousSubscription = this.terminalSubscriptions.get(
+      context.correlation.commandId,
+    );
+    previousSubscription?.dispose();
+    const subscription = webview.controller.onTaskTerminal((event) => {
+      if (event.taskId === localTaskId) {
+        void this.completeSwarmTaskFromLifecycle(
+          context.correlation.commandId,
+          event,
+        );
+      }
+    });
+    this.terminalSubscriptions.set(context.correlation.commandId, subscription);
+    try {
+      await this.persistOutcomeHandoffs();
+    } catch (error) {
+      Logger.log(
+        `Failed to persist running SWARM handoff ${context.correlation.commandId}: ${String(error)}`,
+      );
+    }
 
     return {
       action,
-      commandId: message.id,
+      commandId: context.correlation.commandId,
+      correlationId: context.correlation.correlationId,
       instanceId: this.instanceId,
+      localTaskId,
+      sessionId: context.correlation.sessionId,
       status: "started",
       taskPreview: text.slice(0, 240),
+      governedCodingInference: governedConfiguration?.governedCodingInference,
     };
+  }
+
+  private statusForRejectedCommand(
+    commandStatus: string,
+    authorization: SwarmApprovalAuthorization,
+  ): SwarmRuntimeOutcomeStatus {
+    if (authorization.status) {
+      return authorization.status;
+    }
+    if (commandStatus === "approval-required") {
+      return "WAITING_APPROVAL";
+    }
+    if (commandStatus === "rejected") {
+      return "BLOCKED";
+    }
+    return "FAILED";
   }
 
   private extractRemoteTaskText(
@@ -670,6 +1066,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     data: Record<string, any>,
   ): string {
     const candidates = [
+      data.instruction,
       data.text,
       data.prompt,
       data.message,
@@ -692,6 +1089,162 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       "Payload:",
       JSON.stringify(data, null, 2),
     ].join("\n");
+  }
+
+  private async completeSwarmTaskFromLifecycle(
+    commandId: string,
+    event: TaskTerminalEvent,
+  ): Promise<void> {
+    const handoff = this.outcomeHandoffLedger
+      .listActive()
+      .find((candidate) => candidate.correlation.commandId === commandId);
+    if (!handoff) {
+      return;
+    }
+    const status = classifySwarmTerminalStatus({
+      blocked: event.kind === "blocked",
+      exitCode: event.exitCode,
+      explicitFailure: event.kind === "failed",
+      outcomeUncertain: event.kind === "outcome-uncertain",
+      succeeded:
+        event.kind === "completed" &&
+        event.source === "runtime-envelope" &&
+        event.confidence === "EXPLICIT" &&
+        Boolean(event.evidenceRefs?.some((reference) => reference.trim())),
+      waitingApproval: event.kind === "waiting-approval",
+    });
+    const unprovenCompletion =
+      event.kind === "completed" && status !== "SUCCEEDED";
+    const task = WebviewProvider.getAllInstances()[0]?.controller.task;
+    const codingBinding =
+      task?.taskId === event.taskId ? task.governedCodingInference : undefined;
+    const inferenceEvidence = codingBinding
+      ? governedCodingEvidenceRefs(codingBinding)
+      : [];
+    const evidenceRefs = [...(event.evidenceRefs ?? []), ...inferenceEvidence];
+    await this.closeSwarmAssignment({
+      completedAt: event.completedAt,
+      confidence: unprovenCompletion ? "UNRESOLVED" : event.confidence,
+      correlation: handoff.correlation,
+      error: event.error,
+      evidenceRefs: evidenceRefs.length > 0 ? evidenceRefs : event.evidenceRefs,
+      localTaskId: event.taskId,
+      retryable: event.error?.retryable,
+      source: unprovenCompletion ? "legacy-classifier" : event.source,
+      startedAt: handoff.startedAt ?? handoff.receivedAt,
+      status,
+      summary: this.limitSummary(event.summary),
+    });
+  }
+
+  private async closeSwarmAssignment(input: {
+    approvalRef?: string;
+    completedAt: string;
+    confidence?: SwarmRuntimeOutcomeConfidence;
+    correlation: SwarmCommandCorrelation;
+    error?: {
+      code: string;
+      message: string;
+      retryable: boolean;
+    };
+    evidenceRefs?: string[];
+    localTaskId?: string;
+    retryable?: boolean;
+    source?: SwarmRuntimeOutcomeSource;
+    startedAt: string;
+    status: SwarmRuntimeOutcomeStatus;
+    summary: string;
+  }): Promise<SwarmRuntimeOutcome> {
+    const outcome = buildSwarmRuntimeOutcome({
+      approvalRef: input.approvalRef,
+      completedAt: input.completedAt,
+      confidence: input.confidence,
+      correlation: input.correlation,
+      error: input.error,
+      evidenceRefs: input.evidenceRefs,
+      localTaskId: input.localTaskId,
+      retryable: input.retryable,
+      source: input.source,
+      startedAt: input.startedAt,
+      status: input.status,
+      summary: this.limitSummary(input.summary),
+    });
+    const durableOutcome = this.outcomeHandoffLedger.complete(outcome);
+    await this.persistOutcomeHandoffs();
+    this.terminalSubscriptions.get(input.correlation.commandId)?.dispose();
+    this.terminalSubscriptions.delete(input.correlation.commandId);
+    this.emitRuntimeOutcome(durableOutcome);
+    if (this.outcomeHandoffLedger.listActive().length === 0) {
+      this.setSwarmState(this.nextIdleSwarmState());
+    }
+    return durableOutcome;
+  }
+
+  private async restoreOutcomeHandoffs(): Promise<void> {
+    if (this.outcomeHandoffsRestored) {
+      return;
+    }
+    const stored = this.context.globalState.get<SwarmOutcomeHandoffSnapshot>(
+      "valorideSwarmOutcomeHandoffs",
+    );
+    this.outcomeHandoffLedger = new SwarmOutcomeHandoffLedger(stored);
+    const recovered = this.outcomeHandoffLedger.recoverUnfinished(
+      new Date().toISOString(),
+    );
+    this.outcomeHandoffsRestored = true;
+    if (recovered.length > 0) {
+      await this.persistOutcomeHandoffs();
+      Logger.log(
+        `Recovered ${recovered.length} unfinished SWARM handoff(s) as OUTCOME_UNCERTAIN.`,
+      );
+    }
+  }
+
+  private async persistOutcomeHandoffs(): Promise<void> {
+    await updateGlobalState(
+      this.context,
+      "valorideSwarmOutcomeHandoffs",
+      this.outcomeHandoffLedger.getSnapshot(),
+    );
+  }
+
+  private replayDurableOutcomes(): void {
+    for (const outcome of this.outcomeHandoffLedger.listOutcomes()) {
+      this.emitRuntimeOutcome(outcome);
+    }
+  }
+
+  private emitRuntimeOutcome(outcome: SwarmRuntimeOutcome): void {
+    if (!this.mothership || !this.mothership.isConnected()) {
+      return;
+    }
+    // An ACK carries the observed lifecycle status; it does not claim success.
+    // The canonical server validates result.outcome against the issued command.
+    this.mothership.sendCommandPayload({
+      type: "ACK",
+      ackId: outcome.commandId,
+      commandId: outcome.commandId,
+      targetInstanceId: outcome.targetInstanceId,
+      workerId: outcome.targetInstanceId,
+      status: outcome.status.toLowerCase(),
+      ...wrapSwarmRuntimeOutcome(outcome),
+    });
+  }
+
+  private limitSummary(summary: string): string {
+    const normalized = String(summary ?? "").trim();
+    if (!normalized) {
+      return "ValorIDE reported a terminal SWARM outcome without a summary.";
+    }
+    return normalized.length > 2_000
+      ? `${normalized.slice(0, 1_997)}...`
+      : normalized;
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> | undefined {
+    return value && typeof value === "object" && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : undefined;
   }
 
   private handleWidgetCommand(
@@ -772,8 +1325,34 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.forwardTaskToWebviews("swarm:task-assignment", assignment);
   }
 
-  private handleTaskCancellation(command: RemoteCommand, payload: any): void {
+  private async handleTaskCancellation(
+    command: RemoteCommand,
+    payload: any,
+  ): Promise<void> {
     const taskId = payload?.taskId;
+    const governedHandoff = this.outcomeHandoffLedger
+      .listActive()
+      .find(
+        (handoff) =>
+          handoff.correlation.taskId === taskId ||
+          handoff.correlation.commandId === payload?.commandId,
+      );
+    if (governedHandoff) {
+      await this.closeSwarmAssignment({
+        completedAt: new Date().toISOString(),
+        correlation: governedHandoff.correlation,
+        error: {
+          code: "ERR_TASK_CANCELLED",
+          message: "The governed SWARM assignment was cancelled.",
+          retryable: false,
+        },
+        localTaskId: governedHandoff.localTaskId,
+        retryable: false,
+        startedAt: governedHandoff.startedAt ?? governedHandoff.receivedAt,
+        status: "BLOCKED",
+        summary: "The governed SWARM assignment was cancelled.",
+      });
+    }
     if (taskId && this.activeAssignments.has(taskId)) {
       this.activeAssignments.delete(taskId);
       this.setSwarmState(this.nextIdleSwarmState());
@@ -912,8 +1491,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
 
   private startHeartbeat(): void {
     this.stopHeartbeat();
-    this.sendHeartbeat();
-    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 30000);
+    void this.sendHeartbeat();
+    this.heartbeatInterval = setInterval(
+      () => void this.sendHeartbeat(),
+      30000,
+    );
   }
 
   private stopHeartbeat(): void {
@@ -923,33 +1505,76 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
   }
 
-  private sendHeartbeat(): void {
+  private async sendHeartbeat(): Promise<void> {
     if (!this.swarmNode) {
       return;
     }
     const active = this.firstActiveAssignment();
-    this.swarmNode
-      .heartbeat({
+    try {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      const activeBinding =
+        WebviewProvider.getAllInstances()[0]?.controller.task
+          ?.governedCodingInference;
+      const providerConfiguration: ApiConfiguration = activeBinding
+        ? {
+            apiProvider: "lmstudio",
+            lmStudioBaseUrl: new URL(activeBinding.endpoint).origin,
+            lmStudioModelId: activeBinding.model,
+          }
+        : apiConfiguration;
+      const localInference = await observeNativeCodingProvider(
+        providerConfiguration,
+      );
+      await this.swarmNode.heartbeat({
+        localInference,
         activeTaskId: active?.taskId,
         projectId: active?.projectId,
         status: active ? "busy" : "online",
-      })
-      .then(() => {
-        this.setSwarmState({
-          activeTaskId: active?.taskId,
-          instanceId: this.instanceId ?? undefined,
-          lastHeartbeatAt: new Date().toISOString(),
-          projectId: active?.projectId,
-          status: active ? "busy" : "online",
-        });
-      })
-      .catch((error) => {
-        this.setSwarmState({
-          instanceId: this.instanceId ?? undefined,
-          lastError: this.errorMessage(error),
-          status: "error",
-        });
       });
+      this.setSwarmState({
+        activeTaskId: active?.taskId,
+        instanceId: this.instanceId ?? undefined,
+        lastError: undefined,
+        lastHeartbeatAt: new Date().toISOString(),
+        projectId: active?.projectId,
+        status: active ? "busy" : "online",
+      });
+    } catch (error) {
+      this.stopHeartbeat();
+      this.setSwarmState({
+        instanceId: this.instanceId ?? undefined,
+        lastError: this.errorMessage(error),
+        status: error instanceof SwarmNodeHeartbeatError ? "rejected" : "error",
+      });
+      this.scheduleSwarmReregistration();
+    }
+  }
+
+  private scheduleSwarmReregistration(): void {
+    if (
+      this.registrationRetryTimer ||
+      !this.mothership ||
+      !this.mothership.isConnected()
+    ) {
+      return;
+    }
+    const delayMs = Math.min(
+      30_000,
+      1_000 * 2 ** Math.min(this.registrationRetryAttempt, 5),
+    );
+    this.registrationRetryAttempt += 1;
+    this.registrationRetryTimer = setTimeout(() => {
+      this.registrationRetryTimer = null;
+      void this.registerSwarmNode();
+    }, delayMs);
+  }
+
+  private clearRegistrationRetry(): void {
+    if (this.registrationRetryTimer) {
+      clearTimeout(this.registrationRetryTimer);
+      this.registrationRetryTimer = null;
+    }
+    this.registrationRetryAttempt = 0;
   }
 
   private firstActiveAssignment(): TaskAssignment | undefined {

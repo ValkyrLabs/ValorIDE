@@ -1,10 +1,13 @@
 import * as vscode from "vscode";
-import axios from "axios";
 import { getTheme } from "@integrations/theme/getTheme";
 import { getNonce } from "@core/webview/getNonce";
 import { getUri } from "@core/webview/getUri";
 import { getSecret } from "@core/storage/state";
 import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "@services/valkyrai/ValkyrLabsRtkApi";
 import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import {
   getValkyraiBasePath,
@@ -41,14 +44,17 @@ export class OpenAPIEditorPanel {
   static readonly viewType = "valoride.openapi.editor";
   private static currentPanel: vscode.WebviewPanel | undefined;
   private static currentApplicationId: string | undefined;
+  private static currentBackend: string | undefined;
 
   static open(
     context: vscode.ExtensionContext,
     options: OpenAPIEditorOptions = {},
   ): void {
+    const backend = getValkyraiBasePath();
     if (
       OpenAPIEditorPanel.currentPanel &&
-      OpenAPIEditorPanel.currentApplicationId === options.applicationId
+      OpenAPIEditorPanel.currentApplicationId === options.applicationId &&
+      OpenAPIEditorPanel.currentBackend === backend
     ) {
       OpenAPIEditorPanel.currentPanel.reveal(vscode.ViewColumn.Active);
       return;
@@ -70,6 +76,7 @@ export class OpenAPIEditorPanel {
 
     OpenAPIEditorPanel.currentPanel = panel;
     OpenAPIEditorPanel.currentApplicationId = options.applicationId;
+    OpenAPIEditorPanel.currentBackend = backend;
     panel.webview.html = renderOpenAPIEditorPanel(
       context,
       panel.webview,
@@ -85,11 +92,11 @@ export class OpenAPIEditorPanel {
         return;
       }
       if (message?.type === "blueprintLoad") {
-        await handleBlueprintLoad(context, panel, options);
+        await handleBlueprintLoad(context, panel, options, backend);
         return;
       }
       if (message?.type === "blueprintSave") {
-        await handleBlueprintSave(context, panel, options, message);
+        await handleBlueprintSave(context, panel, options, message, backend);
         return;
       }
       if (message?.type === "blueprintOpenDeployment") {
@@ -114,6 +121,7 @@ export class OpenAPIEditorPanel {
     panel.onDidDispose(() => {
       OpenAPIEditorPanel.currentPanel = undefined;
       OpenAPIEditorPanel.currentApplicationId = undefined;
+      OpenAPIEditorPanel.currentBackend = undefined;
     });
   }
 }
@@ -134,8 +142,8 @@ interface BlueprintDocument {
   lastModifiedDate?: string;
 }
 
-const blueprintEndpoint = (applicationId: string) =>
-  `${getValkyraiBasePath()}/thorapi/applications/${encodeURIComponent(applicationId)}/openapi`;
+const blueprintEndpoint = (applicationId: string, backend: string) =>
+  `${backend}/thorapi/applications/${encodeURIComponent(applicationId)}/openapi`;
 
 const requireJwt = async (context: vscode.ExtensionContext) => {
   const jwtToken = await getSecret(context, "jwtToken");
@@ -147,14 +155,38 @@ const requireJwt = async (context: vscode.ExtensionContext) => {
   return jwtToken;
 };
 
+const requireBlueprintSession = async (
+  context: vscode.ExtensionContext,
+  backend: string,
+) => {
+  const assertBackend = () => {
+    if (getValkyraiBasePath() !== backend)
+      throw new Error(
+        "The ValkyrAI backend changed. Reopen Blueprint from the original Application.",
+      );
+  };
+  assertBackend();
+  const jwtToken = await requireJwt(context);
+  const assertCurrent = async () => {
+    assertBackend();
+    if ((await requireJwt(context)) !== jwtToken)
+      throw new Error(
+        "Your session changed. Reopen Blueprint from the Application before continuing.",
+      );
+    assertBackend();
+  };
+  await assertCurrent();
+  return { jwtToken, assertCurrent };
+};
+
 const authHeaders = (jwtToken: string) => ({
   Authorization: `Bearer ${jwtToken}`,
   jwtSession: jwtToken,
 });
 
 const errorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const body = error.response?.data as
+  if (error instanceof ValkyrLabsApiError) {
+    const body = error.data as
       | { message?: string; error?: string }
       | string
       | undefined;
@@ -171,6 +203,7 @@ const handleBlueprintLoad = async (
   context: vscode.ExtensionContext,
   panel: vscode.WebviewPanel,
   options: OpenAPIEditorOptions,
+  backend: string,
 ) => {
   if (!options.applicationId) {
     await panel.webview.postMessage({
@@ -181,11 +214,16 @@ const handleBlueprintLoad = async (
     return;
   }
   try {
-    const jwtToken = await requireJwt(context);
-    const response = await axios.get<BlueprintDocument>(
-      blueprintEndpoint(options.applicationId),
-      { headers: authHeaders(jwtToken), timeout: 60_000 },
+    const { jwtToken, assertCurrent } = await requireBlueprintSession(
+      context,
+      backend,
     );
+    const response =
+      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
+        url: blueprintEndpoint(options.applicationId, backend),
+        headers: authHeaders(jwtToken),
+      });
+    await assertCurrent();
     await panel.webview.postMessage({
       type: "blueprintLoaded",
       document: response.data,
@@ -208,6 +246,7 @@ const handleBlueprintSave = async (
     expectedEtag?: string;
     regenerate?: boolean;
   },
+  backend: string,
 ) => {
   if (!options.applicationId || !message.specification) {
     await panel.webview.postMessage({
@@ -217,16 +256,22 @@ const handleBlueprintSave = async (
     return;
   }
   try {
-    const jwtToken = await requireJwt(context);
-    const response = await axios.put<BlueprintDocument>(
-      blueprintEndpoint(options.applicationId),
-      {
-        specification: message.specification,
-        filename: message.filename,
-        expectedEtag: message.expectedEtag,
-      },
-      { headers: authHeaders(jwtToken), timeout: 60_000 },
+    const { jwtToken, assertCurrent } = await requireBlueprintSession(
+      context,
+      backend,
     );
+    const response =
+      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
+        url: blueprintEndpoint(options.applicationId, backend),
+        method: "PUT",
+        json: {
+          specification: message.specification,
+          filename: message.filename,
+          expectedEtag: message.expectedEtag,
+        },
+        headers: authHeaders(jwtToken),
+      });
+    await assertCurrent();
     await panel.webview.postMessage({
       type: "blueprintSaved",
       document: response.data,
@@ -238,6 +283,7 @@ const handleBlueprintSave = async (
         applicationId: options.applicationId,
         applicationName: options.applicationName,
         jwtToken,
+        assertCurrent,
         onProgress: async (status) => {
           await panel.webview.postMessage({
             type: "blueprintProgress",

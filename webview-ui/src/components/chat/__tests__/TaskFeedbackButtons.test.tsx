@@ -42,6 +42,22 @@ describe("TaskFeedbackButtons", () => {
         provider: "openrouter",
         source: "remote",
       },
+      valorideMessages: [
+        {
+          say: "api_req_started",
+          text: JSON.stringify({
+            bifrostContextHash: "context-hash",
+            bifrostContextPageRef: "context-page-1",
+            bifrostLineageHash: "lineage-hash",
+            contextInputBudget: 13762,
+            contextMode: "compact",
+            estimatedTokensIn: 2345,
+            estimatedTokensOut: 456,
+          }),
+          ts: 1782611320000,
+          type: "say",
+        },
+      ],
       vscMachineId: "machine-1",
     };
     Object.defineProperty(window, "localStorage", {
@@ -91,6 +107,13 @@ describe("TaskFeedbackButtons", () => {
     const metadata = JSON.parse(payload.metadata);
     expect(metadata).toMatchObject({
       currentTaskId: "task-history-1782611320142",
+      bifrostContextHash: "context-hash",
+      bifrostContextPageRef: "context-page-1",
+      bifrostLineageHash: "lineage-hash",
+      contextInputBudget: 13762,
+      contextMode: "compact",
+      estimatedTokensIn: 2345,
+      estimatedTokensOut: 456,
       taskFeedbackContentId: payload.contentId,
       taskFeedbackMessageTs: 1782611320142,
       ratingRaterId: payload.raterId,

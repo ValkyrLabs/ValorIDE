@@ -32,6 +32,18 @@ import { GlobalFileNames } from "@core/storage/disk";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { appendMcpServerLog, markMcpServerStatus } from "./McpDiagnostics";
+import { scopeGrayMatterMcpArguments } from "@services/graymatter/GrayMatterMcpScope";
+import {
+  BaseConfigSchema,
+  McpServerConfig,
+  McpSettingsSchema,
+  parseMcpServerConfigs,
+  ServerConfigSchema,
+  SseConfigSchema,
+  StdioConfigSchema,
+} from "./McpServerConfig";
+
+export type { McpServerConfig } from "./McpServerConfig";
 
 // Default timeout for internal MCP data requests in milliseconds; is not the same as the user facing timeout stored as DEFAULT_MCP_TIMEOUT_SECONDS
 const DEFAULT_REQUEST_TIMEOUT_MS = 5000;
@@ -43,42 +55,6 @@ export type McpConnection = {
 };
 
 export type McpTransportType = "stdio" | "sse";
-
-export type McpServerConfig = z.infer<typeof ServerConfigSchema>;
-
-const AutoApproveSchema = z.array(z.string()).default([]);
-
-const BaseConfigSchema = z.object({
-  autoApprove: AutoApproveSchema.optional(),
-  disabled: z.boolean().optional(),
-  timeout: z
-    .number()
-    .min(MIN_MCP_TIMEOUT_SECONDS)
-    .optional()
-    .default(DEFAULT_MCP_TIMEOUT_SECONDS),
-});
-
-const SseConfigSchema = BaseConfigSchema.extend({
-  url: z.string().url(),
-}).transform((config) => ({
-  ...config,
-  transportType: "sse" as const,
-}));
-
-const StdioConfigSchema = BaseConfigSchema.extend({
-  command: z.string(),
-  args: z.array(z.string()).optional(),
-  env: z.record(z.string()).optional(),
-}).transform((config) => ({
-  ...config,
-  transportType: "stdio" as const,
-}));
-
-const ServerConfigSchema = z.union([StdioConfigSchema, SseConfigSchema]);
-
-const McpSettingsSchema = z.object({
-  mcpServers: z.record(ServerConfigSchema),
-});
 
 export class McpHub {
   getMcpServersPath: () => Promise<string>;
@@ -151,14 +127,33 @@ export class McpHub {
         return undefined;
       }
 
-      // Validate against schema
-      const result = McpSettingsSchema.safeParse(config);
-      if (!result.success) {
+      if (
+        !config ||
+        typeof config !== "object" ||
+        !config.mcpServers ||
+        typeof config.mcpServers !== "object" ||
+        Array.isArray(config.mcpServers)
+      ) {
         vscode.window.showErrorMessage("Invalid MCP settings schema.");
         return undefined;
       }
 
-      return result.data;
+      const parsed = parseMcpServerConfigs(config.mcpServers);
+      if (parsed.invalidServers.length > 0) {
+        console.warn(
+          "Ignoring invalid MCP server configurations:",
+          parsed.invalidServers,
+        );
+      }
+      if (parsed.migratedServers.length > 0) {
+        config.mcpServers = parsed.migratedFileConfigs;
+        await fs.writeFile(settingsPath, JSON.stringify(config, null, 2));
+        console.info(
+          `Migrated legacy MCP baseUrl configuration for: ${parsed.migratedServers.join(", ")}`,
+        );
+      }
+
+      return { mcpServers: parsed.servers };
     } catch (error) {
       console.error("Failed to read MCP settings:", error);
       return undefined;
@@ -790,6 +785,12 @@ export class McpHub {
     toolName: string,
     toolArguments?: Record<string, unknown>,
   ): Promise<McpToolCallResponse> {
+    const scopedToolArguments = scopeGrayMatterMcpArguments(
+      serverName,
+      toolName,
+      toolArguments,
+      vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath),
+    );
     const connection = this.connections.find(
       (conn) => conn.server.name === serverName,
     );
@@ -820,7 +821,7 @@ export class McpHub {
         method: "tools/call",
         params: {
           name: toolName,
-          arguments: toolArguments,
+          arguments: scopedToolArguments,
         },
       },
       CallToolResultSchema,
@@ -979,13 +980,18 @@ export class McpHub {
     config.mcpServers[serverName] = fileConfig;
 
     await fs.writeFile(settingsPath, JSON.stringify(config, null, 2));
-    const parsedServers = Object.fromEntries(
-      Object.entries(config.mcpServers).map(([name, value]) => [
-        name,
-        ServerConfigSchema.parse(value),
-      ]),
-    );
-    await this.updateServerConnections(parsedServers);
+    const parsed = parseMcpServerConfigs(config.mcpServers);
+    if (parsed.invalidServers.length > 0) {
+      console.warn(
+        "Ignoring invalid MCP server configurations while registering a server:",
+        parsed.invalidServers,
+      );
+    }
+    if (parsed.migratedServers.length > 0) {
+      config.mcpServers = parsed.migratedFileConfigs;
+      await fs.writeFile(settingsPath, JSON.stringify(config, null, 2));
+    }
+    await this.updateServerConnections(parsed.servers);
   }
 
   public async deleteServer(serverName: string) {
@@ -1005,7 +1011,13 @@ export class McpHub {
           settingsPath,
           JSON.stringify(updatedConfig, null, 2),
         );
-        await this.updateServerConnections(config.mcpServers);
+        const parsedServers = Object.fromEntries(
+          Object.entries(config.mcpServers).map(([name, value]) => [
+            name,
+            ServerConfigSchema.parse(value),
+          ]),
+        );
+        await this.updateServerConnections(parsedServers);
         vscode.window.showInformationMessage(
           `Deleted ${serverName} MCP server`,
         );

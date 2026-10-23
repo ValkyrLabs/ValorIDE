@@ -42,6 +42,12 @@ vi.mock("@thorapi/services/creditsApi", () => ({
   }),
 }));
 
+vi.mock("./OmegaTraversalReplayPanel", () => ({
+  default: () => (
+    <section aria-label="OmegaRAG receipt replay">Omega replay panel</section>
+  ),
+}));
+
 import ReceiptTraceInspector, {
   hasReceiptAccountId,
   sanitizeReceiptPayload,
@@ -391,5 +397,16 @@ describe("ReceiptTraceInspector", () => {
       screen.getAllByText("cdr_gm_0f635915-ac93-4514-b4e5-332747906e65").length,
     ).toBeGreaterThan(0);
     expect(screen.getByText(/"currentBalance": 2000000/)).toBeInTheDocument();
+  });
+
+  it("mounts Omega traversal replay inside the canonical Receipts surface", () => {
+    render(<ReceiptTraceInspector accountId={ACCOUNT_ID} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Omega replay" }));
+
+    expect(
+      screen.getByLabelText("OmegaRAG receipt replay"),
+    ).toBeInTheDocument();
+    expect(screen.queryByTitle("Lookup receipt")).not.toBeInTheDocument();
   });
 });

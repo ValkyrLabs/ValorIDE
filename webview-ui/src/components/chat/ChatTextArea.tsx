@@ -67,6 +67,65 @@ interface ChatTextAreaProps {
   onHeightChange?: (height: number) => void;
 }
 
+type ChatInputBorderState = "happy" | "waiting" | "sad";
+
+type ChatTextAreaRuntimeProps = ChatTextAreaProps &
+  Pick<
+    ReturnType<typeof useExtensionState>,
+    | "filePaths"
+    | "chatSettings"
+    | "apiConfiguration"
+    | "openRouterModels"
+    | "platform"
+  > & {
+    borderState: ChatInputBorderState;
+  };
+
+export const deriveChatInputBorderState = (
+  messages: ReturnType<typeof useExtensionState>["valorideMessages"],
+): ChatInputBorderState => {
+  try {
+    const safeMessages = messages || [];
+    const last = safeMessages[safeMessages.length - 1] as any;
+
+    if (
+      (last?.type === "ask" && last.ask === "api_req_failed") ||
+      (last?.type === "say" && last.say === "error")
+    ) {
+      return "sad";
+    }
+
+    let lastStarted = -1;
+    let lastFinished = -1;
+    for (let i = safeMessages.length - 1; i >= 0; i--) {
+      const message = safeMessages[i] as any;
+      if (
+        lastStarted === -1 &&
+        message.type === "say" &&
+        message.say === "api_req_started"
+      ) {
+        lastStarted = i;
+      }
+      if (
+        lastFinished === -1 &&
+        message.type === "say" &&
+        (message.say === "api_req_finished" ||
+          message.say === "api_req_retried")
+      ) {
+        lastFinished = i;
+      }
+      if (lastStarted !== -1 && lastFinished !== -1) break;
+    }
+
+    const hasOngoing =
+      lastStarted !== -1 && (lastFinished === -1 || lastStarted > lastFinished);
+    const isPartialAsk = last?.type === "ask" && last?.partial === true;
+    return hasOngoing || isPartialAsk ? "waiting" : "happy";
+  } catch {
+    return "happy";
+  }
+};
+
 interface GitCommit {
   type: ContextMenuOptionType.Git;
   value: string;
@@ -249,7 +308,10 @@ const ModelButtonContent = styled.div`
   white-space: nowrap;
 `;
 
-const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
+const ChatTextAreaRuntimeBase = forwardRef<
+  HTMLTextAreaElement,
+  ChatTextAreaRuntimeProps
+>(
   (
     {
       inputValue,
@@ -262,17 +324,15 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
       onSelectImages,
       shouldDisableImages,
       onHeightChange,
-    },
-    ref,
-  ) => {
-    const {
       filePaths,
       chatSettings,
       apiConfiguration,
       openRouterModels,
       platform,
-      valorideMessages,
-    } = useExtensionState();
+      borderState,
+    },
+    ref,
+  ) => {
     const [isTextAreaFocused, setIsTextAreaFocused] = useState(false);
     const [gitCommits, setGitCommits] = useState<GitCommit[]>([]);
 
@@ -290,6 +350,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
     const [cursorPosition, setCursorPosition] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+    const setTextAreaElement = useCallback(
+      (element: HTMLTextAreaElement | null) => {
+        if (typeof ref === "function") {
+          ref(element);
+        } else if (ref) {
+          ref.current = element;
+        }
+        textAreaRef.current = element;
+      },
+      [ref],
+    );
     const [isMouseDownOnMenu, setIsMouseDownOnMenu] = useState(false);
     const highlightLayerRef = useRef<HTMLDivElement>(null);
     const [selectedMenuIndex, setSelectedMenuIndex] = useState(-1);
@@ -1481,69 +1552,10 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
           />
           <GlowingTextArea
             data-testid="chat-input"
-            ref={(el) => {
-              if (typeof ref === "function") {
-                ref(el);
-              } else if (ref) {
-                ref.current = el;
-              }
-              textAreaRef.current = el;
-            }}
+            ref={setTextAreaElement}
             value={inputValue}
             disabled={textAreaDisabled}
-            borderState={(() => {
-              // Determine border state from chat status
-              // sad: last event indicates error/failure
-              // waiting: an API request is in progress or partial content is streaming
-              // happy: idle/done
-              try {
-                const msgs = valorideMessages || [];
-                const last = msgs[msgs.length - 1] as any;
-
-                if (last) {
-                  if (
-                    (last.type === "ask" && last.ask === "api_req_failed") ||
-                    (last.type === "say" && last.say === "error")
-                  ) {
-                    return "sad" as const;
-                  }
-                }
-
-                // Look for most recent api_req_started vs finished/retried
-                let lastStarted = -1;
-                let lastFinished = -1;
-                for (let i = msgs.length - 1; i >= 0; i--) {
-                  const m: any = msgs[i];
-                  if (
-                    lastStarted === -1 &&
-                    m.type === "say" &&
-                    m.say === "api_req_started"
-                  )
-                    lastStarted = i;
-                  if (
-                    lastFinished === -1 &&
-                    m.type === "say" &&
-                    (m.say === "api_req_finished" ||
-                      m.say === "api_req_retried")
-                  )
-                    lastFinished = i;
-                  if (lastStarted !== -1 && lastFinished !== -1) break;
-                }
-
-                const hasOngoing =
-                  lastStarted !== -1 &&
-                  (lastFinished === -1 || lastStarted > lastFinished);
-                const isPartialAsk =
-                  last?.type === "ask" && last?.partial === true;
-                if (hasOngoing || isPartialAsk) {
-                  return "waiting" as const;
-                }
-
-                return "happy" as const;
-              } catch {
-                return "happy" as const;
-              }
-            })()}
+            borderState={borderState}
             isExtendedThinking={(() => {
               try {
                 const { selectedModelId, selectedModelInfo } =
@@ -1844,6 +1856,41 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
     );
   },
 );
+
+const ChatTextAreaRuntime = React.memo(ChatTextAreaRuntimeBase);
+ChatTextAreaRuntime.displayName = "ChatTextAreaRuntime";
+
+const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
+  (props, ref) => {
+    const {
+      filePaths,
+      chatSettings,
+      apiConfiguration,
+      openRouterModels,
+      platform,
+      valorideMessages,
+    } = useExtensionState();
+    const borderState = useMemo(
+      () => deriveChatInputBorderState(valorideMessages),
+      [valorideMessages],
+    );
+
+    return (
+      <ChatTextAreaRuntime
+        {...props}
+        ref={ref}
+        filePaths={filePaths}
+        chatSettings={chatSettings}
+        apiConfiguration={apiConfiguration}
+        openRouterModels={openRouterModels}
+        platform={platform}
+        borderState={borderState}
+      />
+    );
+  },
+);
+
+ChatTextArea.displayName = "ChatTextArea";
 
 // Update TypeScript interface for styled-component props
 interface ModelSelectorTooltipProps {

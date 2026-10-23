@@ -7,11 +7,15 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
-import { applyCsrfHeader, shouldAttachCsrfToken } from "@thorapi/utils/csrfToken";
+import {
+  applyCsrfHeader,
+  shouldAttachCsrfToken,
+} from "@thorapi/utils/csrfToken";
 import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
 import { refreshCsrfToken } from "@thorapi/utils/authFetch";
 import { applyTenantHeaders } from "@thorapi/utils/tenantContext";
 import { vscode } from "@thorapi/utils/vscode";
+import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
 
 const getRequestPath = (arg: unknown): string => {
   const url = typeof arg === "string" ? arg : (arg as { url?: string })?.url;
@@ -58,6 +62,7 @@ const buildBaseQuery = () =>
   fetchBaseQuery({
     baseUrl: getValkyraiHost(),
     credentials: "include",
+    timeout: VALKYR_LABS_API_TIMEOUT_MS,
     prepareHeaders: (headers, { arg }) => {
       const token = getStoredJwtToken();
       if (token && !isLoginRequest(arg)) {
@@ -235,6 +240,7 @@ const extensionThorapiBaseQuery = async (
 ): Promise<ThorapiBridgeResult> => {
   const requestId = createRequestId();
   const request = withStoredAuthHeaders(argsToThorapiRequest(args));
+  const timeoutMs = VALKYR_LABS_API_TIMEOUT_MS;
 
   return new Promise<ThorapiBridgeResult>((resolve) => {
     let handleResponse: (event: MessageEvent) => void = () => undefined;
@@ -243,10 +249,10 @@ const extensionThorapiBaseQuery = async (
       resolve({
         error: {
           status: "TIMEOUT_ERROR",
-          error: "ThorAPI request timed out.",
+          error: `ThorAPI request timed out after ${timeoutMs} ms.`,
         },
       });
-    }, 30000);
+    }, timeoutMs);
 
     handleResponse = (event: MessageEvent) => {
       const message = event.data;

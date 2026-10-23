@@ -46,6 +46,17 @@ export class CommunicationService extends EventEmitter {
     { urls: ["stun:stun.l.google.com:19302"] },
   ];
   private p2pOpenCount = 0;
+  private listenerDisposers: Array<() => void> = [];
+  private discoveryKick?: ReturnType<typeof setTimeout>;
+  private discoveryRetry?: ReturnType<typeof setInterval>;
+
+  private listenToWindow(type: string, listener: EventListener) {
+    const target = window;
+    target.addEventListener(type, listener);
+    this.listenerDisposers.push(() =>
+      target.removeEventListener(type, listener),
+    );
+  }
 
   constructor(options: CommunicationServiceOptions) {
     super();
@@ -80,10 +91,11 @@ export class CommunicationService extends EventEmitter {
 
     try {
       // Listen for ThorAPI/STOMP bridge messages from webview (AppMessage shape)
-      window.addEventListener("websocket-message", (evt: Event) => {
+      this.listenToWindow("websocket-message", (evt: Event) => {
         const custom = evt as CustomEvent;
         const appMsg = custom.detail;
         if (!appMsg || typeof appMsg.type !== "string") return;
+        if (appMsg.senderId === this.senderId) return;
 
         // Handle potential WebRTC signaling tunneled via ThorAPI broker
         if (appMsg.type.startsWith("webrtc:")) {
@@ -134,7 +146,7 @@ export class CommunicationService extends EventEmitter {
       });
 
       // Listen for VSCode extension hub messages
-      window.addEventListener("message", (evt: MessageEvent) => {
+      this.listenToWindow("message", (evt: MessageEvent) => {
         const data = evt.data;
         if (data?.type === "P2P:message" && data.message) {
           const appMsg = data.message as HubAppMessage;
@@ -195,7 +207,7 @@ export class CommunicationService extends EventEmitter {
       this.hubConnected = !!this.vscodeApi;
 
       // Listen for STOMP connection status events
-      window.addEventListener("P2P-status", (evt: Event) => {
+      this.listenToWindow("P2P-status", (evt: Event) => {
         const ce = evt as CustomEvent<{
           thorConnected: boolean;
           phase: string;
@@ -216,6 +228,7 @@ export class CommunicationService extends EventEmitter {
       // Do an immediate kick, then a short burst of retries to catch
       // tabs/views that are still initializing.
       const kick = () => {
+        if (!this.connected) return;
         try {
           this.connectToVsCodePeers();
           this.reconnectPeers();
@@ -227,7 +240,7 @@ export class CommunicationService extends EventEmitter {
       kick();
       // Initial kick shortly after connect to allow VS Code to
       // wire up the webview message channel.
-      setTimeout(kick, 50);
+      this.discoveryKick = setTimeout(kick, 50);
       // Fast retries for ~5s or until we see peers
       let attempts = 0;
       const maxAttempts = 20; // ~5s at 250ms
@@ -239,6 +252,7 @@ export class CommunicationService extends EventEmitter {
         }
         kick();
       }, 250);
+      this.discoveryRetry = retry;
     } catch (err: any) {
       this.error = err instanceof Error ? err : new Error(String(err));
       this.emit("error", this.error);
@@ -246,12 +260,20 @@ export class CommunicationService extends EventEmitter {
   }
 
   public disconnect() {
-    if (!this.connected || !CommunicationService.isSupported()) return;
     try {
-      window.removeEventListener("websocket-message", () => {});
-      window.removeEventListener("message", () => {});
       this.connected = false;
       this.ready = false;
+      clearTimeout(this.discoveryKick);
+      clearInterval(this.discoveryRetry);
+      this.discoveryKick = undefined;
+      this.discoveryRetry = undefined;
+      this.listenerDisposers.splice(0).forEach((dispose) => dispose());
+      for (const peerId of Array.from(this.rtcPeers.keys()))
+        this.teardownPeer(peerId);
+      this.peers.clear();
+      this.vscodeApi = null;
+      this.hubConnected = false;
+      this.thorConnected = false;
     } catch (err: any) {
       this.error = err instanceof Error ? err : new Error(String(err));
       this.emit("error", this.error);
@@ -270,7 +292,15 @@ export class CommunicationService extends EventEmitter {
       messageId: this.generateMessageId(),
       timestamp: Date.now(),
     };
-    window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMsg }));
+    try {
+      window.dispatchEvent(
+        new CustomEvent("websocket-send", { detail: appMsg }),
+      );
+    } catch (error) {
+      this.error = error instanceof Error ? error : new Error(String(error));
+      this.emit("error", this.error);
+      return;
+    }
     if (this.vscodeApi) {
       try {
         this.vscodeApi.postMessage({ type: "P2P:send", message: appMsg });

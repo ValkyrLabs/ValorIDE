@@ -321,6 +321,7 @@ describe("TerminalProcess (Integration Tests)", () => {
 
       const setTimeoutSpy = sandbox.spy(global, "setTimeout");
 
+      const emitSpy = sandbox.spy(process, "emit");
       await process.run(terminal, "standard command");
       sandbox.clock.tick(100);
 
@@ -331,8 +332,7 @@ describe("TerminalProcess (Integration Tests)", () => {
       foundNormalTimeout.length.should.be.greaterThan(0);
 
       // Also check that "completed" eventually emits
-      const emitSpy = sandbox.spy(process, "emit");
-      await process.run(terminal, "another command");
+      // Each TerminalProcess represents one command; observe that invocation.
       (emitSpy as sinon.SinonSpy).calledWith("completed").should.be.true();
     });
 

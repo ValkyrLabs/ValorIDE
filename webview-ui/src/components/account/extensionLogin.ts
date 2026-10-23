@@ -8,6 +8,13 @@ export interface ExtensionLoginResult {
 
 const REQUEST_TIMEOUT_MS = 20000;
 
+let inFlightLogin:
+  | {
+      username: string;
+      promise: Promise<ExtensionLoginResult>;
+    }
+  | undefined;
+
 const parsePrincipal = (value: unknown): Principal | undefined => {
   if (!value) {
     return undefined;
@@ -34,9 +41,14 @@ const createRequestId = () => {
 export const loginThroughExtensionHost = (
   values: Pick<Login, "username" | "password">,
 ): Promise<ExtensionLoginResult> => {
+  const normalizedUsername = values.username.trim().toLowerCase();
+  if (inFlightLogin?.username === normalizedUsername) {
+    return inFlightLogin.promise;
+  }
+
   const requestId = createRequestId();
 
-  return new Promise((resolve, reject) => {
+  const promise = new Promise<ExtensionLoginResult>((resolve, reject) => {
     const timeout = window.setTimeout(() => {
       window.removeEventListener("message", onMessage);
       reject(new Error("Login request timed out."));
@@ -79,4 +91,13 @@ export const loginThroughExtensionHost = (
       password: values.password,
     });
   });
+
+  inFlightLogin = { username: normalizedUsername, promise };
+  const clearInFlight = () => {
+    if (inFlightLogin?.promise === promise) {
+      inFlightLogin = undefined;
+    }
+  };
+  void promise.then(clearInFlight, clearInFlight);
+  return promise;
 };

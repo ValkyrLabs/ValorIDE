@@ -29,6 +29,8 @@ export class ToolDescriptionHelper {
         return `[${toolName} for '${params.action}']`;
       case "use_mcp_tool":
         return `[${toolName} for '${params.server_name}']`;
+      case "use_procedure":
+        return `[${toolName}: ${["search", "inspect", "execute", "status", "pause", "resume", "cancel"].includes(params.action) ? params.action : "invalid action"}]`;
       case "access_mcp_resource":
         return `[${toolName} for '${params.server_name}']`;
       case "ask_followup_question":

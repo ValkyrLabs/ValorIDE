@@ -131,10 +131,7 @@ const swarmSummary = (
 ): { detail: string; label: string; tone: PillTone } => {
   const swarm = agenticState?.swarm;
   const status =
-    websocketState?.isConnected &&
-    (!swarm?.status || swarm.status === "offline")
-      ? "online"
-      : (swarm?.status ?? "offline");
+    swarm?.status ?? (websocketState?.isConnected ? "registering" : "offline");
   const tone: PillTone =
     status === "online" || status === "busy"
       ? "ok"
@@ -150,10 +147,11 @@ const swarmSummary = (
               swarm?.instanceId ??
               "No registration ACK",
           )
-        : (websocketState?.instanceId ??
-          swarm?.instanceId ??
+        : (swarm?.instanceId ??
           swarm?.lastError ??
-          "No registration ACK"),
+          (websocketState?.isConnected
+            ? "Transport connected; awaiting registration ACK"
+            : "No registration ACK")),
     label: `SWARM ${titleCaseStatus(status)}`,
     tone,
   };

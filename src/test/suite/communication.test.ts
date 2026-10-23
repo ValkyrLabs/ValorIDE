@@ -40,6 +40,14 @@ describe("CommunicationService", () => {
   const g = global as any;
   let originalWindow: any;
   let originalCustomEvent: any;
+  const services: CommunicationService[] = [];
+  const createService = (
+    options: ConstructorParameters<typeof CommunicationService>[0],
+  ) => {
+    const service = new CommunicationService(options);
+    services.push(service);
+    return service;
+  };
 
   beforeEach(() => {
     originalWindow = g.window;
@@ -47,13 +55,40 @@ describe("CommunicationService", () => {
   });
 
   afterEach(() => {
+    services.splice(0).forEach((service) => service.disconnect());
     g.window = originalWindow;
     g.CustomEvent = originalCustomEvent;
   });
 
+  it("removes listeners on disconnect and delivers once after reconnect", () => {
+    const mockWin = new MockWindow();
+    g.window = mockWin;
+    g.CustomEvent = MockCustomEvent;
+    const svc = createService({ role: "worker", senderId: "self" });
+    let received = 0;
+    svc.on("message", () => received++);
+    svc.connect();
+    svc.disconnect();
+    const event = () =>
+      new MockCustomEvent("websocket-message", {
+        detail: {
+          type: "ping",
+          senderId: "peer",
+          messageId: "m1",
+          payload: {},
+          timestamp: 1000,
+        },
+      });
+    mockWin.dispatchEvent(event());
+    expect(received).to.equal(0);
+    svc.connect();
+    mockWin.dispatchEvent(event());
+    expect(received).to.equal(1);
+  });
+
   it("is unsupported in Node (no window) and does not emit error on connect", () => {
     delete (g as any).window;
-    const svc = new CommunicationService({ role: "worker" });
+    const svc = createService({ role: "worker" });
     let errorCount = 0;
     svc.on("error", () => errorCount++);
     svc.connect();
@@ -66,7 +101,7 @@ describe("CommunicationService", () => {
     g.window = mockWin as unknown as Window;
     g.CustomEvent = MockCustomEvent;
 
-    const svc = new CommunicationService({
+    const svc = createService({
       role: "worker",
       senderId: "self-id",
     });
@@ -95,7 +130,8 @@ describe("CommunicationService", () => {
 
     expect(received.length).to.equal(1);
     expect(received[0].type).to.equal("ping");
-    expect(received[0].payload.ok).to.equal(true);
+    expect(JSON.parse(received[0].payload).ok).to.equal(true);
+    expect(received[0].user.id).to.equal("other-id");
   });
 
   it("sendMessage dispatches a websocket-send event with correct payload", () => {
@@ -109,7 +145,7 @@ describe("CommunicationService", () => {
     g.window = mockWin as unknown as Window;
     g.CustomEvent = MockCustomEvent;
 
-    const svc = new CommunicationService({ role: "manager", senderId: "abc" });
+    const svc = createService({ role: "manager", senderId: "abc" });
     svc.connect();
     svc.sendMessage("topic", { x: 1 });
 
@@ -132,7 +168,7 @@ describe("CommunicationService", () => {
       }
     };
 
-    const svc = new CommunicationService({ role: "worker", senderId: "abc" });
+    const svc = createService({ role: "worker", senderId: "abc" });
     svc.connect();
 
     let errorCount = 0;

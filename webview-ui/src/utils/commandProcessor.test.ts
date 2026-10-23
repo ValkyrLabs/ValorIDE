@@ -1,9 +1,10 @@
+import { vi } from "vitest";
 import { FrontendCommandProcessor } from "./commandProcessor";
 
 describe("FrontendCommandProcessor widget actions", () => {
   it("dispatches versioned widget open events and telemetry hook", async () => {
-    const telemetryHook = jest.fn();
-    const eventSpy = jest.fn();
+    const telemetryHook = vi.fn();
+    const eventSpy = vi.fn();
     window.addEventListener(
       "valoride:widget-action",
       eventSpy as EventListener,

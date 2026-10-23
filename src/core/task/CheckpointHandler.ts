@@ -4,11 +4,31 @@ import { DIFF_VIEW_URI_SCHEME } from "@integrations/editor/DiffViewProvider";
 import { ValorIDECheckpointRestore } from "@shared/WebviewMessage";
 import { findLast, findLastIndex } from "@shared/array";
 import { MessageHandler } from "./MessageHandler";
+import type { ValorIDEMessage } from "@shared/ExtensionMessage";
 
 /**
  * Handles checkpoint creation, restoration, and diff operations
  */
 export class CheckpointHandler {
+  static async captureCheckpoint(
+    tracker: Pick<CheckpointTracker, "commit"> | undefined,
+    message: ValorIDEMessage | undefined,
+    persist: () => Promise<void>,
+  ): Promise<void> {
+    if (!tracker) return;
+    const hash = await tracker.commit();
+    if (message) {
+      const previousHash = message.lastCheckpointHash;
+      try {
+        message.lastCheckpointHash = hash;
+        await persist();
+      } catch (error) {
+        message.lastCheckpointHash = previousHash;
+        throw error;
+      }
+    }
+  }
+
   private checkpointTracker?: CheckpointTracker;
   checkpointTrackerErrorMessage?: string;
 
@@ -79,16 +99,11 @@ export class CheckpointHandler {
 
       // For non-attempt completion we just say checkpoints
       await this.messageHandler.say("checkpoint_created");
-      this.checkpointTracker?.commit().then(async (commitHash) => {
-        const lastCheckpointMessage = findLast(
-          valorideMessages,
-          (m) => m.say === "checkpoint_created",
-        );
-        if (lastCheckpointMessage) {
-          lastCheckpointMessage.lastCheckpointHash = commitHash;
-          await this.saveValorIDEMessagesAndUpdateHistory();
-        }
-      }); // silently fails for now
+      await CheckpointHandler.captureCheckpoint(
+        this.checkpointTracker,
+        findLast(valorideMessages, (m) => m.say === "checkpoint_created"),
+        this.saveValorIDEMessagesAndUpdateHistory,
+      );
     } else {
       // attempt completion requires checkpoint to be sync so that we can present button after attempt_completion
       const commitHash = await this.checkpointTracker?.commit();

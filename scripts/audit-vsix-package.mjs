@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const DEFAULT_MAX_ARCHIVE_BYTES = 95 * 1024 * 1024;
 const DEFAULT_MAX_FILE_COUNT = 15000;
@@ -24,7 +25,7 @@ const FORBIDDEN_RULES = [
 const ALLOWED_RUNTIME_ENTRY_PATTERNS = [
   /^\[Content_Types\]\.xml$/,
   /^extension\.vsixmanifest$/,
-  /^extension\/(package\.json|README\.md|LICENSE)$/,
+  /^extension\/(package\.json|README\.md|LICENSE(?:\.txt)?)$/i,
   /^extension\/dist\//,
   /^extension\/assets\/icons\//,
   /^extension\/assets\/valorIde\.acorn$/,
@@ -162,6 +163,8 @@ function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Module URLs are encoded and resolve symbolic paths; compare real files so
+// packaging from a linked checkout or a path with spaces cannot skip the audit.
+if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {
   main();
 }

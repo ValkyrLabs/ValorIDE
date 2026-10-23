@@ -19,7 +19,10 @@ import type {
 } from "openai/resources/responses/responses";
 import { resolveOpenAiNativeAuthToken } from "./openai-native-auth";
 import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
-import { extractOpenAiResponsesReasoningText } from "./openai-native-events";
+import {
+  extractOpenAiResponsesReasoningText,
+  takeOpenAiResponsesEventsThroughCompletion,
+} from "./openai-native-events";
 
 interface OpenAiNativeHandlerOptions {
   openAiNativeApiKey?: string;
@@ -162,7 +165,9 @@ export class OpenAiNativeHandler implements ApiHandler {
       },
     });
 
-    for await (const event of stream as AsyncIterable<ResponseStreamEvent>) {
+    for await (const event of takeOpenAiResponsesEventsThroughCompletion(
+      stream as AsyncIterable<ResponseStreamEvent>,
+    )) {
       const reasoningText = extractOpenAiResponsesReasoningText(event);
       if (reasoningText && !emittedReasoning.has(reasoningText)) {
         emittedReasoning.add(reasoningText);
@@ -203,6 +208,9 @@ export class OpenAiNativeHandler implements ApiHandler {
     const model = this.getModel();
 
     switch (model.id) {
+      case "gpt-5.6-sol":
+      case "gpt-5.6-terra":
+      case "gpt-5.6-luna":
       case "gpt-5.5":
       case "gpt-5.4":
       case "gpt-5.4-mini":

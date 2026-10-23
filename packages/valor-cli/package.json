@@ -1,14 +1,21 @@
 {
   "name": "valor-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "type": "module",
   "description": "ValorIDE CLI agent for autonomous coding tasks",
-  "main": "dist/index.js",
+  "main": "dist/cli.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "bin": {
     "valor": "dist/cli.js"
   },
   "scripts": {
     "dev": "tsx watch src/cli.ts",
-    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write src",

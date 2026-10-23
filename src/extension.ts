@@ -15,6 +15,7 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { disposeAgentRuntimeCoordinator } from "./services/communication/AgentRuntimeCoordinator";
 import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
 import {
   hasDirectCallbackCredentials,
@@ -23,6 +24,8 @@ import {
   summarizeAuthCallback,
 } from "./security/authCallback";
 import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
+import { applicationDeepLinkOptions } from "./services/applicationDeepLink";
+import { OpenAPIEditorPanel } from "./views/openapi/OpenAPIEditorPanel";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -79,7 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize PromptService (load system.json, thorapi-catalog.json, swarm-rules.json)
   const workspaceRoot =
     vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || process.cwd();
-  void initializePromptService(workspaceRoot, outputChannel)
+  const promptReady = initializePromptService(workspaceRoot, outputChannel)
     .then(() => {
       Logger.log("PromptService initialized successfully");
     })
@@ -88,7 +91,10 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
   // Initialize MemoryBankLoader (load .valoride/memorybank/)
-  void initializeMemoryBankLoader(workspaceRoot, outputChannel)
+  const memoryBankReady = initializeMemoryBankLoader(
+    workspaceRoot,
+    outputChannel,
+  )
     .then(() => {
       Logger.log("MemoryBankLoader initialized successfully");
     })
@@ -97,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
   // Initialize LLMPromptService (load base prompt + manual overrides)
-  void (async () => {
+  const llmPromptReady = (async () => {
     try {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
@@ -126,16 +132,24 @@ export function activate(context: vscode.ExtensionContext) {
   })();
 
   // Initialize LLMContextInjector (synthesize all prompt layers)
-  void initializeLLMContextInjector(
-    outputChannel,
-    new GrayMatterContextProvider(outputChannel),
-  )
+  void Promise.all([promptReady, memoryBankReady, llmPromptReady])
+    .then(() =>
+      initializeLLMContextInjector(
+        outputChannel,
+        new GrayMatterContextProvider(outputChannel),
+        context,
+      ),
+    )
     .then(() => {
       Logger.log("LLMContextInjector initialized successfully");
     })
     .catch((error) => {
       Logger.log(`LLMContextInjector initialization failed: ${error}`);
     });
+
+  // The broadcaster must exist before the orchestrator registers its workers.
+  initializeSwarmPromptBroadcaster(outputChannel);
+  Logger.log("SwarmPromptBroadcaster initialized successfully");
 
   // Initialize SwarmOrchestrator (Supervisor agent for task routing)
   initializeSwarmOrchestrator(outputChannel);
@@ -152,10 +166,6 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize BrowserErrorCapture (Console error + auto-fix)
   initializeBrowserErrorCapture(workspaceRoot, outputChannel);
   Logger.log("BrowserErrorCapture initialized successfully");
-
-  // Initialize SwarmPromptBroadcaster (Real-time prompt broadcast)
-  initializeSwarmPromptBroadcaster(outputChannel);
-  Logger.log("SwarmPromptBroadcaster initialized successfully");
 
   // Initialize ThorAPIModelRegistry (Auto-discover models/services)
   initializeThorAPIModelRegistry(workspaceRoot, outputChannel);
@@ -195,6 +205,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (authResult.success) {
         Logger.log("Successfully restored authentication from stored tokens");
+        await refreshGrayMatterStatus(context);
         // Notify the webview that authentication was restored
         sidebarWebview.controller.postMessageToWebview({
           type: "loginSuccess",
@@ -207,7 +218,12 @@ export function activate(context: vscode.ExtensionContext) {
         Logger.log(
           `Authentication restoration failed: ${authResult.error || "Unknown error"}`,
         );
+        // Reconcile stale pre-login capability/auth state after restoration.
+        // A newer interactive login wins inside StartupAuthService, and its
+        // own messages will contain the current authenticated state.
+        await refreshGrayMatterStatus(context);
       }
+      await sidebarWebview.controller.postStateToWebview();
     } catch (error) {
       Logger.log(`Error during startup authentication restoration: ${error}`);
     }
@@ -285,6 +301,17 @@ export function activate(context: vscode.ExtensionContext) {
     })
     .catch((e) => {
       Logger.log(`Projects view registration failed: ${String(e)}`);
+    });
+
+  // Project authenticated workflow definitions, fixtures, traces, and secured
+  // artifact metadata into one read-only developer filesystem. Execution and
+  // mutation remain in ValkyrAI's governed workflow services.
+  void import("./integrations/workflows/WorkflowProjectProvider")
+    .then(({ registerWorkflowProjects }) => {
+      registerWorkflowProjects(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Workflow project registration failed: ${String(e)}`);
     });
 
   // Initialize test mode and set dev mode context
@@ -571,6 +598,21 @@ export function activate(context: vscode.ExtensionContext) {
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
+    if (path === "/application") {
+      const thor_options = applicationDeepLinkOptions(
+        new URLSearchParams(uri.query),
+      );
+      if (!thor_options) {
+        await vscode.window.showErrorMessage(
+          "This application link is invalid. Open a Blueprint from your ValkyrAI applications.",
+        );
+        return;
+      }
+      // The existing editor re-resolves the Blueprint through the authenticated
+      // RTK transport. A link never starts generation, a command, or deployment.
+      OpenAPIEditorPanel.open(context, thor_options);
+      return;
+    }
     const query = parseAuthCallbackQuery(uri.query);
     Logger.log(
       "URI callback received: " + buildAuthCallbackDiagnostics(path, query),
@@ -615,6 +657,7 @@ export function activate(context: vscode.ExtensionContext) {
             exchange.tokens,
             exchange.user,
           );
+          await refreshGrayMatterStatus(context);
 
           if (exchange.tokens.apiKey) {
             await visibleWebview?.controller.handleAuthCallback(
@@ -660,6 +703,7 @@ export function activate(context: vscode.ExtensionContext) {
               },
               legacyCredentials.authenticatedPrincipal,
             );
+            await refreshGrayMatterStatus(context);
 
             await visibleWebview?.controller.handleAuthCallback(
               legacyCredentials.token,
@@ -973,6 +1017,14 @@ const { IS_DEV, DEV_WORKSPACE_FOLDER } = process.env;
 export function deactivate() {
   return new Promise<void>((resolve) => {
     Logger.log("Starting ValorIDE extension deactivation...");
+
+    try {
+      disposeAgentRuntimeCoordinator();
+      Logger.log("Agent runtime coordinator disposed successfully");
+    } catch (error) {
+      Logger.log(`Error disposing agent runtime coordinator: ${error}`);
+      console.error("Error disposing agent runtime coordinator:", error);
+    }
 
     try {
       // Clean up test mode

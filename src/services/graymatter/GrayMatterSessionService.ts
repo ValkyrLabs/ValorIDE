@@ -27,6 +27,38 @@ export interface CreateGrayMatterSessionStateOptions {
   token?: string;
 }
 
+export const degradeGrayMatterSession = (
+  session: GrayMatterSessionState,
+  status: Exclude<GrayMatterSessionStatus, "ready">,
+  error: string,
+  now = () => new Date(),
+): GrayMatterSessionState => ({
+  baseUrl: session.baseUrl,
+  capabilities: defaultGrayMatterCapabilities,
+  checkedAt: now().toISOString(),
+  error,
+  recovery: buildGrayMatterRecovery(status, session.baseUrl),
+  status,
+});
+
+/**
+ * Keep a previously authorized capability snapshot during a transient transport
+ * outage. Authentication, quota, and authorization failures must still replace
+ * the prior state immediately.
+ */
+export const reconcileGrayMatterSessionRefresh = (
+  previous: GrayMatterSessionState | undefined,
+  refreshed: GrayMatterSessionState,
+): GrayMatterSessionState => {
+  if (previous?.status === "ready" && refreshed.status === "unavailable") {
+    return {
+      ...previous,
+      checkedAt: refreshed.checkedAt,
+    };
+  }
+  return refreshed;
+};
+
 export const buildGrayMatterRecovery = (
   status: GrayMatterSessionStatus,
   backendBaseUrl: string,
@@ -130,10 +162,7 @@ export const createGrayMatterSessionState = async ({
       capabilities: defaultGrayMatterCapabilities,
       checkedAt,
       error: "GrayMatter authentication is required.",
-      recovery: buildGrayMatterRecovery(
-        "unauthenticated",
-        normalizedBaseUrl,
-      ),
+      recovery: buildGrayMatterRecovery("unauthenticated", normalizedBaseUrl),
       status: "unauthenticated",
     };
   }

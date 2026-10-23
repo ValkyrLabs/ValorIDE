@@ -28,6 +28,7 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
     authenticatedUser,
     currentTaskItem,
     selectedLlmDetails,
+    valorideMessages = [],
     vscMachineId,
   } = useExtensionState();
   const [shouldShow, setShouldShow] = useState<boolean>(true);
@@ -38,6 +39,16 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
 
     return uuidv4();
   }, [currentTaskItem?.id, messageTs]);
+  const contextEfficiency = useMemo(() => {
+    const request = [...valorideMessages]
+      .reverse()
+      .find((message) => message.say === "api_req_started" && message.text);
+    try {
+      return request?.text ? JSON.parse(request.text) : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [valorideMessages]);
 
   // Check localStorage on mount to see if feedback was already given for this message
   useEffect(() => {
@@ -83,6 +94,23 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
           metadata={{
             completedAt,
             completionReportTitle: reportTitle,
+            bifrostCompilerVersion: contextEfficiency?.bifrostCompilerVersion,
+            bifrostContextHash: contextEfficiency?.bifrostContextHash,
+            bifrostContextPageRef: contextEfficiency?.bifrostContextPageRef,
+            bifrostIncludedItemCount:
+              contextEfficiency?.bifrostIncludedItemCount,
+            bifrostLineageHash: contextEfficiency?.bifrostLineageHash,
+            bifrostPromptHash: contextEfficiency?.bifrostPromptHash,
+            bifrostRetrievalReceiptRef:
+              contextEfficiency?.bifrostRetrievalReceiptRef,
+            bifrostSourceHashCount: contextEfficiency?.bifrostSourceHashCount,
+            bifrostTraceId: contextEfficiency?.bifrostTraceId,
+            contextInputBudget: contextEfficiency?.contextInputBudget,
+            contextMode: contextEfficiency?.contextMode,
+            contextPolicyReason: contextEfficiency?.contextPolicyReason,
+            contextWindow: contextEfficiency?.contextWindow,
+            conversationTokensEstimated:
+              contextEfficiency?.conversationTokensEstimated,
             currentTaskId: currentTaskItem?.id,
             currentTaskText: currentTaskItem?.task,
             llmDetailsId: selectedLlmDetails?.id,
@@ -91,6 +119,10 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
             llmDetailsSource: selectedLlmDetails?.source,
             machineId: vscMachineId,
             reportKind: "task_completion_report",
+            estimatedTokensIn: contextEfficiency?.estimatedTokensIn,
+            estimatedTokensOut: contextEfficiency?.estimatedTokensOut,
+            systemPromptTokensEstimated:
+              contextEfficiency?.systemPromptTokensEstimated,
             skillOpticsSignal: true,
             taskFeedbackContentId: ratingContentId,
             taskFeedbackMessageTs: messageTs,

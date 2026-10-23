@@ -27,6 +27,7 @@ import { MoonshotHandler } from "./providers/moonshot";
 import { MinimaxHandler } from "./providers/minimax";
 
 export interface ApiHandler {
+  readonly provider?: string;
   createMessage(
     systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
@@ -34,6 +35,9 @@ export interface ApiHandler {
   getModel(): { id: string; info: ModelInfo };
   getApiStreamUsage?(): Promise<ApiStreamUsageChunk | undefined>;
   getApiStreamStartTimeoutMs?(): number | undefined;
+  getApiStreamStartRetryPolicy?():
+    | { maxRetries: number; backoffMs: number }
+    | undefined;
 }
 
 export interface SingleCompletionHandler {

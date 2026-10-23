@@ -1,6 +1,25 @@
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object";
 
+export const isOpenAiResponsesCompletedEvent = (event: unknown): boolean =>
+  isRecord(event) && event.type === "response.completed";
+
+/**
+ * OpenAI's `response.completed` event is the authoritative end of a Responses
+ * stream. Stop consuming there so a transport that remains open cannot leave
+ * ValorIDE in a permanent streaming/Working state.
+ */
+export async function* takeOpenAiResponsesEventsThroughCompletion<T>(
+  events: AsyncIterable<T>,
+): AsyncGenerator<T> {
+  for await (const event of events) {
+    yield event;
+    if (isOpenAiResponsesCompletedEvent(event)) {
+      return;
+    }
+  }
+}
+
 const getTextFromUnknown = (value: unknown): string | undefined => {
   if (typeof value === "string") {
     return value.trim() ? value : undefined;

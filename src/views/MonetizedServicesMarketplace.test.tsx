@@ -153,7 +153,11 @@ describe("MonetizedServicesMarketplace", () => {
         "PAY_AS_YOU_GO",
       ),
     );
-    await screen.findByText(/subscription activated/i);
+    expect(
+      await screen.findByText(
+        "Subscription activated. Invocation credits and limits will refresh shortly.",
+      ),
+    ).toBeInTheDocument();
     expect((global as any).alert).not.toHaveBeenCalled();
   });
 });

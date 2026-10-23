@@ -80,28 +80,21 @@ describe("ModelContextTracker", () => {
     }
   });
 
-  it("should throw an error when controller is dereferenced", async () => {
-    // Create a new tracker with a controller that will be garbage collected
-    const weakTracker = new ModelContextTracker(mockContext, taskId);
-
-    // Force the WeakRef to return null by overriding the deref method
-    const weakRef = { deref: sandbox.stub().returns(null) };
-    sandbox.stub(WeakRef.prototype, "deref").callsFake(() => weakRef.deref());
-
-    try {
-      // Try to call the method - this should throw
-      await weakTracker.recordModelUsage(
-        "any-provider",
-        "any-model",
-        "any-mode",
-      );
-
-      // If we get here, the test should fail
-      expect.fail("Expected an error to be thrown");
-    } catch (error) {
-      // Verify the error message
-      expect(error.message).to.equal("Unable to access extension context");
-    }
+  it("retains its extension context independently of unrelated weak references", async () => {
+    const strongTracker = new ModelContextTracker(mockContext, taskId);
+    sandbox.stub(WeakRef.prototype, "deref").returns(undefined);
+    await strongTracker.recordModelUsage(
+      "any-provider",
+      "any-model",
+      "any-mode",
+    );
+    expect(
+      saveTaskMetadataStub.calledOnceWithExactly(
+        mockContext,
+        taskId,
+        mockTaskMetadata,
+      ),
+    ).to.equal(true);
   });
 
   it("should append model usage to existing entries", async () => {

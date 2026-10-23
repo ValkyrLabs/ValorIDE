@@ -125,6 +125,7 @@ describe("FileToolHandler list_files approval updates", () => {
     const result = await handler.execute(block, false);
 
     expect(result.shouldContinue).toBe(true);
+    expect(result.outcome).toBe("succeeded");
     expect(removeMock).toHaveBeenCalledWith("say", "tool");
 
     const [, completeMessage] = (sayMock as jest.Mock).mock.calls[0];
@@ -153,6 +154,7 @@ describe("FileToolHandler list_files approval updates", () => {
     const result = await handler.execute(block, false);
 
     expect(result.shouldContinue).toBe(true);
+    expect(result.outcome).toBe("succeeded");
     expect(missingParamMock).not.toHaveBeenCalled();
     expect(regexSearchFiles).toHaveBeenCalledWith(
       "/repo",

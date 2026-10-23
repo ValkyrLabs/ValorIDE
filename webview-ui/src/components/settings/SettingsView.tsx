@@ -26,7 +26,11 @@ import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
-import { DEFAULT_VALKYRAI_HOST } from "@thorapi/utils/valkyraiHost";
+import {
+  DEFAULT_VALKYRAI_HOST,
+  normalizeValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
+import { VALKYR_LABS_API_TIMEOUT_MS } from "@shared/ValkyrLabsApi";
 import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
 const { IS_DEV } = process.env;
@@ -88,7 +92,30 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   >("idle");
   const [valkyraiHostError, setValkyraiHostError] = useState<string>();
   const [isTestingValkyraiHost, setIsTestingValkyraiHost] = useState(false);
-  const pendingHostRef = useRef<string>();
+  const pendingHostRef = useRef<{
+    host: string;
+    requestId: string;
+    phase: "testing" | "saving";
+    requiresAuth?: boolean;
+  }>();
+
+  useEffect(() => {
+    if (!isTestingValkyraiHost) return undefined;
+    const timeout = setTimeout(() => {
+      const pending = pendingHostRef.current;
+      if (!pending) return;
+      pendingHostRef.current = undefined;
+      setIsTestingValkyraiHost(false);
+      setValkyraiHostStatus("No response");
+      setValkyraiHostStatusKind("error");
+      setValkyraiHostError(
+        pending.phase === "saving"
+          ? "Save confirmation was not received. Check the saved Base URL before retrying."
+          : "The backend test did not respond. Check the URL and connection, then retry.",
+      );
+    }, VALKYR_LABS_API_TIMEOUT_MS + 1000);
+    return () => clearTimeout(timeout);
+  }, [isTestingValkyraiHost, valkyraiHostStatus]);
 
   // Local-only setting: Remember login (persist JWT to localStorage)
   const [persistJwt, setPersistJwt] = useState<boolean>(() => {
@@ -114,6 +141,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   }, [apiConfiguration?.valkyraiHost]);
 
   const handleSubmit = (withoutDone: boolean = false) => {
+    if (activeSettingsTab === "valkyraiBackend") {
+      testAndSaveValkyraiHost();
+      return;
+    }
     const apiValidationResult = validateApiConfiguration(apiConfiguration);
     const modelIdValidationResult = validateModelId(
       apiConfiguration,
@@ -192,28 +223,60 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           break;
         case "valkyraiHostTestResult":
           if (
-            pendingHostRef.current &&
-            message.host !== pendingHostRef.current
+            !pendingHostRef.current ||
+            pendingHostRef.current.phase !== "testing" ||
+            message.requestId !== pendingHostRef.current.requestId ||
+            message.host !== pendingHostRef.current.host
+          ) {
+            break;
+          }
+          if (message.success) {
+            setValkyraiHostError(undefined);
+            setValkyraiHostStatus("Saving…");
+            setValkyraiHostStatusKind("warn");
+            pendingHostRef.current.phase = "saving";
+            pendingHostRef.current.requiresAuth = message.requiresAuth === true;
+            vscode.postMessage({
+              type: "updateValkyraiHost",
+              valkyraiHost: pendingHostRef.current.host,
+              requestId: pendingHostRef.current.requestId,
+            });
+          } else {
+            setIsTestingValkyraiHost(false);
+            setValkyraiHostStatus("Unavailable");
+            setValkyraiHostStatusKind("error");
+            setValkyraiHostError(
+              message.error || "Unable to reach ValkyrAI host.",
+            );
+            pendingHostRef.current = undefined;
+          }
+          break;
+        case "valkyraiHostSaveResult":
+          if (
+            !pendingHostRef.current ||
+            pendingHostRef.current.phase !== "saving" ||
+            message.requestId !== pendingHostRef.current.requestId ||
+            (message.host && message.host !== pendingHostRef.current.host)
           ) {
             break;
           }
           setIsTestingValkyraiHost(false);
           if (message.success) {
+            setValkyraiHostInput(pendingHostRef.current.host);
             setValkyraiHostError(undefined);
-            setValkyraiHostStatus("Connected");
-            setValkyraiHostStatusKind("ok");
-            if (message.host) {
-              setValkyraiHostInput(message.host);
-            }
-            vscode.postMessage({
-              type: "updateValkyraiHost",
-              valkyraiHost: message.host,
-            });
+            setValkyraiHostStatus(
+              pendingHostRef.current.requiresAuth
+                ? "Saved (sign in required)"
+                : "Connected & saved",
+            );
+            setValkyraiHostStatusKind(
+              pendingHostRef.current.requiresAuth ? "warn" : "ok",
+            );
           } else {
-            setValkyraiHostStatus("Unavailable");
+            setValkyraiHostStatus("Save failed");
             setValkyraiHostStatusKind("error");
             setValkyraiHostError(
-              message.error || "Unable to reach ValkyrAI host.",
+              message.error || "Unable to save ValkyrAI host.",
             );
           }
           pendingHostRef.current = undefined;
@@ -263,13 +326,17 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     }
     try {
       const parsed = new URL(trimmed);
-      if (parsed.protocol !== "https:") {
-        if (
-          parsed.hostname !== "localhost" &&
-          parsed.hostname !== "127.0.0.1"
-        ) {
-          return "HTTPS is required for ValkyrAI hosts.";
-        }
+      const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(
+        parsed.hostname,
+      );
+      if (
+        parsed.protocol !== "https:" &&
+        !(parsed.protocol === "http:" && isLocal)
+      ) {
+        return "HTTPS is required for ValkyrAI hosts.";
+      }
+      if (parsed.username || parsed.password || parsed.search || parsed.hash) {
+        return "Enter an API base URL without credentials, query or fragment.";
       }
       return undefined;
     } catch {
@@ -278,6 +345,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   };
 
   const testAndSaveValkyraiHost = (value?: string) => {
+    if (pendingHostRef.current) return;
     const targetHost = (value ?? valkyraiHostInput).trim();
     const validationError = validateValkyraiHost(targetHost);
     if (validationError) {
@@ -290,10 +358,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     setValkyraiHostStatus("Testing…");
     setValkyraiHostStatusKind("warn");
     setIsTestingValkyraiHost(true);
-    pendingHostRef.current = targetHost.replace(/\/$/, "");
+    pendingHostRef.current = {
+      host: normalizeValkyraiHost(targetHost),
+      requestId: crypto.randomUUID(),
+      phase: "testing",
+    };
     vscode.postMessage({
       type: "testValkyraiHost",
-      valkyraiHost: pendingHostRef.current,
+      valkyraiHost: pendingHostRef.current.host,
+      requestId: pendingHostRef.current.requestId,
     });
   };
 
@@ -411,7 +484,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 <span className="text-xs">Remember login</span>
               </VSCodeCheckbox>
             </div>
-            <VSCodeButton onClick={() => handleSubmit(false)}>
+            <VSCodeButton
+              onClick={() => handleSubmit(false)}
+              disabled={
+                activeSettingsTab === "valkyraiBackend" && isTestingValkyraiHost
+              }
+            >
               Save
             </VSCodeButton>
           </div>
@@ -580,14 +658,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 />
               </div>
               <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
-                Configure which ValkyrAI backend this IDE uses. Changes apply
-                immediately and sync via VS Code settings.
+                Test the ValkyrAI backend and save its Base URL to VS Code
+                settings. The result appears here.
               </p>
               <VSCodeTextField
                 value={valkyraiHostInput}
-                onInput={(e: any) =>
-                  setValkyraiHostInput(e.target?.value ?? "")
-                }
+                disabled={isTestingValkyraiHost}
+                onInput={(e: any) => {
+                  setValkyraiHostInput(e.target?.value ?? "");
+                  setValkyraiHostError(undefined);
+                  setValkyraiHostStatus(undefined);
+                  setValkyraiHostStatusKind("idle");
+                }}
                 placeholder="https://api-0.valkyrlabs.com/v1"
               >
                 Base URL
@@ -650,7 +732,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                   Local agent registration and remote command readiness for the
                   active ValkyrAI backend.
                 </p>
-                <div className="text-xs text-(--vscode-descriptionForeground) break-all mb-3">
+                <div
+                  className="text-xs text-(--vscode-descriptionForeground) break-all mb-3"
+                  data-cy="valkyrai-swarm-detail"
+                >
                   {swarmDetail}
                 </div>
                 <VSCodeButton

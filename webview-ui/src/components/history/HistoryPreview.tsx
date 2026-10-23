@@ -60,9 +60,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
     <div style={{ padding: "1em", flexShrink: 0 }}>
       {/* Using global aurora .history-preview-item styles */}
 
-      <h4>
-        <FaComments /> Recent Tasks
-      </h4>
 
       <div style={{ padding: "1em" }}>
         {taskHistory

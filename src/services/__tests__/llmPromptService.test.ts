@@ -5,6 +5,9 @@ import {
   selectBestLlmDetailsPrompt,
 } from "../llmPromptService";
 import * as vscode from "vscode";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { tmpdir } from "node:os";
 
 describe("LLMPromptService", () => {
   let service: LLMPromptService;
@@ -22,6 +25,28 @@ describe("LLMPromptService", () => {
   beforeEach(async () => {
     service = new LLMPromptService(process.cwd(), mockLogger);
     await service.initialize();
+  });
+
+  it("leaves the built-in task prompt active when a fresh workspace has no optional selection", async () => {
+    const root = fs.mkdtempSync(
+      path.join(tmpdir(), "valoride-default-prompt-"),
+    );
+    const lines: string[] = [];
+    try {
+      const fresh = new LLMPromptService(root, {
+        ...mockLogger,
+        appendLine: (line) => lines.push(line),
+      });
+      await fresh.initialize({ query: async () => null });
+      expect(fresh.getSelectedPrompt()).toBeNull();
+      expect(lines.join("\n")).toContain("built-in ValorIDE system prompt");
+      expect(lines.join("\n")).not.toMatch(
+        /No prompt available|Fallback prompt not found|Initialization failed/,
+      );
+      expect(fs.readdirSync(root)).toEqual([]);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it("applies manual selection overrides from UI", () => {

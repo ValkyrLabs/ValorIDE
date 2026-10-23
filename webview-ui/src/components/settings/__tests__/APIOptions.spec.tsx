@@ -9,10 +9,8 @@ declare global {
   }
 }
 
-vi.mock("../../../context/ExtensionStateContext", async (importOriginal) => {
-  const actual = await importOriginal();
+vi.mock("../../../context/ExtensionStateContext", () => {
   return {
-    ...(typeof actual === "object" && actual !== null ? actual : {}),
     // your mocked methods
     useExtensionState: vi.fn(() => ({
       apiConfiguration: {
@@ -60,23 +58,6 @@ describe.skip("ApiOptions Component", () => {
   });
 });
 
-vi.mock("../../../context/ExtensionStateContext", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...(typeof actual === "object" && actual !== null ? actual : {}),
-    // your mocked methods
-    useExtensionState: vi.fn(() => ({
-      apiConfiguration: {
-        apiProvider: "together",
-        requestyApiKey: "",
-        requestyModelId: "",
-      },
-      setApiConfiguration: vi.fn(),
-      uriScheme: "vscode",
-    })),
-  };
-});
-
 describe.skip("ApiOptions Component", () => {
   vi.clearAllMocks();
   const mockPostMessage = vi.fn();
@@ -104,22 +85,6 @@ describe.skip("ApiOptions Component", () => {
     const modelIdInput = screen.getByPlaceholderText("Enter Model ID...");
     //expect(modelIdInput).toBeInTheDocument()
   });
-});
-
-vi.mock("../../../context/ExtensionStateContext", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...(typeof actual === "object" && actual !== null ? actual : {}),
-    useExtensionState: vi.fn(() => ({
-      apiConfiguration: {
-        apiProvider: "openai",
-        requestyApiKey: "",
-        requestyModelId: "",
-      },
-      setApiConfiguration: vi.fn(),
-      uriScheme: "vscode",
-    })),
-  };
 });
 
 describe.skip("OpenApiInfoOptions", () => {

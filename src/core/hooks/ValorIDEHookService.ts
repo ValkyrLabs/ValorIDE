@@ -3,6 +3,7 @@ import { existsSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, extname, join } from "node:path";
 import * as vscode from "vscode";
+import type { ToolExecutionOutcome } from "@core/task/tools/BaseToolHandler";
 
 export type ValorIDEHookName =
   | "TaskStart"
@@ -35,6 +36,7 @@ export interface ValorIDEHookPayload {
     parameters: Record<string, string>;
   };
   postToolUse?: {
+    outcome: ToolExecutionOutcome;
     toolName: string;
     parameters: Record<string, string>;
     result: string;
@@ -214,6 +216,7 @@ export class ValorIDEHookService {
   }
 
   async runPostToolUse(input: {
+    outcome?: ToolExecutionOutcome;
     toolName: string;
     parameters: unknown;
     result: string;
@@ -222,10 +225,11 @@ export class ValorIDEHookService {
   }): Promise<ValorIDEHookControl | undefined> {
     return this.runHook("PostToolUse", {
       postToolUse: {
+        outcome: input.outcome ?? "unknown",
         toolName: input.toolName,
         parameters: mapParams(input.parameters),
         result: input.result,
-        success: input.success,
+        success: input.outcome === "succeeded",
         executionTimeMs: input.executionTimeMs,
       },
     });

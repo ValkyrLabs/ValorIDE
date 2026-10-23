@@ -285,29 +285,53 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
     setIsChatLoading(isWaitingForResponse);
   }, [messages, lastMessage, textAreaDisabled, enableButtons]);
 
-  const handlePrimaryButtonClick = useCallback(() => {
+  const handlePrimaryButtonClick = useCallback(async () => {
     if (!enableButtons || !valorideAsk) return;
 
+    setEnableButtons(false);
+    if (
+      (valorideAsk === "completion_result" &&
+        primaryButtonText === "Start New Task") ||
+      valorideAsk === "resume_completed_task"
+    ) {
+      await TaskServiceClient.clearTask({});
+      return;
+    }
+    if (valorideAsk === "completion_result") {
+      // Preserve the existing explicit Stubborn-mode continuation control.
+      vscode.postMessage({
+        type: "askResponse",
+        askResponse: "messageResponse",
+        text: "continue",
+        images: [],
+      });
+      return;
+    }
     vscode.postMessage({
       type: "askResponse",
-      askResponse: "messageResponse",
-      text: "continue",
-      images: [],
+      askResponse: "yesButtonClicked",
     });
+  }, [enableButtons, valorideAsk, primaryButtonText]);
+
+  const handleSecondaryButtonClick = useCallback(async () => {
+    if (!enableButtons || !valorideAsk || !secondaryButtonText) return;
+
     setEnableButtons(false);
-  }, [enableButtons, valorideAsk]);
-
-  const handleSecondaryButtonClick = useCallback(() => {
-    if (!enableButtons || !valorideAsk) return;
-
+    if (
+      [
+        "api_req_failed",
+        "mistake_limit_reached",
+        "auto_approval_max_req_reached",
+      ].includes(valorideAsk)
+    ) {
+      await TaskServiceClient.clearTask({});
+      return;
+    }
     vscode.postMessage({
       type: "askResponse",
-      askResponse: "messageResponse",
-      text: "no",
-      images: [],
+      askResponse: "noButtonClicked",
     });
-    setEnableButtons(false);
-  }, [enableButtons, valorideAsk]);
+  }, [enableButtons, valorideAsk, secondaryButtonText]);
 
   const handleCancelClick = useCallback(async () => {
     await TaskServiceClient.cancelTask({});

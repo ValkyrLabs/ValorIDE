@@ -1,5 +1,4 @@
-import { ApiHandler } from "@api/index";
-import { OpenAiHandler } from "@api/providers/openai";
+import type { ApiHandler } from "@api/index";
 
 /**
  * Gets context window information for the given API handler
@@ -13,7 +12,7 @@ export function getContextWindowInfo(api: ApiHandler) {
 
   // Handle special cases like DeepSeek
   if (
-    api instanceof OpenAiHandler &&
+    api.provider === "openai" &&
     api.getModel().id.toLowerCase().includes("deepseek")
   ) {
     contextWindow = 64_000;

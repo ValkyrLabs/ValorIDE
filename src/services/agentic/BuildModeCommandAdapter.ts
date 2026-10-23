@@ -273,7 +273,7 @@ export interface BuildModeFinalReportPublishResult {
   contentHash?: string;
   memoryError?: string;
   memoryId?: string;
-  memoryStatus?: "failed" | "queued" | "written";
+  memoryStatus?: "failed" | "queued" | "written" | "unverified";
   reportTitle?: string;
   summary?: string;
 }
@@ -1788,7 +1788,9 @@ const toFinalReportPublishOutput = (
     ? redactCommandSecrets(result.artifactUri)
     : undefined;
   const buildModeStatus: BuildModeCommandStatus =
-    memoryStatus === "failed" ? "failed" : "succeeded";
+    memoryStatus === "written" || memoryStatus === "queued"
+      ? "succeeded"
+      : "failed";
   const summary =
     (result.summary ? redactCommandSecrets(result.summary) : undefined) ??
     `${reportTitle} captured with Build Mode evidence receipts.`;

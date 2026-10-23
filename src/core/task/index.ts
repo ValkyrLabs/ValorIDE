@@ -96,12 +96,18 @@ import { addUserInstructions, SYSTEM_PROMPT } from "@core/prompts/system";
 import { getContextWindowInfo } from "@core/context/context-management/context-window-utils";
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
-import { validateMcpToolCall } from "@core/task/mcpToolValidation";
 import {
   checkIsAnthropicContextWindowError,
   checkIsOpenRouterContextWindowError,
 } from "@core/context/context-management/context-error-handling";
 import { ContextManager } from "@core/context/context-management/ContextManager";
+import {
+  estimateTextTokens,
+  measurePromptTokens,
+  promptContextTokens,
+  resolveContextEfficiencyProfile,
+  type ContextEfficiencyProfile,
+} from "@core/context/context-management/ContextEfficiency";
 import { loadMcpDocumentation } from "@core/prompts/loadMcpDocumentation";
 import {
   ensureRulesDirectoryExists,
@@ -124,9 +130,14 @@ import {
 import { parseSlashCommands } from "@core/slash-commands";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
-import { createAgentContextSectionForTask } from "@services/agentic/AgentContextAssembler";
+import {
+  createAgentContextForTask,
+  type AgentContextAssembly,
+} from "@services/agentic/AgentContextAssembler";
 import {
   createGrayMatterSessionState,
+  degradeGrayMatterSession,
+  reconcileGrayMatterSessionRefresh,
   type GrayMatterSessionState,
 } from "@services/graymatter/GrayMatterSessionService";
 import { getLLMPromptService } from "@services/llmPromptService";
@@ -164,9 +175,20 @@ import { ToolExecutionEngine } from "./ToolExecutionEngine";
 import { getStatusBarService } from "@services/StatusBarService";
 import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
-import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
+import { TokenStorageService } from "@services/auth/TokenStorageService";
+import { createSessionBoundProcedureClient } from "@services/workflow/ValkyrProcedureClient";
+import {
+  resolveFirstChunkRetryPolicy,
+  resolveFirstChunkTimeoutMs,
+} from "./apiTimeouts";
 import { resolveCommandRequiresApproval } from "./tools/commandApproval";
 import { composeRuntimeSystemPrompt } from "@core/prompts/runtimePrompt";
+import {
+  classifyTaskCompletion,
+  type TaskTerminalEvent,
+  type TaskTerminalListener,
+} from "@shared/TaskLifecycle";
+import { buildCommandEvidenceRef } from "./CommandEvidence";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -200,9 +222,24 @@ export class Task {
   private cancelTask: () => Promise<void>;
   private toolRelayService?: ToolRelayService;
   private communicationService?: CommunicationService;
+  private readonly terminalListener?: TaskTerminalListener;
+  private terminalReported = false;
+  private readonly commandEvidenceRefs = new Set<string>();
 
   readonly taskId: string;
-  api: ApiHandler;
+  private activeApi: ApiHandler;
+  readonly governedCodingInference?: import("@services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
+  get api(): ApiHandler {
+    return this.activeApi;
+  }
+  set api(handler: ApiHandler) {
+    if (this.governedCodingInference && this.activeApi) {
+      throw new Error(
+        "The governed coding task's approved provider cannot be replaced by settings.",
+      );
+    }
+    this.activeApi = handler;
+  }
   private terminalManager: TerminalManager;
   private urlContentFetcher: UrlContentFetcher;
   browserSession: BrowserSession;
@@ -227,7 +264,11 @@ export class Task {
   abandoned = false;
   private diffViewProvider: DiffViewProvider;
   private checkpointTracker?: CheckpointTracker;
+  private checkpointTrackerInitialization?: Promise<void>;
+  private checkpointCapture?: Promise<void>;
   checkpointTrackerErrorMessage?: string;
+  private agentContextSectionPromise?: Promise<string | undefined>;
+  private agentContextTelemetry?: AgentContextAssembly["bifrost"];
   conversationHistoryDeletedRange?: [number, number];
   isInitialized = false;
   isAwaitingPlanResponse = false;
@@ -252,7 +293,7 @@ export class Task {
   private didRejectTool = false;
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
-  private didAutomaticallyRetryFailedApiRequest = false;
+  private automaticApiRetryAttempts = 0;
 
   // Handler instances for better code organization
   private messageHandler: MessageHandler;
@@ -300,6 +341,7 @@ export class Task {
     historyItem?: HistoryItem,
     communicationService?: CommunicationService,
     thorapi_project?: string,
+    terminalListener?: TaskTerminalListener,
   ) {
     this.context = context;
     this.mcpHub = mcpHub;
@@ -309,6 +351,7 @@ export class Task {
     this.postMessageToWebview = postMessageToWebview;
     this.reinitExistingTaskFromId = reinitExistingTaskFromId;
     this.cancelTask = cancelTask;
+    this.terminalListener = terminalListener;
     this.valorideIgnoreController = new ValorIDEIgnoreController(cwd);
     this.valorideIgnoreController.initialize().catch((error) => {
       console.error("Failed to initialize ValorIDEIgnoreController:", error);
@@ -339,9 +382,16 @@ export class Task {
       throw new Error("Either historyItem or task/images must be provided");
     }
 
+    if (!historyItem) {
+      this.checkpointTrackerInitialization =
+        this.initializeCheckpointTrackerForChat();
+    }
+
     // Initialize file context tracker
     this.fileContextTracker = new FileContextTracker(context, this.taskId);
     this.modelContextTracker = new ModelContextTracker(context, this.taskId);
+    // Lock before the first model request; ordinary tasks retain settings-driven behavior.
+    this.governedCodingInference = apiConfiguration.governedCodingInference;
     // Now that taskId is initialized, we can build the API handler
     this.api = buildApiHandler({
       ...apiConfiguration,
@@ -493,6 +543,7 @@ export class Task {
         shadowGitConfigWorkTree:
           await this.checkpointTracker?.getShadowGitConfigWorkTree(),
         conversationHistoryDeletedRange: this.conversationHistoryDeletedRange,
+        governedCodingInference: this.governedCodingInference,
       });
     } catch (error) {
       console.error("Failed to save valoride messages:", error);
@@ -1737,6 +1788,19 @@ export class Task {
       if (didEndLoop) {
         // For now a task never 'completes'. This will only happen if the user hits max requests and denies resetting the count.
         //this.say("task_completed", `Task completed. Total API usage cost: ${totalCost}`)
+        await this.reportTerminal({
+          confidence: "EXPLICIT",
+          error: {
+            code: "ERR_TASK_LOOP_ENDED",
+            message:
+              "The task loop ended without an explicit completion result.",
+            retryable: true,
+          },
+          kind: "blocked",
+          source: "runtime-envelope",
+          summary:
+            "Task stopped before ValorIDE produced an explicit completion result.",
+        });
         break;
       } else {
         // this.say(
@@ -1755,7 +1819,20 @@ export class Task {
   }
 
   async abortTask() {
-    this.abort = true; // will stop any autonomously running promises
+    this.abort = true; // stop autonomously running promises before publishing asynchronous lifecycle work
+    await this.reportTerminal({
+      confidence: "EXPLICIT",
+      error: {
+        code: "ERR_TASK_ABORTED",
+        message:
+          "The task was aborted before a durable terminal result was confirmed.",
+        retryable: true,
+      },
+      kind: "outcome-uncertain",
+      source: "runtime-envelope",
+      summary:
+        "Task aborted before a durable success, failure, or blocker was confirmed.",
+    });
     this.terminalManager.disposeAll();
     this.urlContentFetcher.closeBrowser();
     await this.browserSession.dispose();
@@ -1764,9 +1841,48 @@ export class Task {
     await this.diffViewProvider.revertChanges(); // need to await for when we want to make sure directories/files are reverted before re-starting the task from a checkpoint
   }
 
+  private async reportTerminal(
+    event: Omit<TaskTerminalEvent, "completedAt" | "taskId">,
+  ): Promise<void> {
+    if (this.terminalReported || !this.terminalListener) {
+      return;
+    }
+    this.terminalReported = true;
+    try {
+      await this.terminalListener({
+        ...event,
+        completedAt: new Date().toISOString(),
+        taskId: this.taskId,
+      });
+    } catch (error) {
+      Logger.log(
+        `Failed to publish terminal task lifecycle event for ${this.taskId}: ${String(error)}`,
+      );
+    }
+  }
+
+  recordCommandEvidence(command: string, result: ToolResponse): void {
+    this.commandEvidenceRefs.add(buildCommandEvidenceRef(command, result));
+  }
+
   // Checkpoints
 
-  async saveCheckpoint(isAttemptCompletionMessage: boolean = false) {
+  async saveCheckpoint(
+    isAttemptCompletionMessage: boolean = false,
+    waitForCapture: boolean = false,
+  ) {
+    if (waitForCapture) {
+      await this.initializeCheckpointTrackerForChat();
+      if (this.checkpointTrackerErrorMessage)
+        throw new Error("Checkpoint initialization failed.");
+      const pending = this.checkpointCapture;
+      try {
+        await pending;
+      } finally {
+        if (this.checkpointCapture === pending)
+          this.checkpointCapture = undefined;
+      }
+    }
     // Set isCheckpointCheckedOut to false for all checkpoint_created messages
     this.valorideMessages.forEach((message) => {
       if (message.say === "checkpoint_created") {
@@ -1777,22 +1893,33 @@ export class Task {
     if (!isAttemptCompletionMessage) {
       // ensure we aren't creating a duplicate checkpoint
       const lastMessage = this.valorideMessages.at(-1);
-      if (lastMessage?.say === "checkpoint_created") {
+      if (
+        lastMessage?.say === "checkpoint_created" &&
+        (!waitForCapture || lastMessage.lastCheckpointHash)
+      ) {
         return;
       }
 
       // For non-attempt completion we just say checkpoints
-      await this.say("checkpoint_created");
-      this.checkpointTracker?.commit().then(async (commitHash) => {
-        const lastCheckpointMessage = findLast(
-          this.valorideMessages,
-          (m) => m.say === "checkpoint_created",
-        );
-        if (lastCheckpointMessage) {
-          lastCheckpointMessage.lastCheckpointHash = commitHash;
-          await this.saveValorIDEMessagesAndUpdateHistory();
+      if (lastMessage?.say !== "checkpoint_created")
+        await this.say("checkpoint_created");
+      this.checkpointCapture = CheckpointHandler.captureCheckpoint(
+        this.checkpointTracker,
+        findLast(this.valorideMessages, (m) => m.say === "checkpoint_created"),
+        this.saveValorIDEMessagesAndUpdateHistory.bind(this),
+      );
+      if (waitForCapture) {
+        const pending = this.checkpointCapture;
+        try {
+          await pending;
+        } finally {
+          if (this.checkpointCapture === pending)
+            this.checkpointCapture = undefined;
         }
-      }); // silently fails for now
+      } else
+        void this.checkpointCapture.catch(() => {
+          /* Awaiting callers retain the rejected barrier. */
+        });
 
       //
     } else {
@@ -2201,6 +2328,14 @@ export class Task {
   }
 
   // Check if the tool should be auto-approved based on the settings
+  public async getProcedureClient() {
+    return createSessionBoundProcedureClient({
+      getBaseUrl: getValkyraiBasePath,
+      getAuthToken: () =>
+        TokenStorageService.getInstance(this.context).getJwtToken(),
+    });
+  }
+
   // Returns bool for most tools, and tuple for tools with nested settings
   shouldAutoApproveTool(toolName: ToolUseName): boolean | [boolean, boolean] {
     if (this.autoApprovalSettings.enabled) {
@@ -2215,6 +2350,7 @@ export class Task {
           ];
         case "write_to_file":
         case "replace_in_file":
+        case "precision_search_and_replace":
           return [
             this.autoApprovalSettings.actions.editFiles,
             this.autoApprovalSettings.actions.editFilesExternally ?? false,
@@ -2229,6 +2365,8 @@ export class Task {
         case "access_mcp_resource":
         case "use_mcp_tool":
           return this.autoApprovalSettings.actions.useMcp;
+        case "use_procedure":
+          return this.autoApprovalSettings.actions.useProcedures ?? false;
       }
     }
     return false;
@@ -2280,7 +2418,7 @@ export class Task {
     this.userMessageContentReady = false;
     this.didRejectTool = false;
     this.didAlreadyUseTool = false;
-    this.didAutomaticallyRetryFailedApiRequest = false;
+    this.automaticApiRetryAttempts = 0;
     await this.diffViewProvider.reset();
   }
 
@@ -2294,8 +2432,8 @@ export class Task {
 
     return (
       !session ||
-      session.status === "unavailable" ||
-      (session.status === "ready" && !session.capabilities.memoryQuery)
+      session.status !== "ready" ||
+      !session.capabilities.memoryQuery
     );
   }
 
@@ -2330,21 +2468,74 @@ export class Task {
       return session;
     }
 
-    try {
-      const refreshed = await createGrayMatterSessionState({
-        baseUrl: getValkyraiBasePath(),
-        tenantContext: await this.readGrayMatterTenantContext(),
-        token,
-      });
+    const refresh = async () => {
+      const refreshed = reconcileGrayMatterSessionRefresh(
+        session,
+        await createGrayMatterSessionState({
+          baseUrl: getValkyraiBasePath(),
+          tenantContext: await this.readGrayMatterTenantContext(),
+          token,
+        }),
+      );
       await updateGlobalState(this.context, "grayMatterSession", refreshed);
       return refreshed;
-    } catch (error) {
-      console.warn("Failed to refresh GrayMatter session for task:", error);
-      return session;
-    }
+    };
+
+    // Capability discovery must never consume the task's transport budget.
+    // Actual memory calls remain authenticated and server-authorized; this only
+    // prevents a recovering backend from blocking unrelated task execution.
+    void refresh().catch((error) => {
+      console.warn(
+        "Failed to refresh the GrayMatter session in the background:",
+        error,
+      );
+    });
+    return session;
   }
 
-  private async buildAgentContextSection(): Promise<string | undefined> {
+  private initializeCheckpointTrackerForChat(): Promise<void> {
+    if (this.checkpointTracker || this.checkpointTrackerErrorMessage) {
+      return Promise.resolve();
+    }
+    if (this.checkpointTrackerInitialization) {
+      return this.checkpointTrackerInitialization;
+    }
+
+    this.checkpointTrackerInitialization = (async () => {
+      try {
+        this.checkpointTracker = await pTimeout(
+          CheckpointTracker.create(
+            this.taskId,
+            this.context.globalStorageUri.fsPath,
+          ),
+          {
+            milliseconds: 15_000,
+            message:
+              "Checkpoints taking too long to initialize. Consider re-opening ValorIDE in a project that uses git, or disabling checkpoints.",
+          },
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to initialize checkpoint tracker:", errorMessage);
+        this.checkpointTrackerErrorMessage = errorMessage;
+      }
+    })();
+
+    return this.checkpointTrackerInitialization;
+  }
+
+  private buildAgentContextSection(
+    taskText = this.getLatestTaskTextForGrayMatter(),
+  ): Promise<string | undefined> {
+    this.agentContextSectionPromise ??=
+      this.assembleAgentContextSection(taskText);
+    return this.agentContextSectionPromise;
+  }
+
+  private async assembleAgentContextSection(
+    taskText: string,
+  ): Promise<string | undefined> {
     try {
       const [jwtToken, legacyValorJwt, valkyraiJwt, cachedGrayMatterSession] =
         await Promise.all([
@@ -2381,18 +2572,21 @@ export class Task {
       if (
         !token ||
         grayMatterSession?.status !== "ready" ||
-        !grayMatterSession.capabilities.memoryQuery
+        (!grayMatterSession.capabilities.memoryRead &&
+          !grayMatterSession.capabilities.memoryQuery)
       ) {
         const message = !token
           ? "GrayMatter memory context needs an active ValkyrAI session token before it can query memory."
           : (grayMatterSession?.recovery?.message ??
             (grayMatterSession?.status === "ready" &&
+            !grayMatterSession.capabilities.memoryRead &&
             !grayMatterSession.capabilities.memoryQuery
-              ? "GrayMatter is authenticated, but memory query capability was not discovered for this backend session."
+              ? "GrayMatter is authenticated, but memory read capability was not discovered for this backend session."
               : "GrayMatter memory context is unavailable for this task."));
         const status = !token
           ? "unauthenticated"
           : grayMatterSession?.status === "ready" &&
+              !grayMatterSession.capabilities.memoryRead &&
               !grayMatterSession.capabilities.memoryQuery
             ? "unavailable"
             : (grayMatterSession?.status ?? "unavailable");
@@ -2405,26 +2599,58 @@ export class Task {
         return undefined;
       }
 
-      const section = await createAgentContextSectionForTask({
+      const context = await createAgentContextForTask({
         baseUrl: getValkyraiBasePath(),
         cwd,
         grayMatterSession,
-        task: this.getLatestTaskTextForGrayMatter(),
+        maxEntries: 8,
+        maxEntryChars: 700,
+        task: taskText,
         tenantContext,
         token,
+        tokenBudget: this.getContextEfficiencyProfile().grayMatterTokenBudget,
       });
 
-      const citationCount = (section?.match(/\[gm:/g) ?? []).length;
+      this.agentContextTelemetry = context?.bifrost;
+
+      const citationCount = context?.grayMatter.citations.length ?? 0;
+      const status = context?.grayMatter.status ?? "unavailable";
+      if (
+        grayMatterSession &&
+        (status === "forbidden" ||
+          status === "quota" ||
+          status === "unauthenticated" ||
+          status === "unavailable")
+      ) {
+        const degradedSession = degradeGrayMatterSession(
+          grayMatterSession,
+          status,
+          context?.grayMatter.error ?? "GrayMatter memory retrieval failed.",
+        );
+        await updateGlobalState(
+          this.context,
+          "grayMatterSession",
+          degradedSession,
+        );
+        getStatusBarService().updateGrayMatterStatus(
+          degradedSession.status,
+          degradedSession.error,
+        );
+        await this.postStateToWebview();
+      }
       await reportGrayMatterAccess({
         citations: citationCount,
         message:
           citationCount > 0
             ? `GrayMatter injected ${citationCount} remembered context entr${citationCount === 1 ? "y" : "ies"} into this task.`
-            : "GrayMatter checked memory before this task; no relevant memories were returned.",
-        status: citationCount > 0 ? "ready" : "empty",
+            : status === "empty"
+              ? "GrayMatter checked memory before this task; no relevant memories were returned."
+              : (context?.grayMatter.error ??
+                "GrayMatter memory retrieval is unavailable; continuing without memory context."),
+        status,
       });
 
-      return section;
+      return context?.promptSection || undefined;
     } catch (error) {
       console.warn("Failed to assemble GrayMatter agent context:", error);
       await this.say(
@@ -2483,17 +2709,22 @@ export class Task {
     return "Current ValorIDE task";
   }
 
-  async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
-    const waitForMcpConnection = async () => {
-      await pWaitFor(() => this.mcpHub.isConnecting !== true, {
-        timeout: 10_000,
-      }).catch(() => {
-        console.error("MCP servers failed to connect in time");
-      });
-    };
+  private getContextEfficiencyProfile(
+    selectedPrompt = getSelectedRuntimePrompt(),
+  ): ContextEfficiencyProfile {
+    return resolveContextEfficiencyProfile(this.api.getModel(), {
+      name: selectedPrompt?.name || this.api.getModel().id,
+      tags: selectedPrompt?.tags ?? [],
+    });
+  }
 
+  async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
     while (true) {
-      await waitForMcpConnection();
+      if (this.mcpHub.isConnecting === true) {
+        console.info(
+          "MCP servers are still connecting; starting the model stream with currently available tools.",
+        );
+      }
 
       const disableBrowserTool =
         vscode.workspace
@@ -2502,7 +2733,13 @@ export class Task {
       const modelSupportsBrowserUse =
         this.api.getModel().info.supportsImages ?? false;
       const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool;
-      const agentContextSection = await this.buildAgentContextSection();
+      const taskIntent = this.getLatestTaskTextForGrayMatter();
+      const selectedRuntimePrompt = getSelectedRuntimePrompt();
+      const contextProfile = this.getContextEfficiencyProfile(
+        selectedRuntimePrompt,
+      );
+      const agentContextSection =
+        await this.buildAgentContextSection(taskIntent);
 
       const fallbackSystemPrompt = await SYSTEM_PROMPT(
         cwd,
@@ -2512,11 +2749,17 @@ export class Task {
         this.browserSettings,
         this.chatSettings ?? DEFAULT_CHAT_SETTINGS,
         agentContextSection,
+        contextProfile,
+        taskIntent,
       );
-      const selectedRuntimePrompt = getSelectedRuntimePrompt();
       let systemPrompt = composeRuntimeSystemPrompt(
         fallbackSystemPrompt,
         selectedRuntimePrompt,
+        {
+          compact: contextProfile.mode === "compact",
+          maxSelectedPromptTokens: contextProfile.selectedPromptTokenBudget,
+          task: taskIntent,
+        },
       );
 
       const settingsCustomInstructions = this.customInstructions?.trim();
@@ -2579,11 +2822,54 @@ export class Task {
           this.conversationHistoryDeletedRange,
           previousApiReqIndex,
           await ensureTaskDirectoryExists(this.getContext(), this.taskId),
+          {
+            inputTokenBudget: contextProfile.inputTokenBudget,
+            systemPromptTokens: estimateTextTokens(systemPrompt),
+          },
         );
 
       if (contextManagementMetadata.updatedConversationHistoryDeletedRange) {
         this.conversationHistoryDeletedRange =
           contextManagementMetadata.conversationHistoryDeletedRange;
+        await this.saveValorIDEMessagesAndUpdateHistory();
+      }
+
+      const promptMetrics = measurePromptTokens(
+        systemPrompt,
+        contextManagementMetadata.truncatedConversationHistory,
+        agentContextSection,
+      );
+      const currentApiReqIndex = findLastIndex(
+        this.valorideMessages,
+        (message) => message.say === "api_req_started",
+      );
+      const currentApiReq = this.valorideMessages[currentApiReqIndex];
+      if (currentApiReq?.text) {
+        const currentInfo = JSON.parse(
+          currentApiReq.text,
+        ) as ValorIDEApiReqInfo;
+        currentApiReq.text = JSON.stringify({
+          ...currentInfo,
+          bifrostCompilerVersion: this.agentContextTelemetry?.compilerVersion,
+          bifrostContextHash: this.agentContextTelemetry?.contextHash,
+          bifrostContextPageRef: this.agentContextTelemetry?.contextPageRef,
+          bifrostIncludedItemCount:
+            this.agentContextTelemetry?.includedItemCount,
+          bifrostLineageHash: this.agentContextTelemetry?.lineageHash,
+          bifrostPromptHash: this.agentContextTelemetry?.promptHash,
+          bifrostRetrievalReceiptRef:
+            this.agentContextTelemetry?.retrievalReceiptRef,
+          bifrostSourceHashCount: this.agentContextTelemetry?.sourceHashCount,
+          bifrostTraceId: this.agentContextTelemetry?.traceId,
+          contextInputBudget: contextProfile.inputTokenBudget,
+          contextMode: contextProfile.mode,
+          contextPolicyReason: contextProfile.reason,
+          contextWindow: contextProfile.contextWindow,
+          conversationTokensEstimated: promptMetrics.conversationTokens,
+          estimatedTokensIn: promptMetrics.totalInputTokens,
+          grayMatterTokensEstimated: promptMetrics.grayMatterTokens,
+          systemPromptTokensEstimated: promptMetrics.systemPromptTokens,
+        } satisfies ValorIDEApiReqInfo);
         await this.saveValorIDEMessagesAndUpdateHistory();
       }
 
@@ -2610,10 +2896,24 @@ export class Task {
         const isAnthropicContextWindowError =
           checkIsAnthropicContextWindowError(error) && isAnthropic;
 
+        const providerRetry = resolveFirstChunkRetryPolicy(this.api);
+        if (
+          providerRetry &&
+          this.automaticApiRetryAttempts < providerRetry.maxRetries
+        ) {
+          console.log(
+            `first chunk failed; retrying once after ${providerRetry.backoffMs}ms under the provider policy`,
+          );
+          await setTimeoutPromise(providerRetry.backoffMs);
+          this.automaticApiRetryAttempts += 1;
+          await this.say("api_req_retried");
+          return true;
+        }
+
         if (
           isAnthropic &&
           isAnthropicContextWindowError &&
-          !this.didAutomaticallyRetryFailedApiRequest
+          this.automaticApiRetryAttempts === 0
         ) {
           this.conversationHistoryDeletedRange =
             this.contextManager.getNextTruncationRange(
@@ -2622,11 +2922,11 @@ export class Task {
               "quarter",
             );
           await this.saveValorIDEMessagesAndUpdateHistory();
-          this.didAutomaticallyRetryFailedApiRequest = true;
+          this.automaticApiRetryAttempts = 1;
           return true;
         }
 
-        if (isOpenRouter && !this.didAutomaticallyRetryFailedApiRequest) {
+        if (isOpenRouter && this.automaticApiRetryAttempts === 0) {
           if (isOpenRouterContextWindowError) {
             this.conversationHistoryDeletedRange =
               this.contextManager.getNextTruncationRange(
@@ -2638,7 +2938,7 @@ export class Task {
           }
           console.log("first chunk failed, waiting 1 second before retrying");
           await setTimeoutPromise(1000);
-          this.didAutomaticallyRetryFailedApiRequest = true;
+          this.automaticApiRetryAttempts = 1;
           return true;
         }
 
@@ -2654,7 +2954,7 @@ export class Task {
             normalizedError = new Error(
               "Context window exceeded. Click retry to truncate the conversation and try again.",
             );
-            this.didAutomaticallyRetryFailedApiRequest = false;
+            this.automaticApiRetryAttempts = 0;
           }
 
           const errorMessage = this.formatErrorWithStatusCode(normalizedError);
@@ -4211,341 +4511,6 @@ export class Task {
               break;
             }
           }
-          case "use_mcp_tool": {
-            const server_name: string | undefined = block.params.server_name;
-            const tool_name: string | undefined = block.params.tool_name;
-            const mcp_arguments: string | undefined = block.params.arguments;
-            try {
-              if (block.partial) {
-                const partialMessage = JSON.stringify({
-                  type: "use_mcp_tool",
-                  serverName: removeClosingTag("server_name", server_name),
-                  toolName: removeClosingTag("tool_name", tool_name),
-                  arguments: removeClosingTag("arguments", mcp_arguments),
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    partialMessage,
-                    undefined,
-                    block.partial,
-                  );
-                } else {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  await this.ask(
-                    "use_mcp_server",
-                    partialMessage,
-                    block.partial,
-                  ).catch(() => {});
-                }
-
-                break;
-              } else {
-                if (!server_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "use_mcp_tool",
-                      "server_name",
-                    ),
-                  );
-
-                  break;
-                }
-                if (!tool_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "use_mcp_tool",
-                      "tool_name",
-                    ),
-                  );
-
-                  break;
-                }
-                // arguments are optional, but if they are provided they must be valid JSON
-                // if (!mcp_arguments) {
-                // 	this.consecutiveMistakeCount++
-                // 	pushToolResult(await this.sayAndCreateMissingParamError("use_mcp_tool", "arguments"))
-                // 	break
-                // }
-                let parsedArguments: Record<string, unknown> | undefined;
-                if (mcp_arguments) {
-                  try {
-                    parsedArguments = JSON.parse(mcp_arguments);
-                  } catch (error) {
-                    this.consecutiveMistakeCount++;
-                    await this.say(
-                      "error",
-                      `ValorIDE tried to use ${tool_name} with an invalid JSON argument. Retrying...`,
-                    );
-                    pushToolResult(
-                      formatResponse.toolError(
-                        formatResponse.invalidMcpToolArgumentError(
-                          server_name,
-                          tool_name,
-                        ),
-                      ),
-                    );
-
-                    break;
-                  }
-                }
-                const connectedServers = this.mcpHub
-                  .getServers()
-                  .filter(
-                    (server) =>
-                      server.status === "connected" && !server.disabled,
-                  );
-                const validation = validateMcpToolCall(
-                  connectedServers,
-                  server_name,
-                  tool_name,
-                  parsedArguments,
-                );
-                if ("error" in validation) {
-                  this.consecutiveMistakeCount++;
-                  await this.say(
-                    "error",
-                    `Invalid MCP tool call. ${validation.error} Retrying...`,
-                  );
-                  pushToolResult(formatResponse.toolError(validation.error));
-                  break;
-                }
-
-                this.consecutiveMistakeCount = 0;
-                const completeMessage = JSON.stringify({
-                  type: "use_mcp_tool",
-                  serverName: server_name,
-                  toolName: tool_name,
-                  arguments: mcp_arguments,
-                } satisfies ValorIDEAskUseMcpServer);
-
-                const isToolAutoApproved = validation.tool.autoApprove;
-
-                if (
-                  this.shouldAutoApproveTool(block.name) &&
-                  isToolAutoApproved
-                ) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    completeMessage,
-                    undefined,
-                    false,
-                  );
-                  this.consecutiveAutoApprovedRequestsCount++;
-                } else {
-                  showNotificationForApprovalIfAutoApprovalEnabled(
-                    `MCP: ${tool_name} (${server_name})`,
-                  );
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  const didApprove = await askApproval(
-                    "use_mcp_server",
-                    completeMessage,
-                  );
-                  if (!didApprove) {
-                    break;
-                  }
-                }
-
-                // now execute the tool
-                await this.say("mcp_server_request_started"); // same as browser_action_result
-                const toolResult = await this.mcpHub.callTool(
-                  server_name,
-                  tool_name,
-                  parsedArguments,
-                );
-
-                // TODO: add progress indicator
-
-                const toolResultImages =
-                  toolResult?.content
-                    .filter((item) => item.type === "image")
-                    .map(
-                      (item) => `data:${item.mimeType};base64,${item.data}`,
-                    ) || [];
-                let toolResultText =
-                  (toolResult?.isError ? "Error:\n" : "") +
-                    toolResult?.content
-                      .map((item) => {
-                        if (item.type === "text") {
-                          return item.text;
-                        }
-                        if (item.type === "resource") {
-                          const { blob, ...rest } = item.resource;
-                          return JSON.stringify(rest, null, 2);
-                        }
-                        return "";
-                      })
-                      .filter(Boolean)
-                      .join("\n\n") || "(No response)";
-                // webview extracts images from the text response to display in the UI
-                const toolResultToDisplay =
-                  toolResultText +
-                  toolResultImages?.map((image) => `\n\n${image}`).join("");
-                await this.say("mcp_server_response", toolResultToDisplay);
-
-                // MCP's might return images to display to the user, but the model may not support them
-                const supportsImages =
-                  this.api.getModel().info.supportsImages ?? false;
-                if (toolResultImages.length > 0 && !supportsImages) {
-                  toolResultText += `\n\n[${toolResultImages.length} images were provided in the response, and while they are displayed to the user, you do not have the ability to view them.]`;
-                }
-
-                // only passes in images if model supports them
-                pushToolResult(
-                  formatResponse.toolResult(
-                    toolResultText,
-                    supportsImages ? toolResultImages : undefined,
-                  ),
-                );
-
-                await this.saveCheckpoint();
-
-                break;
-              }
-            } catch (error) {
-              await handleError("executing MCP tool", error);
-
-              break;
-            }
-          }
-          case "access_mcp_resource": {
-            const server_name: string | undefined = block.params.server_name;
-            const uri: string | undefined = block.params.uri;
-            try {
-              if (block.partial) {
-                const partialMessage = JSON.stringify({
-                  type: "access_mcp_resource",
-                  serverName: removeClosingTag("server_name", server_name),
-                  uri: removeClosingTag("uri", uri),
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    partialMessage,
-                    undefined,
-                    block.partial,
-                  );
-                } else {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  await this.ask(
-                    "use_mcp_server",
-                    partialMessage,
-                    block.partial,
-                  ).catch(() => {});
-                }
-
-                break;
-              } else {
-                if (!server_name) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "access_mcp_resource",
-                      "server_name",
-                    ),
-                  );
-
-                  break;
-                }
-                if (!uri) {
-                  this.consecutiveMistakeCount++;
-                  pushToolResult(
-                    await this.sayAndCreateMissingParamError(
-                      "access_mcp_resource",
-                      "uri",
-                    ),
-                  );
-
-                  break;
-                }
-                this.consecutiveMistakeCount = 0;
-                const completeMessage = JSON.stringify({
-                  type: "access_mcp_resource",
-                  serverName: server_name,
-                  uri,
-                } satisfies ValorIDEAskUseMcpServer);
-
-                if (this.shouldAutoApproveTool(block.name)) {
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "ask",
-                    "use_mcp_server",
-                  );
-                  await this.say(
-                    "use_mcp_server",
-                    completeMessage,
-                    undefined,
-                    false,
-                  );
-                  this.consecutiveAutoApprovedRequestsCount++;
-                } else {
-                  showNotificationForApprovalIfAutoApprovalEnabled(
-                    `Accessing: ${uri} (${server_name})`,
-                  );
-                  this.removeLastPartialMessageIfExistsWithType(
-                    "say",
-                    "use_mcp_server",
-                  );
-                  const didApprove = await askApproval(
-                    "use_mcp_server",
-                    completeMessage,
-                  );
-                  if (!didApprove) {
-                    break;
-                  }
-                }
-
-                // now execute the tool
-                await this.say("mcp_server_request_started");
-                const resourceResult = await this.mcpHub.readResource(
-                  server_name,
-                  uri,
-                );
-                const resourceResultPretty =
-                  resourceResult?.contents
-                    .map((item) => {
-                      if (item.text) {
-                        return item.text;
-                      }
-                      return "";
-                    })
-                    .filter(Boolean)
-                    .join("\n\n") || "(Empty response)";
-                await this.say("mcp_server_response", resourceResultPretty);
-                pushToolResult(formatResponse.toolResult(resourceResultPretty));
-
-                break;
-              }
-            } catch (error) {
-              await handleError("accessing MCP resource", error);
-
-              break;
-            }
-          }
           case "ask_followup_question": {
             const question: string | undefined = block.params.question;
             const optionsRaw: string | undefined = block.params.options;
@@ -5175,6 +5140,24 @@ export class Task {
                     partialMessage: lastCompletionResultMessage,
                   });
                 }
+                const checkpointHash =
+                  lastCompletionResultMessage?.lastCheckpointHash?.trim();
+                const checkpointEvidenceRefs =
+                  checkpointHash &&
+                  lastCompletionChangesSummary &&
+                  lastCompletionChangesSummary.totalFiles > 0
+                    ? [`valoride-checkpoint:${checkpointHash}`]
+                    : [];
+                const machineEvidenceRefs = [
+                  ...checkpointEvidenceRefs,
+                  ...this.commandEvidenceRefs,
+                ];
+                await this.reportTerminal(
+                  classifyTaskCompletion({
+                    evidenceRefs: machineEvidenceRefs,
+                    summary: result,
+                  }),
+                );
                 const { response, text, images } = await this.ask(
                   "completion_result",
                   "",
@@ -5324,6 +5307,18 @@ export class Task {
       });
     }
 
+    const thor_taskText = userContent
+      .filter(
+        (block): block is Anthropic.TextBlockParam => block.type === "text",
+      )
+      .map((block) => block.text)
+      .join("\n")
+      .trim()
+      .slice(0, 8_000);
+    void this.buildAgentContextSection(
+      thor_taskText || this.getLatestTaskTextForGrayMatter(),
+    );
+
     if (this.consecutiveMistakeCount >= 3) {
       if (
         this.autoApprovalSettings.enabled &&
@@ -5419,29 +5414,8 @@ export class Task {
       }),
     );
 
-    // use this opportunity to initialize the checkpoint tracker (can be expensive to initialize in the constructor)
-    // FIXME: right now we're letting users init checkpoints for old tasks, but this could be a problem if opening a task in the wrong workspace
-    // isNewTask &&
-    if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
-      try {
-        this.checkpointTracker = await pTimeout(
-          CheckpointTracker.create(
-            this.taskId,
-            this.context.globalStorageUri.fsPath,
-          ),
-          {
-            milliseconds: 15_000,
-            message:
-              "Checkpoints taking too long to initialize. Consider re-opening ValorIDE in a project that uses git, or disabling checkpoints.",
-          },
-        );
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
-        console.error("Failed to initialize checkpoint tracker:", errorMessage);
-        this.checkpointTrackerErrorMessage = errorMessage; // will be displayed right away since we saveValorIDEMessages next which posts state to webview
-      }
-    }
+    // Await the tracker that was prewarmed when the task was constructed.
+    await this.initializeCheckpointTrackerForChat();
 
     // Now that checkpoint tracker is initialized, update the dummy checkpoint_created message with the commit hash. (This is necessary since we use the API request loading as an opportunity to initialize the checkpoint tracker, which can take some time)
     if (isFirstRequest) {
@@ -5518,6 +5492,9 @@ export class Task {
         );
         const nextInfo: ValorIDEApiReqInfo = {
           ...existingInfo,
+          estimatedTokensOut: hasUsageDetails()
+            ? undefined
+            : estimateTextTokens(assistantMessage),
           isComplete: apiReqComplete || undefined,
           usagePending: usagePending && !hasUsageDetails() ? true : undefined,
           cancelReason,
@@ -5779,8 +5756,19 @@ export class Task {
       } catch (error) {
         // abandoned happens when extension is no longer waiting for the valoride instance to finish aborting (error is thrown here when any function in the for loop throws due to this.abort)
         if (!this.abandoned) {
-          this.abortTask(); // if the stream failed, there's various states the task could be in (i.e. could have streamed some tools the user may have executed), so we just resort to replicating a cancel task
           const errorMessage = this.formatErrorWithStatusCode(error);
+          await this.reportTerminal({
+            confidence: "EXPLICIT",
+            error: {
+              code: "ERR_TASK_STREAM_FAILED",
+              message: errorMessage,
+              retryable: true,
+            },
+            kind: "failed",
+            source: "runtime-envelope",
+            summary: "ValorIDE task streaming failed before completion.",
+          });
+          void this.abortTask(); // if the stream failed, there's various states the task could be in (i.e. could have streamed some tools the user may have executed), so we just resort to replicating a cancel task
 
           await abortStream("streaming_failed", errorMessage);
           await this.reinitExistingTaskFromId(this.taskId);
@@ -5922,6 +5910,17 @@ export class Task {
       return didEndLoop; // will always be false for now
     } catch (error) {
       // this should never happen since the only thing that can throw an error is the attemptApiRequest, which is wrapped in a try catch that sends an ask where if noButtonClicked, will clear current task and destroy this instance. However to avoid unhandled promise rejection, we will end this loop which will end execution of this instance (see startTask)
+      await this.reportTerminal({
+        confidence: "EXPLICIT",
+        error: {
+          code: "ERR_TASK_EXECUTION_FAILED",
+          message: error instanceof Error ? error.message : String(error),
+          retryable: true,
+        },
+        kind: "failed",
+        source: "runtime-envelope",
+        summary: "ValorIDE task execution failed before completion.",
+      });
       return true; // needs to be true so parent loop knows to end task
     }
   }
@@ -6012,26 +6011,8 @@ export class Task {
     const inactiveTerminals = this.terminalManager.getTerminals(false);
     // const allTerminals = [...busyTerminals, ...inactiveTerminals]
 
-    if (busyTerminals.length > 0 && this.didEditFile) {
-      //  || this.didEditFile
-      await setTimeoutPromise(300); // delay after saving file to let terminals catch up
-    }
-
-    // let terminalWasBusy = false
-    if (busyTerminals.length > 0) {
-      // wait for terminals to cool down
-      // terminalWasBusy = allTerminals.some((t) => this.terminalManager.isProcessHot(t.id))
-      await pWaitFor(
-        () =>
-          busyTerminals.every((t) => !this.terminalManager.isProcessHot(t.id)),
-        {
-          interval: 100,
-          timeout: 15_000,
-        },
-      ).catch(() => {});
-    }
-
-    // we want to get diagnostics AFTER terminal cools down for a few reasons: terminal could be scaffolding a project, dev servers (compilers like webpack) will first re-compile and then send diagnostics, etc
+    // Snapshot terminal output immediately. Long-running dev servers are expected
+    // to remain hot and must never hold the next agent/tool turn hostage.
     /*
     let diagnosticsDetails = ""
     const diagnostics = await this.diagnosticsMonitor.getCurrentDiagnostics(this.didEditFile || terminalWasBusy) // if valoride ran a command (ie npm install) or edited the workspace then wait a bit for updated diagnostics
@@ -6158,15 +6139,8 @@ export class Task {
         return 0;
       }
       try {
-        const { tokensIn, tokensOut, cacheWrites, cacheReads } = JSON.parse(
-          msg.text,
-        );
-        return (
-          (tokensIn || 0) +
-          (tokensOut || 0) +
-          (cacheWrites || 0) +
-          (cacheReads || 0)
-        );
+        const info = JSON.parse(msg.text) as ValorIDEApiReqInfo;
+        return promptContextTokens(info);
       } catch (e) {
         return 0;
       }

@@ -12,7 +12,7 @@ npm install -g valor-cli
 
 ```bash
 # Create and run a new task
-valor task run "Add dark mode support to the app"
+valor task "Add dark mode support to the app" --act
 
 # List active sessions
 valor instance ls
@@ -31,11 +31,10 @@ valor checkpoint restore --task my-task --step 1
 Manage agentic coding tasks
 
 ```bash
-valor task run "your task here"          # Run a new task
-valor task run --plan                    # Plan mode (dry-run)
-valor task run --act                     # Act mode (execute)
-valor task run --session <id>            # Attach to existing session
-valor task list                          # List all tasks
+valor task "your task here" --plan       # Plan mode (read-only)
+valor task "your task here" --act        # Act mode (execute)
+valor task "your task here" --session <id>
+valor task-list                          # List all tasks
 ```
 
 ### instance
@@ -71,6 +70,12 @@ valor checkpoint compare --task <id> --step <n>
 ## Session Persistence
 
 Sessions are stored in `~/.valoride/sessions/` and can be resumed across CLI invocations and IDE instances.
+
+## Headless Runtime
+
+The CLI runs tasks through an installed Codex runtime and streams its JSON event lifecycle to stdout so supervisors such as Valkyr SWARM can emit realtime progress and terminal receipts. On macOS it prefers the self-contained Codex binary shipped with ChatGPT; elsewhere it discovers `codex` on `PATH`. Set `VALOR_RUNTIME_EXECUTABLE` only when the product runtime is installed at a nonstandard path.
+
+Plan mode uses a read-only sandbox. Act mode uses a workspace-write sandbox. Outbound sends, production deployments, and merges remain separately human-approved.
 
 ## Multi-Project Workspaces
 

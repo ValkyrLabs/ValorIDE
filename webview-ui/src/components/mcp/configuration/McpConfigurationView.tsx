@@ -9,7 +9,6 @@ import InstalledServersView from "./tabs/installed/InstalledServersView";
 import { McpViewTab } from "@shared/mcp";
 import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 type McpViewProps = {
@@ -48,7 +47,6 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
 
   return (
     <>
-      <SystemAlerts />
       <div
         style={{
           position: "fixed",

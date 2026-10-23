@@ -1,4 +1,5 @@
 import { GrayMatterClient, GrayMatterClientError } from "./GrayMatterClient";
+import { createHash } from "node:crypto";
 
 const jsonResponse = (status: number, body: unknown): Response =>
   ({
@@ -18,7 +19,231 @@ const headerValue = (
 ): string | undefined =>
   (headers as Record<string, string> | undefined)?.[name.toLowerCase()];
 
+describe("verified GrayMatter writes", () => {
+  const id = "883e5d08-fde8-4c68-8b34-c9238a116863";
+  const input = {
+    content: "Decision: preserve verified outcomes.",
+    type: "decision" as const,
+  };
+  const saved = { id, type: "decision", text: "preserve verified outcomes." };
+
+  it("reads back the exact normalized record before returning a bounded verification receipt", async () => {
+    const fetch = jest.fn(async () =>
+      jsonResponse(200, { ...saved, secretField: "private-server-data" }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch,
+      getAuthToken: () => "token",
+    });
+    const result = await client.writeMemory(input);
+    expect(result).toMatchObject({
+      id,
+      type: "decision",
+      verification: {
+        status: "verified",
+        purpose: "write_verification",
+        contentHash: createHash("sha256").update(saved.text).digest("hex"),
+        inputContentHash: createHash("sha256")
+          .update(input.content)
+          .digest("hex"),
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain("private-server-data");
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls[1]).toMatchObject([
+      `https://api.example.test/v1/MemoryEntry/${id}`,
+      { method: "GET" },
+    ]);
+  });
+
+  for (const [label, status, body] of [
+    ["skipped", 202, undefined],
+    ["missing identity", 200, {}],
+    ["invalid identity", 200, { ...saved, id: "not-a-uuid" }],
+    ["wrong type", 200, { ...saved, type: "todo" }],
+  ] as const) {
+    it(`does not report a ${label} write as durable`, async () => {
+      const fetch = jest.fn(async () => jsonResponse(status, body));
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => "token",
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+      });
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+  }
+
+  for (const [label, status, body] of [
+    [
+      "identity mismatch",
+      200,
+      { ...saved, id: "11111111-1111-4111-8111-111111111111" },
+    ],
+    ["text mismatch", 200, { ...saved, text: "a different memory" }],
+    ["type mismatch", 200, { ...saved, type: "context" }],
+    ["denied", 403, { message: "private-server-data" }],
+    ["missing", 404, { message: "private-server-data" }],
+    ["accepted without completion", 202, saved],
+  ] as const) {
+    it(`preserves an unverified reference after ${label} readback without another POST`, async () => {
+      const fetch = jest
+        .fn<Promise<Response>, [string, RequestInit?]>()
+        .mockResolvedValueOnce(jsonResponse(200, saved))
+        .mockResolvedValueOnce(jsonResponse(status, body));
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => "token",
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+        memoryId: id,
+      });
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(
+        fetch.mock.calls.filter(([, init]) => init?.method === "POST"),
+      ).toHaveLength(1);
+    });
+  }
+
+  for (const boundary of [
+    "token-after-write",
+    "tenant-after-write",
+    "token-after-read",
+  ] as const) {
+    it(`rejects ${boundary} session drift`, async () => {
+      let token = "original",
+        tenantId = "tenant-a",
+        calls = 0;
+      const fetch = jest.fn(async () => {
+        calls++;
+        if (
+          boundary === "token-after-write" ||
+          (boundary === "token-after-read" && calls === 2)
+        )
+          token = "changed";
+        if (boundary === "tenant-after-write") tenantId = "tenant-b";
+        return jsonResponse(200, saved);
+      });
+      const client = new GrayMatterClient({
+        baseUrl: "https://api.example.test/v1",
+        fetch,
+        getAuthToken: () => token,
+        getTenantContext: () => ({ tenantId }),
+      });
+      await expect(client.writeMemory(input)).rejects.toMatchObject({
+        kind: "unverified",
+        memoryId: id,
+      });
+      expect(fetch).toHaveBeenCalledTimes(
+        boundary === "token-after-read" ? 2 : 1,
+      );
+    });
+  }
+
+  it("requires a session before writing and keeps unknown transport outcomes unverified", async () => {
+    const fetch = jest.fn(async () => {
+      throw new Error("private-transport-data");
+    });
+    const options = { baseUrl: "https://api.example.test/v1", fetch };
+    await expect(
+      new GrayMatterClient({
+        ...options,
+        getAuthToken: () => undefined,
+      }).writeMemory(input),
+    ).rejects.toMatchObject({ kind: "unauthenticated" });
+    expect(fetch).not.toHaveBeenCalled();
+    await expect(
+      new GrayMatterClient({
+        ...options,
+        getAuthToken: () => "token",
+      }).writeMemory(input),
+    ).rejects.toMatchObject({ kind: "unverified" });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("GrayMatterClient", () => {
+  it("compiles and projects a bounded Bifrost ContextPage", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/context_page/compile")
+          ? jsonResponse(200, {
+              contextPageRef: "context-page-1",
+              traceId: "trace-1",
+              tokenEstimate: 512,
+            })
+          : jsonResponse(200, {
+              contextPageRef: "context-page-1",
+              prompt: "compressed invariant context",
+              promptHash: "prompt-hash-1",
+              sourceHash: "source-hash-1",
+              tokenEstimate: 128,
+            }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(
+      client.compileContextPage({
+        taskIntent: "optimize local model context",
+        tokenBudget: 640,
+        includeProcedures: true,
+        includeRatings: true,
+        filters: { workspace: "ValorIDE" },
+      }),
+    ).resolves.toMatchObject({
+      contextPageRef: "context-page-1",
+      traceId: "trace-1",
+    });
+    await expect(
+      client.compileContextPagePrompt({
+        contextPageRef: "context-page-1",
+        surface: "code",
+        task: "optimize local model context",
+        maxTokens: 640,
+      }),
+    ).resolves.toMatchObject({
+      prompt: "compressed invariant context",
+      promptHash: "prompt-hash-1",
+    });
+
+    expect(fetchMock.mock.calls).toEqual([
+      [
+        "https://api-0.valkyrlabs.com/v1/graymatter_ops/context_page/compile",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            taskIntent: "optimize local model context",
+            tokenBudget: 640,
+            includeProcedures: true,
+            includeRatings: true,
+            filters: { workspace: "ValorIDE" },
+          }),
+        }),
+      ],
+      [
+        "https://api-0.valkyrlabs.com/v1/graymatter_ops/context_page/prompt",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            contextPageRef: "context-page-1",
+            surface: "code",
+            task: "optimize local model context",
+            maxTokens: 640,
+          }),
+        }),
+      ],
+    ]);
+  });
+
   it("loads RBAC-scoped GrayMatter capabilities from the Valhalla control surface", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>
@@ -253,10 +478,11 @@ describe("GrayMatterClient", () => {
 
   it("writes durable memory records with an explicit GrayMatter memory type", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () =>
-        jsonResponse(201, {
-          id: "memory-1",
+      async (_url, init) =>
+        jsonResponse(init?.method === "POST" ? 201 : 200, {
+          id: "883e5d08-fde8-4c68-8b34-c9238a116863",
           type: "decision",
+          text: "ValorIDE uses GrayMatter as primary durable memory.",
         }),
     );
     const client = new GrayMatterClient({
@@ -316,7 +542,8 @@ describe("GrayMatterClient", () => {
 
   it("recalls through the receipt-backed OmegaRAG contract without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { receiptRef: "rr-1", trajectoryRef: "traj-1" }),
+      async () =>
+        jsonResponse(200, { receiptRef: "rr-1", trajectoryRef: "traj-1" }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -412,7 +639,8 @@ describe("GrayMatterClient", () => {
 
   it("forgets through the idempotent OmegaRAG deletion contract", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { deletionStatus: "deleted", replayed: false }),
+      async () =>
+        jsonResponse(200, { deletionStatus: "deleted", replayed: false }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -440,7 +668,11 @@ describe("GrayMatterClient", () => {
 
   it("reads an authorized redacted OmegaRAG trajectory", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { trajectory: { trajectoryId: "traj-1" }, steps: [] }),
+      async () =>
+        jsonResponse(200, {
+          trajectory: { trajectoryId: "traj-1" },
+          steps: [],
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -458,7 +690,11 @@ describe("GrayMatterClient", () => {
 
   it("evaluates an authorized OmegaRAG trajectory without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { evaluation: { evaluationId: "eval-1" }, replayed: false }),
+      async () =>
+        jsonResponse(200, {
+          evaluation: { evaluationId: "eval-1" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -524,7 +760,11 @@ describe("GrayMatterClient", () => {
 
   it("manages tenant-scoped OmegaRAG index jobs without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(200, { job: { jobId: "job-1", state: "QUEUED" }, replayed: false }),
+      async () =>
+        jsonResponse(200, {
+          job: { jobId: "job-1", state: "QUEUED" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -542,14 +782,18 @@ describe("GrayMatterClient", () => {
     await client.cancelOmegaIndexJob("job-1");
 
     const [estimateUrl, estimateInit] = fetchMock.mock.calls[0];
-    expect(estimateUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(estimateUrl).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs",
+    );
     expect(JSON.parse(estimateInit?.body as string)).toEqual({
       dryRun: true,
       idempotencyKey: "estimate-1",
       mode: "estimate",
     });
     const [startUrl, startInit] = fetchMock.mock.calls[1];
-    expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/index-jobs");
+    expect(startUrl).toBe(
+      "https://api.example.test/v1/graymatter/omega/index-jobs",
+    );
     expect(JSON.parse(startInit?.body as string)).toEqual({
       idempotencyKey: "index-1",
       mode: "incremental",
@@ -569,7 +813,11 @@ describe("GrayMatterClient", () => {
 
   it("manages a content-free resumable OmegaRAG retrieval run without client identity", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () => jsonResponse(202, { run: { runId: "run-1", state: "QUEUED" }, replayed: false }),
+      async () =>
+        jsonResponse(202, {
+          run: { runId: "run-1", state: "QUEUED" },
+          replayed: false,
+        }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api.example.test/v1",
@@ -586,7 +834,10 @@ describe("GrayMatterClient", () => {
     });
     await client.getOmegaRetrievalRun("run-1");
     await client.cancelOmegaRetrievalRun("run-1");
-    await client.resumeOmegaRetrievalRun("run-1", "what changed in the project");
+    await client.resumeOmegaRetrievalRun(
+      "run-1",
+      "what changed in the project",
+    );
 
     const [startUrl, startInit] = fetchMock.mock.calls[0];
     expect(startUrl).toBe("https://api.example.test/v1/graymatter/omega/runs");
@@ -600,11 +851,15 @@ describe("GrayMatterClient", () => {
     expect(fetchMock.mock.calls[1][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1",
     );
-    expect(fetchMock.mock.calls[1][1]).toEqual(expect.objectContaining({ method: "GET" }));
+    expect(fetchMock.mock.calls[1][1]).toEqual(
+      expect.objectContaining({ method: "GET" }),
+    );
     expect(fetchMock.mock.calls[2][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1/cancel",
     );
-    expect(fetchMock.mock.calls[2][1]).toEqual(expect.objectContaining({ method: "POST" }));
+    expect(fetchMock.mock.calls[2][1]).toEqual(
+      expect.objectContaining({ method: "POST" }),
+    );
     expect(fetchMock.mock.calls[3][0]).toBe(
       "https://api.example.test/v1/graymatter/omega/runs/run-1/resume",
     );
@@ -737,5 +992,41 @@ describe("GrayMatterClient", () => {
       retrievalMode: "HYBRID",
       topK: 12,
     });
+  });
+
+  it("uses the shared Valkyr Labs RTK Query timeout for memory reads", async () => {
+    const realSetTimeout = global.setTimeout;
+    const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation(((
+      callback: (...args: unknown[]) => void,
+      delay?: number,
+      ...args: unknown[]
+    ) => {
+      if (delay === 16 * 60_000) {
+        queueMicrotask(() => callback(...args));
+        return {} as NodeJS.Timeout;
+      }
+      return realSetTimeout(callback, delay, ...args);
+    }) as typeof setTimeout);
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (_url, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new Error("aborted"));
+          });
+        }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await expect(client.listMemory()).rejects.toMatchObject<
+      Partial<GrayMatterClientError>
+    >({
+      kind: "unavailable",
+      message: "Valkyr Labs API request timed out after 960000 ms.",
+    });
+    setTimeoutSpy.mockRestore();
   });
 });

@@ -3,7 +3,66 @@ import "should";
 import { OutputFilterService } from "./OutputFilterService";
 
 describe("OutputFilterService", () => {
+  describe("summarizeRepetitiveOutput", () => {
+    it("should summarize repeated lines", () => {
+      const content = `
+Different line
+Same line
+Same line
+Same line
+Another different line
+      `;
+
+      // Access private method for testing
+      const result = OutputFilterService.filterCommandOutput(
+        content,
+        "custom-tool",
+      );
+
+      result.should.containEql("Different line");
+      result.should.containEql("Same line");
+      result.should.containEql("[Previous line repeated 2 times]");
+      result.should.containEql("Another different line");
+    });
+
+    it("should handle empty lines correctly", () => {
+      const content = `
+Line 1
+
+Line 2
+Line 2
+
+Line 3
+      `;
+
+      const result = OutputFilterService.filterCommandOutput(
+        content,
+        "custom-tool",
+      );
+
+      result.should.containEql("Line 1");
+      result.should.containEql("Line 2");
+      result.should.containEql("[Previous line repeated 1 times]");
+      result.should.containEql("Line 3");
+    });
+  });
+
   describe("filterMavenOutput", () => {
+    it("enforces the total output budget while retaining the first error and final status", () => {
+      const input =
+        "[ERROR] First failure\n" +
+        "detail\n".repeat(2000) +
+        "[INFO] BUILD FAILURE";
+      const result = OutputFilterService.filterMavenOutput(input, {
+        maxOutputLength: 150,
+      });
+      result.length.should.be.belowOrEqual(150);
+      result.should.containEql("[ERROR] First failure");
+      result.should.containEql("BUILD FAILURE");
+      OutputFilterService.filterMavenOutput(input, {
+        maxOutputLength: 10,
+      }).length.should.be.belowOrEqual(10);
+    });
     it("should remove download progress indicators", () => {
       const input = `
 [INFO] Scanning for projects...

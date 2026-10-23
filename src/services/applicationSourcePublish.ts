@@ -1,5 +1,5 @@
 import AdmZip from "adm-zip";
-import axios from "axios";
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 import crypto from "crypto";
 import fs from "fs/promises";
 import ignore, { Ignore } from "ignore";
@@ -334,16 +334,13 @@ export async function publishApplicationSource({
   await onProgress?.(
     `Uploading ${archive.manifest.fileCount.toLocaleString()} source files to ValkyrAI...`,
   );
-  const response = await axios.post<ApplicationSourcePublishResult>(
-    `${getValkyraiBasePath()}/thorapi/applications/${encodeURIComponent(applicationId)}/source-snapshots`,
-    formData,
-    {
+  const response =
+    await getValkyrLabsRtkApiClient().request<ApplicationSourcePublishResult>({
+      url: `${getValkyraiBasePath()}/thorapi/applications/${encodeURIComponent(applicationId)}/source-snapshots`,
+      method: "POST",
+      body: formData,
       headers: { Authorization: `Bearer ${jwtToken}`, jwtSession: jwtToken },
-      timeout: 10 * 60_000,
-      maxBodyLength: MAX_SOURCE_BYTES,
-      maxContentLength: MAX_SOURCE_BYTES,
-    },
-  );
+    });
   await onProgress?.(
     `Published immutable source revision ${response.data.revisionRef}`,
   );

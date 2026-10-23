@@ -62,7 +62,10 @@ export class MothershipService extends EventEmitter {
   }
 
   public async connect(): Promise<void> {
-    if (this.connected && this.stompClient?.connected) {
+    if (
+      (this.connected && this.stompClient?.connected) ||
+      this.stompClient?.active
+    ) {
       return;
     }
 
@@ -166,20 +169,16 @@ export class MothershipService extends EventEmitter {
       pathname = pathname.slice(0, -3) || "";
     }
 
-    if (/\/ws\/websocket$/i.test(pathname)) {
-      url.pathname = pathname.replace(/\/websocket$/i, "");
-    } else if (/\/chat\/websocket$/i.test(pathname)) {
-      url.pathname = pathname.replace(/\/websocket$/i, "");
+    if (/\/(ws|chat)\/websocket$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/(ws|chat)\/websocket$/i, "/swarm");
     } else if (/\/swarm\/websocket$/i.test(pathname)) {
       url.pathname = pathname.replace(/\/websocket$/i, "");
-    } else if (/\/ws$/i.test(pathname)) {
-      url.pathname = pathname;
-    } else if (/\/chat$/i.test(pathname)) {
-      url.pathname = pathname;
+    } else if (/\/(ws|chat)$/i.test(pathname)) {
+      url.pathname = pathname.replace(/\/(ws|chat)$/i, "/swarm");
     } else if (/\/swarm$/i.test(pathname)) {
       url.pathname = pathname;
     } else {
-      url.pathname = `${pathname}/ws`;
+      url.pathname = `${pathname}/swarm`;
     }
 
     return url;
@@ -214,42 +213,7 @@ export class MothershipService extends EventEmitter {
     this.connected = true;
     this.reconnectAttempts = 0;
     this.subscribeToMothershipTopics();
-    this.startPingInterval();
     this.emit("connected");
-
-    // Send initial registration message.
-    this.sendMessage({
-      type: WebsocketMessageTypeEnum.SERVICE,
-      payload: JSON.stringify({
-        action: "register",
-        instanceId: this.instanceId,
-        userId: this.options.userId,
-        timestamp: Date.now(),
-      }),
-      time: new Date().toISOString(),
-      user: { id: this.options.userId || "anonymous" } as any,
-    });
-
-    try {
-      this.sendAppTopic("presence:join", {
-        id: this.instanceId,
-        online: true,
-      });
-      this.sendAppTopic("auth:ack", { id: this.instanceId });
-      this.sendAppTopic("presence:rollcall", { id: this.instanceId });
-      this.sendAppTopic("session:resume", {
-        id: this.instanceId,
-        lastProcessedSequence: this.lastProcessedSequence,
-        replayWindowSize: this.replayWindowSize,
-      });
-      this.emit("liveness", {
-        id: this.instanceId,
-        online: true,
-        timestamp: Date.now(),
-      });
-    } catch (e) {
-      console.warn("Failed to send presence/rollcall on connect:", e);
-    }
   }
 
   private subscribeToMothershipTopics(): void {
@@ -262,9 +226,7 @@ export class MothershipService extends EventEmitter {
 
     const headers = this.buildAgentHeaders();
     const destinations = [
-      "/topic/messages",
-      "/topic/statuses",
-      "/topic/agent-commands",
+      "/user/queue/swarm-control",
       `/queue/agents/${this.instanceId}/commands`,
     ];
 
@@ -296,19 +258,6 @@ export class MothershipService extends EventEmitter {
     if (wasConnected) {
       this.emit("disconnected", event);
     }
-  }
-
-  private startPingInterval(): void {
-    this.stopPingInterval();
-    this.pingInterval = setInterval(() => {
-      if (this.stompClient?.connected) {
-        this.sendMessage({
-          type: WebsocketMessageTypeEnum.SERVICE,
-          payload: JSON.stringify({ action: "ping" }),
-          time: new Date().toISOString(),
-        });
-      }
-    }, 30000); // Ping every 30 seconds
   }
 
   private stopPingInterval(): void {
@@ -489,10 +438,15 @@ export class MothershipService extends EventEmitter {
   private handleRemoteCommand(payload: any): void {
     try {
       const commandPayload = payload?.command ?? payload?.message ?? payload;
-      const isSwarmCommand = validateSwarmMessage(commandPayload);
-      const innerPayload = isSwarmCommand
+      const generatedCommandEnvelope =
+        String(commandPayload?.type ?? "").toLowerCase() === "command" &&
+        typeof commandPayload?.payload?.action === "string";
+      const isSwarmCommand =
+        validateSwarmMessage(commandPayload) || generatedCommandEnvelope;
+      const innerPayloadRaw = isSwarmCommand
         ? commandPayload.payload?.data
         : (commandPayload?.data ?? commandPayload?.payload ?? payload?.payload);
+      const innerPayload = this.parseRemoteCommandPayload(innerPayloadRaw);
       const command: RemoteCommand = {
         id:
           payload?.commandId ||
@@ -533,7 +487,21 @@ export class MothershipService extends EventEmitter {
     }
   }
 
-  public sendMessage(message: Partial<WebsocketMessage>): void {
+  private parseRemoteCommandPayload(payload: any): any {
+    if (typeof payload !== "string") {
+      return payload;
+    }
+    try {
+      return JSON.parse(payload);
+    } catch {
+      return payload;
+    }
+  }
+
+  public sendMessage(
+    message: Partial<WebsocketMessage>,
+    destination?: string,
+  ): void {
     if (!this.connected || !this.stompClient?.connected) {
       console.warn("Cannot send message - mothership not connected");
       return;
@@ -578,9 +546,10 @@ export class MothershipService extends EventEmitter {
       this.stompClient.publish({
         body: JSON.stringify(jsonMessage),
         destination:
-          fullMessage.type === ("command" as any)
+          destination ??
+          (fullMessage.type === ("command" as any)
             ? "/app/command"
-            : "/app/chat",
+            : "/app/chat"),
         headers: this.buildAgentHeaders(),
       });
     } catch (error) {
@@ -594,6 +563,25 @@ export class MothershipService extends EventEmitter {
       payload: JSON.stringify(data),
       time: new Date().toISOString(),
     });
+  }
+
+  public sendSwarmControlPayload(data: any): void {
+    const envelope = {
+      topic: "swarm",
+      payload: data,
+      senderId: this.instanceId,
+      messageId: Math.random().toString(36).slice(2, 12),
+      sequence: ++this.outboundSequence,
+      timestamp: Date.now(),
+    };
+    this.sendMessage(
+      {
+        type: WebsocketMessageTypeEnum.BROADCAST,
+        payload: JSON.stringify(envelope),
+        time: new Date().toISOString(),
+      },
+      "/app/swarm/control",
+    );
   }
 
   public sendValorIDEAction(taskId: string, action: string, data: any): void {
@@ -632,6 +620,12 @@ export class MothershipService extends EventEmitter {
     data: any,
     type: WebsocketMessageTypeEnum = WebsocketMessageTypeEnum.BROADCAST,
   ): void {
+    if (topic !== "swarm") {
+      console.warn(
+        `Skipped unsupported legacy mothership topic ${topic}; use the canonical SWARM control or command-response path`,
+      );
+      return;
+    }
     const envelope = {
       topic,
       payload: data,
@@ -640,11 +634,14 @@ export class MothershipService extends EventEmitter {
       sequence: ++this.outboundSequence,
       timestamp: Date.now(),
     };
-    this.sendMessage({
-      type,
-      payload: JSON.stringify(envelope),
-      time: new Date().toISOString(),
-    });
+    this.sendMessage(
+      {
+        type,
+        payload: JSON.stringify(envelope),
+        time: new Date().toISOString(),
+      },
+      "/app/swarm/control",
+    );
   }
 
   public disconnect(): void {
@@ -668,6 +665,10 @@ export class MothershipService extends EventEmitter {
   }
 
   public updateJwtToken(newToken: string): void {
+    if (newToken === this.options.jwtToken) {
+      return;
+    }
+
     this.options.jwtToken = newToken;
 
     // Reconnect with new token if currently connected

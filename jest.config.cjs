@@ -1,7 +1,8 @@
+const tests = require("./scripts/host-test-inventory.cjs")();
 module.exports = {
   testEnvironment: "node",
   roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts", "**/*.test.tsx"],
+  testMatch: tests.jest.map((file) => `<rootDir>/${file}`),
   transform: {
     "^.+\\.(ts|tsx|js|jsx)$": "<rootDir>/jest.esbuild-transform.cjs",
   },

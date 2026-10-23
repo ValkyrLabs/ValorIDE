@@ -2,6 +2,16 @@ import { AxiosResponseHeaders } from "axios";
 import type { AuthenticatedUser, AuthTokens } from "./TokenStorageService";
 import { extractTenantContext } from "./tenantContext";
 
+type AuthResponseHeaders =
+  | AxiosResponseHeaders
+  | Record<string, string | string[]>;
+
+export const withAuthResponseCookies = (
+  headers: Record<string, string>,
+  setCookies?: string[],
+): AuthResponseHeaders =>
+  setCookies?.length ? { ...headers, "set-cookie": setCookies } : headers;
+
 const TOKEN_BODY_FIELDS = [
   "token",
   "jwtToken",
@@ -48,7 +58,7 @@ const AUTH_BODY_CONTAINERS = [
 ];
 
 const getCaseInsensitive = (
-  source: Record<string, any> | AxiosResponseHeaders | undefined,
+  source: AuthResponseHeaders | undefined,
   key: string,
 ) => {
   if (!source) {
@@ -97,7 +107,7 @@ const extractCookieValue = (
 };
 
 const extractCookieToken = (
-  headers?: AxiosResponseHeaders | Record<string, any>,
+  headers?: AuthResponseHeaders,
 ): string | undefined => {
   const rawSetCookie = getCaseInsensitive(headers, "set-cookie");
   const cookies = Array.isArray(rawSetCookie)
@@ -140,10 +150,7 @@ const extractStringField = (body: any, fields: string[]) => {
   return undefined;
 };
 
-export const extractAuthToken = (
-  body: any,
-  headers?: AxiosResponseHeaders | Record<string, any>,
-) => {
+export const extractAuthToken = (body: any, headers?: AuthResponseHeaders) => {
   const bodyToken = extractStringField(body, TOKEN_BODY_FIELDS);
   if (bodyToken) {
     return bodyToken;
@@ -223,7 +230,7 @@ export const extractAuthenticatedUser = (body: any) => {
 
 export const buildAuthTokensFromResponse = (
   body: any,
-  headers?: AxiosResponseHeaders | Record<string, any>,
+  headers?: AuthResponseHeaders,
 ): AuthTokens | undefined => {
   const jwtToken = extractAuthToken(body, headers);
   if (!jwtToken) {

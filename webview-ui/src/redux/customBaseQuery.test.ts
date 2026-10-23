@@ -1,3 +1,7 @@
+import {
+  Request as ThorNodeRequest,
+  type RequestInit as ThorNodeRequestInit,
+} from "node-fetch";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { BaseQueryApi } from "@reduxjs/toolkit/query";
 import customBaseQuery from "./customBaseQuery";
@@ -5,7 +9,7 @@ import { setValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import thorapiBaseQuery from "@thorapi/redux/customBaseQuery";
 
 const baseQueryApi: BaseQueryApi = {
-  signal: undefined as unknown as AbortSignal,
+  signal: new AbortController().signal,
   abort: vi.fn(),
   dispatch: vi.fn(),
   getState: vi.fn(),
@@ -71,9 +75,34 @@ const createMockStorage = (): Storage => {
   } as Storage;
 };
 
+// Use the existing fetch polyfill with jsdom's AbortSignal, and retain browser
+// URL resolution and cookie credentials when RTK clones a Request.
+class ThorBrowserRequest extends ThorNodeRequest {
+  readonly credentials: RequestCredentials;
+
+  constructor(input: RequestInfo | URL, init?: RequestInit) {
+    super(
+      input instanceof ThorNodeRequest
+        ? input
+        : new URL(String(input), window.location.href).href,
+      init as ThorNodeRequestInit,
+    );
+    this.credentials =
+      init?.credentials ??
+      (input instanceof ThorBrowserRequest ? input.credentials : "same-origin");
+  }
+
+  override clone() {
+    return new ThorBrowserRequest(this as unknown as Request);
+  }
+}
+
 describe("customBaseQuery", () => {
   beforeEach(() => {
     vi.unstubAllGlobals();
+    vi.stubEnv("VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED", "false");
+    baseQueryApi.signal = new AbortController().signal;
+    vi.stubGlobal("Request", ThorBrowserRequest);
     const session = createMockStorage();
     const local = createMockStorage();
     Object.defineProperty(window, "sessionStorage", {
@@ -91,6 +120,7 @@ describe("customBaseQuery", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it("does not send an expired bearer token when logging in", async () => {
@@ -264,29 +294,42 @@ describe("customBaseQuery", () => {
     expect(request.headers.jwtSession).toBe("session-token");
   });
 
-  it("uses cookie transport for generated ThorAPI calls without bearer fallback", async () => {
-    sessionStorage.setItem("jwtToken", "stale-token");
-    localStorage.setItem("jwtToken", "stale-token");
-    const fetchMock = vi.fn(
-      async () =>
-        new Response(JSON.stringify([]), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }),
-    );
-    vi.stubGlobal("fetch", fetchMock);
+  it.each([
+    { mode: "cookies only", storedToken: null },
+    { mode: "cookies and stored session", storedToken: "session-token" },
+  ])(
+    "uses $mode without opting into global bearer fallback",
+    async ({ storedToken }) => {
+      vi.stubGlobal("__VALKYR_AUTH_TOKEN__", "unapproved-global-token");
+      if (storedToken) {
+        sessionStorage.setItem("jwtToken", storedToken);
+      }
+      const fetchMock = vi.fn(
+        async () =>
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+      );
+      vi.stubGlobal("fetch", fetchMock);
 
-    await thorapiBaseQuery(
-      {
-        url: "/MemoryEntry",
-        method: "GET",
-      },
-      baseQueryApi,
-      {},
-    );
+      await thorapiBaseQuery(
+        {
+          url: "/MemoryEntry",
+          method: "GET",
+        },
+        baseQueryApi,
+        {},
+      );
 
-    expect(credentialsFromFetchCall(fetchMock)).toBe("include");
-    expect(headersFromFetchCall(fetchMock).get("authorization")).toBeNull();
-    expect(urlFromFetchCall(fetchMock)).toContain("/MemoryEntry");
-  });
+      expect(credentialsFromFetchCall(fetchMock)).toBe("include");
+      expect(headersFromFetchCall(fetchMock).get("authorization")).toBe(
+        storedToken ? `Bearer ${storedToken}` : null,
+      );
+      expect(headersFromFetchCall(fetchMock).get("jwtSession")).toBe(
+        storedToken,
+      );
+      expect(urlFromFetchCall(fetchMock)).toContain("/MemoryEntry");
+    },
+  );
 });

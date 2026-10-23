@@ -6,8 +6,17 @@ import * as path from "path";
 import fs from "fs/promises";
 import cloneDeep from "clone-deep";
 import { ValorIDEApiReqInfo, ValorIDEMessage } from "@shared/ExtensionMessage";
-import { ApiHandler } from "@api/index";
+import type { ApiHandler } from "@api/index";
 import { Anthropic } from "@anthropic-ai/sdk";
+import {
+  estimateConversationTokens,
+  promptContextTokens,
+} from "./ContextEfficiency";
+
+export interface ContextInputBudget {
+  inputTokenBudget: number;
+  systemPromptTokens: number;
+}
 
 enum EditType {
   UNDEFINED = 0,
@@ -126,6 +135,7 @@ export class ContextManager {
     conversationHistoryDeletedRange: [number, number] | undefined,
     previousApiReqIndex: number,
     taskDirectory: string,
+    inputBudget?: ContextInputBudget,
   ) {
     let updatedConversationHistoryDeletedRange = false;
 
@@ -136,15 +146,16 @@ export class ContextManager {
         const timestamp = previousRequest.ts;
         const {
           tokensIn,
-          tokensOut,
           cacheWrites,
           cacheReads,
+          estimatedTokensIn,
         }: ValorIDEApiReqInfo = JSON.parse(previousRequest.text);
-        const totalTokens =
-          (tokensIn || 0) +
-          (tokensOut || 0) +
-          (cacheWrites || 0) +
-          (cacheReads || 0);
+        const totalTokens = promptContextTokens({
+          cacheReads,
+          cacheWrites,
+          estimatedTokensIn,
+          tokensIn,
+        });
         const { maxAllowedSize } = getContextWindowInfo(api);
 
         // This is the most reliable way to know when we're close to hitting the context window.
@@ -201,16 +212,79 @@ export class ContextManager {
       }
     }
 
-    const truncatedConversationHistory = this.getAndAlterTruncatedMessages(
+    let truncatedConversationHistory = this.getAndAlterTruncatedMessages(
       apiConversationHistory,
       conversationHistoryDeletedRange,
     );
+
+    let estimatedConversationTokens = estimateConversationTokens(
+      truncatedConversationHistory,
+    );
+    let estimatedInputTokens =
+      (inputBudget?.systemPromptTokens ?? 0) + estimatedConversationTokens;
+
+    if (
+      inputBudget &&
+      estimatedInputTokens > inputBudget.inputTokenBudget &&
+      apiConversationHistory.length > 4
+    ) {
+      const timestamp =
+        previousApiReqIndex >= 0
+          ? (valorideMessages[previousApiReqIndex]?.ts ?? Date.now())
+          : Date.now();
+      let contextStateUpdated = this.applyContextOptimizations(
+        apiConversationHistory,
+        conversationHistoryDeletedRange
+          ? conversationHistoryDeletedRange[1] + 1
+          : 2,
+        timestamp,
+      )[0];
+      truncatedConversationHistory = this.getAndAlterTruncatedMessages(
+        apiConversationHistory,
+        conversationHistoryDeletedRange,
+      );
+      estimatedConversationTokens = estimateConversationTokens(
+        truncatedConversationHistory,
+      );
+      estimatedInputTokens =
+        inputBudget.systemPromptTokens + estimatedConversationTokens;
+
+      for (let pass = 0; pass < 8; pass += 1) {
+        if (estimatedInputTokens <= inputBudget.inputTokenBudget) break;
+        const nextRange = this.getNextTruncationRange(
+          apiConversationHistory,
+          conversationHistoryDeletedRange,
+          "half",
+        );
+        const previousEnd = conversationHistoryDeletedRange?.[1] ?? 1;
+        if (nextRange[1] <= previousEnd || nextRange[1] < nextRange[0]) break;
+
+        conversationHistoryDeletedRange = nextRange;
+        updatedConversationHistoryDeletedRange = true;
+        contextStateUpdated =
+          this.applyStandardContextTruncationNoticeChange(timestamp) ||
+          contextStateUpdated;
+        truncatedConversationHistory = this.getAndAlterTruncatedMessages(
+          apiConversationHistory,
+          conversationHistoryDeletedRange,
+        );
+        estimatedConversationTokens = estimateConversationTokens(
+          truncatedConversationHistory,
+        );
+        estimatedInputTokens =
+          inputBudget.systemPromptTokens + estimatedConversationTokens;
+      }
+
+      if (contextStateUpdated) await this.saveContextHistory(taskDirectory);
+    }
 
     return {
       conversationHistoryDeletedRange: conversationHistoryDeletedRange,
       updatedConversationHistoryDeletedRange:
         updatedConversationHistoryDeletedRange,
       truncatedConversationHistory: truncatedConversationHistory,
+      estimatedConversationTokens,
+      estimatedInputTokens,
     };
   }
 
@@ -222,6 +296,7 @@ export class ContextManager {
     currentDeletedRange: [number, number] | undefined,
     keep: "none" | "lastTwo" | "half" | "quarter",
   ): [number, number] {
+    if (apiMessages.length <= 2) return [2, 1];
     // We always keep the first user-assistant pairing, and truncate an even number of messages from there
     const rangeStartIndex = 2; // index 0 and 1 are kept
     const startOfRest = currentDeletedRange ? currentDeletedRange[1] + 1 : 2; // inclusive starting index
@@ -250,7 +325,8 @@ export class ContextManager {
 
     let rangeEndIndex = startOfRest + messagesToRemove - 1; // inclusive ending index
 
-    // Make sure that the last message being removed is a assistant message, so the next message after the initial user-assistant pair is an assistant message. This preserves the user-assistant-user-assistant structure.
+    // End on an assistant message so the retained initial pair is followed by
+    // a user message, preserving user-assistant alternation.
     // NOTE: anthropic format messages are always user-assistant-user-assistant, while openai format messages can have multiple user messages in a row (we use anthropic format throughout valoride)
     if (apiMessages[rangeEndIndex].role !== "assistant") {
       rangeEndIndex -= 1;

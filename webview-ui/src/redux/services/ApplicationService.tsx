@@ -1,6 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Application } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery"; // Import the custom base query
+import {
+  applicationTagsFor,
+  normalizeApplicationResponse,
+} from "./applicationResponse";
 
 type ApplicationResponse = Application[];
 
@@ -16,10 +20,11 @@ export const ApplicationService = createApi({
     >({
       query: ({ page, limit = 20 }) =>
         `Application?page=${page}&limit=${limit}`,
+      transformResponse: normalizeApplicationResponse,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
+              ...applicationTagsFor(result),
               { type: "Application", id: `PAGE_${page}` },
             ]
           : [],
@@ -31,66 +36,13 @@ export const ApplicationService = createApi({
         url: `Application`,
         method: "GET",
       }),
+      transformResponse: normalizeApplicationResponse,
       providesTags: (result) =>
         result
-          ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
-              { type: "Application", id: "LIST" },
-            ]
+          ? [...applicationTagsFor(result), { type: "Application", id: "LIST" }]
           : [{ type: "Application", id: "LIST" }],
       // Keep data for 5 minutes to retain across tab switches
       keepUnusedDataFor: 300,
-    }),
-
-    // Generate Application Stack
-    generateApplication: build.mutation<
-      { blob: Blob; filename: string; mimeType?: string },
-      string
-    >({
-      query: (applicationId) => ({
-        url: `thorapi/generate/${applicationId}`,
-        method: "POST",
-        responseHandler: async (response) => {
-          const blob = await response.blob();
-          const contentType =
-            response.headers.get("content-type") || blob.type || undefined;
-
-          // Extract filename from Content-Disposition header
-          const contentDisposition = response.headers.get(
-            "content-disposition",
-          );
-          let filename = `${applicationId}.zip`; // fallback filename
-
-          console.log("Content-Disposition header:", contentDisposition);
-
-          if (contentDisposition) {
-            // Try multiple patterns to extract filename
-            let filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
-            if (!filenameMatch) {
-              filenameMatch = contentDisposition.match(/filename=([^;\s]+)/);
-            }
-
-            if (filenameMatch && filenameMatch[1]) {
-              filename = filenameMatch[1].trim();
-              console.log("Extracted filename:", filename);
-            } else {
-              console.log("No filename match found in header");
-            }
-          } else {
-            console.log("No Content-Disposition header found");
-          }
-
-          if (!/\.zip$/i.test(filename) && contentType?.includes("zip")) {
-            filename = `${filename}.zip`;
-            console.log("Normalized filename with .zip extension:", filename);
-          }
-
-          return { blob, filename, mimeType: contentType || undefined };
-        },
-      }),
-      invalidatesTags: (result, error, applicationId) => [
-        { type: "Application", id: applicationId },
-      ],
     }),
 
     // Deploy Application (stub for now)
@@ -175,6 +127,5 @@ export const {
   useAddApplicationMutation,
   useUpdateApplicationMutation,
   useDeleteApplicationMutation,
-  useGenerateApplicationMutation,
   useDeployApplicationMutation,
 } = ApplicationService;

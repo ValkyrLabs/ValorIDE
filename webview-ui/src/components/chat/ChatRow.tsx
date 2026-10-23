@@ -50,6 +50,7 @@ import {
   FaBolt,
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
+import ProcedureToolCard from "./ProcedureToolCard";
 import type {
   ValorIDEApiReqInfo,
   ValorIDEAskUseMcpServer,
@@ -1176,6 +1177,8 @@ export const ChatRowContent = ({
       return {
         ...info,
         tokensIn: toNumber(info.tokensIn),
+        estimatedTokensIn: toNumber(info.estimatedTokensIn),
+        estimatedTokensOut: toNumber(info.estimatedTokensOut),
         tokensOut: toNumber(info.tokensOut),
         cacheWrites: toNumber(info.cacheWrites),
         cacheReads: toNumber(info.cacheReads),
@@ -1219,6 +1222,8 @@ export const ChatRowContent = ({
       parsedApiReqInfo.usagePending === true ||
       parsedApiReqInfo.isComplete === true ||
       typeof parsedApiReqInfo.tokensIn === "number" ||
+      typeof parsedApiReqInfo.estimatedTokensIn === "number" ||
+      typeof parsedApiReqInfo.estimatedTokensOut === "number" ||
       typeof parsedApiReqInfo.tokensOut === "number" ||
       typeof parsedApiReqInfo.cacheWrites === "number" ||
       typeof parsedApiReqInfo.cacheReads === "number"
@@ -1722,6 +1727,13 @@ export const ChatRowContent = ({
     );
 
     switch (tool.tool) {
+      case "useProcedure":
+        return (
+          <ProcedureToolCard
+            content={tool.content}
+            awaitingApproval={message.type === "ask"}
+          />
+        );
       case "editedExistingFile":
         return (
           <>
@@ -2541,10 +2553,23 @@ export const ChatRowContent = ({
                         <div>Usage: pending</div>
                       )}
                       <div>
-                        In: {formatUsageValue(apiReqInfo?.tokensIn)} tokens
+                        In:{" "}
+                        {apiReqInfo?.tokensIn == null &&
+                        apiReqInfo?.estimatedTokensIn != null
+                          ? "≈"
+                          : ""}
+                        {formatUsageValue(
+                          apiReqInfo?.tokensIn ?? apiReqInfo?.estimatedTokensIn,
+                        )}{" "}
+                        tokens
                       </div>
                       <div>
-                        Out: {formatUsageValue(apiReqInfo?.tokensOut)} tokens
+                        Out: {apiReqInfo?.tokensOut == null ? "≈" : ""}
+                        {formatUsageValue(
+                          apiReqInfo?.tokensOut ??
+                            apiReqInfo?.estimatedTokensOut,
+                        )}{" "}
+                        tokens
                       </div>
                       <div>
                         Cache writes:{" "}
@@ -2560,6 +2585,21 @@ export const ChatRowContent = ({
                           apiReqInfo?.costUnit,
                         )}
                       </div>
+                      {apiReqInfo?.contextMode && (
+                        <div>
+                          Context: {apiReqInfo.contextMode} · {"≈"}
+                          {formatUsageValue(
+                            apiReqInfo.systemPromptTokensEstimated,
+                          )}{" "}
+                          system + {"≈"}
+                          {formatUsageValue(
+                            apiReqInfo.conversationTokensEstimated,
+                          )}{" "}
+                          history /{" "}
+                          {formatUsageValue(apiReqInfo.contextInputBudget)}{" "}
+                          budget
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -2591,19 +2631,30 @@ export const ChatRowContent = ({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 8,
-                border: `1px solid ${
-                  isReady
-                    ? "color-mix(in srgb, var(--vscode-charts-green) 55%, transparent)"
-                    : "color-mix(in srgb, var(--vscode-editorWarning-foreground) 55%, transparent)"
-                }`,
-                borderRadius: 8,
-                padding: 10,
-                background:
-                  "color-mix(in srgb, var(--vscode-editorWidget-background) 82%, transparent)",
+                gap: isExpanded ? 6 : 0,
+                border: "none",
+                padding: "2px 0",
+                background: "transparent",
               }}
             >
-              <div style={headerStyle}>
+              <div
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                onClick={onToggleExpand}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onToggleExpand();
+                  }
+                }}
+                style={{ ...headerStyle, cursor: "pointer", minHeight: 20 }}
+              >
+                {isExpanded ? (
+                  <FaChevronDown size={10} />
+                ) : (
+                  <FaChevronRight size={10} />
+                )}
                 <FaBolt
                   color={
                     isReady
@@ -2631,34 +2682,47 @@ export const ChatRowContent = ({
                   {status}
                 </span>
               </div>
-              {recoveryMessage && (
+              {isExpanded && (
                 <div
                   style={{
-                    color: "var(--vscode-foreground)",
-                    fontSize: 12,
-                    lineHeight: 1.35,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 6,
+                    paddingLeft: 18,
                   }}
                 >
-                  {recoveryMessage}
-                </div>
-              )}
-              {actions.length > 0 && (
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {actions.map((action) => (
-                    <VSCodeButton
-                      key={action.id || action.label}
-                      appearance={action.primary ? "primary" : "secondary"}
-                      onClick={() =>
-                        vscode.postMessage({
-                          type: "showAccountViewClicked",
-                          accountTab:
-                            action.id === "buy_credits" ? "credits" : "login",
-                        } as any)
-                      }
+                  {recoveryMessage && (
+                    <div
+                      style={{
+                        color: "var(--vscode-foreground)",
+                        fontSize: 12,
+                        lineHeight: 1.35,
+                      }}
                     >
-                      {action.label || "Open account"}
-                    </VSCodeButton>
-                  ))}
+                      {recoveryMessage}
+                    </div>
+                  )}
+                  {actions.length > 0 && (
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {actions.map((action) => (
+                        <VSCodeButton
+                          key={action.id || action.label}
+                          appearance={action.primary ? "primary" : "secondary"}
+                          onClick={() =>
+                            vscode.postMessage({
+                              type: "showAccountViewClicked",
+                              accountTab:
+                                action.id === "buy_credits"
+                                  ? "credits"
+                                  : "login",
+                            } as any)
+                          }
+                        >
+                          {action.label || "Open account"}
+                        </VSCodeButton>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

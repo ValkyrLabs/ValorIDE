@@ -19,16 +19,20 @@ export interface MothershipTopicBridge {
     listener: (payload: any) => void,
   ): unknown;
   sendAppTopic(topic: string, data: any): void;
+  sendSwarmControlPayload?(data: any): void;
   sendCommandPayload?(data: any): void;
 }
 
 type PendingAck = {
   message: SwarmMessage;
   resolve: (message: SwarmMessage) => void;
+  retryTimers: Array<ReturnType<typeof setTimeout>>;
   timeout: ReturnType<typeof setTimeout>;
 };
 
 const DEFAULT_ACK_TIMEOUT_MS = 30_000;
+const REGISTRATION_ACK_TIMEOUT_MS = 60_000;
+const REGISTRATION_RETRY_DELAYS_MS = [1_000, 5_000, 15_000] as const;
 
 export class MothershipSwarmTransport implements SwarmNodeTransport {
   private readonly pending = new Map<string, PendingAck>();
@@ -51,39 +55,64 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
       message.type === SwarmMessageType.NACK
     ) {
       this.mothership.sendCommandPayload?.(message);
-      this.mothership.sendAppTopic(message.type, {
-        ackId: message.ackId,
-        commandId: message.ackId,
-        code: message.payload.data.code,
-        error: message.payload.data.error,
-        status: message.type === SwarmMessageType.ACK ? "ok" : "rejected",
-      });
       return;
     }
 
+    const action = String(message.payload?.action ?? "").toLowerCase();
+    if (
+      (action === "register" || action === "heartbeat") &&
+      this.mothership.sendSwarmControlPayload
+    ) {
+      this.mothership.sendSwarmControlPayload(message);
+      return;
+    }
+
+    if (this.mothership.sendSwarmControlPayload) {
+      this.mothership.sendSwarmControlPayload(message);
+      return;
+    }
     this.mothership.sendAppTopic("swarm", message);
   }
 
   sendAndWaitForAck(
     message: SwarmMessage,
-    timeoutMs = DEFAULT_ACK_TIMEOUT_MS,
+    timeoutMs?: number,
   ): Promise<SwarmMessage> {
     return new Promise((resolve) => {
+      const action = String(message.payload?.action ?? "").toLowerCase();
+      const isRegistration = action === "register";
+      const effectiveTimeoutMs =
+        timeoutMs ??
+        (isRegistration
+          ? REGISTRATION_ACK_TIMEOUT_MS
+          : DEFAULT_ACK_TIMEOUT_MS);
       const timeout = setTimeout(() => {
         this.resolvePending(
           message.id,
           buildNack(
             message,
             this.serverEntity,
-            `Timeout waiting for SWARM ack/nack (${timeoutMs}ms)`,
+            `Timeout waiting for SWARM ack/nack (${effectiveTimeoutMs}ms)`,
             "ERR_ACK_TIMEOUT",
           ),
         );
-      }, timeoutMs);
+      }, effectiveTimeoutMs);
+      const retryTimers = isRegistration
+        ? REGISTRATION_RETRY_DELAYS_MS.filter(
+            (delay) => delay < effectiveTimeoutMs,
+          ).map((delay) =>
+            setTimeout(() => {
+              if (this.pending.has(message.id)) {
+                this.send(message);
+              }
+            }, delay),
+          )
+        : [];
 
       this.pending.set(message.id, {
         message,
         resolve,
+        retryTimers,
         timeout,
       });
       this.send(message);
@@ -96,6 +125,7 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
 
     for (const pending of this.pending.values()) {
       clearTimeout(pending.timeout);
+      pending.retryTimers.forEach((timer) => clearTimeout(timer));
       pending.resolve(
         buildNack(
           pending.message,
@@ -169,6 +199,7 @@ export class MothershipSwarmTransport implements SwarmNodeTransport {
     }
 
     clearTimeout(pending.timeout);
+    pending.retryTimers.forEach((timer) => clearTimeout(timer));
     this.pending.delete(messageId);
     pending.resolve(response);
   }

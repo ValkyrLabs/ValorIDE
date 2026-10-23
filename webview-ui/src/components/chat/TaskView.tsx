@@ -63,6 +63,17 @@ const ScrollToBottomButton = styled.div`
   }
 `;
 
+const TaskMessageListFooter = () => <div style={{ height: 5 }} />;
+const TASK_MESSAGE_LIST_COMPONENTS = { Footer: TaskMessageListFooter };
+
+const taskMessageKey = (
+  _index: number,
+  messageOrGroup: ValorIDEMessage | ValorIDEMessage[],
+) =>
+  Array.isArray(messageOrGroup)
+    ? `browser-${messageOrGroup[0]?.ts ?? "empty"}`
+    : messageOrGroup.ts;
+
 const ActionButtonsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -522,12 +533,11 @@ const TaskView: React.FC<TaskViewProps> = ({
             flexGrow: 1,
             overflowY: "scroll",
           }}
-          components={{
-            Footer: () => <div style={{ height: 5 }} />,
-          }}
+          components={TASK_MESSAGE_LIST_COMPONENTS}
+          computeItemKey={taskMessageKey}
           increaseViewportBy={{
-            top: 3_000,
-            bottom: Number.MAX_SAFE_INTEGER,
+            top: 1_200,
+            bottom: 1_600,
           }}
           data={groupedMessages}
           itemContent={itemContent}

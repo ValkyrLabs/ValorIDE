@@ -22,7 +22,7 @@ const ensureApiBasePath = (value: string) => {
 
 const listeners = new Set<HostListener>();
 
-const sanitizeHost = (value?: string): string => {
+export const normalizeValkyraiHost = (value?: string): string => {
   const candidate = (value || "").trim();
   if (!candidate) {
     return trimTrailingSlashes(rawDefault);
@@ -44,7 +44,7 @@ let currentHost =
     (window as any).__valorideValkyraiBasePath) ||
   DEFAULT_VALKYRAI_HOST;
 
-currentHost = sanitizeHost(currentHost);
+currentHost = normalizeValkyraiHost(currentHost);
 setBasePath(currentHost);
 
 const notifyHostChange = (host: string) => {
@@ -60,7 +60,7 @@ const notifyHostChange = (host: string) => {
 export const getValkyraiHost = () => currentHost;
 
 export const setValkyraiHost = (value?: string) => {
-  const nextHost = sanitizeHost(value);
+  const nextHost = normalizeValkyraiHost(value);
   if (nextHost === currentHost) {
     return;
   }

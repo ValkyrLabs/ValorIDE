@@ -37,11 +37,9 @@ describe("FileContextTracker", () => {
     };
 
     // Use a function replacement instead of a direct stub
-    const originalCreateFileSystemWatcher =
-      vscode.workspace.createFileSystemWatcher;
-    vscode.workspace.createFileSystemWatcher = function () {
-      return mockFileSystemWatcher;
-    };
+    sandbox
+      .stub(vscode.workspace, "createFileSystemWatcher")
+      .returns(mockFileSystemWatcher);
 
     // Mock controller and context
     mockContext = {
@@ -188,16 +186,13 @@ describe("FileContextTracker", () => {
     const filePath = "src/test-file.ts";
 
     // Create a spy to track if createFileSystemWatcher was called
-    const createWatcherSpy = sinon.spy(
-      vscode.workspace,
-      "createFileSystemWatcher",
-    );
+    const createWatcherSpy = vscode.workspace
+      .createFileSystemWatcher as sinon.SinonStub;
 
     await tracker.trackFileContext(filePath, "read_tool");
 
     // Verify createFileSystemWatcher was called
     expect(createWatcherSpy.called).to.be.true;
-    createWatcherSpy.restore();
 
     // Verify onDidChange was called to set up the change listener
     expect(mockFileSystemWatcher.onDidChange.called).to.be.true;

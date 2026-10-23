@@ -14,12 +14,16 @@ const activeBilling = {
 function mockFetchWithBilling(status: any) {
   vi.stubGlobal(
     "fetch",
-    vi.fn((url: string) => {
-      if (url.includes("/billing/status")) {
-        return Promise.resolve({ ok: true, json: async () => status });
-      }
-      return Promise.resolve({ ok: true, json: async () => [] });
-    }) as any,
+    vi.fn((input: RequestInfo | URL) => {
+      const url = input instanceof Request ? input.url : String(input);
+      const body = url.includes("/billing/status") ? status : [];
+      return Promise.resolve(
+        new Response(JSON.stringify(body), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    }),
   );
 }
 

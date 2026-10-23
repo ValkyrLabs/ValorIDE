@@ -1,10 +1,17 @@
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import { createHash } from "node:crypto";
 import type {
   GrayMatterCapabilities,
   GrayMatterControlSurface,
 } from "@shared/GrayMatterSession";
 import { buildTenantHeaders } from "../auth/tenantContext";
 import type { TenantContext } from "../auth/tenantContext";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+  ValkyrLabsFetch,
+  ValkyrLabsRtkApiClient,
+} from "../valkyrai/ValkyrLabsRtkApi";
 
 export type { GrayMatterCapabilities, GrayMatterControlSurface };
 
@@ -22,9 +29,11 @@ export type GrayMatterErrorKind =
   | "unauthenticated"
   | "unavailable";
 
+export type GrayMatterMemoryWriteErrorKind = GrayMatterErrorKind | "unverified";
+
 export interface GrayMatterClientOptions {
   baseUrl: string;
-  fetch?: FetchLike;
+  fetch?: ValkyrLabsFetch;
   getAuthToken: () => Promise<string | undefined> | string | undefined;
   getTenantContext?: () =>
     | Promise<TenantContext | undefined>
@@ -64,6 +73,22 @@ export interface GrayMatterRetrievalReceiptQuery {
   workflowId?: string;
 }
 
+export interface GrayMatterContextPageCompileInput {
+  filters?: Record<string, unknown>;
+  includeProcedures?: boolean;
+  includeRatings?: boolean;
+  taskIntent: string;
+  tokenBudget?: number;
+  traceId?: string;
+}
+
+export interface GrayMatterContextPagePromptInput {
+  contextPageRef: string;
+  maxTokens?: number;
+  surface: "action" | "audit" | "chat" | "code" | "research" | "workflow";
+  task?: string;
+}
+
 export interface GrayMatterOmegaRecallInput {
   asOf?: string;
   budgets?: Record<string, unknown>;
@@ -73,7 +98,10 @@ export interface GrayMatterOmegaRecallInput {
   query: string;
 }
 
-export type GrayMatterOmegaPlanInput = Omit<GrayMatterOmegaRecallInput, "includeEvaluator"> & {
+export type GrayMatterOmegaPlanInput = Omit<
+  GrayMatterOmegaRecallInput,
+  "includeEvaluator"
+> & {
   includeEvaluator?: boolean;
 };
 
@@ -151,7 +179,6 @@ export interface GrayMatterProjectInput {
   workspacePath?: string;
 }
 
-type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 type HeaderRecord = Record<string, string>;
 
 interface OpenApiLike {
@@ -174,13 +201,84 @@ export class GrayMatterClientError extends Error {
   }
 }
 
+export class GrayMatterMemoryWriteUnverifiedError extends Error {
+  readonly kind = "unverified" as const;
+
+  constructor(readonly memoryId?: string) {
+    super(
+      "Memory persistence could not be verified. Inspect the exact memory when its reference is available before another write. This attempt must not be replayed automatically.",
+    );
+    this.name = "GrayMatterMemoryWriteUnverifiedError";
+  }
+}
+
+export interface GrayMatterMemoryWriteReceipt {
+  id: string;
+  type: GrayMatterMemoryType;
+  verification: {
+    status: "verified";
+    purpose: "write_verification";
+    contentHash: string;
+    inputContentHash: string;
+  };
+}
+
+const memoryRecord = (value: unknown): value is Record<string, any> =>
+  value !== null &&
+  typeof value === "object" &&
+  !Array.isArray(value) &&
+  [Object.prototype, null].includes(Object.getPrototypeOf(value));
+const memoryId = (value: unknown): value is string =>
+  typeof value === "string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+const memoryHash = (text: string): string =>
+  createHash("sha256").update(text).digest("hex");
+
+/** A raw HTTP acknowledgement is not a verified durable memory receipt. */
+export function requireVerifiedMemoryWrite(
+  value: unknown,
+  input: GrayMatterMemoryInput,
+): GrayMatterMemoryWriteReceipt {
+  const id = memoryRecord(value) && memoryId(value.id) ? value.id : undefined;
+  const proof =
+    memoryRecord(value) && memoryRecord(value.verification)
+      ? value.verification
+      : undefined;
+  if (
+    !id ||
+    !memoryRecord(value) ||
+    value.type !== input.type ||
+    proof?.status !== "verified" ||
+    proof?.purpose !== "write_verification" ||
+    typeof proof.contentHash !== "string" ||
+    !/^[0-9a-f]{64}$/.test(proof.contentHash) ||
+    proof.inputContentHash !== memoryHash(input.content)
+  )
+    throw new GrayMatterMemoryWriteUnverifiedError(id);
+  return {
+    id,
+    type: input.type,
+    verification: {
+      status: "verified",
+      purpose: "write_verification",
+      contentHash: proof.contentHash,
+      inputContentHash: proof.inputContentHash,
+    },
+  };
+}
+
+interface MemoryWriteSession {
+  token: string;
+  tenantHeaders: string;
+}
+
 export class GrayMatterClient {
   private readonly baseUrl: string;
-  private readonly fetchImpl: FetchLike;
+  private readonly api: ValkyrLabsRtkApiClient;
 
   constructor(private readonly options: GrayMatterClientOptions) {
     this.baseUrl = normalizeValkyraiHost(options.baseUrl);
-    this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.api = getValkyrLabsRtkApiClient(options.fetch);
   }
 
   async loadDiscovery(): Promise<GrayMatterDiscovery> {
@@ -358,9 +456,7 @@ export class GrayMatterClient {
     });
   }
 
-  async planOmegaRetrieval(
-    input: GrayMatterOmegaPlanInput,
-  ): Promise<unknown> {
+  async planOmegaRetrieval(input: GrayMatterOmegaPlanInput): Promise<unknown> {
     return this.request("/graymatter/omega/plan", {
       body: JSON.stringify({
         query: input.query,
@@ -394,9 +490,7 @@ export class GrayMatterClient {
     });
   }
 
-  async forgetOmegaMemory(
-    input: GrayMatterOmegaForgetInput,
-  ): Promise<unknown> {
+  async forgetOmegaMemory(input: GrayMatterOmegaForgetInput): Promise<unknown> {
     return this.request("/graymatter/omega/forget", {
       body: JSON.stringify({
         idempotencyKey: input.idempotencyKey,
@@ -426,7 +520,11 @@ export class GrayMatterClient {
   async estimateOmegaIndexJob(
     input: Omit<GrayMatterOmegaIndexJobInput, "dryRun" | "mode"> = {},
   ): Promise<unknown> {
-    return this.startOmegaIndexJob({ ...input, dryRun: true, mode: "estimate" });
+    return this.startOmegaIndexJob({
+      ...input,
+      dryRun: true,
+      mode: "estimate",
+    });
   }
 
   async getOmegaIndexJob(jobId: string): Promise<unknown> {
@@ -462,10 +560,9 @@ export class GrayMatterClient {
   }
 
   async getOmegaRetrievalRun(runId: string): Promise<unknown> {
-    return this.request(
-      `/graymatter/omega/runs/${encodeURIComponent(runId)}`,
-      { method: "GET" },
-    );
+    return this.request(`/graymatter/omega/runs/${encodeURIComponent(runId)}`, {
+      method: "GET",
+    });
   }
 
   async cancelOmegaRetrievalRun(runId: string): Promise<unknown> {
@@ -538,22 +635,137 @@ export class GrayMatterClient {
     );
   }
 
-  async writeMemory(input: GrayMatterMemoryInput): Promise<unknown> {
+  async compileContextPage(
+    input: GrayMatterContextPageCompileInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter_ops/context_page/compile", {
+      body: JSON.stringify({
+        taskIntent: input.taskIntent,
+        ...(input.tokenBudget ? { tokenBudget: input.tokenBudget } : {}),
+        ...(input.traceId ? { traceId: input.traceId } : {}),
+        ...(input.includeProcedures === undefined
+          ? {}
+          : { includeProcedures: input.includeProcedures }),
+        ...(input.includeRatings === undefined
+          ? {}
+          : { includeRatings: input.includeRatings }),
+        ...(input.filters ? { filters: input.filters } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
+  async compileContextPagePrompt(
+    input: GrayMatterContextPagePromptInput,
+  ): Promise<unknown> {
+    return this.request("/graymatter_ops/context_page/prompt", {
+      body: JSON.stringify({
+        contextPageRef: input.contextPageRef,
+        surface: input.surface,
+        ...(input.task ? { task: input.task } : {}),
+        ...(input.maxTokens ? { maxTokens: input.maxTokens } : {}),
+      }),
+      method: "POST",
+    });
+  }
+
+  async writeMemory(
+    input: GrayMatterMemoryInput,
+  ): Promise<GrayMatterMemoryWriteReceipt> {
     const metadata =
       input.metadata && Object.keys(input.metadata).length > 0
         ? JSON.stringify(input.metadata)
         : undefined;
 
-    return this.request("/MemoryEntry/write", {
-      body: JSON.stringify({
-        content: input.content,
-        text: input.content,
-        ...(metadata ? { metadata } : {}),
-        ...(input.tags ? { tags: input.tags } : {}),
+    const session = await this.memoryWriteSession();
+    let id: string | undefined;
+    let acknowledged = false;
+    try {
+      const response = await this.request(
+        "/MemoryEntry/write",
+        {
+          body: JSON.stringify({
+            content: input.content,
+            text: input.content,
+            ...(metadata ? { metadata } : {}),
+            ...(input.tags ? { tags: input.tags } : {}),
+            type: input.type,
+          }),
+          method: "POST",
+        },
+        { session, statuses: [200, 201] },
+      );
+      acknowledged = true;
+      if (memoryRecord(response) && memoryId(response.id)) id = response.id;
+      if (
+        !id ||
+        !memoryRecord(response) ||
+        response.type !== input.type ||
+        typeof response.text !== "string" ||
+        !response.text.trim()
+      )
+        throw new GrayMatterMemoryWriteUnverifiedError(id);
+      const readback = await this.request(
+        `/MemoryEntry/${id}`,
+        {},
+        { session, statuses: [200] },
+      );
+      await this.requireMemoryWriteSession(session);
+      if (
+        !memoryRecord(readback) ||
+        readback.id !== id ||
+        readback.type !== response.type ||
+        readback.text !== response.text
+      )
+        throw new GrayMatterMemoryWriteUnverifiedError(id);
+      return {
+        id,
         type: input.type,
-      }),
-      method: "POST",
-    });
+        verification: {
+          status: "verified",
+          purpose: "write_verification",
+          contentHash: memoryHash(response.text),
+          inputContentHash: memoryHash(input.content),
+        },
+      };
+    } catch (error) {
+      // A rejected POST can retain the existing auth/quota handling. Once a
+      // response was accepted, even a later read denial leaves a possible write.
+      if (
+        !acknowledged &&
+        error instanceof GrayMatterClientError &&
+        ["unauthenticated", "quota", "forbidden"].includes(error.kind)
+      )
+        throw error;
+      throw new GrayMatterMemoryWriteUnverifiedError(id);
+    }
+  }
+
+  private async memoryWriteSession(): Promise<MemoryWriteSession> {
+    const token = await this.options.getAuthToken();
+    const tenantHeaders = JSON.stringify(
+      buildTenantHeaders(await this.options.getTenantContext?.()),
+    );
+    if (!token)
+      throw new GrayMatterClientError(
+        "Sign in before writing GrayMatter memory.",
+        "unauthenticated",
+      );
+    return { token, tenantHeaders };
+  }
+
+  private async requireMemoryWriteSession(
+    expected: MemoryWriteSession,
+  ): Promise<void> {
+    const current = await this.memoryWriteSession();
+    if (
+      current.token !== expected.token ||
+      current.tenantHeaders !== expected.tenantHeaders
+    )
+      throw new GrayMatterClientError(
+        "The selected GrayMatter session changed.",
+        "unauthenticated",
+      );
   }
 
   async listProjects(): Promise<unknown> {
@@ -586,9 +798,20 @@ export class GrayMatterClient {
   private async request<T = unknown>(
     path: string,
     init: RequestInit = {},
+    verification?: { session: MemoryWriteSession; statuses: number[] },
   ): Promise<T> {
     const token = await this.options.getAuthToken();
     const tenantContext = await this.options.getTenantContext?.();
+    if (
+      verification &&
+      (token !== verification.session.token ||
+        JSON.stringify(buildTenantHeaders(tenantContext)) !==
+          verification.session.tenantHeaders)
+    )
+      throw new GrayMatterClientError(
+        "The selected GrayMatter session changed.",
+        "unauthenticated",
+      );
     const headers = toHeaderRecord(init.headers);
 
     headers.accept = "application/json";
@@ -600,76 +823,71 @@ export class GrayMatterClient {
     }
     applyHeaderRecord(headers, buildTenantHeaders(tenantContext));
 
-    const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-      ...init,
-      headers,
-    });
-
-    if (!response.ok) {
-      throw await this.toClientError(response);
+    try {
+      const response = await this.api.request<T>({
+        body: init.body,
+        headers,
+        method: init.method,
+        url: `${this.baseUrl}${path}`,
+      });
+      if (verification && !verification.statuses.includes(response.status))
+        throw new GrayMatterMemoryWriteUnverifiedError();
+      return response.data;
+    } catch (error) {
+      if (error instanceof ValkyrLabsApiError) {
+        throw this.toClientError(error);
+      }
+      throw error;
     }
-
-    const contentType = getHeaderValue(response.headers, "content-type") ?? "";
-    if (contentType.includes("application/json")) {
-      return (await response.json()) as T;
-    }
-
-    return (await response.text()) as T;
   }
 
-  private async toClientError(
-    response: Response,
-  ): Promise<GrayMatterClientError> {
-    const message = await this.readErrorMessage(response);
+  private toClientError(error: ValkyrLabsApiError): GrayMatterClientError {
+    const message = readApiErrorMessage(error.data) || error.message;
+    const status = typeof error.status === "number" ? error.status : undefined;
 
-    switch (response.status) {
+    switch (status) {
       case 401:
         return new GrayMatterClientError(
           message || "GrayMatter authentication is required.",
           "unauthenticated",
-          response.status,
+          status,
         );
       case 402:
         return new GrayMatterClientError(
           message || "ValorIDE account credits are required.",
           "quota",
-          response.status,
+          status,
         );
       case 403:
         return new GrayMatterClientError(
           message || "GrayMatter access was denied by RBAC or tenant context.",
           "forbidden",
-          response.status,
+          status,
         );
       default:
         return new GrayMatterClientError(
           message || "GrayMatter is unavailable.",
           "unavailable",
-          response.status,
+          status,
         );
     }
   }
-
-  private async readErrorMessage(response: Response): Promise<string> {
-    try {
-      const contentType =
-        getHeaderValue(response.headers, "content-type") ?? "";
-      if (contentType.includes("application/json")) {
-        const body = await response.json();
-        if (typeof body?.message === "string") {
-          return body.message;
-        }
-        if (typeof body?.error === "string") {
-          return body.error;
-        }
-      }
-
-      return await response.text();
-    } catch {
-      return "";
-    }
-  }
 }
+
+const readApiErrorMessage = (data: unknown): string => {
+  if (typeof data === "string") {
+    return data;
+  }
+  if (!data || typeof data !== "object") {
+    return "";
+  }
+  const body = data as Record<string, unknown>;
+  return typeof body.message === "string"
+    ? body.message
+    : typeof body.error === "string"
+      ? body.error
+      : "";
+};
 
 const toHeaderRecord = (headers?: HeadersInit): HeaderRecord => {
   const record: HeaderRecord = {};
@@ -716,18 +934,6 @@ const applyHeaderRecord = (
     }
   }
   return headers;
-};
-
-const getHeaderValue = (headers: Response["headers"], name: string) => {
-  const anyHeaders = headers as unknown as {
-    get?: (headerName: string) => string | null;
-  } & HeaderRecord;
-
-  if (typeof anyHeaders.get === "function") {
-    return anyHeaders.get(name);
-  }
-
-  return anyHeaders[name.toLowerCase()] ?? anyHeaders[name];
 };
 
 const capabilitiesFromControlSurface = (

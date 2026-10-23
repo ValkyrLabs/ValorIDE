@@ -19,7 +19,6 @@ import {
   isRetryableError,
 } from "@thorapi/utils/errorHandling";
 import Tooltip from "@thorapi/components/common/Tooltip";
-import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const MCP_MARKETPLACE_HELP_URL =
@@ -105,7 +104,6 @@ const McpMarketplaceView = () => {
   if (isLoading) {
     return (
       <>
-        <SystemAlerts />
         <div
           style={{
             display: "flex",
@@ -124,7 +122,6 @@ const McpMarketplaceView = () => {
   if (error) {
     return (
       <>
-        <SystemAlerts />
         <div
           style={{
             display: "flex",
@@ -197,7 +194,6 @@ const McpMarketplaceView = () => {
 
   return (
     <>
-      <SystemAlerts />
       <div
         style={{
           display: "flex",

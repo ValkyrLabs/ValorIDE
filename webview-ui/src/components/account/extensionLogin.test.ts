@@ -65,4 +65,33 @@ describe("loginThroughExtensionHost", () => {
 
     await expect(promise).rejects.toThrow("access denied");
   });
+
+  it("coalesces duplicate in-flight submits for the same username", async () => {
+    const first = loginThroughExtensionHost({
+      username: "super",
+      password: "stale-password",
+    });
+    const second = loginThroughExtensionHost({
+      username: " Super ",
+      password: "stale-password",
+    });
+
+    expect(second).toBe(first);
+    expect(vscode.postMessage).toHaveBeenCalledTimes(1);
+
+    const posted = vi.mocked(vscode.postMessage).mock.calls[0]?.[0] as any;
+    window.dispatchEvent(
+      new MessageEvent("message", {
+        data: {
+          type: "accountLoginResult",
+          requestId: posted.requestId,
+          success: false,
+          error: "access denied",
+        },
+      }),
+    );
+
+    await expect(first).rejects.toThrow("access denied");
+    await expect(second).rejects.toThrow("access denied");
+  });
 });

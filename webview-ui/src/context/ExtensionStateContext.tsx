@@ -56,7 +56,9 @@ interface ExtensionStateContextType extends Omit<ExtensionState, "userInfo"> {
   mcpMarketplaceCatalog: McpMarketplaceCatalog;
   filePaths: string[];
   totalTasksSize: number | null;
-  setApiConfiguration: (config: ApiConfiguration) => void;
+  setApiConfiguration: (
+    config: ApiConfiguration | ((previous: ApiConfiguration) => ApiConfiguration),
+  ) => void;
   setCustomInstructions: (value?: string) => void;
 
   setShowAnnouncement: (value: boolean) => void;
@@ -608,7 +610,10 @@ export const ExtensionStateContextProvider: React.FC<{
     setApiConfiguration: (value) =>
       setState((prevState) => ({
         ...prevState,
-        apiConfiguration: value,
+        apiConfiguration:
+          typeof value === "function"
+            ? value(prevState.apiConfiguration || {})
+            : value,
       })),
     setCustomInstructions: (value) =>
       setState((prevState) => ({

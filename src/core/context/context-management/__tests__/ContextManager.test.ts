@@ -2,6 +2,9 @@ import { ContextManager } from "../ContextManager";
 import { Anthropic } from "@anthropic-ai/sdk";
 import { expect } from "chai";
 
+// Truncation tests do not launch subprocesses; keep the storage module real.
+jest.mock("execa", () => ({ execa: jest.fn() }));
+
 describe("ContextManager", () => {
   function createMessages(count: number): Anthropic.Messages.MessageParam[] {
     const messages: Anthropic.Messages.MessageParam[] = [];
@@ -38,7 +41,7 @@ describe("ContextManager", () => {
         "half",
       );
 
-      expect(result).to.deep.equal([1, 4]);
+      expect(result).to.deep.equal([2, 5]);
     });
 
     it("first truncation with quarter keep", () => {
@@ -49,7 +52,7 @@ describe("ContextManager", () => {
         "quarter",
       );
 
-      expect(result).to.deep.equal([1, 6]);
+      expect(result).to.deep.equal([2, 7]);
     });
 
     it("sequential truncation with half keep", () => {
@@ -59,7 +62,7 @@ describe("ContextManager", () => {
         undefined,
         "half",
       );
-      expect(firstRange).to.deep.equal([1, 10]);
+      expect(firstRange).to.deep.equal([2, 9]);
 
       // Pass the previous range for sequential truncation
       const secondRange = contextManager.getNextTruncationRange(
@@ -67,7 +70,7 @@ describe("ContextManager", () => {
         firstRange,
         "half",
       );
-      expect(secondRange).to.deep.equal([1, 14]);
+      expect(secondRange).to.deep.equal([2, 13]);
     });
 
     it("sequential truncation with quarter keep", () => {
@@ -84,11 +87,11 @@ describe("ContextManager", () => {
         "quarter",
       );
 
-      expect(secondRange[0]).to.equal(1);
+      expect(secondRange[0]).to.equal(2);
       expect(secondRange[1]).to.be.greaterThan(firstRange[1]);
     });
 
-    it("ensures the last message in range is a user message", () => {
+    it("ensures the last removed message is an assistant after keeping the initial pair", () => {
       const messages = createMessages(14);
       const result = contextManager.getNextTruncationRange(
         messages,
@@ -98,11 +101,11 @@ describe("ContextManager", () => {
 
       // Check if the message at the end of range is a user message
       const lastRemovedMessage = messages[result[1]];
-      expect(lastRemovedMessage.role).to.equal("user");
+      expect(lastRemovedMessage.role).to.equal("assistant");
 
-      // Check if the next message after the range is an assistant message
+      // Check if the next message after the range is a user message
       const nextMessage = messages[result[1] + 1];
-      expect(nextMessage.role).to.equal("assistant");
+      expect(nextMessage.role).to.equal("user");
     });
 
     it("handles small message arrays", () => {
@@ -113,7 +116,22 @@ describe("ContextManager", () => {
         "half",
       );
 
-      expect(result).to.deep.equal([1, 0]);
+      expect(result).to.deep.equal([2, 1]);
+    });
+
+    it("leaves empty histories and the initial pair intact", () => {
+      for (const messages of [[], createMessages(1), createMessages(2)]) {
+        for (const keep of ["none", "lastTwo", "half", "quarter"] as const) {
+          const range = contextManager.getNextTruncationRange(
+            messages,
+            undefined,
+            keep,
+          );
+          expect(
+            contextManager.getTruncatedMessages(messages, range),
+          ).to.deep.equal(messages);
+        }
+      }
     });
 
     it("preserves the message structure when truncating", () => {
@@ -153,42 +171,41 @@ describe("ContextManager", () => {
       expect(result).to.deep.equal(messages);
     });
 
-    it("correctly removes messages in the specified range", () => {
+    it("preserves the initial pair and removes an inclusive middle range", () => {
       const messages = createMessages(5);
-
-      const range: [number, number] = [1, 3];
-      const result = contextManager.getTruncatedMessages(messages, range);
-
-      expect(result).to.have.lengthOf(2);
-      expect(result[0]).to.deep.equal(messages[0]);
-      expect(result[1]).to.deep.equal(messages[4]);
+      const result = contextManager.getTruncatedMessages(messages, [2, 3]);
+      expect(result).to.deep.equal([messages[0], messages[1], messages[4]]);
     });
 
-    it("works with a range that starts at the first message after task", () => {
+    it("keeps only the initial pair when all later complete pairs are removed", () => {
       const messages = createMessages(4);
-
-      const range: [number, number] = [1, 2];
-      const result = contextManager.getTruncatedMessages(messages, range);
-
-      expect(result).to.have.lengthOf(2);
-      expect(result[0]).to.deep.equal(messages[0]);
-      expect(result[1]).to.deep.equal(messages[3]);
+      expect(
+        contextManager.getTruncatedMessages(messages, [2, 3]),
+      ).to.deep.equal(messages.slice(0, 2));
     });
 
-    it("correctly handles removing a range while preserving alternation pattern", () => {
-      const messages = createMessages(5);
-
-      const range: [number, number] = [1, 2];
+    it("keeps the initial and latest pairs in order without mutating messages", () => {
+      const messages = createMessages(6);
+      const original = structuredClone(messages);
+      const range = contextManager.getNextTruncationRange(
+        messages,
+        undefined,
+        "lastTwo",
+      );
       const result = contextManager.getTruncatedMessages(messages, range);
-
-      expect(result).to.have.lengthOf(3);
-      expect(result[0]).to.deep.equal(messages[0]);
-      expect(result[1]).to.deep.equal(messages[3]);
-      expect(result[2]).to.deep.equal(messages[4]);
-
-      expect(result[0].role).to.equal("user");
-      expect(result[1].role).to.equal("assistant");
-      expect(result[2].role).to.equal("user");
+      expect(result).to.deep.equal([
+        messages[0],
+        messages[1],
+        messages[4],
+        messages[5],
+      ]);
+      expect(result.map((message) => message.role)).to.deep.equal([
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+      ]);
+      expect(messages).to.deep.equal(original);
     });
   });
 });

@@ -63,6 +63,7 @@ export function deriveChatLoadingState({
           msg.say === "browser_action_launch" ||
           msg.say === "browser_action" ||
           msg.say === "mcp_server_request_started" ||
+          msg.say === "mcp_server_response" ||
           msg.say === "completion_result",
       );
 

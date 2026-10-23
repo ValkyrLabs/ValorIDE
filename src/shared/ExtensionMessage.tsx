@@ -103,6 +103,7 @@ export interface ExtensionMessage {
     | "swarm:command-response"
     | "swarm:broadcast"
     | "valkyraiHostTestResult"
+    | "valkyraiHostSaveResult"
     | "swarm:private-message"
     | "taskCompletionFilePreview"
     | "webviewError"
@@ -183,6 +184,7 @@ export interface ExtensionMessage {
   isConnected?: boolean;
   isRemote?: boolean;
   host?: string;
+  requiresAuth?: boolean;
   mentionsRequestId?: string;
   results?: Array<{
     path: string;
@@ -214,6 +216,7 @@ export interface ExtensionMessage {
     error?: string; // Optional error message
   };
   streamToThorapiResult?: {
+    requestId?: string;
     success: boolean;
     applicationId?: string;
     error?: string;
@@ -297,6 +300,14 @@ export interface UserInfo {
   password: string; // Make password optional
 }
 
+export interface TaskProgressCorrelation {
+  commandId: string;
+  correlationId: string;
+  localTaskId: string;
+  sessionId: string;
+  taskId?: string;
+}
+
 export interface ExtensionState {
   apiConfiguration?: ApiConfiguration;
   autoApprovalSettings: AutoApprovalSettings;
@@ -307,7 +318,9 @@ export interface ExtensionState {
   chatSettings: ChatSettings;
   checkpointTrackerErrorMessage?: string;
   valorideMessages: ValorIDEMessage[];
+  currentTaskId?: string;
   currentTaskItem?: HistoryItem;
+  taskProgressCorrelation?: TaskProgressCorrelation;
   customInstructions?: string;
   mcpMarketplaceEnabled?: boolean;
   planActSeparateModelsSetting: boolean;
@@ -431,7 +444,9 @@ export interface ValorIDESayTool {
     | "listFilesRecursive"
     | "listCodeDefinitionNames"
     | "searchFiles"
-    | "precisionSearchAndReplace";
+    | "precisionSearchAndReplace"
+    | "useProcedure";
+  procedureAction?: string;
   path?: string;
   diff?: string;
   content?: string;
@@ -498,7 +513,25 @@ export interface ValorIDEP2PChatMessage {
 }
 
 export interface ValorIDEApiReqInfo {
+  bifrostCompilerVersion?: string;
+  bifrostContextHash?: string;
+  bifrostContextPageRef?: string;
+  bifrostIncludedItemCount?: number;
+  bifrostLineageHash?: string;
+  bifrostPromptHash?: string;
+  bifrostRetrievalReceiptRef?: string;
+  bifrostSourceHashCount?: number;
+  bifrostTraceId?: string;
+  contextInputBudget?: number;
+  contextMode?: "compact" | "standard";
+  contextPolicyReason?: string;
+  contextWindow?: number;
+  conversationTokensEstimated?: number;
+  estimatedTokensIn?: number;
+  estimatedTokensOut?: number;
+  grayMatterTokensEstimated?: number;
   request?: string;
+  systemPromptTokensEstimated?: number;
   tokensIn?: number;
   tokensOut?: number;
   cacheWrites?: number;

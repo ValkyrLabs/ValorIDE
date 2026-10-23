@@ -103,9 +103,15 @@ describe("webview accessControl persistence helpers", () => {
     expect(result.token).toBe("persisted-token");
     expect(result.principal).toMatchObject(principal);
     expect(window.sessionStorage.getItem("jwtToken")).toBe("persisted-token");
-    expect(window.sessionStorage.getItem("authenticatedPrincipal")).toBe(
-      JSON.stringify(principal),
-    );
+    expect(
+      JSON.parse(window.sessionStorage.getItem("authenticatedPrincipal")!),
+    ).toEqual({
+      ...principal,
+      email: "",
+      ownerId: principal.id,
+      roles: [],
+      grantedAuthorities: [],
+    });
     expect(dispatchEvent).toHaveBeenCalled();
 
     clearStoredJwtToken("test-cleanup");
@@ -121,10 +127,16 @@ describe("webview accessControl persistence helpers", () => {
       "authenticatedPrincipal",
     );
     const storedLocal = window.localStorage.getItem("authenticatedPrincipal");
-    expect(storedSession).toBe(JSON.stringify(principal));
-    expect(storedLocal).toBe(JSON.stringify(principal));
+    expect(JSON.parse(storedSession!)).toEqual({
+      ...principal,
+      email: "",
+      ownerId: principal.id,
+      roles: [],
+      grantedAuthorities: [],
+    });
+    expect(storedLocal).toBe(storedSession);
     expect(window.sessionStorage.getItem("authenticatedUser")).toBe(
-      JSON.stringify(principal),
+      storedSession,
     );
   });
 });

@@ -19,10 +19,12 @@ jest.mock("@services/P2P/TelecomHub", () => ({
 }));
 
 jest.mock("./getUri", () => ({
-  getUri: jest.fn(
-    (_webview: any, _extUri: any, segments: string[]) =>
-      `webview://${segments.join("/")}`,
-  ),
+  getUri: jest.fn((_webview: any, _extUri: any, segments: string[]) => ({
+    with: ({ query }: { query: string }) => ({
+      toString: () => `webview://${segments.join("/")}?${query}`,
+    }),
+    toString: () => `webview://${segments.join("/")}`,
+  })),
 }));
 
 jest.mock("./getNonce", () => ({

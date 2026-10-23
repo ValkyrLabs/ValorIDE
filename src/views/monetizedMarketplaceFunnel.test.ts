@@ -31,7 +31,7 @@ test("buildMarketplaceFunnel turns generic creator cards into attributed convers
     averageRating: 4.5,
   } as typeof baseService & { subscriberCount: number; averageRating: number });
 
-  assert.equal(funnel.creatorDisplayName, "Verified Valkyr creator");
+  assert.equal(funnel.creatorDisplayName, "Creator not provided");
   assert.equal(funnel.priceLabel, "7 credits/call");
   assert.equal(funnel.recommendedSubscriptionType, "PAY_AS_YOU_GO");
   assert.equal(funnel.primaryCta, "Review pay-as-you-go");

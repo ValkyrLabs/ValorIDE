@@ -2,11 +2,14 @@ import {
   BaseToolHandler,
   ToolContext,
   ToolExecutionResult,
+  ToolExecutionOutcome,
   ToolResponse,
 } from "./BaseToolHandler";
 import { FileToolHandler } from "./FileToolHandler";
 import { CommandToolHandler } from "./CommandToolHandler";
 import { BrowserToolHandler } from "./BrowserToolHandler";
+import { McpToolHandler } from "./McpToolHandler";
+import { ProcedureToolHandler } from "./ProcedureToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { telemetryService } from "@services/telemetry/TelemetryService";
 import { Logger } from "@services/logging/Logger";
@@ -36,6 +39,10 @@ export class ToolManager {
     // Register browser handler
     const browserHandler = new BrowserToolHandler(context);
     this.handlers.set("browser_action", browserHandler);
+    this.handlers.set("use_procedure", new ProcedureToolHandler(context));
+    const mcpHandler = new McpToolHandler(context);
+    this.handlers.set("use_mcp_tool", mcpHandler);
+    this.handlers.set("access_mcp_resource", mcpHandler);
   }
 
   async executeTool(
@@ -44,6 +51,7 @@ export class ToolManager {
     didRejectTool: boolean,
     didAlreadyUseTool: boolean,
   ): Promise<{
+    outcome?: ToolExecutionOutcome;
     shouldContinue: boolean;
     toolResponse?: ToolResponse;
     userRejected?: boolean;
@@ -79,6 +87,8 @@ export class ToolManager {
     if (handler) {
       const result = await handler.execute(block, partial);
       return {
+        outcome:
+          result.outcome ?? (result.userRejected ? "rejected" : "unknown"),
         shouldContinue: result.shouldContinue,
         toolResponse: result.toolResponse,
         userRejected: result.userRejected,

@@ -78,6 +78,41 @@ vi.mock("@thorapi/utils/vscode", () => ({
 }));
 
 describe("ChatRow Content - completion_result summary handling", () => {
+  it("renders native procedure results in the existing tool row without reporting an unfinished workflow as complete", () => {
+    const message = {
+      type: "say",
+      say: "tool",
+      ts: Date.now(),
+      text: JSON.stringify({
+        tool: "useProcedure",
+        content: JSON.stringify({
+          phase: "result",
+          action: "execute",
+          result: {
+            status: "procedure_started",
+            procedureRef: "procedure:case:v1",
+            workflow: { id: "execution-42", state: "WAITING_FOR_APPROVAL" },
+          },
+        }),
+      }),
+    } as any;
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+    expect(screen.getByText("Waiting for approval")).toBeTruthy();
+    expect(screen.getByText("execution-42")).toBeTruthy();
+    expect(screen.queryByText("Completed")).toBeNull();
+  });
+
   it("renders the initial task prompt inside the generated report when a thin summary exists", () => {
     const initialPrompt = "Write a unit test for this function";
 
@@ -99,7 +134,7 @@ describe("ChatRow Content - completion_result summary handling", () => {
       >
         <ChatRowContent
           message={message}
-          isExpanded={true}
+          isExpanded={false}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -291,7 +326,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       <ProviderAny>
         <ChatRowContent
           message={message}
-          isExpanded={false}
+          isExpanded={true}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -321,7 +356,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       <ProviderAny>
         <ChatRowContent
           message={message}
-          isExpanded={false}
+          isExpanded={true}
           onToggleExpand={() => {}}
           lastModifiedMessage={message}
           isLast={true}
@@ -426,9 +461,7 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       </ProviderAny>,
     );
 
-    expect(
-      screen.queryByText("Command completed with no output."),
-    ).toBeNull();
+    expect(screen.queryByText("Command completed with no output.")).toBeNull();
     expect(screen.queryByText("No output yet")).toBeNull();
   });
 });
@@ -678,6 +711,40 @@ describe("ChatRow Content - api request spinner handling", () => {
     expect(screen.queryByText("API Request...")).toBeNull();
   });
 
+  it("shows clearly labeled estimates when a local provider omits usage", () => {
+    const apiRequestMessage = {
+      type: "say",
+      say: "api_req_started",
+      ts: Date.now(),
+      text: JSON.stringify({
+        contextInputBudget: 13762,
+        contextMode: "compact",
+        conversationTokensEstimated: 1234,
+        estimatedTokensIn: 2345,
+        estimatedTokensOut: 456,
+        request: "POST /v1/chat",
+        systemPromptTokensEstimated: 1111,
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={apiRequestMessage}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={apiRequestMessage}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    expect(screen.getByText(/In:\s*≈2,345 tokens/)).toBeTruthy();
+    expect(screen.getByText(/Out:\s*≈456 tokens/)).toBeTruthy();
+    expect(screen.getByText(/Context: compact/)).toBeTruthy();
+  });
+
   it("clears the spinner once task completion is shown even without usage details", () => {
     const apiRequestMessage = {
       type: "say",
@@ -810,6 +877,44 @@ describe("ChatRow Content - reasoning severity indicator", () => {
 });
 
 describe("ChatRow Content - GrayMatter recovery", () => {
+  it("renders the borderless GrayMatter row collapsed by default", () => {
+    const onToggleExpand = vi.fn();
+    const message = {
+      type: "say",
+      say: "graymatter_context",
+      ts: Date.now(),
+      text: JSON.stringify({
+        message: "GrayMatter injected 3 remembered context entries.",
+        status: "ready",
+      }),
+    } as any;
+
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={false}
+          onToggleExpand={onToggleExpand}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+
+    const header = screen.getByRole("button", {
+      name: /GrayMatter memory checked/i,
+    });
+    expect(header).toHaveAttribute("aria-expanded", "false");
+    expect(header.parentElement).toHaveStyle({ border: "none" });
+    expect(
+      screen.queryByText("GrayMatter injected 3 remembered context entries."),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(header);
+    expect(onToggleExpand).toHaveBeenCalledTimes(1);
+  });
+
   it("shows a sign-in action when GrayMatter is unauthenticated without recovery actions", async () => {
     const { vscode } = await import("@thorapi/utils/vscode");
     vi.mocked(vscode.postMessage).mockClear();
@@ -844,5 +949,33 @@ describe("ChatRow Content - GrayMatter recovery", () => {
       type: "showAccountViewClicked",
       accountTab: "login",
     });
+  });
+});
+
+describe("MCP uncertain outcome rendering", () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it("shows the terminal recovery guidance in the existing response row", async () => {
+    vi.stubGlobal("localStorage", { getItem: () => "plain", setItem: vi.fn() });
+    const message = {
+      ts: 1,
+      type: "say",
+      say: "mcp_server_response",
+      text: "Outcome unknown\n\nInspect the server's state. Do not repeat the action automatically.",
+    } as any;
+    render(
+      <ProviderAny>
+        <ChatRowContent
+          message={message}
+          isExpanded={true}
+          onToggleExpand={() => {}}
+          lastModifiedMessage={message}
+          isLast={true}
+          onHeightChange={() => {}}
+        />
+      </ProviderAny>,
+    );
+    expect(await screen.findByText(/Outcome unknown/)).toBeTruthy();
+    expect(screen.getByText(/Do not repeat/)).toBeTruthy();
+    expect(screen.queryByText("Completed")).toBeNull();
   });
 });

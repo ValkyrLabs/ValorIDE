@@ -142,6 +142,29 @@ const ChatView = ({
       ourSenderId,
     });
 
+    // Public extension API invocations follow the same active UI handlers as
+    // a user click or message, including the pending-decision checks.
+    useEffect(() => {
+      if (isHidden) return undefined;
+      const handleInvoke = (event: MessageEvent<ExtensionMessage>) => {
+        const message = event.data;
+        if (message?.type !== "invoke") return;
+        switch (message.invoke) {
+          case "primaryButtonClick":
+            void handlePrimaryButtonClick();
+            break;
+          case "secondaryButtonClick":
+            void handleSecondaryButtonClick();
+            break;
+          case "sendMessage":
+            void handleSendMessage(message.text ?? "", message.images ?? []);
+            break;
+        }
+      };
+      window.addEventListener("message", handleInvoke);
+      return () => window.removeEventListener("message", handleInvoke);
+    }, [isHidden, handlePrimaryButtonClick, handleSecondaryButtonClick, handleSendMessage]);
+
     // Computed values
     const task = useMemo(() => messages?.at(0), [messages]);
     const modifiedMessages = useMemo(() => {
@@ -172,16 +195,13 @@ const ChatView = ({
         try {
           const {
             tokensIn,
-            tokensOut,
             cacheWrites,
             cacheReads,
+            estimatedTokensIn,
           }: ValorIDEApiReqInfo = JSON.parse(msg.text);
-          return (
-            (tokensIn || 0) +
-            (tokensOut || 0) +
-            (cacheWrites || 0) +
-            (cacheReads || 0)
-          );
+          const measured =
+            (tokensIn || 0) + (cacheWrites || 0) + (cacheReads || 0);
+          return measured > 0 ? measured : estimatedTokensIn || 0;
         } catch (e) {
           // Malformed or unexpected payload
           return 0;

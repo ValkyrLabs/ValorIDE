@@ -1,4 +1,9 @@
 import { Anthropic } from "@anthropic-ai/sdk";
+import {
+  governedCodingTaskApprovalSettings,
+  materializeGovernedCodingTask,
+} from "@services/swarm/SwarmCodingInference";
+import { TokenStorageService } from "@services/auth/TokenStorageService";
 import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
 import crypto from "crypto";
@@ -14,14 +19,14 @@ import { startOpenAiNativeOAuthLogin } from "@api/providers/openai-native-auth";
 import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
 import { downloadTask } from "@integrations/misc/export-markdown";
-import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
+import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
 import {
   fetchOpenGraphData,
   isImageUrl,
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
-import { buildOpenApiImportConfig } from "./openApiImport";
+import { buildOpenApiHeaders } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -38,6 +43,11 @@ import { publishApplicationSource } from "@services/applicationSourcePublish";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import {
+  getValkyrLabsRtkApiClient,
+  ValkyrLabsApiError,
+} from "@services/valkyrai/ValkyrLabsRtkApi";
+import { testValkyraiHostConnection } from "@services/valkyrai/ValkyraiHostConnection";
 import { initializeAgentRuntimeCoordinator } from "@services/communication/AgentRuntimeCoordinator";
 import {
   buildTenantHeaders,
@@ -45,7 +55,10 @@ import {
   mergeTenantContext,
 } from "@services/auth/tenantContext";
 import { ValoridePasswordLoginService } from "@services/auth/ValoridePasswordLoginService";
-import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import {
+  createGrayMatterSessionState,
+  reconcileGrayMatterSessionRefresh,
+} from "@services/graymatter/GrayMatterSessionService";
 import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
 import { GrayMatterClient } from "@services/graymatter/GrayMatterClient";
 import { createGrayMatterMemoryService } from "@services/graymatter/GrayMatterMemoryQueueStorage";
@@ -64,8 +77,10 @@ import {
   ExtensionState,
   Invoke,
   Platform,
+  TaskProgressCorrelation,
 } from "@shared/ExtensionMessage";
 import { HistoryItem } from "@shared/HistoryItem";
+import type { TaskTerminalEvent } from "@shared/TaskLifecycle";
 import {
   McpDownloadResponse,
   McpMarketplaceCatalog,
@@ -74,6 +89,7 @@ import {
 } from "@shared/mcp";
 import type { McpToolCallResponse } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { openWorkflowStudioTarget } from "@integrations/workflows/workflowStudioNavigation";
 import {
   validateAdvancedSettings,
   DEFAULT_ADVANCED_SETTINGS,
@@ -424,6 +440,22 @@ const summarizeBuildModeWorkflowOutput = (
   return `Output keys: ${keys.join(", ")}.`;
 };
 
+const describeLlmDetailsForRouting = (
+  details: Pick<
+    LlmDetailsSummary,
+    "description" | "name" | "provider" | "tags" | "version"
+  >,
+): string | undefined =>
+  [
+    details.name,
+    details.provider,
+    details.version,
+    details.description,
+    ...(details.tags ?? []),
+  ]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .join(" ") || undefined;
+
 export class Controller {
   private postMessage: (
     message: ExtensionMessage,
@@ -439,6 +471,10 @@ export class Controller {
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
   private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
   private readonly buildModeTerminalManager = new TerminalManager();
+  private readonly taskTerminalEmitter =
+    new vscode.EventEmitter<TaskTerminalEvent>();
+  public readonly onTaskTerminal = this.taskTerminalEmitter.event;
+  private taskProgressCorrelation?: TaskProgressCorrelation;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -500,6 +536,7 @@ export class Controller {
       this.outputChannel.appendLine(`Error clearing task: ${error}`);
       console.error("Error clearing task:", error);
     }
+    this.taskTerminalEmitter.dispose();
 
     // Dispose all disposables with individual error handling
     while (this.disposables.length) {
@@ -1670,8 +1707,15 @@ export class Controller {
     await updateGlobalState(this.context, "userInfo", info);
   }
 
-  async initTask(task?: string, images?: string[], historyItem?: HistoryItem) {
+  async initTask(
+    task?: string,
+    images?: string[],
+    historyItem?: HistoryItem,
+    taskProgressCorrelation?: Omit<TaskProgressCorrelation, "localTaskId">,
+    governedApiConfiguration?: ApiConfiguration,
+  ) {
     await this.clearTask(); // ensures that an existing task doesn't exist before starting a new one, although this shouldn't be possible since user must clear task before starting a new one
+    this.taskProgressCorrelation = undefined;
     const {
       apiConfiguration,
       customInstructions,
@@ -1680,10 +1724,22 @@ export class Controller {
       chatSettings,
       selectedLlmDetails,
     } = await getAllExtensionState(this.context);
-    const taskApiConfiguration = await this.resolveTaskApiConfiguration(
-      apiConfiguration,
-      selectedLlmDetails,
-    );
+    let taskApiConfiguration: ApiConfiguration;
+    if (governedApiConfiguration) {
+      if (!governedApiConfiguration.governedCodingInference) {
+        throw new Error("A governed coding task needs its validated command configuration.");
+      }
+      taskApiConfiguration = governedApiConfiguration;
+    } else if (historyItem?.governedCodingInference) {
+      const binding = historyItem.governedCodingInference;
+      if (!apiConfiguration.valkyraiHost) throw new Error("Governed coding history needs authenticated canonical revalidation.");
+      const credentials = TokenStorageService.getInstance(this.context);
+      taskApiConfiguration = await materializeGovernedCodingTask(apiConfiguration.valkyraiHost, () => credentials.getJwtToken(),
+        binding, binding.commandId, binding.actionDigest, binding.scopeDigest, binding.approvalSignature);
+      taskApiConfiguration.governedCodingInference!.requests.push(...binding.requests);
+    } else {
+      taskApiConfiguration = await this.resolveTaskApiConfiguration(apiConfiguration, selectedLlmDetails);
+    }
 
     if (autoApprovalSettings) {
       const updatedAutoApprovalSettings = {
@@ -1696,6 +1752,9 @@ export class Controller {
         updatedAutoApprovalSettings,
       );
     }
+    const taskAutoApprovalSettings = taskApiConfiguration.governedCodingInference
+      ? governedCodingTaskApprovalSettings(autoApprovalSettings)
+      : autoApprovalSettings;
     this.task = new Task(
       this.context,
       this.mcpHub,
@@ -1706,14 +1765,23 @@ export class Controller {
       (taskId) => this.reinitExistingTaskFromId(taskId),
       () => this.cancelTask(),
       taskApiConfiguration,
-      autoApprovalSettings,
+      taskAutoApprovalSettings,
       browserSettings,
       chatSettings,
       customInstructions,
       task,
       images,
       historyItem,
+      undefined,
+      undefined,
+      (event) => this.taskTerminalEmitter.fire(event),
     );
+    if (taskProgressCorrelation) {
+      this.taskProgressCorrelation = {
+        ...taskProgressCorrelation,
+        localTaskId: this.task.taskId,
+      };
+    }
   }
 
   async reinitExistingTaskFromId(taskId: string) {
@@ -1742,6 +1810,18 @@ export class Controller {
         apiProvider: "valkyrai",
         apiModelId: selectedServiceId,
         valkyraiServiceId: selectedServiceId,
+        valkyraiModelInfo:
+          apiConfiguration.valkyraiModelInfo ||
+          (selectedLlmDetails
+            ? {
+                contextWindow: selectedLlmDetails.contextWindow,
+                description: describeLlmDetailsForRouting(selectedLlmDetails),
+                maxTokens: selectedLlmDetails.maxTokens,
+                supportsImages: selectedLlmDetails.supportsImages,
+                supportsPromptCache:
+                  selectedLlmDetails.supportsPromptCache ?? false,
+              }
+            : undefined),
       };
     }
 
@@ -2142,7 +2222,11 @@ export class Controller {
             "authenticatedPrincipal",
             authenticatedPrincipal,
           );
-          await updateGlobalState(this.context, "userInfo", authenticatedPrincipal);
+          await updateGlobalState(
+            this.context,
+            "userInfo",
+            authenticatedPrincipal,
+          );
           await this.storeTenantContextFromPayloads(authenticatedPrincipal);
         }
         await updateGlobalState(
@@ -2280,7 +2364,10 @@ export class Controller {
               "autoApprovalSettings",
               message.autoApprovalSettings,
             );
-            if (this.task) {
+            // A governed SWARM task must retain its native interaction floor.
+            // Global UI preferences can still be saved for later ordinary
+            // tasks, but cannot broaden an already-running signed command.
+            if (this.task && !this.task.governedCodingInference) {
               this.task.autoApprovalSettings = message.autoApprovalSettings;
             }
             await this.postStateToWebview();
@@ -2409,25 +2496,57 @@ export class Controller {
         if (!targetHost) {
           await this.postMessageToWebview({
             type: "valkyraiHostTestResult",
+            requestId: message.requestId,
             host: "",
             success: false,
             error: "Host URL is required.",
           });
           break;
         }
-        await this.testValkyraiHostConnection(targetHost);
+        const token = normalizeValkyraiHost(targetHost) === getValkyraiBasePath()
+          ? await getSecret(this.context, "jwtToken")
+          : undefined;
+        const result = await testValkyraiHostConnection(targetHost, undefined, token);
+        await this.postMessageToWebview({
+          type: "valkyraiHostTestResult",
+          requestId: message.requestId,
+          ...result,
+        });
         break;
       }
       case "updateValkyraiHost": {
         const requestedHost = message.valkyraiHost?.trim();
         if (!requestedHost) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostSaveResult",
+            requestId: message.requestId,
+            success: false,
+            error: "Host URL is required.",
+          });
           break;
         }
         const nextHost = normalizeValkyraiHost(requestedHost);
-        await vscode.workspace
-          .getConfiguration("valoride.valkyrai")
-          .update("host", nextHost, vscode.ConfigurationTarget.Global);
-        await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        try {
+          await vscode.workspace
+            .getConfiguration("valoride.valkyrai")
+            .update("host", nextHost, vscode.ConfigurationTarget.Global);
+          await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        } catch (error) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostSaveResult",
+            requestId: message.requestId,
+            host: nextHost,
+            success: false,
+            error: error instanceof Error ? error.message : "Unable to save host.",
+          });
+          break;
+        }
+        await this.postMessageToWebview({
+          type: "valkyraiHostSaveResult",
+          requestId: message.requestId,
+          host: nextHost,
+          success: true,
+        });
         await this.postStateToWebview();
         await this.refreshLLMDetails();
         try {
@@ -2442,6 +2561,7 @@ export class Controller {
           );
         }
         await this.retrySwarmRegistration("ValkyrAI host change");
+        void this.registerSwarmSession(nextHost);
         break;
       }
       case "refreshOpenAiModels":
@@ -2464,6 +2584,18 @@ export class Controller {
           await openUrlWithSimpleBrowser(message.url);
         }
         break;
+      case "openWorkflowStudio": {
+        try {
+          await openWorkflowStudioTarget(message.workflowStudioTarget);
+        } catch (error) {
+          void vscode.window.showErrorMessage(
+            error instanceof Error
+              ? error.message
+              : "Workflow Studio could not be opened.",
+          );
+        }
+        break;
+      }
       case "openOpenAPIEditor":
         OpenAPIEditorPanel.open(this.context, {
           applicationId: message.applicationId,
@@ -2690,7 +2822,6 @@ export class Controller {
         break;
       // case "openMcpMarketplaceServerDetails": {
       // 	if (message.text) {
-      // 		const response = await fetch(`https://api-0.valkyrlabs.com/v1/McpMarketplace/${message.mcpId}`)
       // 		const details: McpDownloadResponse = await response.json()
 
       // 		if (details.readmeContent) {
@@ -2952,6 +3083,13 @@ export class Controller {
             apiProvider: "valkyrai",
             apiModelId: selected.id,
             valkyraiServiceId: selected.id,
+            valkyraiModelInfo: {
+              contextWindow: selected.contextWindow,
+              description: describeLlmDetailsForRouting(selected),
+              maxTokens: selected.maxTokens,
+              supportsImages: selected.supportsImages,
+              supportsPromptCache: selected.supportsPromptCache ?? false,
+            },
           };
           await updateApiConfiguration(this.context, updatedApiConfiguration);
           if (this.task) {
@@ -2964,6 +3102,7 @@ export class Controller {
           let normalizedSelection: SelectedLlmDetails | undefined;
           if (promptText) {
             normalizedSelection = {
+              contextWindow: selected.contextWindow,
               id: selected.id,
               name: selected.name || selected.id,
               description: selected.description,
@@ -2971,9 +3110,12 @@ export class Controller {
               ratingScore: selected.ratingScore,
               promptType: selected.promptType ?? "SYSTEM",
               initialPrompt: promptText,
+              maxTokens: selected.maxTokens,
               prompt: promptText,
               mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
               source: "thorapi",
+              supportsImages: selected.supportsImages,
+              supportsPromptCache: selected.supportsPromptCache,
               updatedAt: Date.now(),
             };
 
@@ -4045,22 +4187,23 @@ export class Controller {
           // Get JWT token for ThorAPI call
           const jwtToken =
             providedJwt || (await getSecret(this.context, "jwtToken"));
-          const axiosConfig = buildOpenApiImportConfig(filename, jwtToken);
+          const importHeaders = buildOpenApiHeaders(filename, jwtToken);
 
           // Call ThorAPI /v1/thorapi/specs/import endpoint
           const apiBaseUrl = getValkyraiBasePath();
           const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
 
           try {
-            const response = await axios.post(
-              importUrl,
-              {
+            const response = await getValkyrLabsRtkApiClient().request<any>({
+              url: importUrl,
+              method: "POST",
+              json: {
                 filename: filename,
                 content: fileContent,
                 fileType: isJson ? "json" : "yaml",
               },
-              axiosConfig,
-            );
+              headers: importHeaders,
+            });
 
             if (response.data?.success === true || response.status === 200) {
               await this.postMessageToWebview({
@@ -4079,13 +4222,11 @@ export class Controller {
             }
           } catch (apiError) {
             let errorMsg = "Failed to import to ThorAPI";
-            if (axios.isAxiosError(apiError)) {
-              if (apiError.response?.status === 401) {
+            if (apiError instanceof ValkyrLabsApiError) {
+              if (apiError.status === 401) {
                 errorMsg = "Authentication failed. Please log in.";
-              } else if (apiError.response?.status === 400) {
-                errorMsg = `Invalid OpenAPI: ${apiError.response.data?.error || "validation failed"}`;
-              } else if (apiError.code === "ECONNREFUSED") {
-                errorMsg = `Cannot reach ThorAPI at ${importUrl}`;
+              } else if (apiError.status === 400) {
+                errorMsg = `Invalid OpenAPI: ${(apiError.data as any)?.error || "validation failed"}`;
               } else if (apiError.message) {
                 errorMsg = apiError.message;
               }
@@ -4121,132 +4262,67 @@ export class Controller {
         }
         break;
       }
-      case "streamToThorapi": {
-        const { blobData, applicationId, applicationName, filename, mimeType } =
-          message;
-
-        const sendProgress = async (step: string, progressMessage: string) => {
-          if (!applicationId) {
-            return;
-          }
+      case "generateApplicationArtifact": {
+        const { applicationId, applicationName, requestId } = message;
+        if (!applicationId || !requestId) break;
+        const sendResult = async (
+          result: NonNullable<ExtensionMessage["streamToThorapiResult"]>,
+        ) => {
           await this.postMessageToWebview({
             type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: true,
-              applicationId,
-              step,
-              message: progressMessage,
-            },
+            streamToThorapiResult: { ...result, applicationId, requestId },
           });
         };
-
         try {
-          if (!blobData || !applicationId) {
-            throw new Error("Missing required data for streamToThorapi");
-          }
-
-          await sendProgress("receiving", "Decoding generated archive...");
-
-          const binaryData = Buffer.from(blobData, "base64");
-          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
-          await fs.mkdir(thorapiFolderPath, { recursive: true });
-
-          const incomingName =
-            filename?.trim() || `application-${applicationId}-${Date.now()}`;
-          const sanitizedBaseName =
-            path
-              .basename(incomingName)
-              .replace(/[\\/:*?"<>|]/g, "_")
-              .trim() || `application-${applicationId}-${Date.now()}`;
-
-          const mime = mimeType?.toLowerCase() ?? "";
-          const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
-
-          let finalFilename = sanitizedBaseName;
-          if (looksLikeZip && !/\.zip$/i.test(finalFilename)) {
-            finalFilename = `${finalFilename}.zip`;
-          }
-
-          const filePath = path.join(thorapiFolderPath, finalFilename);
-          await fs.writeFile(filePath, binaryData);
-          await sendProgress(
-            "processing",
-            `Saved archive to ${getReadablePath(filePath)}`,
-          );
-
-          let extractedPath: string | undefined;
-          let readmePath: string | undefined;
-
-          if (looksLikeZip) {
-            await sendProgress("extracting", "Extracting project files...");
-            try {
-              extractedPath = await extractLocalZip(
-                filePath,
-                thorapiFolderPath,
-                applicationName || applicationId,
-              );
-            } catch (extractionError) {
-              throw new Error(
-                `Failed to extract archive: ${
-                  extractionError instanceof Error
-                    ? extractionError.message
-                    : String(extractionError)
-                }`,
-              );
-            }
-
-            if (extractedPath) {
-              readmePath = await this.findReadmeFile(extractedPath);
-              await sendProgress(
-                "finalizing",
-                `Extracted to ${getReadablePath(extractedPath)}`,
-              );
-            }
-
-            await fs.unlink(filePath).catch((unlinkError) => {
-              console.warn(
-                `Failed to delete archive ${filePath}: ${
-                  unlinkError instanceof Error
-                    ? unlinkError.message
-                    : String(unlinkError)
-                }`,
-              );
-            });
-          } else {
-            await sendProgress(
-              "finalizing",
-              `Saved file to ${getReadablePath(filePath)}`,
-            );
-          }
-
-          await this.postMessageToWebview({
-            type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: true,
-              applicationId,
-              filePath,
-              filename: finalFilename,
-              extractedPath,
-              readmePath,
-              step: "completed",
-              message: looksLikeZip
-                ? "Application extracted successfully."
-                : "Application saved successfully.",
+          const generationBackend = getValkyraiBasePath();
+          const jwtToken = await this.readStoredJwtToken();
+          if (!jwtToken)
+            throw new Error("Sign in before generating an application.");
+          const artifact = await downloadApplicationArtifact({
+            applicationId,
+            applicationName,
+            jwtToken,
+            assertCurrent: async () => {
+              if (
+                (await this.readStoredJwtToken()) !== jwtToken ||
+                getValkyraiBasePath() !== generationBackend
+              )
+                throw new Error(
+                  "Your session or backend changed during generation. Return to the original Application before retrying.",
+                );
             },
+            onProgress: (progressMessage, step) =>
+              sendResult({ success: true, step, message: progressMessage }),
           });
+          await sendResult({
+            success: true,
+            ...artifact,
+            step: "completed",
+            message: "Your application is ready to open in ValorIDE.",
+          });
+          void vscode.window
+            .showInformationMessage(
+              `${applicationName || "Your application"} is ready in ValorIDE.`,
+              "Open project",
+            )
+            .then((action) => {
+              if (action === "Open project") {
+                return vscode.commands.executeCommand(
+                  "vscode.openFolder",
+                  vscode.Uri.file(artifact.extractedPath),
+                  { forceNewWindow: true },
+                );
+              }
+              return undefined;
+            });
         } catch (error) {
-          console.error("Error in streamToThorapi:", error);
-          await this.postMessageToWebview({
-            type: "streamToThorapiResult",
-            streamToThorapiResult: {
-              success: false,
-              applicationId: message.applicationId,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : "Failed to stream to thorapi",
-              step: "error",
-            },
+          await sendResult({
+            success: false,
+            step: "error",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Application generation failed.",
           });
         }
         break;
@@ -4621,7 +4697,9 @@ export class Controller {
         openAuthorizationUrl: async (url) => {
           const opened = await openUrlExternally(url);
           if (!opened) {
-            throw new Error("Unable to open your default browser for OpenAI OAuth.");
+            throw new Error(
+              "Unable to open your default browser for OpenAI OAuth.",
+            );
           }
           vscode.window.showInformationMessage(
             "OpenAI sign-in opened in your default browser. Complete it there; ValorIDE will connect automatically.",
@@ -4651,7 +4729,9 @@ export class Controller {
           success: true,
         },
       });
-      vscode.window.showInformationMessage("OpenAI OAuth connected for ValorIDE.");
+      vscode.window.showInformationMessage(
+        "OpenAI OAuth connected for ValorIDE.",
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       await this.postMessageToWebview({
@@ -4733,13 +4813,22 @@ export class Controller {
   }
 
   private async refreshGrayMatterSessionState(token?: string) {
+    const previous = (await getGlobalState(
+      this.context,
+      "grayMatterSession",
+    )) as
+      | import("@shared/GrayMatterSession").GrayMatterSessionState
+      | undefined;
     const resolvedToken = token || (await this.readStoredJwtToken());
     const tenantContext = await this.readStoredTenantContext();
-    const grayMatterSession = await createGrayMatterSessionState({
-      baseUrl: getValkyraiBasePath(),
-      tenantContext,
-      token: resolvedToken,
-    });
+    const grayMatterSession = reconcileGrayMatterSessionRefresh(
+      previous,
+      await createGrayMatterSessionState({
+        baseUrl: getValkyraiBasePath(),
+        tenantContext,
+        token: resolvedToken,
+      }),
+    );
     await updateGlobalState(
       this.context,
       "grayMatterSession",
@@ -4814,8 +4903,7 @@ export class Controller {
       const jwtToken = await this.readStoredJwtToken();
       const { authenticatedPrincipal, userInfo, agenticState } =
         await getAllExtensionState(this.context);
-      const currentAgenticState =
-        createAgenticCommandCenterState(agenticState);
+      const currentAgenticState = createAgenticCommandCenterState(agenticState);
 
       if (!jwtToken) {
         const nextAgenticState = updateSwarmState(currentAgenticState, {
@@ -4896,28 +4984,19 @@ export class Controller {
         headers.jwtSession = token;
       }
 
-      const response = await axios.request({
+      const response = await getValkyrLabsRtkApiClient().request({
         url: this.resolveThorapiWebviewUrl(request.url),
         method: request.method || "GET",
-        data: request.body,
+        ...(request.body === undefined ? {} : { json: request.body }),
         params: request.params,
         headers,
         responseType:
-          request.responseType === "arraybuffer" ? "arraybuffer" : "json",
-        timeout: 30000,
-        validateStatus: () => true,
+          request.responseType === "arraybuffer" ? "arrayBuffer" : "json",
+        acceptHttpErrors: true,
       });
-      const responseHeaders = Object.fromEntries(
-        Object.entries(response.headers).map(([key, value]) => [
-          key,
-          Array.isArray(value) ? value.join(", ") : String(value),
-        ]),
-      );
       const responseBuffer =
         request.responseType === "arraybuffer"
-          ? Buffer.isBuffer(response.data)
-            ? response.data
-            : Buffer.from(response.data)
+          ? Buffer.from(response.data as ArrayBuffer)
           : undefined;
 
       await this.postMessageToWebview({
@@ -4929,18 +5008,16 @@ export class Controller {
           statusText: response.statusText,
           data:
             request.responseType === "arraybuffer" ? undefined : response.data,
-          headers: responseHeaders,
+          headers: response.headers,
           bodyBase64: responseBuffer?.toString("base64"),
         },
       });
     } catch (error) {
-      const status = axios.isAxiosError(error)
-        ? error.response?.status
-        : undefined;
-      const statusText = axios.isAxiosError(error)
-        ? error.response?.statusText
-        : undefined;
-      const data = axios.isAxiosError(error) ? error.response?.data : undefined;
+      const status =
+        error instanceof ValkyrLabsApiError && typeof error.status === "number"
+          ? error.status
+          : undefined;
+      const data = error instanceof ValkyrLabsApiError ? error.data : undefined;
       const errorMessage =
         error instanceof Error ? error.message : "ThorAPI request failed";
 
@@ -4950,7 +5027,7 @@ export class Controller {
           requestId,
           ok: false,
           status,
-          statusText,
+          statusText: undefined,
           data,
           error: errorMessage,
         },
@@ -4989,16 +5066,16 @@ export class Controller {
 
       for (const endpoint of endpoints) {
         try {
-          const response = await axios.get(endpoint, {
+          const response = await getValkyrLabsRtkApiClient().request({
+            url: endpoint,
             headers,
-            timeout: 10000,
           });
           responseData = response.data;
           lastError = undefined;
           break;
         } catch (error) {
           lastError = error;
-          if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+          if (!(error instanceof ValkyrLabsApiError) || error.status !== 404) {
             throw error;
           }
         }
@@ -5082,23 +5159,23 @@ export class Controller {
     } catch (error) {
       let errorMessage = "Failed to fetch MCP marketplace";
 
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ECONNABORTED") {
+      if (error instanceof ValkyrLabsApiError) {
+        if (error.status === "TIMEOUT_ERROR") {
           errorMessage = "MCP marketplace request timed out. Please try again.";
-        } else if (error.response?.status === 404) {
+        } else if (error.status === 404) {
           errorMessage =
             "MCP marketplace service is not available (404). Please check if the service is running.";
-        } else if (error.response?.status === 500) {
+        } else if (error.status === 500) {
           errorMessage =
             "MCP marketplace service encountered an internal error. Please try again later.";
-        } else if (error.response?.status === 503) {
+        } else if (error.status === 503) {
           errorMessage =
             "MCP marketplace service is temporarily unavailable. Please try again later.";
-        } else if (!error.response && error.request) {
+        } else if (error.status === "FETCH_ERROR") {
           errorMessage =
             "Cannot connect to MCP marketplace service. Please check your network connection.";
-        } else if (error.response) {
-          errorMessage = `MCP marketplace service returned error ${error.response.status}: ${error.response.statusText}`;
+        } else {
+          errorMessage = `MCP marketplace service returned error ${error.status}`;
         }
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -5188,8 +5265,7 @@ export class Controller {
         const lowerAliases = aliases.map((alias) => alias.toLowerCase());
         if (
           lowerAliases.some(
-            (alias) =>
-              alias === "graymatter" || alias.includes("graymatter"),
+            (alias) => alias === "graymatter" || alias.includes("graymatter"),
           )
         ) {
           aliases.push("graymatter-memory");
@@ -5242,13 +5318,10 @@ export class Controller {
       }
 
       const getServiceByIdentifier = async (identifier: string) =>
-        axios.get<any>(
-          `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
-          {
-            headers,
-            timeout: 10000,
-          },
-        );
+        getValkyrLabsRtkApiClient().request<any>({
+          url: `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
+          headers,
+        });
 
       let response: any;
       let resolvedServiceId = serviceIdentifiers[0] || mcpId;
@@ -5263,7 +5336,7 @@ export class Controller {
         } catch (error) {
           lastLookupError = error;
           const isNotFound =
-            axios.isAxiosError(error) && error.response?.status === 404;
+            error instanceof ValkyrLabsApiError && error.status === 404;
 
           if (!isNotFound) {
             if (sourceItem) {
@@ -5289,13 +5362,11 @@ export class Controller {
         // Fallback: resolve marketplace item IDs to a concrete service identifier
         // (slug, id, or name) then retry /mcp/services/{slug}.
         try {
-          const serviceListResponse = await axios.get<any>(
-            `${getValkyraiBasePath()}/mcp/services`,
-            {
+          const serviceListResponse =
+            await getValkyrLabsRtkApiClient().request<any>({
+              url: `${getValkyraiBasePath()}/mcp/services`,
               headers,
-              timeout: 10000,
-            },
-          );
+            });
 
           const services = Array.isArray(serviceListResponse.data)
             ? serviceListResponse.data
@@ -5426,14 +5497,14 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       console.error("Failed to download MCP:", error);
       let errorMessage = "Failed to download MCP";
 
-      if (axios.isAxiosError(error)) {
-        if (error.code === "ECONNABORTED") {
+      if (error instanceof ValkyrLabsApiError) {
+        if (error.status === "TIMEOUT_ERROR") {
           errorMessage = "Request timed out. Please try again.";
-        } else if (error.response?.status === 404) {
+        } else if (error.status === 404) {
           errorMessage = "MCP server not found in marketplace.";
-        } else if (error.response?.status === 500) {
+        } else if (error.status === 500) {
           errorMessage = "Internal server error. Please try again later.";
-        } else if (!error.response && error.request) {
+        } else if (error.status === "FETCH_ERROR") {
           errorMessage =
             "Network error. Please check your internet connection.";
         }
@@ -5735,7 +5806,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         headers["jwtSession"] = authToken;
       }
 
-      const response = await axios.get(endpoint, { headers });
+      const response = await getValkyrLabsRtkApiClient().request<any>({
+        url: endpoint,
+        headers,
+      });
 
       if (Array.isArray(response.data)) {
         // Transform ValkyrAI LLMDetails to ModelInfo format
@@ -5754,6 +5828,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
             };
             models[llmDetail.id] = modelInfo;
             llmDetailsList.push({
+              contextWindow: llmDetail.contextWindow,
               id: llmDetail.id,
               name: llmDetail.name || llmDetail.provider || llmDetail.id,
               description: llmDetail.description,
@@ -5761,12 +5836,15 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                 | "SYSTEM"
                 | "APPEND",
               initialPrompt: llmDetail.initialPrompt,
+              maxTokens: llmDetail.maxTokens,
               tags: Array.isArray(llmDetail.tags) ? llmDetail.tags : [],
               ratingScore:
                 typeof llmDetail.ratingScore === "number"
                   ? llmDetail.ratingScore
                   : undefined,
               provider: llmDetail.provider,
+              supportsImages: llmDetail.supportsImages,
+              supportsPromptCache: llmDetail.supportsPromptCache,
               version: llmDetail.version,
               lastModifiedDate: llmDetail.lastModifiedDate,
             });
@@ -5777,7 +5855,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         console.error("Invalid response from ValkyrAI LLMDetails endpoint");
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (error instanceof ValkyrLabsApiError && error.status === 401) {
         lastError =
           "Authentication required for ValkyrAI LLMDetails. Sign in again or provide a ValkyrAI JWT.";
         console.warn(
@@ -5797,44 +5875,6 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       error: lastError,
     });
     return models;
-  }
-
-  private async testValkyraiHostConnection(host: string) {
-    let success = false;
-    let errorMessage: string | undefined;
-    const normalizedHost = normalizeValkyraiHost(host);
-    const endpoints = [
-      `${normalizedHost}/health`,
-      `${normalizedHost}/status`,
-      normalizedHost,
-    ];
-    for (const endpoint of endpoints) {
-      try {
-        await axios.get(endpoint, { timeout: 5000 });
-        success = true;
-        errorMessage = undefined;
-        break;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          success = true;
-          errorMessage = undefined;
-          break;
-        }
-        errorMessage =
-          error instanceof Error ? error.message : "Unable to reach host.";
-      }
-    }
-
-    if (success) {
-      void this.registerSwarmSession(normalizedHost);
-    }
-
-    await this.postMessageToWebview({
-      type: "valkyraiHostTestResult",
-      host: normalizedHost,
-      success,
-      error: errorMessage,
-    });
   }
 
   /**
@@ -5872,9 +5912,11 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         headers["jwtSession"] = jwtToken;
       }
 
-      await axios.post(`${host}/swarm/sessions`, sessionMessage, {
+      await getValkyrLabsRtkApiClient().request({
+        url: `${host}/swarm/sessions`,
+        method: "POST",
+        json: sessionMessage,
         headers,
-        timeout: 5000,
       });
       console.log(`[SWARM] ValorIDE session registered with ${host}`);
 
@@ -6369,6 +6411,11 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       currentTaskItem: this.task?.taskId
         ? (taskHistory || []).find((item) => item.id === this.task?.taskId)
         : undefined,
+      currentTaskId: this.task?.taskId,
+      taskProgressCorrelation:
+        this.taskProgressCorrelation?.localTaskId === this.task?.taskId
+          ? this.taskProgressCorrelation
+          : undefined,
       checkpointTrackerErrorMessage: this.task?.checkpointTrackerErrorMessage,
       valorideMessages: this.task?.valorideMessages || [],
       taskHistory: (taskHistory || [])

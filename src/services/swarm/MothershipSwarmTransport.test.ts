@@ -11,11 +11,12 @@ const createMothership = () => ({
   on: jest.fn(),
   removeListener: jest.fn(),
   sendAppTopic: jest.fn(),
+  sendSwarmControlPayload: jest.fn(),
   sendCommandPayload: jest.fn(),
 });
 
 describe("MothershipSwarmTransport", () => {
-  it("sends SWARM messages over the mothership app topic and resolves protocol ACKs", async () => {
+  it("sends registration over the session-scoped SWARM control channel and resolves protocol ACKs", async () => {
     const mothership = createMothership();
     const transport = new MothershipSwarmTransport(mothership);
     const message = buildSwarmMessage(
@@ -42,7 +43,8 @@ describe("MothershipSwarmTransport", () => {
       ackId: message.id,
       type: SwarmMessageType.ACK,
     });
-    expect(mothership.sendAppTopic).toHaveBeenCalledWith("swarm", message);
+    expect(mothership.sendSwarmControlPayload).toHaveBeenCalledWith(message);
+    expect(mothership.sendAppTopic).not.toHaveBeenCalledWith("swarm", message);
   });
 
   it("publishes command ACKs through the mothership command channel", () => {
@@ -63,13 +65,46 @@ describe("MothershipSwarmTransport", () => {
     transport.send(ack);
 
     expect(mothership.sendCommandPayload).toHaveBeenCalledWith(ack);
-    expect(mothership.sendAppTopic).toHaveBeenCalledWith("ack", {
-      ackId: command.id,
-      commandId: command.id,
-      code: undefined,
-      error: undefined,
-      status: "ok",
-    });
+    expect(mothership.sendAppTopic).not.toHaveBeenCalled();
+  });
+
+  it("retries idempotent registration until the application-level ACK arrives", async () => {
+    jest.useFakeTimers();
+    try {
+      const mothership = createMothership();
+      const transport = new MothershipSwarmTransport(mothership);
+      const message = buildSwarmMessage(
+        SwarmMessageType.EVENT,
+        { instanceId: "agent-1", type: SwarmEntityType.AGENT },
+        { instanceId: "api-0", type: SwarmEntityType.SERVER },
+        "register",
+        {},
+      );
+
+      const pending = transport.sendAndWaitForAck(message);
+      expect(mothership.sendSwarmControlPayload).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(1_000);
+      expect(mothership.sendSwarmControlPayload).toHaveBeenCalledTimes(2);
+
+      const listener = mothership.on.mock.calls[0][1];
+      listener({
+        topic: "swarm",
+        payload: buildAck(message, {
+          instanceId: "api-0",
+          type: SwarmEntityType.SERVER,
+        }),
+      });
+      await expect(pending).resolves.toMatchObject({
+        ackId: message.id,
+        type: SwarmMessageType.ACK,
+      });
+
+      jest.advanceTimersByTime(20_000);
+      expect(mothership.sendSwarmControlPayload).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("converts app-level mothership nacks into protocol NACKs", async () => {

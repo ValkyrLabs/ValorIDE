@@ -80,6 +80,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "blocked",
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "browser_action",
           "action",
@@ -92,6 +93,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "blocked",
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "browser_action",
           "url",
@@ -102,6 +104,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "blocked",
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "browser_action",
           "coordinate",
@@ -112,6 +115,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
+        outcome: "blocked",
         toolResponse: await this.context.sayAndCreateMissingParamError(
           "browser_action",
           "text",
@@ -150,12 +154,13 @@ export class BrowserToolHandler extends BaseToolHandler {
           "ask",
           "browser_action_launch",
         );
-        const didApprove = await this.askApproval(
-          "browser_action_launch",
-          url,
-        );
+        const didApprove = await this.askApproval("browser_action_launch", url);
         if (!didApprove) {
-          return { shouldContinue: true, userRejected: true };
+          return {
+            shouldContinue: true,
+            outcome: "rejected",
+            userRejected: true,
+          };
         }
       }
       await this.context.say("browser_action_result", "");
@@ -164,7 +169,11 @@ export class BrowserToolHandler extends BaseToolHandler {
       if (!this.context.shouldAutoApproveTool(block.name)) {
         const didApprove = await this.askApproval("tool", message);
         if (!didApprove) {
-          return { shouldContinue: true, userRejected: true };
+          return {
+            shouldContinue: true,
+            outcome: "rejected",
+            userRejected: true,
+          };
         }
       }
     }
@@ -189,7 +198,7 @@ export class BrowserToolHandler extends BaseToolHandler {
           result = await this.context.browserSession.scrollUp();
           break;
         case "close":
-          result = await this.context.browserSession.closeBrowser();
+          result = (await this.context.browserSession.closeBrowser()) ?? {};
           break;
         default:
           throw new Error(`Unknown action: ${action}`);
@@ -199,10 +208,7 @@ export class BrowserToolHandler extends BaseToolHandler {
       const message = `Browser action '${action}' completed.\nLogs: ${result.logs || "none"}\nText: ${result.text || "none"}`;
 
       if (action !== "close") {
-        await this.context.say(
-          "browser_action_result",
-          JSON.stringify(result),
-        );
+        await this.context.say("browser_action_result", JSON.stringify(result));
       }
 
       if (result.screenshot) {
@@ -213,12 +219,14 @@ export class BrowserToolHandler extends BaseToolHandler {
 
       return {
         shouldContinue: true,
+        outcome: "succeeded",
         toolResponse,
         didAlreadyUseTool: true,
       };
     } catch (error) {
       return {
         shouldContinue: true,
+        outcome: "failed",
         toolResponse: await this.handleError(
           "executing browser action",
           error as Error,

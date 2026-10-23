@@ -4,7 +4,8 @@ import * as vscode from "vscode";
 
 /**
  * PromptService — Manages VALOR system prompts, ThorAPI catalog, and swarm rules
- * Loads from .valoride/prompts/ JSON configuration files
+ * Loads optional .valoride/prompts/ JSON configuration files.
+ * The Task engine owns the built-in prompt; absent files add no project layer.
  */
 
 export interface SystemPromptConfig {
@@ -129,11 +130,30 @@ export class PromptService {
     );
 
     if (!fs.existsSync(filePath)) {
-      throw new Error(`system.json not found at ${filePath}`);
+      this.systemPrompt = null;
+      this.logger.appendLine(
+        "[PromptService] No optional project system prompt configured",
+      );
+      return;
     }
 
     const content = fs.readFileSync(filePath, "utf-8");
-    this.systemPrompt = JSON.parse(content);
+    const config = JSON.parse(content);
+    if (
+      !Array.isArray(config?.sections) ||
+      !config.sections.every(
+        (section: any) =>
+          section &&
+          typeof section.section === "string" &&
+          typeof section.title === "string" &&
+          typeof section.content === "string",
+      )
+    ) {
+      throw new Error(
+        "Invalid system.json: sections must contain section, title and content strings",
+      );
+    }
+    this.systemPrompt = config;
     this.logger.appendLine(
       `[PromptService] ✅ Loaded system.json (${this.systemPrompt.sections.length} sections)`,
     );
@@ -149,11 +169,21 @@ export class PromptService {
     );
 
     if (!fs.existsSync(filePath)) {
-      throw new Error(`thorapi-catalog.json not found at ${filePath}`);
+      this.thorapiCatalog = null;
+      this.logger.appendLine(
+        "[PromptService] No optional project ThorAPI catalog configured",
+      );
+      return;
     }
 
     const content = fs.readFileSync(filePath, "utf-8");
-    this.thorapiCatalog = JSON.parse(content);
+    const config = JSON.parse(content);
+    if (!Array.isArray(config?.services) || !Array.isArray(config?.models)) {
+      throw new Error(
+        "Invalid thorapi-catalog.json: services and models must be arrays",
+      );
+    }
+    this.thorapiCatalog = config;
     this.logger.appendLine(
       `[PromptService] ✅ Loaded thorapi-catalog.json (${this.thorapiCatalog.services.length} services, ${this.thorapiCatalog.models.length} models)`,
     );
@@ -169,11 +199,26 @@ export class PromptService {
     );
 
     if (!fs.existsSync(filePath)) {
-      throw new Error(`swarm-rules.json not found at ${filePath}`);
+      this.swarmRules = null;
+      this.logger.appendLine(
+        "[PromptService] No optional project SWARM rules configured",
+      );
+      return;
     }
 
     const content = fs.readFileSync(filePath, "utf-8");
-    this.swarmRules = JSON.parse(content);
+    const config = JSON.parse(content);
+    if (
+      !Array.isArray(config?.worker_agents) ||
+      !config?.supervisor_agent ||
+      typeof config.supervisor_agent !== "object" ||
+      Array.isArray(config.supervisor_agent)
+    ) {
+      throw new Error(
+        "Invalid swarm-rules.json: worker_agents and supervisor_agent are required",
+      );
+    }
+    this.swarmRules = config;
     this.logger.appendLine(
       `[PromptService] ✅ Loaded swarm-rules.json (${this.swarmRules.worker_agents.length} workers)`,
     );
@@ -226,14 +271,14 @@ export class PromptService {
    * Get all configs as JSON (for injection into prompts)
    */
   getAllConfigs(): {
-    systemPrompt: SystemPromptConfig;
-    thorapiCatalog: ThorAPICatalog;
-    swarmRules: SwarmRules;
+    systemPrompt: SystemPromptConfig | null;
+    thorapiCatalog: ThorAPICatalog | null;
+    swarmRules: SwarmRules | null;
   } {
     return {
-      systemPrompt: this.getSystemPromptConfig(),
-      thorapiCatalog: this.getThorAPICatalog(),
-      swarmRules: this.getSwarmRules(),
+      systemPrompt: this.systemPrompt,
+      thorapiCatalog: this.thorapiCatalog,
+      swarmRules: this.swarmRules,
     };
   }
 

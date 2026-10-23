@@ -3,6 +3,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { getAllExtensionState, getSecret } from "@core/storage/state";
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import { getValkyrLabsRtkApiClient } from "./valkyrai/ValkyrLabsRtkApi";
 
 /**
  * LLMPromptService — ThorAPI-FIRST prompt loading
@@ -10,7 +11,7 @@ import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
  * PRIORITY ORDER:
  * 1. ThorAPI LLMDetails service (PRIMARY) - query by task intent + project stack
  * 2. src/assets/prompts/system.json (fallback) - base system prompt
- * 3. Fail gracefully with error message
+ * 3. No optional selection; the Task engine retains its built-in system prompt.
  *
  * STACK-AWARE LOADING:
  * - Detect project stack (Java/Spring, Python/Flask, Node.js, etc.)
@@ -61,8 +62,6 @@ export interface LLMDetailsPromptService {
   query(input: LLMDetailsQuery): Promise<LLMDetailsPromptCandidate | null>;
 }
 
-const LLM_DETAILS_QUERY_TIMEOUT_MS = 5000;
-
 export class LLMPromptService {
   private workspaceRoot: string;
   private logger: vscode.OutputChannel;
@@ -109,7 +108,7 @@ export class LLMPromptService {
         );
       } else {
         this.logger.appendLine(
-          "[LLMPromptService] ❌ No prompt available (ThorAPI failed, fallback missing)",
+          "[LLMPromptService] No optional prompt selected; using the built-in ValorIDE system prompt",
         );
       }
     } catch (error) {
@@ -293,9 +292,6 @@ export class LLMPromptService {
       );
 
       if (!fallbackPath) {
-        this.logger.appendLine(
-          "[LLMPromptService] Fallback prompt not found in expected locations",
-        );
         return;
       }
 
@@ -444,25 +440,18 @@ export function createExtensionHostLLMDetailsService(
         headers.jwtSession = authToken;
       }
 
-      const controller = new AbortController();
-      const timeout = setTimeout(
-        () => controller.abort(),
-        LLM_DETAILS_QUERY_TIMEOUT_MS,
-      );
-
-      let response: Response;
+      let response;
       try {
-        response = await fetch(endpoint.toString(), {
+        response = await getValkyrLabsRtkApiClient().request<unknown>({
+          url: endpoint.toString(),
           headers,
-          signal: controller.signal,
+          acceptHttpErrors: true,
         });
       } catch (error) {
         logger.appendLine(
           `[LLMPromptService] ThorAPI query unavailable (${classifyLlmDetailsQueryError(error)}); using fallback prompt`,
         );
         return null;
-      } finally {
-        clearTimeout(timeout);
       }
 
       if (response.status === 401 || response.status === 403) {
@@ -471,12 +460,11 @@ export function createExtensionHostLLMDetailsService(
         );
         return null;
       }
-      if (!response.ok) {
+      if (response.status < 200 || response.status >= 300) {
         throw new Error(`LlmDetails query failed with HTTP ${response.status}`);
       }
 
-      const payload = await response.json();
-      return selectBestLlmDetailsPrompt(payload, input.tags);
+      return selectBestLlmDetailsPrompt(response.data, input.tags);
     },
   };
 }
@@ -517,9 +505,7 @@ export function selectBestLlmDetailsPrompt(
     }))
     .sort(
       (a, b) =>
-        b.tagScore - a.tagScore ||
-        b.rating - a.rating ||
-        b.recency - a.recency,
+        b.tagScore - a.tagScore || b.rating - a.rating || b.recency - a.recency,
     )[0].candidate;
 }
 
@@ -541,9 +527,7 @@ function extractLlmDetails(payload: unknown): LLMDetailsPromptCandidate[] {
 function getPromptBody(candidate: LLMDetailsPromptCandidate): string | null {
   const prompt =
     candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
-  return typeof prompt === "string" && prompt.trim().length > 0
-    ? prompt
-    : null;
+  return typeof prompt === "string" && prompt.trim().length > 0 ? prompt : null;
 }
 
 function classifyLlmDetailsQueryError(error: unknown): string {
@@ -562,9 +546,7 @@ function normalizePromptMode(mode: unknown): "SYSTEM" | "APPEND" {
 
 function normalizeTags(tags: unknown): string[] {
   if (Array.isArray(tags)) {
-    return tags
-      .map((tag) => `${tag}`.trim())
-      .filter((tag) => tag.length > 0);
+    return tags.map((tag) => `${tag}`.trim()).filter((tag) => tag.length > 0);
   }
   if (typeof tags === "string") {
     return tags

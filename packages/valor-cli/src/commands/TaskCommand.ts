@@ -3,21 +3,16 @@
  */
 
 import chalk from "chalk";
-import ora from "ora";
-import { SessionManager } from "../SessionManager";
-import {
-  Orchestrator,
-  OrchestrationContext,
-} from "../orchestrator/Orchestrator";
-import { promises as fs } from "fs";
-import { join } from "path";
-import { homedir } from "os";
+import { SessionManager } from "../SessionManager.js";
+import { ValorRuntimeExecutor } from "../runtime/ValorRuntimeExecutor.js";
 
 export class TaskCommand {
   private sessionManager: SessionManager;
+  private runtimeExecutor: ValorRuntimeExecutor;
 
   constructor() {
     this.sessionManager = new SessionManager();
+    this.runtimeExecutor = new ValorRuntimeExecutor();
   }
 
   async execute(description: string, options: any): Promise<void> {
@@ -63,69 +58,25 @@ export class TaskCommand {
 
   private async runPlanMode(description: string, session: any): Promise<void> {
     console.log(chalk.blue("📝 PLAN MODE (dry-run)\n"));
-
-    const spinner = ora("Generating plan...").start();
-
-    try {
-      const context: OrchestrationContext = {
-        taskId: session.sessionId,
-        description,
-        initialContext: {
-          task: description,
-          workspace: session.workspaceRoot,
-        },
-        maxTurns: 1, // Planner only
-      };
-
-      const orchestrator = new Orchestrator(context);
-      await orchestrator.initialize();
-
-      // Log to ledger
-      const ledger = orchestrator.getLedger();
-      const entries = await ledger.readAll();
-
-      spinner.succeed(chalk.green("Plan generated"));
-      console.log(chalk.gray(`Ledger entries: ${entries.length}`));
-      console.log(chalk.gray("Mode: DRY-RUN (no changes applied)\n"));
-    } catch (error) {
-      spinner.fail(chalk.red(`Plan failed: ${error}`));
-      throw error;
-    }
+    const result = await this.runtimeExecutor.execute(
+      description,
+      "plan",
+      session.workspaceRoot,
+    );
+    console.log(chalk.green("\nPlan generated"));
+    console.log(chalk.gray(`Runtime events: ${result.eventCount}`));
+    console.log(chalk.gray("Mode: DRY-RUN (no changes applied)\n"));
   }
 
   private async runActMode(description: string, session: any): Promise<void> {
     console.log(chalk.blue("⚡ ACT MODE (executing)\n"));
-
-    const spinner = ora("Executing task...").start();
-
-    try {
-      const context: OrchestrationContext = {
-        taskId: session.sessionId,
-        description,
-        initialContext: {
-          task: description,
-          workspace: session.workspaceRoot,
-        },
-        maxTurns: 20, // Full orchestration
-      };
-
-      const orchestrator = new Orchestrator(context);
-      await orchestrator.initialize();
-
-      const result = await orchestrator.execute();
-
-      spinner.succeed(chalk.green("Task executed"));
-      console.log(chalk.gray(`Status: ${result.status}`));
-      console.log(chalk.gray(`Turns: ${result.turn}`));
-      console.log(
-        chalk.gray(
-          `Tokens: ${result.totalTokens} | Cost: $${result.totalCost.toFixed(4)}`,
-        ),
-      );
-      console.log(chalk.gray(`Ledger entries: ${result.ledgerEntries}\n`));
-    } catch (error) {
-      spinner.fail(chalk.red(`Execution failed: ${error}`));
-      throw error;
-    }
+    const result = await this.runtimeExecutor.execute(
+      description,
+      "act",
+      session.workspaceRoot,
+    );
+    console.log(chalk.green("\nTask executed"));
+    console.log(chalk.gray(`Status: ${result.status}`));
+    console.log(chalk.gray(`Runtime events: ${result.eventCount}\n`));
   }
 }

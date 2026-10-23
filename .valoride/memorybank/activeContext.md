@@ -9,9 +9,41 @@
 ✅ **Discovery & Analysis**
 
 - Generated `docs/cline-parity.md` with Cline→ValorIDE feature matrix
-- Analyzed Cline architecture (cline-core.ts, task management, checkpoints, storage)
+- Analy
+
+---
+
+## Current Task Context: AgentRuntimeCoordinator Test Import Lint Fix
+
+### Objective
+Remove the forbidden CommonJS `require()` import from `AgentRuntimeCoordinator.test.ts` while preserving test behavior.
+
+### Implemented
+- Replaced the runtime `require("./AgentRuntimeCoordinator").default` with a static TypeScript default import.
+
+### Verification
+- Targeted ESLint completed successfully.
+- The targeted Jest suite completed successfully.
+- `git diff --check` completed successfully.
+ed Cline architecture (cline-core.ts, task management, checkpoints, storage)
 - Documented gaps: CLI agent mode, multi-agent orchestration, persistent ledger, multi-project checkpoints
-- Parity matrix shows 8 major features, prioritized by P0/P1/P2
+- Parity matrix shows 8 major features, prioriti
+
+---
+
+## Current Task Context: AgentRuntimeCoordinator Test Import Lint Fix
+
+### Objective
+Remove the forbidden CommonJS `require()` import from `AgentRuntimeCoordinator.test.ts` while preserving test behavior.
+
+### Implemented
+- Replaced the runtime `require("./AgentRuntimeCoordinator").default` with a static TypeScript default import.
+
+### Verification
+- Targeted ESLint completed successfully.
+- The targeted Jest suite completed successfully.
+- `git diff --check` completed successfully.
+ed by P0/P1/P2
 
 ✅ **CLI Package Scaffold**
 
@@ -50,7 +82,23 @@
 
 1. **Implement TaskCommand.run()** — Connect CLI to ValorIDE task loop
    - Create session UUID
-   - Serialize context (workspace files, open tabs, terminal state)
+   - Seriali
+
+---
+
+## Current Task Context: AgentRuntimeCoordinator Test Import Lint Fix
+
+### Objective
+Remove the forbidden CommonJS `require()` import from `AgentRuntimeCoordinator.test.ts` while preserving test behavior.
+
+### Implemented
+- Replaced the runtime `require("./AgentRuntimeCoordinator").default` with a static TypeScript default import.
+
+### Verification
+- Targeted ESLint completed successfully.
+- The targeted Jest suite completed successfully.
+- `git diff --check` completed successfully.
+e context (workspace files, open tabs, terminal state)
    - Send to IDE via MCP or WebSocket if running
    - Fall back to standalone execution in CLI
 
@@ -151,3 +199,77 @@ Add a reliable way to clear authentication state and return users to the welcome
 - Current auth-clear path is triggered by the extension host via `clearClientAuthState`.
 - OpenAI-native still uses OAuth-backed local credentials when available; Anthropic remains API-key based in current config.
 - Next validation step should be a browser-level check of the welcome/account flow in the webview.
+
+---
+
+## Current Task Context: ThorAPI Webview Alias Fix
+
+### Objective
+Resolve the Vite build failure caused by `webview-ui/src/thorapi/api/index.ts` importing `APITelemetryApi.ts` from an external ValkyrAI path that does not exist in this repo layout.
+
+### Implemented
+- Updated `webview-ui/vite.config.ts` so `@thorapi/model`, `@thorapi/src`, `@thorapi/redux`, and `@thorapi/api` resolve to local `webview-ui/src/thorapi/*` directories instead of the removed external `../../ValkyrAI/...` path.
+- Hardened `scripts/thorapi-boundary.test.mjs` to assert the webview aliases stay local and do not regress back to the external ThorAPI path.
+
+### Verification
+- `npm --prefix webview-ui run build --silent` completed successfully.
+- `node --test scripts/thorapi-boundary.test.mjs scripts/sync-thorapi-from-valkyrai.test.mjs` executed successfully.
+
+### Notes
+- The repo already contains `webview-ui/src/thorapi/api/APITelemetryApi.ts`, so the fix is alias-routing, not regeneration.
+- This change keeps the build isolated from the sibling `ValkyrAI` checkout and aligns the webview with its local generated ThorAPI copy.
+
+---
+
+## Current Task Context: Chat Drag-and-Drop Image Support
+
+### Objective
+Add drag-and-drop image support to the webview chat composer so users can drop image files directly into the message area, matching the existing attach-photo button behavior.
+
+### Implemented
+- Added a `data-testid="chat-textarea-drop
+
+---
+
+## Current Task Context: AgentRuntimeCoordinator Test Import Lint Fix
+
+### Objective
+Remove the forbidden CommonJS `require()` import from `AgentRuntimeCoordinator.test.ts` while preserving test behavior.
+
+### Implemented
+- Replaced the runtime `require("./AgentRuntimeCoordinator").default` with a static TypeScript default import.
+
+### Verification
+- Targeted ESLint completed successfully.
+- The targeted Jest suite completed successfully.
+- `git diff --check` completed successfully.
+one"` marker to the chat composer wrapper in `webview-ui/src/components/chat/ChatTextArea.tsx`.
+- Expanded drop handling to accept both `DataTransfer.files` and `DataTransfer.items` so dropped image files are detected more reliably.
+- Preserved existing VS Code resource URI drop handling and plain-text drop behavior.
+- Added a regression test at `webview-ui/src/components/chat/__tests__/ChatTextArea.test.tsx` that verifies a dropped image file is converted into a data URL and added to the selected image list.
+
+### Verification
+- `npm test -- --run src/components/chat/__tests__/ChatTextArea.test.tsx` ran successfully.
+- `npm run build` ran successfully.
+- Browser verification was attempted, but the browser tool could not be launched in this session.
+
+### Notes
+- The drop
+
+---
+
+## Current Task Context: AgentRuntimeCoordinator Test Import Lint Fix
+
+### Objective
+Remove the forbidden CommonJS `require()` import from `AgentRuntimeCoordinator.test.ts` while preserving test behavior.
+
+### Implemented
+- Replaced the runtime `require("./AgentRuntimeCoordinator").default` with a static TypeScript default import.
+
+### Verification
+- Targeted ESLint completed successfully.
+- The targeted Jest suite completed successfully.
+- `git diff --check` completed successfully.
+one is intentionally scoped to the chat composer wrapper to keep the change surgical.
+- No changes were made to the existing attach-photo button flow.
+- Follow-up: if browser tooling becomes available, verify an actual image drop in the webview composer.

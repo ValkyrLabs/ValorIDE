@@ -76,6 +76,29 @@ describe("ValkyraiHandler", () => {
     );
   });
 
+  it("exposes the selected LlmDetails context limits to context management", () => {
+    const handler = new ValkyraiHandler({
+      valkyraiHost: "http://127.0.0.1:1234/v1",
+      valkyraiServiceId: "qwen-local-service",
+      valkyraiModelInfo: {
+        contextWindow: 32768,
+        maxTokens: 4096,
+        supportsImages: false,
+        supportsPromptCache: true,
+      },
+    });
+
+    expect(handler.getModel()).toEqual({
+      id: "qwen-local-service",
+      info: expect.objectContaining({
+        contextWindow: 32768,
+        maxTokens: 4096,
+        supportsImages: false,
+        supportsPromptCache: true,
+      }),
+    });
+  });
+
   it("includes the ValorIDE system prompt and conversation history in the ValkyrAI prompt", async () => {
     const handler = new ValkyraiHandler({
       valkyraiHost: "https://api-0.valkyrlabs.com/v1",

@@ -1,4 +1,5 @@
 export type HistoryItem = {
+  governedCodingInference?: import("../services/swarm/SwarmCodingInference").GovernedCodingTaskBinding;
   id: string;
   ts: number;
   task: string;
