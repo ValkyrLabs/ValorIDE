@@ -138,9 +138,13 @@ export async function downloadAndExtractZip(
   // Extract zip using adm-zip
   const zip = new AdmZip(buffer);
   const zipEntries = zip.getEntries();
+  await validateLocalZipEntries(zipEntries, targetDir, extractDir);
 
   for (const entry of zipEntries) {
-    const entryPath = path.join(extractDir, entry.entryName);
+    const entryPath = path.join(
+      extractDir,
+      entry.entryName.replace(/\\/g, "/"),
+    );
     if (entry.isDirectory) {
       await vscode.workspace.fs.createDirectory(vscode.Uri.file(entryPath));
     } else {

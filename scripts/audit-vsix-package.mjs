@@ -31,10 +31,17 @@ const ALLOWED_RUNTIME_ENTRY_PATTERNS = [
   /^extension\/assets\/valorIde\.acorn$/,
 ];
 
+const REQUIRED_RUNTIME_ENTRIES = [
+  { id: 'manifest', test: (entry) => entry.name === 'extension/package.json', message: 'extension/package.json is required' },
+  { id: 'extension_bundle', test: (entry) => entry.name === 'extension/dist/extension.js', message: 'extension/dist/extension.js is required' },
+  { id: 'webview_bundle', test: (entry) => entry.name.startsWith('extension/dist/webview/'), message: 'dist/webview assets are required' },
+];
+
 export function parseUnzipListing(listing) {
   const entries = [];
   for (const line of listing.split(/\r?\n/)) {
-    const match = line.match(/^\s*(\d+)\s+\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}\s+(.+?)\s*$/);
+    // Info-ZIP listings use ISO dates on Linux and legacy dates on macOS.
+    const match = line.match(/^\s*(\d+)\s+(?:\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{2}(?:\d{2})?)\s+\d{2}:\d{2}\s+(.+?)\s*$/);
     if (!match) continue;
     const size = Number(match[1]);
     const name = match[2];
@@ -51,6 +58,7 @@ export function auditEntries(entries, options = {}) {
   const totalUncompressedBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
   const forbiddenMatches = [];
   const unexpectedRuntimeEntries = [];
+  const missingRuntimeEntries = [];
 
   for (const entry of entries) {
     for (const rule of FORBIDDEN_RULES) {
@@ -60,6 +68,12 @@ export function auditEntries(entries, options = {}) {
     }
     if (!ALLOWED_RUNTIME_ENTRY_PATTERNS.some((pattern) => pattern.test(entry.name))) {
       unexpectedRuntimeEntries.push({ path: entry.name, size: entry.size });
+    }
+  }
+
+  for (const requiredEntry of REQUIRED_RUNTIME_ENTRIES) {
+    if (!entries.some(requiredEntry.test)) {
+      missingRuntimeEntries.push({ rule: requiredEntry.id, message: requiredEntry.message });
     }
   }
 
@@ -76,6 +90,9 @@ export function auditEntries(entries, options = {}) {
   if (unexpectedRuntimeEntries.length > 0) {
     failures.push(`${unexpectedRuntimeEntries.length} entries outside the runtime package allowlist detected`);
   }
+  if (missingRuntimeEntries.length > 0) {
+    failures.push(`${missingRuntimeEntries.length} required runtime entries missing`);
+  }
 
   return {
     ok: failures.length === 0,
@@ -86,6 +103,7 @@ export function auditEntries(entries, options = {}) {
     failures,
     forbiddenMatches,
     unexpectedRuntimeEntries,
+    missingRuntimeEntries,
     largestFiles: [...entries].sort((a, b) => b.size - a.size).slice(0, 50),
   };
 }
@@ -112,6 +130,11 @@ export function formatMarkdownReport(report, vsixPath = 'unknown') {
     '## Unexpected runtime entries',
     ...(report.unexpectedRuntimeEntries.length
       ? report.unexpectedRuntimeEntries.slice(0, 100).map((entry) => `- ${entry.path} (${entry.size} bytes)`)
+      : ['- none']),
+    '',
+    '## Missing runtime entries',
+    ...(report.missingRuntimeEntries.length
+      ? report.missingRuntimeEntries.map((entry) => `- ${entry.rule}: ${entry.message}`)
       : ['- none']),
     '',
     '## Largest files',
