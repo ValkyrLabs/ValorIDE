@@ -1,6 +1,12 @@
 name: ValorIDE VSIX package audit
 
 on:
+  workflow_call:
+    inputs:
+      valoride_ref:
+        description: Exact ValorIDE commit to package using the caller's shared component source
+        required: true
+        type: string
   pull_request:
     branches: [main, rc-5, rc-8]
   push:
@@ -9,22 +15,53 @@ on:
 jobs:
   package-audit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ValorIDE
     env:
       VALORIDE_VSIX_MAX_BYTES: 99614720
       VALORIDE_VSIX_MAX_FILES: 15000
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: ValkyrLabs/ValorIDE
+          ref: ${{ inputs.valoride_ref || github.event.pull_request.head.sha || github.sha }}
+          path: ValorIDE
+          persist-credentials: false
+
+      # A reusable invocation from the private source repository already has
+      # read access through its own GITHUB_TOKEN. Never expose private source
+      # or a cross-repository secret to a public pull-request build.
+      - name: Check out the caller's shared OpenAPI designer
+        if: github.repository == 'ValkyrLabs/ValkyrAI'
+        uses: actions/checkout@v4
+        with:
+          repository: ValkyrLabs/ValkyrAI
+          ref: ${{ github.sha }}
+          path: ValkyrAI
+          sparse-checkout: packages/component-library
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'yarn'
+          cache-dependency-path: ValorIDE/yarn.lock
+
+      - name: Install the shared designer's locked dependencies
+        if: github.repository == 'ValkyrLabs/ValkyrAI'
+        run: npm ci --ignore-scripts --prefix ../ValkyrAI/packages/component-library
 
       - name: Install extension dependencies
         run: yarn install --frozen-lockfile
 
       - name: Install webview dependencies
         run: yarn --cwd webview-ui install --frozen-lockfile
+
+      - name: Test VSIX runtime requirements with Jest
+        run: yarn test:package-audit
 
       - name: Build VSIX
         run: yarn package:vsix
@@ -34,4 +71,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: valoride-vsix-audit
-          path: artifacts/vsix-audit/
+          path: ValorIDE/artifacts/vsix-audit/
+
+      - name: Upload tested VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoride-vsix-${{ inputs.valoride_ref || github.event.pull_request.head.sha || github.sha }}
+          path: ValorIDE/*.vsix
+          if-no-files-found: error
