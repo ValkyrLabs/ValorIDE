@@ -40,7 +40,8 @@ const REQUIRED_RUNTIME_ENTRIES = [
 export function parseUnzipListing(listing) {
   const entries = [];
   for (const line of listing.split(/\r?\n/)) {
-    const match = line.match(/^\s*(\d+)\s+\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}\s+(.+?)\s*$/);
+    // Info-ZIP listings use ISO dates on Linux and legacy dates on macOS.
+    const match = line.match(/^\s*(\d+)\s+(?:\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{2}(?:\d{2})?)\s+\d{2}:\d{2}\s+(.+?)\s*$/);
     if (!match) continue;
     const size = Number(match[1]);
     const name = match[2];

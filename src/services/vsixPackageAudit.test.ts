@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import AdmZip from "adm-zip";
 
 describe("VSIX runtime completeness", () => {
@@ -85,6 +86,31 @@ describe("VSIX runtime completeness", () => {
       "extension/dist/extension.js",
       "extension/dist/webview/assets/index.js",
     ];
+
+    it.each(["2026-05-22", "05-22-2026", "05-22-26"])(
+      "parses unzip entries with the platform date layout %s",
+      (date) => {
+        const listing = `Archive: fixture.vsix\n  Length Date Time Name\n  0 ${date} 17:00 extension/dist/\n  2048 ${date} 17:00 extension/dist/extension.js\n  512 ${date} 17:00 extension/package.json\n  2560 2 files\n`;
+        const moduleUrl = pathToFileURL(
+          path.resolve("scripts/audit-vsix-package.mjs"),
+        ).href;
+        const parsed = JSON.parse(
+          execFileSync(
+            process.execPath,
+            [
+              "--input-type=module",
+              "-e",
+              `import { parseUnzipListing } from ${JSON.stringify(moduleUrl)}; process.stdout.write(JSON.stringify(parseUnzipListing(${JSON.stringify(listing)})));`,
+            ],
+            { encoding: "utf8", timeout: 5000 },
+          ),
+        );
+        expect(parsed).toEqual([
+          { size: 2048, name: "extension/dist/extension.js" },
+          { size: 512, name: "extension/package.json" },
+        ]);
+      },
+    );
 
     it("counts files and bytes without counting ZIP directories", async () => {
       const { report } = await audit([...runtime, "extension/dist/empty/"]);
