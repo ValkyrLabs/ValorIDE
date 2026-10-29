@@ -3,6 +3,7 @@ import { convertToOpenAiMessages } from "@api/transform/openai-format";
 import { convertToR1Format } from "@api/transform/r1-format";
 import { Anthropic } from "@anthropic-ai/sdk";
 import OpenAI from "openai";
+import { supportsExplicitAnthropicPromptCaching } from "./openrouter-prompt-cache";
 
 // Function to send API data to websocket if available
 function sendApiDataToWebsocket(
@@ -43,66 +44,41 @@ export async function createOpenRouterStream(
 
   // prompt caching: https://openrouter.ai/docs/prompt-caching
   // this is specifically for valoride models (some models may 'support prompt caching' automatically without this)
-  switch (model.id) {
-    case "anthropic/claude-sonnet-4.5":
-    case "anthropic/claude-opus-4":
-    case "anthropic/claude-opus-4.1":
-    case "anthropic/claude-opus-4.5":
-    case "anthropic/claude-haiku-4.5":
-    case "anthropic/claude-3.7-sonnet":
-    case "anthropic/claude-3.7-sonnet:beta":
-    case "anthropic/claude-3.7-sonnet:thinking":
-    case "anthropic/claude-3-7-sonnet":
-    case "anthropic/claude-3-7-sonnet:beta":
-    case "anthropic/claude-3.5-sonnet":
-    case "anthropic/claude-3.5-sonnet:beta":
-    case "anthropic/claude-3.5-sonnet-20240620":
-    case "anthropic/claude-3.5-sonnet-20240620:beta":
-    case "anthropic/claude-3-5-haiku":
-    case "anthropic/claude-3-5-haiku:beta":
-    case "anthropic/claude-3-5-haiku-20241022":
-    case "anthropic/claude-3-5-haiku-20241022:beta":
-    case "anthropic/claude-3-haiku":
-    case "anthropic/claude-3-haiku:beta":
-    case "anthropic/claude-3-opus":
-    case "anthropic/claude-3-opus:beta":
-      openAiMessages[0] = {
-        role: "system",
-        content: [
-          {
-            type: "text",
-            text: systemPrompt,
-            // @ts-ignore-next-line
-            cache_control: { type: "ephemeral" },
-          },
-        ],
-      };
-      // Add cache_control to the last two user messages
-      // (note: this works because we only ever add one user message at a time, but if we added multiple we'd need to mark the user message before the last assistant message)
-      const lastTwoUserMessages = openAiMessages
-        .filter((msg) => msg.role === "user")
-        .slice(-2);
-      lastTwoUserMessages.forEach((msg) => {
-        if (typeof msg.content === "string") {
-          msg.content = [{ type: "text", text: msg.content }];
-        }
-        if (Array.isArray(msg.content)) {
-          // NOTE: this is fine since env details will always be added at the end. but if it weren't there, and the user added a image_url type message, it would pop a text part before it and then move it after to the end.
-          let lastTextPart = msg.content
-            .filter((part) => part.type === "text")
-            .pop();
-
-          if (!lastTextPart) {
-            lastTextPart = { type: "text", text: "..." };
-            msg.content.push(lastTextPart);
-          }
+  if (supportsExplicitAnthropicPromptCaching(model)) {
+    openAiMessages[0] = {
+      role: "system",
+      content: [
+        {
+          type: "text",
+          text: systemPrompt,
           // @ts-ignore-next-line
-          lastTextPart["cache_control"] = { type: "ephemeral" };
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+    };
+    // Add cache_control to the last two user messages
+    // (note: this works because we only ever add one user message at a time, but if we added multiple we'd need to mark the user message before the last assistant message)
+    const lastTwoUserMessages = openAiMessages
+      .filter((msg) => msg.role === "user")
+      .slice(-2);
+    lastTwoUserMessages.forEach((msg) => {
+      if (typeof msg.content === "string") {
+        msg.content = [{ type: "text", text: msg.content }];
+      }
+      if (Array.isArray(msg.content)) {
+        // NOTE: this is fine since env details will always be added at the end. but if it weren't there, and the user added a image_url type message, it would pop a text part before it and then move it after to the end.
+        let lastTextPart = msg.content
+          .filter((part) => part.type === "text")
+          .pop();
+
+        if (!lastTextPart) {
+          lastTextPart = { type: "text", text: "..." };
+          msg.content.push(lastTextPart);
         }
-      });
-      break;
-    default:
-      break;
+        // @ts-ignore-next-line
+        lastTextPart["cache_control"] = { type: "ephemeral" };
+      }
+    });
   }
 
   // Not sure how openrouter defaults max tokens when no value is provided, but the anthropic api requires this value and since they offer both 4096 and 8192 variants, we should ensure 8192.

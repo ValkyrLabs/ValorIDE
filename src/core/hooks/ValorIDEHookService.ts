@@ -206,6 +206,10 @@ export class ValorIDEHookService {
 
   private readonly enabled: boolean;
 
+  hasHook(hookName: ValorIDEHookName): boolean {
+    return this.enabled && this.findHookScripts(hookName).length > 0;
+  }
+
   async runPreToolUse(
     toolName: string,
     input: unknown,

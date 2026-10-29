@@ -660,6 +660,39 @@ describe("AgentContextAssembler", () => {
     );
   });
 
+  it("shares one task-start latency budget across memory fallbacks", async () => {
+    jest.useFakeTimers();
+    try {
+      const listMemory = jest.fn(() => new Promise<unknown>(() => undefined));
+      const retrieveMemoryWithReceipt = jest.fn(() => new Promise<never>((_resolve, reject) => {
+        setTimeout(() => reject(new GrayMatterClientError("Older server has no receipt route", "unavailable", 404)), 60);
+      }));
+      const assembler = new AgentContextAssembler({
+        grayMatter: {
+          listMemory,
+          queryMemory: jest.fn(),
+          retrieveMemoryWithReceipt,
+        },
+        latencyBudgetMs: 100,
+        monotonicNow: () => Date.now(),
+        now: () => new Date("2026-05-13T12:00:00.000Z"),
+      });
+
+      const contextPromise = assembler.assemble({
+        task: "Start an agentic task without blocking on memory transport",
+      });
+      await jest.advanceTimersByTimeAsync(100);
+      const context = await contextPromise;
+
+      expect(listMemory).toHaveBeenCalledTimes(1);
+      expect(retrieveMemoryWithReceipt).toHaveBeenCalledTimes(1);
+      expect(context.grayMatter.status).toBe("unavailable");
+      expect(context.grayMatter.error).toContain("task-start latency budget");
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("suppresses receipt-backed context when policy requires retry", async () => {
     const queryMemory = jest.fn();
     const retrieveMemoryWithReceipt = jest.fn(async () => ({

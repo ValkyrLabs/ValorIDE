@@ -133,6 +133,7 @@ import { McpHub } from "@services/mcp/McpHub";
 import {
   createAgentContextForTask,
   type AgentContextAssembly,
+  DEFAULT_AGENT_CONTEXT_LATENCY_BUDGET_MS,
 } from "@services/agentic/AgentContextAssembler";
 import {
   createGrayMatterSessionState,
@@ -202,6 +203,10 @@ import {
 import type { TaskVerificationEvidence } from "@shared/TaskSummary";
 import type { TaskCompletionClassification } from "@shared/TaskLifecycle";
 import { GovernedLocalAuthority, type GovernedLocalAuthorityState } from "@services/swarm/GovernedLocalAuthority";
+import { backgroundUsageQueue } from "@services/usage-tracking/BackgroundUsageQueue";
+import { UsageTrackingService } from "@services/usage-tracking/UsageTrackingService";
+import { InitialCheckpointCoordinator } from "./InitialCheckpointCoordinator";
+import { PartialMessageCoalescer } from "./PartialMessageCoalescer";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -284,6 +289,14 @@ export class Task {
   checkpointTrackerErrorMessage?: string;
   private agentContextSectionPromise?: Promise<string | undefined>;
   private agentContextTelemetry?: AgentContextAssembly["bifrost"];
+  private readonly initialCheckpointCoordinator =
+    new InitialCheckpointCoordinator((error) => {
+      console.error("Failed to capture initial checkpoint:", error);
+      void vscode.window.showWarningMessage(
+        "ValorIDE could not capture the initial rollback checkpoint. Workspace changes are blocked; resolve the checkpoint error before retrying.",
+      );
+    });
+  private readonly partialMessageCoalescer: PartialMessageCoalescer<ValorIDEMessage>;
   conversationHistoryDeletedRange?: [number, number];
   isInitialized = false;
   isAwaitingPlanResponse = false;
@@ -362,8 +375,20 @@ export class Task {
     this.mcpHub = mcpHub;
     this.workspaceTracker = workspaceTracker;
     this.updateTaskHistory = updateTaskHistory;
-    this.postStateToWebview = postStateToWebview;
     this.postMessageToWebview = postMessageToWebview;
+    this.partialMessageCoalescer = new PartialMessageCoalescer(
+      (partialMessage) =>
+        this.postMessageToWebview({
+          type: "partialMessage",
+          partialMessage,
+        }),
+      32,
+      (error) => console.warn("Failed to post partial chat update:", error),
+    );
+    this.postStateToWebview = async () => {
+      await this.partialMessageCoalescer.discardPendingAndWait();
+      await postStateToWebview();
+    };
     this.reinitExistingTaskFromId = reinitExistingTaskFromId;
     this.cancelTask = cancelTask;
     this.terminalListener = terminalListener;
@@ -1305,10 +1330,7 @@ export class Task {
           // todo be more efficient about saving and posting only new data or one whole message at a time so ignore partial for saves, and only post parts of partial message instead of whole array in new listener
           // await this.saveValorIDEMessagesAndUpdateHistory()
           // await this.postStateToWebview()
-          await this.postMessageToWebview({
-            type: "partialMessage",
-            partialMessage: lastMessage,
-          });
+          this.partialMessageCoalescer.enqueue({ ...lastMessage });
           throw new Error("Current ask promise was ignored 1");
         } else {
           // this is a new partial message, so add it with partial state
@@ -1339,6 +1361,7 @@ export class Task {
       } else {
         // partial=false means its a complete version of a previously partial message
         if (isUpdatingPreviousPartial) {
+          await this.partialMessageCoalescer.discardPendingAndWait();
           // this is the complete version of a previously partial message, so replace the partial with the complete version
           this.askResponse = undefined;
           this.askResponseText = undefined;
@@ -1494,10 +1517,7 @@ export class Task {
           lastMessage.text = text;
           lastMessage.images = images;
           lastMessage.partial = partial;
-          await this.postMessageToWebview({
-            type: "partialMessage",
-            partialMessage: lastMessage,
-          });
+          this.partialMessageCoalescer.enqueue({ ...lastMessage });
         } else {
           // this is a new partial message, so add it with partial state
           const sayTs = Date.now();
@@ -1515,6 +1535,7 @@ export class Task {
       } else {
         // partial=false means its a complete version of a previously partial message
         if (isUpdatingPreviousPartial) {
+          await this.partialMessageCoalescer.discardPendingAndWait();
           // this is the complete version of a previously partial message, so replace the partial with the complete version
           this.lastMessageTs = lastMessage.ts;
           // lastMessage.ts = sayTs
@@ -1845,6 +1866,7 @@ export class Task {
 
   async abortTask() {
     this.abort = true; // stop autonomously running promises before publishing asynchronous lifecycle work
+    this.partialMessageCoalescer.dispose();
     await this.reportTerminal({
       confidence: "EXPLICIT",
       error: {
@@ -1902,6 +1924,7 @@ export class Task {
     isAttemptCompletionMessage: boolean = false,
     waitForCapture: boolean = false,
   ) {
+    await this.initialCheckpointCoordinator.onIdle();
     if (waitForCapture) {
       await this.initializeCheckpointTrackerForChat();
       if (this.checkpointTrackerErrorMessage)
@@ -2583,6 +2606,28 @@ export class Task {
     return this.checkpointTrackerInitialization;
   }
 
+  private startInitialCheckpointCapture(
+    checkpointMessage: ValorIDEMessage | undefined,
+  ): void {
+    this.initialCheckpointCoordinator.start(async () => {
+      await this.initializeCheckpointTrackerForChat();
+      if (this.checkpointTrackerErrorMessage)
+        throw new Error(this.checkpointTrackerErrorMessage);
+      const commitHash = await this.checkpointTracker?.commit();
+      if (checkpointMessage && commitHash) {
+        checkpointMessage.lastCheckpointHash = commitHash;
+        await this.saveValorIDEMessagesAndUpdateHistory();
+      }
+    });
+  }
+
+  async awaitInitialCheckpointForTool(
+    toolName: ToolUseName,
+    force = false,
+  ): Promise<void> {
+    await this.initialCheckpointCoordinator.beforeTool(toolName, force);
+  }
+
   private buildAgentContextSection(
     taskText = this.getLatestTaskTextForGrayMatter(),
   ): Promise<string | undefined> {
@@ -2594,6 +2639,9 @@ export class Task {
   private async assembleAgentContextSection(
     taskText: string,
   ): Promise<string | undefined> {
+    const deadline =
+      performance.now() + DEFAULT_AGENT_CONTEXT_LATENCY_BUDGET_MS;
+    const remainingBudget = () => Math.max(0, deadline - performance.now());
     try {
       const [jwtToken, legacyValorJwt, valkyraiJwt, cachedGrayMatterSession] =
         await Promise.all([
@@ -2658,11 +2706,21 @@ export class Task {
               !grayMatterSession.capabilities.memoryQuery
             ? "unavailable"
             : (grayMatterSession?.status ?? "unavailable");
-        await reportGrayMatterAccess({
+        void reportGrayMatterAccess({
           capabilities: grayMatterSession?.capabilities,
           message,
           recovery: grayMatterSession?.recovery,
           status,
+        });
+        return undefined;
+      }
+
+      const retrievalBudgetMs = remainingBudget();
+      if (retrievalBudgetMs <= 0) {
+        void reportGrayMatterAccess({
+          message:
+            "GrayMatter exceeded its 1.5 second task-start budget; continuing without memory context.",
+          status: "unavailable",
         });
         return undefined;
       }
@@ -2673,6 +2731,7 @@ export class Task {
         grayMatterSession,
         maxEntries: 8,
         maxEntryChars: 700,
+        latencyBudgetMs: retrievalBudgetMs,
         task: taskText,
         tenantContext,
         token,
@@ -2727,7 +2786,7 @@ export class Task {
       return context?.promptSection || undefined;
     } catch (error) {
       console.warn("Failed to assemble GrayMatter agent context:", error);
-      await this.say(
+      void this.say(
         "graymatter_context",
         JSON.stringify({
           checkedAt: new Date().toISOString(),
@@ -5501,8 +5560,16 @@ export class Task {
     const isFirstRequest =
       this.valorideMessages.filter((m) => m.say === "api_req_started")
         .length === 0;
+    let initialCheckpointMessage: ValorIDEMessage | undefined;
     if (isFirstRequest) {
-      await this.say("checkpoint_created"); // no hash since we need to wait for CheckpointTracker to be initialized
+      await this.say("checkpoint_created");
+      initialCheckpointMessage = findLast(
+        this.valorideMessages,
+        (message) => message.say === "checkpoint_created",
+      );
+      // Snapshot work starts immediately, but does not hold the first model
+      // token hostage. Workspace-mutating tools await this same capture.
+      this.startInitialCheckpointCapture(initialCheckpointMessage);
     }
 
     // getting verbose details is an expensive operation, it uses globby to top-down build file structure of project which for large projects can take a few seconds
@@ -5516,22 +5583,6 @@ export class Task {
             .join("\n\n") + "\n\nLoading...",
       }),
     );
-
-    // Await the tracker that was prewarmed when the task was constructed.
-    await this.initializeCheckpointTrackerForChat();
-
-    // Now that checkpoint tracker is initialized, update the dummy checkpoint_created message with the commit hash. (This is necessary since we use the API request loading as an opportunity to initialize the checkpoint tracker, which can take some time)
-    if (isFirstRequest) {
-      const commitHash = await this.checkpointTracker?.commit();
-      const lastCheckpointMessage = findLast(
-        this.valorideMessages,
-        (m) => m.say === "checkpoint_created",
-      );
-      if (lastCheckpointMessage) {
-        lastCheckpointMessage.lastCheckpointHash = commitHash;
-        await this.saveValorIDEMessagesAndUpdateHistory();
-      }
-    }
 
     const [parsedUserContent, environmentDetails] = await this.loadContext(
       userContent,
@@ -5649,32 +5700,46 @@ export class Task {
         });
       };
 
-      const trackUsageAndRefreshBalance = async (logContext: string) => {
-        if (!hasUsageDetails()) {
+      let didQueueUsageTracking = false;
+      const trackUsageAndRefreshBalance = (logContext: string) => {
+        if (!hasUsageDetails() || didQueueUsageTracking) {
           return;
         }
-        try {
-          const { trackApiUsageWithPricing } = await import(
-            "../../api/usage-tracking"
+        didQueueUsageTracking = true;
+
+        const usageSnapshot = {
+          accountId: (() => {
+            const principal =
+              this.context.globalState.get<any>("authenticatedPrincipal") ??
+              this.context.globalState.get<any>("userInfo");
+            const value =
+              principal?.id ?? principal?.username ?? principal?.email;
+            return value === undefined || value === null
+              ? undefined
+              : String(value);
+          })(),
+          inputTokens,
+          idempotencyKey: `usage:${this.taskId}:${lastApiReqIndex}`,
+          modelId: this.api.getModel().id,
+          outputTokens,
+          providerId: currentProviderId,
+        };
+        const usageTrackingService = UsageTrackingService.getInstance();
+        backgroundUsageQueue.enqueue(async () => {
+          const usageTracking = await import("../../api/usage-tracking");
+          await usageTracking.trackApiUsageWithPricingForService(
+            usageTrackingService,
+            usageSnapshot.providerId,
+            usageSnapshot.modelId,
+            usageSnapshot.inputTokens,
+            usageSnapshot.outputTokens,
+            {
+              accountId: usageSnapshot.accountId,
+              idempotencyKey: usageSnapshot.idempotencyKey,
+            },
           );
-          await trackApiUsageWithPricing(
-            currentProviderId,
-            this.api.getModel().id,
-            inputTokens,
-            outputTokens,
-          );
-        } catch (err) {
-          console.error(
-            `Failed to track usage after stream ${logContext}:`,
-            err,
-          );
-        }
-        try {
-          const { WebviewProvider } = await import("../webview/index");
-          WebviewProvider.getVisibleInstance()
-            ?.getUsageTrackingService()
-            .requestBalance();
-        } catch {}
+          await usageTrackingService.requestBalance();
+        });
       };
 
       const abortStream = async (
@@ -5783,7 +5848,7 @@ export class Task {
               await this.postStateToWebview();
             }
             if (didUpdateUsage) {
-              await trackUsageAndRefreshBalance("(background drain)");
+              trackUsageAndRefreshBalance("(background drain)");
             }
           }
         })();
@@ -5898,7 +5963,7 @@ export class Task {
           await this.saveValorIDEMessagesAndUpdateHistory();
           await this.postStateToWebview();
 
-          await trackUsageAndRefreshBalance("(fetch path)");
+          trackUsageAndRefreshBalance("(fetch path)");
         });
       }
 
@@ -5930,7 +5995,7 @@ export class Task {
       await this.saveValorIDEMessagesAndUpdateHistory();
       await this.postStateToWebview();
 
-      await trackUsageAndRefreshBalance("");
+      trackUsageAndRefreshBalance("");
 
       // now add to apiconversationhistory
       // need to save assistant responses to file before proceeding to tool use since user can exit at any moment and we wouldn't be able to save the assistant's response

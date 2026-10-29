@@ -23,6 +23,7 @@ export interface CreateGrayMatterSessionStateOptions {
     | TenantContext
     | undefined;
   now?: () => Date;
+  requestTimeoutMs?: number;
   tenantContext?: TenantContext;
   token?: string;
 }
@@ -147,6 +148,7 @@ export const createGrayMatterSessionState = async ({
   fetch,
   getTenantContext,
   now = () => new Date(),
+  requestTimeoutMs,
   tenantContext,
   token,
 }: CreateGrayMatterSessionStateOptions): Promise<GrayMatterSessionState> => {
@@ -170,6 +172,7 @@ export const createGrayMatterSessionState = async ({
       fetch,
       getAuthToken: () => token,
       getTenantContext: getTenantContext ?? (() => tenantContext),
+      requestTimeoutMs,
     });
     const discovery = await client.loadDiscovery();
     const sessionState: GrayMatterSessionState = {

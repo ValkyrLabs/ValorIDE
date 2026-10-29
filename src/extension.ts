@@ -37,6 +37,7 @@ import { initializeSwarmPromptBroadcaster } from "./services/swarmPromptBroadcas
 import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry";
 import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
+import { backgroundUsageQueue } from "./services/usage-tracking/BackgroundUsageQueue";
 import {
   createExtensionHostLLMDetailsService,
   initializeLLMPromptService,
@@ -1028,9 +1029,8 @@ export function activate(context: vscode.ExtensionContext) {
 const { IS_DEV, DEV_WORKSPACE_FOLDER } = process.env;
 
 // This method is called when your extension is deactivated
-export function deactivate() {
-  return new Promise<void>((resolve) => {
-    Logger.log("Starting ValorIDE extension deactivation...");
+export async function deactivate() {
+  Logger.log("Starting ValorIDE extension deactivation...");
 
     try {
       disposeAgentRuntimeCoordinator();
@@ -1049,9 +1049,13 @@ export function deactivate() {
       console.error("Error cleaning up test mode:", error);
     }
 
-    Logger.log("ValorIDE extension deactivated successfully");
-    resolve();
-  });
+  try {
+    await backgroundUsageQueue.onIdle();
+  } catch (error) {
+    Logger.log(`Error draining usage accounting: ${error}`);
+  }
+
+  Logger.log("ValorIDE extension deactivated successfully");
 }
 
 // Set up development mode file watcher

@@ -302,6 +302,11 @@
           "command": "valoride.projects.import",
           "group": "navigation@2",
           "when": "view == valoride-dev.ProjectsView"
+        },
+        {
+          "command": "valoride.workflows.refresh",
+          "group": "navigation@1",
+          "when": "view == valoride-dev.WorkflowProjectsView"
         }
       ],
       "view/item/context": [

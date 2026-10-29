@@ -88,6 +88,8 @@ export interface AgentContextAssembly {
 
 export interface AgentContextAssemblerOptions {
   grayMatter?: GrayMatterReadableClient;
+  latencyBudgetMs?: number;
+  monotonicNow?: () => number;
   now?: () => Date;
 }
 
@@ -115,12 +117,14 @@ export interface CreateAgentContextSectionForTaskOptions
   baseUrl: string;
   fetch?: FetchLike;
   grayMatterSession?: GrayMatterSessionState;
+  latencyBudgetMs?: number;
   tenantContext?: TenantContext;
   token?: string;
 }
 
 const DEFAULT_MAX_ENTRIES = 8;
 const DEFAULT_MAX_ENTRY_CHARS = 700;
+export const DEFAULT_AGENT_CONTEXT_LATENCY_BUDGET_MS = 1_500;
 const GRAYMATTER_INVARIANT_QUERY_CONTEXT = [
   "Required preflight memory: invariants, rules, instructions, decisions, methodology, preferences, prior session context, business truth, and organizational truth.",
   "Named platform anchors: ValkyrAI, ThorAPI, AspectJ, RBAC, ACL, api-0, ValorIDE, GrayMatter.",
@@ -128,10 +132,15 @@ const GRAYMATTER_INVARIANT_QUERY_CONTEXT = [
 ].join("\n");
 
 export class AgentContextAssembler {
+  private readonly latencyBudgetMs: number;
+  private readonly monotonicNow: () => number;
   private readonly now: () => Date;
 
   constructor(private readonly options: AgentContextAssemblerOptions = {}) {
     this.now = options.now ?? (() => new Date());
+    this.monotonicNow = options.monotonicNow ?? (() => performance.now());
+    this.latencyBudgetMs =
+      options.latencyBudgetMs ?? DEFAULT_AGENT_CONTEXT_LATENCY_BUDGET_MS;
   }
 
   async assemble(
@@ -415,6 +424,15 @@ export class AgentContextAssembler {
     input: AssembleAgentContextInput,
   ): Promise<ContextReadResponse> {
     const grayMatter = this.options.grayMatter;
+    const deadline = this.monotonicNow() + this.latencyBudgetMs;
+    const remainingBudget = () => Math.max(0, deadline - this.monotonicNow());
+    const runWithinBudget = <T>(operation: () => Promise<T>) => {
+      const remainingMs = remainingBudget();
+      if (remainingMs <= 0) {
+        throw new Error("GrayMatter exceeded the task-start latency budget.");
+      }
+      return withLatencyBudget(operation(), remainingMs);
+    };
 
     if (!grayMatter?.retrieveMemoryWithReceipt) {
       // Keep the newer ACL-scoped compatibility path for clients that do not
@@ -422,7 +440,7 @@ export class AgentContextAssembler {
       if (grayMatter?.listMemory) {
         return {
           value: rankRelevantMemoryEntries(
-            await grayMatter.listMemory(),
+            await runWithinBudget(() => grayMatter.listMemory!()),
             input,
           ),
         };
@@ -435,7 +453,7 @@ export class AgentContextAssembler {
 
     let receiptResponse: unknown;
     try {
-      receiptResponse = await grayMatter.retrieveMemoryWithReceipt({
+      receiptResponse = await runWithinBudget(() => grayMatter.retrieveMemoryWithReceipt!({
         includeEvaluator: false,
         includeItems: true,
         includeText: true,
@@ -443,7 +461,7 @@ export class AgentContextAssembler {
         query: query.query,
         retrievalMode: "HYBRID",
         topK: query.limit ?? DEFAULT_MAX_ENTRIES,
-      });
+      }));
     } catch (error) {
       if (
         grayMatter.listMemory &&
@@ -456,7 +474,7 @@ export class AgentContextAssembler {
         // take this path after an auth/quota failure, timeout or policy result.
         return {
           value: rankRelevantMemoryEntries(
-            await grayMatter.listMemory(),
+            await runWithinBudget(() => grayMatter.listMemory!()),
             input,
           ),
         };
@@ -484,6 +502,28 @@ export class AgentContextAssembler {
   }
 }
 
+const withLatencyBudget = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+): Promise<T> => {
+  let timeout: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(
+      () =>
+        reject(new Error("GrayMatter exceeded the task-start latency budget.")),
+      timeoutMs,
+    );
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
+};
+
 export const createAgentContextSectionForTask = async ({
   ...options
 }: CreateAgentContextSectionForTaskOptions): Promise<string | undefined> => {
@@ -495,6 +535,7 @@ export const createAgentContextForTask = async ({
   baseUrl,
   fetch,
   grayMatterSession,
+  latencyBudgetMs = DEFAULT_AGENT_CONTEXT_LATENCY_BUDGET_MS,
   tenantContext,
   token,
   ...input
@@ -515,8 +556,10 @@ export const createAgentContextForTask = async ({
     fetch,
     getAuthToken: () => token,
     getTenantContext: () => tenantContext,
+    requestTimeoutMs: latencyBudgetMs,
   });
   return new AgentContextAssembler({
+    latencyBudgetMs,
     grayMatter: {
       compileContextPage: (input) => client.compileContextPage(input),
       compileContextPagePrompt: (input) =>

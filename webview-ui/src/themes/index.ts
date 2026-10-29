@@ -121,13 +121,13 @@ export class ThemeSwitcher {
     if (typeof themeName === "string" && themeName !== normalized) {
       this.removeLegacyThemeStylesheet(themeName);
     }
-    this.ensureComponentOverrides();
 
     // Remove previous theme stylesheet
     this.removeThemeStylesheet(this.currentTheme);
 
     // Load new theme stylesheet
     this.loadThemeStylesheet(normalized);
+    this.ensureComponentOverrides();
 
     // Update data attribute for CSS targeting
     document.documentElement.setAttribute("data-theme", normalized);
@@ -207,7 +207,9 @@ export class ThemeSwitcher {
 
   private ensureComponentOverrides(): void {
     const overridesId = "valkyr-theme-overrides";
-    if (document.getElementById(overridesId)) {
+    const existing = document.getElementById(overridesId);
+    if (existing) {
+      document.head.appendChild(existing);
       return;
     }
 

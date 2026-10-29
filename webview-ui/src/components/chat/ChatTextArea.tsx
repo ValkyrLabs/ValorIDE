@@ -135,10 +135,10 @@ interface GitCommit {
 
 const PLAN_MODE_COLOR = "var(--vscode-inputValidation-warningBorder)";
 
-const SwitchOption = styled.div<{ isActive: boolean }>`
+const SwitchOption = styled.div<{ $isActive: boolean }>`
   padding: 2px 8px;
   color: ${(props) =>
-    props.isActive ? "var(--vscode-foreground)" : "var(--vscode-descriptionForeground)"};
+    props.$isActive ? "var(--vscode-foreground)" : "var(--vscode-descriptionForeground)"};
   z-index: 1;
   transition: color 0.2s ease;
   font-size: 12px;
@@ -147,7 +147,7 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      !props.isActive
+      !props.$isActive
         ? "var(--vscode-toolbar-hoverBackground)"
         : "transparent"};
   }
@@ -168,14 +168,14 @@ const SwitchContainer = styled.div<{ disabled: boolean }>`
   user-select: none; // Prevent text selection
 `;
 
-const Slider = styled.div<{ isAct: boolean; isPlan?: boolean }>`
+const Slider = styled.div<{ $isAct: boolean; $isPlan?: boolean }>`
   position: absolute;
   height: 100%;
   width: 50%;
   background-color: ${(props) =>
-    `color-mix(in srgb, ${props.isPlan ? PLAN_MODE_COLOR : "var(--vscode-focusBorder)"} 28%, var(--valoride-chat-surface))`};
+    `color-mix(in srgb, ${props.$isPlan ? PLAN_MODE_COLOR : "var(--vscode-focusBorder)"} 28%, var(--valoride-chat-surface))`};
   transition: transform 0.2s ease;
-  transform: translateX(${(props) => (props.isAct ? "100%" : "0%")});
+  transform: translateX(${(props) => (props.$isAct ? "100%" : "0%")});
 `;
 
 const ButtonGroup = styled.div`
@@ -257,15 +257,18 @@ const ModelButtonWrapper = styled.div`
   max-width: 100%; // Don't overflow parent
 `;
 
-const ModelDisplayButton = styled.a<{ isActive?: boolean; disabled?: boolean }>`
+const ModelDisplayButton = styled.a<{
+  $isActive?: boolean;
+  disabled?: boolean;
+}>`
   padding: 0px 0px;
   height: 20px;
   width: 100%;
   min-width: 0;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  text-decoration: ${(props) => (props.isActive ? "underline" : "none")};
+  text-decoration: ${(props) => (props.$isActive ? "underline" : "none")};
   color: ${(props) =>
-    props.isActive
+    props.$isActive
       ? "var(--vscode-foreground)"
       : "var(--vscode-descriptionForeground)"};
   display: flex;
@@ -1721,7 +1724,7 @@ const ChatTextAreaRuntimeBase = forwardRef<
               <ModelButtonWrapper ref={buttonRef}>
                 <ModelDisplayButton
                   role="button"
-                  isActive={showModelSelector}
+                  $isActive={showModelSelector}
                   disabled={false}
                   title="Select Model / API Provider"
                   onClick={handleModelButtonClick}
@@ -1767,18 +1770,18 @@ const ChatTextAreaRuntimeBase = forwardRef<
               onClick={onModeToggle}
             >
               <Slider
-                isAct={chatSettings.mode === "act"}
-                isPlan={chatSettings.mode === "plan"}
+                $isAct={chatSettings.mode === "act"}
+                $isPlan={chatSettings.mode === "plan"}
               />
               <SwitchOption
-                isActive={chatSettings.mode === "plan"}
+                $isActive={chatSettings.mode === "plan"}
                 onMouseOver={() => setShownTooltipMode("plan")}
                 onMouseLeave={() => setShownTooltipMode(null)}
               >
                 Plan
               </SwitchOption>
               <SwitchOption
-                isActive={chatSettings.mode === "act"}
+                $isActive={chatSettings.mode === "act"}
                 onMouseOver={() => setShownTooltipMode("act")}
                 onMouseLeave={() => setShownTooltipMode(null)}
               >

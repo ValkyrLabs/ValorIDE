@@ -22,6 +22,8 @@ export const credentialBoundSdkFetch: typeof globalThis.fetch = async (
 };
 
 export interface ValkyrLabsApiRequest {
+  /** A consumer may shorten, never extend, the shared request deadline. */
+  timeoutMs?: number;
   acceptHttpErrors?: boolean;
   body?: BodyInit | null;
   credentials?: RequestCredentials;
@@ -233,12 +235,16 @@ const createValkyrLabsBaseQuery =
     ValkyrLabsApiBaseQueryError
   > =>
   async (request, api) => {
+    if (request.timeoutMs !== undefined && (!Number.isFinite(request.timeoutMs) || request.timeoutMs <= 0)) {
+      return { error: { status: "FETCH_ERROR", error: "Request timeout must be a positive finite number." } };
+    }
+    const timeoutMs = Math.min(request.timeoutMs ?? VALKYR_LABS_API_TIMEOUT_MS, VALKYR_LABS_API_TIMEOUT_MS);
     const abortController = new AbortController();
     const abortFromRtk = () => abortController.abort();
     api.signal.addEventListener("abort", abortFromRtk, { once: true });
     const timeout = setTimeout(
       () => abortController.abort(),
-      VALKYR_LABS_API_TIMEOUT_MS,
+      timeoutMs,
     );
 
     try {
@@ -299,7 +305,7 @@ const createValkyrLabsBaseQuery =
       return {
         error: {
           error: timedOut
-            ? `Valkyr Labs API request timed out after ${VALKYR_LABS_API_TIMEOUT_MS} ms.`
+            ? `Valkyr Labs API request timed out after ${timeoutMs} ms.`
             : error instanceof Error
               ? error.message
               : "Valkyr Labs API request failed.",

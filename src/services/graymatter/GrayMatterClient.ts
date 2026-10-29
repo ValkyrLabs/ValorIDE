@@ -32,6 +32,7 @@ export type GrayMatterErrorKind =
 export type GrayMatterMemoryWriteErrorKind = GrayMatterErrorKind | "unverified";
 
 export interface GrayMatterClientOptions {
+  requestTimeoutMs?: number;
   baseUrl: string;
   fetch?: ValkyrLabsFetch;
   getAuthToken: () => Promise<string | undefined> | string | undefined;
@@ -825,6 +826,7 @@ export class GrayMatterClient {
 
     try {
       const response = await this.api.request<T>({
+        timeoutMs: this.options.requestTimeoutMs,
         body: init.body,
         headers,
         method: init.method,

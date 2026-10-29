@@ -31,6 +31,22 @@ describe("ValkyrLabsRtkApi", () => {
     expect(VALKYR_LABS_API_TIMEOUT_MS).toBe(16 * 60_000);
   });
 
+  it("honors a shorter consumer deadline through the same guarded transport", async () => {
+    const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(async (_url, init) => new Promise((_resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+    }));
+    await expect(getValkyrLabsRtkApiClient(fetchImpl).request({ url: "https://api-0.valkyrlabs.com/v1/example", timeoutMs: 5 }))
+      .rejects.toMatchObject({ status: "TIMEOUT_ERROR", message: "Valkyr Labs API request timed out after 5 ms." });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects an invalid consumer deadline before transport", async () => {
+    const fetchImpl = jest.fn();
+    await expect(getValkyrLabsRtkApiClient(fetchImpl).request({ url: "https://api-0.valkyrlabs.com/v1/example", timeoutMs: 0 }))
+      .rejects.toThrow("Request timeout must be a positive finite number");
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("serializes JSON and query parameters through RTK Query", async () => {
     const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, { ok: true }),

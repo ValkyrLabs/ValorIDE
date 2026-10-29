@@ -43,6 +43,7 @@ import { ToolManager, ToolContext } from "./tools";
 import type { ToolExecutionOutcome } from "./tools/BaseToolHandler";
 import { Logger } from "@services/logging/Logger";
 import { ValorIDEHookService } from "@core/hooks/ValorIDEHookService";
+import { mutatesWorkspaceDuringStreaming } from "./InitialCheckpointCoordinator";
 
 type ToolResponse =
   | string
@@ -255,6 +256,16 @@ export class ToolExecutionEngine {
       );
       return { ...result, handled: result.handled ?? false };
     }
+    // File tools can open/create their diff target while their arguments are
+    // still streaming. Join the initial snapshot before either partial or
+    // complete execution reaches a workspace-mutating handler.
+    if (!block.partial || mutatesWorkspaceDuringStreaming(block.name)) {
+      await this.task.awaitInitialCheckpointForTool?.(
+        block.name,
+        !block.partial && this.hookService.hasHook("PreToolUse"),
+      );
+    }
+
     if (!block.partial) {
       if (this.hookService.findHookScripts("PreToolUse").length > 0) {
         await this.task.saveCheckpoint(false, true);
