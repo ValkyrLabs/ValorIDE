@@ -1,5 +1,5 @@
 import { ManagedMcpService } from "@thorapi/services/monetization/ServiceMonetizationService";
-import { getCreatorDisplayName } from "./monetizedMarketplaceFunnel";
+import { getCreatorDisplayName, getServicePopularityScore } from "./monetizedMarketplaceFunnel";
 
 export type MarketplaceSort = "newest" | "popular" | "price-low";
 export type PurchaseSheetMode = "details" | "subscribe";
@@ -52,7 +52,7 @@ export function sortMarketplaceServices(
         );
       case "popular":
         return (
-          Number(b.isMonetized) - Number(a.isMonetized) ||
+          getServicePopularityScore(b) - getServicePopularityScore(a) ||
           b.updatedAt.localeCompare(a.updatedAt)
         );
       default:
