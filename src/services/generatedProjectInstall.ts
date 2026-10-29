@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { createHash, randomBytes } from "crypto";
 import { committedGeneratorPolicy, GENERATOR_POLICY } from "./generatedProjectPolicy";
+import type { McpPublicationObservation } from "@shared/McpPublication";
 
 export const GENERATION_MARKER = ".valoride-generation.json";
 const activeProjects = new Set<string>();
@@ -18,7 +19,7 @@ interface FileBaseline {
   pendingHash?: string;
 }
 
-export interface GeneratedProjectProvenance {
+export interface GeneratedProjectProvenance extends Partial<McpPublicationObservation> {
   requestRef: string;
   receiptRef: string;
   generationRunRef: string;

@@ -11,6 +11,7 @@ import { McpMarketplaceItem, McpViewTab } from "./mcp";
 import type { RemoteCodingCommand } from "../services/communication/RemoteCodingSessionOrchestrator";
 import type { ValorTaskBridgePayload } from "./BuildMode";
 import type { WorkflowStudioTarget } from "./WorkflowStudioTarget";
+import type { McpPublicationMode } from "./McpPublication";
 
 export interface WebviewMessage {
   type:
@@ -207,6 +208,7 @@ export interface WebviewMessage {
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
   applicationVersion?: string; // Saved OpenAPI info.version; archive plan is checked against it
+  mcpPublicationMode?: McpPublicationMode;
   deploymentUrl?: string;
   mimeType?: string;
   // For addGeneratedToProject

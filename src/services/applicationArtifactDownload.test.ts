@@ -58,6 +58,16 @@ describe("native complete project generation", () => {
   });
   afterEach(async () => fs.rm(root, { recursive: true, force: true }));
 
+  it("MCP publication forwards the per-request choice and preserves receipt observations in the installed marker", async () => {
+    const observation = { mcpPublicationMode: "suppress" as const, mcpPublicationDisposition: "SUPPRESSED" as const };
+    (generateCanonicalArchive as jest.Mock).mockResolvedValue({ archive: packageBytes(), fileName: "v1.Sample.zip", provenance: { ...proof, ...observation }, complete });
+    const result = await downloadApplicationArtifact({ ...request, mcpPublicationMode: "suppress" });
+    expect(generateCanonicalArchive).toHaveBeenCalledWith(expect.objectContaining({ applicationId, mcpPublicationMode: "suppress", completeProjectExport: true }));
+    expect(result).toMatchObject({ generationReceiptRef: "receipt-1", ...observation });
+    expect(JSON.parse(await fs.readFile(path.join(result.extractedPath, ".valoride-generation.json"), "utf8"))).toMatchObject({ applicationId, generation: { ...proof, ...observation } });
+    expect(complete).toHaveBeenCalledTimes(1);
+  });
+
   it("imports the accepted receipt's complete source and establishes an editable Blueprint without another download", async () => {
     const result = await downloadApplicationArtifact(request);
     expect(generateCanonicalArchive).toHaveBeenCalledWith(expect.objectContaining({ applicationId, completeProjectExport: true }));

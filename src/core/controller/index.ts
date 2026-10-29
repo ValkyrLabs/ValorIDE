@@ -4269,6 +4269,7 @@ export class Controller {
             applicationId,
             applicationName,
             applicationVersion,
+            mcpPublicationMode: message.mcpPublicationMode,
             jwtToken,
             recoveryDirectory: path.join(this.context.globalStorageUri.fsPath, "generation-requests"),
             assertCurrent: async () => {

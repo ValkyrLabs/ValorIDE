@@ -12,6 +12,7 @@ import { useExtensionState } from "../../context/ExtensionStateContext";
 import { getValkyraiHost } from "../../utils/valkyraiHost";
 import { readStoredTenantContext } from "../../utils/tenantContext";
 import { getCredentialRevision } from "@shared/CredentialOrigin";
+import type { McpPublicationDisposition } from "@shared/McpPublication";
 import {
   FaCalendarAlt,
   FaCloudUploadAlt,
@@ -64,6 +65,7 @@ interface ApplicationLoadingState {
   sourceStatus?: string;
   currentStep?: ApplicationGenerationStep;
   statusMessage?: string;
+  mcpPublicationDisposition?: McpPublicationDisposition;
   error?: string;
   steps: {
     receiving: boolean;
@@ -318,6 +320,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
     Record<string, ApplicationLoadingState>
   >({});
   const [showFileExplorer, setShowFileExplorer] = useState(false); // Start with cards view by default
+  const [skipMcpPublication, setSkipMcpPublication] = useState<Record<string, boolean>>({});
   const [completedApplications, setCompletedApplications] = useState<
     Set<string>
   >(new Set());
@@ -325,6 +328,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   useEffect(() => {
     activeRequests.current.clear();
     setLoadingStates({});
+    setSkipMcpPublication({});
     setCompletedApplications(new Set());
     setShowFileExplorer(false);
     return () => {
@@ -382,6 +386,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         error,
         step,
         message: progressMessage,
+        mcpPublicationDisposition,
       } = message.streamToThorapiResult || {};
       if (
         !applicationId ||
@@ -405,6 +410,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
             generating: false,
             currentStep: "finalizing",
             statusMessage: progressMessage,
+            mcpPublicationDisposition: mcpPublicationDisposition || "UNKNOWN",
             error: undefined,
             steps: {
               receiving: true,
@@ -581,6 +587,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         generating: true,
         currentStep: "receiving",
         statusMessage: "Generating your application in ValkyrAI...",
+        mcpPublicationDisposition: undefined,
         error: undefined,
         steps: {
           receiving: false,
@@ -597,6 +604,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         applicationName,
         applicationVersion,
         requestId,
+        ...(skipMcpPublication[applicationId] ? { mcpPublicationMode: "suppress" } : {}),
       });
     } catch (error) {
       activeRequests.current.delete(applicationId);
@@ -836,6 +844,19 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                   {loadingStates[appId]?.sourceStatus}
                 </div>
               )}
+              {loadingStates[appId]?.mcpPublicationDisposition && (
+                <div aria-label="MCP publication result" aria-live="polite" style={{ marginTop: 8 }}>
+                  MCP publication: {({
+                    SUPPRESSED: "suppressed for this generation",
+                    GLOBAL_DISABLED: "disabled by the server policy",
+                    PUBLISHER_UNAVAILABLE: "publisher unavailable",
+                    NO_APPLICATION: "no application to publish",
+                    PUBLISHED: "published",
+                    PUBLISH_FAILED: "publication failed",
+                    UNKNOWN: "not reported by this receipt",
+                  })[loadingStates[appId]!.mcpPublicationDisposition!] || "not reported by this receipt"}.
+                </div>
+              )}
             </div>
 
             {app.id && (
@@ -870,6 +891,16 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     ? "Generating..."
                     : "Generate"}
                 </VSCodeButton>
+                <label style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <input
+                    type="checkbox"
+                    aria-label={`Skip MCP publication for ${app.name || appId}`}
+                    checked={Boolean(skipMcpPublication[appId])}
+                    disabled={loadingStates[appId]?.generating}
+                    onChange={(event) => setSkipMcpPublication((previous) => ({ ...previous, [appId]: event.target.checked }))}
+                  />
+                  Skip MCP publication
+                </label>
                 <VSCodeButton
                   appearance="secondary"
                   aria-label="Deploy"

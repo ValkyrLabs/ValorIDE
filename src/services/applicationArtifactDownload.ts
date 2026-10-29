@@ -9,6 +9,7 @@ import { isZipBuffer } from "@utils/zipExtractor";
 import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
 import { canonicalProjectFolder } from "./generatedProjectInstall";
 import { importLocalProjectPackage } from "./localProjectImport";
+import type { McpPublicationMode, McpPublicationObservation } from "@shared/McpPublication";
 
 export type ApplicationArtifactStage =
   | "receiving"
@@ -22,6 +23,7 @@ export interface ApplicationArtifactDownloadRequest {
   applicationId: string;
   applicationName?: string;
   applicationVersion?: string;
+  mcpPublicationMode?: McpPublicationMode;
   jwtToken: string;
   recoveryDirectory?: string;
   fetch?: typeof fetch;
@@ -33,7 +35,7 @@ export interface ApplicationArtifactDownloadRequest {
   confirmOverwrite?: (affectedPaths: string[]) => boolean | Promise<boolean>;
 }
 
-export interface ApplicationArtifactDownloadResult {
+export interface ApplicationArtifactDownloadResult extends Partial<McpPublicationObservation> {
   extractedPath: string;
   filename: string;
   applicationVersion: string;
@@ -68,6 +70,7 @@ export async function downloadApplicationArtifact({
   applicationId,
   applicationName,
   applicationVersion,
+  mcpPublicationMode,
   jwtToken,
   recoveryDirectory,
   fetch: fetcher,
@@ -122,7 +125,7 @@ export async function downloadApplicationArtifact({
     );
     await ensureCurrent();
     const generated = await generateCanonicalArchive({
-      backend, workspaceRoot, applicationId, applicationVersion, jwtToken, recoveryDirectory,
+      backend, workspaceRoot, applicationId, applicationVersion, mcpPublicationMode, jwtToken, recoveryDirectory,
       assertCurrent: ensureCurrent, fetch: fetcher, completeProjectExport: true,
       onProgress: (message) => onProgress?.(message, "receiving"),
     });
@@ -165,7 +168,7 @@ export async function downloadApplicationArtifact({
       "finalizing",
     );
     await generated.complete();
-    return { extractedPath, filename, applicationVersion: version, preservedFiles, configurationWarnings, generationReceiptRef: generated.provenance.receiptRef };
+    return { extractedPath, filename, applicationVersion: version, preservedFiles, configurationWarnings, generationReceiptRef: generated.provenance.receiptRef, mcpPublicationMode: generated.provenance.mcpPublicationMode, mcpPublicationDisposition: generated.provenance.mcpPublicationDisposition };
   } finally {
     if (stagingRoot)
       await fs

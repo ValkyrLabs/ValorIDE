@@ -261,11 +261,19 @@ const createValkyrLabsBaseQuery =
         // Never follow a redirect carrying credentials, cookies, passwords or codes.
         redirect: "error",
       });
-      const data = await parseResponseBody(
-        response,
-        request.responseType,
-        request.maxResponseBytes,
-      );
+      let data: unknown;
+      try {
+        data = await parseResponseBody(
+          response,
+          request.responseType,
+          request.maxResponseBytes,
+        );
+      } catch (error) {
+        // Proxies commonly return HTML for 502/504. Preserve the HTTP status
+        // instead of misclassifying an error-body JSON parse as FETCH_ERROR.
+        if (response.ok || request.acceptHttpErrors) throw error;
+        return { error: { status: response.status } };
+      }
       const responseHeaders = readResponseHeaders(response.headers);
 
       if (!response.ok && !request.acceptHttpErrors) {

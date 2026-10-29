@@ -19,6 +19,7 @@ import {
 import { TelemetrySetting } from "./TelemetrySetting";
 import { ValorIDERulesToggles } from "./valoride-rules";
 import type { GrayMatterSessionState } from "./GrayMatterSession";
+import type { McpPublicationDisposition, McpPublicationMode } from "./McpPublication";
 import type { AgenticCapabilityCommandCenterState } from "./AgenticState";
 import type { RemoteCodingCommandResult } from "../services/communication/RemoteCodingSessionOrchestrator";
 import type {
@@ -229,6 +230,8 @@ export interface ExtensionMessage {
     filename?: string;
     extractedPath?: string;
     applicationVersion?: string;
+    mcpPublicationMode?: McpPublicationMode;
+    mcpPublicationDisposition?: McpPublicationDisposition;
     preservedFiles?: string[];
     configurationWarnings?: string[];
     readmePath?: string;

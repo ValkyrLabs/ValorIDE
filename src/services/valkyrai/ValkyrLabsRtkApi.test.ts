@@ -66,6 +66,14 @@ describe("ValkyrLabsRtkApi", () => {
     );
   });
 
+  it.each([401, 403, 502, 504])("preserves HTTP %s when an error response is HTML instead of JSON", async status => {
+    const client = getValkyrLabsRtkApiClient(async () => new Response("<html>Proxy error</html>", {
+      status, headers: { "Content-Type": "text/html" },
+    }));
+    await expect(client.request({ url: "https://api-0.valkyrlabs.com/v1/example", responseType: "json" }))
+      .rejects.toMatchObject({ status });
+  });
+
   it("rejects redirects for every consumer so legacy headers and refresh bodies cannot cross origins", async () => {
     const fetchImpl = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () => jsonResponse(200, { ok: true }),

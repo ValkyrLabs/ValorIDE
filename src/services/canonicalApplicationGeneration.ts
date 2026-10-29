@@ -3,9 +3,11 @@ import path from "path";
 import { createHash, randomUUID } from "crypto";
 import type { AppGenerationRequest } from "@thorapi/model/AppGenerationRequest";
 import type { GenerationReceipt } from "@thorapi/model/GenerationReceipt";
+import type { ThorApiGenerationRun } from "@thorapi/model/ThorApiGenerationRun";
 import type { AppGenerationTraceResponse } from "@thorapi/model/AppGenerationTraceResponse";
 import type { GeneratedArtifact } from "@thorapi/model/GeneratedArtifact";
 import type { Principal } from "@thorapi/model/Principal";
+import type { McpPublicationDisposition, McpPublicationMode, McpPublicationObservation } from "@shared/McpPublication";
 import { getValkyrLabsRtkApiClient, ValkyrLabsApiError } from "./valkyrai/ValkyrLabsRtkApi";
 import { assertNoProjectLinks, GeneratedProjectProvenance } from "./generatedProjectInstall";
 
@@ -15,14 +17,30 @@ const MAX_ARCHIVE_BYTES = 128 * 1024 * 1024;
 const hash = (bytes: string | Buffer) => createHash("sha256").update(bytes).digest("hex");
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const reference = (value: unknown): value is string => typeof value === "string" && /^[a-z0-9._:-]{1,200}$/i.test(value);
-type Recovery = { idempotencyKey: string; requestRef?: string; tenantId?: string; accountId?: string };
+// Keep the authored compatibility adapter separate from generated API models.
+type NativeAppGenerationRequest = AppGenerationRequest & { mcpPublicationMode?: McpPublicationMode };
+type Recovery = { idempotencyKey: string; requestRef?: string; tenantId?: string; accountId?: string; mcpPublicationMode?: McpPublicationMode };
 const pending = new Map<string, Recovery>();
+const RECOVERY_POLL_MS = 2000;
+const RECOVERY_WINDOW_MS = 45 * 60_000;
+
+class CanonicalRequestError extends Error {
+  constructor(readonly status?: ValkyrLabsApiError["status"]) {
+    super(status === 401 || status === 403
+      ? "Sign in to the application's authorized account before generating or resuming it."
+      : `Canonical generation request failed${status ? ` (${String(status)})` : ""}. Check the backend connection and retry to resume the same request.`);
+  }
+}
+
+const interrupted = (error: unknown): boolean => error instanceof CanonicalRequestError
+  && ["FETCH_ERROR", "TIMEOUT_ERROR", 502, 503, 504].includes(error.status!);
 
 interface Options {
   backend: string;
   workspaceRoot: string;
   applicationId: string;
   applicationVersion?: string;
+  mcpPublicationMode?: McpPublicationMode;
   jwtToken: string;
   recoveryDirectory?: string;
   assertCurrent: () => Promise<void>;
@@ -34,16 +52,61 @@ interface Options {
 
 const same = (left: unknown, right: unknown) => typeof left === "string" && typeof right === "string" && left.toLowerCase() === right.toLowerCase();
 
-function validateRequest(request: AppGenerationRequest, applicationId: string, recovered?: Recovery): void {
+function publicationMode(value: unknown): McpPublicationMode {
+  if (value == null) return "inherit";
+  if (value === "inherit" || value === "suppress") return value;
+  throw new Error("The generation has an invalid MCP publication mode. Keep its recovery record and check the backend before retrying.");
+}
+
+function validateRequest(request: NativeAppGenerationRequest, applicationId: string, mode: McpPublicationMode, recovered?: Recovery, executionMayHaveStarted = false): void {
   if (!request || !reference(request.requestRef) || !reference(request.tenantId) || !uuid.test(request.accountId || "") || !same(request.applicationId, applicationId))
     throw new Error("The backend returned an incomplete or different application generation request. Check the selected account/backend before retrying.");
   if (recovered?.requestRef && (request.requestRef !== recovered.requestRef || request.tenantId !== recovered.tenantId || !same(request.accountId, recovered.accountId)))
     throw new Error("The pending generation belongs to a different account or tenant. Return to its original account/backend before retrying.");
+  if (publicationMode(request.mcpPublicationMode) !== mode) {
+    const executionStatus = executionMayHaveStarted || reference(request.generationRunRef)
+      ? "Generation may already have started or completed; do not start another run."
+      : "This attempt has not submitted execution.";
+    const clearanceStatus = mode === "suppress"
+      ? "Suppression clearance is missing."
+      : "The requested MCP publication mode is unverified.";
+    throw new Error(`The backend did not record the requested MCP publication mode. ${executionStatus} ${clearanceStatus} This attempt will not download an archive; keep the existing request and recovery record for reconciliation with a compatible backend.`);
+  }
+}
+
+function publicationObservation(receipt: GenerationReceipt, mode: McpPublicationMode, optional = false): McpPublicationObservation | undefined {
+  let summary: Record<string, unknown>;
+  try {
+    const parsed = receipt.summaryJson == null || receipt.summaryJson === "" ? {} : JSON.parse(receipt.summaryJson);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error();
+    summary = parsed;
+  } catch { throw new Error("The generation receipt has invalid MCP publication evidence. No archive was downloaded; keep the recovery record and repair the receipt."); }
+  if (optional && !("mcpPublicationMode" in summary) && !("mcpPublicationDisposition" in summary)) return undefined;
+  const recordedMode = publicationMode(summary.mcpPublicationMode);
+  const disposition = summary.mcpPublicationDisposition ?? "UNKNOWN";
+  const dispositions: McpPublicationDisposition[] = ["SUPPRESSED", "GLOBAL_DISABLED", "PUBLISHER_UNAVAILABLE", "NO_APPLICATION", "PUBLISHED", "PUBLISH_FAILED", "UNKNOWN"];
+  if (recordedMode !== mode || !dispositions.includes(disposition as McpPublicationDisposition)
+    || (mode === "suppress" ? disposition !== "SUPPRESSED" : disposition === "SUPPRESSED"))
+    throw new Error("The generation receipt does not attest the requested MCP publication outcome. No archive was downloaded; keep the recovery record and repair the receipt.");
+  return { mcpPublicationMode: recordedMode, mcpPublicationDisposition: disposition as McpPublicationDisposition };
 }
 
 function validateReceipt(receipt: GenerationReceipt, request: AppGenerationRequest): void {
   if (!receipt || !reference(receipt.receiptRef) || receipt.requestRef !== request.requestRef || receipt.tenantId !== request.tenantId || !same(receipt.accountId, request.accountId) || !same(receipt.applicationId, request.applicationId) || (receipt.status === "succeeded" && (!reference(receipt.generationRunRef) || !reference(receipt.artifactSetRef))))
     throw new Error("The generation receipt does not match the authorized application/account. No project files were written; check the backend before retrying.");
+}
+
+function generationFailureMessage(receipt: GenerationReceipt): string {
+  const serverTerminated = /ThorAPI code-generation worker exited with code 143\b/i.test(receipt.errorMessage || "");
+  const reason = serverTerminated
+    ? "The server stopped the application generator before it finished. Generate again after the server is ready."
+    : `Review its build/validation evidence in ValkyrAI before retrying. ${receipt.errorMessage || ""}`.trim();
+  const noDebit = !receipt.creditDebitReceiptRef?.trim()
+    && (receipt.debitedCredits == null || (Number.isFinite(receipt.debitedCredits) && receipt.debitedCredits <= 0));
+  const billing = receipt.billable === false && noDebit
+    ? " No credits were charged for this failed generation."
+    : "";
+  return `Application generation ${receipt.status || "did not finish"}. ${reason}${billing} Request: ${receipt.requestRef}. Receipt: ${receipt.receiptRef}.`;
 }
 
 function packageFromTrace(trace: AppGenerationTraceResponse, receipt: GenerationReceipt, request: AppGenerationRequest): GeneratedArtifact {
@@ -105,8 +168,9 @@ async function readArchive(url: string, jwtToken: string, bytes: number, ensureC
 /** Generated API types remain authoritative. This adapter binds the canonical request, receipt, trace and private artifact bytes. */
 export async function generateCanonicalArchive(options: Options): Promise<{ archive: Buffer; fileName?: string; provenance: GeneratedProjectProvenance; complete: () => Promise<void> }> {
   const { backend, workspaceRoot, applicationId, applicationVersion, jwtToken, recoveryDirectory, assertCurrent } = options;
+  const mode = publicationMode(options.mcpPublicationMode);
   const client = getValkyrLabsRtkApiClient();
-  const json = async <T>(url: string, method = "GET", body?: Partial<AppGenerationRequest>): Promise<T> => {
+  const json = async <T>(url: string, method = "GET", body?: Partial<NativeAppGenerationRequest>): Promise<T> => {
     await assertCurrent();
     let data: T;
     try {
@@ -114,7 +178,7 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
       data = response.data;
     } catch (error) {
       const status = error instanceof ValkyrLabsApiError ? error.status : undefined;
-      throw new Error(status === 401 || status === 403 ? "Sign in to the application's authorized account before generating or resuming it." : `Canonical generation request failed${status ? ` (${String(status)})` : ""}. Check the backend connection and retry to resume the same request.`);
+      throw new CanonicalRequestError(status);
     }
     await assertCurrent(); return data;
   };
@@ -134,7 +198,9 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
         throw new Error("The pending generation recovery record is invalid. Keep the project intact and repair that record before retrying.");
     }
   }
-  recovery ||= { idempotencyKey: `valoride-${randomUUID()}` };
+  if (recovery && publicationMode(recovery.mcpPublicationMode) !== mode)
+    throw new Error("The pending generation uses a different MCP publication mode. Resume it with its original choice before starting another generation; its recovery record was preserved.");
+  recovery ||= { idempotencyKey: `valoride-${randomUUID()}`, mcpPublicationMode: mode };
   const save = async () => {
     pending.set(key, recovery!);
     if (file) {
@@ -148,22 +214,85 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
   const complete = async () => { pending.delete(key); if (file) { await assertNoProjectLinks(recoveryDirectory!, path.basename(file)); await fs.rm(file, { force: true }); } };
   await assertCurrent(); await save();
   if (recovery.requestRef) await options.onProgress?.("Resuming the previous generation. Generate again after this download finishes to include later Blueprint edits.");
-  const request = recovery.requestRef
-    ? await json<AppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(recovery.requestRef)}`)
-    : await json<AppGenerationRequest>("/app_generation_ops/requests", "POST", { applicationId, idempotencyKey: recovery.idempotencyKey });
-  validateRequest(request, applicationId, recovery);
+  const resuming = Boolean(recovery.requestRef);
+  let request = resuming
+    ? await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(recovery.requestRef!)}`)
+    : await json<NativeAppGenerationRequest>("/app_generation_ops/requests", "POST", { applicationId, idempotencyKey: recovery.idempotencyKey, ...(mode === "suppress" ? { mcpPublicationMode: mode } : {}) });
+  validateRequest(request, applicationId, mode, recovery, resuming);
   if (!same(request.accountId, principalId)) throw new Error("The generation request belongs to a different authenticated principal. No project files were written; return to its authorized account.");
   recovery = { ...recovery, requestRef: request.requestRef, tenantId: request.tenantId, accountId: request.accountId };
   await save();
-  const receipt = await json<GenerationReceipt>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}/run`, "POST");
+  if (mode === "suppress" && !resuming) {
+    // An echoed create body is insufficient: require the persisted request before execution.
+    const recorded = await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}`);
+    validateRequest(recorded, applicationId, mode, recovery);
+    request = recorded;
+  }
+  let recoveredTrace: AppGenerationTraceResponse | undefined;
+  const recoverReceipt = async (): Promise<GenerationReceipt> => {
+    await options.onProgress?.("Reconnecting to the recorded generation; no duplicate build will be started...");
+    const deadline = Date.now() + RECOVERY_WINDOW_MS;
+    while (Date.now() < deadline) {
+      await assertCurrent();
+      try {
+        const current = await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}`);
+        validateRequest(current, applicationId, mode, recovery, true);
+        if (reference(current.generationRunRef)) {
+          const run = await json<ThorApiGenerationRun>(`/app_generation_ops/runs/${encodeURIComponent(current.generationRunRef)}`);
+          if (run.requestRef !== request.requestRef || run.tenantId !== request.tenantId || !same(run.accountId, request.accountId)
+            || !same(run.applicationId, applicationId) || run.generationRunRef !== current.generationRunRef)
+            throw new Error("The recorded generation run belongs to a different request or account. No project files were written.");
+          if (reference(run.generationReceiptRef)) {
+            const trace = await json<AppGenerationTraceResponse>(`/app_generation_ops/traces/${encodeURIComponent(run.generationReceiptRef)}`);
+            validateReceipt(trace?.generationReceipt, request);
+            if (trace.receiptRef !== run.generationReceiptRef || trace.requestRef !== request.requestRef || trace.tenantId !== request.tenantId
+              || !same(trace.accountId, request.accountId) || !same(trace.applicationId, applicationId) || trace.generationRunRef !== run.generationRunRef
+              || trace.generationReceipt.receiptRef !== run.generationReceiptRef || trace.generationReceipt.generationRunRef !== run.generationRunRef)
+              throw new Error("The recorded generation receipt does not match this run. No project files were written.");
+            recoveredTrace = trace;
+            return trace.generationReceipt;
+          }
+        }
+      } catch (error) {
+        if (!interrupted(error)) throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, RECOVERY_POLL_MS));
+    }
+    throw new Error("Generation has not returned a terminal receipt yet. Retry to resume this same request; no duplicate build was started.");
+  };
+  let receipt: GenerationReceipt;
+  if (reference(request.generationRunRef)) {
+    // A resumed durable run must be inspected, not submitted for execution again.
+    receipt = await recoverReceipt();
+  } else {
+    try {
+      receipt = await json<GenerationReceipt>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}/run`, "POST");
+    } catch (error) {
+      if (!interrupted(error)) {
+        if (!(error instanceof CanonicalRequestError) || error.status !== 409) throw error;
+        const current = await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}`);
+        validateRequest(current, applicationId, mode, recovery, true);
+        // Only reconcile a conflict if the backend confirms a durable run.
+        // A source/authorization/policy rejection must not become a polling loop.
+        if (!reference(current.generationRunRef)) throw error;
+      }
+      // The server keeps running after a proxy disconnect. Reconcile with GETs
+      // only: do not infer failure, clear recovery, or repeat an ambiguous POST.
+      receipt = await recoverReceipt();
+    }
+  }
   validateReceipt(receipt, request);
   if (receipt?.status !== "succeeded") {
     // Terminal unsuccessful requests are not reused after the user repairs the saved Blueprint.
     if (["failed", "partial", "canceled"].includes(receipt?.status)) await complete();
-    throw new Error(`Application generation ${receipt?.status || "did not finish"}. Review its build/validation evidence in ValkyrAI, fix the saved Blueprint, and retry. ${receipt?.errorMessage || ""}`.trim());
+    throw new Error(generationFailureMessage(receipt));
   }
-  const trace = await json<AppGenerationTraceResponse>(`/app_generation_ops/traces/${encodeURIComponent(receipt.receiptRef)}`);
+  const compactPublication = publicationObservation(receipt, mode, true);
+  const trace = recoveredTrace ?? await json<AppGenerationTraceResponse>(`/app_generation_ops/traces/${encodeURIComponent(receipt.receiptRef)}`);
   const artifact = packageFromTrace(trace, receipt, request);
+  const publication = publicationObservation(trace.generationReceipt, mode)!;
+  if (compactPublication && compactPublication.mcpPublicationDisposition !== publication.mcpPublicationDisposition)
+    throw new Error("The trace and generation receipt disagree about MCP publication. No archive was downloaded; keep the recovery record and repair the receipt.");
   let metadata: Record<string, unknown>;
   try { metadata = JSON.parse(artifact.metadataJson || "{}"); } catch { throw new Error("The packaged artifact has invalid storage metadata. Repair its generation trace before downloading."); }
   if (!metadata || typeof metadata !== "object" || metadata.generationRunRef !== receipt.generationRunRef)
@@ -174,11 +303,11 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
   const download = developer
     ? `${backend}/thorapi/applications/${encodeURIComponent(applicationId)}/developer-project/artifacts/${encodeURIComponent(artifact.artifactRef)}/download`
     : `${backend}/files/${encodeURIComponent(String(metadata.fileRecordId))}/download`;
-  await options.onProgress?.("Downloading the verified application package from its generation receipt...");
+  await options.onProgress?.(`MCP publication: ${publication.mcpPublicationDisposition === "SUPPRESSED" ? "suppressed for this generation (server verified)" : publication.mcpPublicationDisposition === "UNKNOWN" ? "not reported by this receipt" : publication.mcpPublicationDisposition}. Downloading the verified application package...`);
   const archive = options.completeProjectExport
     ? await downloadCanonicalProjectExport({ backend, applicationId, receiptRef: receipt.receiptRef, jwtToken, assertCurrent })
     : await readArchive(download, jwtToken, artifact.byteSize!, assertCurrent, options.fetch || fetch);
   await assertCurrent();
   if (!options.completeProjectExport && hash(archive) !== artifact.checksum!.toLowerCase()) throw new Error("The downloaded archive checksum disagrees with its receipt. No project files were written; retry or repair the stored artifact.");
-  return { archive, fileName: artifact.fileName, complete, provenance: { requestRef: request.requestRef, receiptRef: receipt.receiptRef, generationRunRef: receipt.generationRunRef!, artifactRef: artifact.artifactRef, ...(developer ? { artifactStorage: "developer_project" as const } : { fileRecordId: String(metadata.fileRecordId), artifactStorage: "file_record" as const }), checksum: artifact.checksum!.toLowerCase(), tenantId: request.tenantId, accountId: request.accountId!, specRevisionRef: receipt.specRevisionRef, buildRunRef: receipt.buildRunRef, testRunRef: receipt.testRunRef, runtimeBindingRef: receipt.runtimeBindingRef } };
+  return { archive, fileName: artifact.fileName, complete, provenance: { requestRef: request.requestRef, receiptRef: receipt.receiptRef, generationRunRef: receipt.generationRunRef!, artifactRef: artifact.artifactRef, ...(developer ? { artifactStorage: "developer_project" as const } : { fileRecordId: String(metadata.fileRecordId), artifactStorage: "file_record" as const }), checksum: artifact.checksum!.toLowerCase(), tenantId: request.tenantId, accountId: request.accountId!, specRevisionRef: receipt.specRevisionRef, buildRunRef: receipt.buildRunRef, testRunRef: receipt.testRunRef, runtimeBindingRef: receipt.runtimeBindingRef, ...publication } };
 }

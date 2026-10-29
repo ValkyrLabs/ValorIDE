@@ -6,6 +6,7 @@ import {
   screen,
   fireEvent,
   waitFor,
+  within,
 } from "@testing-library/react";
 import ApplicationsList, {
   getApplicationDeployUrl,
@@ -467,6 +468,57 @@ describe("ApplicationsList", () => {
     fireEvent.click(screen.getByRole("button", { name: "Generate" }));
     return { ...rendered, request: mockPostMessage.mock.calls.at(-1)![0] };
   };
+
+  describe("MCP publication", () => {
+    it("leaves the new choice unchecked and keeps default generation requests unchanged", () => {
+      const { request } = prepareGeneration();
+      expect(request).not.toHaveProperty("mcpPublicationMode");
+      const choice = screen.getByRole("checkbox", { name: "Skip MCP publication for Sample App" });
+      expect(choice).not.toBeChecked();
+      expect(choice).toBeDisabled();
+    });
+
+    it("sends suppression only for the selected original App without changing another App", () => {
+      const originalId = "4b2a4dc5-e9f6-45c4-aaaa-0bb187ee386c";
+      const apps = [
+        { id: originalId, name: "John Social Video Clipping", openAPISpec: { info: { version: "0.1.3-draft" } } },
+        { id: "other-app", name: "Other App" },
+      ];
+      const before = JSON.stringify(apps);
+      mockUseGetApplicationsQuery.mockReturnValue({ data: apps, isLoading: false, isFetching: false, refetch: mockRefetch });
+      render(<ApplicationsList />);
+      fireEvent.click(screen.getByRole("checkbox", { name: "Skip MCP publication for John Social Video Clipping" }));
+      fireEvent.click(within(screen.getByRole("group", { name: "Actions for John Social Video Clipping" })).getByRole("button", { name: "Generate" }));
+      fireEvent.click(within(screen.getByRole("group", { name: "Actions for Other App" })).getByRole("button", { name: "Generate" }));
+      const requests = mockPostMessage.mock.calls.map(([message]) => message).filter(message => message.type === "generateApplicationArtifact");
+      expect(requests).toHaveLength(2);
+      expect(requests[0]).toMatchObject({ applicationId: originalId, applicationVersion: "0.1.3-draft", mcpPublicationMode: "suppress" });
+      expect(requests[1]).toMatchObject({ applicationId: "other-app" });
+      expect(requests[1]).not.toHaveProperty("mcpPublicationMode");
+      expect(JSON.stringify(apps)).toBe(before);
+    });
+
+    it("resets the per-App choice when the authenticated scope changes", () => {
+      mockUseGetApplicationsQuery.mockReturnValue({ data: [{ id: "app-1", name: "Sample App" }], isLoading: false, isFetching: false, refetch: mockRefetch });
+      const view = render(<ApplicationsList />);
+      fireEvent.click(screen.getByRole("checkbox", { name: "Skip MCP publication for Sample App" }));
+      expect(screen.getByRole("checkbox")).toBeChecked();
+      mockExtensionState = { ...mockExtensionState, authenticatedPrincipal: { id: "new-user", organizationId: "new-org" } };
+      view.rerender(<ApplicationsList />);
+      expect(screen.getByRole("checkbox")).not.toBeChecked();
+      expect(mockPostMessage).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["SUPPRESSED", "suppressed for this generation"],
+      ["PUBLISH_FAILED", "publication failed"],
+      [undefined, "not reported by this receipt"],
+    ])("displays the completed receipt outcome %s without inferring success", (disposition, label) => {
+      const { request } = prepareGeneration();
+      generationResult(request, { mcpPublicationDisposition: disposition });
+      expect(screen.getByLabelText("MCP publication result")).toHaveTextContent(String(label));
+    });
+  });
 
   it("shows a completion error even when the result also reports success", async () => {
     const { request } = prepareGeneration();
