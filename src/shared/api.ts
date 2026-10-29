@@ -149,8 +149,56 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 // Anthropic
 // https://platform.claude.com/docs/en/about-claude/models/overview
 export type AnthropicModelId = keyof typeof anthropicModels;
-export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-5";
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-5-5";
 export const anthropicModels = {
+  "claude-fable-5-1": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 10.0,
+    outputPrice: 50.0,
+    cacheWritesPrice: 12.5,
+    cacheReadsPrice: 0.25,
+    description:
+      "Claude Fable 5.1 - Anthropic's highest-capability model for advanced research and long-running autonomous agents.",
+  },
+  "claude-opus-5-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 4.0,
+    outputPrice: 20.0,
+    cacheWritesPrice: 5.0,
+    cacheReadsPrice: 0.2,
+    description:
+      "Claude Opus 5.5 - Anthropic's model for long-running agentic coding and knowledge work.",
+  },
+  "claude-sonnet-5-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.0,
+    outputPrice: 10.0,
+    cacheWritesPrice: 2.5,
+    cacheReadsPrice: 0.1,
+    description:
+      "Claude Sonnet 5.5 - Anthropic's latest balanced model for coding, reasoning, and agent workflows.",
+  },
+  "claude-haiku-5-5": {
+    maxTokens: 128_000,
+    contextWindow: 1_000_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.1,
+    outputPrice: 0.5,
+    cacheWritesPrice: 0.125,
+    cacheReadsPrice: 0.01,
+    description:
+      "Claude Haiku 5.5 - Anthropic's fastest model for high-volume, latency-sensitive classification, extraction, and routing.",
+  },
   "claude-fable-5": {
     maxTokens: 128_000,
     contextWindow: 1_000_000,
@@ -325,6 +373,7 @@ export const openRouterDefaultModelInfo: ModelInfo = {
 export const kimiOpenRouterModelIds = [
   "moonshotai/kimi-k3",
   "moonshotai/kimi-k2.7-code",
+  "moonshotai/kimi-k2.6",
   "moonshotai/kimi-k2.5",
   "moonshotai/kimi-k2",
   "moonshotai/kimi-k2:exacto",
@@ -342,6 +391,45 @@ export const kimiOpenRouterModelIds = [
 // Moonshot AI Studio
 // https://platform.moonshot.ai/docs/pricing/chat
 export const moonshotModels = {
+  "kimi-k2.7-code": {
+    maxTokens: 32_768,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.95,
+    outputPrice: 4.0,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.19,
+    temperature: 1.0,
+    description:
+      "Kimi K2.7 Code agentic coding model with a 262K context window and prompt caching.",
+  },
+  "kimi-k2.7-code-highspeed": {
+    maxTokens: 32_768,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 1.9,
+    outputPrice: 8.0,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.38,
+    temperature: 1.0,
+    description:
+      "Kimi K2.7 Code high-speed variant with a 262K context window for lower-latency agentic coding.",
+  },
+  "kimi-k2.6": {
+    maxTokens: 32_768,
+    contextWindow: 262_144,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.95,
+    outputPrice: 4.0,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.16,
+    temperature: 1.0,
+    description:
+      "Kimi K2.6 multimodal model with text, image, and video understanding, thinking mode, tool calling, and 262K context.",
+  },
   "kimi-k3": {
     maxTokens: 128_000,
     contextWindow: 1_048_576,
@@ -882,6 +970,17 @@ export const ollamaModelPresets = {
     description:
       "Gemma4 12B local workstation model with 256K context and multimodal input.",
   },
+  "gemma4:26b-a4b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma 4 26B A4B canonical Ollama tag: 256K-context MoE model for high-quality local agent work.",
+  },
   "gemma4:26b": {
     maxTokens: 8192,
     contextWindow: 256_000,
@@ -910,8 +1009,44 @@ export type OllamaModelPresetId = keyof typeof ollamaModelPresets;
 // OpenAI Native
 // https://developers.openai.com/api/docs/models
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
-export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.6-sol";
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-6.1-sol";
 export const openAiNativeModels = {
+  "gpt-6.1-sol": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.0,
+    outputPrice: 10.0,
+    cacheWritesPrice: 2.5,
+    cacheReadsPrice: 0.1,
+    description:
+      "GPT-6.1 Sol - OpenAI's flagship model for complex professional and agentic work.",
+  },
+  "gpt-6-astra": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 10.0,
+    outputPrice: 50.0,
+    cacheWritesPrice: 12.5,
+    cacheReadsPrice: 1.0,
+    description:
+      "GPT-6 Astra - OpenAI's highest-capability model for difficult, high-value work.",
+  },
+  "gpt-6-luna": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.1,
+    outputPrice: 0.5,
+    cacheWritesPrice: 0.125,
+    cacheReadsPrice: 0.01,
+    description:
+      "GPT-6 Luna - OpenAI's fast, low-cost model for high-throughput tasks.",
+  },
   "gpt-5.6-sol": {
     maxTokens: 128_000,
     contextWindow: 1_050_000,

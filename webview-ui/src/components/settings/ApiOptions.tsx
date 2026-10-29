@@ -323,7 +323,7 @@ const ApiOptions = ({
           <VSCodeOption value="valkyrai">ValkyrAI</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
           <VSCodeOption value="moonshot">
-            Moonshot (Kimi2 / Kimi2.5)
+            Moonshot (Kimi K2.6 / K2.7 Code / K3)
           </VSCodeOption>
           <VSCodeOption value="minimax">MiniMax (M2.7)</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
@@ -2373,6 +2373,10 @@ const ApiOptions = ({
 
             {((selectedProvider === "anthropic" &&
               [
+                "claude-fable-5-1",
+                "claude-opus-5-5",
+                "claude-sonnet-5-5",
+                "claude-haiku-5-5",
                 "claude-opus-4-8",
                 "claude-sonnet-4-6",
                 "claude-haiku-4-5-20251001",

@@ -19,8 +19,12 @@ import {
 
 describe("model catalog defaults", () => {
   it("only exposes current official Claude API models for Anthropic", () => {
-    expect(anthropicDefaultModelId).toBe("claude-sonnet-5");
+    expect(anthropicDefaultModelId).toBe("claude-sonnet-5-5");
     expect(Object.keys(anthropicModels)).toEqual([
+      "claude-fable-5-1",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
       "claude-fable-5",
       "claude-opus-5",
       "claude-sonnet-5",
@@ -32,14 +36,21 @@ describe("model catalog defaults", () => {
     expect(anthropicModels).not.toHaveProperty("claude-sonnet-4-20250514");
     expect(anthropicModels).not.toHaveProperty("claude-3-7-sonnet-20250219");
     expect(anthropicModels).not.toHaveProperty("claude-haiku-4-5-20251016");
+    expect(anthropicModels["claude-opus-5-5"]?.contextWindow).toBe(1_000_000);
+    expect(anthropicModels["claude-opus-5-5"]?.inputPrice).toBe(4);
+    expect(anthropicModels["claude-sonnet-5-5"]?.outputPrice).toBe(10);
+    expect(anthropicModels["claude-haiku-5-5"]?.cacheReadsPrice).toBe(0.01);
     expect(anthropicModels["claude-opus-4-8"]?.contextWindow).toBe(1_000_000);
     expect(anthropicModels).toHaveProperty("claude-sonnet-4-6");
     expect(anthropicModels["claude-sonnet-4-6"]?.maxTokens).toBe(128_000);
   });
 
-  it("exposes the current OpenAI native GPT-5.6 family", () => {
-    expect(openAiNativeDefaultModelId).toBe("gpt-5.6-sol");
+  it("exposes the current OpenAI native GPT-6 family", () => {
+    expect(openAiNativeDefaultModelId).toBe("gpt-6.1-sol");
     expect(Object.keys(openAiNativeModels)).toEqual([
+      "gpt-6.1-sol",
+      "gpt-6-astra",
+      "gpt-6-luna",
       "gpt-5.6-sol",
       "gpt-5.6-terra",
       "gpt-5.6-luna",
@@ -48,9 +59,11 @@ describe("model catalog defaults", () => {
       "gpt-5.4-mini",
       "gpt-5.4-nano",
     ]);
-    expect(openAiNativeModels["gpt-5.6-sol"]?.contextWindow).toBe(1_050_000);
-    expect(openAiNativeModels["gpt-5.6-sol"]?.inputPrice).toBe(5);
-    expect(openAiNativeModels["gpt-5.6-sol"]?.outputPrice).toBe(30);
+    expect(openAiNativeModels["gpt-6.1-sol"]?.contextWindow).toBe(1_050_000);
+    expect(openAiNativeModels["gpt-6.1-sol"]?.inputPrice).toBe(2);
+    expect(openAiNativeModels["gpt-6.1-sol"]?.outputPrice).toBe(10);
+    expect(openAiNativeModels["gpt-6-astra"]?.inputPrice).toBe(10);
+    expect(openAiNativeModels["gpt-6-luna"]?.cacheReadsPrice).toBe(0.01);
     expect(openAiNativeModels["gpt-5.4"]?.contextWindow).toBe(1_000_000);
     expect(openAiNativeModels["gpt-5.4-mini"]?.contextWindow).toBe(400_000);
     expect(openAiNativeModels["gpt-5.4-nano"]?.inputPrice).toBe(0.2);
@@ -104,6 +117,10 @@ describe("model catalog defaults", () => {
     expect(moonshotModels["kimi-k3"]?.contextWindow).toBe(1_048_576);
     expect(moonshotModels["kimi-k3"]?.supportsPromptCache).toBe(true);
     expect(moonshotModels["kimi-k2.5"]).toBeDefined();
+    expect(moonshotModels["kimi-k2.7-code"]?.contextWindow).toBe(262_144);
+    expect(moonshotModels["kimi-k2.7-code"]?.inputPrice).toBe(0.95);
+    expect(moonshotModels["kimi-k2.7-code-highspeed"]?.outputPrice).toBe(8);
+    expect(moonshotModels["kimi-k2.6"]?.cacheReadsPrice).toBe(0.16);
     expect(moonshotModels["kimi-k2.5"]?.supportsImages).toBe(true);
   });
 
@@ -112,6 +129,7 @@ describe("model catalog defaults", () => {
       expect.arrayContaining([
         "moonshotai/kimi-k3",
         "moonshotai/kimi-k2.7-code",
+        "moonshotai/kimi-k2.6",
         "moonshotai/kimi-k2",
         "moonshotai/kimi-k2-instruct-0905",
       ]),
@@ -124,6 +142,7 @@ describe("model catalog defaults", () => {
         "gemma4:e2b",
         "gemma4:e4b",
         "gemma4:12b",
+        "gemma4:26b-a4b",
         "gemma4:26b",
         "gemma4:31b",
       ]),

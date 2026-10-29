@@ -60,12 +60,20 @@ export class AnthropicHandler implements ApiHandler {
         ? true
         : false;
     const adaptiveThinkingModel = [
+      "claude-fable-5-1",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
       "claude-fable-5",
       "claude-opus-5",
       "claude-sonnet-5",
     ].includes(modelId);
 
     switch (modelId) {
+      case "claude-fable-5-1":
+      case "claude-opus-5-5":
+      case "claude-sonnet-5-5":
+      case "claude-haiku-5-5":
       case "claude-fable-5":
       case "claude-opus-5":
       case "claude-sonnet-5":
@@ -142,6 +150,10 @@ export class AnthropicHandler implements ApiHandler {
             // https://github.com/anthropics/anthropic-sdk-typescript?tab=readme-ov-file#default-headers
             // https://github.com/anthropics/anthropic-sdk-typescript/commit/c920b77fc67bd839bfeb6716ceab9d7c9bbe7393
             switch (modelId) {
+              case "claude-fable-5-1":
+              case "claude-opus-5-5":
+              case "claude-sonnet-5-5":
+              case "claude-haiku-5-5":
               case "claude-fable-5":
               case "claude-opus-5":
               case "claude-sonnet-5":
