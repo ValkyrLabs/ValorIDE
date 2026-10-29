@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { it } from "@jest/globals";
 import { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 import { getAllExtensionState } from "../state";
 
@@ -38,6 +39,19 @@ describe("Agentic extension state", () => {
     (vscode.workspace.getConfiguration as jest.Mock).mockImplementation(() => ({
       get: jest.fn((_key: string, fallback?: unknown) => fallback),
     }));
+  });
+
+  it.each([null, "invalid history", { task: "not a list" }])("normalizes invalid persisted task history: %j", async (history) => {
+    const { context, globalStateValues } = createContext();
+    globalStateValues.set("taskHistory", history);
+    expect((await getAllExtensionState(context)).taskHistory).toEqual([]);
+  });
+
+  it("retains valid persisted task history", async () => {
+    const { context, globalStateValues } = createContext();
+    const history = [{ id: "existing-task", task: "Keep original work" }];
+    globalStateValues.set("taskHistory", history);
+    expect((await getAllExtensionState(context)).taskHistory).toEqual(history);
   });
 
   it("posts SWARM status and command audit state to the webview state", async () => {

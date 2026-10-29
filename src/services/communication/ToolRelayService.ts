@@ -245,6 +245,13 @@ export class ToolRelayService {
 
   private async executeReadFile(params: { path: string }): Promise<string> {
     const filePath = path.resolve(cwd, params.path);
+    let entry;
+    try { entry = await fs.stat(filePath); }
+    catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") throw new Error(`File not found: ${params.path}`);
+      throw error;
+    }
+    if (entry.isDirectory()) throw new Error(`The path '${params.path}' is a directory. Use list_files to view directory contents instead of read_file.`);
     return await fs.readFile(filePath, "utf8");
   }
 

@@ -28,11 +28,13 @@ export async function detectEncoding(
 }
 
 export async function extractTextFromFile(filePath: string): Promise<string> {
+  let entry;
   try {
-    await fs.access(filePath);
+    entry = await fs.stat(filePath);
   } catch (error) {
     throw new Error(`File not found: ${filePath}`);
   }
+  if (entry.isDirectory()) throw new Error(`The path '${filePath}' is a directory. Use list_files to view directory contents instead of read_file.`);
   const fileExtension = path.extname(filePath).toLowerCase();
   switch (fileExtension) {
     case ".pdf":
