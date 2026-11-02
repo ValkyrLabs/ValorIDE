@@ -1,5 +1,13 @@
 import React from "react";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import ChatRow, {
   ChatRowContent,
@@ -65,6 +73,15 @@ vi.mock("@thorapi/components/chat/TaskHeader", () => ({
 
 vi.mock("@thorapi/components/common/MarkdownBlock", () => ({
   default: ({ markdown }: any) => <div>{markdown}</div>,
+}));
+
+vi.mock("@thorapi/components/common/CodeBlock", () => ({
+  CODE_BLOCK_BG_COLOR: "var(--vscode-editor-background)",
+  default: ({ source }: { source: string }) => (
+    <pre>
+      <code>{source}</code>
+    </pre>
+  ),
 }));
 
 vi.mock("@thorapi/components/chat/TaskFeedbackButtons", () => ({
@@ -461,7 +478,12 @@ describe("ChatRow Content - command and GrayMatter UX", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("Executing Command:")).toBeTruthy();
+    expect(
+      screen.getByRole("button", {
+        name: "Executing command: npm test -- --runInBand",
+      }),
+    ).toBeTruthy();
+    expect(screen.queryByText("Executing Command:")).toBeNull();
     expect(screen.getByText("npm test -- --runInBand")).toBeTruthy();
     expect(screen.queryByText(/ValorIDE executing command/i)).toBeNull();
   });
@@ -746,7 +768,7 @@ describe("ChatRow Content - precision search & replace summary", () => {
 });
 
 describe("ChatRow Content - command header", () => {
-  it("renders the command inline with the executing label", () => {
+  it("renders the command inline with its icon and keeps keyboard expansion", () => {
     const message = {
       type: "say",
       say: "command",
@@ -754,12 +776,13 @@ describe("ChatRow Content - command header", () => {
       text: "ls -la",
     } as any;
 
+    const onToggleExpand = vi.fn();
     render(
       <ProviderAny>
         <ChatRowContent
           message={message}
           isExpanded={true}
-          onToggleExpand={() => {}}
+          onToggleExpand={onToggleExpand}
           lastModifiedMessage={message}
           isLast={true}
           onHeightChange={() => {}}
@@ -767,15 +790,123 @@ describe("ChatRow Content - command header", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("Executing Command:")).toBeTruthy();
+    const commandButton = screen.getByRole("button", {
+      name: "Executing command: ls -la",
+    });
+    expect(screen.queryByText("Executing Command:")).toBeNull();
     expect(screen.getByText("ls -la")).toBeTruthy();
     expect(screen.queryByText("ValorIDE executing command:")).toBeNull();
+    fireEvent.keyDown(commandButton, { key: "Enter" });
+    expect(onToggleExpand).toHaveBeenCalledOnce();
   });
+});
+
+describe("ChatRow Content - inline file actions", () => {
+  it.each([
+    ["newFileCreated", "Create file", "runtime/sample-data.json"],
+    ["editedExistingFile", "Edit file", "runtime/populate_sample_data.py"],
+  ])(
+    "keeps %s inline with the filename and preserves expansion",
+    async (tool, label, path) => {
+      const message = {
+        type: "say",
+        say: "tool",
+        ts: Date.now(),
+        text: JSON.stringify({
+          tool,
+          path,
+          content: "sample_file_contents",
+          operationIsLocatedInWorkspace: false,
+        }),
+      } as any;
+      const FileRow = () => {
+        const [isExpanded, setExpanded] = React.useState(false);
+        return (
+          <ProviderAny>
+            <ChatRowContent
+              message={message}
+              isExpanded={isExpanded}
+              onToggleExpand={() => setExpanded((expanded) => !expanded)}
+              lastModifiedMessage={message}
+              isLast={true}
+              onHeightChange={() => {}}
+            />
+          </ProviderAny>
+        );
+      };
+      const { container } = render(<FileRow />);
+      const fileButton = screen.getByRole("button", {
+        name: `${label} ${path}`,
+      });
+
+      expect(fileButton).toHaveTextContent(path);
+      expect(within(fileButton).getByTitle(label)).toBeTruthy();
+      expect(
+        within(fileButton).getByTitle("This file is outside of your workspace"),
+      ).toBeTruthy();
+      expect(
+        screen.queryByText(/ValorIDE (editing|creating a new file):/),
+      ).toBeNull();
+      expect(fileButton).toHaveAttribute("aria-expanded", "false");
+      expect(container.querySelector("code")).toBeNull();
+
+      fireEvent.click(fileButton);
+      expect(fileButton).toHaveAttribute("aria-expanded", "true");
+      await waitFor(() =>
+        expect(container.querySelector("code")).toHaveTextContent(
+          "sample_file_contents",
+        ),
+      );
+
+      fireEvent.keyDown(fileButton, { key: " " });
+      expect(fileButton).toHaveAttribute("aria-expanded", "false");
+      expect(container.querySelector("code")).toBeNull();
+    },
+  );
 });
 
 describe("ChatRow Content - api request spinner handling", () => {
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("keeps request usage details accessible from the compact icon row", () => {
+    const message = {
+      type: "say",
+      say: "api_req_started",
+      ts: Date.now(),
+      text: JSON.stringify({
+        request: "POST /v1/chat",
+        tokensIn: 42,
+        tokensOut: 18,
+      }),
+    } as any;
+    const RequestRow = () => {
+      const [isExpanded, setExpanded] = React.useState(false);
+      return (
+        <ProviderAny>
+          <ChatRowContent
+            message={message}
+            isExpanded={isExpanded}
+            onToggleExpand={() => setExpanded((expanded) => !expanded)}
+            lastModifiedMessage={message}
+            isLast={true}
+            onHeightChange={() => {}}
+          />
+        </ProviderAny>
+      );
+    };
+    render(<RequestRow />);
+    const requestButton = screen.getByRole("button", {
+      name: "API request details",
+    });
+    expect(requestButton).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText(/In: 42 tokens/)).toBeNull();
+
+    fireEvent.keyDown(requestButton, { key: " " });
+    expect(requestButton).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText(/In: 42 tokens/)).toBeTruthy();
+    expect(screen.getByText(/Out: 18 tokens/)).toBeTruthy();
   });
 
   it("clears the API request spinner when usage details are present even without cost", () => {
@@ -803,8 +934,12 @@ describe("ChatRow Content - api request spinner handling", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("API Request")).toBeTruthy();
+    expect(
+      screen.getByRole("img", { name: "API request complete" }),
+    ).toBeTruthy();
+    expect(screen.queryByText("API Request")).toBeNull();
     expect(screen.queryByText("API Request...")).toBeNull();
+    expect(screen.queryByLabelText("progress-indicator")).toBeNull();
   });
 
   it("clears the spinner when usage values are provided as numeric strings", () => {
@@ -833,7 +968,10 @@ describe("ChatRow Content - api request spinner handling", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("API Request")).toBeTruthy();
+    expect(
+      screen.getByRole("img", { name: "API request complete" }),
+    ).toBeTruthy();
+    expect(screen.queryByText("API Request")).toBeNull();
     expect(screen.queryByText("API Request...")).toBeNull();
   });
 
@@ -901,7 +1039,10 @@ describe("ChatRow Content - api request spinner handling", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("API Request")).toBeTruthy();
+    expect(
+      screen.getByRole("img", { name: "API request complete" }),
+    ).toBeTruthy();
+    expect(screen.queryByText("API Request")).toBeNull();
     expect(screen.queryByText("API Request...")).toBeNull();
     expect(screen.queryByLabelText("progress-indicator")).toBeNull();
   });
@@ -931,18 +1072,87 @@ describe("ChatRow Content - api request spinner handling", () => {
       </ProviderAny>,
     );
 
-    expect(screen.getByText("API Request...")).toBeTruthy();
+    expect(
+      screen.getByRole("img", { name: "API request in progress" }),
+    ).toBeTruthy();
+    expect(screen.queryByText("API Request...")).toBeNull();
 
     act(() => {
       vi.advanceTimersByTime(API_REQUEST_TIMEOUT_MS);
     });
 
-    expect(screen.getByText("API Request Failed")).toBeTruthy();
+    expect(
+      screen.getByRole("img", { name: "API request failed" }),
+    ).toBeTruthy();
+    expect(screen.getByText("Failed")).toBeTruthy();
     expect(screen.getByText(/timed out/i)).toBeTruthy();
   });
 });
 
 describe("ChatRow Content - reasoning severity indicator", () => {
+  it("streams reasoning beside its brain icon without headers and keeps keyboard collapse", async () => {
+    const user = userEvent.setup();
+    const ReasoningRow = ({
+      text,
+      partial,
+    }: {
+      text: string;
+      partial: boolean;
+    }) => {
+      const [isExpanded, setExpanded] = React.useState(true);
+      const message = {
+        type: "say",
+        say: "reasoning",
+        ts: 1,
+        text,
+        partial,
+      } as any;
+      return (
+        <ProviderAny>
+          <ChatRowContent
+            message={message}
+            isExpanded={isExpanded}
+            onToggleExpand={() => setExpanded((expanded) => !expanded)}
+            lastModifiedMessage={message}
+            isLast={true}
+            onHeightChange={() => {}}
+          />
+        </ProviderAny>
+      );
+    };
+    const { rerender } = render(
+      <ReasoningRow text="Inspecting the app" partial />,
+    );
+    const brain = screen.getByTestId("reasoning-icon");
+    expect(
+      within(brain.parentElement!).getByText("Inspecting the app"),
+    ).toBeTruthy();
+    expect(
+      screen.queryByText(/^(Thoughts|Thinking\.\.\.|Collapse|Tap to expand)$/),
+    ).toBeNull();
+    const toggle = screen.getByRole("button", { name: "Collapse reasoning" });
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+    fireEvent.click(screen.getByText("Inspecting the app"));
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    rerender(
+      <ReasoningRow text={"Inspecting the app\nPreparing changes"} partial />,
+    );
+    expect(screen.getByText(/Preparing changes/)).toHaveTextContent(
+      "Inspecting the app Preparing changes",
+    );
+
+    toggle.focus();
+    await user.keyboard("{Enter}");
+    expect(
+      screen.getByRole("button", { name: "Expand reasoning" }),
+    ).toHaveAttribute("aria-expanded", "false");
+    await user.keyboard(" ");
+    expect(
+      screen.getByRole("button", { name: "Collapse reasoning" }),
+    ).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("shows warning color when reasoning is partial (low confidence)", () => {
     const message = {
       type: "say",

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { TokenStorageService } from "../../services/auth/TokenStorageService";
 import { getValkyrLabsRtkApiClient } from "../../services/valkyrai/ValkyrLabsRtkApi";
 import { getValkyraiBasePath } from "../../utils/serverValkyraiHost";
+import { openUrlExternally } from "../../utils/openUrl";
 import { collectWorkflowPages } from "./workflowCollection";
 import { workflowStudioWebviewHtml } from "./workflowStudioWebview";
 import {
@@ -316,6 +317,11 @@ export function registerWorkflowProjects(
       treeDataProvider: treeProvider,
       showCollapseAll: false,
     }),
+    vscode.commands.registerCommand("valoride.workflows.create", () =>
+      openUrlExternally(
+        "https://valkyrlabs.com/dashboard?open=workflow-studio",
+      ),
+    ),
     vscode.commands.registerCommand("valoride.workflows.refresh", () =>
       treeProvider.refresh(),
     ),

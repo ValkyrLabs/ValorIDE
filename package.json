@@ -86,6 +86,16 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "valoride-dev.ProjectsView",
+        "contents": "Create an app in the web editor, then download it into your workspace.\n[Create New App](command:valoride.projects.create)"
+      },
+      {
+        "view": "valoride-dev.WorkflowProjectsView",
+        "contents": "Build a workflow in the web Workflow Studio.\n[Create Workflow](command:valoride.workflows.create)"
+      }
+    ],
     "commands": [
       {
         "command": "valoride.plusButtonClicked",
@@ -178,6 +188,12 @@
         "category": "ValorIDE"
       },
       {
+        "command": "valoride.projects.create",
+        "title": "Create New App",
+        "category": "ValorIDE",
+        "icon": "$(add)"
+      },
+      {
         "command": "valoride.projects.refresh",
         "title": "Refresh Projects",
         "category": "ValorIDE",
@@ -247,6 +263,12 @@
         "title": "Copy Folder Path",
         "category": "ValorIDE",
         "icon": "$(clippy)"
+      },
+      {
+        "command": "valoride.workflows.create",
+        "title": "Create Workflow",
+        "category": "ValorIDE",
+        "icon": "$(add)"
       },
       {
         "command": "valoride.workflows.openStudio",

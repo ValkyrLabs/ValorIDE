@@ -2,6 +2,7 @@ const mockGetToken = jest.fn();
 const mockRequest = jest.fn();
 const mockGetBase = jest.fn();
 const mockExecuteCommand = jest.fn();
+const mockOpenUrlExternally = jest.fn();
 const mockCommands = new Map<string, (...args: any[]) => Promise<unknown>>();
 const mockReceive = jest.fn(
   (_callback: (message: unknown) => Promise<void>) => undefined,
@@ -47,6 +48,9 @@ jest.mock("../../services/valkyrai/ValkyrLabsRtkApi", () => ({
 jest.mock("../../utils/serverValkyraiHost", () => ({
   getValkyraiBasePath: () => mockGetBase(),
 }));
+jest.mock("../../utils/openUrl", () => ({
+  openUrlExternally: (...args: unknown[]) => mockOpenUrlExternally(...args),
+}));
 import {
   WorkflowEngineeringClient,
   registerWorkflowProjects,
@@ -66,6 +70,18 @@ describe("authenticated Workflow Studio handoff", () => {
     });
   });
   const client = () => new WorkflowEngineeringClient({} as any);
+  it("opens workflow creation without selecting or requesting an existing workflow", async () => {
+    registerWorkflowProjects(
+      { subscriptions: [] } as any,
+      { appendLine: jest.fn() } as any,
+    );
+    await mockCommands.get("valoride.workflows.create")!();
+    expect(mockOpenUrlExternally).toHaveBeenCalledWith(
+      "https://valkyrlabs.com/dashboard?open=workflow-studio",
+    );
+    expect(mockGetToken).not.toHaveBeenCalled();
+    expect(mockRequest).not.toHaveBeenCalled();
+  });
   for (const executionId of [
     undefined,
     "6b5f4311-bf51-448a-83c8-e391c435314e",

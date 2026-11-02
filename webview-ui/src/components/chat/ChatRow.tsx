@@ -1453,9 +1453,6 @@ export const ChatRowContent = ({
               flex: 1,
             }}
           >
-            <span style={{ fontWeight: "bold", flexShrink: 0 }}>
-              {isCommandExecuting ? "Executing Command:" : "Command:"}
-            </span>
             {commandHeaderSuffix && (
               <span
                 title={commandHeaderSuffix}
@@ -1558,7 +1555,6 @@ export const ChatRowContent = ({
             />
           </div>
         );
-        const apiReqInfo = parsedApiReqInfo;
         const apiRequestFinished =
           isTaskCompletionMessage ||
           !isLast ||
@@ -1572,7 +1568,17 @@ export const ChatRowContent = ({
           apiRequestFailedMessage != null ||
           apiReqStreamingFailedMessage != null ||
           apiRequestTimedOut;
-        return [
+        const apiRequestStatus =
+          apiReqCancelReason != null
+            ? apiReqCancelReason === "user_cancelled"
+              ? "API request cancelled"
+              : "API streaming failed"
+            : apiRequestErrored
+              ? "API request failed"
+              : apiRequestFinished
+                ? "API request complete"
+                : "API request in progress";
+        const requestIcon =
           apiReqCancelReason != null ? (
             apiReqCancelReason === "user_cancelled" ? (
               getIconSpan(VscError, cancelledColor)
@@ -1585,16 +1591,24 @@ export const ChatRowContent = ({
             getIconSpan(VscCheck, successColor)
           ) : (
             <ProgressIndicator color={severityColors[apiRequestSeverity]} />
-          ),
+          );
+        return [
+          <span
+            role="img"
+            aria-label={apiRequestStatus}
+            title={apiRequestStatus}
+          >
+            {requestIcon}
+          </span>,
           (() => {
             if (apiReqCancelReason != null) {
               return apiReqCancelReason === "user_cancelled" ? (
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
-                  API Request Cancelled
+                  Cancelled
                 </span>
               ) : (
                 <span style={{ color: errorColor, fontWeight: "bold" }}>
-                  API Streaming Failed
+                  Streaming failed
                 </span>
               );
             }
@@ -1606,28 +1620,12 @@ export const ChatRowContent = ({
             ) {
               return (
                 <span style={{ color: errorColor, fontWeight: "bold" }}>
-                  API Request Failed
+                  Failed
                 </span>
               );
             }
 
-            if (
-              apiRequestUsageAvailable ||
-              cost != null ||
-              isTaskCompletionMessage
-            ) {
-              return (
-                <span style={{ color: normalColor, fontWeight: "bold" }}>
-                  API Request
-                </span>
-              );
-            }
-
-            return (
-              <span style={{ color: normalColor, fontWeight: "bold" }}>
-                API Request...
-              </span>
-            );
+            return null;
           })(),
         ];
       case "followup":
@@ -1655,7 +1653,10 @@ export const ChatRowContent = ({
     isMcpServerResponding,
     apiRequestUsageAvailable,
     apiRequestTimedOut,
+    apiRequestSeverity,
     isTaskCompletionMessage,
+    isLast,
+    commandHeaderSuffix,
     message.text,
   ]);
 
@@ -1715,51 +1716,48 @@ export const ChatRowContent = ({
         );
       case "editedExistingFile":
         return (
-          <>
-            <div style={headerStyle}>
-              {toolIcon(FaEdit)}
-              {tool.operationIsLocatedInWorkspace === false &&
-                toolIcon(
-                  FaSignOutAlt,
-                  "yellow",
-                  -90,
-                  "This file is outside of your workspace",
-                )}
-              <span style={{ fontWeight: "bold" }}>ValorIDE editing:</span>
-            </div>
-            <CodeAccordian
-              // isLoading={message.partial}
-              code={tool.content}
-              path={tool.path!}
-              isExpanded={isExpanded}
-              onToggleExpand={onToggleExpand}
-            />
-          </>
+          <CodeAccordian
+            code={tool.content}
+            path={tool.path!}
+            ariaLabel={`Edit file ${tool.path}`}
+            icon={
+              <>
+                {toolIcon(FaEdit, undefined, undefined, "Edit file")}
+                {tool.operationIsLocatedInWorkspace === false &&
+                  toolIcon(
+                    FaSignOutAlt,
+                    "yellow",
+                    -90,
+                    "This file is outside of your workspace",
+                  )}
+              </>
+            }
+            isExpanded={isExpanded}
+            onToggleExpand={onToggleExpand}
+          />
         );
       case "newFileCreated":
         return (
-          <>
-            <div style={headerStyle}>
-              {toolIcon(FaPlus)}
-              {tool.operationIsLocatedInWorkspace === false &&
-                toolIcon(
-                  FaSignOutAlt,
-                  "yellow",
-                  -90,
-                  "This file is outside of your workspace",
-                )}
-              <span style={{ fontWeight: "bold" }}>
-                ValorIDE creating a new file:
-              </span>
-            </div>
-            <CodeAccordian
-              isLoading={message.partial}
-              code={tool.content!}
-              path={tool.path!}
-              isExpanded={isExpanded}
-              onToggleExpand={onToggleExpand}
-            />
-          </>
+          <CodeAccordian
+            isLoading={message.partial}
+            code={tool.content!}
+            path={tool.path!}
+            ariaLabel={`Create file ${tool.path}`}
+            icon={
+              <>
+                {toolIcon(FaPlus, undefined, undefined, "Create file")}
+                {tool.operationIsLocatedInWorkspace === false &&
+                  toolIcon(
+                    FaSignOutAlt,
+                    "yellow",
+                    -90,
+                    "This file is outside of your workspace",
+                  )}
+              </>
+            }
+            isExpanded={isExpanded}
+            onToggleExpand={onToggleExpand}
+          />
         );
       case "precisionSearchAndReplace": {
         let prettyContent = tool.content ?? "{}";
@@ -2209,6 +2207,16 @@ export const ChatRowContent = ({
     return (
       <>
         <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={isExpanded}
+          aria-label={`${isCommandExecuting ? "Executing command" : "Command"}${commandHeaderSuffix ? `: ${commandHeaderSuffix}` : " output"}`}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onToggleExpand();
+            }
+          }}
           style={{
             ...headerStyle,
             cursor: "pointer",
@@ -2416,6 +2424,16 @@ export const ChatRowContent = ({
           return (
             <>
               <div
+                role="button"
+                tabIndex={0}
+                aria-label="API request details"
+                aria-expanded={isExpanded}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onToggleExpand();
+                  }
+                }}
                 style={{
                   ...headerStyle,
                   marginBottom: shouldShowApiError ? 10 : 0,
@@ -2712,83 +2730,62 @@ export const ChatRowContent = ({
           return (
             <div
               className="valoride-chat-card valoride-reasoning-card"
-              role="button"
-              tabIndex={0}
-              aria-expanded={isExpanded}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  onToggleExpand();
-                }
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 8,
+                padding: "10px 12px",
               }}
-              onClick={onToggleExpand}
-              style={{ cursor: "pointer", padding: "10px 12px" }}
             >
+              <FaBrain
+                data-testid="reasoning-icon"
+                aria-hidden="true"
+                style={{ flexShrink: 0, marginTop: 3 }}
+                color={
+                  reasoningSeverity
+                    ? severityColors[reasoningSeverity]
+                    : undefined
+                }
+              />
               <div
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  fontStyle: "italic",
+                  lineHeight: 1.5,
+                  color: isExpanded
+                    ? "var(--vscode-foreground)"
+                    : "var(--vscode-descriptionForeground)",
+                  whiteSpace: isExpanded ? "pre-wrap" : "nowrap",
+                  overflow: isExpanded ? undefined : "hidden",
+                  textOverflow: isExpanded ? undefined : "ellipsis",
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {message.text}
+              </div>
+              <button
+                type="button"
+                aria-label={
+                  isExpanded ? "Collapse reasoning" : "Expand reasoning"
+                }
+                title={isExpanded ? "Collapse reasoning" : "Expand reasoning"}
+                aria-expanded={isExpanded}
+                onClick={onToggleExpand}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  marginBottom: isExpanded ? 6 : 2,
-                  color: "var(--vscode-foreground)",
+                  flexShrink: 0,
+                  width: "auto",
+                  border: "none",
+                  background: "none",
+                  padding: 2,
+                  cursor: "pointer",
+                  color: "var(--vscode-descriptionForeground)",
                 }}
               >
-                <FaBrain
-                  data-testid="reasoning-icon"
-                  color={
-                    reasoningSeverity
-                      ? severityColors[reasoningSeverity]
-                      : undefined
-                  }
-                />
-                <span style={{ fontWeight: 700, fontSize: 12 }}>
-                  {message.partial ? "Thinking..." : "Thoughts"}
-                </span>
-                <span
-                  style={{
-                    marginLeft: "auto",
-                    fontSize: 11,
-                    color: "var(--vscode-descriptionForeground)",
-                  }}
-                >
-                  {isExpanded ? "Collapse" : "Tap to expand"}
-                </span>
-              </div>
-              {isExpanded ? (
-                <div
-                  style={{
-                    fontStyle: "italic",
-                    lineHeight: 1.5,
-                    color: "var(--vscode-foreground)",
-                  }}
-                >
-                  {message.text}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    color: "var(--vscode-descriptionForeground)",
-                    fontStyle: "italic",
-                  }}
-                >
-                  <span
-                    style={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      direction: "rtl",
-                      textAlign: "left",
-                      flex: 1,
-                    }}
-                  >
-                    {message.text + "\u200E"}
-                  </span>
-                  <FaArrowRight />
-                </div>
-              )}
+                {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
             </div>
           );
         case "user_feedback":

@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, type ReactNode } from "react";
 import { getLanguageFromPath } from "@thorapi/utils/getLanguageFromPath";
 import CodeBlock, {
   CODE_BLOCK_BG_COLOR,
@@ -21,6 +21,8 @@ interface CodeAccordianProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   isLoading?: boolean;
+  icon?: ReactNode;
+  ariaLabel?: string;
 }
 
 /*
@@ -42,6 +44,8 @@ const CodeAccordian = ({
   isExpanded,
   onToggleExpand,
   isLoading,
+  icon,
+  ariaLabel,
 }: CodeAccordianProps) => {
   const inferredLanguage = useMemo(
     () => code && (language ?? (path ? getLanguageFromPath(path) : undefined)),
@@ -71,6 +75,7 @@ const CodeAccordian = ({
           tabIndex={isLoading ? -1 : 0}
           aria-expanded={isExpanded}
           aria-disabled={!!isLoading}
+          aria-label={ariaLabel}
           onKeyDown={(event) => {
             if (!isLoading && (event.key === "Enter" || event.key === " ")) {
               event.preventDefault();
@@ -92,6 +97,19 @@ const CodeAccordian = ({
           }}
           onClick={isLoading ? undefined : onToggleExpand}
         >
+          {icon && (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                marginRight: 8,
+                flexShrink: 0,
+              }}
+            >
+              {icon}
+            </span>
+          )}
           {isFeedback || isConsoleLogs ? (
             <div style={{ display: "flex", alignItems: "center" }}>
               {isFeedback ? (

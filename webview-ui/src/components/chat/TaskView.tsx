@@ -383,7 +383,8 @@ const TaskView: React.FC<TaskViewProps> = ({
         imagesCount: Array.isArray(messageOrGroup.images)
           ? messageOrGroup.images.length
           : undefined,
-        isExpanded: expandedRows[messageOrGroup.ts] ?? false,
+        isExpanded:
+          expandedRows[messageOrGroup.ts] ?? messageOrGroup.say === "reasoning",
         lastModifiedMessage: lastModified
           ? {
               ts: lastModified.ts,
@@ -401,6 +402,10 @@ const TaskView: React.FC<TaskViewProps> = ({
     (index: number, messageOrGroup: ValorIDEMessage | ValorIDEMessage[]) => {
       if (Array.isArray(messageOrGroup)) {
         const boundaryContext = buildMessageContext(messageOrGroup);
+        const isExpandedByDefault = (messageTs: number) =>
+          messageOrGroup.some(
+            (message) => message.ts === messageTs && message.say === "reasoning",
+          );
         return (
           <ErrorBoundary
             title="Browser session failed to render"
@@ -412,12 +417,12 @@ const TaskView: React.FC<TaskViewProps> = ({
               lastModifiedMessage={modifiedMessages.at(-1)}
               onHeightChange={() => {}}
               isExpanded={(messageTs: number) =>
-                expandedRows[messageTs] ?? false
+                expandedRows[messageTs] ?? isExpandedByDefault(messageTs)
               }
               onToggleExpand={(messageTs: number) => {
                 setExpandedRows((prev) => ({
                   ...prev,
-                  [messageTs]: !prev[messageTs],
+                  [messageTs]: !(prev[messageTs] ?? isExpandedByDefault(messageTs)),
                 }));
               }}
             />
@@ -433,11 +438,15 @@ const TaskView: React.FC<TaskViewProps> = ({
           <ChatRow
             key={messageOrGroup.ts}
             message={messageOrGroup}
-            isExpanded={expandedRows[messageOrGroup.ts] || false}
+            isExpanded={
+              expandedRows[messageOrGroup.ts] ?? messageOrGroup.say === "reasoning"
+            }
             onToggleExpand={() => {
               setExpandedRows((prev) => ({
                 ...prev,
-                [messageOrGroup.ts]: !prev[messageOrGroup.ts],
+                [messageOrGroup.ts]: !(
+                  prev[messageOrGroup.ts] ?? messageOrGroup.say === "reasoning"
+                ),
               }));
             }}
             lastModifiedMessage={modifiedMessages.at(-1)}

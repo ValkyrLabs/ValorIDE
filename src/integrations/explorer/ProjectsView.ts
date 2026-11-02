@@ -5,7 +5,7 @@ import {
   resolveThorapiFolderPath,
   thorapiSettingChanged,
 } from "@utils/thorapi";
-import { openUrlWithSimpleBrowser } from "@utils/openUrl";
+import { openUrlExternally, openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveProjectCommandUri } from "./projectCommandUri";
 import {
   projectCommand,
@@ -121,6 +121,11 @@ export function registerProjectsView(
   context.subscriptions.push(registerProjectGitPublishCommand(context, output, getUriArg));
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.projects.create", () =>
+      openUrlExternally(
+        "https://valkyrlabs.com/dashboard?open=application-wizard&autoOpen=true",
+      ),
+    ),
     vscode.commands.registerCommand("valoride.projects.refresh", () =>
       provider.refresh(),
     ),
