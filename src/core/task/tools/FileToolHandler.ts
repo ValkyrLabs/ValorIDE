@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import * as fs from "node:fs";
+import { AcpFileSystem } from "@integrations/acp/AcpFileSystem";
 import {
   BaseToolHandler,
   ToolExecutionResult,
@@ -40,6 +42,24 @@ export class FileToolHandler extends BaseToolHandler {
       return { shouldContinue: false };
     }
 
+    if (this.context.isExternalAgentTask?.()) {
+      if (
+        [
+          "write_to_file",
+          "replace_in_file",
+          "read_file",
+          "precision_search_and_replace",
+          "list_files",
+          "list_code_definition_names",
+          "search_files",
+        ].includes(block.name)
+      ) {
+        // Never let streaming arguments reach the native, disk-mutating diff preview.
+        if (partial) return { shouldContinue: false };
+        return this.handleExternalFileOperation(block);
+      }
+    }
+
     switch (block.name) {
       case "precision_search_and_replace":
         return this.handlePrecisionSearchAndReplace(block, partial);
@@ -56,6 +76,238 @@ export class FileToolHandler extends BaseToolHandler {
         return this.handleSearchFiles(block, partial);
       default:
         return { shouldContinue: false };
+    }
+  }
+
+  private assertExternalActive(root: string) {
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri;
+    if (
+      this.context.isTaskActive?.() === false ||
+      !vscode.workspace.isTrusted ||
+      folder?.scheme !== "file" ||
+      fs.realpathSync(folder.fsPath) !== root
+    ) {
+      throw new Error(
+        "The external task workspace is no longer active or trusted.",
+      );
+    }
+  }
+
+  /** External permissions precede disk reads and edits; the normal preview is never used. */
+  private async handleExternalFileOperation(
+    block: AssistantMessageContent,
+  ): Promise<ToolExecutionResult> {
+    if (block.type !== "tool_use") return { shouldContinue: false };
+    let denied = false;
+    const rejected = (): ToolExecutionResult => ({
+      shouldContinue: true,
+      outcome: "rejected",
+      userRejected: true,
+      toolResponse:
+        "The ACP client declined this file operation; no edit was submitted.",
+    });
+    try {
+      if (block.name === "precision_search_and_replace") {
+        return {
+          shouldContinue: true,
+          outcome: "blocked",
+          toolResponse:
+            "precision_search_and_replace is unavailable for external ACP tasks. Use read_file followed by replace_in_file or write_to_file for a reviewed editor edit.",
+        };
+      }
+      const relPath = block.params.path;
+      if (typeof relPath !== "string" || !relPath.trim())
+        throw new Error("A file path is required.");
+      const root = fs.realpathSync(this.context.cwd);
+      this.assertExternalActive(root);
+      const target = path.resolve(root, relPath);
+      const relative = path.relative(root, target);
+      if (
+        relative === ".." ||
+        relative.startsWith(`..${path.sep}`) ||
+        path.isAbsolute(relative)
+      ) {
+        throw new Error(
+          "External ACP file operations must remain inside the enabled workspace.",
+        );
+      }
+      const approve = async (details: Record<string, unknown>) => {
+        this.assertExternalActive(root);
+        const message = JSON.stringify(details);
+        // The backend deliberately refuses larger permission descriptions rather than truncating them.
+        if (message.length > 50_000)
+          throw new Error(
+            "This ACP file proposal is too large to review completely. Split it into smaller operations.",
+          );
+        const answer = await this.context.ask("tool", message, false);
+        this.assertExternalActive(root);
+        denied = answer.response !== "yesButtonClicked";
+        return !denied;
+      };
+      let replacementBase: string | undefined;
+      let replacementVersion: string | undefined;
+      const diskVersion = () => {
+        const stat = fs.statSync(target);
+        return `${stat.dev}:${stat.ino}:${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}`;
+      };
+      const files = new AcpFileSystem(root, {
+        assertActive: () => this.assertExternalActive(root),
+        confirmWrite: async (proposal) => {
+          if (proposal.isDirty)
+            throw new Error(
+              "Save or discard the existing unsaved document before requesting another ACP edit.",
+            );
+          if (
+            replacementBase !== undefined &&
+            (proposal.currentContent !== replacementBase ||
+              diskVersion() !== replacementVersion)
+          )
+            throw new Error(
+              "The file changed while preparing the replacement. Read it again before editing.",
+            );
+          return approve({
+            tool: proposal.isNewFile ? "newFileCreated" : "editedExistingFile",
+            path: proposal.path,
+            content: proposal.proposedContent,
+            operationIsLocatedInWorkspace: true,
+            persistence: proposal.isNewFile
+              ? "Create new file on disk"
+              : "Update editor buffer only; save explicitly before running commands",
+          });
+        },
+      });
+      if (
+        ["list_files", "list_code_definition_names", "search_files"].includes(
+          block.name,
+        )
+      ) {
+        if (
+          relative
+            .split(path.sep)
+            .some((segment) =>
+              /^(?:\.git|\.aws|\.ssh|\.gnupg|\.kube|\.docker|\.env(?:\..*)?)$/i.test(
+                segment,
+              ),
+            )
+        ) {
+          throw new Error(
+            "External ACP cannot scan credential or version-control internals.",
+          );
+        }
+        if (
+          !fs.lstatSync(target).isDirectory() ||
+          fs.realpathSync(target) !== target
+        )
+          throw new Error(
+            "ACP directory scans require a canonical local directory without symlinks.",
+          );
+        const parameters = { ...block.params, path: target,
+          ...(block.name === "search_files" ? { regex: block.params.regex?.trim() || "." } : {}) };
+        if (
+          !(await approve({
+            tool: block.name,
+            path: target,
+            parameters,
+            operationIsLocatedInWorkspace: true,
+          }))
+        )
+          return rejected();
+        this.assertExternalActive(root);
+        if (
+          !fs.lstatSync(target).isDirectory() ||
+          fs.realpathSync(target) !== target
+        )
+          throw new Error(
+            "The approved ACP directory changed before the scan.",
+          );
+        // This one operation has already been approved with exact arguments. Avoid the native
+        // result-bearing permission, which otherwise discloses search results before approval.
+        const approved = new FileToolHandler({
+          ...this.context,
+          shouldAutoApproveToolWithPath: () => true,
+          shouldAutoApproveTool: () => true,
+          autoApprovalSettings: {
+            ...this.context.autoApprovalSettings,
+            enabled: false,
+          },
+        });
+        const request = { ...block, params: parameters };
+        if (block.name === "list_files")
+          return approved.handleListFiles(request, false);
+        if (block.name === "list_code_definition_names")
+          return approved.handleListCodeDefinitions(request, false);
+        return approved.handleSearchFiles(request, false);
+      }
+      if (block.name === "read_file") {
+        if (
+          !(await approve({
+            tool: "readFile",
+            path: target,
+            operationIsLocatedInWorkspace: true,
+          }))
+        )
+          return rejected();
+        const result = await files.readTextFile({ path: target });
+        return {
+          shouldContinue: true,
+          outcome: "succeeded",
+          toolResponse: result.content,
+        };
+      }
+      const generatedArtifactError = getGeneratedArtifactEditError(relPath);
+      if (generatedArtifactError) throw new Error(generatedArtifactError);
+      const openDocument = vscode.workspace.textDocuments.find(
+        (doc) =>
+          doc.uri.scheme === "file" && path.resolve(doc.uri.fsPath) === target,
+      );
+      if (openDocument?.isDirty)
+        throw new Error(
+          "Save or discard the existing unsaved document before requesting another ACP edit.",
+        );
+      let content: string;
+      if (block.name === "replace_in_file") {
+        if (typeof block.params.diff !== "string" || !block.params.diff)
+          throw new Error("A replacement diff is required.");
+        if (
+          !(await approve({
+            tool: "readFile",
+            path: target,
+            purpose:
+              "Read the current file to prepare the requested replacement",
+            operationIsLocatedInWorkspace: true,
+          }))
+        )
+          return rejected();
+        replacementVersion = diskVersion();
+        const current = await files.readTextFile({ path: target });
+        replacementBase = current.content;
+        content = await constructNewFileContent(
+          block.params.diff,
+          current.content,
+          true,
+        );
+      } else {
+        if (typeof block.params.content !== "string")
+          throw new Error("File content is required.");
+        content = block.params.content;
+      }
+      await files.writeTextFile({ path: target, content });
+      this.context.didEditFile = true;
+      this.context.fileContextTracker.markFileAsEditedByValorIDE(relPath);
+      return {
+        shouldContinue: true,
+        outcome: "succeeded",
+        toolResponse: `ACP edit applied to ${target}. Existing-file edits remain UNSAVED in the editor; save explicitly before executing commands or builds. New files are created on disk. read_file reads the current editor content. No native diff preview or automatic save was used.`,
+      };
+    } catch (error) {
+      if (denied) return rejected();
+      return {
+        shouldContinue: true,
+        outcome: "failed",
+        toolResponse: formatResponse.toolError(
+          error instanceof Error ? error.message : String(error),
+        ),
+      };
     }
   }
 

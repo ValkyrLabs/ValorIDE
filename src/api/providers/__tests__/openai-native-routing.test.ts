@@ -71,6 +71,25 @@ const request = (index = 0) => {
 };
 
 describe("OpenAI native credential transport", () => {
+  it("streams repeated summary tokens, then fills any missing suffix from the same part exactly once", async () => {
+    const part = {type:"summary_text",text:"Check check check!"};
+    const item = {id:"rs-a",type:"reasoning",encrypted_content:"DO NOT DISPLAY",summary:[part,{type:"summary_text",text:"Second part"}]};
+    const events = [
+      ...["Check"," ","check"," ","check"].map(delta=>({type:"response.reasoning_summary_text.delta",item_id:"rs-a",summary_index:0,delta})),
+      {type:"response.reasoning_summary_text.done",item_id:"rs-a",summary_index:0,text:part.text},
+      {type:"response.reasoning_summary_part.done",item_id:"rs-a",summary_index:0,part},
+      {type:"response.output_item.done",item},
+      {type:"response.output_text.delta",delta:"Answer"},
+      {type:"response.reasoning_text.delta",delta:"PRIVATE"},
+      {type:"response.completed",response:{status:"completed",output:[item,{id:"rs-b",type:"reasoning",summary:[{type:"summary_text",text:"Second part"}]}]}},
+    ];
+    mockFetch.mockResolvedValue(new Response(events.map(e => `data: ${JSON.stringify(e)}\n\n`).join(""),
+      {headers:{"content-type":"text/event-stream"}}));
+    const chunks = await collect(new OpenAiNativeHandler({apiModelId:"gpt-5.5"}));
+    expect(chunks.filter(c=>c.type==="reasoning").map(c=>c.reasoning)).toEqual(["Check"," ","check"," ","check","!","\n\nSecond part","\n\nSecond part"]);
+    expect(chunks.filter(c=>c.type==="text")).toEqual([{type:"text",text:"Answer"}]);
+    expect(JSON.stringify(chunks)).not.toMatch(/PRIVATE|DO NOT DISPLAY/);
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     mockClientOptions.length = 0;

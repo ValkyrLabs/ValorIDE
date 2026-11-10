@@ -48,6 +48,20 @@ afterEach(() => {
 });
 
 describe("ThemeSwitcher", () => {
+  it("follows live host contrast and light/dark changes without persisting them over the user's selected theme", async () => {
+    document.body.dataset.vscodeThemeKind = "vscode-high-contrast-light";
+    themeSwitcher.init();
+    expect(document.documentElement.dataset.bsTheme).toBe("light");
+    expect(localStorage.getItem("valkyr-theme")).toBeNull();
+    themeSwitcher.setTheme("fun");
+    document.body.dataset.vscodeThemeKind = "vscode-dark";
+    await vi.waitFor(() =>
+      expect(document.documentElement.dataset.bsTheme).toBe("dark"),
+    );
+    expect(themeSwitcher.getCurrentTheme()).toBe("fun");
+    expect(localStorage.getItem("valkyr-theme")).toBe("fun");
+    delete document.body.dataset.vscodeThemeKind;
+  });
   it("keeps shared component styles after the active theme", () => {
     themeSwitcher.setTheme("dark", { persist: false });
 
@@ -60,7 +74,7 @@ describe("ThemeSwitcher", () => {
     expect(managedLinks.map(({ id }) => id)).toEqual([
       "valkyr-theme-dark",
       "valkyr-theme-overrides",
-        ]);
+    ]);
     expect(managedLinks.every(({ rel }) => rel === "stylesheet")).toBe(true);
   });
 
@@ -77,6 +91,6 @@ describe("ThemeSwitcher", () => {
     expect(managedLinks.map(({ id }) => id)).toEqual([
       "valkyr-theme-fun",
       "valkyr-theme-overrides",
-        ]);
+    ]);
   });
 });

@@ -1,3 +1,4 @@
+import { ScreenHeader } from "../common/ScreenHeader";
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -450,9 +451,7 @@ const SettingsView = ({ onDone, initialTab }: SettingsViewProps) => {
       <SystemAlerts />
       <div className="settings-screen fixed top-0 left-0 right-0 bottom-0 pt-2.5 pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
         {/* Header bar */}
-        <div className="flex justify-between items-center mb-[13px] pr-[17px]">
-          <h3 className="text-(--vscode-foreground) m-0">Settings</h3>
-          <div className="flex items-center gap-2">
+        <ScreenHeader title="Settings">
             <VSCodeButton appearance="secondary" onClick={onDone} disabled={isTestingValkyraiHost}>Done</VSCodeButton>
             <VSCodeButton
               onClick={() => handleSubmit(false)}
@@ -462,8 +461,7 @@ const SettingsView = ({ onDone, initialTab }: SettingsViewProps) => {
             >
               Save
             </VSCodeButton>
-          </div>
-        </div>
+        </ScreenHeader>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">
           <OfflineBanner onOpenSettings={() => setActiveSettingsTab("valkyraiBackend")} />
           {peers.length > 0 && (

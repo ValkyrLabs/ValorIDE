@@ -125,7 +125,7 @@ export interface ProjectBlueprintSyncRequest {
   reviewedBase?: { etag: string; specificationHash: string };
 }
 
-const checkedDocument = (value: ProjectBlueprintDocument, applicationId: string): ProjectBlueprintDocument => {
+export const checkedDocument = (value: ProjectBlueprintDocument, applicationId: string): ProjectBlueprintDocument => {
   if (!value || value.applicationId?.toLowerCase() !== applicationId.toLowerCase() || !HASH.test(value.etag) || !PROJECT_UUID.test(value.specId) || typeof value.filename !== "string" || !value.specification)
     throw new Error("ValkyrAI returned an invalid Blueprint revision. Local files and the base revision were preserved.");
   specificationHash(value.specification);

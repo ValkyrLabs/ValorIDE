@@ -5,6 +5,7 @@ import { createHash } from "crypto";
 import AdmZip from "adm-zip";
 import { extractLocalZip, isZipBuffer } from "../utils/zipExtractor";
 import { canonicalProjectFolder, generatedProjectDestination, installGeneratedProject, assertNoProjectLinks, GENERATION_MARKER, GeneratedProjectProvenance } from "./generatedProjectInstall";
+import { blueprintGenerationTarget } from "./blueprintGenerationTarget";
 import { initializeGeneratedProject, connectGeneratedSources } from "./generatedProjectConfiguration";
 import { BLUEPRINT_MARKER, PROJECT_UUID, initializeProjectBlueprintState, readProjectBlueprintState, parseProjectSpecification, safeProjectRelativePath, specificationHash, normalizeBlueprintBackend, ProjectBlueprintState } from "./projectBlueprintSync";
 
@@ -98,6 +99,9 @@ export interface LocalProjectImportRequest {
   archivePath: string;
   parent: string;
   workspaceRoot?: string;
+  /** A native, preflighted folder. Never read from the incoming package. */
+  selectedProjectRoot?: string;
+  expectedInstallRoot?: string;
   assertCurrent?: () => void | Promise<void>;
   onProgress?: (message: string) => void | Promise<void>;
   /** Only the authenticated native generation path supplies verified receipt provenance. */
@@ -106,7 +110,7 @@ export interface LocalProjectImportRequest {
   confirmOverwrite?: (affectedPaths: string[]) => boolean | Promise<boolean>;
 }
 
-export async function importLocalProjectPackage({ archivePath, parent, workspaceRoot, assertCurrent, onProgress, expectedGeneration, mode = "import", confirmOverwrite }: LocalProjectImportRequest): Promise<{ extractedPath: string; preservedFiles: string[]; configurationWarnings: string[]; specificationPath: string; packageSha256: string; applicationVersion: string }> {
+export async function importLocalProjectPackage({ archivePath, parent, workspaceRoot, selectedProjectRoot, expectedInstallRoot, assertCurrent, onProgress, expectedGeneration, mode = "import", confirmOverwrite }: LocalProjectImportRequest): Promise<{ extractedPath: string; preservedFiles: string[]; configurationWarnings: string[]; specificationPath: string; packageSha256: string; applicationVersion: string }> {
   let staging: string | undefined;
   try {
     await assertCurrent?.();
@@ -220,8 +224,14 @@ export async function importLocalProjectPackage({ archivePath, parent, workspace
       await fs.writeFile(path.join(incoming, relative), bytes);
     }
     const configurationWarnings = await initializeGeneratedProject(incoming, identity.applicationName, identity.applicationVersion);
-    const destination = workspaceRoot ? await generatedProjectDestination(workspaceRoot, parent, identity.applicationId) : { parent, standalone: false };
+    if (selectedProjectRoot || expectedInstallRoot) {
+      if (!workspaceRoot || !expectedGeneration || mode !== "regenerate") throw new Error("Exact project regeneration requires a verified generation receipt.");
+      selectedProjectRoot=await blueprintGenerationTarget(workspaceRoot,selectedProjectRoot,identity.applicationId,identity.applicationName,identity.applicationVersion,expectedGeneration.backend,parent);
+    }
+    const destination = selectedProjectRoot ? { parent:path.dirname(selectedProjectRoot), standalone:true } :
+      workspaceRoot ? await generatedProjectDestination(workspaceRoot, parent, identity.applicationId) : { parent, standalone: false };
     const target = path.join(destination.parent, canonicalProjectFolder(identity.applicationName, identity.applicationVersion));
+    if ((expectedInstallRoot || selectedProjectRoot) && path.resolve(target) !== path.resolve(expectedInstallRoot || selectedProjectRoot!)) throw new Error("The generated package does not match the selected project folder. No project files were written.");
     await assertNoProjectLinks(target, BLUEPRINT_MARKER);
     const existingState = await readProjectBlueprintState(target);
     if (existingState && (existingState.applicationId.toLowerCase() !== identity.applicationId.toLowerCase() || existingState.specificationPath !== specificationPath))

@@ -259,6 +259,11 @@ describe("ApplicationsList", () => {
     });
 
     render(<ApplicationsList />);
+    const toolbar = within(screen.getByRole("toolbar", { name: "Actions for Sample App" }));
+    fireEvent.click(toolbar.getByRole("button", { name: "Commit and push app to GitHub" }));
+    expect(mockPostMessage).toHaveBeenCalledWith({ type: "pushApplicationToGitHub", applicationId: "app-1" });
+    fireEvent.click(toolbar.getByRole("button", { name: "Pull app from GitHub" }));
+    expect(mockPostMessage).toHaveBeenCalledWith({ type: "pullApplicationFromGitHub", applicationId: "app-1" });
     fireEvent.click(screen.getByRole("button", { name: "Publish source" }));
 
     expect(mockPostMessage).toHaveBeenCalledWith({
@@ -332,6 +337,8 @@ describe("ApplicationsList", () => {
     expect(
       screen.queryByRole("button", { name: "Publish source" }),
     ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Commit and push app to GitHub" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Pull app from GitHub" })).not.toBeInTheDocument();
   });
 
   it("keeps the generation checklist open with the transport failure", async () => {
@@ -488,8 +495,8 @@ describe("ApplicationsList", () => {
       mockUseGetApplicationsQuery.mockReturnValue({ data: apps, isLoading: false, isFetching: false, refetch: mockRefetch });
       render(<ApplicationsList />);
       fireEvent.click(screen.getByRole("checkbox", { name: "Skip MCP publication for John Social Video Clipping" }));
-      fireEvent.click(within(screen.getByRole("group", { name: "Actions for John Social Video Clipping" })).getByRole("button", { name: "Generate" }));
-      fireEvent.click(within(screen.getByRole("group", { name: "Actions for Other App" })).getByRole("button", { name: "Generate" }));
+      fireEvent.click(within(screen.getByRole("toolbar", { name: "Actions for John Social Video Clipping" })).getByRole("button", { name: "Generate" }));
+      fireEvent.click(within(screen.getByRole("toolbar", { name: "Actions for Other App" })).getByRole("button", { name: "Generate" }));
       const requests = mockPostMessage.mock.calls.map(([message]) => message).filter(message => message.type === "generateApplicationArtifact");
       expect(requests).toHaveLength(2);
       expect(requests[0]).toMatchObject({ applicationId: originalId, applicationVersion: "0.1.3-draft", mcpPublicationMode: "suppress" });

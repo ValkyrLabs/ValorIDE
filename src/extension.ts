@@ -57,6 +57,7 @@ import {
   registerGrayMatterCommands,
 } from "./commands/graymatter/graymatterCommands";
 import { SelectedLlmDetails } from "@shared/llm";
+import { registerAcp } from "./integrations/acp/registerAcp";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -79,6 +80,8 @@ let toolRelayService: any | null = null;
 export function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("ValorIDE");
   context.subscriptions.push(outputChannel);
+  registerAcp(context, () => WebviewProvider.getVisibleInstance()?.controller || WebviewProvider.getSidebarInstance()?.controller,
+    () => WebviewProvider.getAllInstances().every(instance => !instance.controller.task));
 
   ErrorService.initialize();
   Logger.initialize(outputChannel);

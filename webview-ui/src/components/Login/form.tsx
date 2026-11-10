@@ -145,7 +145,7 @@ const Form: React.FC<FormProps> = ({
               touched = {};
             }
             return (
-              <form onSubmit={handleSubmit} className="form">
+              <form onSubmit={handleSubmit} className="form valoride-auth-form">
                 {/**
                  * 
                  * 
@@ -201,7 +201,7 @@ const Form: React.FC<FormProps> = ({
                   <Col md={12}>
                     <label htmlFor="username" className="nice-form-control">
                       <b>
-                        User Name:{" "}
+                        Username{" "}
                         {touched.username && !errors.username && (
                           <span className="okCheck">
                             <FaCheckCircle />
@@ -210,6 +210,8 @@ const Form: React.FC<FormProps> = ({
                       </b>
                       <Field
                         name="username"
+                        id="username"
+                        autoComplete="username"
                         type="text"
                         className={
                           errors.username
@@ -230,7 +232,7 @@ const Form: React.FC<FormProps> = ({
                   <Col md={12}>
                     <label htmlFor="password" className="nice-form-control">
                       <b>
-                        Password:{" "}
+                        Password{" "}
                         {touched.password && !errors.password && (
                           <span className="okCheck">
                             <FaCheckCircle />
@@ -239,6 +241,8 @@ const Form: React.FC<FormProps> = ({
                       </b>
                       <Field
                         name="password"
+                        id="password"
+                        autoComplete="current-password"
                         type="password"
                         className={
                           errors.password
@@ -255,8 +259,6 @@ const Form: React.FC<FormProps> = ({
                   </Col>
                 </Row>
 
-                <br />
-                <br />
                 <Row>
                   <Col>
                     <button

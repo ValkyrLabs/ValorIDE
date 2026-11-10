@@ -8,6 +8,7 @@ import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { isZipBuffer } from "@utils/zipExtractor";
 import { generateCanonicalArchive } from "./canonicalApplicationGeneration";
 import { canonicalProjectFolder } from "./generatedProjectInstall";
+import { blueprintGenerationTarget } from "./blueprintGenerationTarget";
 import { importLocalProjectPackage } from "./localProjectImport";
 import type { McpPublicationMode, McpPublicationObservation } from "@shared/McpPublication";
 
@@ -23,6 +24,12 @@ export interface ApplicationArtifactDownloadRequest {
   applicationId: string;
   applicationName?: string;
   applicationVersion?: string;
+  expectedSpecId?: string;
+  /** Selected Project tree workspace, never supplied by a webview. */
+  selectedWorkspace?: vscode.Uri;
+  /** Exact verified install root for an in-place Blueprint regeneration. */
+  selectedProjectRoot?: string;
+  confirmedInstallRoot?: string;
   mcpPublicationMode?: McpPublicationMode;
   jwtToken: string;
   recoveryDirectory?: string;
@@ -70,6 +77,10 @@ export async function downloadApplicationArtifact({
   applicationId,
   applicationName,
   applicationVersion,
+  expectedSpecId,
+  selectedWorkspace,
+  selectedProjectRoot,
+  confirmedInstallRoot,
   mcpPublicationMode,
   jwtToken,
   recoveryDirectory,
@@ -89,7 +100,10 @@ export async function downloadApplicationArtifact({
   }
   if (!jwtToken.trim())
     throw new Error("Sign in before generating an application.");
-  const workspaceRoot = getWorkspacePath();
+  const workspace = () => selectedWorkspace
+    ? vscode.workspace.workspaceFolders?.find(f => f.uri.scheme === "file" && f.uri.fsPath === selectedWorkspace.fsPath)?.uri.fsPath
+    : getWorkspacePath();
+  const workspaceRoot = workspace();
   if (!workspaceRoot)
     throw new Error("Open a workspace before downloading generated artifacts.");
   if (!applicationName?.trim()) throw new Error("Save a project name before downloading the application.");
@@ -107,7 +121,7 @@ export async function downloadApplicationArtifact({
       throw new Error(
         "The ValkyrAI backend changed during generation. Return to the original backend before retrying.",
       );
-    if (getWorkspacePath() !== workspaceRoot)
+    if (workspace() !== workspaceRoot)
       throw new Error(
         "The workspace changed during generation. Reopen the original workspace to retry.",
       );
@@ -119,13 +133,22 @@ export async function downloadApplicationArtifact({
   };
   try {
     await ensureCurrent();
+    let expectedInstallRoot:string|undefined;
+    if (selectedProjectRoot || expectedSpecId) {
+      if (!expectedSpecId || !applicationVersion) throw new Error("The selected project requires a pinned Blueprint and version.");
+      const artifactParent=resolveThorapiFolderPath(workspaceRoot);
+      selectedProjectRoot=await blueprintGenerationTarget(workspaceRoot,selectedProjectRoot,applicationId,applicationName,applicationVersion,backend,artifactParent);
+      expectedInstallRoot=selectedProjectRoot || path.resolve(artifactParent,canonicalProjectFolder(applicationName,applicationVersion));
+      if (confirmedInstallRoot && expectedInstallRoot!==confirmedInstallRoot) throw new Error("The generated project destination changed. Review the destination and confirm regeneration again.");
+      await ensureCurrent();
+    }
     await onProgress?.(
       "Generating your application in ValkyrAI...",
       "receiving",
     );
     await ensureCurrent();
     const generated = await generateCanonicalArchive({
-      backend, workspaceRoot, applicationId, applicationVersion, mcpPublicationMode, jwtToken, recoveryDirectory,
+      backend, workspaceRoot, applicationId, applicationVersion, expectedSpecId, mcpPublicationMode, jwtToken, recoveryDirectory,
       assertCurrent: ensureCurrent, fetch: fetcher, completeProjectExport: true,
       onProgress: (message) => onProgress?.(message, "receiving"),
     });
@@ -151,6 +174,8 @@ export async function downloadApplicationArtifact({
       archivePath,
       parent: resolveThorapiFolderPath(workspaceRoot),
       workspaceRoot,
+      selectedProjectRoot,
+      expectedInstallRoot,
       assertCurrent: ensureCurrent,
       expectedGeneration: { applicationId, applicationVersion, backend, provenance: generated.provenance },
       mode: "regenerate",

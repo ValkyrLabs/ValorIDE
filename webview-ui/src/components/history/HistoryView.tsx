@@ -1,3 +1,4 @@
+import { ScreenHeader } from "../common/ScreenHeader";
 import {
   VSCodeButton,
   VSCodeTextField,
@@ -174,32 +175,15 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px 17px 10px 20px",
-          }}
-        >
-          <h3
-            style={{
-              color: "var(--vscode-foreground)",
-              margin: 0,
-            }}
-          >
-            History
-          </h3>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <ScreenHeader title="History">
             <StatusBadge
               label="P2P"
               value={value}
               kind={kind as any}
               title={hasError ? String(communicationService.error) : undefined}
             />
-            <VSCodeButton onClick={onDone}>Done</VSCodeButton>
-          </div>
-        </div>
+            <VSCodeButton appearance="secondary" onClick={onDone}>Done</VSCodeButton>
+        </ScreenHeader>
 
         <div style={{ padding: "5px 17px 6px 17px" }}>
           <div
@@ -289,6 +273,10 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             </div>
           )}
             */}
+          {taskHistorySearchResults.length === 0 && <div className="valoride-empty-state">
+            <h3>{searchQuery ? "No matching tasks" : "No task history yet"}</h3>
+            <p>{searchQuery ? "Try another search or clear the filter." : "Start a conversation in Chat. Your tasks will appear here so you can pick up where you left off."}</p>
+          </div>}
           <Virtuoso
             style={{
               flexGrow: 1,
@@ -547,11 +535,10 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             )}
           />
         </div>
-        <div
+        {taskHistory.length > 0 && <div
           style={{
             padding: "10px 10px",
             borderTop: "1px solid var(--vscode-panel-border)",
-            marginTop: "200px",
           }}
         >
           <DangerButton
@@ -565,7 +552,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             Delete All History
             {totalTasksSize !== null ? ` (${formatSize(totalTasksSize)})` : ""}
           </DangerButton>
-        </div>
+        </div>}
       </div>
     </>
   );

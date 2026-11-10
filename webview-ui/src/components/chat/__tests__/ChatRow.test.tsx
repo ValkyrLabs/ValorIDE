@@ -1090,6 +1090,13 @@ describe("ChatRow Content - api request spinner handling", () => {
 });
 
 describe("ChatRow Content - reasoning severity indicator", () => {
+  it("labels the gateway's activity as status, not the model's reasoning or answer", () => {
+    const message = { type:"say",say:"provider_status",ts:101,text:"Reviewing authorized evidence",partial:true } as any;
+    render(<ProviderAny><ChatRowContent message={message} isExpanded={false} onToggleExpand={()=>{}}
+      lastModifiedMessage={message} isLast={true} onHeightChange={()=>{}}/></ProviderAny>);
+    expect(screen.getByRole("status").textContent).toBe("Provider status · Reviewing authorized evidence");
+    expect(screen.queryByTestId("reasoning-icon")).toBeNull();
+  });
   it("streams reasoning beside its brain icon without headers and keeps keyboard collapse", async () => {
     const user = userEvent.setup();
     const ReasoningRow = ({

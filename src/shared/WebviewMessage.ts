@@ -115,6 +115,8 @@ export interface WebviewMessage {
     | "uploadOpenAPISpecResult"
     | "openOpenAPIEditor"
     | "publishApplicationSource"
+    | "pushApplicationToGitHub"
+    | "pullApplicationFromGitHub"
     | "restoreApplicationSourceSelection"
     | "openFile"
     | "trackFunnelEvent"

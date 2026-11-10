@@ -149,11 +149,19 @@ const extensionConfig = {
 
 async function main() {
   const extensionCtx = await esbuild.context(extensionConfig);
+  const acpCtx = await esbuild.context({
+    entryPoints: ["src/integrations/acp/agent/stdio.ts"],
+    outfile: "dist/acp-agent.cjs", bundle: true, platform: "node", format: "cjs", target: "node20",
+    minify: production, sourcemap: false, logLevel: "warning",
+  });
   if (watch) {
     await extensionCtx.watch();
+    await acpCtx.watch();
   } else {
     await extensionCtx.rebuild();
+    await acpCtx.rebuild();
     await extensionCtx.dispose();
+    await acpCtx.dispose();
   }
 }
 

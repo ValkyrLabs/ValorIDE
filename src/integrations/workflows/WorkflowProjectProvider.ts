@@ -4,6 +4,8 @@ import { getValkyrLabsRtkApiClient } from "../../services/valkyrai/ValkyrLabsRtk
 import { getValkyraiBasePath } from "../../utils/serverValkyraiHost";
 import { openUrlExternally } from "../../utils/openUrl";
 import { collectWorkflowPages } from "./workflowCollection";
+import { registerBindWorkflow } from "./bindWorkflowCommand";
+import type { Deployment, Version } from "./workflowBinding";
 import { workflowStudioWebviewHtml } from "./workflowStudioWebview";
 import {
   assertWorkflowStudioBackend,
@@ -42,6 +44,7 @@ export class WorkflowEngineeringClient {
   }
 
   async listWorkflows(): Promise<WorkflowListItem[]> {
+    const backend = getValkyraiBasePath();
     const workflows = await collectWorkflowPages((page, size) =>
       this.get<unknown>(`Workflow?page=${page}&size=${size}`),
     );
@@ -52,7 +55,41 @@ export class WorkflowEngineeringClient {
         name: workflow.name,
         description: workflow.description,
         status: workflow.status,
+        backend,
       }));
+  }
+
+  async bindingData(id: string, backend: string) {
+    if (!isWorkflowStudioId(id)) throw new Error("Invalid workflow identity.");
+    const storage = TokenStorageService.getInstance(this.context),
+      token = await storage.getJwtToken();
+    const assertCurrent = async () => {
+      assertWorkflowStudioBackend(backend, getValkyraiBasePath());
+      if (!token || (await storage.getJwtToken()) !== token)
+        throw new Error(
+          "The workflow account changed. Refresh Workflows and retry.",
+        );
+    };
+    await assertCurrent();
+    const base = assertWorkflowStudioBackend(backend, getValkyraiBasePath());
+    const read = async <T>(path: string) =>
+      (
+        await getValkyrLabsRtkApiClient().request<T>({
+          url: base + "/vaiworkflow/" + id + "/" + path,
+          headers: { Authorization: "Bearer " + token, jwtSession: token! },
+          redirect: "error",
+        })
+      ).data;
+    const [deployments, versions] = await Promise.all([
+      read<Deployment[]>("deployments"),
+      read<Version[]>("versions"),
+    ]);
+    await assertCurrent();
+    if (!Array.isArray(deployments) || !Array.isArray(versions))
+      throw new Error(
+        "Workflow Studio did not return an authorized deployment contract.",
+      );
+    return { deployments, versions, assertCurrent };
   }
 
   async createStudioHandoff(
@@ -313,6 +350,7 @@ export function registerWorkflowProjects(
   };
 
   context.subscriptions.push(
+    registerBindWorkflow(context, client),
     vscode.window.createTreeView("valoride-dev.WorkflowProjectsView", {
       treeDataProvider: treeProvider,
       showCollapseAll: false,

@@ -94,6 +94,34 @@ describe("native complete project generation", () => {
     await expect(fs.access(path.join(first.extractedPath, "thorapi"))).rejects.toThrow();
   });
 
+  it("regenerates a pinned Blueprint into the exact selected nested project instead of the default directory", async () => {
+    const first=await downloadApplicationArtifact(request);
+    const parent=path.join(root,"nested","projects"), selectedProjectRoot=path.join(parent,path.basename(first.extractedPath));
+    await fs.mkdir(parent,{recursive:true}); await fs.rename(first.extractedPath,selectedProjectRoot);
+    const result=await downloadApplicationArtifact({...request,selectedProjectRoot,expectedSpecId:foreignId});
+    expect(result.extractedPath).toBe(selectedProjectRoot); await expect(fs.access(first.extractedPath)).rejects.toThrow();
+  });
+
+  it("rejects an occupied unbound output folder or drift from a confirmed destination before a new generation",async()=>{
+    const occupied=path.join(root,"thorapi","Sample-v1");await fs.mkdir(occupied,{recursive:true});
+    await expect(downloadApplicationArtifact({...request,expectedSpecId:foreignId})).rejects.toThrow(/install baseline/);
+    await fs.rmdir(occupied);
+    await expect(downloadApplicationArtifact({...request,expectedSpecId:foreignId,confirmedInstallRoot:occupied+"-other"})).rejects.toThrow(/destination changed/);
+    expect(generateCanonicalArchive).not.toHaveBeenCalled();
+  });
+
+  it.each(["renamed","foreign","checkout","outside","new-version","new-title"])("rejects an unsupported selected project (%s) before generation admission",async problem=>{
+    const first=await downloadApplicationArtifact(request);
+    (generateCanonicalArchive as jest.Mock).mockClear();
+    let selectedProjectRoot=first.extractedPath;
+    if(problem==="renamed"){selectedProjectRoot=path.join(root,"MyClone");await fs.rename(first.extractedPath,selectedProjectRoot);}
+    if(problem==="checkout") await fs.unlink(path.join(first.extractedPath,".valoride-generation.json"));
+    if(problem==="outside") selectedProjectRoot=path.dirname(root);
+    await expect(downloadApplicationArtifact({...request,applicationId:problem==="foreign"?foreignId:applicationId,
+      applicationName:problem==="new-title"?"Renamed":request.applicationName,applicationVersion:problem==="new-version"?"2":"1",selectedProjectRoot,expectedSpecId:foreignId})).rejects.toThrow();
+    expect(generateCanonicalArchive).not.toHaveBeenCalled();
+  });
+
   it("keeps edits and the receipt recoverable after cancelling replacement, then safely retries", async () => {
     const first = await downloadApplicationArtifact(request);
     const file = path.join(first.extractedPath, "spring-server/Generated.java"); await fs.writeFile(file, "keep cancelled edit");

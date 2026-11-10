@@ -6,6 +6,11 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import AdmZip from "adm-zip";
 
+const bindingTemplates = [
+  "extension/assets/workflow-binding/runtime.ts.tpl",
+  "extension/assets/workflow-binding/thorapiTransport.ts.tpl",
+];
+
 describe("VSIX runtime completeness", () => {
   let root: string;
 
@@ -51,13 +56,15 @@ describe("VSIX runtime completeness", () => {
     expect(report.ok).toBe(false);
     expect(
       report.missingRuntimeEntries.map((entry: { rule: string }) => entry.rule),
-    ).toEqual(["extension_bundle", "webview_bundle"]);
+    ).toEqual(["extension_bundle", "acp_agent_bundle", "webview_bundle", "workflow_binding_runtime", "workflow_binding_thorapiTransport"]);
   });
 
   it("accepts an archive containing both extension and webview runtime bundles", async () => {
     const { exitCode, report } = await audit([
+      ...bindingTemplates,
       "extension/package.json",
       "extension/dist/extension.js",
+      "extension/dist/acp-agent.cjs",
       "extension/dist/webview/assets/index.js",
     ]);
     expect(exitCode).toBe(0);
@@ -82,8 +89,10 @@ describe("VSIX runtime completeness", () => {
 
   describe("existing audit coverage in Jest", () => {
     const runtime = [
+      ...bindingTemplates,
       "extension/package.json",
       "extension/dist/extension.js",
+      "extension/dist/acp-agent.cjs",
       "extension/dist/webview/assets/index.js",
     ];
 
@@ -114,9 +123,9 @@ describe("VSIX runtime completeness", () => {
 
     it("counts files and bytes without counting ZIP directories", async () => {
       const { report } = await audit([...runtime, "extension/dist/empty/"]);
-      expect(report.fileCount).toBe(3);
+      expect(report.fileCount).toBe(runtime.length);
       expect(report.totalUncompressedBytes).toBe(
-        3 * Buffer.byteLength("runtime fixture"),
+        runtime.length * Buffer.byteLength("runtime fixture"),
       );
     });
 
@@ -130,7 +139,7 @@ describe("VSIX runtime completeness", () => {
         /archive size .* exceeds budget 1/,
       );
       expect(report.failures.join("\n")).toMatch(
-        /file count 3 exceeds budget 1/,
+        /file count 6 exceeds budget 1/,
       );
     });
 
@@ -202,7 +211,7 @@ describe("VSIX runtime completeness", () => {
         "utf8",
       );
       expect(markdown).toContain("Status: PASS");
-      expect(markdown).toContain("File count: 3");
+      expect(markdown).toContain("File count: 6");
       expect(markdown).toContain("extension/dist/extension.js");
     });
 
@@ -228,7 +237,7 @@ describe("VSIX runtime completeness", () => {
         );
         expect(exitCode).toBe(forbiddenSource ? 1 : 0);
         expect(report.ok).toBe(!forbiddenSource);
-        expect(report.fileCount).toBe(forbiddenSource ? 4 : 3);
+        expect(report.fileCount).toBe(runtime.length + Number(forbiddenSource));
       },
     );
   });

@@ -54,6 +54,7 @@ export class ThemeSwitcher {
   private themeChangeCallbacks: Array<(theme: ThemeName) => void> = [];
   private hasExplicitPreference = false;
   private systemThemeMediaQuery: MediaQueryList | null = null;
+  private hostObserver?: MutationObserver;
 
   private constructor() {
     const rawSavedTheme = localStorage.getItem("valkyr-theme");
@@ -245,8 +246,15 @@ export class ThemeSwitcher {
   }
 
   init(): void {
-    // Initialize theme on app startup
+    if (this.hostObserver) return;
     this.setTheme(this.currentTheme, { persist: this.hasExplicitPreference });
+    this.syncHostAppearance();
+    this.hostObserver = new MutationObserver(() => this.syncHostAppearance());
+    this.hostObserver.observe(document.body, { attributes: true, attributeFilter: ["class", "data-vscode-theme-kind"] });
+    if (!this.systemThemeMediaQuery && typeof window.matchMedia === "function") {
+      this.systemThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      this.systemThemeMediaQuery.addEventListener("change", this.handleSystemThemeChange);
+    }
 
     // Add keyboard shortcut for theme cycling (Ctrl+Shift+T)
     document.addEventListener("keydown", (event) => {
@@ -257,12 +265,17 @@ export class ThemeSwitcher {
     });
   }
 
-  private handleSystemThemeChange = (event: MediaQueryListEvent): void => {
-    if (this.hasExplicitPreference) {
-      return;
-    }
-    const nextTheme = event.matches ? "dark" : DEFAULT_THEME;
-    this.setTheme(nextTheme, { persist: false });
+  private handleSystemThemeChange = (): void => this.syncHostAppearance();
+
+  private syncHostAppearance(): void {
+    const body = document.body;
+    const kinds = ["vscode-high-contrast-light", "vscode-high-contrast", "vscode-light", "vscode-dark"];
+    const kind = body.dataset.vscodeThemeKind || kinds.find(name => body.classList.contains(name));
+    const light = kind ? kind.includes("light") : !this.systemThemeMediaQuery?.matches;
+    document.documentElement.dataset.bsTheme = light ? "light" : "dark";
+    // A host color scheme switch is not an explicit selection of a Valkyr theme.
+    const theme = light ? DEFAULT_THEME : "dark";
+    if (!this.hasExplicitPreference && this.currentTheme !== theme) this.setTheme(theme, {persist:false});
   };
 }
 

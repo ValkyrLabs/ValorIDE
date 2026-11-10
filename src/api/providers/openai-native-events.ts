@@ -21,54 +21,80 @@ export async function* takeOpenAiResponsesEventsThroughCompletion<T>(
   }
 }
 
-const getTextFromUnknown = (value: unknown): string | undefined => {
-  if (typeof value === "string") {
-    return value.trim() ? value : undefined;
+/** The API sends both token deltas and complete snapshots of the same summary at
+ * several boundaries. Deduplicate snapshots by item/part identity, never token value. */
+export class OpenAiSummaryStream {
+  private readonly parts = new Map<string, string>();
+  private lastKey?: string;
+
+  private accept(key: string, text: unknown, delta: boolean): string {
+    if (typeof text !== "string" || !text) return "";
+    const previous = this.parts.get(key) ?? "";
+    const next = delta
+      ? text
+      : text.startsWith(previous)
+        ? text.slice(previous.length)
+        : "";
+    if (!next) return "";
+    this.parts.set(key, previous + next);
+    const separator =
+      this.lastKey !== undefined && this.lastKey !== key ? "\n\n" : "";
+    this.lastKey = key;
+    return separator + next;
   }
-  if (!isRecord(value)) {
-    return undefined;
+
+  private item(item: unknown, index: unknown): string {
+    if (
+      !isRecord(item) ||
+      item.type !== "reasoning" ||
+      !Array.isArray(item.summary)
+    )
+      return "";
+    return item.summary
+      .map((p, i) =>
+        isRecord(p) && p.type === "summary_text"
+          ? this.accept(
+              JSON.stringify([item.id ?? index ?? 0, i]),
+              p.text,
+              false,
+            )
+          : "",
+      )
+      .join("");
   }
-  for (const key of ["text", "delta", "content"]) {
-    const candidate = value[key];
-    if (typeof candidate === "string" && candidate.trim()) {
-      return candidate;
+
+  consume(event: unknown): string {
+    if (!isRecord(event)) return "";
+    const key = JSON.stringify([
+      event.item_id ?? event.output_index ?? 0,
+      event.summary_index ?? 0,
+    ]);
+    switch (event.type) {
+      case "response.reasoning_summary_text.delta":
+      case "response.reasoning_summary.delta":
+        return this.accept(key, event.delta, true);
+      case "response.reasoning_summary_text.done":
+      case "response.reasoning_summary.done":
+        return this.accept(key, event.text, false);
+      case "response.reasoning_summary_part.added":
+      case "response.reasoning_summary_part.done":
+        return isRecord(event.part) && event.part.type === "summary_text"
+          ? this.accept(key, event.part.text, false)
+          : "";
+      case "response.output_item.added":
+      case "response.output_item.done":
+        return this.item(event.item, event.output_index);
+      case "response.completed":
+      case "response.done":
+        return isRecord(event.response) && Array.isArray(event.response.output)
+          ? event.response.output.map((item, i) => this.item(item, i)).join("")
+          : "";
+      default:
+        return ""; // Never surface signatures, encrypted_content or private reasoning events.
     }
   }
-  return undefined;
-};
+}
 
 export const extractOpenAiResponsesReasoningText = (
   event: unknown,
-): string | undefined => {
-  if (!isRecord(event)) {
-    return undefined;
-  }
-
-  switch (event.type) {
-    case "response.reasoning_summary_text.delta":
-      return getTextFromUnknown(event.delta);
-    case "response.reasoning_summary_text.done":
-    case "response.reasoning_summary.done":
-      return getTextFromUnknown(event.text);
-    case "response.reasoning_summary.delta":
-      return getTextFromUnknown(event.delta);
-    case "response.reasoning_summary_part.added":
-    case "response.reasoning_summary_part.done":
-      return getTextFromUnknown(
-        isRecord(event.part) ? event.part.text : undefined,
-      );
-    case "response.output_item.done": {
-      const item = isRecord(event.item) ? event.item : undefined;
-      if (item?.type !== "reasoning" || !Array.isArray(item.summary)) {
-        return undefined;
-      }
-      const summary = item.summary
-        .map((part) => getTextFromUnknown(part))
-        .filter((text): text is string => Boolean(text?.trim()))
-        .join("\n");
-      return summary || undefined;
-    }
-    default:
-      return undefined;
-  }
-};
+): string | undefined => new OpenAiSummaryStream().consume(event) || undefined;

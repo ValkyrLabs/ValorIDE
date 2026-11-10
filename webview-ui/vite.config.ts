@@ -28,6 +28,8 @@ const stripUnsafeGlobalEval = () => ({
 });
 
 export default defineConfig({
+  // VS Code serves the bundle under the installed extension's path, not /assets.
+  base: "./",
   plugins: [react(), tailwindcss(), stripUnsafeGlobalEval()],
 
   build: {

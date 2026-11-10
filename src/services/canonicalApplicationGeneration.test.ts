@@ -43,6 +43,21 @@ describe("canonical application generation handoff", () => {
   afterEach(async () => fs.rm(root, { recursive: true, force: true }));
 
   describe("MCP publication contract", () => {
+    it("pins native Blueprint regeneration to the exact persisted spec revision before the run", async()=>{
+      options.expectedSpecId="44444444-4444-4444-8444-444444444444";
+      request.clarifyingQuestionsJson=JSON.stringify({expectedOpenApiSpecId:options.expectedSpecId});
+      const generated=await generateCanonicalArchive(options);
+      expect(json.mock.calls.find(([q])=>q.url.endsWith("/requests")&&q.method==="POST")[0].json.clarifyingQuestionsJson).toBe(request.clarifyingQuestionsJson);
+      const persisted=json.mock.calls.findIndex(([q])=>q.url.endsWith("/requests/req-1"));
+      expect(persisted).toBeGreaterThan(0);
+      expect(json.mock.calls.findIndex(([q])=>q.url.endsWith("/run"))).toBeGreaterThan(persisted);
+      await generated.complete();
+    });
+    it("refuses execution when the server drops the Blueprint revision pin",async()=>{
+      options.expectedSpecId="44444444-4444-4444-8444-444444444444";
+      await expect(generateCanonicalArchive(options)).rejects.toThrow(/did not retain/);
+      expect(json.mock.calls.some(([q])=>q.url.endsWith("/run"))).toBe(false);
+    });
     const useSuppression = () => {
       options.mcpPublicationMode = "suppress";
       request.mcpPublicationMode = "suppress";

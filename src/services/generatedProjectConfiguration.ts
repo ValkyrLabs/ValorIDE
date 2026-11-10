@@ -164,6 +164,13 @@ async function preserveBootLibraryJars(root: string, poms: string[], warnings: s
 export async function initializeGeneratedProject(root: string, name: string, version: string): Promise<string[]> {
   const warnings: string[] = [];
   let sources = await inventory(root);
+  // Older exported Vite and TS configs resolve the package root to components/.
+  // Keep both those imports and subpath imports working with the newer root barrel.
+  const bundle = path.join(root, "bundle-assets/component-library");
+  if (await exists(path.join(bundle, "index.ts")) && await exists(path.join(bundle, "components")) &&
+      !(await fs.readdir(path.join(bundle, "components"))).some((name) => /^index\.(?:d\.)?[cm]?[jt]sx?$/.test(name))) {
+    await fs.writeFile(path.join(bundle, "components/index.ts"), 'export * from "../index";\n', { flag: "wx" });
+  }
   if (!sources.tsFiles.length && !await exists(path.join(root, "tsconfig.json"))) {
     await fs.mkdir(path.join(root, "src"), { recursive: true });
     await fs.writeFile(path.join(root, "src/index.ts"), "// Local source entry point. Add application code here.\nexport {};\n");
@@ -190,16 +197,30 @@ export async function initializeGeneratedProject(root: string, name: string, ver
 }
 
 export async function connectGeneratedSources(root: string, workspaceRoot: string, warnings: string[] = []): Promise<string[]> {
-  const sources = await inventory(root);
+  root = path.resolve(root);
+  workspaceRoot = path.resolve(workspaceRoot);
   const rootOffset = slash(path.relative(workspaceRoot, root));
+  if (rootOffset === ".." || rootOffset.startsWith("../") || path.isAbsolute(rootOffset)) throw new Error("The generated project is outside the selected workspace.");
+  await assertNoProjectLinks(root);
+  const sources = await inventory(root);
   const projectPath = (relative: string) => path.posix.join(rootOffset, relative);
-  const configs = new Set([workspaceRoot, root, ...sources.packages.map((pkg) => path.join(root, pkg.directory))]);
+  const configs = new Set([workspaceRoot, root, ...sources.packages.map((pkg) => path.join(root, pkg.directory))]
+    .map((directory) => path.join(directory, "tsconfig.json")));
+  // Real app repos commonly keep authored code in app/ or ui/ with its own
+  // (non-inheriting) TypeScript project, so linking only the root has no effect.
+  if (workspaceRoot !== root) for (const subdir of ["app", "ui", "frontend", "web", "client"]) {
+    const file = path.join(workspaceRoot, subdir, "tsconfig.json");
+    if (await exists(file)) configs.add(file);
+  }
   const aliases: Record<string, string> = {};
   if (await exists(path.join(root, "typescript-redux-query"))) {
     Object.assign(aliases, { "@thorapi/model": "typescript-redux-query/model", "@thorapi/model/*": "typescript-redux-query/model/*", "@thorapi/redux": "typescript-redux-query/redux", "@thorapi/redux/*": "typescript-redux-query/redux/*", "@thorapi/*": "typescript-redux-query/*" });
+    if (await exists(path.join(root, "typescript-redux-query/src/index.ts"))) aliases["@thorapi"] = "typescript-redux-query/src/index.ts";
   }
   if (await exists(path.join(root, "bundle-assets/component-library"))) {
     Object.assign(aliases, { "@valkyr/component-library": "bundle-assets/component-library/components/index.ts", "@valkyr/component-library/*": "bundle-assets/component-library/components/*", "@valkyr/redux/*": "bundle-assets/component-library/redux/*", "redux/bundles/*": "bundle-assets/component-library/redux/bundles/*", "redux/cache/*": "bundle-assets/component-library/redux/cache/*", "redux/features/*": "bundle-assets/component-library/redux/features/*", "redux/middleware/*": "bundle-assets/component-library/redux/middleware/*", "redux/services/*": "bundle-assets/component-library/redux/services/*", "redux/slices/*": "bundle-assets/component-library/redux/slices/*" });
+    if (await exists(path.join(root, "bundle-assets/component-library/index.ts"))) aliases["@valkyr/component-library"] = "bundle-assets/component-library/index.ts";
+    if (await exists(path.join(root, "bundle-assets/component-library/services"))) aliases["@valkyr/services/*"] = "bundle-assets/component-library/services/*";
   }
   for (const pkg of sources.packages) {
     if (typeof pkg.name === "string" && pkg.directory !== "." && !aliases[pkg.name]) {
@@ -210,25 +231,61 @@ export async function connectGeneratedSources(root: string, workspaceRoot: strin
       }
     }
   }
-  for (const directory of configs) {
-    const file = path.join(directory, "tsconfig.json");
+  for (const file of configs) {
+    const directory = path.dirname(file);
     const present = await exists(file);
     let current: Record<string, any> = {};
-    try { if (present) current = jsonConfig(await fs.readFile(file, "utf8"), file); } catch (error) { warnings.push(String(error.message || error)); continue; }
-    const base = path.resolve(directory, typeof current.compilerOptions?.baseUrl === "string" ? current.compilerOptions.baseUrl : ".");
-    const changes: Array<[ConfigPath, ConfigValue]> = [[["compilerOptions", "baseUrl"], "."]];
+    try {
+      await assertNoProjectLinks(directory, path.basename(file));
+      if (present) current = jsonConfig(await fs.readFile(file, "utf8"), file);
+    } catch (error) { warnings.push(String(error.message || error)); continue; }
+    // Follow local TS project references, not arbitrary paths from a downloaded archive.
+    for (const ref of Array.isArray(current.references) ? current.references : []) {
+      if (typeof ref?.path !== "string" || !ref.path || path.isAbsolute(ref.path) || ref.path.split(/[\\/]/).some((part: string) => part === ".." || part.startsWith(".") && part !== "." || part === "node_modules")) continue;
+      const target = path.resolve(directory, ref.path);
+      const config = target.endsWith(".json") ? target : path.join(target, "tsconfig.json");
+      if (/^tsconfig(?:\.[\w.-]+)?\.json$/i.test(path.basename(config)) && await exists(config)) configs.add(config);
+    }
+    if (Array.isArray(current.references) && Array.isArray(current.files) && current.files.length === 0 && !current.include) continue;
+    // TypeScript resolves inherited baseUrl/paths relative to the declaring
+    // config. A fresh paths object must not silently replace the user's aliases.
+    const inScope = (candidate: string) => {
+      const relative = path.relative(workspaceRoot, ts.sys.realpath?.(candidate) || candidate);
+      return relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative);
+    };
+    const effective = current.extends ? ts.getParsedCommandLineOfConfigFile(file, {}, {
+      ...ts.sys, readDirectory: () => [], readFile: (candidate) => inScope(candidate) ? ts.sys.readFile(candidate) : undefined,
+      fileExists: (candidate) => inScope(candidate) && ts.sys.fileExists(candidate), onUnRecoverableConfigFileDiagnostic: () => {},
+    }) : undefined;
+    if (current.extends && (!effective || effective.errors.some((error) => ![18002, 18003].includes(error.code)))) {
+      warnings.push(`${file}: could not resolve the inherited compiler options; kept this config unchanged. Reconnect after fixing its base config.`);
+      continue;
+    }
+    const base = effective?.options.baseUrl || path.resolve(directory, typeof current.compilerOptions?.baseUrl === "string" ? current.compilerOptions.baseUrl : ".");
+    const changes: Array<[ConfigPath, ConfigValue]> = [];
+    if (!effective?.options.baseUrl) changes.push([["compilerOptions", "baseUrl"], "."]);
+    const inherited = current.compilerOptions?.paths ? undefined : effective?.options.paths;
+    if (inherited) {
+      const inheritedBase = effective!.options.baseUrl || String(effective!.options.pathsBasePath || directory);
+      for (const [alias, targets] of Object.entries(inherited)) changes.push([["compilerOptions", "paths", alias], targets.map((target) => slash(path.relative(base, path.resolve(inheritedBase, target))) || ".")]);
+    }
     if (!present) changes.push([["compilerOptions", "noEmit"], true], [["compilerOptions", "target"], "ES2022"], [["compilerOptions", "module"], "ESNext"], [["compilerOptions", "moduleResolution"], "Bundler"], [["compilerOptions", "jsx"], "react-jsx"], [["compilerOptions", "skipLibCheck"], true]);
     for (const [alias, relative] of Object.entries(aliases)) {
-      if (current.compilerOptions?.paths?.[alias]) {
+      const configured = current.compilerOptions?.paths?.[alias] || inherited?.[alias];
+      if (configured) {
         const desired = slash(path.relative(base, path.join(root, relative)));
-        if (!Array.isArray(current.compilerOptions.paths[alias]) || !current.compilerOptions.paths[alias].includes(desired)) warnings.push(`${file}: kept existing ${alias} mapping; add ${desired} if this is the intended version.`);
+        const accepted = [path.resolve(root, relative)];
+        if (alias === "@valkyr/component-library" && await exists(path.join(root, "bundle-assets/component-library/components/index.ts"))) {
+          accepted.push(path.join(root, "bundle-assets/component-library/components/index.ts"));
+        }
+        if (!Array.isArray(configured) || !configured.some((mapped) => typeof mapped === "string" && accepted.includes(path.resolve(base, mapped)))) warnings.push(`${file}: kept existing ${alias} mapping; add ${desired} if this is the intended version.`);
         continue;
       }
       changes.push([["compilerOptions", "paths", alias], [slash(path.relative(base, path.join(root, relative)))]]);
     }
     // Preserve TypeScript's implicit default include when adding explicit generated roots.
     const include = Array.isArray(current.include) ? current.include : current.include !== undefined || current.files ? [] : ["**/*"];
-    changes.push([["include"], [...include, ...["typescript-redux-query", "bundle-assets"].filter((relative) => sources.tsFiles.some((file) => file.startsWith(relative + "/"))).map((relative) => slash(path.relative(directory, path.join(root, relative))) + "/**/*")]]);
+    if (!current.extends && !current.files) changes.push([["include"], [...include, ...["typescript-redux-query", "bundle-assets"].filter((relative) => sources.tsFiles.some((file) => file.startsWith(relative + "/"))).map((relative) => slash(path.relative(directory, path.join(root, relative))) + "/**/*")]]);
     await addConfig(file, changes, warnings);
   }
   const settings = path.join(workspaceRoot, ".vscode/settings.json");
@@ -236,18 +293,72 @@ export async function connectGeneratedSources(root: string, workspaceRoot: strin
   try { references = jsonConfig(await fs.readFile(settings, "utf8"), settings)["java.project.referencedLibraries"]; } catch { /* New config or invalid config is handled by addConfig. */ }
   const librariesKey = references && !Array.isArray(references) ? ["java.project.referencedLibraries", "include"] : ["java.project.referencedLibraries"];
   await addConfig(settings, [[ ["java.project.sourcePaths"], sources.javaRoots.map(projectPath) ], [librariesKey, [projectPath("**/*.jar")]]], warnings);
-  await connectMavenLibraries(root, workspaceRoot, sources.poms, warnings);
+  try {
+    await connectMavenLibraries(root, workspaceRoot, sources.poms, warnings);
+  } catch (error) {
+    warnings.push(`Could not connect generated Maven modules in ${workspaceRoot}: ${(error as Error).message}`);
+  }
   return warnings;
 }
 
+function elementText(text: string, route: string[]): string[] {
+  return directXmlBlocks(text, route).map(({ start, end }) => text.slice(start, end)
+    .replace(/<!--[\s\S]*?-->/g, "").replace(/^<[^>]+>|<\/[^>]+>$/g, "").trim());
+}
+
+function appendPomElements(text: string, container: string, elements: string[]): string {
+  const block = directXmlBlocks(text, ["project", container])[0];
+  if (!block) {
+    const project = directXmlBlocks(text, ["project"])[0];
+    if (!project || !text.slice(project.start, project.end).endsWith("</project>")) throw new Error("Expected a Maven project with a closing project tag.");
+    const end = project.end - "</project>".length;
+    return text.slice(0, end) + `<${container}>${elements.join("")}</${container}>\n` + text.slice(end);
+  }
+  const original = text.slice(block.start, block.end);
+  const next = original.endsWith("/>")
+    ? original.slice(0, -2) + ">" + elements.join("") + `</${container}>`
+    : original.replace(new RegExp(`</${container}>$`), () => elements.join("") + `\n</${container}>`);
+  return text.slice(0, block.start) + next + text.slice(block.end);
+}
+
 async function connectMavenLibraries(root: string, workspaceRoot: string, poms: string[], warnings: string[]): Promise<void> {
-  const pom = path.join(workspaceRoot, "pom.xml");
+  let pom = path.join(workspaceRoot, "pom.xml");
   if (!await exists(pom)) return;
   // A consumer Maven project needs actual artifact dependencies; Java sourcePaths alone is ignored by Maven/JDT.
   // Keep its packaging, plugins and existing dependencies; never graft modules onto a jar project.
   await assertNoProjectLinks(workspaceRoot, "pom.xml");
   let text = await fs.readFile(pom, "utf8");
-  if (/<packaging>\s*pom\s*<\/packaging>/.test(text.split(/<(?:dependencies|build|profiles)\b/)[0])) return;
+  const reactor = elementText(text, ["project", "packaging"])[0] === "pom";
+  if (reactor) {
+    if (root === workspaceRoot || !poms.includes(".")) return;
+    const reactorPom = pom;
+    const declared = elementText(text, ["project", "modules", "module"]);
+    const candidates: string[] = [];
+    for (const module of declared) {
+      // Never follow external/symlink modules, or modify a sibling generated app.
+      if (!module || path.isAbsolute(module) || module.split(/[\\/]/).includes("..") || /[<${}&]/.test(module)) continue;
+      const dir = path.resolve(workspaceRoot, module);
+      if (dir === root || dir.startsWith(root + path.sep) || await exists(path.join(dir, ".valoride-generation.json"))) continue;
+      await assertNoProjectLinks(dir, "pom.xml");
+      if (await exists(path.join(dir, "src/main/java")) && await exists(path.join(dir, "pom.xml"))) candidates.push(dir);
+    }
+    // Attaching the generated reactor makes the Maven language server resolve
+    // source and dependencies without publishing an artifact to a remote repo.
+    const module = slash(path.relative(workspaceRoot, root));
+    if (!declared.some((item) => path.resolve(workspaceRoot, item) === root)) {
+      await fs.writeFile(reactorPom, appendPomElements(text, "modules", [`<module>${xml(module)}</module>`]), "utf8");
+    }
+    if (candidates.length !== 1) {
+      if (candidates.length) warnings.push(`${reactorPom}: imported the generated reactor; choose which authored Maven modules should depend on its libraries.`);
+      return;
+    }
+    pom = path.join(candidates[0], "pom.xml");
+    text = await fs.readFile(pom, "utf8");
+  }
+  const existingDeps = new Set(directXmlBlocks(text, ["project", "dependencies", "dependency"]).map(({ start, end }) => {
+    const dep = text.slice(start, end);
+    return `${elementText(dep, ["dependency", "groupId"])[0]}:${elementText(dep, ["dependency", "artifactId"])[0]}`;
+  }));
   const dependencies: string[] = [];
   const modules: string[] = [];
   for (const directory of poms) {
@@ -270,27 +381,12 @@ async function connectMavenLibraries(root: string, workspaceRoot: string, poms: 
       continue;
     }
     modules.push(slash(path.relative(workspaceRoot, path.join(root, directory))));
-    if (new RegExp(`<groupId>\\s*${group.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*</groupId>\\s*<artifactId>\\s*${artifact.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*</artifactId>`).test(text)) continue;
+    if (existingDeps.has(`${group}:${artifact}`)) continue;
+    existingDeps.add(`${group}:${artifact}`);
     dependencies.push(`<dependency><groupId>${xml(group)}</groupId><artifactId>${xml(artifact)}</artifactId><version>${xml(version)}</version></dependency>`);
   }
-  if (modules.length) await addConfig(path.join(workspaceRoot, ".valoride-java-libraries.json"), [[["modules"], modules]], warnings);
+  if (!reactor && modules.length) await addConfig(path.join(workspaceRoot, ".valoride-java-libraries.json"), [[["modules"], modules]], warnings);
   if (!dependencies.length) return;
-  // Only direct project dependencies are eligible, never dependencyManagement or a profile's dependency list.
-  const tokens = [...text.matchAll(/<!--[\s\S]*?-->|<\/?([\w:.-]+)\b[^>]*>/g)];
-  const stack: string[] = [];
-  let insertion = -1;
-  for (const token of tokens) {
-    if (token[0].startsWith("<!--")) continue;
-    if (token[0].startsWith("</")) {
-      if (token[1] === "dependencies" && stack.join("/") === "project/dependencies") insertion = token.index!;
-      stack.pop();
-    } else if (!token[0].endsWith("/>")) stack.push(token[1]);
-  }
-  if (insertion < 0) {
-    insertion = text.lastIndexOf("</project>");
-    if (insertion < 0) { warnings.push(`${pom}: no closing project element; add generated library dependencies after fixing the POM.`); return; }
-    text = text.slice(0, insertion) + `<dependencies>${dependencies.join("")}</dependencies>\n` + text.slice(insertion);
-  } else text = text.slice(0, insertion) + dependencies.join("") + "\n" + text.slice(insertion);
-  await fs.writeFile(pom, text, "utf8");
-  warnings.push(`Maven consumer dependencies added to ${pom}. Build/install the generated modules with mvn -f ${slash(path.relative(workspaceRoot, root))}/pom.xml install before building this consumer.`);
+  await fs.writeFile(pom, appendPomElements(text, "dependencies", dependencies), "utf8");
+  if (!reactor) warnings.push(`Maven consumer dependencies added to ${pom}. Build/install the generated modules with mvn -f ${slash(path.relative(workspaceRoot, root))}/pom.xml install before building this consumer.`);
 }

@@ -3,6 +3,8 @@ import { registerProjectRoundTripCommands } from "./projectRoundTripCommands";
 import { importLocalProjectPackage } from "../services/localProjectImport";
 import { ProjectBlueprintConflict, readProjectBlueprintState, specificationHash, synchronizeProjectBlueprint } from "../services/projectBlueprintSync";
 import { getSecret } from "../core/storage/state";
+import { OpenAPIEditorPanel } from "../views/openapi/OpenAPIEditorPanel";
+import { readGitProjectIdentity } from "../services/projectGitIdentity";
 
 jest.mock("vscode", () => ({
   CancellationError: class CancellationError extends Error {},
@@ -20,6 +22,8 @@ jest.mock("../core/storage/state", () => ({ getSecret: jest.fn() }));
 jest.mock("../utils/serverValkyraiHost", () => ({ getValkyraiBasePath: () => "https://api.example/v1" }));
 jest.mock("../utils/thorapi", () => ({ resolveThorapiFolderPath: (root: string) => `${root}/.thorapi` }));
 jest.mock("../services/localProjectImport", () => ({ importLocalProjectPackage: jest.fn() }));
+jest.mock("../views/openapi/OpenAPIEditorPanel", () => ({ OpenAPIEditorPanel: {open: jest.fn()} }));
+jest.mock("../services/projectGitIdentity", () => ({ readGitProjectIdentity: jest.fn() }));
 jest.mock("../services/projectBlueprintSync", () => ({
   ...jest.requireActual("../services/projectBlueprintSync"), synchronizeProjectBlueprint: jest.fn(), readProjectBlueprintState: jest.fn(),
 }));
@@ -32,6 +36,7 @@ describe("native project round-trip commands", () => {
   beforeEach(() => {
     jest.clearAllMocks(); cancelled = false; refresh = jest.fn(); commands = new Map();
     (vscode.workspace as any).isTrusted = true;
+    (vscode.workspace as any).getWorkspaceFolder = () => vscode.workspace.workspaceFolders![0];
     (vscode.workspace as any).textDocuments = [];
     (vscode.commands.registerCommand as jest.Mock).mockImplementation((name, callback) => { commands.set(name, callback); return { dispose: jest.fn() }; });
     (vscode.window.withProgress as jest.Mock).mockImplementation(async (_options, callback) => callback({ report: jest.fn() }, { get isCancellationRequested() { return cancelled; } }));
@@ -46,8 +51,20 @@ describe("native project round-trip commands", () => {
     registerProjectRoundTripCommands({} as any, { appendLine: jest.fn() } as any, () => project(), refresh);
   });
 
+  it("binds the hosted editor to the selected project lineage, not an imported document or a foreign backend", async () => {
+    (readGitProjectIdentity as jest.Mock).mockResolvedValue({applicationId: canonical.applicationId, applicationName: "Demo"});
+    (readProjectBlueprintState as jest.Mock).mockResolvedValue({ applicationId:canonical.applicationId, backend:"https://api.example/v1", specificationPath:"api/openapi.yaml" });
+    await commands.get("valoride.projects.editBlueprint")!();
+    expect(OpenAPIEditorPanel.open).toHaveBeenCalledWith({},expect.objectContaining({applicationId:canonical.applicationId, selectedWorkspace:vscode.workspace.workspaceFolders![0].uri,
+      localSpec:expect.objectContaining({fsPath:project().fsPath+"/api/openapi.yaml"})}));
+    (readProjectBlueprintState as jest.Mock).mockResolvedValue({applicationId:canonical.applicationId,backend:"https://different.example/v1",specificationPath:"api.yaml"});
+    await commands.get("valoride.projects.editBlueprint")!();
+    expect(OpenAPIEditorPanel.open).toHaveBeenCalledTimes(1);
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining("original ValkyrAI backend"));
+  });
+
   it("registers the import and sync commands and returns the installed project without waiting on the success notification", async () => {
-    expect([...commands.keys()]).toEqual(["valoride.projects.import", "valoride.projects.syncBlueprint"]);
+    expect([...commands.keys()]).toEqual(["valoride.projects.import", "valoride.projects.syncBlueprint", "valoride.projects.editBlueprint"]);
     (vscode.window.showInformationMessage as jest.Mock).mockImplementation(() => new Promise(() => {}));
     const result = await commands.get("valoride.projects.import")!(vscode.Uri.file("/project-export.zip"), vscode.Uri.file("/workspace/.thorapi"));
     expect(result.extractedPath).toContain("Round-Trip-v1.0.0"); expect(refresh).toHaveBeenCalledTimes(1);

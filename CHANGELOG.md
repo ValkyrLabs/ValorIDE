@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Import Jest test APIs explicitly in the verified procedure business-result tests to prevent Mocha global typings from hiding `it.each` during typechecking.
+
 - Refresh model selectors from official provider catalogs: add OpenAI GPT-6.1 Sol/GPT-6 Astra/GPT-6 Luna, Anthropic Claude 5.5 and Fable 5.1, Moonshot Kimi K2.6/K2.7 Code variants, and the canonical Gemma 4 26B A4B Ollama tag.
 
 - Make precision file edits honor the existing file-edit approval settings, including rejection and path-scoped automatic approval.

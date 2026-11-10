@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.990",
+  "version": "3.20.996",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -97,6 +97,32 @@
       }
     ],
     "commands": [
+      {
+        "command": "valoride.acp.serve",
+        "title": "Start ACP Agent Server",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.acp.stopServer",
+        "title": "Stop ACP Agent Server",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.acp.open",
+        "title": "Open ACP Agents",
+        "category": "ValorIDE",
+        "icon": "$(hubot)"
+      },
+      {
+        "command": "valoride.acp.configure",
+        "title": "Configure ACP Agents",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.acp.setSecret",
+        "title": "Set ACP Agent Secret",
+        "category": "ValorIDE"
+      },
       {
         "command": "valoride.plusButtonClicked",
         "title": "New Task",
@@ -217,10 +243,22 @@
         "icon": "$(sync)"
       },
       {
+        "command": "valoride.projects.editBlueprint",
+        "title": "Edit App Blueprint in ValkyrLabs Designer",
+        "category": "ValorIDE",
+        "icon": "$(edit)"
+      },
+      {
         "command": "valoride.projects.publishSource",
-        "title": "Publish Project Source to GitHub",
+        "title": "Commit & Push App to GitHub",
         "category": "ValorIDE",
         "icon": "$(repo-push)"
+      },
+      {
+        "command": "valoride.projects.pullSource",
+        "title": "Pull App from GitHub (Fast-forward Only)",
+        "category": "ValorIDE",
+        "icon": "$(repo-pull)"
       },
       {
         "command": "valoride.projects.build",
@@ -265,6 +303,12 @@
         "icon": "$(clippy)"
       },
       {
+        "command": "valoride.workflows.bindAction",
+        "title": "Assign Workflow to Action or Component Event",
+        "category": "ValorIDE",
+        "icon": "$(link)"
+      },
+      {
         "command": "valoride.workflows.create",
         "title": "Create Workflow",
         "category": "ValorIDE",
@@ -284,7 +328,19 @@
       }
     ],
     "menus": {
+      "editor/context": [
+        {
+          "command": "valoride.workflows.bindAction",
+          "when": "isWorkspaceTrusted && (editorLangId == typescript || editorLangId == typescriptreact)",
+          "group": "navigation@7"
+        }
+      ],
       "view/title": [
+        {
+          "command": "valoride.acp.open",
+          "group": "agents@1",
+          "when": "view == valoride-dev.SidebarProvider"
+        },
         {
           "command": "valoride.plusButtonClicked",
           "group": "navigation@1",
@@ -333,9 +389,24 @@
       ],
       "view/item/context": [
         {
+          "command": "valoride.workflows.bindAction",
+          "when": "isWorkspaceTrusted && view == valoride-dev.WorkflowProjectsView && viewItem == valkyrWorkflowProject",
+          "group": "inline@1"
+        },
+        {
+          "command": "valoride.projects.editBlueprint",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@8"
+        },
+        {
           "command": "valoride.projects.publishSource",
           "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
-          "group": "project@2"
+          "group": "inline@0"
+        },
+        {
+          "command": "valoride.projects.pullSource",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@6"
         },
         {
           "command": "valoride.projects.syncBlueprint",
@@ -426,6 +497,61 @@
     "configuration": {
       "title": "ValorIDE",
       "properties": {
+        "valoride.acp.agents": {
+          "type": "array",
+          "default": [],
+          "scope": "machine",
+          "markdownDescription": "Trusted local ACP v1 agents. Configure in **User settings**; workspace values are ignored. Start explicitly with `ValorIDE: Open ACP Agents`. Executables run with your OS permissions, not in a sandbox. No automatic installs or credential sharing. Use `secretEnv` and `ValorIDE: Set ACP Agent Secret` for credentials.",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "command"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "command": {
+                "type": "string",
+                "description": "Absolute executable or a command on PATH outside this workspace. No shell command string."
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": []
+              },
+              "env": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {},
+                "description": "Explicit nonsecret environment variables. Other provider/IDE secrets are not inherited."
+              },
+              "secretEnv": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                },
+                "default": [],
+                "description": "Environment variable names whose values come from VS Code SecretStorage."
+              }
+            }
+          }
+        },
         "valoride.advanced.fileProcessing.warnLargeFiles": {
           "type": "boolean",
           "default": true,
@@ -690,6 +816,7 @@
     "version-packages": "changeset version",
     "package:audit": "node scripts/audit-vsix-package.mjs",
     "test:package-audit": "jest --runInBand src/services/vsixPackageAudit.test.ts",
+    "test:acp": "node scripts/test-acp.cjs",
     "package:vsix": "npx --yes @vscode/vsce@3.9.2 package --no-yarn --no-dependencies && npm run package:audit",
     "test:inventory": "node scripts/host-test-inventory.cjs",
     "test:host:jest": "jest --runInBand",
@@ -732,12 +859,14 @@
   "files": [
     "dist/",
     "assets/icons/",
+    "assets/workflow-binding/",
     "assets/valorIde.acorn",
     "package.json",
     "README.md",
     "LICENSE"
   ],
   "dependencies": {
+    "@agentclientprotocol/sdk": "2.5.0",
     "@anthropic-ai/bedrock-sdk": "0.24.0",
     "@anthropic-ai/sdk": "0.59.0",
     "@anthropic-ai/vertex-sdk": "0.13.1",

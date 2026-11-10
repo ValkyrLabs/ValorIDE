@@ -66,6 +66,7 @@ describe("callValkyraiLlm", () => {
   });
 
   it("preserves reasoning, usage, and credits from ValkyrAI ChatResponse metadata", async () => {
+    expect(normalizeValkyraiLlmResponse({content:"answer", json:JSON.stringify({reasoning:"private"})}).reasoning).toBeUndefined();
     const response = normalizeValkyraiLlmResponse({
       content: "pong",
       reasoning: "reasoned route",
@@ -102,11 +103,22 @@ describe("callValkyraiLlm", () => {
       "event: reasoning",
       "data: planning",
       "",
+      "event: reasoning_summary",
+      'data: {"text":" "}',
+      "",
+      "event: reasoning_summary",
+      'data: {"signature":"PRIVATE"}',
+      "",
+      "event: progress",
+      'data: {"stage":"reasoning","message":"Working on authorized evidence"}',
+      "",
       "event: thinking",
       "data: checking route",
       "",
       "event: text",
       "data: hello",
+      "",
+      'data: {"choices":[{"delta":{"reasoning":"summary","content":"!"}}]}',
       "",
       "event: usage",
       'data: {"prompt_tokens":2,"completion_tokens":3,"credits":1,"model":"hosted"}',
@@ -151,8 +163,12 @@ describe("callValkyraiLlm", () => {
 
     expect(chunks).toEqual([
       { type: "reasoning", reasoning: "planning" },
+      { type: "reasoning", reasoning: " " },
+      { type: "progress", message: "Working on authorized evidence" },
       { type: "reasoning", reasoning: "checking route" },
       { type: "text", text: "hello" },
+      { type: "reasoning", reasoning: "summary" },
+      { type: "text", text: "!" },
       expect.objectContaining({
         type: "usage",
         usage: expect.objectContaining({

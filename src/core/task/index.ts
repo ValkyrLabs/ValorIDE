@@ -37,6 +37,7 @@ import {
   parsePartialArrayString,
 } from "@shared/array";
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
+import { answerExternalTaskAsk, type ExternalTaskInteraction } from "./ExternalTaskInteraction";
 import { BrowserSettings } from "@shared/BrowserSettings";
 import { ChatSettings, DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { combineApiRequests } from "@shared/combineApiRequests";
@@ -207,6 +208,7 @@ import { backgroundUsageQueue } from "@services/usage-tracking/BackgroundUsageQu
 import { UsageTrackingService } from "@services/usage-tracking/UsageTrackingService";
 import { InitialCheckpointCoordinator } from "./InitialCheckpointCoordinator";
 import { PartialMessageCoalescer } from "./PartialMessageCoalescer";
+import { drainRequestTail, StreamingNarrative } from "./StreamingNarrative";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -241,6 +243,7 @@ export class Task {
   private toolRelayService?: ToolRelayService;
   private communicationService?: CommunicationService;
   private readonly terminalListener?: TaskTerminalListener;
+  private readonly externalInteractions?: ExternalTaskInteraction;
   private terminalReported = false;
   private readonly commandEvidenceRefs = new Set<string>();
   private readonly verificationEvidence: TaskVerificationEvidence[] = [];
@@ -277,6 +280,12 @@ export class Task {
   private askResponseText?: string;
   private askResponseImages?: string[];
   private lastMessageTs?: number;
+  private lastIssuedMessageTs = 0;
+
+  private nextMessageTimestamp(): number {
+    return this.lastIssuedMessageTs = Math.max(Date.now(), this.lastIssuedMessageTs + 1,
+      (this.valorideMessages.at(-1)?.ts ?? 0) + 1);
+  }
   private consecutiveAutoApprovedRequestsCount: number = 0;
   private consecutiveMistakeCount: number = 0;
   private abort: boolean = false;
@@ -370,6 +379,7 @@ export class Task {
     communicationService?: CommunicationService,
     thorapi_project?: string,
     terminalListener?: TaskTerminalListener,
+    externalInteractions?: ExternalTaskInteraction,
   ) {
     this.context = context;
     this.mcpHub = mcpHub;
@@ -392,6 +402,7 @@ export class Task {
     this.reinitExistingTaskFromId = reinitExistingTaskFromId;
     this.cancelTask = cancelTask;
     this.terminalListener = terminalListener;
+    this.externalInteractions = externalInteractions;
     this.valorideIgnoreController = new ValorIDEIgnoreController(cwd);
     this.valorideIgnoreController.initialize().catch((error) => {
       console.error("Failed to initialize ValorIDEIgnoreController:", error);
@@ -475,10 +486,12 @@ export class Task {
     if (historyItem) {
       this.resumeTaskFromHistory().catch((error) => {
         console.error("Failed to resume task from history:", error);
+        this.externalInteractions?.onFatalError(error);
       });
     } else if (task || images) {
       this.startTask(task, images).catch((error) => {
         console.error("Failed to start task:", error);
+        this.externalInteractions?.onFatalError(error);
       });
     }
 
@@ -529,13 +542,23 @@ export class Task {
     );
   }
 
-  private async addToValorIDEMessages(message: ValorIDEMessage) {
+  private async addToValorIDEMessages(message: ValorIDEMessage, preserveTrailingPartial = false, afterRequest?: ValorIDEMessage) {
     // these values allow us to reconstruct the conversation history at the time this valoride message was created
     // it's important that apiConversationHistory is initialized before we add valoride messages
     message.conversationHistoryIndex = this.apiConversationHistory.length - 1; // NOTE: this is the index of the last added message which is the user message, and once the valoridemessages have been presented we update the apiconversationhistory with the completed assistant message. This means when resetting to a message, we need to +1 this index to get the correct assistant message that this tool use corresponds to
     message.conversationHistoryDeletedRange =
       this.conversationHistoryDeletedRange;
-    this.valorideMessages.push(message);
+    if (afterRequest) {
+      const at = this.valorideMessages.indexOf(afterRequest);
+      if (at < 0) return; // history was replaced while draining an old provider request
+      message.conversationHistoryIndex = afterRequest.conversationHistoryIndex;
+      message.conversationHistoryDeletedRange = afterRequest.conversationHistoryDeletedRange;
+      this.valorideMessages.splice(at + 1, 0, message);
+    } else if (preserveTrailingPartial && this.valorideMessages.at(-1)?.partial) {
+      this.valorideMessages.splice(this.valorideMessages.length - 1, 0, message);
+    } else {
+      this.valorideMessages.push(message);
+    }
     await this.saveValorIDEMessagesAndUpdateHistory();
   }
 
@@ -1337,7 +1360,7 @@ export class Task {
           // this.askResponse = undefined
           // this.askResponseText = undefined
           // this.askResponseImages = undefined
-          askTs = Date.now();
+          askTs = this.nextMessageTimestamp();
           this.lastMessageTs = askTs;
           const messageToAdd: ValorIDEMessage = {
             ts: askTs,
@@ -1397,7 +1420,7 @@ export class Task {
           this.askResponse = undefined;
           this.askResponseText = undefined;
           this.askResponseImages = undefined;
-          askTs = Date.now();
+          askTs = this.nextMessageTimestamp();
           this.lastMessageTs = askTs;
           const messageToAdd: ValorIDEMessage = {
             ts: askTs,
@@ -1423,7 +1446,7 @@ export class Task {
       this.askResponse = undefined;
       this.askResponseText = undefined;
       this.askResponseImages = undefined;
-      askTs = Date.now();
+      askTs = this.nextMessageTimestamp();
       this.lastMessageTs = askTs;
       const messageToAdd: ValorIDEMessage = {
         ts: askTs,
@@ -1445,6 +1468,13 @@ export class Task {
 
     this.awaitingAskResponse = true;
     try {
+      if (this.externalInteractions) {
+        return await answerExternalTaskAsk(
+          this.externalInteractions,
+          this.valorideMessages.find((message) => message.ts === askTs)!,
+          () => !this.abort && !this.abandoned && this.lastMessageTs === askTs,
+        );
+      }
       await pWaitFor(
         () => this.askResponse !== undefined || this.lastMessageTs !== askTs,
         { interval: 100 },
@@ -1520,7 +1550,7 @@ export class Task {
           this.partialMessageCoalescer.enqueue({ ...lastMessage });
         } else {
           // this is a new partial message, so add it with partial state
-          const sayTs = Date.now();
+          const sayTs = this.nextMessageTimestamp();
           this.lastMessageTs = sayTs;
           await this.addToValorIDEMessages({
             ts: sayTs,
@@ -1552,7 +1582,7 @@ export class Task {
           }); // more performant than an entire postStateToWebview
         } else {
           // this is a new partial=false message, so add it like normal
-          const sayTs = Date.now();
+          const sayTs = this.nextMessageTimestamp();
           this.lastMessageTs = sayTs;
           await this.addToValorIDEMessages({
             ts: sayTs,
@@ -1566,7 +1596,7 @@ export class Task {
       }
     } else {
       // this is a new non-partial message, so add it like normal
-      const sayTs = Date.now();
+      const sayTs = this.nextMessageTimestamp();
       this.lastMessageTs = sayTs;
       await this.addToValorIDEMessages({
         ts: sayTs,
@@ -2210,10 +2240,9 @@ export class Task {
             }, 2000);
           });
 
-          const { response, text, images } = await Promise.race([
-            askPromise,
-            timeoutPromise,
-          ]);
+          const { response, text, images } = await (this.externalInteractions
+            ? askPromise // An external ACP permission can never become approval by timeout.
+            : Promise.race([askPromise, timeoutPromise]));
 
           if (response !== "yesButtonClicked") {
             userFeedback = { text, images };
@@ -2383,6 +2412,10 @@ export class Task {
   }
 
   // Check if the tool should be auto-approved based on the settings
+  isExternalAgentTask(): boolean {
+    return this.externalInteractions !== undefined;
+  }
+
   public async getProcedureClient() {
     return createSessionBoundProcedureClient({
       getBaseUrl: getValkyraiBasePath,
@@ -2392,6 +2425,7 @@ export class Task {
   }
 
   updateAutoApprovalSettings(settings: AutoApprovalSettings): void {
+    if (this.externalInteractions) return; // ACP authority is task-local and always interactive.
     this.autoApprovalSettings = this.governedLocalAuthority?.settings(settings) ?? settings;
   }
 
@@ -2405,6 +2439,7 @@ export class Task {
   }
 
   shouldAutoApproveCommand(command: string, requiresApproval: boolean): boolean | undefined {
+    if (this.externalInteractions) return false;
     return this.governedLocalAuthority?.canAutoApproveCommand(command, requiresApproval, this.localAuthorityState());
   }
 
@@ -2418,6 +2453,7 @@ export class Task {
 
   // Returns bool for most tools, and tuple for tools with nested settings
   shouldAutoApproveTool(toolName: ToolUseName): boolean | [boolean, boolean] {
+    if (this.externalInteractions) return false;
     if (this.governedLocalAuthority) {
       const state = this.localAuthorityState();
       switch (toolName) {
@@ -2851,7 +2887,7 @@ export class Task {
     });
   }
 
-  async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
+  async *attemptApiRequest(previousApiRequest?: ValorIDEMessage): ApiStream {
     while (true) {
       if (this.mcpHub.isConnecting === true) {
         console.info(
@@ -2953,7 +2989,7 @@ export class Task {
           this.valorideMessages,
           this.api,
           this.conversationHistoryDeletedRange,
-          previousApiReqIndex,
+          previousApiRequest ? this.valorideMessages.indexOf(previousApiRequest) : -1,
           await ensureTaskDirectoryExists(this.getContext(), this.taskId),
           {
             inputTokenBudget: contextProfile.inputTokenBudget,
@@ -5536,6 +5572,7 @@ export class Task {
       this.valorideMessages,
       (m) => m.say === "api_req_started",
     );
+    const previousApiRequest = this.valorideMessages[previousApiReqIndex];
 
     // Optional: Pause if budget limit reached
     try {
@@ -5609,7 +5646,8 @@ export class Task {
       this.valorideMessages,
       (m) => m.say === "api_req_started",
     );
-    this.valorideMessages[lastApiReqIndex].text = JSON.stringify({
+    const apiRequestRow = this.valorideMessages[lastApiReqIndex];
+    apiRequestRow.text = JSON.stringify({
       request: userContent
         .map((block) => formatContentBlockToMarkdown(block))
         .join("\n\n"),
@@ -5642,7 +5680,7 @@ export class Task {
         streamingFailedMessage?: string,
       ) => {
         const existingInfo = JSON.parse(
-          this.valorideMessages[lastApiReqIndex].text || "{}",
+          apiRequestRow.text || "{}",
         );
         const nextInfo: ValorIDEApiReqInfo = {
           ...existingInfo,
@@ -5672,7 +5710,7 @@ export class Task {
           nextInfo.costUnit = costUnit;
         }
 
-        this.valorideMessages[lastApiReqIndex].text = JSON.stringify({
+        apiRequestRow.text = JSON.stringify({
           ...nextInfo,
         } satisfies ValorIDEApiReqInfo);
       };
@@ -5795,15 +5833,35 @@ export class Task {
       // reset streaming state
       await this.resetStreamingState();
 
-      const stream = this.attemptApiRequest(previousApiReqIndex); // yields only if the first chunk is successful, otherwise will allow the user to retry the request (most likely due to rate limit error, which gets thrown on the first chunk)
+      const stream = this.attemptApiRequest(previousApiRequest); // pinned row: late summaries can change array indices
       const streamIterator = stream[Symbol.asyncIterator]();
       let assistantMessage = "";
-      let reasoningMessage = "";
-      let didFinalizeReasoningMessage = false;
-      const finalizeReasoningMessage = async () => {
-        if (reasoningMessage && !didFinalizeReasoningMessage && !this.abort) {
-          await this.say("reasoning", reasoningMessage, undefined, false);
-          didFinalizeReasoningMessage = true;
+      let didStartBackgroundUsageDrain = false;
+      const createChatStreamRow = (kind: "reasoning" | "provider_status") => new StreamingNarrative(
+        () => this.nextMessageTimestamp(),
+        async row => {
+          await this.addToValorIDEMessages(row, true, didStartBackgroundUsageDrain ? apiRequestRow : undefined);
+          await this.postStateToWebview();
+        },
+        row => this.postMessageToWebview({ type: "partialMessage", partialMessage: row }),
+        () => this.saveValorIDEMessagesAndUpdateHistory(),
+        kind,
+      );
+      const narrative = createChatStreamRow("reasoning");
+      const status = createChatStreamRow("provider_status");
+      const finishNarratives = async () => {
+        try {
+          if (!this.abandoned && this.valorideMessages.includes(apiRequestRow)) {
+            await narrative.seal();
+            await status.seal();
+          }
+        } catch {
+          // A detached/disposed webview must not abort billing reconciliation
+          // or replace the provider's actual stream error.
+          console.warn("Could not finish posting the provider transcript to the chat.");
+        } finally {
+          narrative.dispose();
+          status.dispose();
         }
       };
       this.isStreaming = true;
@@ -5814,8 +5872,7 @@ export class Task {
         status: "streaming",
       });
       let didReceiveUsageChunk = false;
-      let didStartBackgroundUsageDrain = false;
-      const drainStreamUsageInBackground = () => {
+      const drainStreamUsageInBackground = (showRemainingSummary: boolean) => {
         if (didStartBackgroundUsageDrain) {
           return;
         }
@@ -5823,23 +5880,20 @@ export class Task {
         void (async () => {
           let didUpdateUsage = false;
           try {
-            while (true) {
-              const next = await streamIterator.next();
-              if (next.done) {
-                break;
-              }
-              const chunk = next.value;
-              if (chunk?.type === "usage") {
-                applyUsageChunk(chunk);
-                didUpdateUsage = true;
-              }
-            }
+            await drainRequestTail(streamIterator, chunk => {
+              applyUsageChunk(chunk); didUpdateUsage = true;
+            }, async chunk => {
+              if (!showRemainingSummary || this.abort || this.abandoned || !this.valorideMessages.includes(apiRequestRow)) return;
+              if (chunk.type === "reasoning") await narrative.append(chunk.reasoning);
+              else await status.append(chunk.message);
+            });
           } catch (err) {
             console.warn(
               "Failed to drain API stream usage in background:",
               err,
             );
           } finally {
+            await finishNarratives();
             apiReqComplete = true;
             usagePending = false;
             if (didUpdateUsage || !hasUsageDetails()) {
@@ -5868,15 +5922,14 @@ export class Task {
               applyUsageChunk(chunk);
               break;
             case "reasoning":
-              reasoningMessage += chunk.reasoning;
-              didFinalizeReasoningMessage = false;
-              // fixes bug where cancelling task > aborts task > for loop may be in middle of streaming reasoning > say function throws error before we get a chance to properly clean up and cancel the task.
-              if (!this.abort) {
-                await this.say("reasoning", reasoningMessage, undefined, true);
-              }
+              if (!this.abort) await narrative.append(chunk.reasoning);
+              break;
+            case "progress":
+              if (!this.abort) await status.append(chunk.message);
               break;
             case "text":
-              await finalizeReasoningMessage();
+              if (!chunk.text) break;
+              await narrative.seal();
               assistantMessage += chunk.text;
               // parse raw assistant message into content blocks
               const prevLength = this.assistantMessageContent.length;
@@ -5894,6 +5947,7 @@ export class Task {
             console.log("aborting stream...");
             if (!this.abandoned) {
               // only need to gracefully abort if this instance isn't abandoned (sometimes openrouter stream hangs, in which case this would affect future instances of valoride)
+              await finishNarratives();
               await abortStream("user_cancelled");
             }
             await streamIterator.return?.(undefined);
@@ -5905,7 +5959,7 @@ export class Task {
             assistantMessage += "\n\n[Response interrupted by user feedback]";
             apiReqComplete = true;
             usagePending = !hasUsageDetails();
-            drainStreamUsageInBackground();
+            drainStreamUsageInBackground(false);
             // this.userMessageContentReady = true // instead of setting this preemptively, we allow the present iterator to finish and set userMessageContentReady when its ready
             break;
           }
@@ -5917,13 +5971,14 @@ export class Task {
               "\n\n[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]";
             apiReqComplete = true;
             usagePending = !hasUsageDetails();
-            drainStreamUsageInBackground();
+            drainStreamUsageInBackground(true);
             break;
           }
         }
       } catch (error) {
         // abandoned happens when extension is no longer waiting for the valoride instance to finish aborting (error is thrown here when any function in the for loop throws due to this.abort)
         if (!this.abandoned) {
+          await finishNarratives();
           const errorMessage = this.formatErrorWithStatusCode(error);
           await this.reportTerminal({
             confidence: "EXPLICIT",
@@ -5943,6 +5998,7 @@ export class Task {
         }
       } finally {
         this.isStreaming = false;
+        if (!didStartBackgroundUsageDrain) await finishNarratives();
 
         // Update status bar: streaming finished
         getStatusBarService().update({
@@ -5971,8 +6027,6 @@ export class Task {
       if (this.abort) {
         throw new Error("ValorIDE instance aborted");
       }
-
-      await finalizeReasoningMessage();
 
       this.didCompleteReadingStream = true;
       apiReqComplete = true;

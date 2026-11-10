@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import {
   ValkyrProcedureClient,
   createSessionBoundProcedureClient,
@@ -70,17 +71,16 @@ const candidate = () => ({
 
 function fixture(reply: unknown = response(), status = 202) {
   const fetch = jest.fn(
-    async (_url: string, _init?: RequestInit) =>
-      ({
-        ok: status >= 200 && status < 300,
+    async (_url: string, _init?: RequestInit) => {
+      const response = new Response(JSON.stringify(reply), {
         status,
-        headers: {
-          get: (name: string) =>
-            name.toLowerCase() === "content-type" ? "application/json" : null,
-        },
-        json: async () => reply,
-        text: async () => JSON.stringify(reply),
-      }) as unknown as Response,
+        headers: { "content-type": "application/json" },
+      });
+      // Undici's JSON objects belong to Node's outer realm in Jest. Mirror
+      // extension-host parsing so its plain-object guard sees its own realm.
+      response.json = async () => JSON.parse(await response.text());
+      return response;
+    },
   );
   return {
     fetch,
@@ -159,6 +159,91 @@ describe("Valkyr procedure consumption", () => {
         code: "STATUS_UNAVAILABLE",
       });
       expect(f.fetch).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("obtains the bounded receipt only for the exact successful run in the same session", async () => {
+    const definitionSnapshotHash = "a".repeat(64);
+    const state = {
+      id: executionId,
+      state: "SUCCESS",
+      workflowId,
+      workflowVersionId: versionId,
+      definitionSnapshotHash,
+    };
+    const report = {
+      customerCount: 1,
+      invoiceCount: 2,
+      matchedCount: 1,
+      snapshotRef: "sha256:" + "f".repeat(64),
+      unmatchedCount: 1,
+      unmatchedInvoiceIds: [workflowId],
+    };
+    const contractId = "invoice-customer-reconciliation/v1";
+    const digest = (v: unknown) =>
+      createHash("sha256").update(JSON.stringify(v)).digest("hex");
+    const receipt = {
+      status: "available",
+      executionId,
+      workflowVersionId: versionId,
+      definitionSnapshotHash,
+      contractId,
+      contractHash: digest({
+        contract: contractId,
+        field: "reconciliationReport",
+      }),
+      result: report,
+      resultChecksum: digest(report),
+      correctness: "unverified",
+    };
+    for (const scenario of [
+      "success",
+      "wrong version",
+      "forbidden",
+      "logout",
+    ]) {
+      let token: string | undefined = "session-token";
+      const fetch = jest.fn(async (url: string, _init?: RequestInit) => {
+        const projection = url.endsWith("/business-result");
+        if (projection && scenario === "logout") token = undefined;
+        const reply = projection
+          ? {
+              ...receipt,
+              ...(scenario === "wrong version"
+                ? { workflowVersionId: workflowId }
+                : {}),
+            }
+          : state;
+        return new Response(JSON.stringify(reply), {
+          headers: { "content-type": "application/json" },
+          status: projection && scenario === "forbidden" ? 403 : 200,
+        });
+      });
+      const client = new ValkyrProcedureClient({
+        baseUrl: "https://api-0.valkyrlabs.com",
+        fetch,
+        getAuthToken: () => token,
+      });
+      const result = client.status(executionId);
+      if (scenario === "logout")
+        await expect(result).rejects.toMatchObject({ code: "UNAUTHENTICATED" });
+      else if (scenario === "success")
+        await expect(result).resolves.toMatchObject({
+          businessResultStatus: "available",
+          businessResult: { result: report, correctness: "unverified" },
+        });
+      else {
+        const actual = await result;
+        expect(actual).toMatchObject({
+          succeeded: true,
+          businessResultStatus: "unavailable",
+        });
+        expect(actual.businessResult).toBeUndefined();
+      }
+      expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+        `https://api-0.valkyrlabs.com/v1/WorkflowExecution/${executionId}`,
+        `https://api-0.valkyrlabs.com/v1/vaiworkflow/engineering/executions/${executionId}/business-result`,
+      ]);
     }
   });
 

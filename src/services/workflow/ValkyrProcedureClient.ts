@@ -1,3 +1,4 @@
+import { verifiedProcedureBusinessResult } from "./verifiedProcedureBusinessResult";
 import { createHash } from "node:crypto";
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
 import {
@@ -298,6 +299,10 @@ export function requireProcedureControlState(
 }
 
 export interface ProcedureExecutionState {
+  businessResult?: NonNullable<
+    ReturnType<typeof verifiedProcedureBusinessResult>
+  >;
+  businessResultStatus?: "available" | "unavailable";
   id: string;
   workflowId?: string;
   workflowVersionId?: string;
@@ -669,14 +674,55 @@ export class ValkyrProcedureClient {
   }
   async status(executionId: string): Promise<ProcedureExecutionState> {
     requireProcedureExecutionId(executionId);
+    const session = await this.options.getAuthToken();
+    if (!session) fail("UNAUTHENTICATED");
     const response = await this.request(
       `/WorkflowExecution/${executionId}`,
       "GET",
       undefined,
       "STATUS_UNAVAILABLE",
+      session,
     );
     if (response.status !== 200) fail("STATUS_UNAVAILABLE");
-    return executionState(response.data, executionId);
+    const state = executionState(response.data, executionId);
+    const hash = record(response.data)
+      ? response.data.definitionSnapshotHash
+      : undefined;
+    if (
+      !state.succeeded ||
+      !state.workflowVersionId ||
+      typeof hash !== "string" ||
+      !/^[0-9a-f]{64}$/.test(hash)
+    )
+      return state;
+    let businessResult;
+    try {
+      const result = await this.request(
+        `/vaiworkflow/engineering/executions/${executionId}/business-result`,
+        "GET",
+        undefined,
+        "STATUS_UNAVAILABLE",
+        session,
+      );
+      if (result.status === 200)
+        businessResult = verifiedProcedureBusinessResult(
+          result.data,
+          state.id,
+          state.workflowVersionId,
+          hash,
+        );
+    } catch (error) {
+      if ((await this.options.getAuthToken()) !== session)
+        fail("UNAUTHENTICATED");
+      if (
+        error instanceof ValkyrProcedureError &&
+        error.code === "UNAUTHENTICATED"
+      )
+        throw error;
+    }
+    return businessResult
+      ? { ...state, businessResultStatus: "available", businessResult }
+      : { ...state, businessResultStatus: "unavailable" };
   }
   async control(
     action: ProcedureControlAction,

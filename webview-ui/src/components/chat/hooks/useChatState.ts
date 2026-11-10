@@ -243,6 +243,9 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
                 setSecondaryButtonText(undefined);
               }
               break;
+            case "provider_status":
+              // A gateway status is informational, not the end of a turn or tool interaction.
+              break;
             case "reasoning":
               // Reasoning messages should not affect loading state
               // They stream with partial: true, then partial: false when complete

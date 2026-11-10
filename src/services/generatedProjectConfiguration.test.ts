@@ -1,7 +1,9 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { ts } from "ts-morph";
+import ts from "typescript";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import { addJsonConfigValue, connectGeneratedSources, initializeGeneratedProject } from "./generatedProjectConfiguration";
 import { discoverProjectRuntime, projectCommand } from "../integrations/explorer/projectRuntime";
 
@@ -71,6 +73,62 @@ describe("generated project source integration", () => {
     expect((await parse("tsconfig.json")).compilerOptions.paths["@thorapi/model"]).toEqual(["mine"]);
     expect(await fs.readFile(path.join(root, ".vscode/settings.json"), "utf8")).toBe("invalid config");
     expect(warnings.join(" ")).toMatch(/kept existing.*mapping/); expect(warnings.join(" ")).toMatch(/fix.*JSON/i);
+  });
+
+  it("resolves generated types, bundle imports and inherited aliases from the authored app's real TS project", async () => {
+    const project = path.join(root, "thorapi/Example");
+    await write("thorapi/Example/typescript-redux-query/model/index.ts", "export type Thing = number;");
+    await write("thorapi/Example/typescript-redux-query/src/index.ts", 'export * from "../model";');
+    await write("thorapi/Example/bundle-assets/component-library/components/Button/index.ts", "export const Button = 1;");
+    await write("thorapi/Example/bundle-assets/component-library/index.ts", 'export * from "./components/Button";');
+    await write("thorapi/Example/ui/tsconfig.json", '{"compilerOptions":{"paths":{"@valkyr/component-library":["../bundle-assets/component-library/components/index.ts"]}}}');
+    await initializeGeneratedProject(project, "Example", "1");
+    expect(await fs.readFile(path.join(project, "bundle-assets/component-library/components/index.ts"), "utf8")).toContain('export * from "../index"');
+
+    await write("tsconfig.json", '{"files":[],"references":[{"path":"./app/tsconfig.app.json"},{"path":"./package.json"}]}');
+    await write("package.json", '{"name":"host"}');
+    await write("config/base.json", '{"compilerOptions":{"baseUrl":"../app","moduleResolution":"bundler","module":"ESNext","strict":true,"skipLibCheck":true,"paths":{"@authored":["./local.ts"]}}}');
+    await write("app/tsconfig.app.json", '{"extends":"../config/base.json","include":["consumer.ts"]}');
+    await write("app/local.ts", "export const authored = 5;");
+    await write("app/consumer.ts", 'import type { Thing } from "@thorapi"; import { Button } from "@valkyr/component-library"; import { authored } from "@authored"; export const value: Thing = Button + authored;');
+    await connectGeneratedSources(project, root);
+
+    expect(await parse("tsconfig.json")).toEqual({files: [], references: [{path: "./app/tsconfig.app.json"}, {path: "./package.json"}]});
+    expect(await parse("package.json")).toEqual({name:"host"});
+    const file = path.join(root, "app/tsconfig.app.json");
+    const effective = ts.getParsedCommandLineOfConfigFile(file, {}, { ...ts.sys, onUnRecoverableConfigFileDiagnostic: () => {} })!;
+    expect(effective.errors).toEqual([]);
+    const program = ts.createProgram(effective.fileNames, effective.options);
+    expect(ts.getPreEmitDiagnostics(program).map((d) => ts.flattenDiagnosticMessageText(d.messageText, "\n"))).toEqual([]);
+    const connected = await fs.readFile(file, "utf8");
+    await connectGeneratedSources(project, root);
+    expect(await fs.readFile(file, "utf8")).toBe(connected);
+  });
+
+  it("imports a nested generated reactor and links an authored Java module even with managed versions and empty dependencies", async () => {
+    const gav = (artifact: string) => `<groupId>sample</groupId><artifactId>${artifact}</artifactId><version>1</version>`;
+    const head = "<project><modelVersion>4.0.0</modelVersion>";
+    await write("pom.xml", head + gav("workspace") + "<packaging>pom</packaging><modules><module>app</module></modules></project>");
+    const management = `<dependencyManagement><dependencies><dependency>${gav("generated-library")}</dependency></dependencies></dependencyManagement>`;
+    await write("app/pom.xml", head + gav("authored") + management + "<dependencies/></project>");
+    await write("app/src/main/java/sample/App.java", "package sample; class App { Generated model; }");
+    await write("thorapi/Example/library/pom.xml", head + gav("generated-library") + "</project>");
+    await write("thorapi/Example/library/src/main/java/sample/Generated.java", "package sample; public class Generated {}");
+    const project = path.join(root, "thorapi/Example");
+    await initializeGeneratedProject(project, "Example", "1");
+    expect(await connectGeneratedSources(project, root)).toEqual([]);
+    const reactorPom = await fs.readFile(path.join(root, "pom.xml"), "utf8");
+    expect(reactorPom).toContain("<module>thorapi/Example</module>");
+    const childPom = await fs.readFile(path.join(root, "app/pom.xml"), "utf8");
+    expect(childPom).toContain(management);
+    expect(childPom.replace(management, "")).toContain(`<dependencies><dependency>${gav("generated-library")}</dependency>`);
+    await connectGeneratedSources(project, root);
+    expect(await fs.readFile(path.join(root, "app/pom.xml"), "utf8")).toBe(childPom);
+    expect(await fs.readFile(path.join(root, "pom.xml"), "utf8")).toBe(reactorPom);
+    if (process.env.VALORIDE_MAVEN_OFFLINE_SMOKE === "1") {
+      await promisify(execFile)("mvn", ["-o", "-q", "-Dmaven.compiler.source=17", "-Dmaven.compiler.target=17", "compile"], { cwd: root, timeout: 60_000 });
+      expect(await fs.stat(path.join(root, "app/target/classes/sample/App.class"))).toBeDefined();
+    }
   });
 
   it("runs a Vite dev script, avoids reinstalling dependencies on reconnect, and errors for a library-only package", async () => {

@@ -19,12 +19,16 @@ import { describeGeneratedProject, listGeneratedProjects } from "./generatedProj
 import { previewLegacyProjectMigration } from "../../commands/legacyProjectMigrationCommand";
 import { registerProjectRoundTripCommands } from "../../commands/projectRoundTripCommands";
 import { registerProjectGitPublishCommand } from "../../commands/projectGitPublishCommand";
+import { registerProjectGitPullCommand } from "../../commands/projectGitPullCommand";
+import { registerApplicationGitToolbar } from "../../commands/applicationGitToolbar";
+import { refreshHostedProjectRevision } from "../../services/projectHostedRefresh";
 import {
   ManagedNodeRuntime,
   ManagedProjectRuntimes,
 } from "./ManagedProjectRuntimes";
 
 type Project = {
+  applicationId?: string;
   name: string;
   version: string;
   uri: vscode.Uri;
@@ -76,7 +80,7 @@ export class ProjectsTreeDataProvider
       for (const project of [...(current ? [current] : []), ...children]) {
         if (seen.has(project.directory)) continue;
         seen.add(project.directory);
-        results.push({ name: project.name, version: project.version, uri: vscode.Uri.file(project.directory), mtime: project.mtime });
+        results.push({ name: project.name, version: project.version, uri: vscode.Uri.file(project.directory), mtime: project.mtime, applicationId: project.applicationId });
       }
     }
 
@@ -118,7 +122,13 @@ export function registerProjectsView(
     resolveProjectCommandUri(arg, view.selection?.[0]);
 
   context.subscriptions.push(...registerProjectRoundTripCommands(context, output, getUriArg, () => provider.refresh()));
-  context.subscriptions.push(registerProjectGitPublishCommand(context, output, getUriArg));
+  context.subscriptions.push(registerProjectGitPublishCommand(context, output, getUriArg, async (pushed) => {
+    const receipt = await refreshHostedProjectRevision(pushed);
+    output.appendLine(`[Projects] ${pushed.repository}@${pushed.revision.commitSha}: ${receipt.message}`);
+    if (receipt.runningTargets) void vscode.window.showInformationMessage(receipt.message);
+  }));
+  context.subscriptions.push(registerProjectGitPullCommand(context, getUriArg));
+  context.subscriptions.push(registerApplicationGitToolbar(() => provider.getChildren()));
 
   context.subscriptions.push(
     vscode.commands.registerCommand("valoride.projects.create", () =>

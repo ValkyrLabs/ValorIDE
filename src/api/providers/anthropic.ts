@@ -54,20 +54,14 @@ export class AnthropicHandler implements ApiHandler {
     let stream: AnthropicStream<Anthropic.RawMessageStreamEvent>;
     const modelId = model.id;
 
-    const budget_tokens = this.options.thinkingBudgetTokens || 0;
-    const reasoningOn =
-      (modelId.includes("3-7") || modelId.includes("4-")) && budget_tokens !== 0
-        ? true
-        : false;
-    const adaptiveThinkingModel = [
-      "claude-fable-5-1",
-      "claude-opus-5-5",
-      "claude-sonnet-5-5",
-      "claude-haiku-5-5",
-      "claude-fable-5",
-      "claude-opus-5",
-      "claude-sonnet-5",
-    ].includes(modelId);
+    const budget = this.options.thinkingBudgetTokens;
+    const adaptiveThinkingModel = /-(?:fable|opus|sonnet|haiku)-5(?:-|$)/.test(modelId) ||
+      modelId === "claude-opus-4-8" || modelId === "claude-sonnet-4-6";
+    // Recent Claude models return signature-only blocks unless asked for the readable
+    // summary. Do not send legacy budget_tokens to adaptive-only models or invent text.
+    const thinking = budget === 0 ? undefined : adaptiveThinkingModel
+      ? { type: "adaptive", display: "summarized" } as const
+      : { type: "enabled", display: "summarized", budget_tokens: Math.min(model.info.maxTokens - 1, Math.max(1024, budget ?? 1024)) } as const;
 
     switch (modelId) {
       case "claude-fable-5-1":
@@ -94,13 +88,12 @@ export class AnthropicHandler implements ApiHandler {
         stream = await client.messages.create(
           {
             model: modelId,
-            thinking: reasoningOn
-              ? { type: "enabled", budget_tokens: budget_tokens }
-              : undefined,
+            // The installed transport predates adaptive mode; the wire contract also accepts adaptive.
+            thinking: thinking as Anthropic.Messages.ThinkingConfigParam | undefined,
             max_tokens: model.info.maxTokens || 8192,
             // "Thinking isn’t compatible with temperature, top_p, or top_k modifications as well as forced tool use."
             // (https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking#important-considerations-when-using-extended-thinking)
-            temperature: reasoningOn || adaptiveThinkingModel ? undefined : 0,
+            temperature: thinking || adaptiveThinkingModel ? undefined : 0,
             system: [
               {
                 text: systemPrompt,
@@ -187,6 +180,12 @@ export class AnthropicHandler implements ApiHandler {
       }
     }
 
+    let lastThinkingBlock: number | undefined;
+    const thinkingText = (index: number, text: string) => {
+      const separator = lastThinkingBlock !== undefined && lastThinkingBlock !== index ? "\n\n" : "";
+      lastThinkingBlock = index;
+      return separator + text;
+    };
     for await (const chunk of stream) {
       switch (chunk?.type) {
         case "message_start":
@@ -215,18 +214,13 @@ export class AnthropicHandler implements ApiHandler {
         case "content_block_start":
           switch (chunk.content_block.type) {
             case "thinking":
-              yield {
+              if (chunk.content_block.thinking) yield {
                 type: "reasoning",
-                reasoning: chunk.content_block.thinking || "",
+                reasoning: thinkingText(chunk.index, chunk.content_block.thinking),
               };
               break;
             case "redacted_thinking":
-              // Handle redacted thinking blocks - we still mark it as reasoning
-              // but note that the content is encrypted
-              yield {
-                type: "reasoning",
-                reasoning: "[Redacted thinking block]",
-              };
+              // An opaque/redacted block is not a user-visible narrative.
               break;
             case "text":
               // we may receive multiple text blocks, in which case just insert a line break between them
@@ -246,9 +240,9 @@ export class AnthropicHandler implements ApiHandler {
         case "content_block_delta":
           switch (chunk.delta.type) {
             case "thinking_delta":
-              yield {
+              if (chunk.delta.thinking) yield {
                 type: "reasoning",
-                reasoning: chunk.delta.thinking,
+                reasoning: thinkingText(chunk.index, chunk.delta.thinking),
               };
               break;
             case "text_delta":

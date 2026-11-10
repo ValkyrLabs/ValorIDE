@@ -99,4 +99,15 @@ describe("LmStudioHandler", () => {
       backoffMs: 1_000,
     });
   });
+
+  it("streams a local template's leading tagged section across token boundaries, preserving XML actions and literal examples", async () => {
+    const answer = '<read_file><path>src/app.ts</path></read_file> (example: <think>x</think>)';
+    mockCreate.mockResolvedValue((async function*(){
+      for (const content of ["<th","inking>Check"," ","check","</thi","nking>"+answer])
+        yield {choices:[{delta:{content}}]};
+    })());
+    const chunks = [];
+    for await (const c of handler.createMessage("",[])) chunks.push(c);
+    expect(chunks).toEqual([{type:"reasoning",reasoning:"Check"},{type:"reasoning",reasoning:" "},{type:"reasoning",reasoning:"check"},{type:"text",text:answer}]);
+  });
 });

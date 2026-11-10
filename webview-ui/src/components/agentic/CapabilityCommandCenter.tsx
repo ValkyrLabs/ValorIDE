@@ -396,7 +396,9 @@ const GrayMatterRecoveryActions = ({
   return null;
 };
 
-const CapabilityCommandCenter = () => {
+const CapabilityCommandCenter = ({
+  compact = false,
+}: { compact?: boolean } = {}) => {
   const state = useExtensionState() as Record<string, any>;
   const mothership = useMothershipOptional();
   const isSignedIn = Boolean(
@@ -424,36 +426,52 @@ const CapabilityCommandCenter = () => {
   const [dismissedPrompts, setDismissedPrompts] = React.useState<
     Record<string, boolean>
   >({});
+  const services = (
+    <div className="capability-command-center__grid">
+      <StatusPill
+        detail={enabledCapabilityLabel(grayMatterSession)}
+        icon={<FaBrain aria-hidden="true" />}
+        title={`GrayMatter ${grayMatter.status}`}
+        tone={grayMatter.tone}
+      />
+      <StatusPill
+        detail={swarm.detail}
+        icon={<FaNetworkWired aria-hidden="true" />}
+        title={swarm.label}
+        tone={swarm.tone}
+      />
+      <StatusPill
+        detail={
+          state.agenticState?.approvalPolicy
+            ? `${mcp.detail} Approval: ${state.agenticState.approvalPolicy}.`
+            : mcp.detail
+        }
+        icon={<FaPlug aria-hidden="true" />}
+        title={mcp.label}
+        tone={mcp.tone}
+      />
+    </div>
+  );
+  const ready = [grayMatter, swarm, mcp].filter(
+    (service) => service.tone === "ok",
+  ).length;
   return (
     <section
       className="capability-command-center"
       aria-label="Agentic command center"
     >
-      <div className="capability-command-center__grid">
-        <StatusPill
-          detail={enabledCapabilityLabel(grayMatterSession)}
-          icon={<FaBrain aria-hidden="true" />}
-          title={`GrayMatter ${grayMatter.status}`}
-          tone={grayMatter.tone}
-        />
-        <StatusPill
-          detail={swarm.detail}
-          icon={<FaNetworkWired aria-hidden="true" />}
-          title={swarm.label}
-          tone={swarm.tone}
-        />
-        <StatusPill
-          detail={
-            state.agenticState?.approvalPolicy
-              ? `${mcp.detail} Approval: ${state.agenticState.approvalPolicy}.`
-              : mcp.detail
-          }
-          icon={<FaPlug aria-hidden="true" />}
-          title={mcp.label}
-          tone={mcp.tone}
-        />
-
-        {latestCommand ? (
+      {compact ? (
+        <details className="valoride-connections">
+          <summary>
+            Workspace connections <small>{ready} of 3 ready</small>
+          </summary>
+          {services}
+        </details>
+      ) : (
+        services
+      )}
+      {latestCommand && (
+        <div className="capability-command-center__grid">
           <div className="capability-command-center__command">
             <span className="capability-command-center__command-meta">
               <FaTerminal aria-hidden="true" />
@@ -470,8 +488,8 @@ const CapabilityCommandCenter = () => {
               </span>
             ) : null}
           </div>
-        ) : null}
-      </div>
+        </div>
+      )}
 
       {grayMatterSession?.status === "quota" ? (
         <GrayMatterQuotaRecovery

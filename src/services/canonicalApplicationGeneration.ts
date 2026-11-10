@@ -19,7 +19,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const reference = (value: unknown): value is string => typeof value === "string" && /^[a-z0-9._:-]{1,200}$/i.test(value);
 // Keep the authored compatibility adapter separate from generated API models.
 type NativeAppGenerationRequest = AppGenerationRequest & { mcpPublicationMode?: McpPublicationMode };
-type Recovery = { idempotencyKey: string; requestRef?: string; tenantId?: string; accountId?: string; mcpPublicationMode?: McpPublicationMode };
+type Recovery = { idempotencyKey: string; requestRef?: string; tenantId?: string; accountId?: string; mcpPublicationMode?: McpPublicationMode; expectedSpecId?: string };
 const pending = new Map<string, Recovery>();
 const RECOVERY_POLL_MS = 2000;
 const RECOVERY_WINDOW_MS = 45 * 60_000;
@@ -40,6 +40,7 @@ interface Options {
   workspaceRoot: string;
   applicationId: string;
   applicationVersion?: string;
+  expectedSpecId?: string;
   mcpPublicationMode?: McpPublicationMode;
   jwtToken: string;
   recoveryDirectory?: string;
@@ -63,6 +64,12 @@ function validateRequest(request: NativeAppGenerationRequest, applicationId: str
     throw new Error("The backend returned an incomplete or different application generation request. Check the selected account/backend before retrying.");
   if (recovered?.requestRef && (request.requestRef !== recovered.requestRef || request.tenantId !== recovered.tenantId || !same(request.accountId, recovered.accountId)))
     throw new Error("The pending generation belongs to a different account or tenant. Return to its original account/backend before retrying.");
+  if (recovered?.expectedSpecId) {
+    let recorded;
+    try { recorded = JSON.parse(request.clarifyingQuestionsJson || "{}").expectedOpenApiSpecId; } catch { /* fail closed below */ }
+    if (!same(recorded, recovered.expectedSpecId))
+      throw new Error("The generation request did not retain the saved Blueprint revision. Execution was not authorized by this editor.");
+  }
   if (publicationMode(request.mcpPublicationMode) !== mode) {
     const executionStatus = executionMayHaveStarted || reference(request.generationRunRef)
       ? "Generation may already have started or completed; do not start another run."
@@ -200,7 +207,10 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
   }
   if (recovery && publicationMode(recovery.mcpPublicationMode) !== mode)
     throw new Error("The pending generation uses a different MCP publication mode. Resume it with its original choice before starting another generation; its recovery record was preserved.");
-  recovery ||= { idempotencyKey: `valoride-${randomUUID()}`, mcpPublicationMode: mode };
+  if (options.expectedSpecId && !uuid.test(options.expectedSpecId)) throw new Error("Invalid saved Blueprint revision.");
+  if (options.expectedSpecId && recovery && !same(options.expectedSpecId, recovery.expectedSpecId))
+    throw new Error("A generation for another Blueprint revision is pending. Resume it from Apps before regenerating this saved revision.");
+  recovery ||= { idempotencyKey: `valoride-${randomUUID()}`, mcpPublicationMode: mode, expectedSpecId: options.expectedSpecId };
   const save = async () => {
     pending.set(key, recovery!);
     if (file) {
@@ -217,12 +227,14 @@ export async function generateCanonicalArchive(options: Options): Promise<{ arch
   const resuming = Boolean(recovery.requestRef);
   let request = resuming
     ? await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(recovery.requestRef!)}`)
-    : await json<NativeAppGenerationRequest>("/app_generation_ops/requests", "POST", { applicationId, idempotencyKey: recovery.idempotencyKey, ...(mode === "suppress" ? { mcpPublicationMode: mode } : {}) });
+    : await json<NativeAppGenerationRequest>("/app_generation_ops/requests", "POST", { applicationId, idempotencyKey: recovery.idempotencyKey,
+      ...(recovery.expectedSpecId ? {clarifyingQuestionsJson: JSON.stringify({expectedOpenApiSpecId:recovery.expectedSpecId})} : {}),
+      ...(mode === "suppress" ? { mcpPublicationMode: mode } : {}) });
   validateRequest(request, applicationId, mode, recovery, resuming);
   if (!same(request.accountId, principalId)) throw new Error("The generation request belongs to a different authenticated principal. No project files were written; return to its authorized account.");
   recovery = { ...recovery, requestRef: request.requestRef, tenantId: request.tenantId, accountId: request.accountId };
   await save();
-  if (mode === "suppress" && !resuming) {
+  if ((mode === "suppress" || recovery.expectedSpecId) && !resuming) {
     // An echoed create body is insufficient: require the persisted request before execution.
     const recorded = await json<NativeAppGenerationRequest>(`/app_generation_ops/requests/${encodeURIComponent(request.requestRef)}`);
     validateRequest(recorded, applicationId, mode, recovery);

@@ -8,6 +8,7 @@ import {
 } from "@shared/api";
 import { convertToOpenAiMessages } from "../transform/openai-format";
 import { ApiStream } from "../transform/stream";
+import { LocalNarrativeStream } from "../transform/compatible-narrative";
 import { assertGovernedCodingDescriptor, beginGovernedCodingRequest } from "@services/swarm/SwarmCodingInference";
 
 export class LmStudioHandler implements ApiHandler {
@@ -55,6 +56,7 @@ export class LmStudioHandler implements ApiHandler {
         ...(binding?.maxTokens != null ? { max_tokens: binding.maxTokens } : {}),
         stream: true,
       });
+      const narrative = new LocalNarrativeStream();
       for await (const chunk of stream) {
         responseObserved = true;
         if (receipt) {
@@ -68,33 +70,9 @@ export class LmStudioHandler implements ApiHandler {
             receipt.completedAt = new Date().toISOString();
           }
         }
-        const delta = chunk.choices[0]?.delta;
-        const reasoningDelta = delta as
-          | {
-              reasoning?: unknown;
-              reasoning_content?: unknown;
-            }
-          | undefined;
-        const reasoning =
-          typeof reasoningDelta?.reasoning === "string" &&
-          reasoningDelta.reasoning.length > 0
-            ? reasoningDelta.reasoning
-            : typeof reasoningDelta?.reasoning_content === "string"
-              ? reasoningDelta.reasoning_content
-              : undefined;
-        if (reasoning) {
-          yield {
-            type: "reasoning",
-            reasoning,
-          };
-        }
-        if (delta?.content) {
-          yield {
-            type: "text",
-            text: delta.content,
-          };
-        }
+        yield* narrative.read(chunk.choices[0]?.delta);
       }
+      yield* narrative.flush();
       if (receipt) { receipt.status = "RECEIVED"; receipt.completedAt = new Date().toISOString(); }
     } catch (error) {
       if (receipt) { receipt.status = "FAILED"; receipt.completedAt = new Date().toISOString(); }

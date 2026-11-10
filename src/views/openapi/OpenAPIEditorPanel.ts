@@ -1,376 +1,194 @@
+import { randomUUID } from "node:crypto";
+import { compareBlueprintOperations, readBlueprintConsumers, type Consumer } from "../../services/blueprintContractImpact";
+import { openWorkflowStudioTarget } from "../../integrations/workflows/workflowStudioNavigation";
 import * as vscode from "vscode";
-import { getTheme } from "@integrations/theme/getTheme";
-import { getNonce } from "@core/webview/getNonce";
-import { getUri } from "@core/webview/getUri";
+import path from "path";
+import * as yaml from "js-yaml";
 import { getSecret } from "@core/storage/state";
 import { downloadApplicationArtifact } from "@services/applicationArtifactDownload";
-import {
-  getValkyrLabsRtkApiClient,
-  ValkyrLabsApiError,
-} from "@services/valkyrai/ValkyrLabsRtkApi";
-import { openUrlWithSimpleBrowser } from "@utils/openUrl";
-import {
-  getValkyraiBasePath,
-  normalizeValkyraiHost,
-} from "@utils/serverValkyraiHost";
-
-const FALLBACK_VALKYRAI_BASE =
-  (process.env.VITE_basePath && process.env.VITE_basePath.trim()) ||
-  "https://api-0.valkyrlabs.com/v1";
-
-const resolveValkyraiBasePath = () => {
-  const configured = vscode.workspace
-    .getConfiguration("valoride.valkyrai")
-    .get<string>("host");
-  return (
-    normalizeValkyraiHost(configured) ||
-    getValkyraiBasePath() ||
-    normalizeValkyraiHost(FALLBACK_VALKYRAI_BASE)
-  );
-};
-
-const deriveValkyraiOrigins = (basePath: string) => {
-  try {
-    const parsed = new URL(basePath);
-    const httpOrigin = `${parsed.protocol}//${parsed.host}`;
-    const wsOrigin = `${parsed.protocol === "https:" ? "wss" : "ws"}://${parsed.host}`;
-    return { httpOrigin, wsOrigin };
-  } catch {
-    return { httpOrigin: basePath.replace(/\/v1$/, ""), wsOrigin: undefined };
-  }
-};
-
-export class OpenAPIEditorPanel {
-  static readonly viewType = "valoride.openapi.editor";
-  private static currentPanel: vscode.WebviewPanel | undefined;
-  private static currentApplicationId: string | undefined;
-  private static currentBackend: string | undefined;
-
-  static open(
-    context: vscode.ExtensionContext,
-    options: OpenAPIEditorOptions = {},
-  ): void {
-    const backend = getValkyraiBasePath();
-    if (
-      OpenAPIEditorPanel.currentPanel &&
-      OpenAPIEditorPanel.currentApplicationId === options.applicationId &&
-      OpenAPIEditorPanel.currentBackend === backend
-    ) {
-      OpenAPIEditorPanel.currentPanel.reveal(vscode.ViewColumn.Active);
-      return;
-    }
-    OpenAPIEditorPanel.currentPanel?.dispose();
-
-    const panel = vscode.window.createWebviewPanel(
-      OpenAPIEditorPanel.viewType,
-      options.applicationName
-        ? `Blueprint - ${options.applicationName}`
-        : "Blueprint",
-      vscode.ViewColumn.Active,
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-        localResourceRoots: [context.extensionUri],
-      },
-    );
-
-    OpenAPIEditorPanel.currentPanel = panel;
-    OpenAPIEditorPanel.currentApplicationId = options.applicationId;
-    OpenAPIEditorPanel.currentBackend = backend;
-
-    panel.webview.onDidReceiveMessage(async (message) => {
-      if (message?.type === "requestTheme") {
-        await panel.webview.postMessage({
-          type: "theme",
-          text: JSON.stringify(getTheme()),
-        });
-        return;
-      }
-      if (message?.type === "blueprintLoad") {
-        await handleBlueprintLoad(context, panel, options, backend);
-        return;
-      }
-      if (message?.type === "blueprintSave") {
-        await handleBlueprintSave(context, panel, options, message, backend);
-        return;
-      }
-      if (message?.type === "blueprintOpenDeployment") {
-        if (!options.deploymentUrl) {
-          await panel.webview.postMessage({
-            type: "blueprintError",
-            error: "This Application does not have a deployment route.",
-          });
-          return;
-        }
-        await openUrlWithSimpleBrowser(
-          options.deploymentUrl,
-          `${options.applicationName || "Application"} deployment`,
-        );
-        return;
-      }
-      if (message?.type === "webviewError") {
-        console.error("OpenAPI editor webview error:", message);
-      }
-    });
-
-    panel.onDidDispose(() => {
-      OpenAPIEditorPanel.currentPanel = undefined;
-      OpenAPIEditorPanel.currentApplicationId = undefined;
-      OpenAPIEditorPanel.currentBackend = undefined;
-    });
-
-    // The webview can request its canonical document as soon as HTML is attached.
-    panel.webview.html = renderOpenAPIEditorPanel(
-      context,
-      panel.webview,
-      options,
-    );
-  }
-}
+import { getValkyrLabsRtkApiClient, ValkyrLabsApiError } from "@services/valkyrai/ValkyrLabsRtkApi";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { checkedDocument, parseProjectSpecification, PROJECT_UUID, ProjectBlueprintDocument, specificationHash } from "../../services/projectBlueprintSync";
+import { hostedBlueprintHtml } from "./hostedBlueprintHtml";
+import { blueprintGenerationTarget } from "../../services/blueprintGenerationTarget";
+import { resolveThorapiFolderPath } from "@utils/thorapi";
+import { canonicalProjectFolder } from "../../services/generatedProjectInstall";
 
 export interface OpenAPIEditorOptions {
   applicationId?: string;
   applicationName?: string;
-  deploymentUrl?: string;
+  deploymentUrl?: string; // older callers; never used as a browser destination
+  selectedWorkspace?: vscode.Uri;
+  selectedProject?: vscode.Uri;
+  localSpec?: vscode.Uri;
 }
+const filters = { "OpenAPI documents": ["yaml", "yml", "json"] };
+const limit = 4 * 1024 * 1024;
+const blank = () => ({openapi:"3.0.3",info:{title:"Untitled API",version:"1.0.0"},paths:{}});
+const asSpec = (value: unknown) => parseProjectSpecification(Buffer.from(JSON.stringify(value), "utf8"));
 
-interface BlueprintDocument {
-  applicationId: string;
-  applicationName?: string;
-  specId: string;
-  filename: string;
-  etag: string;
-  specification: Record<string, unknown>;
-  lastModifiedDate?: string;
-}
+export class OpenAPIEditorPanel {
+  static readonly viewType = "valoride.openapi.editor";
+  private static readonly panels = new Map<string, vscode.WebviewPanel>();
 
-const blueprintEndpoint = (applicationId: string, backend: string) =>
-  `${backend}/thorapi/applications/${encodeURIComponent(applicationId)}/openapi`;
-
-const requireJwt = async (context: vscode.ExtensionContext) => {
-  const jwtToken = await getSecret(context, "jwtToken");
-  if (!jwtToken) {
-    throw new Error(
-      "Sign in to ValorIDE before opening an Application Blueprint.",
-    );
-  }
-  return jwtToken;
-};
-
-const requireBlueprintSession = async (
-  context: vscode.ExtensionContext,
-  backend: string,
-) => {
-  const assertBackend = () => {
-    if (getValkyraiBasePath() !== backend)
-      throw new Error(
-        "The ValkyrAI backend changed. Reopen Blueprint from the original Application.",
-      );
-  };
-  assertBackend();
-  const jwtToken = await requireJwt(context);
-  const assertCurrent = async () => {
-    assertBackend();
-    if ((await requireJwt(context)) !== jwtToken)
-      throw new Error(
-        "Your session changed. Reopen Blueprint from the Application before continuing.",
-      );
-    assertBackend();
-  };
-  await assertCurrent();
-  return { jwtToken, assertCurrent };
-};
-
-const authHeaders = (jwtToken: string) => ({
-  Authorization: `Bearer ${jwtToken}`,
-  jwtSession: jwtToken,
-});
-
-const errorMessage = (error: unknown): string => {
-  if (error instanceof ValkyrLabsApiError) {
-    const body = error.data as
-      | { message?: string; error?: string }
-      | string
-      | undefined;
-    if (typeof body === "string" && body.trim()) return body;
-    if (body && typeof body !== "string") {
-      return body.message || body.error || error.message;
+  static open(context: vscode.ExtensionContext, options: OpenAPIEditorOptions = {}) {
+    const { applicationId, selectedWorkspace } = options;
+    if (applicationId !== undefined && !PROJECT_UUID.test(applicationId)) {
+      void vscode.window.showErrorMessage("Select a valid ValkyrAI Application to edit its Blueprint.");
+      return;
     }
-    return error.message;
-  }
-  return error instanceof Error ? error.message : String(error);
-};
-
-const handleBlueprintLoad = async (
-  context: vscode.ExtensionContext,
-  panel: vscode.WebviewPanel,
-  options: OpenAPIEditorOptions,
-  backend: string,
-) => {
-  if (!options.applicationId) {
-    await panel.webview.postMessage({
-      type: "blueprintError",
-      error:
-        "Open Blueprint from a ValkyrAI Application to load its canonical spec.",
+    const backend = getValkyraiBasePath();
+    const key = JSON.stringify([backend,applicationId,selectedWorkspace?.fsPath,options.selectedProject?.fsPath,options.localSpec?.fsPath]);
+    const existing = this.panels.get(key);
+    if (existing) { existing.reveal(vscode.ViewColumn.Active); return; }
+    const panel = vscode.window.createWebviewPanel(this.viewType,
+      options.applicationName ? `Blueprint · ${options.applicationName}` : "Blueprint",
+      vscode.ViewColumn.Active, {enableScripts:true,retainContextWhenHidden:true,localResourceRoots:[]});
+    this.panels.set(key, panel);
+    let active = true, busy = false, approvedHost = false, originalSession: string | undefined, canonical: ProjectBlueprintDocument | undefined;
+    let filename = "openapi.yaml";
+    let impactReview: {id:string; targets:Consumer[]} | undefined;
+    const post = async (message: Record<string, unknown>) => { if (active) await panel.webview.postMessage(message); };
+    const assertSession = async () => {
+      if (!active || getValkyraiBasePath() !== backend) throw new Error("The backend changed or the editor closed. Reopen Blueprint from the original Application.");
+      const token = await getSecret(context,"jwtToken");
+      if (!active || getValkyraiBasePath() !== backend || !token || (originalSession && originalSession !== token))
+        throw new Error("Your ValorIDE session changed. Reopen Blueprint after signing in to the original account.");
+      originalSession = token;
+      return token;
+    };
+    const openSession = applicationId ? assertSession().then(() => undefined, (e: unknown) => e) : Promise.resolve(undefined);
+    const check = async () => {
+      if (!active) throw new Error("Blueprint is closed.");
+      if (applicationId) { const failure = await openSession; if (failure) throw failure; await assertSession(); }
+    };
+    const endpoint = `${backend}/thorapi/applications/${applicationId}/openapi`;
+    const headers = () => ({Authorization:`Bearer ${originalSession}`});
+    const watchers = [
+      context.secrets?.onDidChange(e => { if (applicationId && e.key === "jwtToken") panel.dispose(); }),
+      vscode.workspace.onDidChangeConfiguration?.(e => { if (e.affectsConfiguration("valoride.valkyrai.host")) panel.dispose(); }),
+    ];
+    panel.onDidDispose(() => {
+      active = false; watchers.forEach(it => it?.dispose());
+      this.panels.delete(key);
     });
-    return;
-  }
-  try {
-    const { jwtToken, assertCurrent } = await requireBlueprintSession(
-      context,
-      backend,
-    );
-    const response =
-      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
-        url: blueprintEndpoint(options.applicationId, backend),
-        headers: authHeaders(jwtToken),
-      });
-    await assertCurrent();
-    await panel.webview.postMessage({
-      type: "blueprintLoaded",
-      document: response.data,
-    });
-  } catch (error) {
-    await panel.webview.postMessage({
-      type: "blueprintError",
-      error: errorMessage(error),
-    });
-  }
-};
-
-const handleBlueprintSave = async (
-  context: vscode.ExtensionContext,
-  panel: vscode.WebviewPanel,
-  options: OpenAPIEditorOptions,
-  message: {
-    specification?: Record<string, unknown>;
-    filename?: string;
-    expectedEtag?: string;
-    regenerate?: boolean;
-  },
-  backend: string,
-) => {
-  if (!options.applicationId || !message.specification) {
-    await panel.webview.postMessage({
-      type: "blueprintError",
-      error: "Application id and OpenAPI specification are required.",
-    });
-    return;
-  }
-  try {
-    const { jwtToken, assertCurrent } = await requireBlueprintSession(
-      context,
-      backend,
-    );
-    const response =
-      await getValkyrLabsRtkApiClient().request<BlueprintDocument>({
-        url: blueprintEndpoint(options.applicationId, backend),
-        method: "PUT",
-        json: {
-          specification: message.specification,
-          filename: message.filename,
-          expectedEtag: message.expectedEtag,
-        },
-        headers: authHeaders(jwtToken),
-      });
-    await assertCurrent();
-    await panel.webview.postMessage({
-      type: "blueprintSaved",
-      document: response.data,
-      regenerating: Boolean(message.regenerate),
-    });
-
-    if (message.regenerate) {
-      const artifact = await downloadApplicationArtifact({
-        applicationId: options.applicationId,
-        applicationName: options.applicationName,
-        jwtToken,
-        assertCurrent,
-        onProgress: async (status) => {
-          await panel.webview.postMessage({
-            type: "blueprintProgress",
-            status,
-          });
-        },
-      });
-      await panel.webview.postMessage({
-        type: "blueprintGenerated",
-        artifact,
-      });
-    }
-  } catch (error) {
-    await panel.webview.postMessage({
-      type: "blueprintError",
-      error: errorMessage(error),
-    });
-  }
-};
-
-const renderOpenAPIEditorPanel = (
-  context: vscode.ExtensionContext,
-  webview: vscode.Webview,
-  options: OpenAPIEditorOptions,
-): string => {
-  const stylesUri = getUri(webview, context.extensionUri, [
-    "dist",
-    "webview",
-    "assets",
-    "index.css",
-  ]);
-  const scriptUri = getUri(webview, context.extensionUri, [
-    "dist",
-    "webview",
-    "assets",
-    "index.js",
-  ]);
-  const nonce = getNonce();
-  const valkyraiBasePath = resolveValkyraiBasePath();
-  const { httpOrigin: valkyraiOrigin, wsOrigin: valkyraiWsOrigin } =
-    deriveValkyraiOrigins(valkyraiBasePath);
-  const connectSrcEntries = new Set<string>([
-    webview.cspSource,
-    valkyraiOrigin || "http://localhost:8080",
-    "https://*.valkyrlabs.com",
-    "wss://*.valkyrlabs.com",
-    "ws://localhost:*",
-    "https://*.posthog.com",
-    "https://*.googleapis.com",
-  ]);
-  if (valkyraiWsOrigin) {
-    connectSrcEntries.add(valkyraiWsOrigin);
-  }
-  const connectSrc = Array.from(connectSrcEntries).filter(Boolean).join(" ");
-  const bootstrap = JSON.stringify(options).replace(/</g, "\\u003c");
-
-  return /* html */ `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="${stylesUri}">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${connectSrc}; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src ${webview.cspSource} 'nonce-${nonce}' 'unsafe-eval' 'wasm-unsafe-eval';">
-    <title>OpenAPI Editor</title>
-  </head>
-  <body>
-    <div id="root">
-      <p id="blueprint-startup-status" role="status" style="padding:12px;color:var(--vscode-editor-foreground);font-family:var(--vscode-font-family)">Opening Blueprint...</p>
-    </div>
-    <script nonce="${nonce}">
-      const reportStartupFailure = () => {
-        const status = document.getElementById("blueprint-startup-status");
-        if (status) status.textContent = "Blueprint could not start. Close this editor and reopen Blueprint from the Application.";
-      };
-      window.addEventListener("error", reportStartupFailure, true);
-      window.addEventListener("unhandledrejection", reportStartupFailure);
+    panel.webview.onDidReceiveMessage(async m => {
+      if (!["blueprintLoad","blueprintImport","blueprintExport","blueprintSave","blueprintReview","blueprintInspectConsumer"].includes(m?.type) || busy || !active) return;
+      busy = true;
       try {
-        window.__valorideWebviewMode = "openapi-editor";
-        window.__valorideValkyraiBasePath = ${JSON.stringify(valkyraiBasePath)};
-        window.__valorideBlueprint = ${bootstrap};
-      } catch {
-        reportStartupFailure();
-      }
-    </script>
-    <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
-  </body>
-</html>`;
-};
+        await check();
+        if (m.type !== "blueprintInspectConsumer") impactReview = undefined;
+        if (m.type === "blueprintReview") {
+          if (!canonical || !applicationId) throw new Error("Open the Blueprint from its saved Application to inspect impact.");
+          const draft = asSpec(m.specification);
+          const params = new URLSearchParams({specId:canonical.specId, etag:canonical.etag});
+          let consumers:Consumer[] = [], partial = true, lookupAvailable = false;
+          try {
+            const response = await getValkyrLabsRtkApiClient().request<unknown>({
+              url:endpoint+"/consumers?"+params,headers:headers(),redirect:"error",responseType:"json",maxResponseBytes:512*1024,
+            });
+            const registry=readBlueprintConsumers(response.data, {applicationId,specId:canonical.specId,etag:canonical.etag});
+            consumers=registry.bindings; partial=registry.truncated; lookupAvailable=true;
+          } catch (error) {
+            if (error instanceof ValkyrLabsApiError && typeof error.status === "number" && [401,403,409].includes(error.status)) throw error;
+          }
+          await check();
+          const impact=compareBlueprintOperations(canonical.specification,draft,consumers);
+          const review={id:randomUUID(),targets:[] as Consumer[]};
+          const rows=impact.rows.map((row)=>({...row,consumers:row.consumers.map((target)=>{
+            const index=review.targets.push(target)-1;
+            return {index,workflowId:target.workflowId,workflowVersionId:target.workflowVersionId,executionId:target.executionId};
+          })}));
+          impactReview=review;
+          await post({type:"blueprintImpact",reviewId:review.id,baseline:canonical.etag,draftHash:specificationHash(draft),
+            total:impact.total,truncated:impact.truncated,unresolved:impact.unresolved,partial,lookupAvailable,rows});
+        } else if (m.type === "blueprintInspectConsumer") {
+          if (!applicationId || !impactReview || m.reviewId!==impactReview.id || !Number.isInteger(m.index) || m.index<0) return;
+          const target=impactReview.targets[m.index];
+          if (!target) return;
+          await check();
+          await openWorkflowStudioTarget({backend,workflowId:target.workflowId,...(target.workflowVersionId?{workflowVersionId:target.workflowVersionId}:{}),
+            ...(target.executionId && m.versionOnly !== true ? {executionId:target.executionId} : {})});
+          await post({type:"blueprintNotice",text:"Opened the registered workflow in Studio."});
+        } else if (m.type === "blueprintLoad") {
+          if (applicationId) {
+            if (!approvedHost && new URL(backend).origin !== "https://api-0.valkyrlabs.com") {
+              const choice = await vscode.window.showWarningMessage("Open this server's Blueprint in the hosted ValkyrLabs editor?",
+                {modal:true,detail:`The selected document from ${new URL(backend).origin} will be displayed by valkyrlabs.com. Your session credentials remain in ValorIDE.`},"Open hosted editor");
+              if (choice !== "Open hosted editor") { panel.dispose(); return; }
+              await check(); approvedHost = true;
+            }
+            const result = await getValkyrLabsRtkApiClient().request<ProjectBlueprintDocument>({
+              url:endpoint, headers:headers(), redirect:"error", responseType:"json", maxResponseBytes:8*1024*1024,
+            });
+            await check(); canonical = checkedDocument(result.data,applicationId); filename = path.basename(canonical.filename);
+          }
+          await post({type:"blueprintLoaded",document:{specification:canonical?.specification || blank()}});
+        } else if (m.type === "blueprintImport") {
+          const chosen = await vscode.window.showOpenDialog({title:"Load a local file in the ValkyrLabs hosted Blueprint editor",filters,canSelectMany:false,defaultUri:options.localSpec});
+          if (!chosen?.length) { await post({type:"blueprintNotice",text:"Upload cancelled. Draft unchanged."}); return; }
+          const file=chosen[0];
+          if (file.scheme !== "file" || (await vscode.workspace.fs.stat(file)).size > limit) throw new Error("Choose a local OpenAPI YAML or JSON file no larger than 4 MiB.");
+          const spec = parseProjectSpecification(Buffer.from(await vscode.workspace.fs.readFile(file)));
+          await check(); filename = path.basename(file.fsPath); await post({type:"blueprintImported",document:{specification:spec}});
+        } else if (m.type === "blueprintExport") {
+          const spec = asSpec(m.specification);
+          const base = selectedWorkspace || vscode.workspace.workspaceFolders?.[0]?.uri;
+          const target = await vscode.window.showSaveDialog({title:"Download the current Blueprint draft",filters,
+            ...(base ? {defaultUri:vscode.Uri.joinPath(base,path.basename(filename))} : {})});
+          if (!target) { await post({type:"blueprintNotice",text:"Download cancelled."}); return; }
+          if (target.scheme !== "file" || !/\.(?:json|ya?ml)$/i.test(target.fsPath)) throw new Error("Save the local file with a .yaml, .yml or .json extension.");
+          await check();
+          await vscode.workspace.fs.writeFile(target,Buffer.from(/\.json$/i.test(target.fsPath)?JSON.stringify(spec,null,2)+"\n":yaml.dump(spec,{noRefs:true,lineWidth:120})));
+          await post({type:"blueprintNotice",text:`Downloaded ${path.basename(target.fsPath)}.`});
+        } else {
+          if (!applicationId || !canonical || !vscode.workspace.isTrusted) throw new Error("Load the selected Application in a trusted workspace before saving.");
+          const spec=asSpec(m.specification);
+          const regenerate=m.regenerate===true;
+          let destination=selectedWorkspace;
+          let projectRoot:string|undefined;
+          let confirmedInstallRoot:string|undefined;
+          if (regenerate) {
+            if (!vscode.workspace.workspaceFolders?.length) throw new Error("Open a local workspace to receive the regenerated app.");
+            if (!destination && vscode.workspace.workspaceFolders.length > 1) {
+              destination=(await vscode.window.showWorkspaceFolderPick({placeHolder:"Choose the workspace for this regenerated application"}))?.uri;
+              if (!destination) { await post({type:"blueprintNotice",text:"Regeneration cancelled; draft retained."}); return; }
+            }
+            destination ||= vscode.workspace.workspaceFolders[0].uri;
+            if (destination.scheme !== "file") throw new Error("Choose a local workspace to receive the generated files.");
+            const artifactParent=resolveThorapiFolderPath(destination.fsPath);
+            const {title,version}=spec.info as {title:string;version:string};
+            projectRoot=await blueprintGenerationTarget(destination.fsPath,options.selectedProject?.fsPath,applicationId,title,version,backend,artifactParent);
+            confirmedInstallRoot=projectRoot || path.resolve(artifactParent,canonicalProjectFolder(title,version));
+            const choice=await vscode.window.showWarningMessage(`Save and regenerate ${options.applicationName || applicationId}?`,
+              {modal:true,detail:`Generate the project from this Blueprint revision in ${confirmedInstallRoot}. A successful generation may use credits.`},"Save and regenerate");
+            if (choice!=="Save and regenerate") { await post({type:"blueprintNotice",text:"Regeneration cancelled; draft retained."}); return; }
+            await check();
+          }
+          // Never take an ETag or application id from the frame. A stale save is a
+          // conflict, not permission to overwrite the newer server document.
+          if (specificationHash(spec) !== specificationHash(canonical.specification)) {
+            const saved=await getValkyrLabsRtkApiClient().request<ProjectBlueprintDocument>({url:endpoint,method:"PUT",headers:headers(),
+              json:{filename,expectedEtag:canonical.etag,specification:spec},responseType:"json",redirect:"error",maxResponseBytes:8*1024*1024});
+            await check(); canonical=checkedDocument(saved.data,applicationId);
+          }
+          await post({type:"blueprintSaved",regenerating:regenerate});
+          if (regenerate) {
+            const artifact=await downloadApplicationArtifact({applicationId,applicationName:String((canonical.specification.info as any).title),
+              expectedSpecId:canonical.specId, selectedWorkspace:destination, selectedProjectRoot:projectRoot,confirmedInstallRoot,
+              applicationVersion:String((canonical.specification.info as any).version),
+              jwtToken:await assertSession(), assertCurrent:check,
+              recoveryDirectory:context.globalStorageUri && path.join(context.globalStorageUri.fsPath,"generation-recovery"),
+              onProgress:async status=>post({type:"blueprintProgress",status})});
+            await check(); await post({type:"blueprintGenerated",artifact:{extractedPath:artifact.extractedPath}});
+          }
+        }
+      } catch(error) {
+        await post({type:"blueprintError",error:error instanceof ValkyrLabsApiError && error.status===409
+          ? "The Blueprint changed elsewhere. Download your draft, reload, and reconcile before saving."
+          : error instanceof Error ? error.message : "Blueprint operation failed."});
+      } finally { busy=false; }
+    });
+    panel.webview.html=hostedBlueprintHtml(Boolean(applicationId));
+  }
+}

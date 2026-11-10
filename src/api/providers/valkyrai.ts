@@ -197,6 +197,8 @@ export class ValkyraiHandler implements ApiHandler {
         streamedAnyChunk = true;
         if (event.type === "reasoning") {
           yield { type: "reasoning", reasoning: event.reasoning };
+        } else if (event.type === "progress") {
+          yield { type: "progress", message: event.message };
         } else if (event.type === "text") {
           yield { type: "text", text: event.text };
         } else if (event.type === "usage") {

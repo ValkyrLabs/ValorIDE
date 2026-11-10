@@ -435,6 +435,7 @@ export type ValorIDESay =
   | "api_req_finished"
   | "text"
   | "reasoning"
+  | "provider_status"
   | "graymatter_context"
   | "completion_result"
   | "user_feedback"

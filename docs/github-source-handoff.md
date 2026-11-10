@@ -1,6 +1,6 @@
 # Immutable GitHub source handoff
 
-ValorIDE publishes reviewed project paths through the existing vscode.git API, then optionally selects the exact pushed commit for canonical generation. Save alone never pushes. Local Git authentication remains with VS Code; the server handoff uses an existing authorized Application repository binding and never transfers that client token.
+ValorIDE’s **Commit & Push** action uses VS Code Git, verifies the remote branch’s exact SHA, then selects that immutable commit for canonical generation and requests refresh of running hosted instances. Save alone never pushes. Local Git authentication stays with VS Code; the server uses the Application’s existing authorized repository binding. See the [round-trip guide](project-roundtrip.md) for setup and recovery.
 
 ## Authenticated developer APIs
 
@@ -22,7 +22,7 @@ The connector remains bean gitHubModule, class com.valkyrlabs.workflow.modules.s
 
 An attached binding must be active, untrashed, provider GITHUB, and identify a canonical credential-free github.com repository URL consistent with its owner/name. Public repositories can use the binding without a token. A private repository uses the binding's existing verified authorized IntegrationAccount via the current secure-field getter. Reconnect a missing, closed, errored or masked connection through the existing supported account flow. Creating any new durable credential requires separate user authorization.
 
-Fetching uses the canonical GitHub API, with redirects disabled and bounded connect/read/call timeouts. The server verifies the requested commit, its exact complete tree and each selected blob's Git SHA-1 and size before creating a deterministic ZIP and SHA-256. Truncated trees, unsafe paths, symlinks, submodules, ambiguous names, secret files and excessive responses/expansion are rejected. Selecting a project directory does not fetch another project's blobs. A successful Actions dispatch is not a source revision.
+The server resolves the exact commit and complete Git tree using the canonical GitHub API. For larger whole repositories it downloads a commit-pinned archive, checking every file against the tree's blob SHA-1 and size before producing a deterministic ZIP and SHA-256. The archive request permits only the expected GitHub codeload redirect for the same repository and commit, without forwarding credentials. Small repositories and selections scoped to a subdirectory fetch only the selected blobs. Truncated trees, unsafe paths, symlinks, submodules, ambiguous names, secret files and excessive responses/expansion are rejected. A successful Actions dispatch is not a source revision.
 
 ## Canonical developer storage and regeneration
 
@@ -43,3 +43,7 @@ This bridge does not use FileUpload/Media scanning for new developer ZIPs, chang
 Focused local tests use real Git commit/push fixtures and Git object responses, generated-model/H2 BuildProfile persistence, private in-memory S3 fixtures, exact admitted revision checks, custom Java compile/run, canonical export and the production native importer. Separate generation regressions cover existing acceptance/billing ordering; method-security and storage tests cover current read/write grants and cross-Application/organization denial. The combined fixture's receipt/runtime collaborators are mocks, explicitly labelled local_isolated_fixture in evidence.
 
 A live private GitHub binding, real private S3 parity and a successful actual Application generation/export receipt still need verification in the authorized deployment. No live push, deployment, persistent credential creation, bucket/IAM/ACL change, workflow enablement or schedule activation is performed by these local changes. The clipping infrastructure owner separately owns parity for the existing 13 developer FileRecords; these tests do not verify or modify that migration.
+
+To repeat the cross-repository contract check, run ValkyrAI's `ApplicationSourceSnapshotServiceTest` with `-Dvalkyrai.roundtrip.evidenceDirectory=<temporary directory>`. Then run ValorIDE's `src/services/localProjectImport.test.ts` with `VALORIDE_BACKEND_EXPORT_FIXTURE=<temporary directory>/backend-roundtrip-local-export.zip`. Without that environment variable the cross-repository case is skipped.
+
+Before enabling hosted refresh, use an authorized staging app already running on Valkyr. Push a visible change, note the verified Git SHA, and confirm the *existing endpoint* serves that change after the same operation and SHA are reported healthy. Retry unchanged and verify there is no second rollout or debit. A failed health check must leave the previous revision serving; a stopped instance must stay stopped.

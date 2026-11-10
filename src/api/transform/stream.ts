@@ -2,6 +2,7 @@ export type ApiStream = AsyncGenerator<ApiStreamChunk>;
 export type ApiStreamChunk =
   | ApiStreamTextChunk
   | ApiStreamReasoningChunk
+  | { type: "progress"; message: string }
   | ApiStreamUsageChunk;
 
 export interface ApiStreamTextChunk {

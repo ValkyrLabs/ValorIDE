@@ -1,3 +1,4 @@
+import { ScreenHeader } from "../../common/ScreenHeader";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
 import { TabList, TabButton } from "../../common/TabList";
@@ -61,21 +62,9 @@ const McpConfigurationView = ({ onDone, initialTab, onOpenSettings }: McpViewPro
           flexDirection: "column",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px 17px 5px 20px",
-          }}
-        >
-          <h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>
-            MCP Servers
-          </h3>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <VSCodeButton onClick={onDone}>Done</VSCodeButton>
-          </div>
-        </div>
+        <ScreenHeader title="MCP Servers">
+          <VSCodeButton appearance="secondary" onClick={onDone}>Done</VSCodeButton>
+        </ScreenHeader>
 
         <div style={{ flex: 1, overflow: "auto" }}>
           <OfflineBanner onOpenSettings={onOpenSettings} style={{ margin: "0 20px 12px" }} />

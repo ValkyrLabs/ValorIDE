@@ -2007,69 +2007,83 @@ export const ChatRowContent = ({
       }
       case "readFile":
         return (
-          <>
-            <div style={headerStyle}>
-              {toolIcon(FaFileCode)}
-              {tool.operationIsLocatedInWorkspace === false &&
-                toolIcon(
-                  FaSignOutAlt,
-                  "yellow",
-                  -90,
-                  "This file is outside of your workspace",
-                )}
-              <span style={{ fontWeight: "bold" }}>
-                ValorIDE reading this file:
-              </span>
-            </div>
+          <div
+            style={{
+              borderRadius: "var(--valoride-chat-radius, 14px)",
+              backgroundColor: CODE_BLOCK_BG_COLOR,
+              overflow: "hidden",
+              border: "none",
+            }}
+          >
             <div
+              role="button"
+              tabIndex={0}
+              aria-label={`Open file ${tool.path}`}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.currentTarget.click();
+                }
+              }}
               style={{
-                borderRadius: "var(--valoride-chat-radius, 14px)",
-                backgroundColor: CODE_BLOCK_BG_COLOR,
-                overflow: "hidden",
-                border: "none",
+                color: "var(--vscode-descriptionForeground)",
+                display: "flex",
+                alignItems: "center",
+                padding: "9px 10px",
+                cursor: "pointer",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                msUserSelect: "none",
+              }}
+              onClick={() => {
+                FileServiceClient.openFile({ value: tool.content }).catch(
+                  (err) => console.error("Failed to open file:", err),
+                );
               }}
             >
-              <div
+              <span
                 style={{
-                  color: "var(--vscode-descriptionForeground)",
-                  display: "flex",
+                  display: "inline-flex",
                   alignItems: "center",
-                  padding: "9px 10px",
-                  cursor: "pointer",
-                  userSelect: "none",
-                  WebkitUserSelect: "none",
-                  MozUserSelect: "none",
-                  msUserSelect: "none",
-                }}
-                onClick={() => {
-                  FileServiceClient.openFile({ value: tool.content }).catch(
-                    (err) => console.error("Failed to open file:", err),
-                  );
+                  gap: 6,
+                  marginRight: 8,
+                  flexShrink: 0,
                 }}
               >
-                {tool.path?.startsWith(".") && <span>.</span>}
-                <span
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    marginRight: "8px",
-                    direction: "rtl",
-                    textAlign: "left",
-                  }}
-                >
-                  {cleanPathPrefix(tool.path ?? "") + "\u200E"}
-                </span>
-                <div style={{ flexGrow: 1 }}></div>
-                <FaExternalLinkAlt
-                  style={{
-                    fontSize: 13.5,
-                    margin: "1px 0",
-                  }}
-                />
-              </div>
+                {toolIcon(FaFileCode, undefined, undefined, "Read file")}
+                {tool.operationIsLocatedInWorkspace === false &&
+                  toolIcon(
+                    FaSignOutAlt,
+                    "yellow",
+                    -90,
+                    "This file is outside of your workspace",
+                  )}
+              </span>
+              {tool.path?.startsWith(".") && <span>.</span>}
+              <span
+                style={{
+                  minWidth: 0,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  marginRight: "8px",
+                  direction: "rtl",
+                  textAlign: "left",
+                }}
+              >
+                {cleanPathPrefix(tool.path ?? "") + "\u200E"}
+              </span>
+              <div style={{ flexGrow: 1 }}></div>
+              <FaExternalLinkAlt
+                style={{
+                  flexShrink: 0,
+                  fontSize: 13.5,
+                  margin: "1px 0",
+                }}
+              />
             </div>
-          </>
+          </div>
         );
       case "listFilesTopLevel":
         return (
@@ -2723,6 +2737,8 @@ export const ChatRowContent = ({
             </div>
           );
         }
+        case "provider_status":
+          return <div role="status" className="valoride-provider-status"><small>Provider status · {message.text}</small></div>;
         case "reasoning":
           if (!message.text) {
             return null;

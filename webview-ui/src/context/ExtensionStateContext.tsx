@@ -25,7 +25,6 @@ import {
 import { findLastIndex } from "@shared/array";
 import { McpMarketplaceCatalog, McpServer } from "../../../src/shared/mcp";
 import { convertTextMateToHljs } from "../utils/textMateToHljs";
-import { setTheme as setValkyrTheme } from "../themes";
 import { vscode } from "../utils/vscode";
 import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
@@ -301,18 +300,9 @@ export const ExtensionStateContextProvider: React.FC<{
       }
       case "theme": {
         if (message.text) {
-          setThemeState(convertTextMateToHljs(JSON.parse(message.text)));
-          // Also set Valkyr theme for UI
           try {
-            const themeObj = JSON.parse(message.text);
-            let themeName = "valkyr";
-            if (themeObj && (themeObj.name || themeObj.type)) {
-              const n = String(
-                themeObj.name || themeObj.type || "",
-              ).toLowerCase();
-              if (n.includes("dark")) themeName = "dark";
-            }
-            setValkyrTheme(themeName, { persist: false });
+            // TextMate metadata controls syntax highlighting, not the user's UI theme.
+            setThemeState(convertTextMateToHljs(JSON.parse(message.text)));
           } catch (error) {
             console.warn("Failed to apply theme metadata", error);
           }

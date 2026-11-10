@@ -3,6 +3,12 @@ import {
   parseWorkflowStudioTarget,
   isWorkflowStudioId,
 } from "@shared/WorkflowStudioTarget";
+import {
+  reconciliationContract,
+  isReconciliationCorrectness,
+  reconciliationCorrectness,
+  readInvoiceReconciliation,
+} from "@shared/InvoiceReconciliationResult";
 import { vscode } from "../../utils/vscode";
 
 const labels: Record<string, string> = {
@@ -161,6 +167,67 @@ function ProcedureCandidateReview({
         </button>
       )}
     </li>
+  );
+}
+
+function ReconciliationReceipt({ receipt }: { receipt: unknown }) {
+  if (
+    !isRecord(receipt) ||
+    receipt.contractId !== reconciliationContract ||
+    !isReconciliationCorrectness(receipt.correctness) ||
+    ![
+      receipt.definitionSnapshotHash,
+      receipt.resultChecksum,
+      receipt.contractHash,
+    ].every(
+      (digest) => typeof digest === "string" && /^[0-9a-f]{64}$/.test(digest),
+    )
+  )
+    return <p>Verified business result unavailable.</p>;
+  const report = readInvoiceReconciliation(receipt.result);
+  if (!report) return <p>Verified business result unavailable.</p>;
+  return (
+    <section
+      aria-label="Invoice reconciliation"
+      style={{
+        borderTop: "1px solid var(--vscode-panel-border)",
+        padding: "8px 0",
+      }}
+    >
+      <strong>Invoice reconciliation</strong>
+      <p>
+        {report.matchedCount} of {report.invoiceCount} invoices matched ·{" "}
+        {report.unmatchedCount} unmatched
+      </p>
+      <p>{reconciliationCorrectness[receipt.correctness]}</p>
+      <details>
+        <summary>Inspect reconciliation evidence</summary>
+        {report.unmatchedCount > 0 && (
+          <>
+            <p>Unmatched invoices</p>
+            <ul>
+              {report.unmatchedInvoiceIds.map((id) => (
+                <li key={id}>
+                  <code>{id}</code>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        <dl>
+          <dt>Customers inspected</dt>
+          <dd>{report.customerCount}</dd>
+          <dt>Data snapshot</dt>
+          <dd>
+            <code>{report.snapshotRef}</code>
+          </dd>
+          <dt>Result checksum</dt>
+          <dd>
+            <code>{receipt.resultChecksum}</code>
+          </dd>
+        </dl>
+      </details>
+    </section>
   );
 }
 
@@ -377,6 +444,15 @@ export default function ProcedureToolCard({
         </span>
       </div>
       <p style={{ margin: "8px 0", lineHeight: 1.5 }}>{description}</p>
+      {data.action === "status" &&
+        data.phase === "result" &&
+        state === "SUCCESS" &&
+        studioTarget?.workflowVersionId &&
+        (result.businessResultStatus === "available" ? (
+          <ReconciliationReceipt receipt={result.businessResult} />
+        ) : result.businessResultStatus === "unavailable" ? (
+          <p>Verified business result unavailable.</p>
+        ) : null)}
       {detailEntries.length > 0 && (
         <dl style={{ margin: "8px 0", fontSize: 12 }}>
           {detailEntries.map(([label, value]) => (

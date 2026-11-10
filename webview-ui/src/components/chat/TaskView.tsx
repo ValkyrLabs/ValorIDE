@@ -213,6 +213,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           "browser_action_result",
           "checkpoint_created",
           "reasoning",
+          "provider_status",
         ].includes(message.say!);
       }
       return false;

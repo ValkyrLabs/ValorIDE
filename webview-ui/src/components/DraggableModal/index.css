@@ -18,9 +18,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: rgba(20, 22, 26, 0.92) !important;
+  background: var(--valoride-surface) !important;
   color: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--valoride-line);
   box-shadow: 0 14px 38px rgba(0, 0, 0, 0.45);
 }
 
@@ -47,7 +47,7 @@
   padding: 0.35rem 0.8rem;
   border-radius: 999px;
   border: none;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--valoride-surface-inset);
   color: inherit;
   font-size: 0.82rem;
   cursor: pointer;
@@ -57,8 +57,7 @@
 }
 
 .draggable-modal-expand:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
+  background: var(--valoride-surface-hover);
 }
 
 .draggable-modal-expand span {
@@ -110,7 +109,7 @@
   position: absolute !important;
   bottom: 24px !important;
   right: 24px !important;
-  color: blue;
+  color: var(--valoride-accent);
   top: auto !important;
   left: auto !important;
   z-index: 9999;

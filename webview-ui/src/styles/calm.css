@@ -5,13 +5,25 @@
   --valoride-surface: color-mix(in srgb, var(--valoride-background) 94%, var(--valoride-foreground) 6%);
   --valoride-surface-hover: color-mix(in srgb, var(--valoride-background) 90%, var(--valoride-foreground) 10%);
   --valoride-surface-inset: color-mix(in srgb, var(--valoride-background) 97%, var(--valoride-foreground) 3%);
-  --valoride-radius: 14px;
-  --valoride-control-radius: 10px;
+  --valoride-muted: var(--vscode-descriptionForeground, color-mix(in srgb, var(--valoride-foreground) 78%, var(--valoride-background)));
+  --valoride-line: var(--vscode-contrastBorder, color-mix(in srgb, var(--valoride-foreground) 17%, var(--valoride-background)));
+  --valoride-accent: var(--vscode-textLink-foreground, #75beff);
+  --valoride-radius: 8px;
+  --valoride-control-radius: 5px;
   --valoride-gap: 12px;
   --valoride-focus: var(--vscode-focusBorder, #007fd4);
 }
 
 body.valoride-calm {
+  --bs-body-bg: var(--valoride-background);
+  --bs-body-color: var(--valoride-foreground);
+  --bs-emphasis-color: var(--valoride-foreground);
+  --bs-secondary-color: var(--valoride-muted);
+  --bs-secondary-bg: var(--valoride-surface);
+  --bs-tertiary-bg: var(--valoride-surface-inset);
+  --bs-border-color: var(--valoride-line);
+  --bs-link-color: var(--valoride-accent);
+  --bs-primary: var(--vscode-button-background, #345a88);
   font-family: var(--vscode-font-family, system-ui, sans-serif);
   font-size: var(--vscode-font-size, 13px);
   line-height: 1.45;
@@ -25,10 +37,7 @@ body.valoride-calm {
   background: var(--valoride-background);
   --input-background: var(--valoride-surface);
   --input-border: transparent;
-  --corner-radius: 10px;
-}
-.valoride-app *, body.valoride-calm :is(.modal, .ant-modal, .draggable-modal) * {
-  font-weight: 400 !important;
+  --corner-radius: var(--valoride-control-radius);
 }
 .valoride-app :is(h1,h2,h3,h4,h5,h6,p,label,button,.nav-link),
 body.valoride-calm .modal :is(h1,h2,h3,h4,h5,h6,p,label,button) {
@@ -37,6 +46,7 @@ body.valoride-calm .modal :is(h1,h2,h3,h4,h5,h6,p,label,button) {
 }
 .valoride-app :is(h1,h2,h3,h4,h5,h6) {
   color: var(--valoride-foreground);
+  font-weight: 600;
   line-height: 1.4;
 }
 .valoride-app :is(.valoride-surface,.card,.history-preview-card,.history-preview-item,
@@ -46,9 +56,9 @@ body.valoride-calm .modal :is(h1,h2,h3,h4,h5,h6,p,label,button) {
   .skillopt-route-explanation,.skillopt-route-metric,.receipt-trace-summary-item,
   .server-console,.build-mode__panel,.build-mode__stat,.build-mode__item,.capability-command-center__pill,
   .capability-command-center__command,.capability-command-center__quota,
-  .border,div[style*="border: 1px solid"]) {
+  .valoride-chat-card) {
   background: var(--valoride-surface) !important;
-  border: 0 !important;
+  border: 1px solid var(--vscode-contrastBorder, transparent) !important;
   border-radius: var(--valoride-radius) !important;
   box-shadow: none !important;
   transform: none !important;
@@ -175,7 +185,7 @@ body.valoride-calm .modal :is(button,a,input,textarea,select):focus-visible {
   font-size: 12px; line-height: 1.45; overflow-wrap: anywhere;
 }
 .valoride-notice--warn { color: var(--valoride-foreground); }
-.valoride-notice--warn::before { content: ""; width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--vscode-notificationsWarningIcon-foreground, #cca700); }
+.valoride-notice--warn > span::before { content: ""; display: inline-block; vertical-align: middle; width: 6px; height: 6px; margin-inline-end: 7px; border-radius: 50%; background: var(--vscode-notificationsWarningIcon-foreground, #cca700); }
 .valoride-notice--error { color: var(--vscode-errorForeground, #f48771); }
 .valoride-app :is(.error-message,.file-explorer-error,.context-page-alert,.tenant-app-generation-alert,
   .receipt-trace-alert,.alert,.inputValidation-error) {
@@ -255,3 +265,58 @@ body.valoride-calm :is(.modal-header,.modal-footer) { border: 0; background: tra
   text-transform: none;
 }
 .valoride-app .server-console :is(.status-icon,.message-row) { animation: none; }
+
+/* Give interactive and informational surfaces distinct roles without a rainbow of panels. */
+html[data-bs-theme="light"] { color-scheme: light; }
+html[data-bs-theme="dark"] { color-scheme: dark; }
+.valoride-app .applications-section-header h3 { font-size: 1em; }
+.valoride-app .applications-section-header span { font-variant-numeric: tabular-nums; }
+.valoride-app .application-card { padding: 12px; container-type: inline-size; }
+.valoride-app .application-row { border: 0; }
+.valoride-app .application-description { margin-top: 6px; line-height: 1.5; font-size: 1em; }
+.valoride-app .application-name { font-size: 1.08em; }
+.valoride-app .applications-section-list { gap: 6px; }
+.valoride-app .application-buttons { gap: 4px; }
+@container (max-width: 460px) {
+  .valoride-app .application-card-content.application-card-with-actions { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .valoride-app .application-buttons {
+    display: flex; flex-flow: row wrap; width: 100%; padding-top: 8px;
+    border-top: 1px solid var(--valoride-line);
+  }
+  .valoride-app .application-buttons vscode-button { width: auto; max-width: 100%; }
+}
+.valoride-app .valoride-screen-header { flex-wrap: wrap; flex-shrink: 0; gap: 8px; border-bottom: 1px solid var(--valoride-line); padding: 8px 0; margin: 0 16px 10px; }
+.valoride-app .account-screen .valoride-screen-header { margin-inline: 0; }
+.valoride-app .settings-screen .valoride-screen-header { margin-inline-start: 0; }
+.valoride-screen-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.valoride-auth-form { display: grid; gap: 12px; }
+.valoride-auth-form .nice-form-control { display: grid; gap: 4px; }
+.valoride-app .valoride-auth-form .form-control { border: 1px solid var(--valoride-line) !important; border-radius: var(--valoride-control-radius); }
+.valoride-chat-welcome { padding: clamp(20px, 5vw, 36px) 18px; max-width: 42em; }
+.valoride-chat-welcome .valoride-wordmark { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--valoride-muted); text-decoration: none; }
+.valoride-wordmark svg { width: 16px; height: 17px; }
+.valoride-wordmark svg path { fill: currentColor; }
+.valoride-chat-welcome h2 { margin: 14px 0 4px; font-size: clamp(18px, 1.5em, 24px); }
+.valoride-chat-welcome p,.valoride-empty-state p { margin: 0 0 10px; max-width: 44ch; color: var(--valoride-muted); }
+.valoride-empty-state { padding: 18px; }
+.valoride-empty-state h3 { font-size: 1em; margin: 0 0 4px; }
+.valoride-connections summary { cursor: pointer; padding: 3px 4px; font-size: 0.95em; }
+.valoride-connections summary small { margin-inline-start: 0.5em; color: var(--valoride-muted); font-variant-numeric: tabular-nums; }
+.valoride-connections[open] > summary { margin-bottom: 6px; }
+.valoride-app .build-mode__status-pill { color: var(--valoride-foreground); }
+.valoride-app .build-mode__status-pill--warn svg { color: var(--vscode-editorWarning-foreground, currentColor); }
+.valoride-app .build-mode__status-pill--danger svg { color: var(--vscode-errorForeground); }
+.valoride-app .build-mode__status-pill--good svg { color: var(--vscode-testing-iconPassed); }
+.valoride-app .application-status[class] { background-color: var(--valoride-surface-inset); color: var(--valoride-foreground); border: 1px solid var(--valoride-line); }
+.valoride-app .valoride-screen-header > :is(h1,h2,h3) { margin: 0; font-size: 1.08em; }
+.valoride-app .valoride-tabs { scrollbar-width: thin; }
+.valoride-app :is(.valoride-tab,.lcars-account-tab-link)[aria-selected="true"] {
+  box-shadow: inset 0 -2px var(--valoride-accent) !important;
+}
+.valoride-app :is(pre,code,kbd) { font-family: var(--vscode-editor-font-family, ui-monospace, monospace); }
+body.valoride-calm :is(.modal-content,.ant-modal-content,.dropdown-menu,.popover) {
+  outline: 1px solid var(--valoride-line);
+}
+body:is(.vscode-high-contrast,.vscode-high-contrast-light) :is(button,[role="button"],[role="tab"],input,textarea,select,.card,.valoride-chat-card,.valoride-notice) {
+  outline: 1px solid var(--vscode-contrastBorder, currentColor);
+}

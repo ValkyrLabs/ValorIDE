@@ -1,23 +1,5 @@
 /* Base styling for the entire app */
 
-body {
-  --vscode-editor-line-height: 2em;
-  font-family: "Orbitron", sans-serif;
-  /*  background: linear-gradient(rgba(0, 0, 0, 1), rgba(255, 255, 255, 0.25));
-  url("./assets/images/heimdallm-toon.png") top center/cover;*/
-}
-
-h1 {
-  color: orange;
-}
-
-h4 {
-  color: orange;
-}
-
-p {
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 .bigReveal {
   padding: 5em;
@@ -257,15 +239,7 @@ button > .nav-link:active:hover {
 }
 
 /* Links and other elements */
-a,
-.btn-link {
-  color: var(--accent-color);
-}
-
-a:hover,
-.btn-link:hover {
-  /*color: darken(var(--accent-color), 30%);*/
-}
+.valoride-app :where(a,.btn-link) { color: var(--vscode-textLink-foreground); }
 
 /* Specific overrides or additional customizations */
 .custom-class {
@@ -365,11 +339,6 @@ a:hover,
   transition: background-color 0.3s ease;
 }
 
-button {
-  width: 100px;
-  border: 1 solid black;
-  color: #fff;
-}
 
 /* Glowing button styles (inspired by chat text area) */
 .glow-button {
@@ -743,10 +712,8 @@ footer a:hover {
 /** FORMIK/FORMS SECTION **/
 
 .form {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.5em;
-  margin: 0.25em;
-  border-radius: 5px;
+  background: transparent;
+  margin: 0;
 }
 
 /*.okCheck {
@@ -755,17 +722,10 @@ footer a:hover {
 }&*/
 
 .error {
-  margin-top: -5em;
-  margin-left: 7em;
-  padding: 1em;
-  font-weight: bold;
-  color: #bbff00;
-
-  float: right;
-  border-radius: 5px;
-  border-width: 20;
-  border-color: black;
-  background-color: rgba(255, 0, 0, 0.5);
+  margin: 4px 0 0;
+  color: var(--vscode-errorForeground);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
 }
 
 .nice-form-control {
@@ -774,9 +734,9 @@ footer a:hover {
 
 /* Aurora themed form inputs and buttons */
 .aurora-input {
-  background: rgba(10, 15, 20, 0.5);
-  border: 1px solid #2d3b4a;
-  color: #f3f6ff;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--valoride-line);
+  color: var(--vscode-input-foreground);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 1rem;
@@ -787,16 +747,13 @@ footer a:hover {
     background 0.15s ease;
 }
 .aurora-input:focus {
-  outline: none;
-  border-color: #1ee5ff;
-  background: rgba(30, 229, 255, 0.05);
-  box-shadow: 0 0 15px rgba(30, 229, 255, 0.18);
+  outline: 1px solid var(--valoride-focus);
 }
 
 .aurora-button {
-  background: #ff9900;
-  border: 1px solid #ff9900;
-  color: #05060b;
+  background: var(--vscode-button-background);
+  border: 1px solid var(--vscode-contrastBorder, transparent);
+  color: var(--vscode-button-foreground);
   padding: 0.6rem 1rem;
   border-radius: 6px;
   font-weight: 600;
@@ -805,11 +762,9 @@ footer a:hover {
     background 200ms ease,
     box-shadow 200ms ease,
     transform 120ms ease;
-  box-shadow: 0 0 15px rgba(30, 229, 255, 0.18);
 }
 .aurora-button:hover:not(:disabled) {
-  background: #ffb347;
-  box-shadow: 0 0 18px rgba(255, 153, 0, 0.26);
+  background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
   transform: translateY(-1px);
 }
 .aurora-button:disabled {
@@ -1083,10 +1038,6 @@ footer a:hover {
   /*transform: scale(1.04);*/
 }
 
-label {
-  width: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5));
-}
 
 /* Responsive styling for smaller devices */
 

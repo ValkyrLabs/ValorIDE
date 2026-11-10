@@ -3,13 +3,12 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 
 import App from "./App";
-import OpenAPIEditorStandalone from "./components/openapi/OpenAPIEditorStandalone";
 // Initialize ThorAPI/STOMP bridge so CommunicationService can relay to mothership
 import "./P2P/thorBridge";
 
 // import reportWebVitals from "./reportWebVitals"
 
-import { initThemes, setTheme } from "./themes";
+import { initThemes } from "./themes";
 initThemes();
 
 const ensureVsCodeBridge = () => {
@@ -59,26 +58,6 @@ try {
   // ignore
 }
 
-// Listen for VSCode theme messages and sync Valkyr theme
-window.addEventListener("message", (event) => {
-  const msg = event.data;
-  if (msg && msg.type === "theme" && msg.text) {
-    try {
-      // Try to detect dark/light from the theme name or content
-      const themeObj = JSON.parse(msg.text);
-      // Heuristic: if theme name or type contains 'dark', use dark, else use valkyr (light)
-      let themeName = "valkyr";
-      if (themeObj && (themeObj.name || themeObj.type)) {
-        const n = String(themeObj.name || themeObj.type || "").toLowerCase();
-        if (n.includes("dark")) themeName = "dark";
-      }
-      setTheme(themeName);
-    } catch (e) {
-      // fallback: do nothing
-    }
-  }
-});
-import "./themes/valkyr/bootstrap.css";
 import "./App.css";
 import "./index.css";
 import "antd/dist/reset.css";
@@ -100,12 +79,6 @@ const root = ReactDOM.createRoot(
 
 import ErrorBoundary from "./components/common/ErrorBoundary";
 
-const webviewMode =
-  typeof window !== "undefined"
-    ? (window as any).__valorideWebviewMode
-    : undefined;
-const RootComponent =
-  webviewMode === "openapi-editor" ? OpenAPIEditorStandalone : App;
 
 root.render(
   <ReduxProvider store={store}>
@@ -120,7 +93,7 @@ root.render(
         }}
       >
         <div className="valoride-app">
-          <RootComponent />
+          <App />
         </div>
       </ErrorBoundary>
     </MemoryRouter>

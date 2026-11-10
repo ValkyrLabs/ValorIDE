@@ -40,5 +40,6 @@
       "test"
     ],
     "extractWith": "syntax"
-  }
+  },
+  "git.ignoreLimitWarning": true
 }

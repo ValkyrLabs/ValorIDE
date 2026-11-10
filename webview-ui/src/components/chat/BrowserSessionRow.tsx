@@ -239,6 +239,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         message.say === "api_req_started" ||
         message.say === "text" ||
         message.say === "reasoning" ||
+        message.say === "provider_status" ||
         message.say === "browser_action"
       ) {
         // These messages lead to the next result, so they should always go in nextActionMessages
@@ -617,6 +618,7 @@ const BrowserSessionRowContent = ({
         case "api_req_started":
         case "text":
         case "reasoning":
+        case "provider_status":
           return (
             <div style={chatRowContentContainerStyle}>
               <ChatRowContent

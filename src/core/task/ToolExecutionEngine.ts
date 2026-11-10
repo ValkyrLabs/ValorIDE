@@ -71,6 +71,8 @@ export class ToolExecutionEngine {
     this.hookService = new ValorIDEHookService({
       cwd: this.cwd,
       taskId: this.task.taskId,
+      // Workspace hooks run before ordinary tool approval and are not ACP permissions.
+      enabled: this.task.isExternalAgentTask?.() ? false : undefined,
     });
 
     // Create ToolContext from task properties
@@ -89,6 +91,7 @@ export class ToolExecutionEngine {
       getProcedureClient: this.task.getProcedureClient?.bind(this.task),
       getChatMode: () => this.task.chatSettings?.mode,
       isTaskActive: () => !this.task.abort && !this.task.abandoned,
+      isExternalAgentTask: () => this.task.isExternalAgentTask?.() === true,
       recordAutoApprovedRequest: () => {
         this.task.consecutiveAutoApprovedRequestsCount++;
       },

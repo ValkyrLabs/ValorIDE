@@ -23,7 +23,7 @@ import {
 } from "./openai-native-auth";
 import { normalizeOpenAiUsageChunk } from "../transform/openai-usage";
 import {
-  extractOpenAiResponsesReasoningText,
+  OpenAiSummaryStream,
   isOpenAiResponsesCompletedEvent,
   takeOpenAiResponsesEventsThroughCompletion,
 } from "./openai-native-events";
@@ -194,7 +194,7 @@ export class OpenAiNativeHandler implements ApiHandler {
     isOAuth: boolean,
   ): ApiStream {
     const model = this.getModel();
-    const emittedReasoning = new Set<string>();
+    const summaries = new OpenAiSummaryStream();
     const stream = await client.responses.create({
       model: model.id,
       instructions: isOAuth
@@ -214,9 +214,8 @@ export class OpenAiNativeHandler implements ApiHandler {
     for await (const event of takeOpenAiResponsesEventsThroughCompletion(
       stream as AsyncIterable<ResponseStreamEvent>,
     )) {
-      const reasoningText = extractOpenAiResponsesReasoningText(event);
-      if (reasoningText && !emittedReasoning.has(reasoningText)) {
-        emittedReasoning.add(reasoningText);
+      const reasoningText = summaries.consume(event);
+      if (reasoningText) {
         yield {
           type: "reasoning",
           reasoning: reasoningText,
@@ -240,6 +239,7 @@ export class OpenAiNativeHandler implements ApiHandler {
 
       switch (event.type) {
         case "response.output_text.delta":
+        case "response.refusal.delta":
           if (event.delta) {
             yield {
               type: "text",

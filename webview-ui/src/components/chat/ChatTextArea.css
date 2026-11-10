@@ -1,19 +1,16 @@
 .valoride-chat {
-  --valoride-chat-background: var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e));
-  --valoride-chat-surface: color-mix(in srgb, var(--valoride-chat-background) 94%, var(--vscode-foreground, #ccc) 6%);
-  --valoride-chat-surface-hover: color-mix(in srgb, var(--valoride-chat-background) 90%, var(--vscode-foreground, #ccc) 10%);
-  --valoride-chat-radius: 14px;
+  --valoride-chat-background: var(--valoride-background);
+  --valoride-chat-surface: var(--valoride-surface);
+  --valoride-chat-surface-hover: var(--valoride-surface-hover);
+  --valoride-chat-radius: var(--valoride-radius);
   background: var(--valoride-chat-background);
   color: var(--vscode-foreground);
   font-family: var(--vscode-font-family, system-ui, sans-serif);
   line-height: 1.5;
 }
 
-/* Keep semantic emphasis in the markup, with a quiet, consistent visual weight. */
-.valoride-chat,
-.valoride-chat * {
-  font-weight: 400 !important;
-}
+.valoride-chat { font-weight: 400; }
+.valoride-chat :is(strong,b) { font-weight: 600; }
 
 .valoride-chat p,
 .valoride-chat h1,
@@ -72,21 +69,21 @@
 }
 
 .chat-composer {
-  --chat-composer-glow: #61dafb;
+  --chat-composer-glow: var(--valoride-line);
   position: relative;
   margin: 10px 15px;
   border: none;
   border-radius: var(--valoride-chat-radius, 14px);
   background: var(--valoride-chat-surface, var(--vscode-input-background));
-  box-shadow: 0 0 4px color-mix(in srgb, var(--chat-composer-glow) 16%, transparent);
+  box-shadow: inset 0 0 0 1px var(--chat-composer-glow);
 }
 
 .chat-composer:has(.chat-text-area.waiting) {
-  --chat-composer-glow: #ff9900;
+  --chat-composer-glow: var(--valoride-line);
 }
 
 .chat-composer:has(.chat-text-area.sad) {
-  --chat-composer-glow: #ff5555;
+  --chat-composer-glow: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));
 }
 
 .chat-composer:has(.chat-text-area.waiting, .chat-text-area.sad, .chat-text-area.stubborn, .chat-text-area.extended-thinking) {

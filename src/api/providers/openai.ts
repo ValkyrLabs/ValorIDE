@@ -1,4 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk";
+import { compatibleSummary } from "../transform/compatible-narrative";
 import OpenAI, { AzureOpenAI } from "openai";
 import { withRetry } from "../retry";
 import {
@@ -121,6 +122,8 @@ export class OpenAiHandler implements ApiHandler {
     });
     for await (const chunk of stream) {
       const delta = chunk.choices[0]?.delta;
+      const summary = compatibleSummary(delta);
+      if (summary) yield { type: "reasoning", reasoning: summary };
       if (delta?.content) {
         yield {
           type: "text",
@@ -128,12 +131,6 @@ export class OpenAiHandler implements ApiHandler {
         };
       }
 
-      if (delta && "reasoning_content" in delta && delta.reasoning_content) {
-        yield {
-          type: "reasoning",
-          reasoning: (delta.reasoning_content as string | undefined) || "",
-        };
-      }
 
       if (chunk.usage) {
         yield normalizeOpenAiUsageChunk(this.getModel().info, chunk.usage);

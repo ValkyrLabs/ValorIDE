@@ -1,9 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
-import { readGenerationManifest } from "../../services/generatedProjectInstall";
+import { readGitProjectIdentity } from "../../services/projectGitIdentity";
 import { readLegacyProjectIdentity } from "../../services/legacyProjectMigration";
 
-export interface LocalGeneratedProject { name: string; version: string; directory: string; mtime?: number }
+export interface LocalGeneratedProject { name: string; version: string; directory: string; mtime?: number; applicationId?: string }
 
 export async function describeGeneratedProject(directory: string): Promise<LocalGeneratedProject | undefined> {
   try {
@@ -11,8 +11,9 @@ export async function describeGeneratedProject(directory: string): Promise<Local
     if (!stat.isDirectory() || stat.isSymbolicLink()) return undefined;
     const legacyIdentity = await readLegacyProjectIdentity(directory);
     if (legacyIdentity) return { name: `${legacyIdentity.applicationName} v${legacyIdentity.applicationVersion} (legacy)`, version: legacyIdentity.applicationVersion, directory, mtime: stat.mtimeMs };
-    const manifest = await readGenerationManifest(directory);
-    if (manifest) return { name: `${manifest.applicationName} v${manifest.applicationVersion}`, version: manifest.applicationVersion, directory, mtime: stat.mtimeMs };
+    const manifest = await readGitProjectIdentity(directory);
+    if (manifest) return { name: manifest.applicationName + (manifest.applicationVersion ? ` v${manifest.applicationVersion}` : "") + (manifest.fromLineage ? " (Git checkout)" : ""),
+      version: manifest.applicationVersion, directory, mtime: stat.mtimeMs, applicationId: manifest.applicationId };
     const legacy = path.basename(directory).match(/^v(\d+(?:\.\d+)*?)\.(.+)$/i);
     return legacy ? { name: path.basename(directory), version: legacy[1], directory, mtime: stat.mtimeMs } : undefined;
   } catch { return undefined; }

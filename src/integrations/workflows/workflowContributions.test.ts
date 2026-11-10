@@ -41,4 +41,24 @@ describe("project and workflow view contributions", () => {
       when: "view == valoride-dev.WorkflowProjectsView",
     });
   });
+  it("ships the form templates and makes binding reachable from a workflow row and a trusted TS editor", () => {
+    const cmd = "valoride.workflows.bindAction";
+    expect(manifest.files).toContain("assets/workflow-binding/");
+    expect(manifest.contributes.commands).toContainEqual(
+      expect.objectContaining({ command: cmd, icon: "$(link)" }),
+    );
+    expect(
+      manifest.contributes.menus["view/item/context"].find(
+        (item: any) => item.command === cmd,
+      ),
+    ).toMatchObject({
+      group: "inline@1",
+      when: expect.stringContaining("valkyrWorkflowProject"),
+    });
+    expect(
+      manifest.contributes.menus["editor/context"].find(
+        (item: any) => item.command === cmd,
+      ).when,
+    ).toContain("typescriptreact");
+  });
 });

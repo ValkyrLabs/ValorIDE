@@ -51,6 +51,7 @@ export interface ToolContext {
   recordCommandOutcome?: (command: string, outcome: ToolExecutionOutcome) => void;
   getChatMode?: () => "plan" | "act";
   isTaskActive?: () => boolean;
+  isExternalAgentTask?: () => boolean;
 
   // State
   taskId: string;

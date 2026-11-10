@@ -1,0 +1,36 @@
+{
+  "vectorVersion": "valoride-acp-host-encoding/draft-1",
+  "productionRouteEnabled": false,
+  "scope": "synthetic byte vectors; not credentials, challenges, grants or a complete task-envelope renderer",
+  "workspace": {
+    "input": {
+      "canonicalUri": "file:///fixture/Workspace%20One",
+      "rootDevice": "18446744073709551615",
+      "rootInode": "9007199254740993",
+      "hostProcessEpoch": "fixture-process-1",
+      "hostConnectionId": "fixture-connection-1",
+      "hostSessionId": "fixture-session-1",
+      "workspaceTrustGeneration": "7"
+    },
+    "canonicalText": "[\"valoride-acp-workspace/v1\",\"file:///fixture/Workspace%20One\",\"18446744073709551615\",\"9007199254740993\",\"fixture-process-1\",\"fixture-connection-1\",\"fixture-session-1\",\"7\"]",
+    "utf8Hex": "5b2276616c6f726964652d6163702d776f726b73706163652f7631222c2266696c653a2f2f2f666978747572652f576f726b73706163652532304f6e65222c223138343436373434303733373039353531363135222c2239303037313939323534373430393933222c22666978747572652d70726f636573732d31222c22666978747572652d636f6e6e656374696f6e2d31222c22666978747572652d73657373696f6e2d31222c2237225d",
+    "digest": "sha256:47dd89b55258c797684b33faab72c7e39372a50fa785d45aba61aceea581bd99"
+  },
+  "prompts": [
+    {
+      "text": "Inspect the fixture workspace.\nContext: café\n",
+      "utf8Hex": "496e737065637420746865206669787475726520776f726b73706163652e0a436f6e746578743a20636166c3a90a",
+      "digest": "sha256:dcf24e0f8dccfd26b85d1d35fe95a57fc96ef70109e6f563bb4949c90b676552"
+    },
+    {
+      "text": "Inspect the fixture workspace.\nContext: cafe\u0301\n",
+      "utf8Hex": "496e737065637420746865206669787475726520776f726b73706163652e0a436f6e746578743a2063616665cc810a",
+      "digest": "sha256:70e16ec8f9d8709223e0f05e40e5b70fc30ee4eeb3fbada6c621c39be83a0d0c"
+    },
+    {
+      "text": "  Keep spaces.\r\n",
+      "utf8Hex": "20204b656570207370616365732e0d0a",
+      "digest": "sha256:c9bb1f4608f994b9d2ad13070619c29b441c8d1547677c9415bc44c7d0a19362"
+    }
+  ]
+}

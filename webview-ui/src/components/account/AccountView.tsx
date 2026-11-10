@@ -1,3 +1,4 @@
+import { ScreenHeader } from "../common/ScreenHeader";
 import {
   memo,
   useState,
@@ -577,10 +578,9 @@ const AccountView = ({
       }}
     >
       <SystemAlerts />
-      <header className="valoride-screen-header">
-        <h3 style={{ margin: 0 }}>Account</h3>
+      <ScreenHeader title="Account">
         <VSCodeButton appearance="secondary" onClick={onDone}>Done</VSCodeButton>
-      </header>
+      </ScreenHeader>
 
       {peers.length > 0 && (
         <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-3 bg-(--vscode-panel-background) text-(--vscode-foreground)">

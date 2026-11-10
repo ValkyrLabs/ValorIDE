@@ -111,6 +111,68 @@ describe("procedure execution chat card", () => {
       cleanup();
     }
   });
+  it("shows the exact successful run's business result and its separate correctness evidence", () => {
+    const digest = "f".repeat(64);
+    const report = {
+      customerCount: 2,
+      invoiceCount: 3,
+      matchedCount: 2,
+      unmatchedCount: 1,
+      unmatchedInvoiceIds: [id],
+      snapshotRef: "sha256:" + digest,
+    };
+    const receipt = {
+      contractId: "invoice-customer-reconciliation/v1",
+      definitionSnapshotHash: digest,
+      resultChecksum: digest,
+      contractHash: digest,
+      correctness: "unverified",
+      result: report,
+    };
+    const status = {
+      id,
+      workflowId,
+      workflowVersionId: "bfdeef65-350b-46af-a4ad-4bc82586fc4c",
+      state: "SUCCESS",
+      businessResultStatus: "available",
+      businessResult: receipt,
+    };
+    show({ phase: "result", action: "status", backend, result: status });
+    expect(
+      screen.getByRole("region", { name: "Invoice reconciliation" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText("2 of 3 invoices matched · 1 unmatched"),
+    ).toBeTruthy();
+    expect(screen.getByText("No verified fixture comparison")).toBeTruthy();
+    expect(screen.getByText("Inspect reconciliation evidence")).toBeTruthy();
+    cleanup();
+    show({
+      phase: "result",
+      action: "status",
+      backend,
+      result: {
+        ...status,
+        businessResult: {
+          ...receipt,
+          result: { ...report, unmatchedCount: 4 },
+        },
+      },
+    });
+    expect(
+      screen.getByText("Verified business result unavailable."),
+    ).toBeTruthy();
+    cleanup();
+    show({
+      phase: "result",
+      action: "status",
+      backend,
+      result: { ...status, state: "RUNNING" },
+    });
+    expect(
+      screen.queryByRole("region", { name: "Invoice reconciliation" }),
+    ).toBeNull();
+  });
   it("keeps the inspected run's exact version in the native handoff", () => {
     const workflowVersionId = "7c6f4311-bf51-448a-83c8-e391c435314e";
     show({

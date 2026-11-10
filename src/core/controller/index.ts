@@ -129,6 +129,8 @@ import {
   updateWorkspaceState,
 } from "../storage/state";
 import { Task, cwd } from "../task";
+import type { DetachedTaskHooks } from "../task/ExternalTaskInteraction";
+import { DEFAULT_AUTO_APPROVAL_SETTINGS } from "@shared/AutoApprovalSettings";
 import { ValorIDERulesToggles } from "@shared/valoride-rules";
 import {
   createRuleFile,
@@ -1769,6 +1771,31 @@ export class Controller {
     }
   }
 
+  /** ACP uses the real task engine without selecting, clearing, or replacing the user's chat. */
+  async createDetachedAcpTask(prompt: string, hooks: DetachedTaskHooks): Promise<Task> {
+    const state = await getAllExtensionState(this.context);
+    const apiConfiguration = { ...await this.resolveTaskApiConfiguration(state.apiConfiguration, state.selectedLlmDetails) };
+    // External callers inherit the local model, never a remote command's delegated authority.
+    delete apiConfiguration.governedCodingInference;
+    await hooks.assertActive();
+    if (this.task) throw new Error("Clear the current ValorIDE task before starting an ACP session.");
+    let detached: Task | undefined;
+    detached = new Task(
+      this.context, this.mcpHub, this.workspaceTracker,
+      (item) => this.updateTaskHistory(item),
+      async () => { await Promise.resolve(); await hooks.assertActive(); if (detached) await hooks.onMessages(detached.valorideMessages); },
+      async (message) => { await hooks.assertActive(); await hooks.onMessage(message); },
+      async () => { throw new Error("The ACP task stopped unexpectedly; start a new ACP session."); },
+      async () => { await detached?.abortTask(); },
+      apiConfiguration,
+      { ...DEFAULT_AUTO_APPROVAL_SETTINGS, actions: { ...DEFAULT_AUTO_APPROVAL_SETTINGS.actions } },
+      state.browserSettings, { ...state.chatSettings }, state.customInstructions,
+      prompt, undefined, undefined, undefined, undefined,
+      (event) => hooks.onTerminal(event), hooks,
+    );
+    return detached;
+  }
+
   async reinitExistingTaskFromId(taskId: string) {
     const history = await this.getTaskWithId(taskId);
     if (history) {
@@ -2564,6 +2591,17 @@ export class Controller {
             success: false, applicationId, error: error instanceof Error ? error.message : "Unable to restore the recorded source selection.",
           } });
         }
+        break;
+      }
+      case "pushApplicationToGitHub":
+      case "pullApplicationFromGitHub": {
+        // Resolve an installed project in the extension host; never accept a path,
+        // remote, branch, or command name supplied by the webview.
+        await vscode.commands.executeCommand(
+          "valoride.projects.gitForApplication",
+          message.applicationId,
+          message.type === "pushApplicationToGitHub" ? "push" : "pull",
+        );
         break;
       }
       case "publishApplicationSource": {

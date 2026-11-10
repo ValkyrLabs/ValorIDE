@@ -4,6 +4,7 @@ import TelemetryBanner from "@thorapi/components/common/TelemetryBanner";
 import Announcement from "@thorapi/components/chat/Announcement";
 import HistoryPreview from "@thorapi/components/history/HistoryPreview";
 import AutoApproveMenu from "@thorapi/components/chat/AutoApproveMenu";
+import ValorMark from "../../assets/ValorIDELogoWhite";
 
 interface WelcomeScreenProps {
   version: string;
@@ -38,31 +39,12 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         {showAnnouncement && (
           <Announcement version={version} hideAnnouncement={hideAnnouncement} />
         )}
-        <div style={{ padding: "0 20px", flexShrink: 0 }}>
-          <div
-            style={{
-              padding: "1em",
-              flexShrink: 0,
-            }}
-          >
-            <a href="https://valkyrlabs.com/valoride">
-              <img
-                style={{ marginTop: "2em", marginBottom: "1em" }}
-                alt="Valkyr Labs"
-                src="https://valkyrlabs.com/assets/VALKYR_LABS_INC_LOGO-7kbl90lk.png"
-              />
-            </a>
-          </div>
-          <p>
-            Agentic Coder Powered by{" "}
-            <VSCodeLink
-              href="https://valkyrlabs.com/thorapi"
-              style={{ display: "inline" }}
-            >
-              ThorAPI Full-Stack CodeGen
-            </VSCodeLink>
-          </p>
-        </div>
+        <section className="valoride-chat-welcome" aria-labelledby="chat-welcome-title">
+          <a className="valoride-wordmark" href="https://valkyrlabs.com/valoride"><ValorMark aria-hidden="true" />ValorIDE</a>
+          <h2 id="chat-welcome-title">What are we building?</h2>
+          <p>Describe a change, ask about your code, or bring a file into the conversation.</p>
+          <VSCodeLink href="https://valkyrlabs.com/thorapi">Explore ThorAPI</VSCodeLink>
+        </section>
         {taskHistory.length > 0 && (
           <HistoryPreview showHistoryView={showHistoryView} />
         )}

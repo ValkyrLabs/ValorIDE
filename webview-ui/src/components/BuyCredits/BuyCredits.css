@@ -41,8 +41,8 @@
 }
 
 .buy-credits-preset-button.active {
-  background-color: #06ffa5;
-  color: #000;
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .buy-credits-summary {

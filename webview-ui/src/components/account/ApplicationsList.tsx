@@ -164,6 +164,26 @@ const ApplicationWriteActions: React.FC<ApplicationWriteActionsProps> = ({
     <>
       <VSCodeButton
         appearance="secondary"
+        aria-label="Commit and push app to GitHub"
+        role="button"
+        disabled={loadingState?.generating || loadingState?.publishing}
+        title="Commit local changes, push to the linked GitHub repository, and request a refresh of running Valkyr-hosted instances"
+        onClick={() => vscode.postMessage({ type: "pushApplicationToGitHub", applicationId })}
+      >
+        Commit &amp; Push
+      </VSCodeButton>
+      <VSCodeButton
+        appearance="secondary"
+        aria-label="Pull app from GitHub"
+        role="button"
+        disabled={loadingState?.generating || loadingState?.publishing}
+        title="Fast-forward the downloaded app from its linked GitHub branch"
+        onClick={() => vscode.postMessage({ type: "pullApplicationFromGitHub", applicationId })}
+      >
+        Pull
+      </VSCodeButton>
+      <VSCodeButton
+        appearance="secondary"
         aria-label="Open Blueprint"
         role="button"
         onClick={() => onBlueprint(application)}
@@ -862,7 +882,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
             {app.id && (
               <div
                 className="application-buttons"
-                role="group"
+                role="toolbar"
                 aria-label={`Actions for ${app.name || app.id}`}
               >
                 <VSCodeButton

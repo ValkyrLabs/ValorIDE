@@ -28,13 +28,20 @@ const ALLOWED_RUNTIME_ENTRY_PATTERNS = [
   /^extension\/(package\.json|README\.md|LICENSE(?:\.txt)?)$/i,
   /^extension\/dist\//,
   /^extension\/assets\/icons\//,
+  /^extension\/assets\/workflow-binding\/(runtime|thorapiTransport)\.ts\.tpl$/,
   /^extension\/assets\/valorIde\.acorn$/,
 ];
 
 const REQUIRED_RUNTIME_ENTRIES = [
   { id: 'manifest', test: (entry) => entry.name === 'extension/package.json', message: 'extension/package.json is required' },
   { id: 'extension_bundle', test: (entry) => entry.name === 'extension/dist/extension.js', message: 'extension/dist/extension.js is required' },
+  { id: 'acp_agent_bundle', test: (entry) => entry.name === 'extension/dist/acp-agent.cjs' && entry.size > 0, message: 'dist/acp-agent.cjs is required for the ACP agent adapter' },
   { id: 'webview_bundle', test: (entry) => entry.name.startsWith('extension/dist/webview/'), message: 'dist/webview assets are required' },
+  ...['runtime', 'thorapiTransport'].map(name => ({
+    id: 'workflow_binding_' + name,
+    test: entry => entry.name === 'extension/assets/workflow-binding/' + name + '.ts.tpl' && entry.size > 0,
+    message: 'Workflow binding template ' + name + '.ts.tpl is required',
+  })),
 ];
 
 export function parseUnzipListing(listing) {

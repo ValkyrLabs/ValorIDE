@@ -43,6 +43,7 @@ export interface ValkyraiLlmResponse {
 export type ValkyraiLlmStreamEvent =
   | { type: "text"; text: string }
   | { type: "reasoning"; reasoning: string }
+  | { type: "progress"; message: string }
   | ({
       type: "usage";
       usage?: Record<string, unknown>;
@@ -197,8 +198,7 @@ export async function* callValkyraiLlmStream(
           ? separatorIndex + 4
           : separatorIndex + 2,
       );
-      const event = normalizeSseBlock(block);
-      if (event) {
+      for (const event of normalizeSseBlock(block)) {
         if (event.type === "done") {
           return;
         }
@@ -212,9 +212,8 @@ export async function* callValkyraiLlmStream(
     }
   }
 
-  const finalEvent = normalizeSseBlock(buffer);
-  if (finalEvent && finalEvent.type !== "done") {
-    yield finalEvent;
+  for (const event of normalizeSseBlock(buffer)) {
+    if (event.type !== "done") yield event;
   }
 }
 
@@ -282,9 +281,9 @@ const findSseSeparator = (value: string): number => {
   return Math.min(lf, crlf);
 };
 
-const normalizeSseBlock = (
+function* normalizeSseBlock(
   block: string,
-): ValkyraiLlmStreamEvent | undefined => {
+): Generator<ValkyraiLlmStreamEvent> {
   if (!block.trim()) {
     return undefined;
   }
@@ -309,21 +308,29 @@ const normalizeSseBlock = (
   }
   const data = dataLines.join("\n");
   if (data === "[DONE]" || eventName === "done") {
-    return { type: "done" };
+    yield { type: "done" }; return;
   }
   const parsed = parseJsonMaybe(data);
   const dataText = eventDataText(data, parsed);
   if (eventName === "text") {
-    return dataText ? { type: "text", text: dataText } : undefined;
+    if (dataText) yield { type: "text", text: dataText };
+    return;
+  }
+  if (eventName === "progress") {
+    const message = getPath(parsed, ["message"]);
+    if (typeof message === "string" && message.trim()) yield { type: "progress", message };
+    return;
   }
   if (
+    eventName === "reasoning_summary" ||
     eventName === "reasoning" ||
     eventName === "reasoning_delta" ||
     eventName === "reasoning_content" ||
     eventName === "thinking" ||
     eventName === "thinking_delta"
   ) {
-    return dataText ? { type: "reasoning", reasoning: dataText } : undefined;
+    if (dataText) yield { type: "reasoning", reasoning: dataText };
+    return;
   }
   if (eventName === "usage") {
     const numericCredits = Number(data);
@@ -336,7 +343,7 @@ const normalizeSseBlock = (
       usage,
       ...(firstObject(parsed) ?? {}),
     });
-    return {
+    yield {
       type: "usage",
       usage: usage ?? normalized.usage,
       metadata: normalized.metadata,
@@ -349,6 +356,7 @@ const normalizeSseBlock = (
       promptEvalDurationMs: normalized.promptEvalDurationMs,
       evalDurationMs: normalized.evalDurationMs,
     };
+    return;
   }
   if (eventName === "error") {
     const message = firstString(
@@ -361,13 +369,13 @@ const normalizeSseBlock = (
 
   const normalized = normalizeValkyraiLlmResponse(parsed ?? data);
   if (normalized.reasoning) {
-    return { type: "reasoning", reasoning: normalized.reasoning };
+    yield { type: "reasoning", reasoning: normalized.reasoning };
   }
   if (normalized.content) {
-    return { type: "text", text: normalized.content };
+    yield { type: "text", text: normalized.content };
   }
   if (normalized.usage || normalized.credits !== undefined) {
-    return {
+    yield {
       type: "usage",
       usage: normalized.usage,
       metadata: normalized.metadata,
@@ -382,17 +390,15 @@ const normalizeSseBlock = (
     };
   }
   return undefined;
-};
+}
 
 const eventDataText = (data: string, parsed: unknown): string | undefined => {
-  return firstString(
-    parsed,
-    getPath(parsed, ["text"]),
-    getPath(parsed, ["content"]),
-    getPath(parsed, ["reasoning"]),
-    getPath(parsed, ["message"]),
-    data,
-  );
+  // A raw SSE string can be a single space, newline, or repeated token. Never
+  // fall back to serializing an unrecognized JSON object (e.g. a signature).
+  return [parsed, getPath(parsed, ["text"]), getPath(parsed, ["content"]),
+    getPath(parsed, ["reasoning"]), getPath(parsed, ["delta"]), getPath(parsed, ["message"]),
+    typeof parsed === "object" && parsed !== null ? undefined : data,
+  ].find((value): value is string => typeof value === "string" && value.length > 0);
 };
 
 export function normalizeValkyraiLlmResponse(
@@ -415,7 +421,7 @@ export function normalizeValkyraiLlmResponse(
     getPath(rawProviderResponse, ["metadata"]),
   );
 
-  const content = firstString(
+  const content = [
     root.content,
     root.text,
     root.response,
@@ -427,29 +433,29 @@ export function normalizeValkyraiLlmResponse(
     getPath(rawProviderResponse, ["choices", 0, "message", "content"]),
     getPath(rawProviderResponse, ["choices", 0, "delta", "content"]),
     getPath(rawProviderResponse, ["output", 0, "content", 0, "text"]),
-  );
+  ].find((value): value is string => typeof value === "string" && value.length > 0);
 
-  const reasoning = firstString(
+  // Use displayable fields on the gateway response; do not mine an embedded
+  // raw provider response for text that the gateway chose not to expose.
+  const reasoning = [
+    root.reasoning_summary,
     root.reasoning,
     root.thinking,
     root.reasoningContent,
     root.reasoning_content,
     getPath(root, ["message", "reasoning_content"]),
-    getPath(root, ["metadata", "reasoning"]),
-    getPath(rawProviderResponse, ["reasoning"]),
-    getPath(rawProviderResponse, ["thinking"]),
-    getPath(rawProviderResponse, ["choices", 0, "message", "reasoning"]),
-    getPath(rawProviderResponse, [
+    getPath(root, ["choices", 0, "message", "reasoning"]),
+    getPath(root, [
       "choices",
       0,
       "message",
       "reasoning_content",
     ]),
-    getPath(rawProviderResponse, ["choices", 0, "message", "thinking"]),
-    getPath(rawProviderResponse, ["choices", 0, "delta", "reasoning"]),
-    getPath(rawProviderResponse, ["choices", 0, "delta", "reasoning_content"]),
-    getPath(rawProviderResponse, ["choices", 0, "delta", "thinking"]),
-  );
+    getPath(root, ["choices", 0, "message", "thinking"]),
+    getPath(root, ["choices", 0, "delta", "reasoning"]),
+    getPath(root, ["choices", 0, "delta", "reasoning_content"]),
+    getPath(root, ["choices", 0, "delta", "thinking"]),
+  ].find((value): value is string => typeof value === "string" && value.length > 0);
 
   return {
     content: content ?? "",

@@ -32,7 +32,11 @@ ValorIDE helps developers move from prompt-based coding to controlled agentic de
 
 ## Core Workflow
 
+Use external coding agents through **ValorIDE: Open ACP Agents**, or expose ValorIDE's own agent to another editor with **ValorIDE: Start ACP Agent Server** (macOS/Linux). [ACP setup and supported capabilities](docs/acp.md) cover streamed conversations, explicit approvals, workspace-aware edits, cancellation, and both connection directions.
+
 For application packages, use **ValorIDE: Import Local Project Package** to import generated code and custom source without hosted signup. Use **Synchronize Project Blueprint** to save an edited specification with canonical revision conflict protection. See [the project import and synchronization guide](docs/project-roundtrip.md) for the package contract and current regeneration handoff.
+
+To change a generated app's API, choose **Edit Blueprint** in Projects: [edit, import or export a spec, and regenerate the selected app](docs/hosted-blueprint-editor.md). To wire a workflow into application code, place the cursor on a TypeScript action, JSX event, or form, then use the workflow's link button: [workflow actions and reusable input forms](docs/workflow-action-bindings.md).
 
 1. **Describe the task**
    Ask ValorIDE to fix a bug, explain an error, refactor a module, generate a feature, wire an API, or convert a mockup into a working application.
@@ -566,7 +570,7 @@ Downloading the same version updates files whose hashes still match the recorded
 
 Initialization adds missing TypeScript aliases/includes, Java source and JAR paths, and Maven library dependencies without replacing existing options. Maven Build installs generated modules so consumer folders can resolve their libraries. Existing alias conflicts or invalid configuration are reported for repair. Missing root configuration gets a canonical TS project and Maven reactor; if Java source is absent, a small local Java entry point is created. This entry point confirms project setup and can be replaced with your application entry point.
 
-Run selects the generated backend/UI modules, uses an existing `dev`, `start`, or `serve` script, and reports a library with no runnable entry point. Canonical regeneration replaces known generated files after affected-path review; a committed `.valoride-generator-ignore` protects intentional overrides. Custom extensions and unknown collisions remain protected. Publish source through the existing Git client using **Publish Project Source to GitHub**; ordinary Save does not push.
+Run selects the generated backend/UI modules, uses an existing `dev`, `start`, or `serve` script, and reports a library with no runnable entry point. Canonical regeneration replaces known generated files after affected-path review; a committed `.valoride-generator-ignore` protects intentional overrides. Custom extensions and unknown collisions remain protected. Use **Commit & Push** on the Application toolbar or Projects row to publish to the linked GitHub repository; use **Pull** to fast-forward the local app. Ordinary Save does neither. See the [round-trip guide](docs/project-roundtrip.md) for setup and hosted refresh requirements.
 
 Spring Boot output keeps an executable `exec` JAR alongside the normal library JAR so other Maven folders can import its classes. Existing plugin options and classifiers are retained. For older projects whose only JAR contains `BOOT-INF` classes, fix that plugin configuration, rebuild, and reconnect the consumer.
 

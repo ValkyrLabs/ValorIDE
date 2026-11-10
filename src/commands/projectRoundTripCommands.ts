@@ -4,9 +4,11 @@ import { getSecret } from "../core/storage/state";
 import { getValkyraiBasePath } from "../utils/serverValkyraiHost";
 import { resolveThorapiFolderPath } from "../utils/thorapi";
 import { importLocalProjectPackage } from "../services/localProjectImport";
-import { ProjectBlueprintConflict, readProjectBlueprintState, specificationHash, synchronizeProjectBlueprint } from "../services/projectBlueprintSync";
+import { normalizeBlueprintBackend, ProjectBlueprintConflict, readProjectBlueprintState, specificationHash, synchronizeProjectBlueprint } from "../services/projectBlueprintSync";
 import { ValkyrLabsApiError } from "../services/valkyrai/ValkyrLabsRtkApi";
 import { assertNoProjectLinks } from "../services/generatedProjectInstall";
+import { OpenAPIEditorPanel } from "../views/openapi/OpenAPIEditorPanel";
+import { readGitProjectIdentity } from "../services/projectGitIdentity";
 
 const message = (error: unknown) => {
   if (error instanceof ValkyrLabsApiError && error.status === 401) return "Sign in to ValorIDE again, then retry Blueprint synchronization.";
@@ -115,5 +117,21 @@ export function registerProjectRoundTripCommands(
       return undefined;
     }
   });
-  return [provider, importCommand, syncCommand, { dispose: () => reviews.clear() }];
+  const editCommand = vscode.commands.registerCommand("valoride.projects.editBlueprint", async (target?: unknown) => {
+    try {
+      if (!vscode.workspace.isTrusted) throw new Error("Trust the workspace before opening this project's hosted Blueprint.");
+      const project = resolveProject(target) || (vscode.workspace.workspaceFolders?.length === 1 ? vscode.workspace.workspaceFolders[0].uri : undefined);
+      if (!project) { OpenAPIEditorPanel.open(context); return; }
+      const identity = await readGitProjectIdentity(project.fsPath);
+      const binding = await readProjectBlueprintState(project.fsPath);
+      if (!identity || binding && (binding.applicationId !== identity.applicationId ||
+          binding.backend && normalizeBlueprintBackend(binding.backend) !== normalizeBlueprintBackend(getValkyraiBasePath())))
+        throw new Error("Select a downloaded app on its original ValkyrAI backend to open its Blueprint.");
+      const selectedWorkspace = vscode.workspace.getWorkspaceFolder(project)?.uri;
+      if (!selectedWorkspace) throw new Error("Open the selected project in this workspace before editing its Blueprint.");
+      OpenAPIEditorPanel.open(context,{ applicationId:identity.applicationId, applicationName:identity.applicationName, selectedWorkspace, selectedProject:project,
+        localSpec:binding && vscode.Uri.joinPath(project,binding.specificationPath) });
+    } catch (error) { await vscode.window.showErrorMessage(message(error)); }
+  });
+  return [provider, importCommand, syncCommand, editCommand, { dispose: () => reviews.clear() }];
 }

@@ -70,6 +70,27 @@ describe("authenticated Workflow Studio handoff", () => {
     });
   });
   const client = () => new WorkflowEngineeringClient({} as any);
+  it("reads authorized deployment/version records without launching and refuses to finish after a sign-in change", async () => {
+    mockRequest.mockImplementation(async ({ url }) => ({
+      data: url.endsWith("/versions")
+        ? [{ id: "version" }]
+        : [{ id: "deployment" }],
+    }));
+    const result = await client().bindingData(workflowId, backend);
+    expect(result.versions).toEqual([{ id: "version" }]);
+    expect(result.deployments).toEqual([{ id: "deployment" }]);
+    expect(mockRequest.mock.calls.map(([args]) => args.url).sort()).toEqual(
+      ["deployments", "versions"].map(
+        (p) => backend + "/vaiworkflow/" + workflowId + "/" + p,
+      ),
+    );
+    for (const [args] of mockRequest.mock.calls) {
+      expect(args.method ?? "GET").toBe("GET");
+      expect(args.redirect).toBe("error");
+    }
+    mockGetToken.mockResolvedValue("other-session");
+    await expect(result.assertCurrent()).rejects.toThrow(/account changed/);
+  });
   it("opens workflow creation without selecting or requesting an existing workflow", async () => {
     registerWorkflowProjects(
       { subscriptions: [] } as any,
