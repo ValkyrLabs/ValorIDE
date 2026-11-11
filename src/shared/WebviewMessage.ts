@@ -68,6 +68,7 @@ export interface WebviewMessage {
     | "accountLoginClicked"
     | "accountLogoutClicked"
     | "showAccountViewClicked"
+    | "retryGrayMatterBlockedAction"
     | "authStateChanged"
     | "authCallback"
     | "fetchMcpMarketplace"
@@ -179,6 +180,9 @@ export interface WebviewMessage {
   // For openInBrowser
   url?: string;
   workflowStudioTarget?: WorkflowStudioTarget;
+  resumeCommandId?: string;
+  resumeCapabilityId?: string;
+  resumeActionLabel?: string;
   planActSeparateModelsSetting?: boolean;
   telemetrySetting?: TelemetrySetting;
   customInstructionsSetting?: string;
