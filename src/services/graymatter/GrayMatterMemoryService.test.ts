@@ -310,7 +310,7 @@ describe("retained legacy replay behaviors", () => {
     const service = new GrayMatterMemoryService({ savePendingWrites, writeMemory: async () => {
       throw new GrayMatterClientError("offline", "unavailable", 503);
     } });
-    const input = { content: "Retain this once", type: "todo" };
+    const input = { content: "Retain this once", type: "todo" as const };
     await service.writeMemory(input);
     await service.writeMemory(input);
     expect(service.getPendingWrites()).toHaveLength(1);
