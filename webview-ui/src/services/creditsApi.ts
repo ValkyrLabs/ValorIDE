@@ -432,6 +432,7 @@ export interface CreateCreditCheckoutSessionRequest {
 
 export interface CreateCreditCheckoutSessionResponse {
   checkout_url?: string;
+  checkoutUrl?: string;
   error?: string;
   session_id?: string;
   url?: string;

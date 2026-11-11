@@ -89,7 +89,7 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
         idempotencyKey,
       }).unwrap();
 
-      const checkoutUrl = checkout.checkout_url || checkout.url;
+      const checkoutUrl = checkout.checkout_url || checkout.checkoutUrl || checkout.url;
       if (!checkoutUrl) {
         throw new Error(checkout.error || "Checkout did not return a URL.");
       }

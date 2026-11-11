@@ -76,6 +76,13 @@ beforeEach(() => {
 });
 
 describe("BuyCredits", () => {
+  it("retains the hosted checkoutUrl response alias", async () => {
+    mockCreateCheckoutSession.mockReturnValue({ unwrap: vi.fn().mockResolvedValue({ checkoutUrl: "https://checkout.stripe.test/legacy-alias" }) });
+    render(<BuyCredits authenticatedPrincipal={principal} />);
+    fireEvent.click(screen.getByRole("button", { name: /buy \$10 credits/i }));
+    await waitFor(() => expect(mockPostMessage).toHaveBeenCalledWith({ type: "openInBrowser", url: "https://checkout.stripe.test/legacy-alias" }));
+  });
+
   it("starts Stripe Checkout instead of booking direct payment credits", async () => {
     mockCreateCheckoutSession.mockReturnValue({
       unwrap: vi
