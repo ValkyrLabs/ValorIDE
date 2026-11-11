@@ -115,6 +115,10 @@ describe("BuyCredits", () => {
       type: "openInBrowser",
       url: "https://checkout.stripe.test/session",
     });
+    expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
+      type: "trackFunnelEvent",
+      event: "valoride_credit_checkout_opened",
+    }));
     expect(screen.getByText(/Stripe Checkout opened/i)).toBeInTheDocument();
     expect(
       screen.getByText(/Credits post after webhook reconciliation/i),
