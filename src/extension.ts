@@ -641,7 +641,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
     const query = parseAuthCallbackQuery(uri.query);
     Logger.log(
-      "URI callback received: " + buildAuthCallbackDiagnostics(path, query),
+      `URI callback received: ${JSON.stringify(buildAuthCallbackDiagnostics(path, query))}`,
     );
     const visibleWebview = WebviewProvider.getVisibleInstance();
 
