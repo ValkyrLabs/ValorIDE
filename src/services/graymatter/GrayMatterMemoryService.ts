@@ -1,3 +1,4 @@
+import { redactGrayMatterPromptText } from "./GrayMatterReceiptPolicy";
 import {
   GrayMatterClientError,
   GrayMatterMemoryInput,
@@ -19,6 +20,7 @@ export interface PendingGrayMatterWrite extends GrayMatterMemoryInput {
   lastErrorKind?: GrayMatterMemoryWriteErrorKind;
   lastTriedAt?: string;
   queuedAt: string;
+  nextAttemptAt?: number;
   phase?: "verification_required";
   memoryId?: string;
 }
@@ -83,6 +85,13 @@ export class GrayMatterMemoryService {
     input: GrayMatterMemoryInput,
   ): Promise<GrayMatterMemoryWriteResult> {
     await this.ready;
+    input = sanitizeMemoryInput(input);
+    const held = this.pendingWrites.find((write) =>
+      (write.phase === "verification_required" || write.lastErrorKind === "unverified") && sameMemoryInput(write, input),
+    );
+    if (held) {
+      return { status: "unverified", errorKind: "unverified", memoryId: held.memoryId, type: input.type };
+    }
     const at = this.now().toISOString();
 
     try {
@@ -120,7 +129,7 @@ export class GrayMatterMemoryService {
           ? "queued"
           : "failed";
 
-      if (shouldQueue || unverified) {
+      if ((shouldQueue || unverified) && !this.pendingWrites.some((write) => sameMemoryInput(write, input))) {
         this.pendingWrites.push(
           sanitizePendingWrite({
             ...input,
@@ -172,6 +181,10 @@ export class GrayMatterMemoryService {
     this.pendingWrites.length = 0;
 
     for (const write of snapshot) {
+      if (write.nextAttemptAt !== undefined && write.nextAttemptAt > this.now().getTime()) {
+        this.pendingWrites.push(write);
+        continue;
+      }
       if (
         write.phase === "verification_required" ||
         write.lastErrorKind === "unverified"
@@ -229,6 +242,9 @@ export class GrayMatterMemoryService {
               lastError: message,
               lastErrorKind: clientError?.kind ?? "unavailable",
               lastTriedAt: at,
+              nextAttemptAt: clientError?.kind === "unavailable"
+                ? this.now().getTime() + Math.min(300_000, 1_000 * 2 ** (write.attempts ?? 0))
+                : undefined,
               ...(unverified
                 ? { phase: "verification_required" as const, memoryId }
                 : {}),
@@ -239,6 +255,25 @@ export class GrayMatterMemoryService {
     }
 
     await this.persistPendingWrites();
+  }
+
+  async discard(idempotencyKey: string): Promise<boolean> {
+    await this.ready;
+    const index = this.pendingWrites.findIndex((write) => write.idempotencyKey === idempotencyKey);
+    if (index < 0) return false;
+    this.pendingWrites.splice(index, 1);
+    await this.persistPendingWrites();
+    return true;
+  }
+
+  async replayDueWrites(): Promise<{ succeeded: number; failed: number }> {
+    const before = this.writes.length;
+    await this.replayPendingWrites();
+    const replayed = this.writes.slice(before);
+    return {
+      succeeded: replayed.filter((write) => write.status === "written").length,
+      failed: replayed.filter((write) => write.status !== "written").length,
+    };
   }
 
   getTranscriptSummary(): GrayMatterTranscriptSummary {
@@ -260,7 +295,8 @@ const sanitizePendingWrite = (
   write: PendingGrayMatterWrite,
 ): PendingGrayMatterWrite => ({
   ...write,
-  metadata: sanitizeMetadata(write.metadata),
+  ...sanitizeMemoryInput(write),
+  lastError: write.lastError ? redactGrayMatterPromptText(write.lastError) : undefined,
 });
 
 const sanitizeMetadata = (
@@ -271,15 +307,32 @@ const sanitizeMetadata = (
   }
 
   const sanitized: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(metadata)) {
+  for (const [key, value] of Object.entries(metadata).sort(([a], [b]) => a.localeCompare(b))) {
     if (SENSITIVE_METADATA_KEY.test(key)) {
       continue;
     }
-    sanitized[key] = value;
+    sanitized[key] = sanitizeValue(value);
   }
 
   return sanitized;
 };
+
+const sanitizeValue = (value: unknown): unknown => {
+  if (typeof value === "string") return redactGrayMatterPromptText(value);
+  if (Array.isArray(value)) return value.map(sanitizeValue);
+  if (value && typeof value === "object") return sanitizeMetadata(value as Record<string, unknown>);
+  return value;
+};
+
+const sanitizeMemoryInput = (input: GrayMatterMemoryInput): GrayMatterMemoryInput => ({
+  content: redactGrayMatterPromptText(input.content),
+  type: input.type,
+  tags: input.tags?.map(redactGrayMatterPromptText),
+  metadata: sanitizeMetadata(input.metadata),
+});
+
+const sameMemoryInput = (a: GrayMatterMemoryInput, b: GrayMatterMemoryInput) =>
+  JSON.stringify(sanitizeMemoryInput(a)) === JSON.stringify(sanitizeMemoryInput(b));
 
 const isRetryableKind = (kind?: GrayMatterMemoryWriteErrorKind) =>
   kind === "unavailable" || kind === "quota" || kind === "unauthenticated";

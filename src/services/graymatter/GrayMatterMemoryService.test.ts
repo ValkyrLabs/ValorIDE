@@ -302,3 +302,46 @@ describe("GrayMatterMemoryService", () => {
     ]);
   });
 });
+
+
+describe("retained legacy replay behaviors", () => {
+  it("deduplicates pending content and persists explicit discard", async () => {
+    const savePendingWrites = jest.fn(async () => {});
+    const service = new GrayMatterMemoryService({ savePendingWrites, writeMemory: async () => {
+      throw new GrayMatterClientError("offline", "unavailable", 503);
+    } });
+    const input = { content: "Retain this once", type: "todo" };
+    await service.writeMemory(input);
+    await service.writeMemory(input);
+    expect(service.getPendingWrites()).toHaveLength(1);
+    const key = service.getPendingWrites()[0].idempotencyKey;
+    await expect(service.discard(key)).resolves.toBe(true);
+    expect(service.getPendingWrites()).toEqual([]);
+    expect(savePendingWrites).toHaveBeenLastCalledWith([]);
+    await expect(service.discard(key)).resolves.toBe(false);
+  });
+
+  it("redacts content and nested metadata before sending or persisting", async () => {
+    const writeMemory = jest.fn(async () => { throw new GrayMatterClientError("offline", "unavailable", 503); });
+    const service = new GrayMatterMemoryService({ writeMemory });
+    await service.writeMemory({ content: "password=fixture-value", type: "todo", metadata: { nested: { apiKey: "fixture-key", note: "access_token=fixture-token" } } });
+    const serialized = JSON.stringify([writeMemory.mock.calls, service.getPendingWrites()]);
+    expect(serialized).not.toContain("fixture-value");
+    expect(serialized).not.toContain("fixture-key");
+    expect(serialized).not.toContain("fixture-token");
+  });
+
+  it("keeps unavailable replay attempts behind their retry deadline", async () => {
+    let now = 1_000;
+    const writeMemory = jest.fn(async () => { throw new GrayMatterClientError("offline", "unavailable", 503); });
+    const service = new GrayMatterMemoryService({ now: () => new Date(now), writeMemory });
+    await service.writeMemory({ content: "Retry on schedule", type: "todo" });
+    await service.replayDueWrites();
+    expect(writeMemory).toHaveBeenCalledTimes(2);
+    await service.replayDueWrites();
+    expect(writeMemory).toHaveBeenCalledTimes(2);
+    now = 2_001;
+    await service.replayDueWrites();
+    expect(writeMemory).toHaveBeenCalledTimes(3);
+  });
+});
