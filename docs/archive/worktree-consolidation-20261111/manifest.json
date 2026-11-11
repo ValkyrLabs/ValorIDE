@@ -1,0 +1,45 @@
+{
+  "target": "rc-8",
+  "archives": [
+    {
+      "source_commit": "72bff192560954013067eb57ac857a8a5661dbf6",
+      "source_path": "src/core/controller/ApiProviderManager.ts",
+      "archived_name": "ApiProviderManager.ts.txt",
+      "sha256": "123e046e5a617e63c22ccf72c3c3f8238d9f1d39c149aefc284c0fde9ef0c4fc",
+      "bytes": 9944
+    },
+    {
+      "source_commit": "72bff192560954013067eb57ac857a8a5661dbf6",
+      "source_path": "src/core/controller/AuthenticationManager.ts",
+      "archived_name": "AuthenticationManager.ts.txt",
+      "sha256": "ab6668a9b6e65c9f442637a7c63ee63cbb30025b40e6e190d3e0a7acedb50059",
+      "bytes": 4742
+    },
+    {
+      "source_commit": "72bff192560954013067eb57ac857a8a5661dbf6",
+      "source_path": "src/core/controller/WebviewMessageHandler.ts",
+      "archived_name": "WebviewMessageHandler.ts.txt",
+      "sha256": "8c43d4216d80461d5fcc439b03c93f514e3bb5ac7179c7b4d99069d3ea397150",
+      "bytes": 29055
+    },
+    {
+      "source_commit": "72bff192560954013067eb57ac857a8a5661dbf6",
+      "source_path": "src/core/controller/index_new.txt",
+      "archived_name": "index_new.txt",
+      "sha256": "1cb1fdc1070ba0f25588913f61e2eb661e73fdff599a7f4b5ab2f4e9c0f9587d",
+      "bytes": 37298
+    }
+  ],
+  "legacy_commit": {
+    "commit": "271720dc7a88256e5f4a11e81d3fc6d460f0cea5",
+    "parent": "0804757fc922df5c5a0dcd7d43842f1ab736fbef",
+    "tree": "03b6728d02a4f95f88784dc555a16452068ec8c1",
+    "raw_patch_sha256": "70b5fcd811e9fdb5c602d06b4023c0552206f18e66ecf8547b441a4d30919e0f",
+    "compressed_sha256": "5b86f4c0a915c967cadd04e5357685b8bf7faae5667a68ef5bc4dba9e360293a",
+    "raw_patch_bytes": 23708263,
+    "compressed_patch_bytes": 3421188,
+    "source_commit_subject": "fix(core): working build not great",
+    "retained_guard_commit": "253c3620357ab770d0eccf1be9a7821348f7db9f",
+    "conflicts_against_initial_rc8": 2330
+  }
+}

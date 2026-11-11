@@ -1,0 +1,1182 @@
+import { Anthropic } from "@anthropic-ai/sdk";
+import { setTimeout as setTimeoutPromise } from "node:timers/promises";
+import pWaitFor from "p-wait-for";
+import * as path from "path";
+import * as vscode from "vscode";
+import { buildApiHandler } from "@api/index";
+import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
+import { downloadTask } from "@integrations/misc/export-markdown";
+import { getTheme } from "@integrations/theme/getTheme";
+import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
+import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService";
+import { McpHub } from "@services/mcp/McpHub";
+import { telemetryService } from "@services/telemetry/TelemetryService";
+import { ChatContent } from "@shared/ChatContent";
+import { ChatSettings } from "@shared/ChatSettings";
+import {
+  ExtensionMessage,
+  ExtensionState,
+  Platform,
+} from "@shared/ExtensionMessage";
+import { HistoryItem } from "@shared/HistoryItem";
+import { McpMarketplaceCatalog } from "@shared/mcp";
+import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { WebviewMessage } from "@shared/WebviewMessage";
+import { fileExistsAtPath } from "@utils/fs";
+import { getTotalTasksSize } from "@utils/storage";
+import {
+  ensureMcpServersDirectoryExists,
+  ensureSettingsDirectoryExists,
+  GlobalFileNames,
+} from "../storage/disk";
+import {
+  getAllExtensionState,
+  getGlobalState,
+  getSecret,
+  getWorkspaceState,
+  resetExtensionState,
+  updateGlobalState,
+} from "../storage/state";
+import { Task, cwd } from "../task";
+import { ValorIDERulesToggles } from "@shared/valoride-rules";
+import { refreshValorIDERulesToggles } from "../context/instructions/user-instructions/valoride-rules";
+
+// Import our new managers
+import { AuthenticationManager } from "./AuthenticationManager";
+import { ApiProviderManager } from "./ApiProviderManager";
+import { WebviewMessageHandler } from "./WebviewMessageHandler";
+
+export class Controller {
+  private postMessage: (
+    message: ExtensionMessage,
+  ) => Thenable<boolean> | undefined;
+  private disposables: vscode.Disposable[] = [];
+  task?: Task;
+  workspaceTracker: WorkspaceTracker;
+  mcpHub: McpHub;
+  accountService: ValorIDEAccountService;
+
+  // New manager instances
+  private authManager: AuthenticationManager;
+  private apiProviderManager: ApiProviderManager;
+  private webviewMessageHandler: WebviewMessageHandler;
+
+  constructor(
+    readonly context: vscode.ExtensionContext,
+    private readonly outputChannel: vscode.OutputChannel,
+    postMessage: (message: ExtensionMessage) => Thenable<boolean> | undefined,
+  ) {
+    this.outputChannel.appendLine("ValorIDEProvider instantiated");
+    this.postMessage = postMessage;
+
+    this.workspaceTracker = new WorkspaceTracker((msg) =>
+      this.postMessageToWebview(msg),
+    );
+    this.mcpHub = new McpHub(
+      () => ensureMcpServersDirectoryExists(),
+      () => ensureSettingsDirectoryExists(this.context),
+      (msg) => this.postMessageToWebview(msg),
+      this.context.extension?.packageJSON?.version ?? "1.0.0",
+    );
+    this.accountService = new ValorIDEAccountService(
+      (msg) => this.postMessageToWebview(msg),
+      async () => {
+        const { apiConfiguration } = await this.getStateToPostToWebview();
+        return apiConfiguration?.valorideApiKey;
+      },
+    );
+
+    // Initialize managers
+    this.authManager = new AuthenticationManager(
+      this.context,
+      this.accountService,
+      (msg) => this.postMessageToWebview(msg),
+      () => this.postStateToWebview(),
+    );
+
+    this.apiProviderManager = new ApiProviderManager(
+      this.context,
+      (msg) => this.postMessageToWebview(msg),
+      () => this.postStateToWebview(),
+    );
+
+    this.webviewMessageHandler = new WebviewMessageHandler(
+      this.context,
+      (msg) => this.postMessageToWebview(msg),
+      () => this.postStateToWebview(),
+      (task, images, historyItem) => this.initTask(task, images, historyItem),
+      () => this.cancelTask(),
+      (chatSettings, chatContent) => this.togglePlanActModeWithChatSettings(chatSettings, chatContent),
+      (instructions) => this.updateCustomInstructions(instructions),
+      (setting) => this.updateTelemetrySetting(setting),
+      () => this.deleteAllTaskHistory(),
+      () => this.refreshTotalTasksSize(),
+      (id) => this.showTaskWithId(id),
+      (id) => this.deleteTaskWithId(id),
+      (id) => this.exportTaskWithId(id),
+      () => this.resetState(),
+      () => this.authManager.fetchUserCreditsData(),
+      () => this.authManager.handleAccountLogin(),
+      () => this.authManager.handleSignOut(),
+      (info) => this.authManager.setUserInfo(info),
+      () => this.authManager.handleDidShowAnnouncement(),
+      (baseUrl) => this.apiProviderManager.getOllamaModels(baseUrl),
+      (baseUrl) => this.apiProviderManager.getLmStudioModels(baseUrl),
+      () => this.apiProviderManager.getVsCodeLmModels(),
+      () => this.apiProviderManager.refreshOpenRouterModels(),
+      () => this.apiProviderManager.refreshRequestyModels(),
+      (baseUrl, apiKey) => this.apiProviderManager.getOpenAiModels(baseUrl, apiKey),
+      (modelId) => this.apiProviderManager.toggleFavoriteModel(modelId),
+      (forceRefresh) => this.fetchMcpMarketplace(forceRefresh),
+      (mcpId) => this.downloadMcp(mcpId),
+      () => this.silentlyRefreshMcpMarketplace(),
+      (url) => this.fetchOpenGraphData(url),
+      (url) => this.checkIsImageUrl(url),
+      (folderPath) => this.getThorapiFolderStructure(folderPath),
+      this, // Pass controller instance for functions that need it
+      this.task,
+      this.mcpHub,
+    );
+
+    // Clean up legacy checkpoints
+    cleanupLegacyCheckpoints(
+      this.context.globalStorageUri.fsPath,
+      this.outputChannel,
+    ).catch((error) => {
+      console.error("Failed to cleanup legacy checkpoints:", error);
+    });
+  }
+
+  async dispose() {
+    this.outputChannel.appendLine("Disposing ValorIDEProvider...");
+    await this.clearTask();
+    this.outputChannel.appendLine("Cleared task");
+    while (this.disposables.length) {
+      const x = this.disposables.pop();
+      if (x) {
+        x.dispose();
+      }
+    }
+    this.workspaceTracker.dispose();
+    this.mcpHub.dispose();
+    this.outputChannel.appendLine("Disposed all disposables");
+    console.error("Controller disposed");
+  }
+
+  // Delegate auth methods to AuthenticationManager
+  async handleSignOut() {
+    return this.authManager.handleSignOut();
+  }
+
+  async setUserInfo(info?: {
+    username: string | null;
+    email: string | null;
+    avatarUrl: string | null;
+  }) {
+    return this.authManager.setUserInfo(info);
+  }
+
+  async validateAuthState(state: string | null): Promise<boolean> {
+    return this.authManager.validateAuthState(state);
+  }
+
+  async handleAuthCallback(
+    customToken: string,
+    apiKey: string,
+    authenticatedPrincipal?: any,
+  ) {
+    return this.authManager.handleAuthCallback(customToken, apiKey, authenticatedPrincipal);
+  }
+
+  async fetchUserCreditsData() {
+    return this.authManager.fetchUserCreditsData();
+  }
+
+  // Delegate API provider methods to ApiProviderManager
+  async handleOpenRouterCallback(code: string) {
+    await this.apiProviderManager.handleOpenRouterCallback(code);
+    if (this.task) {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+      this.task.api = buildApiHandler(apiConfiguration);
+    }
+  }
+
+  async readOpenRouterModels() {
+    return this.apiProviderManager.readOpenRouterModels();
+  }
+
+  async refreshOpenRouterModels() {
+    return this.apiProviderManager.refreshOpenRouterModels();
+  }
+
+  async refreshRequestyModels() {
+    return this.apiProviderManager.refreshRequestyModels();
+  }
+
+  async getVsCodeLmModels() {
+    return this.apiProviderManager.getVsCodeLmModels();
+  }
+
+  async getOllamaModels(baseUrl?: string) {
+    return this.apiProviderManager.getOllamaModels(baseUrl);
+  }
+
+  async getLmStudioModels(baseUrl?: string) {
+    return this.apiProviderManager.getLmStudioModels(baseUrl);
+  }
+
+  async getOpenAiModels(baseUrl?: string, apiKey?: string) {
+    return this.apiProviderManager.getOpenAiModels(baseUrl, apiKey);
+  }
+
+  // Task management
+  async initTask(task?: string, images?: string[], historyItem?: HistoryItem) {
+    await this.clearTask();
+    const {
+      apiConfiguration,
+      customInstructions,
+      autoApprovalSettings,
+      browserSettings,
+      chatSettings,
+    } = await getAllExtensionState(this.context);
+
+    if (autoApprovalSettings) {
+      const updatedAutoApprovalSettings = {
+        ...autoApprovalSettings,
+        version: (autoApprovalSettings.version ?? 1) + 1,
+      };
+      await updateGlobalState(
+        this.context,
+        "autoApprovalSettings",
+        updatedAutoApprovalSettings,
+      );
+    }
+    this.task = new Task(
+      this.context,
+      this.mcpHub,
+      this.workspaceTracker,
+      (historyItem) => this.updateTaskHistory(historyItem),
+      () => this.postStateToWebview(),
+      (message) => this.postMessageToWebview(message),
+      (taskId) => this.reinitExistingTaskFromId(taskId),
+      () => this.cancelTask(),
+      apiConfiguration,
+      autoApprovalSettings,
+      browserSettings,
+      chatSettings,
+      customInstructions,
+      task,
+      images,
+      historyItem,
+    );
+
+    // Update the webview message handler with the new task
+    this.webviewMessageHandler = new WebviewMessageHandler(
+      this.context,
+      (msg) => this.postMessageToWebview(msg),
+      () => this.postStateToWebview(),
+      (task, images, historyItem) => this.initTask(task, images, historyItem),
+      () => this.cancelTask(),
+      (chatSettings, chatContent) => this.togglePlanActModeWithChatSettings(chatSettings, chatContent),
+      (instructions) => this.updateCustomInstructions(instructions),
+      (setting) => this.updateTelemetrySetting(setting),
+      () => this.deleteAllTaskHistory(),
+      () => this.refreshTotalTasksSize(),
+      (id) => this.showTaskWithId(id),
+      (id) => this.deleteTaskWithId(id),
+      (id) => this.exportTaskWithId(id),
+      () => this.resetState(),
+      () => this.authManager.fetchUserCreditsData(),
+      () => this.authManager.handleAccountLogin(),
+      () => this.authManager.handleSignOut(),
+      (info) => this.authManager.setUserInfo(info),
+      () => this.authManager.handleDidShowAnnouncement(),
+      (baseUrl) => this.apiProviderManager.getOllamaModels(baseUrl),
+      (baseUrl) => this.apiProviderManager.getLmStudioModels(baseUrl),
+      () => this.apiProviderManager.getVsCodeLmModels(),
+      () => this.apiProviderManager.refreshOpenRouterModels(),
+      () => this.apiProviderManager.refreshRequestyModels(),
+      (baseUrl, apiKey) => this.apiProviderManager.getOpenAiModels(baseUrl, apiKey),
+      (modelId) => this.apiProviderManager.toggleFavoriteModel(modelId),
+      (forceRefresh) => this.fetchMcpMarketplace(forceRefresh),
+      (mcpId) => this.downloadMcp(mcpId),
+      () => this.silentlyRefreshMcpMarketplace(),
+      (url) => this.fetchOpenGraphData(url),
+      (url) => this.checkIsImageUrl(url),
+      (folderPath) => this.getThorapiFolderStructure(folderPath),
+      this,
+      this.task,
+      this.mcpHub,
+    );
+  }
+
+  async reinitExistingTaskFromId(taskId: string) {
+    const history = await this.getTaskWithId(taskId);
+    if (history) {
+      await this.initTask(undefined, undefined, history.historyItem);
+    }
+  }
+
+  async postMessageToWebview(message: ExtensionMessage) {
+    await this.postMessage(message);
+  }
+
+  // Delegate webview message handling to WebviewMessageHandler
+  async handleWebviewMessage(message: WebviewMessage) {
+    // Handle special cases that need webview launch logic
+    if (message.type === "webviewDidLaunch") {
+      await this.handleWebviewDidLaunch();
+      return;
+    }
+    
+    // Delegate to the message handler
+    return this.webviewMessageHandler.handleWebviewMessage(message);
+  }
+
+  private async handleWebviewDidLaunch() {
+    this.postStateToWebview();
+    this.workspaceTracker?.populateFilePaths();
+    
+    getTheme().then((theme) =>
+      this.postMessageToWebview({
+        type: "theme",
+        text: JSON.stringify(theme),
+      }),
+    );
+
+    // Post cached models
+    this.readOpenRouterModels().then((openRouterModels) => {
+      if (openRouterModels) {
+        this.postMessageToWebview({
+          type: "openRouterModels",
+          openRouterModels,
+        });
+      }
+    });
+
+    getGlobalState(this.context, "mcpMarketplaceCatalog").then(
+      (mcpMarketplaceCatalog) => {
+        if (mcpMarketplaceCatalog) {
+          this.postMessageToWebview({
+            type: "mcpMarketplaceCatalog",
+            mcpMarketplaceCatalog: mcpMarketplaceCatalog as McpMarketplaceCatalog,
+          });
+        }
+      },
+    );
+
+    this.silentlyRefreshMcpMarketplace();
+    this.refreshOpenRouterModels().then(async (openRouterModels) => {
+      if (openRouterModels) {
+        const { apiConfiguration } = await getAllExtensionState(this.context);
+        if (apiConfiguration.openRouterModelId) {
+          await updateGlobalState(
+            this.context,
+            "openRouterModelInfo",
+            openRouterModels[apiConfiguration.openRouterModelId],
+          );
+          await this.postStateToWebview();
+        }
+      }
+    });
+
+    // Enable telemetry if user opted in
+    this.getStateToPostToWebview().then((state) => {
+      const { telemetrySetting } = state;
+      const isOptedIn = telemetrySetting === "enabled";
+      telemetryService.updateTelemetryState(isOptedIn);
+    });
+  }
+
+  async updateTelemetrySetting(telemetrySetting: TelemetrySetting) {
+    await updateGlobalState(this.context, "telemetrySetting", telemetrySetting);
+    const isOptedIn = telemetrySetting === "enabled";
+    telemetryService.updateTelemetryState(isOptedIn);
+  }
+
+  async togglePlanActModeWithChatSettings(
+    chatSettings: ChatSettings,
+    chatContent?: ChatContent,
+  ) {
+    const didSwitchToActMode = chatSettings.mode === "act";
+
+    telemetryService.captureModeSwitch(
+      this.task?.taskId ?? "0",
+      chatSettings.mode,
+    );
+
+    const {
+      apiConfiguration,
+      previousModeApiProvider: newApiProvider,
+      previousModeModelId: newModelId,
+      previousModeModelInfo: newModelInfo,
+      previousModeVsCodeLmModelSelector: newVsCodeLmModelSelector,
+      previousModeThinkingBudgetTokens: newThinkingBudgetTokens,
+      previousModeReasoningEffort: newReasoningEffort,
+      planActSeparateModelsSetting,
+    } = await getAllExtensionState(this.context);
+
+    const shouldSwitchModel = planActSeparateModelsSetting === true;
+
+    if (shouldSwitchModel) {
+      // Save current mode model info
+      await updateGlobalState(
+        this.context,
+        "previousModeApiProvider",
+        apiConfiguration.apiProvider,
+      );
+      await updateGlobalState(
+        this.context,
+        "previousModeThinkingBudgetTokens",
+        apiConfiguration.thinkingBudgetTokens,
+      );
+      await updateGlobalState(
+        this.context,
+        "previousModeReasoningEffort",
+        apiConfiguration.reasoningEffort,
+      );
+
+      // Save model ID based on provider type
+      switch (apiConfiguration.apiProvider) {
+        case "anthropic":
+        case "bedrock":
+        case "vertex":
+        case "gemini":
+        case "asksage":
+        case "openai-native":
+        case "qwen":
+        case "deepseek":
+        case "xai":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.apiModelId,
+          );
+          break;
+        case "openrouter":
+        case "valoride":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.openRouterModelId,
+          );
+          await updateGlobalState(
+            this.context,
+            "previousModeModelInfo",
+            apiConfiguration.openRouterModelInfo,
+          );
+          break;
+        case "vscode-lm":
+          await updateGlobalState(
+            this.context,
+            "previousModeVsCodeLmModelSelector",
+            apiConfiguration.vsCodeLmModelSelector,
+          );
+          break;
+        case "openai":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.openAiModelId,
+          );
+          await updateGlobalState(
+            this.context,
+            "previousModeModelInfo",
+            apiConfiguration.openAiModelInfo,
+          );
+          break;
+        case "ollama":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.ollamaModelId,
+          );
+          break;
+        case "lmstudio":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.lmStudioModelId,
+          );
+          break;
+        case "litellm":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.liteLlmModelId,
+          );
+          break;
+        case "requesty":
+          await updateGlobalState(
+            this.context,
+            "previousModeModelId",
+            apiConfiguration.requestyModelId,
+          );
+          await updateGlobalState(
+            this.context,
+            "previousModeModelInfo",
+            apiConfiguration.requestyModelInfo,
+          );
+          break;
+      }
+
+      // Restore previous mode model
+      if (
+        newApiProvider ||
+        newModelId ||
+        newThinkingBudgetTokens !== undefined ||
+        newReasoningEffort ||
+        newVsCodeLmModelSelector
+      ) {
+        await updateGlobalState(this.context, "apiProvider", newApiProvider);
+        await updateGlobalState(
+          this.context,
+          "thinkingBudgetTokens",
+          newThinkingBudgetTokens,
+        );
+        await updateGlobalState(
+          this.context,
+          "reasoningEffort",
+          newReasoningEffort,
+        );
+
+        // Restore model ID based on provider type
+        switch (newApiProvider) {
+          case "anthropic":
+          case "bedrock":
+          case "vertex":
+          case "gemini":
+          case "asksage":
+          case "openai-native":
+          case "qwen":
+          case "deepseek":
+          case "xai":
+            await updateGlobalState(this.context, "apiModelId", newModelId);
+            break;
+          case "openrouter":
+          case "valoride":
+            await updateGlobalState(
+              this.context,
+              "openRouterModelId",
+              newModelId,
+            );
+            await updateGlobalState(
+              this.context,
+              "openRouterModelInfo",
+              newModelInfo,
+            );
+            break;
+          case "vscode-lm":
+            await updateGlobalState(
+              this.context,
+              "vsCodeLmModelSelector",
+              newVsCodeLmModelSelector,
+            );
+            break;
+          case "openai":
+            await updateGlobalState(this.context, "openAiModelId", newModelId);
+            await updateGlobalState(
+              this.context,
+              "openAiModelInfo",
+              newModelInfo,
+            );
+            break;
+          case "ollama":
+            await updateGlobalState(this.context, "ollamaModelId", newModelId);
+            break;
+          case "lmstudio":
+            await updateGlobalState(
+              this.context,
+              "lmStudioModelId",
+              newModelId,
+            );
+            break;
+          case "litellm":
+            await updateGlobalState(this.context, "liteLlmModelId", newModelId);
+            break;
+          case "requesty":
+            await updateGlobalState(
+              this.context,
+              "requestyModelId",
+              newModelId,
+            );
+            await updateGlobalState(
+              this.context,
+              "requestyModelInfo",
+              newModelInfo,
+            );
+            break;
+        }
+
+        if (this.task) {
+          const { apiConfiguration: updatedApiConfiguration } =
+            await getAllExtensionState(this.context);
+          this.task.api = buildApiHandler(updatedApiConfiguration);
+        }
+      }
+    }
+
+    await updateGlobalState(this.context, "chatSettings", chatSettings);
+    await this.postStateToWebview();
+
+    if (this.task) {
+      this.task.chatSettings = chatSettings;
+      if (this.task.isAwaitingPlanResponse && didSwitchToActMode) {
+        this.task.didRespondToPlanAskBySwitchingMode = true;
+        await this.postMessageToWebview({
+          type: "invoke",
+          invoke: "sendMessage",
+          text: chatContent?.message || "PLAN_MODE_TOGGLE_RESPONSE",
+          images: chatContent?.images,
+        });
+      } else {
+        this.cancelTask();
+      }
+    }
+  }
+
+  async cancelTask() {
+    if (this.task) {
+      const { historyItem } = await this.getTaskWithId(this.task.taskId);
+      try {
+        await this.task.abortTask();
+      } catch (error) {
+        console.error("Failed to abort task", error);
+      }
+      await pWaitFor(
+        () =>
+          this.task === undefined ||
+          this.task.isStreaming === false ||
+          this.task.didFinishAbortingStream ||
+          this.task.isWaitingForFirstChunk,
+        {
+          timeout: 3_000,
+        },
+      ).catch(() => {
+        console.error("Failed to abort task");
+      });
+      if (this.task) {
+        this.task.abandoned = true;
+      }
+      await this.initTask(undefined, undefined, historyItem);
+    }
+  }
+
+  async updateCustomInstructions(instructions?: string) {
+    await updateGlobalState(
+      this.context,
+      "customInstructions",
+      instructions || undefined,
+    );
+    if (this.task) {
+      this.task.customInstructions = instructions || undefined;
+    }
+  }
+
+  // MCP Marketplace methods
+  private async fetchMcpMarketplaceFromApi(
+    silent: boolean = false,
+  ) {
+    try {
+      const catalog = { items: [] };
+      await updateGlobalState(this.context, "mcpMarketplaceCatalog", catalog);
+      return catalog;
+    } catch (error) {
+      console.error("Failed to fetch MCP marketplace:", error);
+      if (!silent) {
+        vscode.window.showErrorMessage("Failed to fetch MCP marketplace");
+      }
+      return undefined;
+    }
+  }
+
+  async silentlyRefreshMcpMarketplace() {
+    try {
+      const catalog = await this.fetchMcpMarketplaceFromApi(true);
+      if (catalog) {
+        await this.postMessageToWebview({
+          type: "mcpMarketplaceCatalog",
+          mcpMarketplaceCatalog: catalog,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to silently refresh MCP marketplace:", error);
+    }
+  }
+
+  private async fetchMcpMarketplace(forceRefresh: boolean = false) {
+    try {
+      const cachedCatalog = (await getGlobalState(
+        this.context,
+        "mcpMarketplaceCatalog",
+      )) as McpMarketplaceCatalog | undefined;
+      if (!forceRefresh && cachedCatalog?.items) {
+        await this.postMessageToWebview({
+          type: "mcpMarketplaceCatalog",
+          mcpMarketplaceCatalog: cachedCatalog,
+        });
+        return;
+      }
+
+      const catalog = await this.fetchMcpMarketplaceFromApi(false);
+      if (catalog) {
+        await this.postMessageToWebview({
+          type: "mcpMarketplaceCatalog",
+          mcpMarketplaceCatalog: catalog,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to handle cached MCP marketplace:", error);
+    }
+  }
+
+  private async downloadMcp(mcpId: string) {
+    try {
+      const servers = this.mcpHub?.getServers() || [];
+      const isInstalled = servers.some((server: any) => server.name === mcpId);
+
+      if (isInstalled) {
+        throw new Error("This MCP server is already installed");
+      }
+
+      // Simplified MCP download logic
+      const task = `Set up the MCP server with ID: ${mcpId}`;
+      await this.initTask(task);
+      await this.postMessageToWebview({
+        type: "action",
+        action: "chatButtonClicked",
+      });
+    } catch (error) {
+      console.error("Failed to download MCP:", error);
+      vscode.window.showErrorMessage("Failed to download MCP");
+    }
+  }
+
+  // Context menus and code actions
+  getFileMentionFromPath(filePath: string) {
+    const cwd = vscode.workspace.workspaceFolders
+      ?.map((folder) => folder.uri.fsPath)
+      .at(0);
+    if (!cwd) {
+      return "@/" + filePath;
+    }
+    const relativePath = path.relative(cwd, filePath);
+    return "@/" + relativePath;
+  }
+
+  async addSelectedCodeToChat(
+    code: string,
+    filePath: string,
+    languageId: string,
+    diagnostics?: vscode.Diagnostic[],
+  ) {
+    await vscode.commands.executeCommand("valoride-dev.SidebarProvider.focus");
+    await setTimeoutPromise(100);
+
+    const fileMention = this.getFileMentionFromPath(filePath);
+    let input = `${fileMention}\n\`\`\`\n${code}\n\`\`\``;
+    if (diagnostics) {
+      const problemsString = this.convertDiagnosticsToProblemsString(diagnostics);
+      input += `\nProblems:\n${problemsString}`;
+    }
+
+    await this.postMessageToWebview({
+      type: "addToInput",
+      text: input,
+    });
+  }
+
+  async addSelectedTerminalOutputToChat(output: string, terminalName: string) {
+    await vscode.commands.executeCommand("valoride-dev.SidebarProvider.focus");
+    await setTimeoutPromise(100);
+
+    await this.postMessageToWebview({
+      type: "addToInput",
+      text: `Terminal output:\n\`\`\`\n${output}\n\`\`\``,
+    });
+  }
+
+  async fixWithValorIDE(
+    code: string,
+    filePath: string,
+    languageId: string,
+    diagnostics: vscode.Diagnostic[],
+  ) {
+    await vscode.commands.executeCommand("valoride-dev.SidebarProvider.focus");
+    await setTimeoutPromise(100);
+
+    const fileMention = this.getFileMentionFromPath(filePath);
+    const problemsString = this.convertDiagnosticsToProblemsString(diagnostics);
+    await this.initTask(
+      `Fix the following code in ${fileMention}\n\`\`\`\n${code}\n\`\`\`\n\nProblems:\n${problemsString}`,
+    );
+  }
+
+  convertDiagnosticsToProblemsString(diagnostics: vscode.Diagnostic[]) {
+    let problemsString = "";
+    for (const diagnostic of diagnostics) {
+      let label: string;
+      switch (diagnostic.severity) {
+        case vscode.DiagnosticSeverity.Error:
+          label = "Error";
+          break;
+        case vscode.DiagnosticSeverity.Warning:
+          label = "Warning";
+          break;
+        case vscode.DiagnosticSeverity.Information:
+          label = "Information";
+          break;
+        case vscode.DiagnosticSeverity.Hint:
+          label = "Hint";
+          break;
+        default:
+          label = "Diagnostic";
+      }
+      const line = diagnostic.range.start.line + 1;
+      const source = diagnostic.source ? `${diagnostic.source} ` : "";
+      problemsString += `\n- [${source}${label}] Line ${line}: ${diagnostic.message}`;
+    }
+    return problemsString.trim();
+  }
+
+  // Task history methods
+  async getTaskWithId(id: string): Promise<{
+    historyItem: HistoryItem;
+    taskDirPath: string;
+    apiConversationHistoryFilePath: string;
+    uiMessagesFilePath: string;
+    contextHistoryFilePath: string;
+    taskMetadataFilePath: string;
+    apiConversationHistory: Anthropic.MessageParam[];
+  }> {
+    const history =
+      ((await getGlobalState(this.context, "taskHistory")) as
+        | HistoryItem[]
+        | undefined) || [];
+    const historyItem = history.find((item) => item.id === id);
+    if (historyItem) {
+      const taskDirPath = path.join(
+        this.context.globalStorageUri.fsPath,
+        "tasks",
+        id,
+      );
+      const apiConversationHistoryFilePath = path.join(
+        taskDirPath,
+        GlobalFileNames.apiConversationHistory,
+      );
+      const uiMessagesFilePath = path.join(
+        taskDirPath,
+        GlobalFileNames.uiMessages,
+      );
+      const contextHistoryFilePath = path.join(
+        taskDirPath,
+        GlobalFileNames.contextHistory,
+      );
+      const taskMetadataFilePath = path.join(
+        taskDirPath,
+        GlobalFileNames.taskMetadata,
+      );
+      const fileExists = await fileExistsAtPath(apiConversationHistoryFilePath);
+      if (fileExists) {
+        const apiConversationHistory = JSON.parse(
+          await import("fs/promises").then(fs => fs.readFile(apiConversationHistoryFilePath, "utf8")),
+        );
+        return {
+          historyItem,
+          taskDirPath,
+          apiConversationHistoryFilePath,
+          uiMessagesFilePath,
+          contextHistoryFilePath,
+          taskMetadataFilePath,
+          apiConversationHistory,
+        };
+      }
+    }
+    await this.deleteTaskFromState(id);
+    throw new Error("Task not found");
+  }
+
+  async showTaskWithId(id: string) {
+    if (id !== this.task?.taskId) {
+      const { historyItem } = await this.getTaskWithId(id);
+      await this.initTask(undefined, undefined, historyItem);
+    }
+    await this.postMessageToWebview({
+      type: "action",
+      action: "chatButtonClicked",
+    });
+  }
+
+  async exportTaskWithId(id: string) {
+    const { historyItem, apiConversationHistory } = await this.getTaskWithId(id);
+    await downloadTask(historyItem.ts, apiConversationHistory);
+  }
+
+  async deleteAllTaskHistory() {
+    await this.clearTask();
+    await updateGlobalState(this.context, "taskHistory", undefined);
+    try {
+      const taskDirPath = path.join(
+        this.context.globalStorageUri.fsPath,
+        "tasks",
+      );
+      if (await fileExistsAtPath(taskDirPath)) {
+        await import("fs/promises").then(fs => fs.rm(taskDirPath, { recursive: true, force: true }));
+      }
+      const checkpointsDirPath = path.join(
+        this.context.globalStorageUri.fsPath,
+        "checkpoints",
+      );
+      if (await fileExistsAtPath(checkpointsDirPath)) {
+        await import("fs/promises").then(fs => fs.rm(checkpointsDirPath, { recursive: true, force: true }));
+      }
+    } catch (error) {
+      vscode.window.showErrorMessage(
+        `Encountered error while deleting task history: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  async refreshTotalTasksSize() {
+    getTotalTasksSize(this.context.globalStorageUri.fsPath)
+      .then((newTotalSize) => {
+        this.postMessageToWebview({
+          type: "totalTasksSize",
+          totalTasksSize: newTotalSize,
+        });
+      })
+      .catch((error) => {
+        console.error("Error calculating total tasks size:", error);
+      });
+  }
+
+  async deleteTaskWithId(id: string) {
+    try {
+      if (id === this.task?.taskId) {
+        await this.clearTask();
+      }
+
+      const {
+        taskDirPath,
+        apiConversationHistoryFilePath,
+        uiMessagesFilePath,
+        contextHistoryFilePath,
+        taskMetadataFilePath,
+      } = await this.getTaskWithId(id);
+      
+      const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json");
+      const updatedTaskHistory = await this.deleteTaskFromState(id);
+
+      const fs = await import("fs/promises");
+      for (const filePath of [
+        apiConversationHistoryFilePath,
+        uiMessagesFilePath,
+        contextHistoryFilePath,
+        taskMetadataFilePath,
+        legacyMessagesFilePath,
+      ]) {
+        const fileExists = await fileExistsAtPath(filePath);
+        if (fileExists) {
+          await fs.unlink(filePath);
+        }
+      }
+
+      await fs.rmdir(taskDirPath);
+
+      if (updatedTaskHistory.length === 0) {
+        await this.deleteAllTaskHistory();
+      }
+    } catch (error) {
+      console.debug(`Error deleting task:`, error);
+    }
+
+    this.refreshTotalTasksSize();
+  }
+
+  async deleteTaskFromState(id: string) {
+    const taskHistory =
+      ((await getGlobalState(this.context, "taskHistory")) as
+        | HistoryItem[]
+        | undefined) || [];
+    const updatedTaskHistory = taskHistory.filter((task) => task.id !== id);
+    await updateGlobalState(this.context, "taskHistory", updatedTaskHistory);
+    await this.postStateToWebview();
+    return updatedTaskHistory;
+  }
+
+  async postStateToWebview() {
+    const state = await this.getStateToPostToWebview();
+    this.postMessageToWebview({ type: "state", state });
+  }
+
+  async getStateToPostToWebview(): Promise<ExtensionState> {
+    const {
+      apiConfiguration,
+      lastShownAnnouncementId,
+      customInstructions,
+      taskHistory,
+      autoApprovalSettings,
+      browserSettings,
+      chatSettings,
+      userInfo,
+      mcpMarketplaceEnabled,
+      telemetrySetting,
+      planActSeparateModelsSetting,
+      globalValorIDERulesToggles,
+      authenticatedPrincipal,
+      isLoggedIn,
+    } = await getAllExtensionState(this.context);
+
+    const jwtToken = await getSecret(this.context, "jwtToken");
+    const localValorIDERulesToggles =
+      ((await getWorkspaceState(
+        this.context,
+        "localValorIDERulesToggles",
+      )) as ValorIDERulesToggles) || {};
+
+    return {
+      version: this.context.extension?.packageJSON?.version ?? "",
+      apiConfiguration,
+      customInstructions,
+      uriScheme: vscode.env.uriScheme,
+      currentTaskItem: this.task?.taskId
+        ? (taskHistory || []).find((item) => item.id === this.task?.taskId)
+        : undefined,
+      checkpointTrackerErrorMessage: this.task?.checkpointTrackerErrorMessage,
+      valorideMessages: this.task?.valorideMessages || [],
+      taskHistory: (taskHistory || [])
+        .filter((item) => item.ts && item.task)
+        .sort((a, b) => b.ts - a.ts)
+        .slice(0, 100),
+      shouldShowAnnouncement:
+        lastShownAnnouncementId !== this.authManager.getLatestAnnouncementId(),
+      platform: process.platform as Platform,
+      autoApprovalSettings,
+      browserSettings,
+      chatSettings,
+      userInfo,
+      mcpMarketplaceEnabled,
+      telemetrySetting,
+      planActSeparateModelsSetting,
+      vscMachineId: vscode.env.machineId,
+      globalValorIDERulesToggles: globalValorIDERulesToggles || {},
+      localValorIDERulesToggles: localValorIDERulesToggles || {},
+      authenticatedPrincipal,
+      isLoggedIn,
+      jwtToken,
+    };
+  }
+
+  async clearTask() {
+    this.task?.abortTask();
+    this.task = undefined;
+  }
+
+  async updateTaskHistory(item: HistoryItem): Promise<HistoryItem[]> {
+    const history =
+      ((await getGlobalState(this.context, "taskHistory")) as HistoryItem[]) ||
+      [];
+    const existingItemIndex = history.findIndex((h) => h.id === item.id);
+    if (existingItemIndex !== -1) {
+      history[existingItemIndex] = item;
+    } else {
+      history.push(item);
+    }
+    await updateGlobalState(this.context, "taskHistory", history);
+    return history;
+  }
+
+  // Open Graph Data methods
+  async fetchOpenGraphData(url: string) {
+    try {
+      const { fetchOpenGraphData } = await import("@integrations/misc/link-preview");
+      const ogData = await fetchOpenGraphData(url);
+      await this.postMessageToWebview({
+        type: "openGraphData",
+        openGraphData: ogData,
+        url: url,
+      });
+    } catch (error) {
+      console.error(`Error fetching Open Graph data for ${url}:`, error);
+      await this.postMessageToWebview({
+        type: "openGraphData",
+        error: `Failed to fetch Open Graph data: ${error}`,
+        url: url,
+      });
+    }
+  }
+
+  async checkIsImageUrl(url: string) {
+    try {
+      const { isImageUrl } = await import("@integrations/misc/link-preview");
+      const isImage = await isImageUrl(url);
+      await this.postMessageToWebview({
+        type: "isImageUrlResult",
+        isImage,
+        url,
+      });
+    } catch (error) {
+      console.error(`Error checking if URL is an image: ${url}`, error);
+      await this.postMessageToWebview({
+        type: "isImageUrlResult",
+        isImage: false,
+        url,
+      });
+    }
+  }
+
+  // File system helpers
+  async getThorapiFolderStructure(folderPath: string): Promise<any[]> {
+    try {
+      const exists = await fileExistsAtPath(folderPath);
+      if (!exists) {
+        return [];
+      }
+
+      const fs = await import("fs/promises");
+      const entries = await fs.readdir(folderPath, { withFileTypes: true });
+      const files: any[] = [];
+
+      for (const entry of entries) {
+        const fullPath = path.join(folderPath, entry.name);
+        const relativePath = path.relative(cwd, fullPath);
+
+        if (entry.isDirectory()) {
+          const children = await this.getThorapiFolderStructure(fullPath);
+          files.push({
+            name: entry.name,
+            path: relativePath,
+            type: "directory",
+            children: children,
+          });
+        } else {
+          files.push({
+            name: entry.name,
+            path: relativePath,
+            type: "file",
+          });
+        }
+      }
+
+      return files;
+    } catch (error) {
+      console.error("Error reading thorapi folder structure:", error);
+      return [];
+    }
+  }
+
+  async resetState() {
+    vscode.window.showInformationMessage("Resetting state...");
+    await resetExtensionState(this.context);
+    if (this.task) {
+      this.task.abortTask();
+      this.task = undefined;
+    }
+    vscode.window.showInformationMessage("State reset");
+    await this.postStateToWebview();
+    await this.postMessageToWebview({
+      type: "action",
+      action: "chatButtonClicked",
+    });
+  }
+}
