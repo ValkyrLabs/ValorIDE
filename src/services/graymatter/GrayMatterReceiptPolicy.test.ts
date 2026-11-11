@@ -197,14 +197,25 @@ describe("GrayMatterReceiptPolicy", () => {
     });
 
     expect(extracted).toMatchObject({
-      confidence: 0.91,
+      qualityScore: 0.91,
       contradictionScore: 0.12,
       coverageStatus: "COMPLETE",
       freshnessScore: 0.84,
       receiptId: "gm_rr_1",
       traceId: "gm_trace_1",
     });
+    expect(extracted?.confidence).toBeUndefined();
     expect(evaluateGrayMatterReceiptPolicy(extracted).allowsContext).toBe(true);
+  });
+
+  it.each([false, true])("keeps evaluator confidence separate from retrieval quality when enabled=%s", (enabled) => {
+    const extracted = extractGrayMatterReceiptMetadata({ receipt: {
+      ...metadata(),
+      quality: { overallScore: 0.91 },
+      evaluator: { enabled, confidence: 0.72 },
+    } });
+    expect(extracted?.qualityScore).toBe(0.91);
+    expect(extracted?.confidence).toBe(enabled ? 0.72 : undefined);
   });
 
   it("redacts credentials, provider keys, tokens, and private keys", () => {

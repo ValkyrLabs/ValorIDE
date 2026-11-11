@@ -728,12 +728,20 @@ describe("AgentContextAssembler", () => {
         citations: [],
         receiptIds: ["receipt-retry"],
         traceIds: ["trace-retry"],
+        answerPolicy: "REQUIRE_RETRY",
+        retrievalStatus: "LOW_CONFIDENCE",
+        recommendedAction: "RETRY_WITH_EXPANDED_QUERY",
+        policyState: "retry_required",
         warning: expect.stringContaining("LOW_CONFIDENCE"),
       }),
     );
     expect(context.promptSection).toContain(
       "GrayMatter status: unavailable. Continue with local project context only.",
     );
+    expect(context.promptSection).toContain("GrayMatter receipt envelope:");
+    expect(context.promptSection).toContain("receiptRefs=receipt-retry");
+    expect(context.promptSection).toContain("confidence=unavailable");
+    expect(context.promptSection).toContain("Follow the receipt retry action");
     expect(context.promptSection).not.toContain("This should not be included");
   });
 

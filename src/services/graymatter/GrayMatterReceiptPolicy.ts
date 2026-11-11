@@ -15,6 +15,7 @@ export interface GrayMatterReceiptMetadata {
   answerPolicy?: string;
   caveatRequired?: boolean;
   confidence?: number;
+  qualityScore?: number;
   contradictionScore?: number;
   coverageStatus?: string;
   disposition?: string;
@@ -142,7 +143,11 @@ export const extractGrayMatterReceiptMetadata = (
       getBoolean(policy, "caveatRequired") ??
       getBoolean(receipt, "caveatRequired"),
     confidence:
-      getNumber(policy, "confidence") ?? getNumber(quality, "overallScore"),
+      getNumber(policy, "confidence") ??
+      (isRecord(receipt?.evaluator) && receipt.evaluator.enabled === true
+        ? getNumber(receipt.evaluator, "confidence")
+        : undefined),
+    qualityScore: getNumber(quality, "overallScore"),
     contradictionScore:
       getNumber(policy, "contradictionScore") ??
       getNumber(quality, "contradictionScore"),
