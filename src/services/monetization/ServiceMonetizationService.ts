@@ -25,6 +25,8 @@ export interface ManagedMcpService {
   invocationCount?: number;
   monthlyInvocations?: number;
   subscriberCount?: number;
+  subscriptionCount?: number;
+  verifiedPublisher?: boolean;
   usageCount?: number;
   installCount?: number;
   downloadCount?: number;

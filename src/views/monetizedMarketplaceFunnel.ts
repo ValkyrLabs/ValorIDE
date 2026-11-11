@@ -27,6 +27,7 @@ export interface MarketplaceServiceSummary {
   invocationCount?: number;
   monthlyInvocations?: number;
   subscriberCount?: number;
+  subscriptionCount?: number;
   usageCount?: number;
 }
 
@@ -85,7 +86,12 @@ export function getServicePopularityScore(
   service: MarketplaceServiceSummary,
 ): number {
   const usageScore = scoreFields.reduce(
-    (score, field) => score + numericValue(service[field]),
+    (score, field) =>
+      score + numericValue(
+        field === "subscriberCount"
+          ? service.subscriberCount ?? service.subscriptionCount
+          : service[field],
+      ),
     0,
   );
   const ratingScore = Math.round(

@@ -1,3 +1,4 @@
+import { getServicePopularityScore } from "./monetizedMarketplaceFunnel";
 import { ManagedMcpService } from "@thorapi/services/monetization/ServiceMonetizationService";
 import {
   estimateMonthlySpend,
@@ -26,6 +27,15 @@ function service(overrides: Partial<ManagedMcpService>): ManagedMcpService {
 }
 
 describe("MonetizedServicesMarketplace helpers", () => {
+  it("retains legacy subscription metrics without double counting canonical counts", () => {
+    const legacy = service({ subscriptionCount: 25 });
+    const canonical = service({ subscriberCount: 25 });
+    const both = service({ subscriberCount: 25, subscriptionCount: 25 });
+    expect(getServicePopularityScore(legacy)).toBe(getServicePopularityScore(canonical));
+    expect(getServicePopularityScore(both)).toBe(getServicePopularityScore(canonical));
+    expect(sortMarketplaceServices([service({ id: "quiet", subscriberCount: 1 }), legacy], "popular")[0]).toBe(legacy);
+  });
+
   it("uses explicit creator identity instead of the old hardcoded Creator label", () => {
     expect(getCreatorLabel(service({ createdBy: "verified-builder" }))).toBe(
       "By: verified-builder",
